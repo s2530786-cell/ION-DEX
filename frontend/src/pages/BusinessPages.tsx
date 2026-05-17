@@ -1,0 +1,733 @@
+import {
+  ArrowLeftRight,
+  BarChart3,
+  Bot,
+  Flame,
+  Globe2,
+  LayoutGrid,
+  Layers3,
+  ShieldCheck,
+} from "lucide-react";
+import { useMemo, useState, type FormEvent } from "react";
+import type { PageKey } from "@/components/layout/AppShell";
+import { NeonButton } from "@/components/ui/NeonButton";
+import { NeonCard } from "@/components/ui/NeonCard";
+
+type BusinessPageConfig = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  icon: typeof BarChart3;
+  primaryAction: string;
+  metrics: Array<{ label: string; value: string; tone: "cyan" | "magenta" | "gold" }>;
+  checklist: string[];
+};
+
+const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
+  trade: {
+    eyebrow: "Professional Trading",
+    title: "ION spot order desk",
+    description:
+      "Market and limit order shell for BNB / ION trading, with later hooks for order book, fee preview, and wallet signing.",
+    icon: BarChart3,
+    primaryAction: "Create Limit Order",
+    metrics: [
+      { label: "Pair", value: "BNB / ION", tone: "gold" },
+      { label: "Order Types", value: "Market + Limit", tone: "cyan" },
+      { label: "Fee Asset", value: "ION", tone: "magenta" },
+    ],
+    checklist: ["Order book panel", "Market depth chart", "ION fee quote", "Wallet-safe payload"],
+  },
+  grid: {
+    eyebrow: "Strategy Automation",
+    title: "On-chain spot grid",
+    description:
+      "Strategy shell for neutral, arithmetic, geometric, trailing, and stop-grid modes inspired by OKX Web3 flows.",
+    icon: LayoutGrid,
+    primaryAction: "Create Grid Strategy",
+    metrics: [
+      { label: "Strategies", value: "5 modes", tone: "cyan" },
+      { label: "Risk Guard", value: "AI Sentinel", tone: "magenta" },
+      { label: "Settlement", value: "ION fees", tone: "gold" },
+    ],
+    checklist: ["Grid bounds", "Take-profit / stop-loss", "Bot defense", "Strategy history"],
+  },
+  pool: {
+    eyebrow: "Liquidity",
+    title: "ION liquidity pools",
+    description:
+      "Pool management shell for adding liquidity, LP position cards, fee growth, and impermanent-loss alerts.",
+    icon: Layers3,
+    primaryAction: "Add Liquidity",
+    metrics: [
+      { label: "TVL", value: "$1.23M", tone: "cyan" },
+      { label: "Pool Fee", value: "ION based", tone: "gold" },
+      { label: "Positions", value: "0 active", tone: "magenta" },
+    ],
+    checklist: ["LP mint flow", "Slippage guard", "Pool analytics", "Position withdrawal"],
+  },
+  stake: {
+    eyebrow: "Yield",
+    title: "DEX staking hub",
+    description:
+      "Staking shell for official staking, DEX staking, ecosystem staking totals, and dynamic APR adjustments.",
+    icon: ShieldCheck,
+    primaryAction: "Stake ION",
+    metrics: [
+      { label: "DEX APR", value: "25.5%", tone: "gold" },
+      { label: "Official Stake", value: "TBD", tone: "cyan" },
+      { label: "Ecosystem Stake", value: "TBD", tone: "magenta" },
+    ],
+    checklist: ["Dynamic APR model", "Reward vesting", "Unstake queue", "Treasury split"],
+  },
+  bridge: {
+    eyebrow: "Cross-chain",
+    title: "BSC <> ION bridge",
+    description:
+      "Bridge shell for BSC vault deposits, ION-side release tracking, relayer health, and consistency checks.",
+    icon: ArrowLeftRight,
+    primaryAction: "Start Bridge",
+    metrics: [
+      { label: "Route", value: "BSC <> ION", tone: "cyan" },
+      { label: "Relayers", value: "Multisig", tone: "gold" },
+      { label: "Status", value: "Design", tone: "magenta" },
+    ],
+    checklist: ["Vault events", "Relayer quorum", "Replay protection", "Bridge audit trail"],
+  },
+  burn: {
+    eyebrow: "Supply",
+    title: "Dual-chain burn tracker",
+    description:
+      "Burn dashboard shell for BSC burn address, ION mainnet burn source, total burned, and remaining supply.",
+    icon: Flame,
+    primaryAction: "View Burn Chart",
+    metrics: [
+      { label: "BSC Burn", value: "0x...dEaD", tone: "magenta" },
+      { label: "ION Burn", value: "Official source", tone: "cyan" },
+      { label: "Trend", value: "Hourly / Daily", tone: "gold" },
+    ],
+    checklist: ["BSC burn index", "ION burn source", "Trend charts", "Remaining supply"],
+  },
+  domain: {
+    eyebrow: "ION DNS",
+    title: "Domain trading and binding",
+    description:
+      "ION DNS shell based on official DNS FunC references and the community dns.ice.io ecosystem surface.",
+    icon: Globe2,
+    primaryAction: "Search Domain",
+    metrics: [
+      { label: "Source", value: "dns.ice.io", tone: "cyan" },
+      { label: "Binding", value: "Wallet transfer", tone: "gold" },
+      { label: "Contracts", value: "Official DNS refs", tone: "magenta" },
+    ],
+    checklist: ["Domain search API", "Wallet binding", "Domain transfer", "DNS contract review"],
+  },
+  ai: {
+    eyebrow: "AI Signals",
+    title: "On-chain AI market analyst",
+    description:
+      "AI analysis shell for market signals, anomaly detection, anti-bot scoring, and strategy risk alerts.",
+    icon: Bot,
+    primaryAction: "Run AI Analysis",
+    metrics: [
+      { label: "Signal", value: "Bullish 63%", tone: "cyan" },
+      { label: "Risk", value: "Medium", tone: "magenta" },
+      { label: "Sentinel", value: "Armed", tone: "gold" },
+    ],
+    checklist: ["Price prediction", "MEV alerts", "Anomaly detection", "Strategy recommendations"],
+  },
+};
+
+const toneClass: Record<BusinessPageConfig["metrics"][number]["tone"], string> = {
+  cyan: "text-cyan-200 shadow-neonCyan",
+  magenta: "text-fuchsia-200 shadow-neonMagenta",
+  gold: "text-amber-200 shadow-neonGold",
+};
+
+function toPositiveNumber(value: string) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function FormField({
+  label,
+  testId,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}: {
+  label: string;
+  testId: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  type?: "number" | "text";
+}) {
+  return (
+    <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
+      <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
+        {label}
+      </span>
+      <input
+        className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none placeholder:text-cyan-100/25"
+        data-testid={testId}
+        inputMode={type === "number" ? "decimal" : undefined}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        type={type}
+        value={value}
+      />
+    </label>
+  );
+}
+
+function SegmentedControl<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+  testId,
+}: {
+  label: string;
+  options: Array<{ label: string; value: T }>;
+  value: T;
+  onChange: (value: T) => void;
+  testId: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-2" data-testid={testId}>
+      <p className="px-2 pb-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
+        {label}
+      </p>
+      <div className="grid grid-cols-2 gap-2">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            className={`rounded-xl px-3 py-2 text-sm font-black transition ${
+              value === option.value
+                ? "bg-cyan-300/20 text-cyan-100 shadow-neonCyan"
+                : "bg-white/[0.04] text-cyan-100/55 hover:bg-white/[0.08]"
+            }`}
+            data-testid={`${testId}-${option.value}`}
+            onClick={() => onChange(option.value)}
+            type="button"
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TradeOrderPanel() {
+  const [side, setSide] = useState<"buy" | "sell">("buy");
+  const [orderType, setOrderType] = useState<"limit" | "market">("limit");
+  const [amount, setAmount] = useState("");
+  const [price, setPrice] = useState("");
+  const [slippage, setSlippage] = useState("0.5");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validation = useMemo(() => {
+    const parsedAmount = toPositiveNumber(amount);
+    const parsedPrice = orderType === "market" ? 6.02 : toPositiveNumber(price);
+    const parsedSlippage = toPositiveNumber(slippage);
+    const slippageValid = parsedSlippage !== null && parsedSlippage >= 0.1 && parsedSlippage <= 5;
+
+    return {
+      isValid: parsedAmount !== null && parsedPrice !== null && slippageValid,
+      notional: parsedAmount !== null && parsedPrice !== null ? parsedAmount * parsedPrice : 0,
+      parsedAmount,
+      parsedPrice,
+      slippageValid,
+    };
+  }, [amount, orderType, price, slippage]);
+
+  function submitTrade(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (validation.isValid) {
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <form className="grid gap-4" data-testid="trade-form" onSubmit={submitTrade}>
+      <div className="grid gap-3 md:grid-cols-2">
+        <SegmentedControl
+          label="Side"
+          onChange={setSide}
+          options={[
+            { label: "Buy ION", value: "buy" },
+            { label: "Sell ION", value: "sell" },
+          ]}
+          testId="trade-side"
+          value={side}
+        />
+        <SegmentedControl
+          label="Order"
+          onChange={setOrderType}
+          options={[
+            { label: "Limit", value: "limit" },
+            { label: "Market", value: "market" },
+          ]}
+          testId="trade-order-type"
+          value={orderType}
+        />
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        <FormField
+          label="Amount ION"
+          onChange={(value) => {
+            setAmount(value);
+            setSubmitted(false);
+          }}
+          placeholder="1250"
+          testId="trade-amount"
+          type="number"
+          value={amount}
+        />
+        <FormField
+          label={orderType === "market" ? "Market price" : "Limit price"}
+          onChange={(value) => {
+            setPrice(value);
+            setSubmitted(false);
+          }}
+          placeholder={orderType === "market" ? "6.02" : "6.00"}
+          testId="trade-price"
+          type="number"
+          value={orderType === "market" ? "" : price}
+        />
+        <FormField
+          label="Slippage %"
+          onChange={(value) => {
+            setSlippage(value);
+            setSubmitted(false);
+          }}
+          placeholder="0.5"
+          testId="trade-slippage"
+          type="number"
+          value={slippage}
+        />
+      </div>
+
+      {!validation.slippageValid ? (
+        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="trade-error">
+          Slippage must stay between 0.1% and 5% for wallet-safe execution.
+        </p>
+      ) : null}
+
+      <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75" data-testid="trade-preview">
+        {validation.isValid ? (
+          <span>
+            {side === "buy" ? "Buying" : "Selling"} {validation.parsedAmount?.toLocaleString()} ION via {orderType} order. Estimated notional: ${validation.notional.toLocaleString(undefined, { maximumFractionDigits: 2 })}.
+          </span>
+        ) : (
+          <span>Enter amount, price, and slippage to preview the wallet-safe order payload.</span>
+        )}
+      </div>
+
+      <NeonButton className="w-full sm:w-fit" data-testid="trade-submit" disabled={!validation.isValid} type="submit">
+        Create Limit Order
+      </NeonButton>
+
+      {submitted ? (
+        <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="trade-confirmation">
+          Draft order ready for wallet signing. Final contract call is intentionally gated behind wallet integration.
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+function GridStrategyPanel() {
+  const [mode, setMode] = useState<"arithmetic" | "geometric">("arithmetic");
+  const [lowerPrice, setLowerPrice] = useState("");
+  const [upperPrice, setUpperPrice] = useState("");
+  const [gridCount, setGridCount] = useState("20");
+  const [investment, setInvestment] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validation = useMemo(() => {
+    const lower = toPositiveNumber(lowerPrice);
+    const upper = toPositiveNumber(upperPrice);
+    const grids = Number(gridCount);
+    const parsedInvestment = toPositiveNumber(investment);
+    const gridValid = Number.isInteger(grids) && grids >= 2 && grids <= 100;
+    const boundsValid = lower !== null && upper !== null && upper > lower;
+    const step = boundsValid && gridValid ? (upper - lower) / grids : 0;
+
+    return {
+      boundsValid,
+      gridValid,
+      isValid: boundsValid && gridValid && parsedInvestment !== null,
+      lower,
+      parsedInvestment,
+      step,
+      upper,
+    };
+  }, [gridCount, investment, lowerPrice, upperPrice]);
+
+  function submitGrid(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (validation.isValid) {
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <form className="grid gap-4" data-testid="grid-form" onSubmit={submitGrid}>
+      <SegmentedControl
+        label="Grid Mode"
+        onChange={setMode}
+        options={[
+          { label: "Arithmetic", value: "arithmetic" },
+          { label: "Geometric", value: "geometric" },
+        ]}
+        testId="grid-mode"
+        value={mode}
+      />
+
+      <div className="grid gap-3 md:grid-cols-4">
+        <FormField
+          label="Lower"
+          onChange={(value) => {
+            setLowerPrice(value);
+            setSubmitted(false);
+          }}
+          placeholder="5.20"
+          testId="grid-lower"
+          type="number"
+          value={lowerPrice}
+        />
+        <FormField
+          label="Upper"
+          onChange={(value) => {
+            setUpperPrice(value);
+            setSubmitted(false);
+          }}
+          placeholder="7.40"
+          testId="grid-upper"
+          type="number"
+          value={upperPrice}
+        />
+        <FormField
+          label="Grids"
+          onChange={(value) => {
+            setGridCount(value);
+            setSubmitted(false);
+          }}
+          placeholder="20"
+          testId="grid-count"
+          type="number"
+          value={gridCount}
+        />
+        <FormField
+          label="Investment USDT"
+          onChange={(value) => {
+            setInvestment(value);
+            setSubmitted(false);
+          }}
+          placeholder="2500"
+          testId="grid-investment"
+          type="number"
+          value={investment}
+        />
+      </div>
+
+      {!validation.boundsValid && lowerPrice && upperPrice ? (
+        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="grid-error">
+          Upper price must be greater than lower price before the strategy can be armed.
+        </p>
+      ) : null}
+
+      <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/[0.05] p-4 text-sm text-fuchsia-100/75" data-testid="grid-preview">
+        {validation.isValid ? (
+          <span>
+            {mode} grid from ${validation.lower?.toLocaleString()} to ${validation.upper?.toLocaleString()} with {gridCount} levels. Approx step: ${validation.step.toLocaleString(undefined, { maximumFractionDigits: 4 })}.
+          </span>
+        ) : (
+          <span>Set bounds, grid count, and investment to preview AI Sentinel guarded strategy parameters.</span>
+        )}
+      </div>
+
+      <NeonButton className="w-full sm:w-fit" data-testid="grid-submit" disabled={!validation.isValid} type="submit">
+        Create Grid Strategy
+      </NeonButton>
+
+      {submitted ? (
+        <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="grid-confirmation">
+          Strategy draft ready. AI Sentinel checks and wallet execution remain gated for contract integration.
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+const DEX_ADVERTISED_APR_PERCENT = 25.5;
+
+function PoolLiquidityPanel() {
+  const [bnbAmount, setBnbAmount] = useState("");
+  const [ionAmount, setIonAmount] = useState("");
+  const [slippage, setSlippage] = useState("0.5");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validation = useMemo(() => {
+    const parsedBnb = toPositiveNumber(bnbAmount);
+    const parsedIon = toPositiveNumber(ionAmount);
+    const parsedSlippage = toPositiveNumber(slippage);
+    const slippageValid = parsedSlippage !== null && parsedSlippage >= 0.1 && parsedSlippage <= 5;
+    const ratio =
+      parsedBnb !== null && parsedIon !== null && parsedIon > 0 ? parsedBnb / parsedIon : null;
+
+    return {
+      isValid: parsedBnb !== null && parsedIon !== null && slippageValid,
+      parsedBnb,
+      parsedIon,
+      ratio,
+      slippageValid,
+    };
+  }, [bnbAmount, ionAmount, slippage]);
+
+  function submitPool(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (validation.isValid) {
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <form className="grid gap-4" data-testid="pool-form" onSubmit={submitPool}>
+      <div className="grid gap-3 md:grid-cols-3">
+        <FormField
+          label="Deposit BNB"
+          onChange={(value) => {
+            setBnbAmount(value);
+            setSubmitted(false);
+          }}
+          placeholder="2.5"
+          testId="pool-bnb"
+          type="number"
+          value={bnbAmount}
+        />
+        <FormField
+          label="Deposit ION"
+          onChange={(value) => {
+            setIonAmount(value);
+            setSubmitted(false);
+          }}
+          placeholder="1250"
+          testId="pool-ion"
+          type="number"
+          value={ionAmount}
+        />
+        <FormField
+          label="Slippage %"
+          onChange={(value) => {
+            setSlippage(value);
+            setSubmitted(false);
+          }}
+          placeholder="0.5"
+          testId="pool-slippage"
+          type="number"
+          value={slippage}
+        />
+      </div>
+
+      {!validation.slippageValid ? (
+        <p
+          className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
+          data-testid="pool-error"
+        >
+          Slippage must stay between 0.1% and 5% before minting LP shares on-chain.
+        </p>
+      ) : null}
+
+      <div
+        className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75"
+        data-testid="pool-preview"
+      >
+        {validation.isValid ? (
+          <span>
+            Liquidity preview: {bnbAmount} BNB + {ionAmount} ION · ratio{" "}
+            {validation.ratio !== null
+              ? validation.ratio.toFixed(6)
+              : "—"}{" "}
+            BNB per ION · max slip {slippage}%
+          </span>
+        ) : (
+          <span>
+            Enter paired deposits and slippage to preview wallet-safe mint parameters for BNB / ION.
+          </span>
+        )}
+      </div>
+
+      <NeonButton className="w-full sm:w-fit" data-testid="pool-submit" disabled={!validation.isValid} type="submit">
+        Add Liquidity
+      </NeonButton>
+
+      {submitted ? (
+        <p
+          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
+          data-testid="pool-confirmation"
+        >
+          Liquidity draft ready for wallet signing. Mint and LP oracle hooks remain gated behind contract integration.
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+function StakeHubPanel() {
+  const [mode, setMode] = useState<"stake" | "unstake">("stake");
+  const [amount, setAmount] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validation = useMemo(() => {
+    const parsedAmount = toPositiveNumber(amount);
+    return {
+      isValid: parsedAmount !== null,
+      parsedAmount,
+    };
+  }, [amount]);
+
+  function submitStake(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (validation.isValid) {
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <form className="grid gap-4" data-testid="stake-form" onSubmit={submitStake}>
+      <SegmentedControl
+        label="Action"
+        onChange={(next) => {
+          setMode(next);
+          setSubmitted(false);
+        }}
+        options={[
+          { label: "Stake ION", value: "stake" },
+          { label: "Unstake ION", value: "unstake" },
+        ]}
+        testId="stake-mode"
+        value={mode}
+      />
+
+      <FormField
+        label="Amount ION"
+        onChange={(value) => {
+          setAmount(value);
+          setSubmitted(false);
+        }}
+        placeholder="500"
+        testId="stake-amount"
+        type="number"
+        value={amount}
+      />
+
+      <div
+        className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.06] p-4 text-sm text-amber-100/85"
+        data-testid="stake-preview"
+      >
+        {validation.isValid ? (
+          <span>
+            {mode === "stake" ? "Stake" : "Unstake"} preview: {amount} ION · advertised DEX APR{" "}
+            {DEX_ADVERTISED_APR_PERCENT}% · vesting and unstake queue enforced by contracts later.
+          </span>
+        ) : (
+          <span>
+            Enter an amount to preview treasury-safe staking payloads and APR assumptions from the hub metrics card.
+          </span>
+        )}
+      </div>
+
+      <NeonButton className="w-full sm:w-fit" data-testid="stake-submit" disabled={!validation.isValid} type="submit">
+        {mode === "stake" ? "Stake ION" : "Unstake ION"}
+      </NeonButton>
+
+      {submitted ? (
+        <p
+          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
+          data-testid="stake-confirmation"
+        >
+          {mode === "stake"
+            ? "Stake draft ready for wallet signing. Reward streams remain gated behind staking contract wiring."
+            : "Unstake draft ready for wallet signing. Cooldown rules remain gated behind staking contract wiring."}
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
+  const config = pageConfigs[page];
+  const Icon = config.icon;
+
+  return (
+    <div className="grid gap-5 xl:grid-cols-[1fr_22rem]" data-testid={`page-${page}`}>
+      <NeonCard className="min-h-[31rem]" variant="mixed">
+        <div className="flex h-full flex-col justify-between gap-8">
+          <div>
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
+                  {config.eyebrow}
+                </p>
+                <h1 className="mt-3 max-w-3xl text-4xl font-black text-white sm:text-6xl" data-testid="page-title">
+                  {config.title}
+                </h1>
+              </div>
+              <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl border border-white/10 bg-white/[0.07] text-cyan-200 shadow-neonCyan">
+                <Icon size={34} />
+              </div>
+            </div>
+            <p className="max-w-3xl text-base leading-7 text-cyan-100/68">
+              {config.description}
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {config.metrics.map((metric) => (
+              <div
+                key={metric.label}
+                className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}
+              >
+                <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">
+                  {metric.label}
+                </p>
+                <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {page === "trade" ? <TradeOrderPanel /> : null}
+          {page === "grid" ? <GridStrategyPanel /> : null}
+          {page === "pool" ? <PoolLiquidityPanel /> : null}
+          {page === "stake" ? <StakeHubPanel /> : null}
+          {page !== "trade" && page !== "grid" && page !== "pool" && page !== "stake" ? (
+            <NeonButton className="w-full sm:w-fit" type="button">
+              {config.primaryAction}
+            </NeonButton>
+          ) : null}
+        </div>
+      </NeonCard>
+
+      <NeonCard variant="cyan">
+        <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Build Checklist</p>
+        <div className="mt-5 grid gap-3">
+          {config.checklist.map((item, index) => (
+            <div
+              key={item}
+              className="rounded-2xl border border-white/10 bg-white/[0.05] p-4"
+            >
+              <p className="text-xs font-black text-cyan-200">0{index + 1}</p>
+              <p className="mt-1 font-bold text-white">{item}</p>
+            </div>
+          ))}
+        </div>
+      </NeonCard>
+    </div>
+  );
+}

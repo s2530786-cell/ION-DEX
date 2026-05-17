@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "desktop-commander": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@wonderwhy-er/desktop-commander@latest"
+      ]
+    },
+    "ion-dex-memory-bank": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@allpepper/memory-bank-mcp@latest"
+      ],
+      "env": {
+        "MEMORY_BANK_ROOT": "C:\\Users\\admin\\.cursor\\projects\\empty-window\\ion-dex-nuke\\.memory-bank"
+      }
+    }
+  }
+}

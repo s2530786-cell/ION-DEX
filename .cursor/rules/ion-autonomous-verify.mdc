@@ -1,0 +1,10 @@
+---
+description: Autonomous verification — run full verify without per-step user confirmation
+alwaysApply: true
+---
+
+# ION DEX — autonomous verification
+
+- After substantive code edits in this repo, **run verification yourself** via `scripts\agent-verify.cmd` (or equivalent `ION_VERIFY_NONINTERACTIVE=1` + `scripts\verify-full.cmd`). Do **not** ask the user to approve each micro-step or to manually press keys in `pause` dialogs unless the execution environment cannot run shell at all.
+- For small, obvious follow-ups in the same task, **continue implementing** without waiting for an explicit “go ahead” after every line change. Only pause to ask the user when requirements are ambiguous, missing credentials, or a destructive / irreversible action needs explicit consent.
+- Prefer `scripts\verify-full-save-log.cmd --no-pause` when stdout may be empty; then read `%TEMP%\ion-verify-full.txt`.

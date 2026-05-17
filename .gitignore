@@ -1,0 +1,16 @@
+# Official ION reference tree — clone locally (nested repo; do not vendor into this repo).
+# git clone https://github.com/ice-blockchain/ion ion
+/ion/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/playwright-report/
+frontend/test-results/
+
+# Local Cursor maintenance backups (large / machine-specific)
+.maintenance/
+
+# OS / editor
+Thumbs.db
+.DS_Store
