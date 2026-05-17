@@ -52,7 +52,10 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
             </div>
           </div>
 
-          <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1 lg:flex">
+          <nav
+            aria-label="Primary"
+            className="flex min-w-0 max-w-[62vw] flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full border border-white/10 bg-white/[0.04] p-1 sm:max-w-[70vw] md:max-w-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          >
             {navItems.map((item) => (
               <button
                 key={item.key}

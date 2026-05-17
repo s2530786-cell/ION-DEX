@@ -9,8 +9,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "preview:local": "vite preview --host=127.0.0.1 --port=4173",
+    "preview:test": "vite preview --host=127.0.0.1 --port=59333 --strictPort",
     "test:e2e": "playwright test",
-    "verify": "npm run build && playwright test",
+    "verify:e2e": "playwright test",
+    "verify": "npm run build && start-server-and-test \"npm run preview:test\" tcp:127.0.0.1:59333 \"npm run verify:e2e\"",
     "audit:high": "npm audit --audit-level=high"
   },
   "dependencies": {
@@ -30,6 +32,7 @@
     "tailwindcss": "latest",
     "typescript": "latest",
     "vite": "latest",
-    "@playwright/test": "^1.52.0"
+    "@playwright/test": "^1.52.0",
+    "start-server-and-test": "^2.1.2"
   }
 }

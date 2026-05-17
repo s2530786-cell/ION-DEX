@@ -133,4 +133,75 @@ test.describe("ION DEX smoke", () => {
     await page.getByTestId("stake-submit").click();
     await expect(page.getByTestId("stake-confirmation")).toContainText("Unstake draft ready");
   });
+
+  test("bridge page validates destination memo and drafts sweep", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("nav-bridge").click();
+
+    await expect(page.getByTestId("bridge-form")).toBeVisible();
+    await expect(page.getByTestId("bridge-submit")).toBeDisabled();
+
+    await page.getByTestId("bridge-amount").fill("180");
+    await page.getByTestId("bridge-destination").fill("0xabc");
+    await expect(page.getByTestId("bridge-error")).toBeVisible();
+
+    await page.getByTestId("bridge-destination").fill("0xabcdef12");
+    await expect(page.getByTestId("bridge-preview")).toContainText("Bridge preview:");
+    await expect(page.getByTestId("bridge-submit")).toBeEnabled();
+
+    await page.getByTestId("bridge-submit").click();
+    await expect(page.getByTestId("bridge-confirmation")).toContainText("Bridge transfer draft ready");
+  });
+
+  test("burn page enforces memo length and drafts narrative", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("nav-burn").click();
+
+    await expect(page.getByTestId("burn-form")).toBeVisible();
+    await page.getByTestId("burn-amount").fill("5000");
+    await page.getByTestId("burn-memo").fill("x".repeat(121));
+    await expect(page.getByTestId("burn-error")).toBeVisible();
+    await expect(page.getByTestId("burn-submit")).toBeDisabled();
+
+    await page.getByTestId("burn-memo").fill("Weekly burn attestation");
+    await expect(page.getByTestId("burn-preview")).toContainText("Burn preview:");
+    await expect(page.getByTestId("burn-submit")).toBeEnabled();
+
+    await page.getByTestId("burn-submit").click();
+    await expect(page.getByTestId("burn-confirmation")).toContainText("Burn analytics draft ready");
+  });
+
+  test("domain page validates label shape and drafts handshake", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("nav-domain").click();
+
+    await expect(page.getByTestId("domain-form")).toBeVisible();
+    await page.getByTestId("domain-query").fill("bad_label");
+    await expect(page.getByTestId("domain-error")).toBeVisible();
+    await expect(page.getByTestId("domain-submit")).toBeDisabled();
+
+    await page.getByTestId("domain-query").fill("custodian.ion");
+    await expect(page.getByTestId("domain-preview")).toContainText("Domain preview:");
+    await expect(page.getByTestId("domain-submit")).toBeEnabled();
+
+    await page.getByTestId("domain-submit").click();
+    await expect(page.getByTestId("domain-confirmation")).toContainText("Domain handshake draft staged");
+  });
+
+  test("ai page validates ticker and drafts sentinel brief", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("nav-ai").click();
+
+    await expect(page.getByTestId("ai-form")).toBeVisible();
+    await page.getByTestId("ai-symbol").fill("!");
+    await expect(page.getByTestId("ai-error")).toBeVisible();
+
+    await page.getByTestId("ai-symbol").fill("ION");
+    await expect(page.getByTestId("ai-preview")).toContainText("AI preview:");
+    await page.getByTestId("ai-horizon-1d").click();
+    await expect(page.getByTestId("ai-preview")).toContainText("(1d,");
+
+    await page.getByTestId("ai-submit").click();
+    await expect(page.getByTestId("ai-confirmation")).toContainText("AI sentinel brief draft ready");
+  });
 });

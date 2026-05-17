@@ -2,7 +2,7 @@
 
 ## Latest Verified Status
 
-- **Unified workspace (2026-05-17)**：`D:\openclaw-tools\ion-dex-nuke` 已与 Cursor `empty-window` 副本对齐：`frontend/`、`scripts/`、`.github/workflows/`、`docs/` 等与既有 **`ion/`** 目录并存；本地 `scripts\agent-verify.cmd` 通过（编码扫描 **434** 文件 OK；Playwright **8 passed**；`audit:high` **0**）。
+- **Unified workspace（2026-05-17 晚）**：`D:\openclaw-tools\ion-dex-nuke` 根目录 `scripts\verify-full.cmd` / `verify-full-save-log.cmd` 已通过：编码扫描 **435** 文件 OK；前端 `npm run verify`（`build` + `start-server-and-test` 监听 **TCP `127.0.0.1:59333`** 后跑 Playwright，避免本机环境下误把 HTTP **400** 当成「预览已就绪」）**Playwright 12 passed**（含 Trade/Grid/Pool/Stake/**Bridge/Burn/Domain/AI** 草稿表单校验）；`audit:high` **0**。**AppShell** 顶栏改为 `flex + overflow-x-auto`：当前 Tailwind 生产产物未生成可用的 `lg:` 断点时，`hidden lg:flex` 会令导航整块 `display:none`，E2E 无法点到 `nav-*`。
 - Pool / Stake milestone（先前 empty-window 基线）：编码、`npm run verify`、`audit:high` 均已绿灯。
 - If `frontend/e2e/smoke.spec.ts` picks up NUL bytes after an edit, run `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-encoding.ps1 -Path .\frontend\e2e -Fix` from repo root.
 

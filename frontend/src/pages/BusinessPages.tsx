@@ -661,6 +661,408 @@ function StakeHubPanel() {
   );
 }
 
+function isDomainLikeLabel(value: string) {
+  const trimmed = value.trim().toLowerCase();
+  if (trimmed.length < 3 || trimmed.length > 253 || !trimmed.includes(".")) {
+    return false;
+  }
+  if (trimmed.startsWith(".") || trimmed.endsWith(".") || trimmed.includes("..")) {
+    return false;
+  }
+  return /^[a-z0-9.-]+$/.test(trimmed);
+}
+
+function BridgeTransferPanel() {
+  const [direction, setDirection] = useState<"bsc-ion" | "ion-bsc">("bsc-ion");
+  const [amount, setAmount] = useState("");
+  const [destination, setDestination] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validation = useMemo(() => {
+    const parsedAmount = toPositiveNumber(amount);
+    const dest = destination.trim();
+    const destinationValid = dest.length >= 8;
+    return {
+      destinationValid,
+      isValid: parsedAmount !== null && destinationValid,
+      parsedAmount,
+    };
+  }, [amount, destination]);
+
+  function submitBridge(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (validation.isValid) {
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <form className="grid gap-4" data-testid="bridge-form" onSubmit={submitBridge}>
+      <SegmentedControl
+        label="Route"
+        onChange={(next) => {
+          setDirection(next);
+          setSubmitted(false);
+        }}
+        options={[
+          { label: "BSC → ION", value: "bsc-ion" },
+          { label: "ION → BSC", value: "ion-bsc" },
+        ]}
+        testId="bridge-direction"
+        value={direction}
+      />
+
+      <div className="grid gap-3 md:grid-cols-2">
+        <FormField
+          label="Amount ION"
+          onChange={(value) => {
+            setAmount(value);
+            setSubmitted(false);
+          }}
+          placeholder="950"
+          testId="bridge-amount"
+          type="number"
+          value={amount}
+        />
+        <FormField
+          label="Destination address / memo"
+          onChange={(value) => {
+            setDestination(value);
+            setSubmitted(false);
+          }}
+          placeholder="EQ... or 0x..."
+          testId="bridge-destination"
+          type="text"
+          value={destination}
+        />
+      </div>
+
+      {!validation.destinationValid && destination.trim().length > 0 ? (
+        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="bridge-error">
+          Destination memo must stay at least 8 characters until wallet resolution maps it to canonical addresses.
+        </p>
+      ) : null}
+
+      <div
+        className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75"
+        data-testid="bridge-preview"
+      >
+        {validation.isValid ? (
+          <span>
+            Bridge preview: route {direction === "bsc-ion" ? "BSC → ION Chain" : "ION Chain → BSC"} · sweep{" "}
+            {validation.parsedAmount?.toLocaleString()} ION · relayer quorum and replay guards remain contract gated.
+          </span>
+        ) : (
+          <span>Set a positive sweep amount and resilient destination memo to simulate vault attestations offline.</span>
+        )}
+      </div>
+
+      <NeonButton className="w-full sm:w-fit" data-testid="bridge-submit" disabled={!validation.isValid} type="submit">
+        Stage Bridge Sweep
+      </NeonButton>
+
+      {submitted ? (
+        <p
+          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
+          data-testid="bridge-confirmation"
+        >
+          Bridge transfer draft ready for relayer quorum + wallet proofs. Custody signatures remain intentionally offline.
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+function BurnAnalyticsPanel() {
+  const [chain, setChain] = useState<"bsc" | "ion">("bsc");
+  const [amount, setAmount] = useState("");
+  const [memo, setMemo] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validation = useMemo(() => {
+    const parsedAmount = toPositiveNumber(amount);
+    const memoLen = memo.length;
+    const memoValid = memoLen <= 120;
+    return {
+      isValid: parsedAmount !== null && memoValid,
+      memoValid,
+      parsedAmount,
+    };
+  }, [amount, memo]);
+
+  function submitBurn(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (validation.isValid) {
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <form className="grid gap-4" data-testid="burn-form" onSubmit={submitBurn}>
+      <SegmentedControl
+        label="Chain Lens"
+        onChange={(next) => {
+          setChain(next);
+          setSubmitted(false);
+        }}
+        options={[
+          { label: "BSC burn ledger", value: "bsc" },
+          { label: "ION burn ledger", value: "ion" },
+        ]}
+        testId="burn-chain"
+        value={chain}
+      />
+
+      <div className="grid gap-3 md:grid-cols-2">
+        <FormField
+          label="Observed burn (ION)"
+          onChange={(value) => {
+            setAmount(value);
+            setSubmitted(false);
+          }}
+          placeholder="125000"
+          testId="burn-amount"
+          type="number"
+          value={amount}
+        />
+        <FormField
+          label="Attestation memo"
+          onChange={(value) => {
+            setMemo(value);
+            setSubmitted(false);
+          }}
+          placeholder="Indexer batch / treasury note"
+          testId="burn-memo"
+          type="text"
+          value={memo}
+        />
+      </div>
+
+      {!validation.memoValid ? (
+        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="burn-error">
+          Memo must stay ≤ 120 chars for sentinel-safe logging overlays.
+        </p>
+      ) : null}
+
+      <div
+        className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.05] p-4 text-sm text-amber-100/80"
+        data-testid="burn-preview"
+      >
+        {validation.isValid ? (
+          <span>
+            Burn preview: {validation.parsedAmount?.toLocaleString()} ION on {chain.toUpperCase()} · dual-chain indexer will reconcile treasury splits once workers land.
+          </span>
+        ) : (
+          <span>Provide a tracked burn magnitude plus optional memo hooks for treasury transparency rails.</span>
+        )}
+      </div>
+
+      <NeonButton className="w-full sm:w-fit" data-testid="burn-submit" disabled={!validation.isValid} type="submit">
+        Draft Burn Narrative
+      </NeonButton>
+
+      {submitted ? (
+        <p
+          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
+          data-testid="burn-confirmation"
+        >
+          Burn analytics draft ready for dual-chain sentinel playback. Still no on-chain transaction from this sandbox.
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+function DomainTradingPanel() {
+  const [mode, setMode] = useState<"search" | "bind">("search");
+  const [query, setQuery] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validation = useMemo(() => {
+    const labelValid = isDomainLikeLabel(query);
+    return {
+      isValid: labelValid,
+      labelValid,
+    };
+  }, [query]);
+
+  function submitDomain(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (validation.isValid) {
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <form className="grid gap-4" data-testid="domain-form" onSubmit={submitDomain}>
+      <SegmentedControl
+        label="Flow"
+        onChange={(next) => {
+          setMode(next);
+          setSubmitted(false);
+        }}
+        options={[
+          { label: "Search label", value: "search" },
+          { label: "Bind alias", value: "bind" },
+        ]}
+        testId="domain-mode"
+        value={mode}
+      />
+
+      <FormField
+        label="DNS / .ion label"
+        onChange={(value) => {
+          setQuery(value);
+          setSubmitted(false);
+        }}
+        placeholder="custodian.ion"
+        testId="domain-query"
+        type="text"
+        value={query}
+      />
+
+      {query.trim().length > 0 && !validation.labelValid ? (
+        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="domain-error">
+          Enter a lowercase label with dotted segments (dns.ice.io compatible) before_FUN wiring.
+        </p>
+      ) : null}
+
+      <div
+        className="rounded-2xl border border-indigo-300/25 bg-indigo-400/[0.07] p-4 text-sm text-indigo-100/80"
+        data-testid="domain-preview"
+      >
+        {validation.isValid ? (
+          <span>
+            Domain preview: {mode === "search" ? "Lookup" : "Bind"}{" "}
+            <span className="font-mono text-white">{query.trim().toLowerCase()}</span> using official DNS FunC schemas + wallet-signed
+            payloads (draft only).
+          </span>
+        ) : (
+          <span>Use dns.ice.io compatible labels to rehearsal wallet proofs without touching validators.</span>
+        )}
+      </div>
+
+      <NeonButton className="w-full sm:w-fit" data-testid="domain-submit" disabled={!validation.isValid} type="submit">
+        Compose DNS Payload
+      </NeonButton>
+
+      {submitted ? (
+        <p
+          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
+          data-testid="domain-confirmation"
+        >
+          Domain handshake draft staged. Resolver transactions remain blocked until dns contracts are reachable from this wallet.
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+function AIMarketPanel() {
+  const [symbol, setSymbol] = useState("ION");
+  const [horizon, setHorizon] = useState<"1h" | "4h" | "1d">("4h");
+  const [depth, setDepth] = useState<"quick" | "standard" | "deep">("standard");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validation = useMemo(() => {
+    const ticker = symbol.trim().toUpperCase();
+    const len = ticker.length;
+    const tickerValid = len >= 2 && len <= 12 && /^[A-Z0-9]+$/.test(ticker);
+    return {
+      confidence: horizon === "1h" ? 58 : horizon === "4h" ? 63 : 71,
+      isValid: tickerValid,
+      ticker,
+      tickerValid,
+    };
+  }, [horizon, symbol]);
+
+  function submitAi(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (validation.isValid) {
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <form className="grid gap-4" data-testid="ai-form" onSubmit={submitAi}>
+      <FormField
+        label="Symbol"
+        onChange={(value) => {
+          setSymbol(value);
+          setSubmitted(false);
+        }}
+        placeholder="ION"
+        testId="ai-symbol"
+        type="text"
+        value={symbol}
+      />
+
+      <div className="grid gap-3 md:grid-cols-2">
+        <SegmentedControl
+          label="Horizon"
+          onChange={(next) => {
+            setHorizon(next);
+            setSubmitted(false);
+          }}
+          options={[
+            { label: "Pulse 1h", value: "1h" },
+            { label: "Core 4h", value: "4h" },
+            { label: "Macro 1d", value: "1d" },
+          ]}
+          testId="ai-horizon"
+          value={horizon}
+        />
+        <SegmentedControl
+          label="Depth"
+          onChange={(next) => {
+            setDepth(next);
+            setSubmitted(false);
+          }}
+          options={[
+            { label: "Quick", value: "quick" },
+            { label: "Standard", value: "standard" },
+            { label: "Deep", value: "deep" },
+          ]}
+          testId="ai-depth"
+          value={depth}
+        />
+      </div>
+
+      {symbol.trim().length > 0 && !validation.tickerValid ? (
+        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="ai-error">
+          Symbol must be 2–12 alphanumeric characters before AI Sentinel merges on-chain tapes.
+        </p>
+      ) : null}
+
+      <div
+        className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.07] p-4 text-sm text-emerald-100/80"
+        data-testid="ai-preview"
+      >
+        {validation.isValid ? (
+          <span>
+            AI preview: model confidence {validation.confidence}% on {validation.ticker} ({horizon}, {depth} scan). Uses offline heuristics only—streaming inference lands with ai-market-service.
+          </span>
+        ) : (
+          <span>Set a ticker to preview offline AI Sentinel overlays for risk desks and treasury alerts.</span>
+        )}
+      </div>
+
+      <NeonButton className="w-full sm:w-fit" data-testid="ai-submit" disabled={!validation.isValid} type="submit">
+        Stage AI Brief
+      </NeonButton>
+
+      {submitted ? (
+        <p
+          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
+          data-testid="ai-confirmation"
+        >
+          AI sentinel brief draft ready for human review—no outbound model calls fired from this page yet.
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
 export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
   const config = pageConfigs[page];
   const Icon = config.icon;
@@ -706,11 +1108,10 @@ export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
           {page === "grid" ? <GridStrategyPanel /> : null}
           {page === "pool" ? <PoolLiquidityPanel /> : null}
           {page === "stake" ? <StakeHubPanel /> : null}
-          {page !== "trade" && page !== "grid" && page !== "pool" && page !== "stake" ? (
-            <NeonButton className="w-full sm:w-fit" type="button">
-              {config.primaryAction}
-            </NeonButton>
-          ) : null}
+          {page === "bridge" ? <BridgeTransferPanel /> : null}
+          {page === "burn" ? <BurnAnalyticsPanel /> : null}
+          {page === "domain" ? <DomainTradingPanel /> : null}
+          {page === "ai" ? <AIMarketPanel /> : null}
         </div>
       </NeonCard>
 
