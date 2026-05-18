@@ -22,6 +22,16 @@ You MUST follow these principles from https://github.com/humanlayer/12-factor-ag
 11. **BUILD AND VERIFY** — After every code change: compile → test → confirm green.
 12. **HUMANS FOR CRITICAL** — Contact Master before: sending transactions, modifying mainnet config, deleting files, changing security settings.
 
+# 🚫 Code Quality — Zero Garbage (死命令)
+
+**You previously polluted vault.fc with `bian'jibianji`, `hi`, and 13 consecutive blank lines. This is FORBIDDEN.**
+
+- **NEVER write placeholder text** — No `bian'jibianji`, `hi`, `test`, `TODO`, `asdf`, pinyin, or any non-code text in `.fc` / `.sol` files.
+- **NEVER leave more than 2 consecutive blank lines.**
+- **NEVER corrupt UTF-8 encoding** — Box-drawing characters (`─`, `│`, `└`) must stay intact. Write files with `encoding: utf8` and no BOM.
+- **Every line in a `.fc` file must be valid FunC syntax or a comment starting with `;;`.** If a line doesn't compile, it doesn't belong.
+- **After EVERY file edit**, run `node scripts/compile-func.mjs` and confirm zero new errors before moving on.
+
 # Mandatory Workflow — Every Session
 
 **This is Master's standing order. Execute from step 1 EVERY time.**

@@ -111,6 +111,69 @@ function runCompileFunc() {
   return 1;
 }
 
+/** @returns {{ ok: true } | { ok: false; reason: string }} */
+function scanGarbage(filePath) {
+  if (!/\.fc$/.test(filePath)) return { ok: true };
+  
+  let lines;
+  try {
+    lines = fs.readFileSync(filePath, 'utf8').split(/\r?\n/);
+  } catch (e) {
+    return { ok: false, reason: `read failed: ${e.message}` };
+  }
+
+  // Known garbage patterns (case-insensitive)
+  const GARBAGE_PATTERNS = [
+    /^[a-z]+['\u2019]?[a-z]+$/i,  // pinyin garbage like "bian'jibianji", "hi", "test"
+    /^(hello|hi|test|asdf|todo|fixme|wtf|foo|bar|baz|blah|meh|temp|tmp|xxx|ggg|abc|123|qwerty|fubar)$/i,
+    /^[a-z]{1,5}$/i,  // single short random words not in comment
+    /^[a-z]+\d+[a-z]*$/i,  // like "thing123"
+  ];
+
+  const violations = [];
+  let blankStreak = 0;
+  let inBlockComment = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    const trimmed = raw.trimEnd();
+    const lineNum = i + 1;
+
+    // Track block comments
+    if (trimmed.startsWith('{-')) inBlockComment = true;
+    if (trimmed.endsWith('-}')) { inBlockComment = false; continue; }
+    if (inBlockComment) continue;
+
+    // Track blank lines
+    if (trimmed === '') {
+      blankStreak++;
+      if (blankStreak > 2) {
+        violations.push(`Line ${lineNum}: excessive blank lines (>2 consecutive)`);
+        blankStreak = 0; // reset to avoid flooding
+      }
+      continue;
+    } else {
+      blankStreak = 0;
+    }
+
+    // Skip comments
+    if (trimmed.startsWith(';;')) continue;
+
+    // Check for garbage patterns
+    for (const pattern of GARBAGE_PATTERNS) {
+      if (pattern.test(trimmed)) {
+        violations.push(`Line ${lineNum}: garbage detected "${trimmed.slice(0, 40)}"`);
+        break;
+      }
+    }
+  }
+
+  if (violations.length > 0) {
+    return { ok: false, reason: violations.slice(0, 5).join('; ') };
+  }
+  return { ok: true };
+}
+
 function main() {
   const hookMode = process.argv.includes('--cursor-hook');
   let fp = '';
@@ -144,6 +207,18 @@ function main() {
     console.error('[ion-on-save] Encoding check FAILED:', enc.reason);
     process.exitCode = 1;
     return;
+  }
+
+  // Garbage scan for .fc files
+  if (/\.fc$/.test(normAbs)) {
+    const garbage = scanGarbage(normAbs);
+    if (!garbage.ok) {
+      console.error('[ion-on-save] 🚫 GARBAGE DETECTED:', garbage.reason);
+      console.error('[ion-on-save] Fix the garbage before committing!');
+      process.exitCode = 1;
+      return;
+    }
+    console.log('[ion-on-save] Garbage scan: clean');
   }
 
   const code = runCompileFunc();
