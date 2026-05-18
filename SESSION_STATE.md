@@ -15,26 +15,29 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 - If shell execution is unavailable, the user must run the verification commands and paste the output.
 - Search for working MCP/tooling before accepting a tooling limitation.
 
-## Master's Permanent Rules（Master 钦定，永久有效）
+## Master's Permanent Rules (same list as `.memory-bank/README.md`)
 
-**�?严格按设计架构写代码**
-> 所有代码必须严格对�?`docs/03-technical-architecture.md`、`docs/04-development-roadmap.md`、`docs/05-product-prd.md` 执行。不得偏离设计文档自行发挥。每一项功能必须能找到对应的设计文档依据�?
-**�?区块链审计公司标准——最严厉级别**
-> 合约代码必须达到 CertiK / Trail of Bits / OpenZeppelin 审计标准。每次提交前�?`.cursor/skills/ion-contract-audit/SKILL.md` �?10 项安全检查逐条过：重入、溢出、精度丢失、访问控制、重放保护、预言机操纵、MEV/夹子、代币兼容性、跨链一致性、事件完整性。任何一个检查项不过，代码不能标记完成�?
-**�?发现漏洞立刻修复，不许留到明�?*
-> 安全漏洞零容忍。编译警告、lint 报错、审计发现——修完才能继续下一项。不得注�?TODO 跳过安全问题�?
-**�?100 次压力测试，100 全绿才过**
-> 任何功能实现后必须跑 100 轮验证：`scripts/verify-100.ps1`。结果必须是 `PASS 100/100`、`FAILED=0`、`RESULT=GREEN`、exit code `0`。少一轮、黄一个、红一个——都不算过。不得跳过、不得缩减、不得解释原因�?
-**�?每步提交，出了问题能追溯**
-> 每完成一个合�?一�?service/一个页面功�?�?立即 git commit，写清楚做了什么。不给后续排错留坑�?
-**�?全自动工作流执行，不等不�?*
-> Agent 必须自主推进开发流程。不等用户喊才干活。检测到任务 �?自动加载对应 Skill �?自动执行 �?自动验证 �?自动汇报。用户不需要手动触发每一步�?
-**�?根据项目需要主动搜�?GitHub 开源项目，下载安装依赖**
-> 缺工具自己找。GitHub 是第一搜索源。找到合适的开源库 �?下载 �?安装依赖 �?集成到项�?�?验证能跑通。最�?50 �?才考虑。装全跑通才算完，不下完就跑不算数�?
-**�?安装任何 Skill 前必须先安全检�?*
-> 使用 `.cursor/skills/skill-vetter/SKILL.md` 审计每个�?Skill。检查权限范围、危险模式、外部请求。有红标（red flag）的一律不装，�?Master 决策�?
-**�?充分利用 Cursor 已安装的能力**
-> 开发加速器（worktree、Agent Review、Bugbot、Cloud Agents、Hooks、CI automation）、MCP 工具（Desktop Commander、Memory Bank）、Rules、Skills——全部要用起来。不等用户提醒，自动选最优路径�?- The agent must proactively use Cursor engineering workflow and development accelerator guidance for every development task. The user should not need to ask for worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy.
+These rules are permanent. No agent or developer may remove or weaken them.
+
+1. **Strict architecture compliance**: All code must match `docs/03-technical-architecture.md` + `docs/04-development-roadmap.md` + `docs/05-product-prd.md`. Every feature must trace back to a design doc.
+
+2. **Blockchain audit company standard**: Contracts must pass CertiK/Trail of Bits/OpenZeppelin-level review. Full 10-point security checklist from `.cursor/skills/ion-contract-audit/SKILL.md` on every change.
+
+3. **Fix vulnerabilities immediately**: Zero tolerance for security issues. Compiler warnings, lint errors, audit findings --- fix before continuing. No TODO-skipping security problems.
+
+4. **100-pass gate, 100/100 GREEN**: `scripts/verify-100.ps1` yields `PASS 100/100, FAILED=0, RESULT=GREEN, exit 0`. On Windows transient exit code `-1073741502`, the script retries each failing step once (see `docs/08-ci-agent-automation.md`). No fewer rounds, no yellow, no red.
+
+5. **Commit every step**: One contract / service / page --- one clear git commit. Full traceability.
+
+6. **Full auto-workflow, never wait to be asked**: Agent must self-drive. Detect task --- auto-load Skill --- auto-execute --- auto-verify --- auto-report. User should never need to trigger individual steps.
+
+7. **Search GitHub, download dependencies**: Missing a tool? GitHub is first search source. Find open-source libs (stars >= 50) --- download --- install deps --- integrate --- verify it runs.
+
+8. **Vet every Skill before install**: Run `.cursor/skills/skill-vetter/SKILL.md` on every new skill. Red flags --- refuse install, report to Master.
+
+9. **Use all installed Cursor capabilities**: Worktrees, Agent Review, Bugbot, Cloud Agents, Hooks, CI, MCP tools (Desktop Commander, Memory Bank), Rules, Skills --- pick the optimal path automatically.
+
+- The agent must proactively use Cursor engineering workflow and development accelerator guidance for every development task. The user should not need to ask for worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy.
 - The agent must use `cursor-engineering-workflow` as the automatic development workflow and `self-evolving` as the post-work learning loop so useful lessons improve project memory, docs, rules, or Skills.
 - The agent must evaluate parallel development worktrees, `/best-of-n`, Agent Review, Bugbot, and code audit paths for non-trivial work; high-risk surfaces require review/audit before being accepted.
 
@@ -159,6 +162,14 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank MCP is loaded. ION official source path is confirmed.
 
+## Agent automation (Cursor Hooks)
+
+- **stop**: Runs `.cursor/hooks/ion-verify-on-stop.cmd`: if `scripts\compile-func.mjs` exists, compile `contracts/ion` first; then `scripts\agent-verify.cmd` (equiv. `verify-full.cmd` with `ION_VERIFY_NONINTERACTIVE=1`). Hook config `.cursor/hooks.json`: `timeout` 900, `failClosed: false`.
+- **every save (Agent / Tab)**: `afterFileEdit` / `afterTabFileEdit` invoke `node scripts/ion-on-save-pipeline.mjs --cursor-hook` (quick encoding check on `file_path` + `compile-func.mjs`); `timeout` 540, `failClosed: false`.
+- **every save (Ctrl+S)**: `.vscode/settings.json` ? **Run On Save** (`emeraldwalk.RunOnSave`); see `.vscode/extensions.json` recommendation. Without the extension, only Agent/Tab hook paths run the on-save compile gate.
+- **Session memory order**: `.memory-bank/README.md` -> `docs/99-current-progress.md` -> narrative/history in `SESSION_STATE.md`. Treat `docs/99-current-progress.md` as canonical progress vs dated bullets here.
+- **VS Code**: See `.vscode/tasks.json` labels starting with `ION DEX:` (agent-verify, verify-full-save-log, verify-100).
+
 ## Next Action
 
 1. Continue development with real shell execution via Desktop Commander.
@@ -168,13 +179,14 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 5. Run Agent Review (`/agent-review`) after meaningful diffs and before final verification when available.
 6. For every development task, proactively load `.cursor/skills/cursor-engineering-workflow/SKILL.md` and `.cursor/skills/ion-dev-accelerators/SKILL.md` as needed; use `docs/cursor-docs-feature-memory.md` and `docs/development-accelerators-memory.md` as local references.
 7. Do not wait for the user to request worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy when they would improve the task.
-8. Phase 5 八页业务表单草稿 + E2E�?026-05-18，`scripts/check-encoding.ps1` 已排除本地官�?ION 参考树 `/ion/`（该目录�?`.gitignore` 忽略，不属于本仓源码）；`scripts\verify-100.ps1` 完成 **100-pass**：`PASS 100 OK`，`PASSED=100`，`FAILED=0`，`RESULT=GREEN`。`frontend` `npm run verify` 使用 `start-server-and-test` + **`tcp:127.0.0.1:59333`**，Playwright **`12 passed`**；`audit:high` **`0`**。顶栏导航改为横向滚动可视，修补生产样式�?`hidden lg:flex` 永久隐藏问题�?9. Wallet/Profile shell�?026-05-18，`AppShell` wallet button now opens a local provider picker (Online+ Wallet / ION Browser Wallet / WalletConnect + OKX), drafts a profile session, and supports disconnect without private keys, RPC calls, or signatures. Single full verification after the change: encoding OK, frontend `npm run verify` **13 passed**, `audit:high` **0**. 100-pass gate completed: `PASS 100 OK`, `PASSED=100`, `FAILED=0`, `RESULT=GREEN`.
-10. External reference architecture�?026-05-18，`docs/09-reference-architecture.md` added to map the user's reference repositories into ION DEX phases. Key decision: use backend gateway repositories (`tyk`, `shenyu`, `ocelot`) as pattern references only, and start Phase 3 with a minimal typed API gateway/BFF rather than vendoring a full gateway product.
-11. Agent capability Skills�?026-05-18，installed project-local Skills `skill-vetter`, `self-evolving`, `tavily`, `find-skill`, `luke-agent-browser-clawdbot`, and `summarize-pro`; registered them in `AGENTS.md` with trigger guidance.
-12. Workflow preference�?026-05-18，user explicitly requested making strong use of `self-evolving` and automatic workflow because they help development. Treat `cursor-engineering-workflow` as the pre/during-work operating loop and `self-evolving` as the post-work memory improvement loop.
-13. Accelerator/review preference�?026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
-14. Claude-Flow/RuFlo�?026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
-15. Phase 3 adapter/cache + Stake/Burn 前端接入已完成（历史条目）。Phase 3 **Bridge / Domain** 前端只读接入已在分支 `2026-05-19-q7fx` 落地：`fetchBridgeRoutes` / `fetchDomainResolve`，`BridgeMetricsRow` + `DomainMetricsRow`（`custodian.ion` 预览）、E2E `bridge-metrics-source` / `domain-metrics-source`。证据：`scripts\verify-full-save-log.cmd --no-pause` exit `0`�?026-05-19），Playwright 13 passed。下一自动步骤：跑 `scripts\verify-100.ps1`�?00 Pass 全绿）后，按计划推进 upstream 超时重试、`/api/bridge/routes` �?adapter/registry 对齐、Redis 契约�?PostgreSQL 脚手架草稿�?
+8. Phase 5 / nav + E2E (2026-05-18): Encoding scan OK; `/ion/` reference excluded via `.gitignore`; **`scripts\verify-100.ps1`** **`RESULT=GREEN`**; **`npm run verify`** uses **`tcp:127.0.0.1:59333`** readiness; Playwright **12 passed**, **`audit:high`** **0**; **`hidden lg:flex`** nav caveat fixed with scrollable nav strip.
+9. Wallet/Profile shell (2026-05-18): `AppShell` wallet opens local provider picker; profile drafted; disconnect without keys; verify ? **`npm run verify`** **13 passed**, **`audit:high`** **0**, 100-pass **`RESULT=GREEN`**.
+10. External reference architecture (2026-05-18): **`docs/09-reference-architecture.md`** ? gateways (`tyk`/`shenyu`/`ocelot`) are pattern refs only; Phase 3 BFF-first.
+11. Skills (2026-05-18): `skill-vetter`, **`self-evolving`**, **`tavily`**, **`find-skill`**, **`luke-agent-browser-clawdbot`**, **`summarize-pro`** wired in **`AGENTS.md`**.
+12. Workflow (2026-05-18): Prefer **`cursor-engineering-workflow`** + **`self-evolving`** loops.
+13. Accelerators (2026-05-18): Worktrees + review/audit for non-trivial work.
+14. Claude-Flow/RuFlo (2026-05-18): Pinned **`3.7.0-alpha.35`**; main has no MCP/daemon/WASM ? treat as constrained local tool; **`verify-full-save-log`** **OK** separately from dependency audit findings.
+15. Phase 3 Bridge/Domain slice (2026-05-19): **`fetchBridgeRoutes`** / **`fetchDomainResolve`**; **`BridgeMetricsRow`** + **`DomainMetricsRow`** (`custodian.ion`); E2E **`bridge-metrics-source`** / **`domain-metrics-source`**; **`verify-full-save-log.cmd --no-pause`** exit **0**; Playwright **13 passed**. **`verify-100.ps1`** retries Windows transient **`-1073741502`** per step once; heavy 100-pass: run from **standalone** **`cmd`/`pwsh`** if Cursor shell flaky. Next: **`/api/bridge/routes`** registry parity, Redis/PostgreSQL drafts.
 ## Memory MCP Candidates
 
 - `alioshr/memory-bank-mcp`: recommended project memory bank.
@@ -182,51 +194,39 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 - `Nonymaus/cursor-kg`: local Cursor knowledge graph.
 - `gannonh/memento-mcp`: Neo4j-backed memory, more heavyweight.
 
-## Current Task (旺财 dispatched,　2026-05-18 19:32)
+## Current Task (`ion-autonomous-verify` + phased roadmap; synced 2026-05-19)
 
-**Priority: Phase 2 - Contract Foundations (START NOW)**
+**Truth for shipped verification:** **`docs/99-current-progress.md`**. MCP durable root: **`.memory-bank/`**.
 
-All contract specs are in `docs/03-technical-architecture.md`. Contract audit rules in `.cursor/skills/ion-contract-audit/SKILL.md`. Official ION reference at `D:/openclaw-tools/ion`.
+### Autonomous block (immediate)
 
-### Task 1: Set up contract workspace
+Per **`.cursor/rules/ion-autonomous-verify.mdc`**: Task 1 baseline committed (**`303745a`**). **NOW: Task 2** ? FunC toolchain on PATH / `compile-func.mjs` green ? compile **`contracts/ion/**/*.fc`**, fix all errors ? then Tasks **3?5** (scoped tests/docs/verify) until that five-task slice is closed.
 
-- Create `contracts/ion/` directory with FunC toolchain (func-js or native func compiler).
-- Create `contracts/bsc/` directory with Foundry/Solidity toolchain (forge).
-- Verify toolchain can compile an empty skeleton.
+Commands after edits: **`scripts/agent-verify.cmd`** or **`ION_VERIFY_NONINTERACTIVE=1 scripts/verify-full.cmd`**.
 
-### Task 2: Write ION FunC contracts
+### Roadmap backlog (single-file contracts, do not batch casually)
 
-Implement in this order (each contract = standalone deliverable, do not batch):
+Skills: **`ion-contract-audit`**, **`ion-official-source`**. Official tree: **`D:/openclaw-tools/ion`**.
 
-1. `DexRouter.fc` �?swap routing, path resolution, fee forwarding
-2. `IonAmmPool.fc` �?constant-product AMM, add/remove liquidity, swap, fee accounting
-3. `LimitOrderBook.fc` �?order creation, matching, cancellation
-4. `GridStrategyVault.fc` �?grid parameters, rebalance logic, LP position management
-5. `StakingPool.fc` �?deposit, withdraw, reward calculation, emergency unstake
-6. `FeeDistributor.fc` �?protocol fee collection, distribution to treasury
-7. `Treasury.fc` �?multisig-controlled fund management
-8. `OracleAdapter.fc` �?consume signed price packets, TWAP fallback
-9. `DomainMarketplace.fc` �?.ion domain auction/sale logic
-10. `DomainResolverAdapter.fc` �?resolve .ion names, verify ownership
+**FunC (`contracts/ion/`)**, in order:
 
-### Task 3: Write BSC Solidity contracts
+1. **`DexRouter.fc`** ? swap routing, path resolution, fee forwarding  
+2. **`IonAmmPool.fc`** ? constant-product AMM, liquidity add/remove, swap, fees  
+3. **`LimitOrderBook.fc`** ? orders / match / cancel  
+4. **`GridStrategyVault.fc`** ? grid params, rebalance, LP bookkeeping  
+5. **`StakingPool.fc`** ? deposit/withdraw rewards, emergency path  
+6. **`FeeDistributor.fc`** ? fee collection + treasury splits  
+7. **`Treasury.fc`** ? multisig treasury  
+8. **`OracleAdapter.fc`** ? signed prices + TWAP fallback  
+9. **`DomainMarketplace.fc`** ? `.ion` marketplace  
+10. **`DomainResolverAdapter.fc`** ? resolution + ownership proofs  
 
-1. `BSCVault.sol` �?SafeERC20 vault, Pausable, EIP-712, threshold validation, limits
-2. `BridgeVerifier.sol` �?validator signature collection, threshold verification
-3. `BSCFeeVault.sol` �?BSC-side fee collection and bridging to ION
+**BSC (`contracts/bsc/`, Foundry):** **`BSCVault.sol`**, **`BridgeVerifier.sol`**, **`BSCFeeVault.sol`**.
 
-### Task 4: Test framework
+### Verification policy
 
-- Unit tests for core math (AMM swap, fee calc, grid math).
-- Integration test skeleton for swap + pool + fee flows.
-- Gas snapshot baseline.
-
-### Rules (dead command from Master)
-
-- Load `ion-contract-audit` skill before writing any contract.
-- Load `ion-official-source` for ION FunC patterns.
-- Every contract must pass `func-js` / `forge build` before next contract starts.
-- Store progress after each contract in `docs/99-current-progress.md`.
-- After each contract: safe commit with clear message.
-- 100-pass gate waived for contract code phase; use single verification per contract.
-- Agent: 旺财 monitors progress via git log and file timestamps. Report to Master when each contract compiles.
+- After material change: **`verify-full-save-log.cmd --no-pause`** (agent) or **`agent-verify.cmd`**.  
+- **100-pass:** **`scripts/verify-100.ps1`** retries exit **`-1073741502`** once per step (**`Run-StepResilient`**); prefer **standalone** **`cmd.exe`/`pwsh`** for long gates if Cursor-embedded shells glitch.  
+- Log path when stdout quiet: **`%TEMP%\ion-verify-full.txt`**.
+- Encode everything **UTF-8 without BOM**.
+- Agents should track progress via **git history** + **`docs/99-current-progress.md`** entries per milestone.

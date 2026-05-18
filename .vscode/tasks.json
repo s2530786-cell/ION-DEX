@@ -13,6 +13,42 @@
       "runOptions": {
         "runOn": "folderOpen"
       }
+    },
+    {
+      "label": "ION DEX: agent-verify (noninteractive)",
+      "type": "shell",
+      "command": "scripts\\agent-verify.cmd",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "ION DEX: verify-full-save-log --no-pause",
+      "type": "shell",
+      "command": "scripts\\verify-full-save-log.cmd --no-pause",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": "test"
+    },
+    {
+      "label": "ION DEX: verify-100.ps1",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\verify-100.ps1",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": "test"
     }
   ]
 }

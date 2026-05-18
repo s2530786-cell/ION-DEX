@@ -27,3 +27,5 @@ Report:
 - `Risks`: concrete findings
 - `Required fixes`: minimal changes before use
 - `Verification`: encoding check and any relevant tests
+
+

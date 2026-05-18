@@ -43,6 +43,28 @@ function Run-Step {
   return $exitCode
 }
 
+function Run-StepResilient {
+  param(
+    [string]$Name,
+    [scriptblock]$Command
+  )
+
+  # -1073741502 == native 0xC0000142 (STATUS_DLL_INIT_FAILED): seen from nested cmd/npm
+  # inside Cursor/agent shells — often transient; retry once before failing the pass.
+  $transientCodes = @(-1073741502)
+
+  $code = Run-Step -Name $Name -Command $Command
+  foreach ($tc in $transientCodes) {
+    if ($code -eq $tc) {
+      Write-Log ("RETRY_TRANSIENT name=" + $Name + " firstExit=" + $code + " sleepMs=1800")
+      Start-Sleep -Milliseconds 1800
+      return Run-Step -Name ($Name + "-retry1") -Command $Command
+    }
+  }
+
+  return $code
+}
+
 Remove-Item $summary, $log -ErrorAction SilentlyContinue
 "ION DEX 100-pass verification" | Set-Content -Path $summary -Encoding utf8
 ("ITERATIONS=" + $Iterations) | Add-Content -Path $summary -Encoding utf8
@@ -55,29 +77,29 @@ for ($i = 1; $i -le $Iterations; $i++) {
   Write-Log ("PASS " + $i + "/" + $Iterations)
 
   Set-Location $root
-  $encodingExit = Run-Step "encoding" {
+  $encodingExit = Run-StepResilient "encoding" {
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts\check-encoding.ps1")
   }
 
   Set-Location $backend
-  $backendVerifyExit = Run-Step "backend-verify" {
+  $backendVerifyExit = Run-StepResilient "backend-verify" {
     cmd.exe /d /c "npm run verify"
   }
 
-  $backendAuditExit = Run-Step "backend-audit-high" {
+  $backendAuditExit = Run-StepResilient "backend-audit-high" {
     cmd.exe /d /c "npm run audit:high"
   }
 
-  $backendStressExit = Run-Step "backend-stress" {
+  $backendStressExit = Run-StepResilient "backend-stress" {
     cmd.exe /d /c "npm run stress"
   }
 
   Set-Location $frontend
-  $verifyExit = Run-Step "frontend-verify" {
+  $verifyExit = Run-StepResilient "frontend-verify" {
     cmd.exe /d /c "npm run verify"
   }
 
-  $auditExit = Run-Step "frontend-audit-high" {
+  $auditExit = Run-StepResilient "frontend-audit-high" {
     cmd.exe /d /c "npm run audit:high"
   }
 

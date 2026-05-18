@@ -1,3 +1,5 @@
+
+
 #pragma version >=0.4.4;
 
 #include "common/common.fc";
@@ -19,6 +21,20 @@ global int storage::deposited_amount;
 () storage::save() impure inline_ref {
     set_data(begin_cell()
         .store_slice(storage::owner_address)
+
+
+
+
+
+
+
+
+
+
+
+
+
+      bian'jibianji
         .store_slice(storage::token_address)
         .store_slice(storage::router_address)
         .store_coins(storage::deposited_amount)

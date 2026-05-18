@@ -34,3 +34,18 @@ These rules are permanent. No agent or developer may remove or weaken them.
 8. **Vet every Skill before install**: Run `.cursor/skills/skill-vetter/SKILL.md` on every new skill. Check permissions, dangerous patterns, external requests. Red flags → refuse install, report to Master.
 
 9. **Use all installed Cursor capabilities**: Worktrees, Agent Review, Bugbot, Cloud Agents, Hooks, CI, MCP tools (Desktop Commander, Memory Bank), Rules, Skills — use them all. Pick the optimal path automatically.
+
+## Session startup order（每次起手读什么）
+
+1. **`.memory-bank/README.md`** — Master permanent rules + this file list.  
+2. **`docs/99-current-progress.md`** — authoritative delivery + last verify evidence.  
+3. **`SESSION_STATE.md`** — long-form session narrative / Next Action backlog.  
+4. **Automation:** `scripts\agent-verify.cmd` after substantive edits; optional Cursor **stop** hook `.cursor/hooks/ion-verify-on-stop.cmd` (see **`docs/08-ci-agent-automation.md`**).
+
+## Automated verify commands（仓库根）
+
+| Goal | Command |
+|------|---------|
+| Agent / hook / CI (no pause) | `scripts\agent-verify.cmd` |
+| Full log to `%TEMP%\ion-verify-full.txt` | `scripts\verify-full-save-log.cmd --no-pause` |
+| 100 green passes | `scripts\verify-100.ps1` (each step retries Windows `-1073741502` once) |

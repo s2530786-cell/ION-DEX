@@ -16,7 +16,7 @@ import { NeonCard } from "@/components/ui/NeonCard";
 import {
   fetchBridgeRoutes,
   fetchBurnSummary,
-  fetchDomainResolution,
+  fetchDomainResolve,
   fetchStakingSummary,
   formatIonAmount,
   type ApiMeta,
@@ -25,8 +25,6 @@ import {
   type DomainResolution,
   type StakingSummary,
 } from "@/lib/ionApi";
-
-const DOMAIN_DEMO_SNAPSHOT_LABEL = "demo.ion";
 
 type BusinessPageConfig = {
   eyebrow: string;
@@ -235,27 +233,30 @@ const fallbackBridgePayload: BridgeRoutesPayload = {
   },
 };
 
-const fallbackDomainResolution: DomainResolution = {
-  name: DOMAIN_DEMO_SNAPSHOT_LABEL,
-  available: false,
-  ownerAddress: "ion1demoowner000000000000000000000000000000000000",
-  resolvedAddress: "ion1resolvedwallet000000000000000000000000000000",
-  expiresAt: "2027-05-18T00:00:00.000Z",
-  records: [
-    { key: "wallet", value: "ion1resolvedwallet000000000000000000000000000000", status: "mock" },
-    { key: "profile", value: "ION DEX demo profile", status: "mock" },
-    { key: "avatar", value: "aurora-neon", status: "planned" },
-  ],
+const fallbackDomainCustodian: DomainResolution = {
+  name: "custodian.ion",
+  available: true,
+  ownerAddress: null,
+  resolvedAddress: null,
+  expiresAt: null,
+  records: [],
   marketplace: {
-    listed: false,
-    floorIon: "0.000",
-    lastSaleIon: "4200.000",
+    listed: true,
+    floorIon: "2500.000",
+    lastSaleIon: null,
   },
   provenance: {
     source: "mock",
-    note: "Phase 3 mock resolver; official ION DNS adapter is pending.",
+    note: "Offline fallback resolver preview.",
   },
 };
+
+function formatTitleCase(word: string) {
+  if (!word) {
+    return word;
+  }
+  return `${word.slice(0, 1).toUpperCase()}${word.slice(1)}`;
+}
 
 function BurnMetricsRow() {
   const [summary, setSummary] = useState<BurnSummary>(fallbackBurnSummary);
@@ -325,11 +326,6 @@ function StakeMetricsRow() {
   return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="stake-metrics-source" />;
 }
 
-function bridgeRelayerHeadline(payload: BridgeRoutesPayload): string {
-  const normalized = payload.relayerStatus.replace(/-/g, " ");
-  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
-}
-
 function BridgeMetricsRow() {
   const [payload, setPayload] = useState<BridgeRoutesPayload>(fallbackBridgePayload);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
@@ -355,37 +351,33 @@ function BridgeMetricsRow() {
     };
   }, []);
 
-  const bscIon = payload.routes.find((route) => route.fromChain === "BSC");
-  const eta = bscIon?.estimatedMinutes ?? payload.routes[0]?.estimatedMinutes ?? 12;
-
+  const primary = payload.routes[0];
+  const primaryLeg = primary ? `${primary.fromChain} → ${primary.toChain}` : "—";
   const metrics: MetricCard[] = [
-    { label: "Routes", value: `${payload.routes.length} configured`, tone: "cyan" },
-    { label: "Relayers", value: bridgeRelayerHeadline(payload), tone: "gold" },
-    {
-      label: "~ETA (B→I)",
-      value: `${eta} min`,
-      tone: "magenta",
-    },
+    { label: "Primary Route", value: primaryLeg, tone: "cyan" },
+    { label: "Relayers", value: formatTitleCase(payload.relayerStatus), tone: "gold" },
+    { label: "Verifier", value: payload.verifier.threshold, tone: "magenta" },
   ];
 
   return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="bridge-metrics-source" />;
 }
 
 function DomainMetricsRow() {
-  const [resolution, setResolution] = useState<DomainResolution>(fallbackDomainResolution);
+  const previewName = "custodian.ion";
+  const [resolution, setResolution] = useState<DomainResolution>(fallbackDomainCustodian);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 1200);
 
-    fetchDomainResolution(DOMAIN_DEMO_SNAPSHOT_LABEL, controller.signal)
+    fetchDomainResolve(previewName, controller.signal)
       .then((response) => {
         setResolution(response.data);
         setMeta(response.meta);
       })
       .catch(() => {
-        setResolution(fallbackDomainResolution);
+        setResolution(fallbackDomainCustodian);
         setMeta(null);
       })
       .finally(() => window.clearTimeout(timeout));
@@ -396,30 +388,14 @@ function DomainMetricsRow() {
     };
   }, []);
 
-  const statusLabel = resolution.available ? "Available" : "Registered";
-  const floorIon = Number(resolution.marketplace.floorIon);
-  const floorDisplay = Number.isFinite(floorIon)
-    ? floorIon.toLocaleString(undefined, { maximumFractionDigits: 3 })
-    : resolution.marketplace.floorIon;
-
+  const listingLabel = resolution.available ? "On market" : "Registered";
   const metrics: MetricCard[] = [
-    { label: "Snapshot", value: resolution.name, tone: "cyan" },
-    { label: "Status", value: statusLabel, tone: resolution.available ? "gold" : "magenta" },
-    {
-      label: "Records",
-      value: `${resolution.records.length} DNS rows`,
-      tone: "gold",
-    },
+    { label: "Resolver Preview", value: resolution.name, tone: "cyan" },
+    { label: "Registry", value: listingLabel, tone: "gold" },
+    { label: "Floor (mock)", value: `${resolution.marketplace.floorIon} ION`, tone: "magenta" },
   ];
 
-  return (
-    <>
-      <MetricsGrid meta={meta} metrics={metrics} sourceTestId="domain-metrics-source" />
-      <p className="sr-only" data-testid="domain-metrics-floor-ion">
-        Floor ION snapshot: {floorDisplay}
-      </p>
-    </>
-  );
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="domain-metrics-source" />;
 }
 
 function toPositiveNumber(value: string) {

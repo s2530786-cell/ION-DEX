@@ -1,0 +1,15 @@
+{
+  "emeraldwalk.runonsave": {
+    "showElapsed": true,
+    "message": "[ION DEX] on-save pipeline (quick encoding + compile-func)",
+    "commands": [
+      {
+        "match": ".*",
+        "notMatch": "node_modules|[\\\\/](?:\\.git|dist|build|out|coverage)(?:[\\\\/]|$)",
+        "isAsync": false,
+        "autoShowOutputPanel": "error",
+        "cmd": "node \"${workspaceFolder}/scripts/ion-on-save-pipeline.mjs\" \"${file}\""
+      }
+    ]
+  }
+}

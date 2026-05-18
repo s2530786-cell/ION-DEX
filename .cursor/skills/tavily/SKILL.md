@@ -5,6 +5,10 @@ description: Performs AI-oriented web search and source gathering. Use when the 
 
 # Tavily Search
 
+
+
+
+
 Use this skill for current external research. Tavily is preferred when configured; otherwise use available web or MCP search tools.
 
 ## Search Workflow
@@ -21,3 +25,17 @@ Use this skill for current external research. Tavily is preferred when configure
 - Treat third-party code as reference until explicitly approved.
 - For blockchain, wallet, bridge, fee, treasury, or AI Sentinel topics, prefer official ION source and project docs first.
 - If no Tavily tool/API is configured, say so and use the available search fallback.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

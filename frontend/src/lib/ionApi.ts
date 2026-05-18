@@ -118,12 +118,9 @@ export async function fetchBridgeRoutes(signal?: AbortSignal): Promise<ApiRespon
   return fetchApi<BridgeRoutesPayload>("/api/bridge/routes", signal);
 }
 
-export async function fetchDomainResolution(
-  name: string,
-  signal?: AbortSignal,
-): Promise<ApiResponse<DomainResolution>> {
-  const encoded = encodeURIComponent(name.trim().toLowerCase());
-  return fetchApi<DomainResolution>(`/api/domain/resolve?name=${encoded}`, signal);
+export async function fetchDomainResolve(name: string, signal?: AbortSignal): Promise<ApiResponse<DomainResolution>> {
+  const query = encodeURIComponent(name);
+  return fetchApi<DomainResolution>(`/api/domain/resolve?name=${query}`, signal);
 }
 
 export function formatIonAmount(value: string): string {
