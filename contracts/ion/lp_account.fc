@@ -36,7 +36,7 @@ global int storage::amount1;
     int fwd_amount = body~load_coins();
     slice to_user = body~load_msg_addr();
 
-    throw_unless(error::invalid_amount, am0 > 0 & am1 > 0);
+    throw_unless(error::invalid_amount, (am0 > 0) & (am1 > 0));
 
     storage::amount0 += am0;
     storage::amount1 += am1;
