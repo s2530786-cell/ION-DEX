@@ -13,6 +13,23 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
   });
 
+  test("wallet shell opens provider picker and profile draft", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByTestId("wallet-connect").click();
+    await expect(page.getByTestId("wallet-panel")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
+
+    await page.getByTestId("wallet-provider-online").click();
+    await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet draft session ready");
+    await expect(page.getByTestId("profile-menu")).toBeVisible();
+    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Ready");
+
+    await page.getByTestId("wallet-disconnect").click();
+    await expect(page.getByTestId("wallet-provider-walletconnect")).toBeVisible();
+    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
+  });
+
   test("375px viewport keeps brand and main content visible", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 844 });
     await page.goto("/");

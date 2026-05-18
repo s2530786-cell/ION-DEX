@@ -107,8 +107,9 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 5. Run Agent Review (`/agent-review`) after meaningful diffs and before final verification when available.
 6. For every development task, proactively load `.cursor/skills/cursor-engineering-workflow/SKILL.md` and `.cursor/skills/ion-dev-accelerators/SKILL.md` as needed; use `docs/cursor-docs-feature-memory.md` and `docs/development-accelerators-memory.md` as local references.
 7. Do not wait for the user to request worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy when they would improve the task.
-8. Phase 5 八页业务表单草稿 + E2E：2026-05-17，`scripts/check-encoding.ps1` exit `0`；`frontend` `npm run verify`（`start-server-and-test` + **`tcp:127.0.0.1:59333`** → Playwright **`12 passed`**）；`audit:high` **`0`**。顶栏导航改为横向滚动可视，修补生产样式下 `hidden lg:flex` 永久隐藏问题。
-9. Next：按路线图继续 Phase 5/合约/后端（见 `docs/04-development-roadmap.md`）。
+8. Phase 5 八页业务表单草稿 + E2E：2026-05-18，`scripts/check-encoding.ps1` 已排除本地官方 ION 参考树 `/ion/`（该目录被 `.gitignore` 忽略，不属于本仓源码）；`scripts\verify-100.ps1` 完成 **100-pass**：`PASS 100 OK`，`PASSED=100`，`FAILED=0`，`RESULT=GREEN`。`frontend` `npm run verify` 使用 `start-server-and-test` + **`tcp:127.0.0.1:59333`**，Playwright **`12 passed`**；`audit:high` **`0`**。顶栏导航改为横向滚动可视，修补生产样式下 `hidden lg:flex` 永久隐藏问题。
+9. Wallet/Profile shell：2026-05-18，`AppShell` wallet button now opens a local provider picker (Online+ Wallet / ION Browser Wallet / WalletConnect + OKX), drafts a profile session, and supports disconnect without private keys, RPC calls, or signatures. Single full verification after the change: encoding OK, frontend `npm run verify` **13 passed**, `audit:high` **0**. 100-pass gate completed: `PASS 100 OK`, `PASSED=100`, `FAILED=0`, `RESULT=GREEN`.
+10. Next：continue Phase 5 toward profile menu polish, transparency/status shell, or backend API foundation（见 `docs/04-development-roadmap.md`）。
 
 ## Memory MCP Candidates
 

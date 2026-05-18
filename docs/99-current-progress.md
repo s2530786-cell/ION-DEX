@@ -2,7 +2,7 @@
 
 ## Latest Verified Status
 
-- **Unified workspace（2026-05-17 晚）**：`D:\openclaw-tools\ion-dex-nuke` 根目录 `scripts\verify-full.cmd` / `verify-full-save-log.cmd` 已通过：编码扫描 **435** 文件 OK；前端 `npm run verify`（`build` + `start-server-and-test` 监听 **TCP `127.0.0.1:59333`** 后跑 Playwright，避免本机环境下误把 HTTP **400** 当成「预览已就绪」）**Playwright 12 passed**（含 Trade/Grid/Pool/Stake/**Bridge/Burn/Domain/AI** 草稿表单校验）；`audit:high` **0**。**AppShell** 顶栏改为 `flex + overflow-x-auto`：当前 Tailwind 生产产物未生成可用的 `lg:` 断点时，`hidden lg:flex` 会令导航整块 `display:none`，E2E 无法点到 `nav-*`。
+- **Unified workspace（2026-05-18）**：`D:\openclaw-tools\ion-dex-nuke` 100-pass 门禁已完成：`PASS 100 OK`，`PASSED=100`，`FAILED=0`，`RESULT=GREEN`。执行前修正 `scripts/check-encoding.ps1`，将被 `.gitignore` 忽略的本地官方 ION 参考树 `/ion/` 排除在仓库编码门禁外，避免第三方官方副本的 BOM 示例文件污染本仓验证。根目录 `scripts\verify-full.cmd` / `verify-full-save-log.cmd` 已通过：编码扫描仓库源文件 OK；前端 `npm run verify`（`build` + `start-server-and-test` 监听 **TCP `127.0.0.1:59333`** 后跑 Playwright，避免本机环境下误把 HTTP **400** 当成「预览已就绪」）**Playwright 12 passed**（含 Trade/Grid/Pool/Stake/**Bridge/Burn/Domain/AI** 草稿表单校验）；`audit:high` **0**。**AppShell** 顶栏改为 `flex + overflow-x-auto`：当前 Tailwind 生产产物未生成可用的 `lg:` 断点时，`hidden lg:flex` 会令导航整块 `display:none`，E2E 无法点到 `nav-*`。
 - Pool / Stake milestone（先前 empty-window 基线）：编码、`npm run verify`、`audit:high` 均已绿灯。
 - If `frontend/e2e/smoke.spec.ts` picks up NUL bytes after an edit, run `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-encoding.ps1 -Path .\frontend\e2e -Fix` from repo root.
 
@@ -107,11 +107,17 @@ OK - All files are UTF-8 without BOM, no NUL bytes.
   - Pool liquidity panel with slippage validation, preview, and liquidity mint draft confirmation.
   - Stake hub with stake/unstake modes, validation, APR preview line, and per-mode draft confirmations.
   - Playwright smoke extended for pool and stake flows; submit-button assertions use `stake-submit` test id to avoid strict-mode ambiguity.
+- Completed Wallet/Profile shell milestone:
+  - `AppShell` wallet button now opens a local provider picker for Online+ Wallet, ION Browser Wallet, and WalletConnect / OKX.
+  - Selecting a provider creates a draft profile session, shows ION ID / profile copy, and supports draft disconnect without private keys, RPC calls, or signatures.
+  - Playwright smoke now covers wallet panel open, provider selection, profile draft confirmation, and disconnect.
+  - Single full verification after the change: encoding OK, frontend `npm run verify` **13 passed**, `audit:high` **0**.
+  - 100-pass gate after the change: `PASS 100 OK`, `PASSED=100`, `FAILED=0`, `RESULT=GREEN`.
 
 ## Known Issues
 
 - Memory Bank MCP config is written but tools are not yet verified. Cursor needs MCP reload/restart.
-- UI has initial dashboard plus business page shells. `Trade`, `Grid`, `Pool`, and `Stake` now have interactive validated draft flows; `Bridge`, `Burn`, `Domain`, and `AI` remain shell-level.
+- UI has initial dashboard plus business page shells. `Trade`, `Grid`, `Pool`, `Stake`, `Bridge`, `Burn`, `Domain`, and `AI` now have interactive validated draft flows; wallet/profile is a draft shell with no real wallet SDK yet.
 - After pulling changes, run locally: `cd frontend && npm install && npx playwright install chromium && npm run verify` (agent shell may not update `package-lock.json` in this environment).
 - Visual regression / pixel-diff vs design mockups not yet set up.
 - Smart contracts and backend services are not yet implemented.

@@ -30,6 +30,8 @@ $excludeDirs = @(
   "out", "coverage", ".vite", ".cache",
   "target", "artifacts", "cache",
   "__pycache__", ".venv", "venv",
+  # Local official ION reference clone; ignored by git and not maintained by this repo.
+  "ion",
   ".git"
 )
 

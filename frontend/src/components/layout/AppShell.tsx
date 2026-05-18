@@ -1,5 +1,5 @@
-import { Bell, Globe2, ShieldCheck, Wallet } from "lucide-react";
-import type { PropsWithChildren } from "react";
+import { Bell, CheckCircle2, Globe2, LogOut, ShieldCheck, UserCircle2, Wallet } from "lucide-react";
+import { useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { NeonButton } from "@/components/ui/NeonButton";
 
@@ -32,6 +32,13 @@ type AppShellProps = PropsWithChildren<{
 }>;
 
 export function AppShell({ activePage, children, onPageChange }: AppShellProps) {
+  const [walletPanelOpen, setWalletPanelOpen] = useState(false);
+  const [connectedProvider, setConnectedProvider] = useState<WalletProviderKey | null>(null);
+  const selectedProvider = useMemo(
+    () => walletProviders.find((provider) => provider.key === connectedProvider) ?? null,
+    [connectedProvider],
+  );
+
   return (
     <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
       <AuroraGalaxyBackground />
@@ -73,7 +80,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
             <button
               type="button"
               className="hidden rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 sm:block"
@@ -95,10 +102,24 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               <ShieldCheck size={16} />
               ION ID
             </button>
-            <NeonButton className="flex items-center gap-2 px-4 py-2">
+            <NeonButton
+              aria-expanded={walletPanelOpen}
+              className="flex items-center gap-2 px-4 py-2"
+              data-testid="wallet-connect"
+              onClick={() => setWalletPanelOpen((open) => !open)}
+              type="button"
+            >
               <Wallet size={16} />
-              Wallet Connect
+              {selectedProvider ? "Wallet Ready" : "Wallet Connect"}
             </NeonButton>
+
+            {walletPanelOpen ? (
+              <WalletConnectPanel
+                connectedProvider={selectedProvider}
+                onConnect={(provider) => setConnectedProvider(provider)}
+                onDisconnect={() => setConnectedProvider(null)}
+              />
+            ) : null}
           </div>
         </header>
 
@@ -108,6 +129,114 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
           {children}
         </main>
       </div>
+    </div>
+  );
+}
+
+type WalletProviderKey = "online" | "ion-browser" | "walletconnect";
+
+type WalletProvider = {
+  key: WalletProviderKey;
+  name: string;
+  label: string;
+  status: string;
+};
+
+const walletProviders: WalletProvider[] = [
+  {
+    key: "online",
+    name: "Online+ Wallet",
+    label: "ION native social wallet",
+    status: "Profile sync shell",
+  },
+  {
+    key: "ion-browser",
+    name: "ION Browser Wallet",
+    label: "Native chain signing",
+    status: "Provider detection shell",
+  },
+  {
+    key: "walletconnect",
+    name: "WalletConnect / OKX",
+    label: "Mainstream Web3 bridge",
+    status: "QR pairing shell",
+  },
+];
+
+function WalletConnectPanel({
+  connectedProvider,
+  onConnect,
+  onDisconnect,
+}: {
+  connectedProvider: WalletProvider | null;
+  onConnect: (provider: WalletProviderKey) => void;
+  onDisconnect: () => void;
+}) {
+  return (
+    <div
+      className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[min(22rem,calc(100vw-2rem))] rounded-[1.6rem] border border-cyan-200/20 bg-slate-950/95 p-4 shadow-[0_0_36px_rgba(36,247,255,0.24)] backdrop-blur-xl"
+      data-testid="wallet-panel"
+    >
+      <div className="mb-4 flex items-start gap-3">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-cyan-300/[0.08] text-cyan-200 shadow-neonCyan">
+          {connectedProvider ? <CheckCircle2 size={22} /> : <Wallet size={22} />}
+        </div>
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-100/50">
+            Wallet Shell
+          </p>
+          <p className="mt-1 text-lg font-black text-white">
+            {connectedProvider ? connectedProvider.name : "Choose provider"}
+          </p>
+        </div>
+      </div>
+
+      {connectedProvider ? (
+        <div className="grid gap-3" data-testid="profile-menu">
+          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-3 text-sm text-emerald-100">
+            <p className="font-black" data-testid="wallet-confirmation">
+              {connectedProvider.name} draft session ready
+            </p>
+            <p className="mt-1 text-emerald-100/70">
+              Profile, ION ID badges, and wallet signing remain mocked until adapters land.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3">
+            <UserCircle2 className="text-cyan-200" size={24} />
+            <div>
+              <p className="text-sm font-bold text-white">Demo profile</p>
+              <p className="text-xs text-cyan-100/55">{connectedProvider.status}</p>
+            </div>
+          </div>
+          <button
+            className="flex items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
+            data-testid="wallet-disconnect"
+            onClick={onDisconnect}
+            type="button"
+          >
+            <LogOut size={16} />
+            Disconnect draft
+          </button>
+        </div>
+      ) : (
+        <div className="grid gap-2">
+          {walletProviders.map((provider) => (
+            <button
+              className="rounded-2xl border border-white/10 bg-white/[0.05] p-3 text-left transition hover:border-cyan-200/35 hover:bg-cyan-300/[0.08]"
+              data-testid={`wallet-provider-${provider.key}`}
+              key={provider.key}
+              onClick={() => onConnect(provider.key)}
+              type="button"
+            >
+              <span className="block text-sm font-black text-white">{provider.name}</span>
+              <span className="mt-1 block text-xs text-cyan-100/55">{provider.label}</span>
+            </button>
+          ))}
+          <p className="mt-2 rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-3 py-2 text-xs text-amber-100/75">
+            Draft only: no private keys, no RPC calls, no wallet signatures are requested.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
