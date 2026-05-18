@@ -94,7 +94,7 @@ global int storage::deposited_amount;
 
 ;; ── Getters ────────────────────────────────────────────────────
 
-() get_vault_data() method_id {
+(slice, slice, slice, int) get_vault_data() method_id {
     storage::load();
     return (
         storage::owner_address,

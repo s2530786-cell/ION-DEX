@@ -122,7 +122,7 @@ global int storage::amount1;
 
 ;; ── Getters ────────────────────────────────────────────────────
 
-() get_lp_account_data() method_id {
+(slice, slice, int, int) get_lp_account_data() method_id {
     storage::load();
     return (
         storage::user_address,
