@@ -2,10 +2,7 @@
 
 ## Latest Verified Status
 
-- **Phase 2 Task 2 — FunC 工具链与全量编译（2026-05-19）**：在 `contracts/ion` 安装 `@ton-community/func-js`（FunC **0.4.6**），修复 `method_id`/getter 返回值、缺失错误码、`stableswap` 非法 `break`、比较与 `&`/`|` 优先级、`pool/get.fc` include 顺序、合约地址推导（`utils::basechain_address_from_code_and_data`）、缺失 `op::getter_router_data` 等。**6 个入口** `*.fc` 全部编译通过；`contracts/ion` 下 `npm run compile` 可复检。本轮未把 FunC 步骤并入 `verify-full.cmd`（留 Task 5）。本环境 `forge` 未入 PATH，`forge build` 未在此处执行。
-
-
-- **Phase 2 Task 1 — 合约静态审计（2026-05-18）**：已通读 `contracts/ion/**/*.fc`（22 文件）、`contracts/bsc` 下 `IonWrapper.sol` / `BSCVault.sol` 与 Foundry 测试。结论：FunC 侧存在未校验 LP 回调发送方、router 部署池静态数据与 deployer 不一致、`#include` 路径错误、`gas::pool::swap` 缺失、stableswap 未接入 swap 等 **Critical/High** 级草稿问题；`BSCVault` 存在 `withdrawalId` 不含 nonce 导致的重复 `requestWithdrawal`/日限额会计风险等 **Medium** 级问题。详见 `SESSION_STATE.md`「Current Task → Task 1」。**本轮未改合约代码**；下一步 Task 2 编译与修复。
+- **Phase 3 Bridge/Domain 前端只读切片（2026-05-19）**：前端 `ionApi.ts` 增加 `/api/bridge/routes`、`/api/domain/resolve?name=` 封装与类型对齐后端；业务页 Bridge/Domain 指标区分别以 `BridgeMetricsRow` / `DomainMetricsRow`（`custodian.ion` 预览解析）接入 API，`DataSourceBadge` 语义与 Stake/Burn 一致（mock/cache 或 offline fallback）。E2E `smoke.spec.ts` 增加 `bridge-metrics-source`、`domain-metrics-source` 断言。证据：`scripts\verify-full-save-log.cmd --no-pause` exit `0`（编码 183 files OK；frontend Playwright **13 passed**；前后端 `audit:high` **0**）。**100-pass**：Cursor 内嵌会话启动的 `verify-100.ps1` 曾中止于 **PASS 4**，`backend-verify` 等系列步骤 exit `-1073741502`（`STATUS_DLL_INIT_FAILED` / 控制台管道类 Windows 瞬时故障），PASS 1–3 全部步骤 exit `0`；事后独立运行 `backend` `npm run verify` 仍 **19 passed**。建议在 **外部系统终端** 重跑 `scripts\verify-100.ps1` 作为门禁。下一里程碑：门禁全绿后继续 upstream 超时/重试、`bridge` route 对齐 adapter/registry、Redis/DB 草稿。
 
 - **Phase 3 adapter/cache + frontend read slice（2026-05-18）**：后端新增 `MemoryCache`（TTL/stale）、`CachedSourceAdapter` registry（market/burn/staking/domain）、`gateway-data` 层；`meta` 扩展 `cacheHit`/`adapter`；`/api/health` 含 `dataSources` 健康快照。后端 **19 tests** + stress 9 endpoints 全绿。前端 Stake/Burn 指标卡接入 `/api/staking/summary`、`/api/burn/summary`，保留 offline fallback，E2E 断言 `stake-metrics-source` / `burn-metrics-source`。`scripts\verify-full.cmd`（`ION_VERIFY_NONINTERACTIVE=1`）exit `0`。100-pass gate 已重新启动（前次因开发中前端中断于 PASS 2）。
 
@@ -186,6 +183,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-full.ps1
 ```
 
 2. For local interactive dev: `cd frontend && npm run dev:local` then open `http://localhost:3001/`.
-3. Next milestone: wire Burn/Stake/Bridge/Domain frontend read paths to adapter-backed APIs with loading/stale/source labels; add upstream timeout/retry contracts and optional Redis cache; then PostgreSQL schema scaffolding.
+3. Next milestone: run `scripts\verify-100.ps1`（100-pass `RESULT=GREEN`）；Profile/ticker 等区域继续只读接线；upstream 超时/重试契约；将 `/api/bridge/routes` 等对齐 adapter/cache 层；Redis 契约与 PostgreSQL schema 脚手架。
 4. Official ION reference: `D:/openclaw-tools/ion`.
 5. After meaningful diffs, run Cursor Agent Review (`/agent-review`) and then the verification baseline.

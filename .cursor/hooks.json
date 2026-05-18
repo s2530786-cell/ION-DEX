@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "stop": [
+      {
+        "command": ".cursor/hooks/ion-verify-on-stop.cmd",
+        "timeout": 600,
+        "failClosed": false
+      }
+    ]
+  }
+}
