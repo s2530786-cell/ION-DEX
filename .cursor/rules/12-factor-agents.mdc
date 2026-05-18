@@ -21,3 +21,26 @@ You MUST follow these principles from https://github.com/humanlayer/12-factor-ag
 10. **NO TODOS IN CODE** — Fix it now or file an issue. Never leave TODO comments.
 11. **BUILD AND VERIFY** — After every code change: compile → test → confirm green.
 12. **HUMANS FOR CRITICAL** — Contact Master before: sending transactions, modifying mainnet config, deleting files, changing security settings.
+
+# Mandatory Workflow — Every Session
+
+**This is Master's standing order. Execute from step 1 EVERY time.**
+
+```
+STEP 1: Read SESSION_STATE.md
+STEP 2: Run `node scripts/compile-func.mjs` → collect all errors
+STEP 3: Audit contracts — scan for vulnerabilities, logic bugs, missing checks
+STEP 4: Fix every error and vulnerability, one file at a time
+STEP 5: After EACH fix → recompile → verify green
+STEP 6: When all errors fixed → git commit
+STEP 7: Run `node scripts/stress-test-100.js` → 100-pass verification
+STEP 8: If any test fails → go back to STEP 3
+STEP 9: All 100 pass → git commit + update SESSION_STATE.md → DONE
+```
+
+**RULES:**
+- Never skip a step. Never assume something passed without running it.
+- Every file change MUST be followed by recompilation.
+- Audit ≠ compile. Audit means: check for reentrancy, overflow, access control, logic errors.
+- If a step fails, fix it and repeat that step. Don't move forward with known failures.
+- After committing, push to `origin 2026-05-19-q7fx`.
