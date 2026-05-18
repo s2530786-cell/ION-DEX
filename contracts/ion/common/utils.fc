@@ -1,0 +1,29 @@
+;; ── ION DEX Utility Functions ───────────────────────────────────
+
+slice utils::get_excesses_address(slice _addr) impure inline {
+    _addr = _addr.address::is_none() ? ctx.at(SENDER) : _addr;
+    throw_unless(error::wrong_workchain, _addr.address::check_workchain(params::workchain));
+    return _addr;
+}
+
+int utils::check_wc_nofail(slice _addr, int _wc) inline {
+    ifnot _addr.address::is_none() {
+        return _addr.address::get_workchain() == _wc;
+    }
+    return true;
+}
+
+;; Fee helpers: fee in basis points (1 = 0.01%)
+int utils::calc_fee(int amount, int fee_bps) inline {
+    return muldiv(amount, fee_bps, params::fee_divider);
+}
+
+;; Slippage helpers
+int utils::calc_min_out(int amount, int slippage_bps) inline {
+    return amount - muldiv(amount, slippage_bps, 10000);
+}
+
+;; Deadline check
+() utils::check_deadline(int tx_deadline) impure inline {
+    throw_unless(error::transfer_bounce_tx_expired, now() <= tx_deadline);
+}

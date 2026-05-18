@@ -1,0 +1,7 @@
+
+[06:47:36] Idle detected (CPU+=0.0s). Dispatching: Task 2 ！ FunC Compile Fix
+[06:47:57] Idle detected (CPU+=35.2s). Dispatching: Task 2 ！ FunC Compile Fix
+[06:48:19] Idle detected (CPU+=36.5s). Dispatching: Task 2 ！ FunC Compile Fix
+[06:48:41] Idle detected (CPU+=34.3s). Dispatching: Task 2 ！ FunC Compile Fix
+[06:49:02] Idle detected (CPU+=35.9s). Dispatching: Task 2 ！ FunC Compile Fix
+[06:49:24] Idle detected (CPU+=33.4s). Dispatching: Task 2 ！ FunC Compile Fix

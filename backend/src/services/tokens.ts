@@ -5,7 +5,11 @@ export type TokenMetadata = {
   decimals: number;
   address: string;
   iconHint: string;
-  status: "native" | "mock" | "planned";
+  status: "mock" | "planned";
+  provenance: {
+    source: "mock";
+    note: string;
+  };
 };
 
 export function getTokens(): TokenMetadata[] {
@@ -17,7 +21,11 @@ export function getTokens(): TokenMetadata[] {
       decimals: 9,
       address: "native:ion",
       iconHint: "ion",
-      status: "native",
+      status: "mock",
+      provenance: {
+        source: "mock",
+        note: "ION token metadata is a Phase 3 mock placeholder until official adapter confirmation.",
+      },
     },
     {
       symbol: "BNB",
@@ -27,6 +35,10 @@ export function getTokens(): TokenMetadata[] {
       address: "native:bsc",
       iconHint: "bnb",
       status: "mock",
+      provenance: {
+        source: "mock",
+        note: "BNB metadata is mock display data for local frontend development.",
+      },
     },
     {
       symbol: "USDT",
@@ -36,6 +48,10 @@ export function getTokens(): TokenMetadata[] {
       address: "0x0000000000000000000000000000000000000000",
       iconHint: "usdt",
       status: "mock",
+      provenance: {
+        source: "mock",
+        note: "USDT address is a placeholder and must not be used for real transfers.",
+      },
     },
   ];
 }

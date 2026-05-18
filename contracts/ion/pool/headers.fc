@@ -1,0 +1,14 @@
+#pragma version >=0.4.4;
+
+;; ── ION DEX Pool Message Headers ───────────────────────────────
+
+#include "../common/common.fc";
+#include "storage.fc";
+
+() headers::load_swap_body(slice body, int swap_direction) impure inline_ref {
+    ;; Parsed in swap handler
+}
+
+() headers::load_provide_lp_body(slice body) impure inline_ref {
+    ;; Parsed in provide_lp handler
+}

@@ -8,10 +8,25 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import {
+  fetchBridgeRoutes,
+  fetchBurnSummary,
+  fetchDomainResolution,
+  fetchStakingSummary,
+  formatIonAmount,
+  type ApiMeta,
+  type BridgeRoutesPayload,
+  type BurnSummary,
+  type DomainResolution,
+  type StakingSummary,
+} from "@/lib/ionApi";
+
+const DOMAIN_DEMO_SNAPSHOT_LABEL = "demo.ion";
 
 type BusinessPageConfig = {
   eyebrow: string;
@@ -143,6 +158,269 @@ const toneClass: Record<BusinessPageConfig["metrics"][number]["tone"], string> =
   magenta: "text-fuchsia-200 shadow-neonMagenta",
   gold: "text-amber-200 shadow-neonGold",
 };
+
+type MetricCard = { label: string; value: string; tone: "cyan" | "magenta" | "gold" };
+
+function MetricsGrid({ metrics, sourceTestId, meta }: { metrics: MetricCard[]; sourceTestId: string; meta: ApiMeta | null }) {
+  return (
+    <>
+      <DataSourceBadge meta={meta} testId={sourceTestId} />
+      <div className="grid gap-4 md:grid-cols-3">
+        {metrics.map((metric) => (
+          <MetricCardView key={metric.label} metric={metric} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function MetricCardView({ metric }: { metric: MetricCard }) {
+  return (
+    <div className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}>
+      <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">{metric.label}</p>
+      <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
+    </div>
+  );
+}
+
+const fallbackBurnSummary: BurnSummary = {
+  totalBurnedIon: "12845000",
+  bscBurnedIon: "8245000",
+  ionMainnetBurnedIon: "4600000",
+  remainingSupplyIon: "987155000",
+  bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
+  ionBurnSource: "ion-mainnet-burn-source-placeholder",
+};
+
+const fallbackStakingSummary: StakingSummary = {
+  totalStakedIon: "452000000",
+  officialStakedIon: "398000000",
+  dexStakedIon: "54000000",
+  lpStakedUsd: "12800000",
+  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
+};
+
+const fallbackBridgePayload: BridgeRoutesPayload = {
+  routes: [
+    {
+      routeId: "bsc-ion-ion",
+      fromChain: "BSC",
+      toChain: "ION",
+      asset: "ION",
+      status: "mock",
+      minAmountIon: "10.000",
+      maxAmountIon: "500000.000",
+      estimatedMinutes: 12,
+      confirmationsRequired: 15,
+      safeguards: ["vault-limit", "relayer-threshold", "replay-protection", "manual-pause"],
+    },
+    {
+      routeId: "ion-bsc-ion",
+      fromChain: "ION",
+      toChain: "BSC",
+      asset: "ION",
+      status: "design",
+      minAmountIon: "10.000",
+      maxAmountIon: "250000.000",
+      estimatedMinutes: 18,
+      confirmationsRequired: 8,
+      safeguards: ["release-limit", "relayer-threshold", "proof-audit-log", "manual-pause"],
+    },
+  ],
+  relayerStatus: "mocked",
+  verifier: {
+    threshold: "3-of-5 draft",
+    replayProtection: true,
+    proofStatus: "planned",
+  },
+};
+
+const fallbackDomainResolution: DomainResolution = {
+  name: DOMAIN_DEMO_SNAPSHOT_LABEL,
+  available: false,
+  ownerAddress: "ion1demoowner000000000000000000000000000000000000",
+  resolvedAddress: "ion1resolvedwallet000000000000000000000000000000",
+  expiresAt: "2027-05-18T00:00:00.000Z",
+  records: [
+    { key: "wallet", value: "ion1resolvedwallet000000000000000000000000000000", status: "mock" },
+    { key: "profile", value: "ION DEX demo profile", status: "mock" },
+    { key: "avatar", value: "aurora-neon", status: "planned" },
+  ],
+  marketplace: {
+    listed: false,
+    floorIon: "0.000",
+    lastSaleIon: "4200.000",
+  },
+  provenance: {
+    source: "mock",
+    note: "Phase 3 mock resolver; official ION DNS adapter is pending.",
+  },
+};
+
+function BurnMetricsRow() {
+  const [summary, setSummary] = useState<BurnSummary>(fallbackBurnSummary);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchBurnSummary(controller.signal)
+      .then((response) => {
+        setSummary(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setSummary(fallbackBurnSummary);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const metrics: MetricCard[] = [
+    { label: "Total Burned", value: `${formatIonAmount(summary.totalBurnedIon)} ION`, tone: "gold" },
+    { label: "BSC Burn", value: `${formatIonAmount(summary.bscBurnedIon)} ION`, tone: "magenta" },
+    { label: "Remaining", value: `${formatIonAmount(summary.remainingSupplyIon)} ION`, tone: "cyan" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="burn-metrics-source" />;
+}
+
+function StakeMetricsRow() {
+  const [summary, setSummary] = useState<StakingSummary>(fallbackStakingSummary);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchStakingSummary(controller.signal)
+      .then((response) => {
+        setSummary(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setSummary(fallbackStakingSummary);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const metrics: MetricCard[] = [
+    { label: "DEX APR", value: `${summary.apr.dexPct}%`, tone: "gold" },
+    { label: "Official Stake", value: `${formatIonAmount(summary.officialStakedIon)} ION`, tone: "cyan" },
+    { label: "DEX Stake", value: `${formatIonAmount(summary.dexStakedIon)} ION`, tone: "magenta" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="stake-metrics-source" />;
+}
+
+function bridgeRelayerHeadline(payload: BridgeRoutesPayload): string {
+  const normalized = payload.relayerStatus.replace(/-/g, " ");
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function BridgeMetricsRow() {
+  const [payload, setPayload] = useState<BridgeRoutesPayload>(fallbackBridgePayload);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchBridgeRoutes(controller.signal)
+      .then((response) => {
+        setPayload(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setPayload(fallbackBridgePayload);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const bscIon = payload.routes.find((route) => route.fromChain === "BSC");
+  const eta = bscIon?.estimatedMinutes ?? payload.routes[0]?.estimatedMinutes ?? 12;
+
+  const metrics: MetricCard[] = [
+    { label: "Routes", value: `${payload.routes.length} configured`, tone: "cyan" },
+    { label: "Relayers", value: bridgeRelayerHeadline(payload), tone: "gold" },
+    {
+      label: "~ETA (B→I)",
+      value: `${eta} min`,
+      tone: "magenta",
+    },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="bridge-metrics-source" />;
+}
+
+function DomainMetricsRow() {
+  const [resolution, setResolution] = useState<DomainResolution>(fallbackDomainResolution);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchDomainResolution(DOMAIN_DEMO_SNAPSHOT_LABEL, controller.signal)
+      .then((response) => {
+        setResolution(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setResolution(fallbackDomainResolution);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const statusLabel = resolution.available ? "Available" : "Registered";
+  const floorIon = Number(resolution.marketplace.floorIon);
+  const floorDisplay = Number.isFinite(floorIon)
+    ? floorIon.toLocaleString(undefined, { maximumFractionDigits: 3 })
+    : resolution.marketplace.floorIon;
+
+  const metrics: MetricCard[] = [
+    { label: "Snapshot", value: resolution.name, tone: "cyan" },
+    { label: "Status", value: statusLabel, tone: resolution.available ? "gold" : "magenta" },
+    {
+      label: "Records",
+      value: `${resolution.records.length} DNS rows`,
+      tone: "gold",
+    },
+  ];
+
+  return (
+    <>
+      <MetricsGrid meta={meta} metrics={metrics} sourceTestId="domain-metrics-source" />
+      <p className="sr-only" data-testid="domain-metrics-floor-ion">
+        Floor ION snapshot: {floorDisplay}
+      </p>
+    </>
+  );
+}
 
 function toPositiveNumber(value: string) {
   const parsed = Number(value);
@@ -1090,19 +1368,24 @@ export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
             </p>
           </div>
 
+          {page === "stake" ? (
+            <StakeMetricsRow />
+          ) : page === "burn" ? (
+            <BurnMetricsRow />
+          ) : page === "bridge" ? (
+            <BridgeMetricsRow />
+          ) : page === "domain" ? (
+            <DomainMetricsRow />
+          ) : (
           <div className="grid gap-4 md:grid-cols-3">
             {config.metrics.map((metric) => (
-              <div
+              <MetricCardView
                 key={metric.label}
-                className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}
-              >
-                <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">
-                  {metric.label}
-                </p>
-                <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
-              </div>
+                metric={metric}
+              />
             ))}
           </div>
+          )}
 
           {page === "trade" ? <TradeOrderPanel /> : null}
           {page === "grid" ? <GridStrategyPanel /> : null}

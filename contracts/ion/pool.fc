@@ -1,0 +1,346 @@
+#pragma version >=0.4.4;
+
+;; ── ION DEX Pool Entry Point ───────────────────────────────────
+
+#include "common/common.fc";
+#include "pool/storage.fc";
+#include "pool/headers.fc";
+#include "pool/pools/constant_product.fc";
+#include "pool/pools/stableswap.fc";
+#include "pool/get.fc";
+
+;; ── Swap handler ───────────────────────────────────────────────
+
+() handle_swap() impure {
+    throw_if(error::empty_not_allowed, ctx.at(BODY).slice_empty?());
+    throw_unless(error::zero_output, storage::is_locked == 0);
+
+    int opcode = ctx.at(OPCODE);
+    slice body = ctx.at(BODY);
+    int query_id = body~load_uint(64);
+
+    if opcode == op::swap {
+        slice from_user = body~load_msg_addr();
+        int left_amount = body~load_coins();
+        int right_amount = body~load_coins();
+        cell dex_payload = body~load_ref();
+
+        slice dp = dex_payload.begin_parse();
+        int transferred_op = dp~load_uint(32);
+        slice token_wallet1 = dp~load_msg_addr();
+        slice refund_address = dp~load_msg_addr();
+        slice excesses_address = dp~load_msg_addr();
+        int tx_deadline = dp~load_uint(64);
+
+        throw_unless(error::transfer_bounce_tx_expired, now() <= tx_deadline);
+
+        cell swap_body_cell = dp~load_ref();
+        slice swap_body = swap_body_cell.begin_parse();
+        int min_out = swap_body~load_coins();
+        slice receiver = swap_body~load_msg_addr();
+        int fwd_gas = swap_body~load_coins();
+        int has_custom = swap_body~load_uint(1);
+        cell custom_payload = has_custom ? swap_body~load_ref() : null();
+        int refund_fwd_gas = swap_body~load_coins();
+        int has_refund_payload = swap_body~load_uint(1);
+        cell refund_payload = has_refund_payload ? swap_body~load_ref() : null();
+        int ref_fee = swap_body~load_uint(16);
+        slice ref_address = swap_body~load_msg_addr();
+
+        ;; Determine swap direction
+        int side = equal_slices(ctx.at(SENDER), storage::token0_address) ? 0 : 1;
+
+        int reserve_in = side == 0 ? storage::reserve0 : storage::reserve1;
+        int reserve_out = side == 0 ? storage::reserve1 : storage::reserve0;
+        int amount_in = side == 0 ? left_amount : right_amount;
+
+        throw_unless(error::invalid_amount, amount_in > 0);
+
+        ;; Execute swap using constant product
+        (int amount_out, int protocol_fee_out, int ref_fee_out) = pool::get_swap_out(
+            side, ref_fee, amount_in, reserve_in, reserve_out);
+
+        throw_unless(error::zero_output, amount_out >= min_out);
+        throw_unless(error::low_liquidity, amount_out > 0);
+
+        ;; Update reserves
+        if side == 0 {
+            storage::reserve0 += amount_in;
+            storage::reserve1 -= (amount_out + protocol_fee_out + ref_fee_out);
+            storage::collected_token1_protocol_fee += protocol_fee_out;
+        } else {
+            storage::reserve1 += amount_in;
+            storage::reserve0 -= (amount_out + protocol_fee_out + ref_fee_out);
+            storage::collected_token0_protocol_fee += protocol_fee_out;
+        }
+        storage::save();
+
+        reserves::max_balance(storage_fee::pool);
+
+        ;; Send output tokens to receiver
+        slice out_token = side == 0 ? storage::token1_address : storage::token0_address;
+        msgs::send_simple(
+            0,
+            out_token,
+            begin_cell()
+                .store_uint(0x0f8a7ea5, 32)  ;; jetton transfer
+                .store_uint(query_id, 64)
+                .store_coins(amount_out)
+                .store_slice(receiver)
+                .store_slice(ctx.at(SENDER))  ;; response = pool
+                .store_uint(0, 1)  ;; no custom payload
+                .store_coins(0)    ;; fwd_ton_amount = 0
+                .store_uint(0, 1)  ;; no fwd payload
+            .end_cell(),
+            QCARRY_ALL_BALANCE);
+
+        ;; Send excess back
+        msgs::send_simple(
+            0,
+            excesses_address,
+            null(),
+            CARRY_REMAINING_GAS);
+
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+;; ── Provide liquidity handler ──────────────────────────────────
+
+() handle_provide_lp() impure {
+    throw_if(error::empty_not_allowed, ctx.at(BODY).slice_empty?());
+    throw_unless(error::zero_output, storage::is_locked == 0);
+
+    int opcode = ctx.at(OPCODE);
+    slice body = ctx.at(BODY);
+
+    if opcode == op::provide_lp {
+        int query_id = body~load_uint(64);
+        slice from_user = body~load_msg_addr();
+        int left_amount = body~load_coins();
+        int right_amount = body~load_coins();
+        cell dex_payload = body~load_ref();
+
+        slice dp = dex_payload.begin_parse();
+        int transferred_op = dp~load_uint(32);
+        slice token_wallet1 = dp~load_msg_addr();
+        slice refund_address = dp~load_msg_addr();
+        slice excesses_address = dp~load_msg_addr();
+        int tx_deadline = dp~load_uint(64);
+
+        throw_unless(error::transfer_bounce_tx_expired, now() <= tx_deadline);
+
+        cell provide_body_cell = dp~load_ref();
+        slice provide_body = provide_body_cell.begin_parse();
+        int min_lp_out = provide_body~load_coins();
+        slice to_address = provide_body~load_msg_addr();
+        int both_positive = provide_body~load_uint(1);
+        int fwd_amount = provide_body~load_coins();
+
+        throw_unless(error::invalid_amount, (left_amount > 0) & (right_amount > 0));
+
+        ;; Calculate LP output
+        (int lp_amount, int protocol_fee0, int protocol_fee1) = pool::get_lp_provide_out(
+            left_amount, right_amount,
+            storage::reserve0, storage::reserve1,
+            storage::total_supply_lp);
+
+        throw_unless(error::zero_output, lp_amount >= min_lp_out);
+
+        ;; Update reserves
+        storage::reserve0 += left_amount - protocol_fee0;
+        storage::reserve1 += right_amount - protocol_fee1;
+        storage::total_supply_lp += lp_amount;
+        storage::collected_token0_protocol_fee += protocol_fee0;
+        storage::collected_token1_protocol_fee += protocol_fee1;
+        storage::save();
+
+        reserves::max_balance(storage_fee::pool);
+
+        ;; Mint LP tokens to user
+        msgs::send_simple(
+            0,
+            to_address,
+            begin_cell()
+                .store_uint(op::refund_ok, 32)
+                .store_uint(query_id, 64)
+                .store_coins(lp_amount)
+                .store_coins(left_amount)
+                .store_coins(right_amount)
+            .end_cell(),
+            QCARRY_ALL_BALANCE);
+
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+;; ── Burn LP / remove liquidity handler ─────────────────────────
+
+() handle_burn_lp() impure {
+    slice body = ctx.at(BODY);
+    int query_id = body~load_uint(64);
+    int lp_amount = body~load_coins();
+    slice from_address = body~load_msg_addr();
+
+    throw_unless(error::invalid_amount, lp_amount > 0);
+    throw_unless(error::invalid_amount, lp_amount <= storage::total_supply_lp);
+
+    (int amount0_out, int amount1_out) = pool::get_lp_burn_out(
+        lp_amount,
+        storage::reserve0, storage::reserve1,
+        storage::total_supply_lp);
+
+    storage::reserve0 -= amount0_out;
+    storage::reserve1 -= amount1_out;
+    storage::total_supply_lp -= lp_amount;
+    storage::save();
+
+    reserves::max_balance(storage_fee::pool);
+
+    ;; Return tokens to user via jetton transfers
+    msgs::send_simple(
+        0,
+        storage::token0_address,
+        begin_cell()
+            .store_uint(0x0f8a7ea5, 32)
+            .store_uint(query_id, 64)
+            .store_coins(amount0_out)
+            .store_slice(from_address)
+            .store_slice(ctx.at(SENDER))
+            .store_uint(0, 1)
+            .store_coins(0)
+            .store_uint(0, 1)
+        .end_cell(),
+        CARRY_ALL_BALANCE);
+}
+
+;; ── Collect fees handler ───────────────────────────────────────
+
+() handle_collect_fees() impure {
+    throw_unless(error::invalid_caller,
+        equal_slices(ctx.at(SENDER), storage::protocol_fee_address));
+
+    int fee0 = storage::collected_token0_protocol_fee;
+    int fee1 = storage::collected_token1_protocol_fee;
+
+    storage::collected_token0_protocol_fee = 0;
+    storage::collected_token1_protocol_fee = 0;
+    storage::save();
+
+    reserves::max_balance(storage_fee::pool);
+
+    if fee0 > 0 {
+        msgs::send_simple(
+            0,
+            storage::token0_address,
+            begin_cell()
+                .store_uint(0x0f8a7ea5, 32)
+                .store_uint(0, 64)
+                .store_coins(fee0)
+                .store_slice(storage::protocol_fee_address)
+                .store_slice(ctx.at(SENDER))
+                .store_uint(0, 1)
+                .store_coins(0)
+                .store_uint(0, 1)
+            .end_cell(),
+            CARRY_ALL_BALANCE);
+    }
+}
+
+;; ── Set fees (admin) ───────────────────────────────────────────
+
+() handle_set_fees() impure {
+    throw_unless(error::invalid_caller,
+        equal_slices(ctx.at(SENDER), storage::router_address));
+
+    slice body = ctx.at(BODY);
+    int query_id = body~load_uint(64);
+    int new_lp_fee = body~load_uint(16);
+    int new_protocol_fee = body~load_uint(16);
+    slice new_protocol_fee_address = body~load_msg_addr();
+
+    throw_unless(error::fee_out_range,
+        (new_lp_fee >= params::min_fee) & (new_lp_fee <= params::max_fee));
+    throw_unless(error::fee_out_range,
+        (new_protocol_fee >= params::min_fee) & (new_protocol_fee <= params::max_fee));
+
+    storage::lp_fee = new_lp_fee;
+    storage::protocol_fee = new_protocol_fee;
+    storage::protocol_fee_address = new_protocol_fee_address;
+    storage::save();
+
+    reserves::max_balance(storage_fee::pool);
+}
+
+;; ── Main entry ─────────────────────────────────────────────────
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+
+    if ctx.at(IS_BOUNCED) {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain,
+        ctx.at(SENDER).address::check_workchain(params::workchain));
+
+    storage::load();
+
+    int op = ctx.at(OPCODE);
+
+    ;; -- Swap --
+    if op == op::swap {
+        handle_swap();
+        return ();
+    }
+
+    ;; -- Provide liquidity --
+    if op == op::provide_lp {
+        handle_provide_lp();
+        return ();
+    }
+
+    ;; -- Burn LP (remove liquidity) --
+    if op == op::burn_notification_ext {
+        handle_burn_lp();
+        return ();
+    }
+
+    ;; -- Collect fees (protocol fee address only) --
+    if op == op::collect_fees {
+        handle_collect_fees();
+        return ();
+    }
+
+    ;; -- Set fees (router only) --
+    if (op == op::set_fees) | (op == op::internal_set_fees) {
+        handle_set_fees();
+        return ();
+    }
+
+    ;; -- Getters --
+    if op == op::getter_pool_data {
+        reserves::max_balance(storage_fee::pool);
+        msgs::send_simple(0, ctx.at(SENDER),
+            begin_cell().store_uint(op::getter_pool_data, 32).store_uint(0, 64)
+            .store_coins(storage::reserve0).store_coins(storage::reserve1)
+            .store_slice(storage::token0_address).store_slice(storage::token1_address)
+            .store_uint(storage::lp_fee, 16).store_uint(storage::protocol_fee, 16)
+            .store_uint(0, 16)
+            .store_coins(storage::collected_token0_protocol_fee)
+            .store_coins(storage::collected_token1_protocol_fee)
+            .store_slice(storage::protocol_fee_address)
+            .store_coins(storage::total_supply_lp)
+            .store_uint(storage::is_locked, 1)
+        .end_cell(), QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    throw(error::wrong_op);
+}

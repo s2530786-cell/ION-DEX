@@ -17,6 +17,11 @@ export type PublicConfig = {
     name: string;
     status: "draft" | "planned" | "enabled";
   }>;
+  provenance: {
+    source: "mock";
+    status: "mocked";
+    note: string;
+  };
 };
 
 export function getPublicConfig(): PublicConfig {
@@ -39,5 +44,10 @@ export function getPublicConfig(): PublicConfig {
       { key: "ion-browser", name: "ION Browser Wallet", status: "planned" },
       { key: "walletconnect", name: "WalletConnect / OKX", status: "draft" },
     ],
+    provenance: {
+      source: "mock",
+      status: "mocked",
+      note: "Public configuration is local Phase 3 mock data until official chain IDs and adapters are confirmed.",
+    },
   };
 }

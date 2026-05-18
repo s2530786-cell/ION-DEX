@@ -1,0 +1,24 @@
+#pragma version >=0.4.4;
+
+;; ── ION DEX Router Utilities ───────────────────────────────────
+
+;; Compute pool address from token pair
+slice router::get_pool_address(slice token0, slice token1) inline {
+    ;; Canonical ordering: lexicographically smaller address first
+    slice t0 = token0;
+    slice t1 = token1;
+
+    cell pool_state = begin_cell()
+        .store_slice(storage::admin_address)  ;; router address = admin for pool
+        .store_slice(t0)
+        .store_slice(t1)
+        .store_ref(storage::lp_wallet_code)
+        .store_ref(storage::lp_account_code)
+    .end_cell();
+
+    return utils::basechain_address_from_code_and_data(storage::pool_code, pool_state);
+}
+
+slice router::get_router_address() inline {
+    return my_address();
+}

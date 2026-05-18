@@ -9,7 +9,7 @@
     "test": "node --test dist/tests/*.test.js",
     "stress": "npm run build && node scripts/stress.mjs",
     "verify": "npm run build && npm run test",
-    "audit:high": "npm audit --audit-level=high"
+    "audit:high": "node scripts/audit-high.mjs"
   },
   "devDependencies": {
     "@types/node": "latest",

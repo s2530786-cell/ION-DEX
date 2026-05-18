@@ -1,0 +1,219 @@
+#pragma version >=0.4.4;
+
+;; ── ION DEX Router Entry Point ─────────────────────────────────
+;; Handles: jetton transfers → route to pool, admin ops, getters
+
+#include "common/common.fc";
+#include "router/storage.fc";
+#include "router/dex.fc";
+#include "router/get.fc";
+#include "router/utils.fc";
+
+;; ── Jetton transfer handler ────────────────────────────────────
+
+() handle_jetton_messages() impure {
+    int op = ctx.at(OPCODE);
+
+    if op == op::internal_transfer {
+        slice body = ctx.at(BODY);
+        int query_id = body~load_uint(64);
+        int jetton_amount = body~load_coins();
+        slice from_address = body~load_msg_addr();
+        slice response_destination = body~load_msg_addr();
+        int has_fwd_payload = body~load_uint(1);
+        cell fwd_payload = has_fwd_payload ? body~load_ref() : null();
+        int fwd_ton_amount = body~load_coins();
+
+        if has_fwd_payload {
+            ;; This is a swap/provide_lp request
+            int available_gas = ctx.at(BALANCE) - storage_fee::router;
+            route_dex_messages(
+                ctx.at(SENDER),  ;; jetton wallet address = token
+                available_gas,
+                jetton_amount,
+                from_address,
+                fwd_payload);
+            return ();
+        }
+    }
+
+    throw(error::wrong_op);
+}
+
+;; ── Admin: set fees ────────────────────────────────────────────
+
+() handle_set_fees() impure {
+    throw_unless(error::invalid_caller,
+        equal_slices(ctx.at(SENDER), storage::admin_address));
+
+    slice body = ctx.at(BODY);
+    int query_id = body~load_uint(64);
+    int new_lp_fee = body~load_uint(16);
+    int new_protocol_fee = body~load_uint(16);
+    slice new_protocol_fee_address = body~load_msg_addr();
+
+    throw_unless(error::fee_out_range,
+        (new_lp_fee >= params::min_fee) & (new_lp_fee <= params::max_fee));
+
+    ;; Forward fee update to all pools
+    ;; In production, this would iterate over pools_dict
+    ;; For MVP, store and forward individually
+
+    reserves::max_balance(storage_fee::router);
+}
+
+;; ── Admin: deploy pool ─────────────────────────────────────────
+
+() handle_deploy_pool() impure {
+    throw_unless(error::invalid_caller,
+        equal_slices(ctx.at(SENDER), storage::admin_address));
+
+    slice body = ctx.at(BODY);
+    slice token0 = body~load_msg_addr();
+    slice token1 = body~load_msg_addr();
+
+    throw_if(error::invalid_token, equal_slices(token0, token1));
+
+    slice pool_addr = router::get_pool_address(token0, token1);
+    int deploy_value = storage_fee::pool * 2;
+
+    ;; Deploy pool contract
+    cell pool_init = begin_cell()
+        .store_uint(0, 2)
+        .store_ref(storage::pool_code)
+        .store_ref(begin_cell()
+            .store_slice(storage::admin_address)
+            .store_slice(token0)
+            .store_slice(token1)
+            .store_ref(storage::lp_wallet_code)
+            .store_ref(storage::lp_account_code)
+        .end_cell())
+        .store_uint(0, 1)
+    .end_cell();
+
+    msgs::send_simple(
+        deploy_value,
+        pool_addr,
+        null(),
+        CARRY_REMAINING_GAS);
+}
+
+;; ── Admin: lock/unlock ─────────────────────────────────────────
+
+() handle_admin_lock() impure {
+    throw_unless(error::invalid_caller,
+        equal_slices(ctx.at(SENDER), storage::admin_address));
+
+    slice body = ctx.at(BODY);
+    int lock_flag = body~load_uint(1);
+
+    storage::is_locked = lock_flag;
+    storage::save();
+}
+
+;; ── Vault messages ─────────────────────────────────────────────
+
+() handle_vault_messages() impure {
+    int op = ctx.at(OPCODE);
+
+    if op == op::deposit_ref_fee {
+        ;; Forward to vault
+        reserves::max_balance(storage_fee::router);
+        msgs::send_simple(0, ctx.at(SENDER),
+            ctx.at(RAW_MSG), QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    if op == op::vault_pay_to {
+        ;; Received from vault - forward tokens
+        slice body = ctx.at(BODY);
+        int query_id = body~load_uint(64);
+        int amount_out = body~load_coins();
+        slice token_address = body~load_msg_addr();
+        slice to_address = body~load_msg_addr();
+
+        reserves::max_balance(storage_fee::router);
+        msgs::send_simple(
+            0,
+            token_address,
+            begin_cell()
+                .store_uint(0x0f8a7ea5, 32)
+                .store_uint(query_id, 64)
+                .store_coins(amount_out)
+                .store_slice(to_address)
+                .store_slice(ctx.at(SENDER))
+                .store_uint(0, 1)
+                .store_coins(0)
+                .store_uint(0, 1)
+            .end_cell(),
+            QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+;; ── Main entry ─────────────────────────────────────────────────
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+
+    if ctx.at(IS_BOUNCED) {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain,
+        ctx.at(SENDER).address::check_workchain(params::workchain));
+
+    storage::load();
+
+    int op = ctx.at(OPCODE);
+
+    ;; -- Jetton transfers (swap/provide_lp entry) --
+    if op == op::internal_transfer {
+        handle_jetton_messages();
+        return ();
+    }
+
+    ;; -- Admin: lock/unlock --
+    if op == 0x4c4f434b {  ;; "LOCK"
+        handle_admin_lock();
+        return ();
+    }
+
+    ;; -- Admin: deploy pool --
+    if op == 0x504f4f4c {  ;; "POOL"
+        handle_deploy_pool();
+        return ();
+    }
+
+    ;; -- Admin: set fees --
+    if op == op::set_fees {
+        handle_set_fees();
+        return ();
+    }
+
+    ;; -- Vault messages --
+    if (op == op::deposit_ref_fee) | (op == op::vault_pay_to) {
+        handle_vault_messages();
+        return ();
+    }
+
+    ;; -- Getters --
+    if (op == op::getter_router_data) | (op == op::getter_pool_address) {
+        reserves::max_balance(storage_fee::router);
+        msgs::send_simple(0, ctx.at(SENDER),
+            begin_cell()
+                .store_uint(op, 32)
+                .store_uint(0, 64)
+                .store_uint(storage::is_locked, 1)
+                .store_slice(storage::admin_address)
+            .end_cell(),
+            QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    throw(error::wrong_op);
+}

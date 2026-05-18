@@ -1,0 +1,119 @@
+#pragma version >=0.4.4;
+
+;; ── ION DEX Pool: StableSwap AMM ──────────────────────────────
+;; For pegged assets (e.g. USDT/USDC)
+;; Uses curve-style invariant: D invariant with amplification
+
+;; ── Newton's method for D ──────────────────────────────────────
+
+int stableswap::get_D(int xp0, int xp1, int A) impure inline {
+    int S = xp0 + xp1;
+    if S == 0 { return 0; }
+
+    int D = S;
+    int D_prev = 0;
+
+    ;; Ann = A * 2
+    int Ann = A * 2;
+
+    ;; Newton's method: iterate up to 255 times (FunC repeat has no `break`)
+    int converged_D = 0;
+    repeat(255) {
+        if (~ converged_D) {
+            int D_P = muldiv(D, D, xp0);
+            D_P = muldiv(D_P, D, xp1 * 4);
+            D_prev = D;
+            int numerator = D * (Ann * S + D_P * 2);
+            int denominator = D * (Ann - 1) + D_P * 3;
+            D = numerator / denominator;
+
+            if D > D_prev {
+                if D - D_prev <= 1 { converged_D = -1; }
+            } else {
+                if D_prev - D <= 1 { converged_D = -1; }
+            }
+        }
+    }
+
+    return D;
+}
+
+;; ── Swap logic ─────────────────────────────────────────────────
+
+(int) stableswap::get_y(int x0, int x1, int y, int A) impure inline {
+    ;; Given x0, x1, and total y in the pool, compute y_out
+    ;; Using Newton's method for y
+    int S = x0 + x1 + y;
+    int D = stableswap::get_D(x0, x1, A);
+
+    ;; Recompute D with all reserves
+    D = stableswap::get_D(S, y, A);
+
+    int Ann = A * 2;
+    int c = muldiv(D, D, x0);
+
+    int y_prev = 0;
+    int converged_y = 0;
+    repeat(255) {
+        if (~ converged_y) {
+            y_prev = y;
+            y = (y * y + c) / (2 * y + D / Ann - D);
+            if y > y_prev {
+                if y - y_prev <= 1 { converged_y = -1; }
+            } else {
+                if y_prev - y <= 1 { converged_y = -1; }
+            }
+        }
+    }
+
+    return y;
+}
+
+(int, int, int) stableswap::get_swap_out(int _amount_in, int _reserve_in, int _reserve_out,
+                                           int _lp_fee, int _protocol_fee, int _ref_value, int _A) inline {
+    int amount_in_with_fee = _amount_in * (params::fee_divider - _lp_fee) / params::fee_divider;
+
+    int new_reserve_in = _reserve_in + amount_in_with_fee;
+    int new_reserve_out = stableswap::get_y(new_reserve_in, _reserve_out, _reserve_in, _A);
+
+    int base_out = _reserve_out - new_reserve_out;
+
+    int protocol_fee_out = 0;
+    int ref_fee_out = 0;
+
+    if _protocol_fee > 0 {
+        protocol_fee_out = divc(base_out * _protocol_fee, params::fee_divider);
+    }
+    if _ref_value > 0 {
+        ref_fee_out = divc(base_out * _ref_value, params::fee_divider);
+    }
+
+    base_out -= protocol_fee_out + ref_fee_out;
+    return (base_out, protocol_fee_out, ref_fee_out);
+}
+
+;; ── LP provide logic ───────────────────────────────────────────
+
+(int) stableswap::get_lp_provide_out(int _amount0, int _amount1, int _reserve0, int _reserve1,
+                                       int _total_supply, int _A) inline {
+    if _total_supply == 0 {
+        int D0 = stableswap::get_D(_amount0, _amount1, _A);
+        return D0;
+    }
+
+    int D0 = stableswap::get_D(_reserve0, _reserve1, _A);
+    int D1 = stableswap::get_D(_reserve0 + _amount0, _reserve1 + _amount1, _A);
+
+    if D1 <= D0 { return 0; }
+
+    return muldiv((D1 - D0), _total_supply, D0);
+}
+
+;; ── LP burn logic ──────────────────────────────────────────────
+
+(int, int) stableswap::get_lp_burn_out(int _lp_amount, int _reserve0, int _reserve1,
+                                         int _total_supply) inline {
+    int left_amount = muldiv(_lp_amount, _reserve0, _total_supply);
+    int right_amount = muldiv(_lp_amount, _reserve1, _total_supply);
+    return (left_amount, right_amount);
+}

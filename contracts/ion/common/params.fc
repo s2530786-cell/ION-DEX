@@ -1,0 +1,18 @@
+;; ── ION DEX Network Parameters ──────────────────────────────────
+
+const params::workchain = 0;
+
+const params::version_major = 1;
+const params::version_minor = 0;
+const params::version_development = "alpha";
+
+const params::required_min_liquidity = 1001;
+const params::fee_divider = 10000;
+const params::min_fee = 0;  ;; 0%
+const params::max_fee = 100; ;; 1%
+
+const params::uri_base = "https://meta.ion-dex.io/lp/";
+const params::uri_end = ".json";
+
+const params::twodays = 2 * 24 * 60 * 60;
+const params::sevendays = 7 * 24 * 60 * 60;

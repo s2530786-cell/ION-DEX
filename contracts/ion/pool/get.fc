@@ -1,0 +1,31 @@
+#pragma version >=0.4.4;
+
+;; ── ION DEX Pool Getters ───────────────────────────────────────
+
+(int, int, slice, slice, int, int, int, int, int, slice, int, int) get_pool_data() method_id {
+    storage::load();
+    return (
+        storage::reserve0,
+        storage::reserve1,
+        storage::token0_address,
+        storage::token1_address,
+        storage::lp_fee,
+        storage::protocol_fee,
+        0,
+        storage::collected_token0_protocol_fee,
+        storage::collected_token1_protocol_fee,
+        storage::protocol_fee_address,
+        storage::total_supply_lp,
+        storage::is_locked
+    );
+}
+
+(int, int) get_expected_tokens(int lp_amount) method_id {
+    storage::load();
+    (int amount0, int amount1) = pool::get_lp_burn_out(
+        lp_amount,
+        storage::reserve0,
+        storage::reserve1,
+        storage::total_supply_lp);
+    return (amount0, amount1);
+}

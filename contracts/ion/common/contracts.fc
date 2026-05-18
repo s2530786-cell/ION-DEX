@@ -1,0 +1,24 @@
+;; ── ION DEX Contract Interface Definitions ──────────────────────
+
+;; -- Pool interface --
+;; get_pool_data() returns:
+;;   (int reserved0, int reserved1, slice token0_address, slice token1_address,
+;;    int lp_fee, int protocol_fee, int ref_fee,
+;;    slice protocol_fee_address, slice router_address,
+;;    int lp_total_supply, slice lp_wallet_code, slice lp_account_code)
+
+;; -- Router interface --
+;; get_router_data() returns:
+;;   (int is_locked, slice admin_address,
+;;    slice pool_code, slice lp_account_code, slice lp_wallet_code,
+;;    cell pools_dict)
+
+;; -- LP Account interface --
+;; get_lp_account_data() returns:
+;;   (slice user_address, slice pool_address,
+;;    int amount0, int amount1)
+
+;; -- Vault interface --
+;; get_vault_data() returns:
+;;   (slice owner_address, slice token_address,
+;;    slice router_address, int deposited_amount)

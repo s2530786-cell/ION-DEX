@@ -133,6 +133,7 @@ test.describe("ION DEX smoke", () => {
     await page.goto("/");
     await page.getByTestId("nav-stake").click();
 
+    await expect(page.getByTestId("stake-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("stake-form")).toBeVisible();
     await expect(page.getByTestId("stake-submit")).toBeDisabled();
 
@@ -156,6 +157,7 @@ test.describe("ION DEX smoke", () => {
     await page.goto("/");
     await page.getByTestId("nav-bridge").click();
 
+    await expect(page.getByTestId("bridge-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("bridge-form")).toBeVisible();
     await expect(page.getByTestId("bridge-submit")).toBeDisabled();
 
@@ -175,6 +177,7 @@ test.describe("ION DEX smoke", () => {
     await page.goto("/");
     await page.getByTestId("nav-burn").click();
 
+    await expect(page.getByTestId("burn-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("burn-form")).toBeVisible();
     await page.getByTestId("burn-amount").fill("5000");
     await page.getByTestId("burn-memo").fill("x".repeat(121));
@@ -193,6 +196,7 @@ test.describe("ION DEX smoke", () => {
     await page.goto("/");
     await page.getByTestId("nav-domain").click();
 
+    await expect(page.getByTestId("domain-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("domain-form")).toBeVisible();
     await page.getByTestId("domain-query").fill("bad_label");
     await expect(page.getByTestId("domain-error")).toBeVisible();

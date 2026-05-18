@@ -1,0 +1,127 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+;; ── State ──────────────────────────────────────────────────────
+
+global slice storage::admin_address;
+global cell storage::router_code;
+global cell storage::pool_code;
+global cell storage::lp_account_code;
+global cell storage::lp_wallet_code;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::admin_address = ds~load_msg_addr();
+    storage::router_code = ds~load_ref();
+    storage::pool_code = ds~load_ref();
+    storage::lp_account_code = ds~load_ref();
+    storage::lp_wallet_code = ds~load_ref();
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::admin_address)
+        .store_ref(storage::router_code)
+        .store_ref(storage::pool_code)
+        .store_ref(storage::lp_account_code)
+        .store_ref(storage::lp_wallet_code)
+    .end_cell());
+}
+
+;; ── Deployment helpers ─────────────────────────────────────────
+
+() deploy_router() impure {
+    int deploy_value = gas::router::route + storage_fee::router;
+    throw_unless(error::insufficient_gas, ctx.at(BALANCE) > deploy_value);
+
+    cell router_data = begin_cell()
+        .store_bool(0)
+        .store_slice(storage::admin_address)
+        .store_ref(storage::pool_code)
+        .store_ref(storage::lp_account_code)
+        .store_ref(storage::lp_wallet_code)
+        .store_ref(begin_cell().end_cell())
+    .end_cell();
+
+    slice router_addr =
+        utils::basechain_address_from_code_and_data(storage::router_code, router_data);
+
+    msgs::send_simple(
+        deploy_value,
+        router_addr,
+        null(),
+        CARRY_REMAINING_GAS);
+}
+
+() deploy_pool(slice token0, slice token1) impure {
+    int deploy_value = gas::pool::provide_lp + storage_fee::pool;
+    throw_unless(error::insufficient_gas, ctx.at(BALANCE) > deploy_value);
+
+    ;; Validate token ordering (canonical: lower address first)
+    throw_if(error::invalid_token, equal_slices(token0, token1));
+
+    ;; Address must match router::get_pool_address (canonical pool_state layout)
+    cell pool_state = begin_cell()
+        .store_slice(storage::admin_address)
+        .store_slice(token0)
+        .store_slice(token1)
+        .store_ref(storage::lp_wallet_code)
+        .store_ref(storage::lp_account_code)
+    .end_cell();
+
+    slice pool_addr =
+        utils::basechain_address_from_code_and_data(storage::pool_code, pool_state);
+
+    msgs::send_simple(
+        deploy_value,
+        pool_addr,
+        null(),
+        CARRY_REMAINING_GAS);
+}
+
+;; ── Message handlers ───────────────────────────────────────────
+
+() handle_deploy_router() impure {
+    throw_unless(error::invalid_caller,
+        equal_slices(ctx.at(SENDER), storage::admin_address));
+    deploy_router();
+}
+
+() handle_deploy_pool() impure {
+    throw_unless(error::invalid_caller,
+        equal_slices(ctx.at(SENDER), storage::admin_address));
+
+    slice body = ctx.at(BODY);
+    slice token0 = body~load_msg_addr();
+    slice token1 = body~load_msg_addr();
+
+    deploy_pool(token0, token1);
+}
+
+;; ── Main entry ─────────────────────────────────────────────────
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx.at(IS_BOUNCED) {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx.at(SENDER).address::check_workchain(params::workchain));
+    storage::load();
+
+    int op = in_msg_body.slice_empty?() ? 0 : ctx.at(OPCODE);
+
+    if op == 0x4445504c {  ;; "DEPL" - deploy router
+        handle_deploy_router();
+        return ();
+    }
+
+    if op == 0x504f4f4c {  ;; "POOL" - deploy pool
+        handle_deploy_pool();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}

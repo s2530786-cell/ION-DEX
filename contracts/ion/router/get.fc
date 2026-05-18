@@ -1,0 +1,21 @@
+#pragma version >=0.4.4;
+
+;; ── ION DEX Router Getters ─────────────────────────────────────
+
+(int, slice, cell, cell, cell, cell) get_router_data() method_id {
+    storage::load();
+    return (
+        storage::is_locked,
+        storage::admin_address,
+        storage::pool_code,
+        storage::lp_account_code,
+        storage::lp_wallet_code,
+        storage::pools_dict
+    );
+}
+
+slice get_pool_address(slice token0, slice token1) method_id {
+    storage::load();
+    slice pool_addr = router::get_pool_address(token0, token1);
+    return pool_addr;
+}
