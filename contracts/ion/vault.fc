@@ -1,4 +1,3 @@
-
 #pragma version >=0.4.4;
 
 #include "common/common.fc";
@@ -26,9 +25,7 @@ global int storage::deposited_amount;
     .end_cell());
 }
 
-;; 鈹€鈹€ Message handlers 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
-
-
+;; ── Message handlers ───────────────────────────────────────────
 
 () handle_deposit_ref_fee() impure {
     slice body = ctx.at(BODY);
@@ -68,7 +65,7 @@ global int storage::deposited_amount;
     storage::save();
 }
 
-;; 鈹€鈹€ Main entry 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+;; ── Main entry ─────────────────────────────────────────────────
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
     throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
@@ -95,7 +92,7 @@ global int storage::deposited_amount;
     throw(error::wrong_op);
 }
 
-;; 鈹€鈹€ Getters 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+;; ── Getters ────────────────────────────────────────────────────
 
 (slice, slice, slice, int) get_vault_data() method_id {
     storage::load();
