@@ -1,8 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const previewHost = "127.0.0.1";
-/** Must match `frontend/package.json` → `preview:test` (start-server-and-test waits on TCP, not HTTP — avoids broken HTTP 200 probes on this host). */
-const previewPort = 59333;
+const previewBaseUrl = process.env.PLAYWRIGHT_BASE_URL ?? `http://${previewHost}:59333`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -11,7 +10,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: [["list"]],
   use: {
-    baseURL: `http://${previewHost}:${previewPort}`,
+    baseURL: previewBaseUrl,
     trace: "on-first-retry",
   },
   projects: [

@@ -15,6 +15,8 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 - If shell execution is unavailable, the user must run the verification commands and paste the output.
 - Search for working MCP/tooling before accepting a tooling limitation.
 - The agent must proactively use Cursor engineering workflow and development accelerator guidance for every development task. The user should not need to ask for worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy.
+- The agent must use `cursor-engineering-workflow` as the automatic development workflow and `self-evolving` as the post-work learning loop so useful lessons improve project memory, docs, rules, or Skills.
+- The agent must evaluate parallel development worktrees, `/best-of-n`, Agent Review, Bugbot, and code audit paths for non-trivial work; high-risk surfaces require review/audit before being accepted.
 
 ## Current State
 
@@ -79,6 +81,28 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `.cursor/skills/ion-data-backend/SKILL.md`
   - `.cursor/skills/cursor-engineering-workflow/SKILL.md`
   - `.cursor/skills/ion-dev-accelerators/SKILL.md`
+- User-requested agent capability Skills installed:
+  - `.cursor/skills/skill-vetter/SKILL.md`
+  - `.cursor/skills/self-evolving/SKILL.md`
+  - `.cursor/skills/tavily/SKILL.md`
+  - `.cursor/skills/find-skill/SKILL.md`
+  - `.cursor/skills/luke-agent-browser-clawdbot/SKILL.md`
+  - `.cursor/skills/summarize-pro/SKILL.md`
+  - `.cursor/skills/claude-flow/SKILL.md`
+- Claude-Flow/RuFlo status:
+  - Root dev dependency `claude-flow@3.7.0-alpha.35` is installed and pinned in `package.json`.
+  - CLI verified with `npx claude-flow@3.7.0-alpha.35 --version`, output `ruflo v3.7.0-alpha.35`.
+  - `init check` reports RuFlo is not initialized in this directory.
+  - `doctor --component mcp` reports no Claude-Flow MCP config found.
+  - `agent wasm-status` reports `@ruvector/rvagent-wasm` is not installed.
+  - Root `npm audit --audit-level=high --json` reports 1 critical and 10 high vulnerabilities in Claude-Flow transitive dependencies; use only as a controlled local accelerator unless isolated and explicitly planned.
+  - A `mcp start --help` attempt started the stdio MCP server instead of showing help; the process was stopped. Do not run `mcp start`, `start`, `daemon`, `autopilot`, or `init --start-all` casually.
+  - Post-update project verification: `scripts\verify-full-save-log.cmd --no-pause` exited `0`; encoding scanned 167 files OK; frontend build and Playwright passed (`13 passed`); frontend `audit:high` found 0 vulnerabilities. Separate root Claude-Flow audit still reports high/critical findings.
+  - Cautious sandbox validation created isolated Git worktree `D:\openclaw-tools\ion-dex-nuke-claude-flow-sandbox` on branch `claude-flow-sandbox`.
+  - Sandbox `init --minimal --skip-claude --no-global` succeeded but still generated `CLAUDE.md`, `.claude/`, `.claude-flow/`, and `.mcp.json`; do not initialize directly in main repo.
+  - Sandbox diagnostics: `init check` initialized, `doctor --component mcp` healthy with 1 `ruflo` server, `agent list` no active agents.
+  - Generated `.mcp.json` used `ruflo@latest`; main integration must pin to `claude-flow@3.7.0-alpha.35` or a reviewed command.
+  - Generated `.claude/settings.json` enabled hooks, auto learning, security scans, and broad command permissions; do not import into main without security review.
 - Cursor Agent Review rules added at `BUGBOT.md` for ION DEX security, verification, UI, backend, and review-output standards.
 - The 100-pass verification gate completed successfully on 2026-05-17:
   - `PASSED=100`
@@ -110,7 +134,11 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 8. Phase 5 八页业务表单草稿 + E2E：2026-05-18，`scripts/check-encoding.ps1` 已排除本地官方 ION 参考树 `/ion/`（该目录被 `.gitignore` 忽略，不属于本仓源码）；`scripts\verify-100.ps1` 完成 **100-pass**：`PASS 100 OK`，`PASSED=100`，`FAILED=0`，`RESULT=GREEN`。`frontend` `npm run verify` 使用 `start-server-and-test` + **`tcp:127.0.0.1:59333`**，Playwright **`12 passed`**；`audit:high` **`0`**。顶栏导航改为横向滚动可视，修补生产样式下 `hidden lg:flex` 永久隐藏问题。
 9. Wallet/Profile shell：2026-05-18，`AppShell` wallet button now opens a local provider picker (Online+ Wallet / ION Browser Wallet / WalletConnect + OKX), drafts a profile session, and supports disconnect without private keys, RPC calls, or signatures. Single full verification after the change: encoding OK, frontend `npm run verify` **13 passed**, `audit:high` **0**. 100-pass gate completed: `PASS 100 OK`, `PASSED=100`, `FAILED=0`, `RESULT=GREEN`.
 10. External reference architecture：2026-05-18，`docs/09-reference-architecture.md` added to map the user's reference repositories into ION DEX phases. Key decision: use backend gateway repositories (`tyk`, `shenyu`, `ocelot`) as pattern references only, and start Phase 3 with a minimal typed API gateway/BFF rather than vendoring a full gateway product.
-11. Next：start Phase 3 backend foundation with typed mock API endpoints (health/config/tokens/tickers first), or continue Phase 5 toward profile menu polish / transparency-status shell（见 `docs/04-development-roadmap.md`）。
+11. Agent capability Skills：2026-05-18，installed project-local Skills `skill-vetter`, `self-evolving`, `tavily`, `find-skill`, `luke-agent-browser-clawdbot`, and `summarize-pro`; registered them in `AGENTS.md` with trigger guidance.
+12. Workflow preference：2026-05-18，user explicitly requested making strong use of `self-evolving` and automatic workflow because they help development. Treat `cursor-engineering-workflow` as the pre/during-work operating loop and `self-evolving` as the post-work memory improvement loop.
+13. Accelerator/review preference：2026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
+14. Claude-Flow/RuFlo：2026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
+15. Next：start Phase 3 backend foundation with typed mock API endpoints (health/config/tokens/tickers first), or continue Phase 5 toward profile menu polish / transparency-status shell（见 `docs/04-development-roadmap.md`）。
 
 ## Memory MCP Candidates
 

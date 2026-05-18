@@ -6,7 +6,7 @@
         "/c",
         "npx",
         "-y",
-        "@wonderwhy-er/desktop-commander@latest"
+        "@wonderwhy-er/desktop-commander@0.2.41"
       ]
     },
     "ion-dex-memory-bank": {
@@ -15,10 +15,10 @@
         "/c",
         "npx",
         "-y",
-        "@allpepper/memory-bank-mcp@latest"
+        "@allpepper/memory-bank-mcp@0.2.2"
       ],
       "env": {
-        "MEMORY_BANK_ROOT": "C:\\Users\\admin\\.cursor\\projects\\empty-window\\ion-dex-nuke\\.memory-bank"
+        "MEMORY_BANK_ROOT": "${workspaceFolder}/.memory-bank"
       }
     }
   }

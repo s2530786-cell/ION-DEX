@@ -1,4 +1,4 @@
-# Full verification: encoding + frontend build/e2e + npm audit (high).
+# Full verification: encoding + backend build/API tests/stress + frontend build/e2e + npm audit (high).
 # Keep this file as UTF-8 without BOM. If PowerShell parsing fails on Windows,
 # use scripts\verify-full.cmd or scripts\verify-full-save-log.cmd.
 
@@ -14,7 +14,28 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host ""
-Write-Host "=== 2) Frontend verify (build + Playwright) ==="
+Write-Host "=== 2) Backend verify (build + API tests) ==="
+Push-Location (Join-Path $root "backend")
+try {
+  npm run verify
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
+  npm run audit:high
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
+  npm run stress
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
+}
+finally {
+  Pop-Location
+}
+
+Write-Host ""
+Write-Host "=== 3) Frontend verify (build + Playwright) ==="
 Push-Location (Join-Path $root "frontend")
 try {
   npm run verify
@@ -27,12 +48,12 @@ finally {
 }
 
 Write-Host ""
-Write-Host "=== 3) npm audit (high) ==="
+Write-Host "=== 4) Frontend npm audit (high) ==="
 Push-Location (Join-Path $root "frontend")
 try {
   npm run audit:high
-  if ($LASTEXITCODE -gt 0) {
-    Write-Host ("audit: npm reported EXITCODE=" + $LASTEXITCODE + ". Review output above.")
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
   }
 }
 finally {

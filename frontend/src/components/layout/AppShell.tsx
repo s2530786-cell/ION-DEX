@@ -1,7 +1,8 @@
 import { Bell, CheckCircle2, Globe2, LogOut, ShieldCheck, UserCircle2, Wallet } from "lucide-react";
-import { useMemo, useState, type PropsWithChildren } from "react";
+import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { NeonButton } from "@/components/ui/NeonButton";
+import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 
 export type PageKey =
   | "swap"
@@ -242,20 +243,38 @@ function WalletConnectPanel({
 }
 
 function TickerStrip() {
-  const tickers = [
-    { symbol: "ION", price: "$6.02", change: "+8.42%" },
-    { symbol: "BNB", price: "$642.20", change: "+1.18%" },
-    { symbol: "BTC", price: "$103,420", change: "+0.74%" },
-    { symbol: "ETH", price: "$4,906", change: "-0.38%" },
-    { symbol: "SOL", price: "$218.30", change: "+3.12%" },
-    { symbol: "USDT", price: "$1.00", change: "+0.01%" },
-  ];
+  const [tickers, setTickers] = useState<MarketTicker[]>(fallbackTickers);
+  const [sourceLabel, setSourceLabel] = useState("offline fallback");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchMarketTickers(controller.signal)
+      .then((response) => {
+        setTickers(response.data);
+        setSourceLabel(`${response.meta.source} API`);
+      })
+      .catch(() => {
+        setTickers(fallbackTickers);
+        setSourceLabel("offline fallback");
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
 
   return (
     <div
       className="flex gap-4 overflow-hidden border-b border-white/10 bg-black/25 px-4 py-2 text-xs sm:px-6"
       data-testid="ticker-strip"
     >
+      <span className="sr-only" data-testid="ticker-source">
+        Ticker source: {sourceLabel}
+      </span>
       <div className="flex min-w-max animate-[ticker_36s_linear_infinite] gap-4">
         {[...tickers, ...tickers].map((ticker, index) => (
           <span
@@ -263,13 +282,13 @@ function TickerStrip() {
             className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1"
           >
             <strong className="text-cyan-200">{ticker.symbol}</strong>{" "}
-            <span className="text-white/80">{ticker.price}</span>{" "}
+            <span className="text-white/80">{ticker.displayPrice}</span>{" "}
             <span
               className={
-                ticker.change.startsWith("+") ? "text-emerald-300" : "text-rose-300"
+                ticker.displayChange.startsWith("+") ? "text-emerald-300" : "text-rose-300"
               }
             >
-              {ticker.change}
+              {ticker.displayChange}
             </span>
           </span>
         ))}
@@ -277,3 +296,12 @@ function TickerStrip() {
     </div>
   );
 }
+
+const fallbackTickers: MarketTicker[] = [
+  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
+  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
+  { symbol: "BTC", priceUsd: 103420, displayPrice: "$103,420", change24hPct: 0.74, displayChange: "+0.74%" },
+  { symbol: "ETH", priceUsd: 4906, displayPrice: "$4,906", change24hPct: -0.38, displayChange: "-0.38%" },
+  { symbol: "SOL", priceUsd: 218.3, displayPrice: "$218.30", change24hPct: 3.12, displayChange: "+3.12%" },
+  { symbol: "USDT", priceUsd: 1, displayPrice: "$1.00", change24hPct: 0.01, displayChange: "+0.01%" },
+];

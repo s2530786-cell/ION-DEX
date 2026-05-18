@@ -16,6 +16,13 @@ Before working on this project, load and follow:
 - `.cursor/skills/ion-data-backend/SKILL.md` when touching CMC, DNS, burn, staking, bridge, treasury, API, indexer, database, cache, or backend data flows.
 - `.cursor/skills/cursor-engineering-workflow/SKILL.md` for every development, verification, review, debugging, workflow, or tooling task. The agent must proactively decide the right Cursor mode, review path, safety controls, and verification path without waiting for the user to ask.
 - `.cursor/skills/ion-dev-accelerators/SKILL.md` for every development task. The agent must proactively consider Git worktrees, Cursor `/worktree`, `/best-of-n`, Hooks, Agent Review, Bugbot, Cloud Agents, Cursor CLI, CI automation, MCP tools, Rules, and Skills when they would improve speed, isolation, or safety.
+- `.cursor/skills/skill-vetter/SKILL.md` when installing, editing, reviewing, or trusting Agent Skills.
+- `.cursor/skills/find-skill/SKILL.md` when locating available Skills or deciding whether a requested Skill already exists.
+- `.cursor/skills/self-evolving/SKILL.md` after major tasks, repeated failures, or user corrections that should update project memory.
+- `.cursor/skills/tavily/SKILL.md` when doing current web/repository/documentation research; use available search fallbacks if Tavily itself is not configured.
+- `.cursor/skills/luke-agent-browser-clawdbot/SKILL.md` when validating or debugging frontend behavior through browser automation.
+- `.cursor/skills/summarize-pro/SKILL.md` when summarizing long docs, logs, transcripts, diffs, research results, or verification output.
+- `.cursor/skills/claude-flow/SKILL.md` when using Claude-Flow/RuFlo for AI agent orchestration, swarm planning, MCP diagnostics, multi-agent decomposition, or controlled local agent experiments.
 
 ## Core Requirements
 
@@ -26,6 +33,10 @@ Before working on this project, load and follow:
 - Do not claim completion without build/test/lint/security evidence.
 - Agent Review must follow `BUGBOT.md` for ION DEX review focus and output style.
 - It is the agent's responsibility to proactively use Cursor engineering workflows and development accelerators during development; the user should not need to ask for them.
+- It is the agent's responsibility to use `cursor-engineering-workflow` before and during development to choose mode, tooling, safety controls, and verification; use `self-evolving` after major work, failures, and user corrections to improve project memory, docs, rules, or Skills.
+- It is the agent's responsibility to evaluate parallel development accelerators for every non-trivial task: use Git worktrees/Cursor `/worktree` for isolated UI/backend/contract/verification streams, `/best-of-n` for competing designs, Agent Review for meaningful local diffs, and Bugbot for PR-level review.
+- Code audit and review are mandatory for high-risk surfaces: contracts, bridge, wallet/session, fees, treasury, staking, burn, DNS, backend data APIs, auth, caching, deployment, and verification scripts.
+- Claude-Flow/RuFlo is allowed only as a controlled local development accelerator. Because `claude-flow@3.7.0-alpha.35` currently has high/critical transitive audit findings, do not start long-running Claude-Flow MCP/daemon/autopilot processes or expose secrets/assets without an explicit isolated task and verification plan.
 - Before continuing feature development after a completed change, the project must pass 100 full green verification runs unless the user explicitly waives this gate for a narrow investigation.
 - If tools cannot run commands, ask the user to run the exact command and paste output.
 - Search for working MCP/tooling before accepting a tool limitation.
@@ -51,10 +62,15 @@ ION DEX is planned as an OKX Web3 wallet style DEX for ION with:
 3. For every development task, proactively load the Cursor workflow and development accelerator context:
    - `docs/cursor-docs-feature-memory.md`
    - `docs/development-accelerators-memory.md`
-4. **Do not ask the user for permission before every tiny step.** For scoped edits (UX copy, tests, wiring, bugfixes), implement continuously and validate yourself. Ask only when requirements are ambiguous, secrets/credentials are missing, or an action is destructive and irreversible without explicit consent.
-5. Implement in coherent chunks; batch related file edits rather than blocking on human “continue” between each line.
-6. After substantive code edits, **automatically** run verification—use `scripts\agent-verify.cmd` (non-interactive, no `pause`) or `ION_VERIFY_NONINTERACTIVE=1` with `scripts\verify-full.cmd`. Use `scripts\verify-full-save-log.cmd --no-pause` if stdout may be empty, then read `%TEMP%\ion-verify-full.txt`. Only ask the user to run commands when the agent environment cannot execute shells.
-7. For feature work, run the 100-pass verification gate before moving on to the next feature unless the user waives it.
-8. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
+4. Apply `cursor-engineering-workflow` as the active automatic workflow for planning, mode choice, review path, MCP/tool selection, and verification strategy.
+5. Apply `ion-dev-accelerators` before implementation to decide whether worktrees, `/best-of-n`, Agent Review, Bugbot, Hooks, Cloud Agents, CLI automation, MCP, Rules, or Skills should be used.
+6. For multi-stream or high-risk work, prefer isolated Git worktrees/Cursor `/worktree` with separate ports and scoped branches; do not mix unrelated UI, backend, contract, and verification experiments in one working tree when isolation would reduce risk.
+7. Run code review/audit paths before accepting meaningful diffs: Agent Review for local diffs when available, Bugbot for PRs, and domain-specific audit Skills for contract/backend/security-sensitive changes.
+8. **Do not ask the user for permission before every tiny step.** For scoped edits (UX copy, tests, wiring, bugfixes), implement continuously and validate yourself. Ask only when requirements are ambiguous, secrets/credentials are missing, or an action is destructive and irreversible without explicit consent.
+9. Implement in coherent chunks; batch related file edits rather than blocking on human “continue” between each line.
+10. After substantive code edits, **automatically** run verification—use `scripts\agent-verify.cmd` (non-interactive, no `pause`) or `ION_VERIFY_NONINTERACTIVE=1` with `scripts\verify-full.cmd`. Use `scripts\verify-full-save-log.cmd --no-pause` if stdout may be empty, then read `%TEMP%\ion-verify-full.txt`. Only ask the user to run commands when the agent environment cannot execute shells.
+11. After major work, repeated failures, verification fixes, or user corrections, apply `self-evolving` to capture lessons and update `SESSION_STATE.md`, `docs/99-current-progress.md`, relevant Skills, or `AGENTS.md` when useful.
+12. For feature work, run the 100-pass verification gate before moving on to the next feature unless the user waives it.
+13. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
 
 See also `docs/08-ci-agent-automation.md` for GitHub Actions and optional Cursor hooks.

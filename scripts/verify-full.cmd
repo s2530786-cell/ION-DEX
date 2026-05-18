@@ -33,7 +33,47 @@ if errorlevel 1 (
 )
 
 echo.
-echo === 2) Frontend verify (build + Playwright) ===
+echo === 2) Backend verify (build + API tests) ===
+if not exist "%CD%\backend\package.json" (
+  echo ERROR: backend\package.json not found under %CD%\backend
+  if not defined _ION_VNP pause
+  exit /b 1
+)
+
+pushd "%CD%\backend"
+call npm run verify
+set BACKEND_VERIFY_ERR=!ERRORLEVEL!
+if "!BACKEND_VERIFY_ERR!"=="0" (
+  call npm run audit:high
+  set BACKEND_AUDIT_ERR=!ERRORLEVEL!
+) else (
+  set BACKEND_AUDIT_ERR=1
+)
+if "!BACKEND_AUDIT_ERR!"=="0" (
+  call npm run stress
+  set BACKEND_STRESS_ERR=!ERRORLEVEL!
+) else (
+  set BACKEND_STRESS_ERR=1
+)
+popd
+if not "!BACKEND_VERIFY_ERR!"=="0" (
+  echo ERROR: backend npm run verify failed with exit code !BACKEND_VERIFY_ERR!
+  if not defined _ION_VNP pause
+  exit /b !BACKEND_VERIFY_ERR!
+)
+if not "!BACKEND_AUDIT_ERR!"=="0" (
+  echo ERROR: backend npm run audit:high failed with exit code !BACKEND_AUDIT_ERR!
+  if not defined _ION_VNP pause
+  exit /b !BACKEND_AUDIT_ERR!
+)
+if not "!BACKEND_STRESS_ERR!"=="0" (
+  echo ERROR: backend npm run stress failed with exit code !BACKEND_STRESS_ERR!
+  if not defined _ION_VNP pause
+  exit /b !BACKEND_STRESS_ERR!
+)
+
+echo.
+echo === 3) Frontend verify (build + Playwright) ===
 if not exist "%CD%\frontend\package.json" (
   echo ERROR: frontend\package.json not found under %CD%\frontend
   if not defined _ION_VNP pause
@@ -51,10 +91,16 @@ if not "!VERIFY_ERR!"=="0" (
 )
 
 echo.
-echo === 3) npm audit (high) ===
+echo === 4) Frontend npm audit (high) ===
 pushd "%CD%\frontend"
 call npm run audit:high
+set FRONTEND_AUDIT_ERR=!ERRORLEVEL!
 popd
+if not "!FRONTEND_AUDIT_ERR!"=="0" (
+  echo ERROR: frontend npm run audit:high failed with exit code !FRONTEND_AUDIT_ERR!
+  if not defined _ION_VNP pause
+  exit /b !FRONTEND_AUDIT_ERR!
+)
 
 echo.
 echo OK - verify-full completed.

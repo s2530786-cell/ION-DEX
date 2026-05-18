@@ -76,6 +76,32 @@ OK - All files are UTF-8 without BOM, no NUL bytes.
   - `ion-data-backend`
   - `cursor-engineering-workflow`
   - `ion-dev-accelerators`
+- Installed agent capability Skills requested by the user:
+  - `skill-vetter` for Skill safety audits.
+  - `self-evolving` for lessons learned and memory updates.
+  - `tavily` for AI-oriented web/repository/documentation research, with fallback when Tavily is not configured.
+  - `find-skill` for discovering project/user/built-in Skills.
+  - `luke-agent-browser-clawdbot` for browser automation workflow guidance.
+  - `summarize-pro` for concise summaries of long docs, logs, diffs, and verification output.
+  - `claude-flow` for controlled Claude-Flow/RuFlo agent orchestration guidance.
+- Installed root dev dependency `claude-flow@3.7.0-alpha.35` as requested and verified the CLI:
+  - `npx claude-flow@3.7.0-alpha.35 --version` -> `ruflo v3.7.0-alpha.35`
+  - `npx claude-flow@3.7.0-alpha.35 init check` -> not initialized in this directory
+  - `npx claude-flow@3.7.0-alpha.35 doctor --component mcp` -> no Claude-Flow MCP config found
+  - `npx claude-flow@3.7.0-alpha.35 agent wasm-status` -> `@ruvector/rvagent-wasm` not installed
+  - Root `npm audit --audit-level=high --json` currently reports 1 critical and 10 high vulnerabilities through Claude-Flow transitive dependencies, so Claude-Flow is treated as a controlled local accelerator, not a trusted production/runtime dependency.
+- Verification after Claude-Flow capability update:
+  - `scripts\verify-full-save-log.cmd --no-pause` exited `0`.
+  - Encoding scanned 167 files: UTF-8 without BOM, no NUL bytes.
+  - Frontend verify passed: build succeeded and Playwright `13 passed`.
+  - Frontend `audit:high`: `found 0 vulnerabilities`.
+  - Separate root `npm audit --audit-level=high --json` remains failing because of Claude-Flow transitive dependencies: 1 critical, 10 high.
+- Claude-Flow cautious sandbox validation:
+  - Created isolated Git worktree `D:\openclaw-tools\ion-dex-nuke-claude-flow-sandbox` on branch `claude-flow-sandbox`, leaving the main dirty worktree untouched.
+  - Ran `npx claude-flow@3.7.0-alpha.35 init --minimal --skip-claude --no-global`; it succeeded but still generated `CLAUDE.md`, `.claude/`, `.claude-flow/`, and `.mcp.json`.
+  - Sandbox diagnostics passed: `init check` reports initialized, `doctor --component mcp` reports 1 `ruflo` MCP server configured, and `agent list` reports no active agents.
+  - Generated `.mcp.json` uses `ruflo@latest` and `autoStart: false`; do not copy it to the main repo without pinning and review.
+  - Generated `.claude/settings.json` enables hooks and broad command permissions; do not import it without security review.
 - Added Cursor Agent Review rules:
   - `BUGBOT.md`
 - Completed the 100-pass full green verification gate:

@@ -8,6 +8,13 @@ frontend/dist/
 frontend/playwright-report/
 frontend/test-results/
 
+# Backend
+backend/node_modules/
+backend/dist/
+
+# Root tooling dependencies
+node_modules/
+
 # Local Cursor maintenance backups (large / machine-specific)
 .maintenance/
 

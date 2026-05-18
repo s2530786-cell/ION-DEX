@@ -6,6 +6,7 @@ param(
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 $frontend = Join-Path $root "frontend"
+$backend = Join-Path $root "backend"
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $summary = Join-Path $env:TEMP "ion-verify-100-summary-$stamp.txt"
 $log = Join-Path $env:TEMP "ion-verify-100-$stamp.log"
@@ -58,22 +59,35 @@ for ($i = 1; $i -le $Iterations; $i++) {
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts\check-encoding.ps1")
   }
 
+  Set-Location $backend
+  $backendVerifyExit = Run-Step "backend-verify" {
+    cmd.exe /d /c "npm run verify"
+  }
+
+  $backendAuditExit = Run-Step "backend-audit-high" {
+    cmd.exe /d /c "npm run audit:high"
+  }
+
+  $backendStressExit = Run-Step "backend-stress" {
+    cmd.exe /d /c "npm run stress"
+  }
+
   Set-Location $frontend
   $verifyExit = Run-Step "frontend-verify" {
     cmd.exe /d /c "npm run verify"
   }
 
-  $auditExit = Run-Step "audit-high" {
+  $auditExit = Run-Step "frontend-audit-high" {
     cmd.exe /d /c "npm run audit:high"
   }
 
-  if ($encodingExit -eq 0 -and $verifyExit -eq 0 -and $auditExit -eq 0) {
+  if ($encodingExit -eq 0 -and $backendVerifyExit -eq 0 -and $backendAuditExit -eq 0 -and $backendStressExit -eq 0 -and $verifyExit -eq 0 -and $auditExit -eq 0) {
     $passed++
     Add-Content -Path $summary -Value ("PASS " + $i + " OK") -Encoding utf8
   }
   else {
     $failed++
-    $failureLine = "PASS " + $i + " FAILED encoding=" + $encodingExit + " verify=" + $verifyExit + " audit=" + $auditExit
+    $failureLine = "PASS " + $i + " FAILED encoding=" + $encodingExit + " backendVerify=" + $backendVerifyExit + " backendAudit=" + $backendAuditExit + " backendStress=" + $backendStressExit + " frontendVerify=" + $verifyExit + " frontendAudit=" + $auditExit
     Add-Content -Path $summary -Value $failureLine -Encoding utf8
     Write-Log $failureLine
     if (-not $ContinueOnFailure) {

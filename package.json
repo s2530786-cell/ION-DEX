@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "claude-flow": "3.7.0-alpha.35"
+  }
+}

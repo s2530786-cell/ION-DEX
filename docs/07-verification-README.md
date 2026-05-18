@@ -5,7 +5,8 @@ Full checklist: `docs/verification-six-pillars.md`
 Quick commands:
 
 - Repo root encoding: `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-encoding.ps1`
-- Frontend: `cd frontend && npm run verify`
+- Backend: `cd backend && npm run verify && npm run audit:high && npm run stress`
+- Frontend: `cd frontend && npm run verify && npm run audit:high`
 - Full script (PowerShell): `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-full.ps1`
 - Full script (CMD): `.\scripts\verify-full.cmd`
 - **Agents / CI (no interactive `pause`)**: `.\scripts\agent-verify.cmd` — also see `docs/08-ci-agent-automation.md`
