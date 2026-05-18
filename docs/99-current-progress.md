@@ -89,6 +89,10 @@ OK - All files are UTF-8 without BOM, no NUL bytes.
 - Indexed development accelerators into local project memory:
   - `docs/development-accelerators-memory.md`
   - Includes Git worktrees, Cursor `/worktree`, `/best-of-n`, Hooks, Agent Review, Bugbot, Cloud Agents, Cursor CLI/GitHub Actions, CI permission patterns, MCP, Rules, and Skills.
+- Added external reference architecture index:
+  - `docs/09-reference-architecture.md`
+  - Maps backend gateway patterns, blockchain development references, AI agent references, advanced web design, and AI media repositories into ION DEX phases.
+  - Establishes the immediate Phase 3 recommendation: a minimal typed backend API gateway/BFF with health, config, token list, ticker, burn, staking, bridge, domain, and profile mock endpoints.
 - Completed the interactive `Trade` and `Grid` frontend milestone:
   - `Trade` now has side/order controls, amount, price, slippage validation, preview, disabled submit state, and wallet-signing draft confirmation.
   - `Grid` now has mode, price bounds, grid count, investment validation, preview, disabled submit state, and AI Sentinel gated draft confirmation.
