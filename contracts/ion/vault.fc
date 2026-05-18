@@ -1,5 +1,4 @@
 
-
 #pragma version >=0.4.4;
 
 #include "common/common.fc";
@@ -21,27 +20,15 @@ global int storage::deposited_amount;
 () storage::save() impure inline_ref {
     set_data(begin_cell()
         .store_slice(storage::owner_address)
-
-
-
-
-
-
-
-
-
-
-
-
-
-      bian'jibianji
         .store_slice(storage::token_address)
         .store_slice(storage::router_address)
         .store_coins(storage::deposited_amount)
     .end_cell());
 }
 
-;; ── Message handlers ───────────────────────────────────────────
+;; 鈹€鈹€ Message handlers 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+
 
 () handle_deposit_ref_fee() impure {
     slice body = ctx.at(BODY);
@@ -81,7 +68,7 @@ global int storage::deposited_amount;
     storage::save();
 }
 
-;; ── Main entry ─────────────────────────────────────────────────
+;; 鈹€鈹€ Main entry 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
     throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
@@ -108,7 +95,7 @@ global int storage::deposited_amount;
     throw(error::wrong_op);
 }
 
-;; ── Getters ────────────────────────────────────────────────────
+;; 鈹€鈹€ Getters 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 (slice, slice, slice, int) get_vault_data() method_id {
     storage::load();
