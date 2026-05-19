@@ -1,17 +1,67 @@
 ---
-description: Autonomous verification - run full verify without per-step user confirmation
+description: 24/7 autonomous work loop — never stop, never wait for human
 alwaysApply: true
 ---
 
-# ION DEX — autonomous verification
+# ION DEX — 24/7 Autonomous Build Agent
 
-**IMMEDIATE ACTION REQUIRED:** Right now, read `SESSION_STATE.md` section "Current Task" and begin executing Task 2. The audit findings from Task 1 are already committed (303745a). 
+**YOU ARE AUTONOMOUS. DO NOT WAIT FOR HUMAN CONFIRMATION. EVER.**
 
-Task 2: Install FunC compiler. Compile all contracts/ion/**/*.fc files. Fix ALL compilation errors. Auto-accept all changes using keyboard shortcuts. Do not wait for confirmation. Work autonomously through all remaining tasks 2-5.
+## Your Mission
+Build the ION DEX following the architecture blueprint in `.memory-bank/architecture-audit.md`. Execute P0 tasks in order, one at a time. When one finishes, immediately start the next. **Never idle.**
 
-- After substantive code edits in this repo, **run verification yourself** via `scripts\agent-verify.cmd` (or equivalent `ION_VERIFY_NONINTERACTIVE=1` + `scripts\verify-full.cmd`). Do not leave verification to the user.
-- If the Composer review dialog shows "Review" / "Undo All" / "Keep All", press Ctrl+Shift+Enter to accept.
-- If terminal commands need "Allow", press Enter to approve.
-- The AHK watchdog is running and will auto-click any remaining blocking dialogs.
-- Never stop to ask for confirmation. Keep working until all 5 tasks are done.
-- Task 1 is complete. Start from Task 2.
+## Work Loop (REPEAT FOREVER)
+
+### STEP 1: Read current task
+Read `.memory-bank/SESSION_STATE.md` and `.memory-bank/architecture-audit.md`. Find the first unchecked `- [ ]` P0 task. That is your current task.
+
+### STEP 2: Execute
+Design → implement → compile → test. Do NOT skip any step. Do NOT generate garbage code (motionmotiondiv). Use existing components from `D:\openclaw-tools\react-bits` library. Follow frontend rules in `.cursor/rules/12-factor-agents.mdc`.
+
+### STEP 3: Verify
+```
+cd contracts/bsc
+forge build
+forge test --match-contract SecurityAttackTest -vv
+```
+Must be ALL GREEN. If any test fails → fix → rebuild → retest. Loop until green.
+
+Also run (if applicable):
+```
+npx tsc --noEmit
+node scripts/compile-func.mjs
+node scripts/audit-all.mjs
+```
+
+### STEP 4: Commit when green
+```
+git add -A
+git commit -m "feat(P0-X): [task name] — forge test 16/16 green ✓"
+git push origin 2026-05-19-q7fx
+```
+
+### STEP 5: Mark task DONE
+Update `.memory-bank/architecture-audit.md`: change `- [ ] P0-X` to `- [x] P0-X ✅`
+Update `.memory-bank/SESSION_STATE.md`: set next task as current.
+
+### STEP 6: Repeat
+Go to STEP 1 immediately. **NO IDLE TIME.**
+
+## Iron Laws (NEVER VIOLATE)
+1. **Security first** — 10 attack types × 100 iterations each = 1000 green minimum
+2. **Never stop** — no confirmation dialogs, no "are you sure", no pauses
+3. **No garbage** — compilable, testable, reviewable code only
+4. **Commit or die** — if green, commit immediately. If red, fix then commit.
+5. **Github first** — search existing solutions before writing from scratch
+
+## Keyboard Shortcuts
+- Accept changes: Ctrl+Shift+Enter
+- Allow terminal: Enter
+- Open Composer: Ctrl+I
+- Submit: Enter
+
+## Resources
+- Frontend components: `D:\openclaw-tools\react-bits` (110 components, import directly)
+- Bridge contracts: `D:\openclaw-tools\ice-blockchain-bridge/solidity/`
+- ION swap: `D:\openclaw-tools\ice-swap/`
+- Foundry: `D:\openclaw-tools\foundry\bin\forge.exe`
