@@ -91,14 +91,16 @@ for ($i = 1; $i -le $Iterations; $i++) {
 
   Set-Location $root
   $encodingScript = Join-Path $root "scripts\check-encoding.ps1"
+  # Route encoding through cmd.exe so we do not nest powershell.exe inside the host that runs this script
+  # (nested hosts under Cursor sometimes collapse with STATUS_DLL_INIT_FAILED / broken pipes).
   $encodingExit = Run-StepResilient "encoding" {
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File $encodingScript
+    cmd.exe /d /c "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$encodingScript`""
   }
   if ($encodingExit -ne 0) {
-    Write-Log ("RETRY_ENCODING_AFTER_FAIL firstExit=" + $encodingExit + " sleepMs=400")
-    Start-Sleep -Milliseconds 400
-    $encodingExit = Run-Step -Name "encoding-retry-final" -Command {
-      powershell.exe -NoProfile -ExecutionPolicy Bypass -File $encodingScript
+    Write-Log ("RETRY_ENCODING_AFTER_FAIL firstExit=" + $encodingExit + " sleepMs=800")
+    Start-Sleep -Milliseconds 800
+    $encodingExit = Run-StepResilient "encoding-retry-after-fail" {
+      cmd.exe /d /c "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$encodingScript`""
     }
   }
 

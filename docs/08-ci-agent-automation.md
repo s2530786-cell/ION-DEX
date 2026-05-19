@@ -33,7 +33,7 @@ Environment variables recognised by `scripts\verify-full.cmd`:
 
 Each numbered pass runs, in order: **`func-compile`** (`node scripts\compile-func.mjs`), **encoding**, **backend verify**, **backend audit:high**, **backend stress**, **frontend verify**, **frontend audit:high**.
 
-If **`encoding`** exits non‑zero, the script **sleeps briefly and retries `check-encoding.ps1` once** (helps with rare editor BOM races).
+If **`encoding`** exits non‑zero, the script **sleeps briefly** and retries **once**, using **`Run-StepResilient`** like the other gates. The check is launched as **`cmd.exe /c powershell.exe -File "…check-encoding.ps1"`** so a nested **`powershell.exe`** is not spawned directly from the host `pwsh` (avoids rare **`0xC0000142`** / broken-pipe flakes in Cursor‑embedded terminals).
 
 Each **`func-compile`** / **`backend-verify`** / **`frontend-verify`** phase is also wrapped by **`Run-StepResilient`**: exit **`-1073741502`** (native **`0xC0000142`**, **`STATUS_DLL_INIT_FAILED`**, often nested `cmd`/`npm`) triggers **one retry** before the pass fails.
 

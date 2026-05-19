@@ -1,29 +1,44 @@
 # Current Session State
 
-## 🎯 Master Prompt — Copy to Composer + Ctrl+Shift+Enter
+## 🎯 PHASE 5 前端路线图 — 自动执行，无需确认
 
 ```
-SESSION START — Full Pipeline
+PHASE 5: Core Frontend — 按步骤依次完成，每步 build 验证 → commit
 
-4 tasks, do in order, commit after each.
+STEP 1: DashboardPage.tsx 数据接入
+  - 硬编码数据 → ionApi.ts 实时调用
+  - 添加 loading skeleton / error / empty 三态
+  - npm run build 通过 → git commit
 
-TASK 1: Read SESSION_STATE.md fully.
-TASK 2: Run node scripts/compile-func.mjs. Fix all errors. 22/22 green. Git commit.
-TASK 3: Build production DEX frontend. Ref component library:
-  D:\openclaw-data\workspace\repos\react-bits (110+ components, browse first).
-  - Replace hardcoded data in DashboardPage.tsx/BusinessPages.tsx with ionApi.ts
-  - Swap panel: real validation, token selector, slippage
-  - Market chart: lightweight-charts with real data
-  - Stats: TVL/APR/Burn from ionApi
-  - Skeleton/loading/error/empty states everywhere
-  - Follow react-bits patterns, no custom design from scratch
-  - Mobile responsive (320px-4K)
-  - After each component: npm run build in frontend/
-  Git commit when done.
-TASK 4: Run scripts/verify-100.ps1. 100/100 GREEN. Retry on fail. Git commit.
+STEP 2: SwapPage.tsx（新建）
+  - 参考 react-bits 组件库: D:\openclaw-data\workspace\repos\react-bits
+  - 代币选择器、数量输入、滑点、报价
+  - 移动端 320px 响应式
+  - npm run build 通过 → git commit
 
-ZERO GARBAGE: No pinyin/placeholder/hi/test. UTF-8 no BOM. Max 2 blank lines.
-When done: update SESSION_STATE.md, say "ALL TASKS DONE".
+STEP 3: PoolPage.tsx（新建）
+  - 池列表 + 添加/移除 LP + 收益计算
+  - npm run build 通过 → git commit
+
+STEP 4: StakePage.tsx（新建）
+  - 质押面板、收益、解锁倒计时
+  - npm run build 通过 → git commit
+
+STEP 5: Burn + Bridge 面板
+  - 销毁统计、跨链状态
+  - npm run build 通过 → git commit
+
+STEP 6: AppShell 导航完善
+  - 侧边栏 + 汉堡菜单 + 路由过渡
+  - npm run build 通过 → git commit
+
+STEP 7: 全栈验证
+  - node scripts/compile-func.mjs 22/22
+  - node scripts/compile-all.js 6/6
+  - npm run build 零 error
+  - git commit + push
+
+规则: 零垃圾 | 每步 build 验证 | UI 从 react-bits 挑 | 自动接受不改动 | 不等人
 ```
 
 ---
