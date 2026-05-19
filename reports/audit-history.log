@@ -136,3 +136,69 @@
 [2026-05-19T09:04:17.190Z] ❌ 1 FAILURES: solhint
 [2026-05-19T09:04:17.228Z] ❌ 1 FAILURES: solhint
 [2026-05-19T09:04:17.259Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:05:48.700Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:05:48.702Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:05:48.702Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:06:18.704Z] ❌ FunC compile FAILED
+[2026-05-19T09:06:18.706Z] ❌ FunC compile FAILED
+[2026-05-19T09:06:18.706Z] ❌ FunC compile FAILED
+[2026-05-19T09:15:07.345Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:15:07.345Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:15:07.346Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:15:37.349Z] ❌ FunC compile FAILED
+[2026-05-19T09:15:37.350Z] ❌ FunC compile FAILED
+[2026-05-19T09:15:37.350Z] ❌ FunC compile FAILED
+[2026-05-19T09:20:07.521Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:20:07.521Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:20:07.521Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:20:37.526Z] ❌ FunC compile FAILED
+[2026-05-19T09:20:37.526Z] ❌ FunC compile FAILED
+[2026-05-19T09:20:37.527Z] ❌ FunC compile FAILED
+[2026-05-19T09:20:40.528Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:20:40.529Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:20:40.529Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:21:10.532Z] ❌ FunC compile FAILED
+[2026-05-19T09:21:10.533Z] ❌ FunC compile FAILED
+[2026-05-19T09:21:10.535Z] ❌ FunC compile FAILED
+[2026-05-19T09:25:07.690Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:25:07.690Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:25:07.692Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:25:37.694Z] ❌ FunC compile FAILED
+[2026-05-19T09:25:37.695Z] ❌ FunC compile FAILED
+[2026-05-19T09:25:37.695Z] ❌ FunC compile FAILED
+[2026-05-19T09:39:29.221Z] 🔄 AUDIT triggered by: \contracts\bsc\test\IonWrapper.t.sol
+[2026-05-19T09:39:29.221Z] 🔄 AUDIT triggered by: \contracts\bsc\test\IonWrapper.t.sol
+[2026-05-19T09:39:29.222Z] 🔄 AUDIT triggered by: \contracts\bsc\test\IonWrapper.t.sol
+[2026-05-19T09:39:44.367Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:39:44.367Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:39:44.368Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:42:52.059Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:42:52.060Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:42:52.060Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:43:22.062Z] ❌ FunC compile FAILED
+[2026-05-19T09:43:22.062Z] ❌ FunC compile FAILED
+[2026-05-19T09:43:22.064Z] ❌ FunC compile FAILED
+[2026-05-19T09:51:22.233Z] 🔄 AUDIT triggered by: \contracts\bsc\test\attackers\AccessControlAttacker.sol
+[2026-05-19T09:51:22.233Z] 🔄 AUDIT triggered by: \contracts\bsc\test\attackers\AccessControlAttacker.sol
+[2026-05-19T09:51:22.234Z] 🔄 AUDIT triggered by: \contracts\bsc\test\attackers\AccessControlAttacker.sol
+[2026-05-19T09:51:27.854Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:51:27.861Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:51:27.921Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:55:08.433Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:55:08.433Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:55:08.433Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:55:38.437Z] ❌ FunC compile FAILED
+[2026-05-19T09:55:38.438Z] ❌ FunC compile FAILED
+[2026-05-19T09:55:38.438Z] ❌ FunC compile FAILED
+[2026-05-19T09:55:41.439Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:55:41.442Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:55:41.442Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:56:11.443Z] ❌ FunC compile FAILED
+[2026-05-19T09:56:11.445Z] ❌ FunC compile FAILED
+[2026-05-19T09:56:11.447Z] ❌ FunC compile FAILED
+[2026-05-19T09:59:56.249Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:59:56.250Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T09:59:56.250Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T10:00:26.254Z] ❌ FunC compile FAILED
+[2026-05-19T10:00:26.254Z] ❌ FunC compile FAILED
+[2026-05-19T10:00:26.254Z] ❌ FunC compile FAILED

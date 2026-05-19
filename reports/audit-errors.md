@@ -494,3 +494,174 @@ No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts
 No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
 
 ```
+
+## func-compile — 2026-05-19T09:06:18.705Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:06:18.706Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:06:18.707Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:15:37.349Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:15:37.350Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:15:37.351Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:20:37.526Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:20:37.527Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:20:37.527Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:21:10.533Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:21:10.534Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:21:10.535Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:25:37.695Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:25:37.696Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:25:37.696Z
+```
+
+```
+
+## solhint — 2026-05-19T09:39:44.366Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## solhint — 2026-05-19T09:39:44.366Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## solhint — 2026-05-19T09:39:44.367Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## func-compile — 2026-05-19T09:43:22.063Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:43:22.063Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:43:22.064Z
+```
+
+```
+
+## solhint — 2026-05-19T09:51:27.854Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## solhint — 2026-05-19T09:51:27.861Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## solhint — 2026-05-19T09:51:27.920Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## func-compile — 2026-05-19T09:55:38.438Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:55:38.439Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:55:38.439Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:56:11.443Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:56:11.445Z
+```
+
+```
+
+## func-compile — 2026-05-19T09:56:11.447Z
+```
+
+```
+
+## func-compile — 2026-05-19T10:00:26.254Z
+```
+
+```
+
+## func-compile — 2026-05-19T10:00:26.255Z
+```
+
+```
+
+## func-compile — 2026-05-19T10:00:26.255Z
+```
+
+```
