@@ -3,8 +3,8 @@ import { readFileSync } from 'fs';
 import { resolve, relative, basename, extname } from 'path';
 import fs from 'fs';
 
-const PINATA_KEY = '3d9c62f5ea59126cdde1';
-const PINATA_SECRET = encodeURIComponent('V5XLLvei98@B3Gs');
+const PINATA_KEY = '4ed03a598b927af3487a';
+const PINATA_SECRET = 'e68350a043c4513b611d6255a04c38a5f670d21839454a206346fa881cfe1aa2';
 
 const DIST = 'D:/openclaw-tools/ion-dex-nuke/frontend/dist';
 

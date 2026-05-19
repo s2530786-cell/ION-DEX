@@ -46,8 +46,10 @@ test.describe("ION DEX smoke", () => {
     await clickNav(page, "swap");
     await expect(page.getByTestId("page-swap")).toBeVisible();
     await page.getByTestId("swap-pay-amount").fill("1");
-    await expect(page.getByTestId("swap-submit")).toBeVisible();
-    await expect(page.getByTestId("swap-submit")).toBeEnabled();
+    const swapSubmit = page.getByTestId("swap-submit");
+    await expect(swapSubmit).toBeVisible();
+    await expect(swapSubmit).toBeDisabled();
+    await expect(page.getByTestId("swap-wallet-hint")).toBeVisible();
     await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
   });
 

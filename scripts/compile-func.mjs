@@ -83,6 +83,8 @@ const ENTRY_BASES = new Set([
   'vault.fc',
   'FeeDistributor.fc',
   'BridgeInbox.fc',
+  'dns-collection.fc',
+  'dns-item.fc',
 ]);
 
 /** recv_internal stub so codegen produces TVM entry / Fift main */
@@ -174,6 +176,9 @@ const FRAGMENT_PROBE_BODY = /** @type {Record<string,string>} */ ({
       '#include "common/common.fc";\n' +
       '#include "pool/storage.fc";\n' +
       '#include "pool/sandwich.fc";',
+
+  'dns-params.fc': '#pragma version >=0.4.4;\n#include "common/common.fc";\n#include "dns-params.fc";',
+  'dns-utils.fc': '#pragma version >=0.4.4;\n#include "common/common.fc";\n#include "dns-utils.fc";',
 });
 
 const rootFiles = Object.keys(deps).filter(
@@ -206,10 +211,9 @@ for (const targetAbs of rootFiles) {
   try {
     const basename = rel.split('/').pop() || '';
 
-    const isPrimary =
-      basename === rel && ENTRY_BASES.has(basename); // deployer.fc at root etc.
+    const isEntry = ENTRY_BASES.has(basename) || ENTRY_BASES.has(rel);
 
-    if (!isPrimary) {
+    if (!isEntry) {
       const body = FRAGMENT_PROBE_BODY[rel];
       if (!body) {
         console.log(`  ${title} ❌ missing probe body for fragment rel=${rel}`);
