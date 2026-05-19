@@ -322,3 +322,10 @@ PHASE LATER (P2-P3):
 ---
 
 _Last updated: 2026-05-19 14:40 CST by 旺财_
+
+
+## ?? Official ION Ecosystem Repos (Cloned by Master)
+
+See full index: [.memory-bank/official-repos-index.md](.memory-bank/official-repos-index.md)
+
+**Critical: ALL bridge code already exists locally. DO NOT write from scratch.**
