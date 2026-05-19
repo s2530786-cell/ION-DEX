@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "npx func-js pool.fc && npx func-js router.fc && npx func-js vault.fc && npx func-js deployer.fc && npx func-js lp_account.fc && npx func-js lp_wallet.fc",
+    "compile": "node scripts/compile-all.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

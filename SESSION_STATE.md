@@ -1,5 +1,33 @@
 # Current Session State
 
+## 🎯 Master Prompt — Copy to Composer + Ctrl+Shift+Enter
+
+```
+SESSION START — Full Pipeline
+
+4 tasks, do in order, commit after each.
+
+TASK 1: Read SESSION_STATE.md fully.
+TASK 2: Run node scripts/compile-func.mjs. Fix all errors. 22/22 green. Git commit.
+TASK 3: Build production DEX frontend. Ref component library:
+  D:\openclaw-data\workspace\repos\react-bits (110+ components, browse first).
+  - Replace hardcoded data in DashboardPage.tsx/BusinessPages.tsx with ionApi.ts
+  - Swap panel: real validation, token selector, slippage
+  - Market chart: lightweight-charts with real data
+  - Stats: TVL/APR/Burn from ionApi
+  - Skeleton/loading/error/empty states everywhere
+  - Follow react-bits patterns, no custom design from scratch
+  - Mobile responsive (320px-4K)
+  - After each component: npm run build in frontend/
+  Git commit when done.
+TASK 4: Run scripts/verify-100.ps1. 100/100 GREEN. Retry on fail. Git commit.
+
+ZERO GARBAGE: No pinyin/placeholder/hi/test. UTF-8 no BOM. Max 2 blank lines.
+When done: update SESSION_STATE.md, say "ALL TASKS DONE".
+```
+
+---
+
 ## Project
 
 ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
@@ -166,7 +194,7 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 
 - **stop**: Runs `.cursor/hooks/ion-verify-on-stop.cmd`: if `scripts\compile-func.mjs` exists, compile `contracts/ion` first; then `scripts\agent-verify.cmd` (equiv. `verify-full.cmd` with `ION_VERIFY_NONINTERACTIVE=1`). Hook config `.cursor/hooks.json`: `timeout` 900, `failClosed: false`.
 - **every save (Agent / Tab)**: `afterFileEdit` / `afterTabFileEdit` invoke `node scripts/ion-on-save-pipeline.mjs --cursor-hook` (quick encoding check on `file_path` + `compile-func.mjs`); `timeout` 540, `failClosed: false`.
-- **every save (Ctrl+S)**: `.vscode/settings.json` ? **Run On Save** (`emeraldwalk.RunOnSave`); see `.vscode/extensions.json` recommendation. Without the extension, only Agent/Tab hook paths run the on-save compile gate.
+- **every save (Ctrl+S)**: `.vscode/settings.json` --- **Run On Save** (`emeraldwalk.RunOnSave`); see `.vscode/extensions.json` recommendation. Without the extension, only Agent/Tab hook paths run the on-save compile gate.
 - **Session memory order**: `.memory-bank/README.md` -> `docs/99-current-progress.md` -> narrative/history in `SESSION_STATE.md`. Treat `docs/99-current-progress.md` as canonical progress vs dated bullets here.
 - **VS Code**: See `.vscode/tasks.json` labels starting with `ION DEX:` (agent-verify, verify-full-save-log, verify-100).
 
@@ -180,12 +208,12 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 6. For every development task, proactively load `.cursor/skills/cursor-engineering-workflow/SKILL.md` and `.cursor/skills/ion-dev-accelerators/SKILL.md` as needed; use `docs/cursor-docs-feature-memory.md` and `docs/development-accelerators-memory.md` as local references.
 7. Do not wait for the user to request worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy when they would improve the task.
 8. Phase 5 / nav + E2E (2026-05-18): Encoding scan OK; `/ion/` reference excluded via `.gitignore`; **`scripts\verify-100.ps1`** **`RESULT=GREEN`**; **`npm run verify`** uses **`tcp:127.0.0.1:59333`** readiness; Playwright **12 passed**, **`audit:high`** **0**; **`hidden lg:flex`** nav caveat fixed with scrollable nav strip.
-9. Wallet/Profile shell (2026-05-18): `AppShell` wallet opens local provider picker; profile drafted; disconnect without keys; verify ? **`npm run verify`** **13 passed**, **`audit:high`** **0**, 100-pass **`RESULT=GREEN`**.
-10. External reference architecture (2026-05-18): **`docs/09-reference-architecture.md`** ? gateways (`tyk`/`shenyu`/`ocelot`) are pattern refs only; Phase 3 BFF-first.
+9. Wallet/Profile shell (2026-05-18): `AppShell` wallet opens local provider picker; profile drafted; disconnect without keys; verify --- **`npm run verify`** **13 passed**, **`audit:high`** **0**, 100-pass **`RESULT=GREEN`**.
+10. External reference architecture (2026-05-18): **`docs/09-reference-architecture.md`** --- gateways (`tyk`/`shenyu`/`ocelot`) are pattern refs only; Phase 3 BFF-first.
 11. Skills (2026-05-18): `skill-vetter`, **`self-evolving`**, **`tavily`**, **`find-skill`**, **`luke-agent-browser-clawdbot`**, **`summarize-pro`** wired in **`AGENTS.md`**.
 12. Workflow (2026-05-18): Prefer **`cursor-engineering-workflow`** + **`self-evolving`** loops.
 13. Accelerators (2026-05-18): Worktrees + review/audit for non-trivial work.
-14. Claude-Flow/RuFlo (2026-05-18): Pinned **`3.7.0-alpha.35`**; main has no MCP/daemon/WASM ? treat as constrained local tool; **`verify-full-save-log`** **OK** separately from dependency audit findings.
+14. Claude-Flow/RuFlo (2026-05-18): Pinned **`3.7.0-alpha.35`**; main has no MCP/daemon/WASM --- treat as constrained local tool; **`verify-full-save-log`** **OK** separately from dependency audit findings.
 15. Phase 3 Bridge/Domain slice (2026-05-19): **`fetchBridgeRoutes`** / **`fetchDomainResolve`**; **`BridgeMetricsRow`** + **`DomainMetricsRow`** (`custodian.ion`); E2E **`bridge-metrics-source`** / **`domain-metrics-source`**; **`verify-full-save-log.cmd --no-pause`** exit **0**; Playwright **13 passed**. **`verify-100.ps1`** retries Windows transient **`-1073741502`** per step once; heavy 100-pass: run from **standalone** **`cmd`/`pwsh`** if Cursor shell flaky. Next: **`/api/bridge/routes`** registry parity, Redis/PostgreSQL drafts.
 ## Memory MCP Candidates
 
@@ -200,7 +228,15 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 
 ### Autonomous block (immediate)
 
-Per **`.cursor/rules/ion-autonomous-verify.mdc`**: Task 1 baseline committed (**`303745a`**). **NOW: Task 2** ? FunC toolchain on PATH / `compile-func.mjs` green ? compile **`contracts/ion/**/*.fc`**, fix all errors ? then Tasks **3?5** (scoped tests/docs/verify) until that five-task slice is closed.
+Per **`.cursor/rules/ion-autonomous-verify.mdc`**: Task 1 baseline committed (**`303745a`**).
+
+**Task 2 (FunC, 2026-05-19): compile gate GREEN.** Run **`node scripts/compile-func.mjs`** --- all **`contracts/ion`** entry contracts + **`FRAGMENT_PROBE_BODY`** fragments compile (**22** tracked `.fc` under repo tree + funcbox deps).
+
+**Audit fix (vault):** **`op::withdraw_fee`** restricted to **`ctx.at(SENDER)`** equals **`storage::router_address`** OR **`storage::owner_address`** before sweeping deposits via **`vault_pay_to`** (previously any caller could trigger withdraw path).
+
+**Automation hooks:** **`scripts/task2-func-loop.cmd`** (optional **`--with-100`**); VS Code **`ION DEX: Task2 Func compile then agent-verify`**; **`scripts/verify-100.ps1`** now runs **`func-compile`** every pass and retries **`check-encoding.ps1`** once after failure.
+
+**NEXT:** Tasks **3--5** (tests/docs/BSC **`forge`** when toolchain installed) plus roadmap **`DexRouter.fc`** onwards when starting greenfield contracts.
 
 Commands after edits: **`scripts/agent-verify.cmd`** or **`ION_VERIFY_NONINTERACTIVE=1 scripts/verify-full.cmd`**.
 
@@ -210,16 +246,16 @@ Skills: **`ion-contract-audit`**, **`ion-official-source`**. Official tree: **`D
 
 **FunC (`contracts/ion/`)**, in order:
 
-1. **`DexRouter.fc`** ? swap routing, path resolution, fee forwarding  
-2. **`IonAmmPool.fc`** ? constant-product AMM, liquidity add/remove, swap, fees  
-3. **`LimitOrderBook.fc`** ? orders / match / cancel  
-4. **`GridStrategyVault.fc`** ? grid params, rebalance, LP bookkeeping  
-5. **`StakingPool.fc`** ? deposit/withdraw rewards, emergency path  
-6. **`FeeDistributor.fc`** ? fee collection + treasury splits  
-7. **`Treasury.fc`** ? multisig treasury  
-8. **`OracleAdapter.fc`** ? signed prices + TWAP fallback  
-9. **`DomainMarketplace.fc`** ? `.ion` marketplace  
-10. **`DomainResolverAdapter.fc`** ? resolution + ownership proofs  
+1. **`DexRouter.fc`** --- swap routing, path resolution, fee forwarding  
+2. **`IonAmmPool.fc`** --- constant-product AMM, liquidity add/remove, swap, fees  
+3. **`LimitOrderBook.fc`** --- orders / match / cancel  
+4. **`GridStrategyVault.fc`** --- grid params, rebalance, LP bookkeeping  
+5. **`StakingPool.fc`** --- deposit/withdraw rewards, emergency path  
+6. **`FeeDistributor.fc`** --- fee collection + treasury splits  
+7. **`Treasury.fc`** --- multisig treasury  
+8. **`OracleAdapter.fc`** --- signed prices + TWAP fallback  
+9. **`DomainMarketplace.fc`** --- `.ion` marketplace  
+10. **`DomainResolverAdapter.fc`** --- resolution + ownership proofs  
 
 **BSC (`contracts/bsc/`, Foundry):** **`BSCVault.sol`**, **`BridgeVerifier.sol`**, **`BSCFeeVault.sol`**.
 

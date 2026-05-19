@@ -77,8 +77,21 @@ for ($i = 1; $i -le $Iterations; $i++) {
   Write-Log ("PASS " + $i + "/" + $Iterations)
 
   Set-Location $root
+  $funcExit = Run-StepResilient "func-compile" {
+    cmd.exe /d /c "node scripts\compile-func.mjs"
+  }
+
+  Set-Location $root
+  $encodingScript = Join-Path $root "scripts\check-encoding.ps1"
   $encodingExit = Run-StepResilient "encoding" {
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts\check-encoding.ps1")
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File $encodingScript
+  }
+  if ($encodingExit -ne 0) {
+    Write-Log ("RETRY_ENCODING_AFTER_FAIL firstExit=" + $encodingExit + " sleepMs=400")
+    Start-Sleep -Milliseconds 400
+    $encodingExit = Run-Step -Name "encoding-retry-final" -Command {
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -File $encodingScript
+    }
   }
 
   Set-Location $backend
@@ -103,13 +116,13 @@ for ($i = 1; $i -le $Iterations; $i++) {
     cmd.exe /d /c "npm run audit:high"
   }
 
-  if ($encodingExit -eq 0 -and $backendVerifyExit -eq 0 -and $backendAuditExit -eq 0 -and $backendStressExit -eq 0 -and $verifyExit -eq 0 -and $auditExit -eq 0) {
+  if ($funcExit -eq 0 -and $encodingExit -eq 0 -and $backendVerifyExit -eq 0 -and $backendAuditExit -eq 0 -and $backendStressExit -eq 0 -and $verifyExit -eq 0 -and $auditExit -eq 0) {
     $passed++
     Add-Content -Path $summary -Value ("PASS " + $i + " OK") -Encoding utf8
   }
   else {
     $failed++
-    $failureLine = "PASS " + $i + " FAILED encoding=" + $encodingExit + " backendVerify=" + $backendVerifyExit + " backendAudit=" + $backendAuditExit + " backendStress=" + $backendStressExit + " frontendVerify=" + $verifyExit + " frontendAudit=" + $auditExit
+    $failureLine = "PASS " + $i + " FAILED funcCompile=" + $funcExit + " encoding=" + $encodingExit + " backendVerify=" + $backendVerifyExit + " backendAudit=" + $backendAuditExit + " backendStress=" + $backendStressExit + " frontendVerify=" + $verifyExit + " frontendAudit=" + $auditExit
     Add-Content -Path $summary -Value $failureLine -Encoding utf8
     Write-Log $failureLine
     if (-not $ContinueOnFailure) {

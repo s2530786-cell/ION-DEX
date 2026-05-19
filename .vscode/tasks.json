@@ -15,6 +15,37 @@
       }
     },
     {
+      "label": "ION DEX: compile-func.mjs",
+      "type": "shell",
+      "command": "node scripts\\compile-func.mjs",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "group": "build"
+    },
+    {
+      "label": "ION DEX: Task2 Func compile then agent-verify",
+      "type": "shell",
+      "command": "cmd /d /c echo ION^ DEX Task2 chain: compile-func + agent-verify finished.",
+      "dependsOn": [
+        "ION DEX: compile-func.mjs",
+        "ION DEX: agent-verify (noninteractive)"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
       "label": "ION DEX: agent-verify (noninteractive)",
       "type": "shell",
       "command": "scripts\\agent-verify.cmd",

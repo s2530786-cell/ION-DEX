@@ -27,3 +27,4 @@
 [07:05:53] Idle detected (CPU+=48.3s). Dispatching: Task 2 ¡ª FunC Compile Fix
 [07:06:14] Idle detected (CPU+=33.7s). Dispatching: Task 2 ¡ª FunC Compile Fix
 [07:06:36] Idle detected (CPU+=43.3s). Dispatching: Task 2 ¡ª FunC Compile Fix
+FRONTEND: Build production DEX UI per react-bits, replace hardcoded data with ionApi, add loading/error states

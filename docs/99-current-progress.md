@@ -2,6 +2,10 @@
 
 ## Latest Verified Status
 
+- **Task 2 `vault.fc` 访问控制（2026-05-19 · 审计）**：`op::deposit_ref_fee` 仅 **`router`**；`op::withdraw_fee` 需 **`sender == router | owner`**，防止任意地址触发金库向路由「清空中转余额」路径。注释 UTF-8 修复（Windows 保存导致的 `;;` 分隔线乱码已还原）。`scripts/verify-100.ps1` 每轮 PASS 首步运行 **`func-compile`**，失败时 `funcCompile=` 出现在汇总行。
+
+- **Phase 2 `contracts/ion` FunC 编译链路（2026-05-19）**：`contracts/ion/npm run compile` → `scripts/compile-all.js`，`npx func-js` **v0.4.6**，每入口生成 **`contracts/ion/build/*.json`**（已 `.gitignore`）。根目录 **`node scripts/compile-func.mjs`**：**22** 个仓库内 **`contracts/ion/**/*.fc`** + fragment probes **全部通过**。本会话 **`forge`** 未在 PATH，`forge build`/`test` 留待 Foundry 环境或 CI。
+
 - **Cursor Agent `stop` 自动化链（ongoing）**：`.cursor/hooks.json` → `stop` → `.cursor/hooks/ion-verify-on-stop.cmd` 顺序执行 **`node scripts/compile-func.mjs`**（`contracts/ion` FunC）再执行 **`scripts\agent-verify.cmd`**（全仓编码 + 后端 + 前端）；`timeout` 现为 **900s**，`failClosed: false**。便于 Agent 会话结束时自动拉回合约编译与门禁，无需手工点脚本。
 - **每次保存触发 FunC 编译门禁（可选重，2026-05-19）**：`scripts/ion-on-save-pipeline.mjs` — 对被保存路径做快速编码检查后执行 **`compile-func.mjs`（全量 `contracts/ion`，数十秒级）**。**Cursor**：`afterFileEdit` / `afterTabFileEdit`，`timeout` **540s**。**编辑器 Ctrl+S**：`.vscode/settings.json` 绑定 **Run On Save**（`emeraldwalk.RunOnSave`）；若未安装该扩展则无手动保存侧触发。详见 `docs/08-ci-agent-automation.md`。
 

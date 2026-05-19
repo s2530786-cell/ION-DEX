@@ -29,9 +29,13 @@ Environment variables recognised by `scripts\verify-full.cmd`:
 - `CI` — skip all pauses (GitHub Actions sets this).
 - `ION_VERIFY_NONINTERACTIVE=1` — skip all pauses (used by `agent-verify.cmd`).
 
-### `verify-100.ps1` retries (Windows transient exit)
+### `verify-100.ps1` passes (ordering)
 
-[`scripts\verify-100.ps1`](../scripts/verify-100.ps1) wraps each phase (`encoding`, `backend-verify`, backend audit/stress, `frontend-verify`, frontend audit) in **`Run-StepResilient`**. If a step exits with **`-1073741502`** (native **`0xC0000142`**, **`STATUS_DLL_INIT_FAILED`**, often seen from nested `cmd`/`npm`), the script logs it and **re-runs that same step once** before failing the entire pass block.
+Each numbered pass runs, in order: **`func-compile`** (`node scripts\compile-func.mjs`), **encoding**, **backend verify**, **backend audit:high**, **backend stress**, **frontend verify**, **frontend audit:high**.
+
+If **`encoding`** exits non‑zero, the script **sleeps briefly and retries `check-encoding.ps1` once** (helps with rare editor BOM races).
+
+Each **`func-compile`** / **`backend-verify`** / **`frontend-verify`** phase is also wrapped by **`Run-StepResilient`**: exit **`-1073741502`** (native **`0xC0000142`**, **`STATUS_DLL_INIT_FAILED`**, often nested `cmd`/`npm`) triggers **one retry** before the pass fails.
 
 If the embedded Cursor terminal still flakes on long gates, launch **`scripts\verify-100.ps1`** from a **standalone `cmd.exe` or Windows Terminal `pwsh`** session.
 
@@ -62,6 +66,17 @@ If you bootstrap from scratch instead of cloning this repo:
 2. Keep `.cursor/hooks/ion-verify-on-stop.cmd` (or replicate the compile + verify sequence above).
 
 `failClosed` is `false`, so hook failure does not block the IDE entirely; inspect the Hooks output channel and fix red steps.
+
+## Task 2 one-shot (FunC + full verify + optional 100-pass)
+
+| Goal | Command |
+|------|---------|
+| Compile only | `node scripts\compile-func.mjs` |
+| Compile + encoding + backend + frontend (same as Cursor **stop**) | `scripts\agent-verify.cmd` (**does not** compile FunC; run compile first, or use hook) |
+| FunC then full verify in one CMD | `scripts\task2-func-loop.cmd` |
+| Above + 100 iterations (`verify-100.ps1`, long) | `scripts\task2-func-loop.cmd --with-100` |
+
+`verify-100.ps1` runs **`func-compile`** at the start of **every** pass, so FunC stays on the critical path during the 100-run gate.
 
 ### After every save (Agent / Tab + editor Ctrl+S)
 
