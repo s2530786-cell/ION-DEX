@@ -74,3 +74,31 @@ ION DEX is planned as an OKX Web3 wallet style DEX for ION with:
 13. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
 
 See also `docs/08-ci-agent-automation.md` for GitHub Actions and optional Cursor hooks.
+
+## Cursor Cloud specific instructions
+
+### Services overview
+
+| Service | Command | Port | Notes |
+|---------|---------|------|-------|
+| Frontend (Vite + React) | `cd frontend && npm run dev` | 3000 | `npm run dev:local` uses 127.0.0.1:3001 |
+| Backend (Node.js) | `cd backend && npm run build && npm run start` | 8787 | Must build before starting; mock data only |
+
+No Docker, PostgreSQL, Redis, or external services required at this stage.
+
+### Running tests
+
+- **Backend unit tests**: `cd backend && npm run build && npm run test` (6 tests via `node --test`)
+- **Frontend build**: `cd frontend && npm run build` (runs `tsc && vite build`)
+- **E2E tests**: `cd frontend && PLAYWRIGHT_BASE_URL=http://127.0.0.1:3000 npx playwright test` (13 Playwright smoke tests; requires Chromium installed via `npx playwright install --with-deps chromium` and a running frontend server)
+- **Full verify** (build + E2E): `cd frontend && npm run verify` (builds first, then spawns a preview server on a random port)
+- **Encoding check**: `bash scripts/check-encoding.sh`
+- **Audit**: `cd frontend && npm audit --audit-level=high` and `cd backend && npm audit --audit-level=high`
+
+### Non-obvious caveats
+
+- The verification scripts (`scripts/*.cmd`, `scripts/*.ps1`) are Windows-oriented. On Linux Cloud Agent VMs, use the bash equivalent commands directly or the `check-encoding.sh` script.
+- Running `npx playwright test` directly (without `npm run verify`) requires either a running dev server or setting `PLAYWRIGHT_BASE_URL`. The default Playwright config targets port 59333, which is only started by the `verify-e2e.mjs` helper script.
+- The root `package.json` only contains `claude-flow` as a devDependency (AI orchestration tool with known audit findings). It is not needed for running the app or tests.
+- `frontend/package.json` uses `latest` tags for many dependencies. `npm install` may resolve different versions across sessions; if E2E tests break after a fresh install, check for breaking upstream changes.
+- The backend must be built (`npm run build`) before it can be started or tested — there is no `ts-node` or similar dev runner.
