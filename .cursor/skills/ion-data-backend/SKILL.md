@@ -36,7 +36,7 @@ Use this skill for data and backend work around:
 > | **ETH Price/Liquidity** | Uniswap V3 Quoter `0xb27308f9F90D2F3dcC8a55F0917A4D7AE73A3276` (BSC) | On-chain `quoteExactInputSingle` |
 > | **ION Chain Data** | `https://api.mainnet.ice.io/http/v2/` + `https://api.mainnet.ice.io/indexer/v3/` | JSON RPC |
 > | **BSC RPC** | Public RPC or configurable endpoint | JSON RPC |
-> | **Wallet** | ethers.js / wagmi / viem → real injected provider (MetaMask/OKX/Trust) | EIP-1193 |
+> | **Wallet** | ethers.js / wagmi / viem → EIP-1193 injected provider | MetaMask, Binance Web3, OKX Web3, Bitget Web3, Trust Wallet, Coinbase Wallet, Rabby |
 > | **Staking** | ION链 `get_stake_info` / `get_validator_list` RPC | On-chain call |
 > | **Burn** | BSC burn address + ION mainnet burn events | Indexer query |
 > | **Bridge** | BSCVault events + ION validators (multisig-code.fc param71) | On-chain events |

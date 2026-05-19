@@ -9,6 +9,7 @@ SESSION START — ION DEX Full Pipeline
 📋 PURPOSE: 把 ION DEX 从 mock 骨架建成可上线产品
   目标：ION 链用户能用 DEX 交易 ION↔USDT
   路径：前端真数据 → 后端真API → 桥部署 → PancakeSwap LP
+  💰 经济模型: 所有手续费/滑点/协议费/Gas/桥费 → 全部用 ION 收取
 ═══════════════════════════════════════════
 🚫 DO NOT — 绝对禁止
   1. 不写 mock/placeholder/硬编码假数据 — 每个接口对接真实数据源
@@ -17,6 +18,7 @@ SESSION START — ION DEX Full Pipeline
   4. 不询问确认 — 改代码/修bug/跑测试直接干，只报告结果
   5. 不浪费主网 gas — 先在 BSC 测试网跑通，验证全绿后再上主网
   6. 不动 ION 链内建协议合约 — multisig-code.fc(config_param 71) 和 votes-collector.fc(config_param 72) 是 ION L1 协议层的，只能读、不能写、不能部署覆盖
+  10. 不收非ION代币作为费用 — 所有手续费/协议费/滑点/Gas补偿/桥费 → 一律用 ION 计价和收取，不收 USDT/BNB/ETH
   7. 不提交包含 API Key 的代码 — 检查 crsr_/sk-/ghp_/ARK_API_KEY 再 git add
   8. 不产出中文乱码 — 所有文件 UTF-8 无 BOM，中文必须正常显示
      → 写文件后立即读回检查：中文是否可读？出现 锟斤拷/烫烫烫 → 重写
@@ -24,7 +26,9 @@ SESSION START — ION DEX Full Pipeline
      → CMC (`pro-api.coinmarketcap.com`)
      → PancakeSwap Router (`0x10ED43C718714eb63d5aA57B78B54704E256024E`)
      → Uniswap V3 Quoter (`0xb27308f9F90D2F3dcC8a55F0917A4D7AE73A3276`)
-     → 真实钱包注入 (MetaMask/OKX/Trust via ethers.js/wagmi/viem)
+     → 真实钱包注入 — 必须全部对接: MetaMask / Binance Web3 / OKX Web3 / Bitget Web3 / Trust Wallet / Coinbase Wallet / Rabby
+     → 钱包对接方式: EIP-1193 injected provider → ethers.js BrowserProvider → wagmi/viem connector
+     → 每个钱包必须检测 window.ethereum / window.okxwallet / window.bitkeep / window.trustwallet
      → mock/假钱包/假余额/假交易哈希=死刑
 ═══════════════════════════════════════════
 ✅ DO — 以下指令按顺序执行，做完一条 commit 一条。不许跳。
@@ -63,10 +67,19 @@ SESSION START — ION DEX Full Pipeline
       → build 过 → commit
   
   3c. Swap 面板 [frontend/src/pages/SwapPage.tsx]
-      → 连接真实钱包: useAccount() → wagmi injected provider
+      → 钱包连接: 支持全部主流 EVM 钱包
+        - MetaMask: `window.ethereum.isMetaMask`
+        - Binance Web3: `window.BinanceChain`
+        - OKX Web3: `window.okxwallet`
+        - Bitget Web3: `window.bitkeep.ethereum`
+        - Trust Wallet: `window.trustwallet`
+        - Coinbase Wallet: `window.coinbaseWalletExtension`
+        - Rabby: `window.rabby`
+      → 每个钱包创建独立 wagmi connector，前端显示钱包选择列表
       → Token 选择器: 从 CMC top100 + PancakeSwap 已有池子拉列表
       → 报价: 调 PancakeSwap Router.getAmountsOut(inputAmount, [tokenPath])
       → 滑点: 显示 0.1%/0.5%/1% 选项，写入 swap 参数
+      → 费用: 所有手续费/协议费/滑点/Gas → 全部用 ION 收取和显示，不用其他代币
       → 执行: 调 Router.swapExactTokensForTokens()，用户签名
       → 交易后显示 BSC 浏览器 tx hash 链接
       → build 过 → commit
@@ -81,6 +94,7 @@ SESSION START — ION DEX Full Pipeline
       → 展示 PancakeSwap 上真实 LP 池: ION/USDT, ION/BNB
       → 添加流动性按钮 → 调 Router.addLiquidity()
       → 移除流动性按钮 → 调 Router.removeLiquidity()
+      → LP 奖励/手续费 → 全部用 ION 发放和显示
       → 显示你的 LP 仓位余额
       → build 过 → commit
   
