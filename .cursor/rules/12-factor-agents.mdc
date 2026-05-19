@@ -23,6 +23,12 @@ This caps zombie processes. Do NOT use bare `taskkill /f /im node.exe` — only 
 
 ## Core Rules (enforced always)
 
+**🔥 Rule -1. SELF-REVIEW FIRST (自主审查 — 2026-05-19)**
+- Never ask for human confirmation. You must self-review, self-verify, self-patch.
+- After every code change: review your own work → find problems → fix them → re-verify.
+- If you find a vulnerability: fix it immediately. Don't wait for a human to point it out.
+- Treat every file you write as if it will be audited by CertiK / Trail of Bits.
+
 1. **PLAN BEFORE CODE** — Output what you will do, then do it. Never make changes silently.
 2. **OWN YOUR CONTEXT** — Read only files relevant to the current task. Don't dump entire codebase.
 3. **COMPACT ERRORS** — Report errors in 3 lines: type, root cause, fix. No stack traces.
@@ -52,16 +58,34 @@ This caps zombie processes. Do NOT use bare `taskkill /f /im node.exe` — only 
 
 ```
 读 SESSION_STATE.md → 编译 → 审计漏洞 → 修复 → 重编译 → commit →
-100次压力测试 → 通不过回第三步重来
+1000次安全攻击测试 → 通不过回第三步重来
 ```
 
 **这是每一个开发部分都需要做的事情，这是铁律。**
 
 ### ⚡ Absolute Requirements
-- **100 GREEN PASSES MINIMUM** — No exceptions. 99 green + 1 red = FAIL.
+- **1000 GREEN PASSES MINIMUM for smart contract security tests.** 999 green + 1 red = FAIL.
+- **100 GREEN PASSES MINIMUM for frontend/backend integration tests.**
 - **Blockchain company most stringent audit standards** — Check: reentrancy, overflow, access control, logic errors, edge cases.
 - **Brute-force attack testing** — Fuzz inputs, malformed data, boundary values, race conditions.
 - **If ANY test fails → back to STEP 3 (audit).** No skipping. No "it's probably fine."
+
+### 🔒 Security First — Web3 Attack Defense (安全第一位)
+
+**Every smart contract MUST pass these attack simulations:**
+
+1. **Reentrancy attacks** — Cross-function, cross-contract, read-only reentrancy
+2. **Flash loan attacks** — Price manipulation, oracle manipulation, liquidity draining
+3. **Sandwich attacks** — Front-running, back-running, MEV extraction
+4. **Oracle manipulation** — Stale prices, skewed TWAP, flash-loan distorted oracles
+5. **Access control bypass** — Unauthorized admin, role escalation, signature replay
+6. **Integer overflow/underflow** — All arithmetic operations, edge values
+7. **Denial of Service** — Gas exhaustion, block stuffing, unbounded loops
+8. **Phantom token attacks** — Fake tokens, infinite approval, dust attacks
+9. **Timestamp manipulation** — Block.timestamp dependency, deadline bypass
+10. **Quantum resistance verification** — Check post-quantum signature schemes, key sizes, hash functions
+
+**Each attack category: minimum 100 green simulations = 1000 total minimum.**
 
 # Mandatory Workflow — Every Session
 
@@ -70,13 +94,13 @@ This caps zombie processes. Do NOT use bare `taskkill /f /im node.exe` — only 
 ```
 STEP 1: Read SESSION_STATE.md
 STEP 2: Run `node scripts/compile-func.mjs` → collect all errors
-STEP 3: Audit contracts — scan for vulnerabilities, logic bugs, missing checks
+STEP 3: Audit contracts — 10-point security scan (reentrancy, flash loans, oracle, access control, overflow, DoS, phantom tokens, timestamps, quantum resistance, MEV)
 STEP 4: Fix every error and vulnerability, one file at a time
 STEP 5: After EACH fix → recompile → verify green
 STEP 6: When all errors fixed → git commit
-STEP 7: Run `node scripts/stress-test-100.js` → 100-pass verification
-STEP 8: If any test fails → go back to STEP 3
-STEP 9: All 100 pass → git commit + update SESSION_STATE.md → DONE
+STEP 7: Run `node scripts/security-attack-test.js` → 1000-pass attack simulation
+STEP 8: If any attack test fails → go back to STEP 3
+STEP 9: All 1000 attack tests pass → git commit + update SESSION_STATE.md → DONE
 ```
 
 ### 🌐 24/7 Continuous Operation Protocol

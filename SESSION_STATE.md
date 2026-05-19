@@ -217,13 +217,32 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 15. Phase 3 Bridge/Domain slice (2026-05-19): **`fetchBridgeRoutes`** / **`fetchDomainResolve`**; **`BridgeMetricsRow`** + **`DomainMetricsRow`** (`custodian.ion`); E2E **`bridge-metrics-source`** / **`domain-metrics-source`**; **`verify-full-save-log.cmd --no-pause`** exit **0**; Playwright **13 passed**. **`verify-100.ps1`** retries Windows transient **`-1073741502`** per step once; heavy 100-pass: run from **standalone** **`cmd`/`pwsh`** if Cursor shell flaky. Next: **`/api/bridge/routes`** registry parity, Redis/PostgreSQL drafts.
 ## 🔥 旺财总经理 24/7 Auto-Workflow (2026-05-19 铁律)
 
-> 旺财总经理下达。死命令。永不停止。
+> 旺财总经理下达。死命令。永不停止。安全第一位。
+
+### 🔒 Security-First Iron Law (安全第一位)
+```
+写智能合约 → 10类Web3攻击防御测试 → 抗量子攻击验证 →
+1000次全绿 → 才能进入下一步
+```
+
+**10 类必测攻击（每类最低 100 次绿）：**
+1. 重入攻击 | 2. 闪电贷 | 3. 三明治攻击 | 4. 预言机操控
+5. 权限绕过 | 6. 整数溢出 | 7. 拒绝服务 | 8. 假币攻击
+9. 时间戳操控 | 10. 抗量子攻击
+
+**安全总数：10类 × 100次 = 1000次全绿底线**
 
 ### Iron Law Cycle (每个开发部分必须循环)：
 ```
 读 SESSION_STATE.md → 编译 → 审计漏洞 → 修复 → 重编译 → commit →
-100次压力测试 → 通不过回第三步重来
+1000次安全攻击测试 → 通不过回第三步重来
 ```
+
+### Self-Review Protocol (自主审查)
+- **不需要人工确认。** 自己审查、自己验证、自己修补漏洞。
+- 每次代码改动后：自查 → 找问题 → 修 → 重验。
+- 发现漏洞立即修复，不等人指出。
+- 把每行代码当作 CertiK / Trail of Bits 审计对象对待。
 
 ### Continuous Operation Protocol
 
