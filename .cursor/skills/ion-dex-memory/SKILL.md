@@ -18,7 +18,8 @@ description: Maintains persistent project memory for ION DEX. Use at the start o
 
 Before doing any ION DEX work — **especially before editing code** — read these files in order if they exist:
 
-0. `.memory-bank/architecture-audit.md` — **TASK 0: 24-item audit + P0→P3 priority + Agent Build Order checkbox**
+0. `.memory-bank/live-data-reference.md` — **TASK 0: 所有真实地址/端点/Key — 链上地址、合约、RPC URL、钱包检测方式**
+1. `.memory-bank/architecture-audit.md` — **24-item audit + P0→P3 priority + Agent Build Order checkbox**
 1. `.memory-bank/README.md`
 2. `.memory-bank/ai-red-lines.md` — no lying, no empty/mock-as-real data, encoding self-check
 3. `.memory-bank/development-iron-law-preflight.md` — dual-chain 1500 audit, stress, verify-100, dev loop

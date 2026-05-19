@@ -26,3 +26,6 @@ Thumbs.db
 
 # Cursor rules (contain local API keys / secrets)
 .cursor/rules/
+
+# Backend environment (secrets)
+backend/.env

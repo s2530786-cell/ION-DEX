@@ -44,20 +44,38 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
   });
 
-  test("wallet shell opens provider picker and profile draft", async ({ page }) => {
+  test("wallet shell connects via official ION extension provider mock", async ({ page }) => {
+    await page.addInitScript(() => {
+      const mockAddress = "EQCTestWalletAddressForE2eSmokeOnlyxxxxxxxxxx";
+      window.ton = {
+        isTonWallet: true,
+        send: async (method: string) => {
+          if (method === "ton_requestAccounts") {
+            return [mockAddress];
+          }
+          if (method === "ton_getBalance") {
+            return "1500000000";
+          }
+          return [];
+        },
+        on: () => undefined,
+        off: () => undefined,
+      };
+    });
+
     await page.goto("/");
 
     await page.getByTestId("wallet-connect").click();
     await expect(page.getByTestId("wallet-panel")).toBeVisible();
-    await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-ion-browser")).toBeVisible();
 
-    await page.getByTestId("wallet-provider-online").click();
-    await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet draft session ready");
+    await page.getByTestId("wallet-provider-ion-browser").click();
+    await expect(page.getByTestId("wallet-confirmation")).toContainText("ION Browser Wallet connected");
     await expect(page.getByTestId("profile-menu")).toBeVisible();
-    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Ready");
+    await expect(page.getByTestId("wallet-connect")).toContainText("EQCTes");
 
     await page.getByTestId("wallet-disconnect").click();
-    await expect(page.getByTestId("wallet-provider-walletconnect")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
     await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
   });
 

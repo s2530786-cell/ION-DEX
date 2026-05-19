@@ -33,9 +33,11 @@ SESSION START — ION DEX Full Pipeline
 ═══════════════════════════════════════════
 ✅ DO — 以下指令按顺序执行，做完一条 commit 一条。不许跳。
 
-📖 TASK 0: 读全量审计
+📖 TASK 0: 读全量审计 + 数据字典
   打开: .memory-bank/architecture-audit.md
+  打开: .memory-bank/live-data-reference.md ← NEW! 所有真实地址/端点/Key 位置
   里面写了：24个模块哪些是真哪些是假、P0→P3执行顺序、Agent Build Order
+  + 每个数据源的地址、合约、RPC URL、检测方式
   checkbox 第一个没勾的就是你现在该干的活
   → 没读就不许动手写代码
 
@@ -532,7 +534,8 @@ Skills: **`ion-contract-audit`**, **`ion-official-source`**. Official tree: **`D
 
 **⚠️ First thing after restart — READ:**
 1. `.cursor/rules/ion-dex-iron-law.mdc` (三红线在最顶部)
-2. `.memory-bank/architecture-audit.md` (P0→P3 优先级)
-3. `SESSION_STATE.md` (本文件，TASK 0-4 指令)
+2. `.memory-bank/live-data-reference.md` (所有真实地址 — ION/PancakeSwap/CMC/RPC/钱包)
+3. `.memory-bank/architecture-audit.md` (P0→P3 优先级)
+4. `SESSION_STATE.md` (本文件，TASK 0-4 指令)
 
 **绝对不能做的三件事:** 撒谎 / 写假代码 / 出中文乱码

@@ -7,7 +7,6 @@ import {
   LogOut,
   Menu,
   ShieldCheck,
-  UserCircle2,
   Wallet,
   X,
 } from "lucide-react";
@@ -15,8 +14,11 @@ import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { useEvmWallet } from "@/context/EvmWalletContext";
+import { useIonWallet } from "@/context/IonWalletContext";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import { shortenAddress } from "@/wallet/injectedEvm";
+import type { IonWalletKind } from "@/wallet/ionTypes";
+import { isIonExtensionInstalled } from "@/wallet/ionExtension";
 
 export type PageKey =
   | "dashboard"
@@ -48,8 +50,18 @@ type AppShellProps = PropsWithChildren<{
   onPageChange: (page: PageKey) => void;
 }>;
 
+function shortenIonAddress(address: string): string {
+  if (address.length <= 12) {
+    return address;
+  }
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
+}
+
+const ION_PROVIDER_KEYS: IonWalletKind[] = ["ion-browser", "online", "walletconnect"];
+
 export function AppShell({ activePage, children, onPageChange }: AppShellProps) {
   const evmWallet = useEvmWallet();
+  const ionWallet = useIonWallet();
   const [walletPanelOpen, setWalletPanelOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [connectedProvider, setConnectedProvider] = useState<WalletProviderKey | null>(null);
@@ -57,15 +69,35 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     () => walletProviders.find((provider) => provider.key === connectedProvider) ?? null,
     [connectedProvider],
   );
+  const ionSessionActive = Boolean(
+    ionWallet.status === "connected" &&
+      ionWallet.snapshot &&
+      connectedProvider !== null &&
+      ION_PROVIDER_KEYS.includes(connectedProvider as IonWalletKind),
+  );
   const walletButtonLabel = useMemo(() => {
     if (evmWallet.status === "connected" && evmWallet.snapshot) {
       return shortenAddress(evmWallet.snapshot.address);
     }
-    if (connectedProvider && selectedProvider) {
-      return "Wallet Ready";
+    if (ionSessionActive && ionWallet.snapshot) {
+      return shortenIonAddress(ionWallet.snapshot.address);
     }
     return "Wallet Connect";
-  }, [connectedProvider, evmWallet.snapshot, evmWallet.status, selectedProvider]);
+  }, [evmWallet.snapshot, evmWallet.status, ionSessionActive, ionWallet.snapshot]);
+
+  useEffect(() => {
+    if (
+      ionWallet.status === "connected" &&
+      ionWallet.snapshot &&
+      ION_PROVIDER_KEYS.includes(ionWallet.snapshot.kind) &&
+      connectedProvider !== ionWallet.snapshot.kind
+    ) {
+      setConnectedProvider(ionWallet.snapshot.kind);
+    }
+    if (ionWallet.status === "disconnected" && connectedProvider && ION_PROVIDER_KEYS.includes(connectedProvider as IonWalletKind)) {
+      setConnectedProvider(null);
+    }
+  }, [connectedProvider, ionWallet.snapshot, ionWallet.status]);
 
   function selectPage(page: PageKey) {
     onPageChange(page);
@@ -212,10 +244,13 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 <WalletConnectPanel
                   connectedProvider={selectedProvider}
                   evmWallet={evmWallet}
+                  ionWallet={ionWallet}
+                  ionSessionActive={ionSessionActive}
                   onConnect={(provider) => setConnectedProvider(provider)}
                   onDisconnect={() => {
                     setConnectedProvider(null);
                     evmWallet.disconnect();
+                    ionWallet.disconnect();
                   }}
                 />
               ) : null}
@@ -302,36 +337,41 @@ const walletProviders: WalletProvider[] = [
   {
     key: "online",
     name: "Online+ Wallet",
-    label: "ION native social wallet",
-    status: "Profile sync shell",
+    label: "wallet.ice.io · postMessage ion_connect",
+    status: "Official Online+ web wallet",
   },
   {
     key: "ion-browser",
     name: "ION Browser Wallet",
-    label: "Native chain signing",
-    status: "Provider detection shell",
+    label: "window.ton · ton_requestAccounts",
+    status: "Official extension (ion-browser-wallet)",
   },
   {
     key: "walletconnect",
-    name: "WalletConnect / OKX",
-    label: "Mainstream Web3 bridge",
-    status: "QR pairing shell",
+    name: "TonConnect (ION)",
+    label: "window.tonwallet.tonconnect bridge",
+    status: "Extension TonConnect v2",
   },
 ];
 
 function WalletConnectPanel({
   connectedProvider,
   evmWallet,
+  ionWallet,
+  ionSessionActive,
   onConnect,
   onDisconnect,
 }: {
   connectedProvider: WalletProvider | null;
   evmWallet: ReturnType<typeof useEvmWallet>;
+  ionWallet: ReturnType<typeof useIonWallet>;
+  ionSessionActive: boolean;
   onConnect: (provider: WalletProviderKey) => void;
   onDisconnect: () => void;
 }) {
   const evmConnected = evmWallet.status === "connected" && evmWallet.snapshot;
   const showInjectedSession = connectedProvider?.key === "injected" && evmConnected;
+  const showIonSession = ionSessionActive && ionWallet.snapshot && connectedProvider;
 
   return (
     <div
@@ -344,14 +384,16 @@ function WalletConnectPanel({
         </div>
         <div>
           <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-100/50">
-            {showInjectedSession ? "EVM Wallet" : "Wallet Shell"}
+            {showInjectedSession ? "EVM Wallet" : showIonSession ? "ION Wallet" : "Wallet Shell"}
           </p>
           <p className="mt-1 text-lg font-black text-white">
             {showInjectedSession
               ? shortenAddress(evmWallet.snapshot!.address)
-              : connectedProvider
-                ? connectedProvider.name
-                : "Choose provider"}
+              : showIonSession
+                ? shortenIonAddress(ionWallet.snapshot!.address)
+                : connectedProvider
+                  ? connectedProvider.name
+                  : "Choose provider"}
           </p>
         </div>
       </div>
@@ -388,23 +430,28 @@ function WalletConnectPanel({
             Disconnect
           </button>
         </motion.div>
-      ) : connectedProvider ? (
+      ) : showIonSession ? (
         <motion.div className="grid gap-3" data-testid="profile-menu">
           <motion.div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-3 text-sm text-emerald-100">
             <p className="font-black" data-testid="wallet-confirmation">
-              {connectedProvider.name} draft session ready
+              {connectedProvider!.name} connected · {ionWallet.snapshot!.network}
             </p>
-            <p className="mt-1 text-emerald-100/70">
-              Profile and ION-native signing are not wired yet. Use MetaMask / Injected for real BSC accounts.
+            <p className="mt-1 font-mono text-xs text-emerald-100/80">{ionWallet.snapshot!.address}</p>
+            <p className="mt-2 text-emerald-100/70">
+              ION balance:{" "}
+              {ionWallet.snapshot!.balanceIon
+                ? `${ionWallet.snapshot!.balanceIon} ION`
+                : "unavailable (RPC or extension)"}{" "}
+              · source: {ionWallet.snapshot!.balanceSource}
             </p>
           </motion.div>
-          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3">
-            <UserCircle2 className="text-cyan-200" size={24} />
-            <div>
-              <p className="text-sm font-bold text-white">Demo profile</p>
-              <p className="text-xs text-cyan-100/55">{connectedProvider.status}</p>
-            </div>
-          </div>
+          <button
+            className="rounded-full border border-cyan-300/25 bg-cyan-300/[0.08] px-4 py-2 text-sm font-black text-cyan-100"
+            onClick={() => void ionWallet.refreshBalance()}
+            type="button"
+          >
+            Refresh balance
+          </button>
           <button
             className="flex items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
             data-testid="wallet-disconnect"
@@ -412,7 +459,7 @@ function WalletConnectPanel({
             type="button"
           >
             <LogOut size={16} />
-            Disconnect draft
+            Disconnect
           </button>
         </motion.div>
       ) : (
@@ -422,15 +469,32 @@ function WalletConnectPanel({
               {evmWallet.error}
             </p>
           ) : null}
+          {ionWallet.error ? (
+            <p className="rounded-2xl border border-rose-300/25 bg-rose-300/[0.08] px-3 py-2 text-xs text-rose-100">
+              {ionWallet.error}
+            </p>
+          ) : null}
           {walletProviders.map((provider) => (
             <button
               className="rounded-2xl border border-white/10 bg-white/[0.05] p-3 text-left transition hover:border-cyan-200/35 hover:bg-cyan-300/[0.08] disabled:cursor-not-allowed disabled:opacity-50"
               data-testid={`wallet-provider-${provider.key}`}
-              disabled={provider.key === "injected" && !evmWallet.hasInjectedProvider}
+              disabled={
+                (provider.key === "injected" && !evmWallet.hasInjectedProvider) ||
+                (provider.key === "ion-browser" && !isIonExtensionInstalled()) ||
+                (provider.key === "walletconnect" && !isIonExtensionInstalled())
+              }
               key={provider.key}
               onClick={() => {
                 if (provider.key === "injected") {
                   void evmWallet.connectInjected().then(() => onConnect("injected"));
+                  return;
+                }
+                if (
+                  provider.key === "ion-browser" ||
+                  provider.key === "online" ||
+                  provider.key === "walletconnect"
+                ) {
+                  void ionWallet.connect(provider.key).then(() => onConnect(provider.key));
                   return;
                 }
                 onConnect(provider.key);
@@ -442,11 +506,17 @@ function WalletConnectPanel({
               {provider.key === "injected" && !evmWallet.hasInjectedProvider ? (
                 <span className="mt-1 block text-xs text-amber-200/80">No window.ethereum detected</span>
               ) : null}
+              {(provider.key === "ion-browser" || provider.key === "walletconnect") &&
+              !isIonExtensionInstalled() ? (
+                <span className="mt-1 block text-xs text-amber-200/80">
+                  Install ION browser wallet extension
+                </span>
+              ) : null}
             </button>
           ))}
           <p className="mt-2 rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-3 py-2 text-xs text-amber-100/75">
-            Injected wallet uses real eth_requestAccounts + backend BSC RPC for BNB balance. ION-native wallets
-            remain preview shells until official adapters ship.
+            ION 钱包逻辑来自官方仓库：ion-browser-wallet（window.ton）、wallet.ice.io（Online+）、扩展内
+            TonConnect 桥。BSC 用 MetaMask / Injected + 后端 RPC。
           </p>
         </motion.div>
       )}

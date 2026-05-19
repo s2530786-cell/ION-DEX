@@ -7,6 +7,8 @@ description: Plans and implements ION DEX backend/API/data integrations. Use whe
 
 ## Data Domains
 
+> **⚠️ 所有真实地址和端点见 `.memory-bank/live-data-reference.md` — 启动必读。**
+
 Use this skill for data and backend work around:
 
 - CMC or other market price feeds for ticker strips and trading quotes.

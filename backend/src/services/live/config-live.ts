@@ -21,9 +21,10 @@ export async function loadLivePublicConfig(config: ServerConfig): Promise<Public
       bridgeTransfers: false,
     },
     supportedWallets: [
-      { key: "online", name: "Online+ Wallet", status: "planned" },
-      { key: "ion-browser", name: "ION Browser Wallet", status: "planned" },
-      { key: "walletconnect", name: "Injected EVM (MetaMask)", status: "enabled" },
+      { key: "online", name: "Online+ Wallet", status: "enabled" },
+      { key: "ion-browser", name: "ION Browser Wallet", status: "enabled" },
+      { key: "walletconnect", name: "TonConnect (ION)", status: "enabled" },
+      { key: "injected", name: "Injected EVM (MetaMask)", status: "enabled" },
     ],
     provenance: {
       source: "upstream",

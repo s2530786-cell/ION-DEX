@@ -40,9 +40,9 @@ export function getPublicConfig(): PublicConfig {
       bridgeTransfers: false,
     },
     supportedWallets: [
-      { key: "online", name: "Online+ Wallet", status: "draft" },
-      { key: "ion-browser", name: "ION Browser Wallet", status: "planned" },
-      { key: "walletconnect", name: "WalletConnect / OKX", status: "draft" },
+      { key: "online", name: "Online+ Wallet", status: "enabled" },
+      { key: "ion-browser", name: "ION Browser Wallet", status: "enabled" },
+      { key: "walletconnect", name: "TonConnect (ION)", status: "enabled" },
     ],
     provenance: {
       source: "mock",
