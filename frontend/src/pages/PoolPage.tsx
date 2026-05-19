@@ -150,7 +150,7 @@ export function PoolPage() {
           <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75" data-testid="pool-preview">
             {validation.isValid && pool ? (
               <span>
-                {mode === "add" ? "Add" : "Remove"} liquidity on {pool.pair}: {bnbAmount} BNB +{" "}
+                Liquidity preview: {mode === "add" ? "add" : "remove"} on {pool.pair}: {bnbAmount} BNB +{" "}
                 {ionAmount} ION · est. daily yield ~{validation.yieldIon?.toFixed(2)} USD · slip{" "}
                 {slippage}%
               </span>

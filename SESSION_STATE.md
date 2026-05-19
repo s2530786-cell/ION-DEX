@@ -279,17 +279,35 @@ After Phase 5 (frontend):
 
 **Truth for shipped verification:** **`docs/99-current-progress.md`**. MCP durable root: **`.memory-bank/`**.
 
-### Autonomous block (immediate)
+### PHASE 5 — Core Frontend (7 steps) ✅ DONE (2026-05-19)
 
-Per **`.cursor/rules/ion-autonomous-verify.mdc`**: Task 1 baseline committed (**`303745a`**).
+| Step | Deliverable | Commit (branch `2026-05-19-q7fx`) |
+|------|-------------|-----------------------------------|
+| 1 | DashboardPage + ionApi loading/error/empty | `1fd3632` (with steps 2–3) |
+| 2 | SwapPage | `1fd3632` |
+| 3 | PoolPage | `1fd3632` |
+| 4 | StakePage | `a380e4d` |
+| 5 | Burn + Bridge in BusinessPages | `a380e4d` / prior shells |
+| 6 | AppShell sidebar + mobile drawer (`motion.button` / `motion.aside`; no `motionmotion*` tags) | **`f13ab94`** |
+| 7 | Full stack verify + E2E nav helpers | **(this session commit)** |
 
-**Task 2 (FunC, 2026-05-19): compile gate GREEN.** Run **`node scripts/compile-func.mjs`** --- all **`contracts/ion`** entry contracts + **`FRAGMENT_PROBE_BODY`** fragments compile (**22** tracked `.fc` under repo tree + funcbox deps).
+**Step 7 evidence (2026-05-19):**
 
-**Audit fix (vault):** **`op::withdraw_fee`** restricted to **`ctx.at(SENDER)`** equals **`storage::router_address`** OR **`storage::owner_address`** before sweeping deposits via **`vault_pay_to`** (previously any caller could trigger withdraw path).
+- `node scripts/compile-func.mjs` → **22/22** green  
+- `node contracts/ion/scripts/compile-all.js` → **6/6** entry modules OK  
+- `frontend/npm run build` → OK  
+- `scripts/verify-full-save-log.cmd --no-pause` → **exit 0** (`%TEMP%\ion-verify-full.txt`)  
+  - Encoding **1136** files UTF-8 no BOM  
+  - Backend **19/19** tests + stress 9 endpoints + audit:high **0**  
+  - Frontend Playwright **13/13** passed  
 
-**Automation hooks:** **`scripts/task2-func-loop.cmd`** (optional **`--with-100`**); VS Code **`ION DEX: Task2 Func compile then agent-verify`**; **`scripts/verify-100.ps1`** now runs **`func-compile`** every pass and retries **`check-encoding.ps1`** once after failure.
+**Iron Law V:** No `motionmotion*` garbage in `frontend/src` (grep clean).
 
-**NEXT:** Tasks **3--5** (tests/docs/BSC **`forge`** when toolchain installed) plus roadmap **`DexRouter.fc`** onwards when starting greenfield contracts.
+### Autonomous block (baseline)
+
+Per **`.cursor/rules/ion-autonomous-verify.mdc`**: Task 1 baseline **`303745a`**. Task 2 FunC compile gate GREEN (vault fee withdraw ACL). **`scripts/task2-func-loop.cmd`** / **`verify-100.ps1`** available.
+
+**NEXT:** Phase 6 FunC greenfield (`DexRouter.fc` …) per roadmap below; BSC security tests; backend DB layer.
 
 Commands after edits: **`scripts/agent-verify.cmd`** or **`ION_VERIFY_NONINTERACTIVE=1 scripts/verify-full.cmd`**.
 

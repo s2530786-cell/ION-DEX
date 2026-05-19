@@ -1,17 +1,44 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+function sidebar(page: Page) {
+  return page.getByTestId("app-sidebar");
+}
+
+async function clickNav(page: Page, key: string) {
+  if (await sidebar(page).isVisible()) {
+    await sidebar(page).getByTestId(`nav-${key}`).click();
+    return;
+  }
+  const primary = page.getByRole("navigation", { name: "Primary" });
+  if (await primary.isVisible()) {
+    await primary.getByTestId(`nav-${key}`).click();
+    return;
+  }
+  await page.getByTestId("nav-menu").click();
+  await page.getByTestId("app-mobile-nav").getByTestId(`nav-${key}`).click();
+}
+
+async function expectIonBrand(page: Page) {
+  if (await sidebar(page).isVisible()) {
+    await expect(sidebar(page).getByTestId("brand-title")).toHaveText("ION DEX");
+    return;
+  }
+  await expect(page.getByRole("banner").getByText("ION DEX", { exact: true })).toBeVisible();
+}
 
 test.describe("ION DEX smoke", () => {
   test("home page shows key sections and controls", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByTestId("brand-title")).toHaveText("ION DEX");
+    await expectIonBrand(page);
     await expect(page.getByTestId("ticker-strip")).toBeVisible();
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
     await expect(page.getByTestId("page-dashboard")).toBeVisible();
     await expect(page.getByText("Professional Chart")).toBeVisible();
-    await page.getByTestId("nav-swap").click();
+    await clickNav(page, "swap");
     await expect(page.getByTestId("page-swap")).toBeVisible();
+    await page.getByTestId("swap-pay-amount").fill("1");
     await expect(page.getByTestId("swap-submit")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeEnabled();
     await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
@@ -38,7 +65,7 @@ test.describe("ION DEX smoke", () => {
     await page.setViewportSize({ width: 375, height: 844 });
     await page.goto("/");
 
-    await expect(page.getByTestId("brand-title")).toBeVisible();
+    await expectIonBrand(page);
     await expect(page.getByTestId("main-content")).toBeVisible();
   });
 
@@ -46,7 +73,7 @@ test.describe("ION DEX smoke", () => {
     for (const width of [768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto("/");
-      await expect(page.getByTestId("brand-title")).toBeVisible();
+      await expectIonBrand(page);
     }
   });
 
@@ -65,7 +92,7 @@ test.describe("ION DEX smoke", () => {
     ] as const;
 
     for (const [key, title] of pages) {
-      await page.getByTestId(`nav-${key}`).click();
+      await clickNav(page, key);
       await expect(page.getByTestId(`page-${key}`)).toBeVisible();
       await expect(page.getByTestId("page-title")).toHaveText(title);
     }
@@ -73,7 +100,7 @@ test.describe("ION DEX smoke", () => {
 
   test("trade page validates and drafts a limit order", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-trade").click();
+    await clickNav(page, "trade");
 
     await expect(page.getByTestId("trade-form")).toBeVisible();
     await expect(page.getByTestId("trade-submit")).toBeDisabled();
@@ -91,7 +118,7 @@ test.describe("ION DEX smoke", () => {
 
   test("grid page validates bounds and drafts a strategy", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-grid").click();
+    await clickNav(page, "grid");
 
     await expect(page.getByTestId("grid-form")).toBeVisible();
     await expect(page.getByTestId("grid-submit")).toBeDisabled();
@@ -114,7 +141,7 @@ test.describe("ION DEX smoke", () => {
 
   test("pool page validates slippage and drafts liquidity mint", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-pool").click();
+    await clickNav(page, "pool");
 
     await expect(page.getByTestId("pool-form")).toBeVisible();
     await expect(page.getByTestId("pool-submit")).toBeDisabled();
@@ -134,7 +161,7 @@ test.describe("ION DEX smoke", () => {
 
   test("stake page drafts stake and unstake payloads", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-stake").click();
+    await clickNav(page, "stake");
 
     await expect(page.getByTestId("stake-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("stake-form")).toBeVisible();
@@ -158,7 +185,7 @@ test.describe("ION DEX smoke", () => {
 
   test("bridge page validates destination memo and drafts sweep", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-bridge").click();
+    await clickNav(page, "bridge");
 
     await expect(page.getByTestId("bridge-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("bridge-form")).toBeVisible();
@@ -178,7 +205,7 @@ test.describe("ION DEX smoke", () => {
 
   test("burn page enforces memo length and drafts narrative", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-burn").click();
+    await clickNav(page, "burn");
 
     await expect(page.getByTestId("burn-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("burn-form")).toBeVisible();
@@ -197,7 +224,7 @@ test.describe("ION DEX smoke", () => {
 
   test("domain page validates label shape and drafts handshake", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-domain").click();
+    await clickNav(page, "domain");
 
     await expect(page.getByTestId("domain-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("domain-form")).toBeVisible();
@@ -215,7 +242,7 @@ test.describe("ION DEX smoke", () => {
 
   test("ai page validates ticker and drafts sentinel brief", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-ai").click();
+    await clickNav(page, "ai");
 
     await expect(page.getByTestId("ai-form")).toBeVisible();
     await page.getByTestId("ai-symbol").fill("!");

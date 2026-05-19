@@ -9,7 +9,7 @@
 | 2 | Contract Foundations | 🟡 70% | ION FunC tests missing, BSC 6/16 security tests failing |
 | 3 | Backend Foundation | 🟡 45% | No DB, no Redis, services are stubs |
 | 4 | Indexer | 🔴 0% | Not started |
-| 5 | Core Frontend | 🟡 60% | No wallet connection, mock data |
+| 5 | Core Frontend | 🟢 85% | Phase5 steps 1–7 done (`f13ab94`+); wallet still draft shell |
 | 6 | Oracle/Keeper/Grid | 🔴 0% | Not started |
 | 7 | Bridge | 🔴 5% | Bridge page UI exists, contracts needed |
 | 8 | Domain/ID | 🔴 0% | Not started |
@@ -20,13 +20,15 @@
 
 ## Current Cursor Task Queue
 
-**Active:** Phase 2 + Phase 11 — Fix security tests & build ION test framework
-**Next:** Phase 3 — Backend database + API completion
-**Then:** Phase 7 — Cross-chain bridge (Master priority)
+**Active:** Phase 6 — FunC DEX contracts (`DexRouter.fc` first)
+**Done (2026-05-19):** Phase 5 frontend roadmap steps 1–7 (`f13ab94` AppShell; verify-full green)
+**Next:** Phase 3 backend DB + Phase 11 BSC security tests (6 failing)
+**Then:** Phase 7 cross-chain bridge (Master priority)
 
 ## Latest Deliverables
 
 ### 2026-05-19
+- ✅ **Phase 5 frontend (7 steps):** Dashboard/Swap/Pool/Stake pages, Burn+Bridge shells, AppShell sidebar+mobile nav (`f13ab94`), verify-full **exit 0** (FunC 22/22, compile-all 6/6, Playwright 13/13)
 - ✅ Iron Law v2 deployed (15 attack categories, 1500 green minimum)
 - ✅ SecurityAttackTest.t.sol created (17 files, Forge framework)
 - ✅ EIP-712 signatures working with proper private key derivation

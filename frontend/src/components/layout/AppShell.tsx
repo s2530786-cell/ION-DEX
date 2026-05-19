@@ -136,12 +136,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                   <div className="h-5 w-5 rotate-45 rounded-md border-2 border-white/90" />
                 </div>
                 <div>
-                  <p
-                    className="text-lg font-black tracking-wide text-glow-cyan"
-                    data-testid="brand-title"
-                  >
-                    ION DEX
-                  </p>
+                  <p className="text-lg font-black tracking-wide text-glow-cyan">ION DEX</p>
                   <p className="text-xs text-cyan-100/55">Trade the future of ION</p>
                 </div>
               </div>
@@ -149,7 +144,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 
             <nav
               aria-label="Primary"
-              className="hidden min-w-0 flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full border border-white/10 bg-white/[0.04] p-1 md:flex [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+              className="hidden min-w-0 flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full border border-white/10 bg-white/[0.04] p-1 md:flex lg:hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
               {navItems.map((item) => (
                 <button
@@ -229,7 +224,9 @@ function SidebarBrand() {
         <div className="h-5 w-5 rotate-45 rounded-md border-2 border-white/90" />
       </div>
       <div>
-        <p className="text-lg font-black tracking-wide text-glow-cyan">ION DEX</p>
+        <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
+          ION DEX
+        </p>
         <p className="text-xs text-cyan-100/55">Trade the future of ION</p>
       </div>
     </div>
