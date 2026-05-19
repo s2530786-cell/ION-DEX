@@ -1,53 +1,52 @@
-# Claude Builders Bounty 🤖
+# CHANGELOG Generator
 
-> A community bounty board for Claude Code builders.
+**Bounty**: $50 — [claude-builders-bounty #1](https://github.com/claude-builders-bounty/claude-builders-bounty/issues/1)
 
-Building with Claude Code? Have tasks to delegate?
-Want to get paid for contributing to AI projects?
-You're in the right place.
+Auto-generates a structured `CHANGELOG.md` from git history. Commits are categorized into **Added**, **Fixed**, **Changed**, and **Removed** sections based on commit message prefixes.
 
----
+## Setup
 
-## How it works
+```bash
+chmod +x generate-changelog.sh
+```
 
-**To post a bounty**
-1. Open a GitHub issue with a clear description and acceptance criteria
-2. Comment `/opire create $XXX` in the issue to set the reward
-3. Share the link — contributors will find it
+## Usage
 
-**To claim a bounty**
-1. Browse the open issues below
-2. Comment `/opire try` in the issue you want to work on
-3. Submit a PR — payment is automatic on merge ✅
+```bash
+# Since last git tag
+./generate-changelog.sh
 
----
+# Since specific tag
+./generate-changelog.sh v1.0.0
 
-## Active Bounties
+# Between two refs
+./generate-changelog.sh v1.0.0 v1.1.0
+```
 
-| # | Task | Amount | Status |
-|---|------|--------|--------|
-| [#1](../../issues/1) | SKILL: Generate a CHANGELOG from git history | $50 | 🟢 Open |
-| [#2](../../issues/2) | TEMPLATE: CLAUDE.md for a Next.js + SQLite project | $75 | 🟢 Open |
-| [#3](../../issues/3) | HOOK: Block destructive bash commands in Claude Code | $100 | 🟢 Open |
-| [#4](../../issues/4) | AGENT: PR reviewer with structured Markdown output | $150 | 🟢 Open |
-| [#5](../../issues/5) | WORKFLOW: n8n + Claude API — automated weekly dev summary | $200 | 🟢 Open |
+## Categorization Rules
 
----
+| Prefix | Category |
+|--------|----------|
+| `feat:` / `add:` / `new:` / `implement:` | **Added** |
+| `fix:` / `bug:` / `patch:` / `resolve:` | **Fixed** |
+| `remove:` / `delete:` / `drop:` / `deprecate:` | **Removed** |
+| Everything else | **Changed** |
 
-## Rules
+## Sample Output
 
-- Tasks must be related to Claude Code or AI tooling
-- Every issue must have clear acceptance criteria before a bounty is activated
-- Payment is handled by [Opire](https://opire.dev) (Stripe)
-- Quality over speed — a solid PR beats a fast one
+```markdown
+# Changelog
 
----
+## [2026-05-20] — v1.0.0 → HEAD
 
-## Community
+### Added
+- feat: add ION domain resolution (abc1234)
+- new: implement bridge decimals conversion (def5678)
 
-- 🐦 X: [@ClaudeBounty](https://x.com/ClaudeBounty)
-- 📧 Contact: claudebounty@gmail.com
+### Fixed
+- fix: sandwich attack vector in pool (ghi9012)
+- bug: edge case in slippage calculation (jkl3456)
 
----
-
-*Started by the Claude builder community · March 2026 · MIT License*
+### Changed
+- update README with ION ecosystem features (mno7890)
+```
