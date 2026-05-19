@@ -7,23 +7,32 @@
 
 ---
 
-## 📊 四引擎行情栈 — 全免费数据源（2026-05-20 建成）
+## 📊 五引擎行情栈 — 全免费数据源（2026-05-20 建成）
 
-**策略：四引擎互补 → ION DEX 前端全数据覆盖，零成本。**
+**策略：五引擎互补 → ION DEX 前端全数据覆盖，零成本。**
 
 | 引擎 | 免费额度 | 角色 | 工具/端点 |
 |------|---------|------|----------|
+| 🥞 **PancakeSwap 链上** | 无限 | ION 价格根数据源（getReserves） | BSC RPC → Router `0x10ED43...` |
 | 🟡 **Binance** | 1200次/分 | BNB/USDT 基准价 | `scripts/binance.py` / `api.binance.com/api/v3` |
 | 🔵 **CoinMarketCap** | 11K次/月 | 市值/排名/全市场 | `scripts/cmc.ts` / `pro-api.coinmarketcap.com` |
 | 🦎 **GeckoTerminal** | 30次/分 | K线/OHLCV/池子详情 | `scripts/geckoterminal.py` / `api.geckoterminal.com/api/v2` |
 | 🟣 **DexScreener** | 300次/分 | 秒级价格/买卖统计/FDV | `scripts/dexcreener.py` / `api.dexscreener.com` |
 | ⛓️ **ION Indexer v3** | 无限制 | ION 原生链上全部数据 | `api.mainnet.ice.io/indexer/v3/` — 35+端点 |
 
-### 价格转换链
+### 价格转换链（五引擎交叉验证）
 ```
-ION/USD = ION/WBNB (BSC PancakeSwap 链上) × BNB/USDT (币安)
-         ↓ 独立验证 ↓
-  DexScreener $0.0001398 / GeckoTerminal $0.0001411 / CMC $0.0001389
+          ┌─ PancakeSwap 链上 (getReserves) ─┐
+          │   ION/WBNB 原始深度 × BNB/USDT    │──→ ION/USD 根价格
+          └──────────────────────────────────┘
+                        ↓ 验证
+   DexScreener ←─ 爬链上事件 ─→ GeckoTerminal  ← 二手数据
+          ↓                            ↓
+    $0.0001398                   $0.0001411
+                        ↓
+          CMC $0.0001389 ← 聚合多家交易所
+                        ↓
+        五价交叉验证，偏差<1.5%
 ```
 
 ### ⚠️ 铁律：前端不直调外部API
@@ -73,6 +82,19 @@ ION/USD = ION/WBNB (BSC PancakeSwap 链上) × BNB/USDT (币安)
 | | `/ticker/24hr?symbol=BNBUSDT` — 24h行情 |
 | | `/klines?symbol=BNBUSDT&interval=1h` — K线 |
 | 限制 | 1200次/分 (权重制) |
+
+### PancakeSwap 链上直查 (已对接 ✅ — ION 价格根数据源)
+| 项目 | 值 |
+|------|-----|
+| 方式 | BSC RPC 直调合约 — 无限次，零费用 |
+| Router V2 | `0x10ED43C718714eb63d5aA57B78B54704E256024E` |
+| Factory V2 | `0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73` |
+| ION/WBNB Pair | `0x6487725b383954e05cA56F3c2B93a104B3DD2C25` (V3 主力) |
+| ION/USDT Pair | `0x1610eDdFE8CFf46913D2c3A9a2AFE20b0aA4A22E` (V2) |
+| 关键方法 | `getReserves()` → 池子深度 | `getAmountsOut()` → 报价 |
+| BSC RPC | `https://bsc-dataseed.binance.org/` |
+| Chain ID | 56 |
+| ⚠️ 注意 | 这是 DexScreener/GeckoTerminal 的根数据源 — 它们都从这爬 |
 
 ### ION 价格降级路径
 当外部API不可用时，走链上查询：
