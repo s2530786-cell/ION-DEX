@@ -13,6 +13,7 @@ const ENTRIES = [
   "pool.fc",
   "router.fc",
   "vault.fc",
+  "BridgeInbox.fc",
   "deployer.fc",
   "lp_account.fc",
   "lp_wallet.fc",

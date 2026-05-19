@@ -38,6 +38,7 @@ export type EvmWalletContextValue = {
   availableWallets: EvmWalletKind[];
   connectWallet: (kind: EvmWalletKind) => Promise<void>;
   connectInjected: () => Promise<void>;
+  hasInjectedProvider: boolean;
   disconnect: () => void;
   refreshBalance: () => Promise<void>;
   publicClient: ReturnType<typeof usePublicClient> | undefined;
@@ -206,6 +207,7 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
       availableWallets,
       connectWallet,
       connectInjected,
+      hasInjectedProvider: availableWallets.length > 0,
       disconnect,
       refreshBalance: async () => {
         if (!snapshot?.address) {

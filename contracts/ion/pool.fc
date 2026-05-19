@@ -8,6 +8,7 @@
 #include "pool/pools/constant_product.fc";
 #include "pool/pools/stableswap.fc";
 #include "pool/get.fc";
+#include "pool/sandwich.fc";
 
 ;; ── Swap handler ───────────────────────────────────────────────
 
@@ -36,6 +37,11 @@
 
         cell swap_body_cell = dp~load_ref();
         slice swap_body = swap_body_cell.begin_parse();
+
+        int nonce = 0;
+        if transferred_op == op::reveal_swap {
+            nonce = swap_body~load_uint(64);
+        }
         int min_out = swap_body~load_coins();
         slice receiver = swap_body~load_msg_addr();
         int fwd_gas = swap_body~load_coins();
@@ -55,6 +61,12 @@
         int amount_in = side == 0 ? left_amount : right_amount;
 
         throw_unless(error::invalid_amount, amount_in > 0);
+
+        sandwich_enforce_max_swap(amount_in, reserve_in);
+
+        if transferred_op == op::reveal_swap {
+            sandwich_verify_swap_commitment(from_user, amount_in, min_out, tx_deadline, nonce);
+        }
 
         ;; Execute swap using constant product
         (int amount_out, int protocol_fee_out, int ref_fee_out) = pool::get_swap_out(
@@ -293,6 +305,17 @@
     storage::load();
 
     int op = ctx.at(OPCODE);
+
+    ;; -- Commit-reveal (sandwich defense) --
+    if op == op::commit_swap {
+        handle_commit_swap();
+        return ();
+    }
+
+    if op == op::reveal_swap {
+        handle_reveal_swap();
+        return ();
+    }
 
     ;; -- Swap --
     if op == op::swap {

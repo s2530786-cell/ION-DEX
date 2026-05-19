@@ -16,3 +16,13 @@ const params::uri_end = ".json";
 
 const params::twodays = 2 * 24 * 60 * 60;
 const params::sevendays = 7 * 24 * 60 * 60;
+
+;; Sandwich defense
+const params::max_swap_bps = 500; ;; 5% of pool reserve (500 / fee_divider)
+const params::commit_reveal_min_blocks = 2;
+const params::commit_max_horizon_sec = 300;
+
+;; Bridge double-signature (ION side; amount in native coins)
+const params::bridge_double_sig_threshold = 10000000000000000000000; ;; 10_000 * 10^18
+const params::bridge_required_sigs = 2;
+const params::bridge_max_validators = 10;

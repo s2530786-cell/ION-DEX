@@ -82,6 +82,7 @@ const ENTRY_BASES = new Set([
   'router.fc',
   'vault.fc',
   'FeeDistributor.fc',
+  'BridgeInbox.fc',
 ]);
 
 /** recv_internal stub so codegen produces TVM entry / Fift main */
@@ -167,6 +168,12 @@ const FRAGMENT_PROBE_BODY = /** @type {Record<string,string>} */ ({
       '#include "router/storage.fc";\n' +
       '#include "router/utils.fc";\n' +
       '#include "router/get.fc";',
+
+  'pool/sandwich.fc':
+    '#pragma version >=0.4.4;\n' +
+      '#include "common/common.fc";\n' +
+      '#include "pool/storage.fc";\n' +
+      '#include "pool/sandwich.fc";',
 });
 
 const rootFiles = Object.keys(deps).filter(

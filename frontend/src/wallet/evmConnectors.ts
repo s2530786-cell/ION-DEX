@@ -1,11 +1,6 @@
 import { injected } from "wagmi/connectors";
 import type { CreateConnectorFn } from "wagmi";
-
-type InjectedTarget = {
-  id: string;
-  name: string;
-  provider: unknown;
-};
+import type { EIP1193Provider } from "viem";
 
 function readWindow(): Window & {
   ethereum?: { isMetaMask?: boolean; request: (args: { method: string }) => Promise<unknown> };
@@ -27,7 +22,9 @@ function readWindow(): Window & {
   };
 }
 
-function injectedConnector(target: () => InjectedTarget | undefined): CreateConnectorFn {
+function injectedConnector(
+  target: () => { id: string; name: string; provider: EIP1193Provider } | undefined,
+): CreateConnectorFn {
   return injected({ target });
 }
 
@@ -56,49 +53,49 @@ export const evmWalletConnectors: Record<EvmWalletKind, CreateConnectorFn> = {
     if (!eth?.isMetaMask) {
       return undefined;
     }
-    return { id: "metamask", name: "MetaMask", provider: eth };
+    return { id: "metamask", name: "MetaMask", provider: eth as EIP1193Provider };
   }),
   binance: injectedConnector(() => {
     const provider = readWindow().BinanceChain;
     if (!provider) {
       return undefined;
     }
-    return { id: "binance", name: "Binance Web3", provider };
+    return { id: "binance", name: "Binance Web3", provider: provider as EIP1193Provider };
   }),
   okx: injectedConnector(() => {
     const provider = readWindow().okxwallet;
     if (!provider) {
       return undefined;
     }
-    return { id: "okx", name: "OKX Web3", provider };
+    return { id: "okx", name: "OKX Web3", provider: provider as EIP1193Provider };
   }),
   bitget: injectedConnector(() => {
     const provider = readWindow().bitkeep?.ethereum;
     if (!provider) {
       return undefined;
     }
-    return { id: "bitget", name: "Bitget Web3", provider };
+    return { id: "bitget", name: "Bitget Web3", provider: provider as EIP1193Provider };
   }),
   trust: injectedConnector(() => {
     const provider = readWindow().trustwallet;
     if (!provider) {
       return undefined;
     }
-    return { id: "trust", name: "Trust Wallet", provider };
+    return { id: "trust", name: "Trust Wallet", provider: provider as EIP1193Provider };
   }),
   coinbase: injectedConnector(() => {
     const provider = readWindow().coinbaseWalletExtension;
     if (!provider) {
       return undefined;
     }
-    return { id: "coinbase", name: "Coinbase Wallet", provider };
+    return { id: "coinbase", name: "Coinbase Wallet", provider: provider as EIP1193Provider };
   }),
   rabby: injectedConnector(() => {
     const provider = readWindow().rabby;
     if (!provider) {
       return undefined;
     }
-    return { id: "rabby", name: "Rabby", provider };
+    return { id: "rabby", name: "Rabby", provider: provider as EIP1193Provider };
   }),
 };
 

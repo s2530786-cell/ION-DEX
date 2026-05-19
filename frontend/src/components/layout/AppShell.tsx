@@ -17,6 +17,11 @@ import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import { shortenAddress } from "@/wallet/injectedEvm";
+import {
+  EVM_WALLET_LABELS,
+  isEvmWalletAvailable,
+  type EvmWalletKind,
+} from "@/wallet/evmConnectors";
 import type { IonWalletKind } from "@/wallet/ionTypes";
 import { isIonExtensionInstalled } from "@/wallet/ionExtension";
 
@@ -94,10 +99,24 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     ) {
       setConnectedProvider(ionWallet.snapshot.kind);
     }
+    if (
+      evmWallet.status === "connected" &&
+      evmWallet.activeWallet &&
+      connectedProvider !== evmWallet.activeWallet
+    ) {
+      setConnectedProvider(evmWallet.activeWallet);
+    }
     if (ionWallet.status === "disconnected" && connectedProvider && ION_PROVIDER_KEYS.includes(connectedProvider as IonWalletKind)) {
       setConnectedProvider(null);
     }
-  }, [connectedProvider, ionWallet.snapshot, ionWallet.status]);
+    if (
+      evmWallet.status === "disconnected" &&
+      connectedProvider &&
+      EVM_WALLET_KINDS.includes(connectedProvider as EvmWalletKind)
+    ) {
+      setConnectedProvider(null);
+    }
+  }, [connectedProvider, evmWallet.activeWallet, evmWallet.status, ionWallet.snapshot, ionWallet.status]);
 
   function selectPage(page: PageKey) {
     onPageChange(page);
@@ -180,7 +199,9 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                   <div className="h-5 w-5 rotate-45 rounded-md border-2 border-white/90" />
                 </div>
                 <div>
-                  <p className="text-lg font-black tracking-wide text-glow-cyan">ION DEX</p>
+                  <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
+                    ION DEX
+                  </p>
                   <p className="text-xs text-cyan-100/55">Trade the future of ION</p>
                 </div>
               </div>
@@ -318,39 +339,49 @@ function NavList({
   );
 }
 
-type WalletProviderKey = "injected" | "online" | "ion-browser" | "walletconnect";
+type WalletProviderKey = EvmWalletKind | IonWalletKind;
 
 type WalletProvider = {
   key: WalletProviderKey;
   name: string;
   label: string;
-  status: string;
+  family: "evm" | "ion";
 };
 
+const EVM_WALLET_KINDS: EvmWalletKind[] = [
+  "metamask",
+  "binance",
+  "okx",
+  "bitget",
+  "trust",
+  "coinbase",
+  "rabby",
+];
+
 const walletProviders: WalletProvider[] = [
-  {
-    key: "injected",
-    name: "MetaMask / Injected",
-    label: "BSC account via eth_requestAccounts",
-    status: "Live BNB balance via backend RPC",
-  },
+  ...EVM_WALLET_KINDS.map((kind) => ({
+    key: kind,
+    name: EVM_WALLET_LABELS[kind],
+    label: "BSC · EIP-1193 injected · wagmi",
+    family: "evm" as const,
+  })),
   {
     key: "online",
     name: "Online+ Wallet",
     label: "wallet.ice.io · postMessage ion_connect",
-    status: "Official Online+ web wallet",
+    family: "ion",
   },
   {
     key: "ion-browser",
     name: "ION Browser Wallet",
     label: "window.ton · ton_requestAccounts",
-    status: "Official extension (ion-browser-wallet)",
+    family: "ion",
   },
   {
     key: "walletconnect",
     name: "TonConnect (ION)",
-    label: "window.tonwallet.tonconnect bridge",
-    status: "Extension TonConnect v2",
+    label: "TonConnect SDK · QR (no extension required)",
+    family: "ion",
   },
 ];
 
@@ -370,7 +401,10 @@ function WalletConnectPanel({
   onDisconnect: () => void;
 }) {
   const evmConnected = evmWallet.status === "connected" && evmWallet.snapshot;
-  const showInjectedSession = connectedProvider?.key === "injected" && evmConnected;
+  const showInjectedSession =
+    connectedProvider?.family === "evm" &&
+    evmConnected &&
+    EVM_WALLET_KINDS.includes(connectedProvider.key as EvmWalletKind);
   const showIonSession = ionSessionActive && ionWallet.snapshot && connectedProvider;
 
   return (
@@ -479,35 +513,27 @@ function WalletConnectPanel({
               className="rounded-2xl border border-white/10 bg-white/[0.05] p-3 text-left transition hover:border-cyan-200/35 hover:bg-cyan-300/[0.08] disabled:cursor-not-allowed disabled:opacity-50"
               data-testid={`wallet-provider-${provider.key}`}
               disabled={
-                (provider.key === "injected" && !evmWallet.hasInjectedProvider) ||
-                (provider.key === "ion-browser" && !isIonExtensionInstalled()) ||
-                (provider.key === "walletconnect" && !isIonExtensionInstalled())
+                (provider.family === "evm" && !isEvmWalletAvailable(provider.key as EvmWalletKind)) ||
+                (provider.key === "ion-browser" && !isIonExtensionInstalled())
               }
               key={provider.key}
               onClick={() => {
-                if (provider.key === "injected") {
-                  void evmWallet.connectInjected().then(() => onConnect("injected"));
+                if (provider.family === "evm") {
+                  void evmWallet
+                    .connectWallet(provider.key as EvmWalletKind)
+                    .then(() => onConnect(provider.key));
                   return;
                 }
-                if (
-                  provider.key === "ion-browser" ||
-                  provider.key === "online" ||
-                  provider.key === "walletconnect"
-                ) {
-                  void ionWallet.connect(provider.key).then(() => onConnect(provider.key));
-                  return;
-                }
-                onConnect(provider.key);
+                void ionWallet.connect(provider.key as IonWalletKind).then(() => onConnect(provider.key));
               }}
               type="button"
             >
               <span className="block text-sm font-black text-white">{provider.name}</span>
               <span className="mt-1 block text-xs text-cyan-100/55">{provider.label}</span>
-              {provider.key === "injected" && !evmWallet.hasInjectedProvider ? (
-                <span className="mt-1 block text-xs text-amber-200/80">No window.ethereum detected</span>
+              {provider.family === "evm" && !isEvmWalletAvailable(provider.key as EvmWalletKind) ? (
+                <span className="mt-1 block text-xs text-amber-200/80">Wallet extension not detected</span>
               ) : null}
-              {(provider.key === "ion-browser" || provider.key === "walletconnect") &&
-              !isIonExtensionInstalled() ? (
+              {provider.key === "ion-browser" && !isIonExtensionInstalled() ? (
                 <span className="mt-1 block text-xs text-amber-200/80">
                   Install ION browser wallet extension
                 </span>

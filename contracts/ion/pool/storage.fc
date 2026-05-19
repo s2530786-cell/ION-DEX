@@ -13,6 +13,7 @@ global int storage::collected_token1_protocol_fee;
 global slice storage::protocol_fee_address;
 global int storage::lp_fee;       ;; basis points (1 = 0.01%)
 global int storage::protocol_fee;  ;; basis points
+global cell storage::pool_commitments_dict;
 
 ;; Static data (set at deploy, immutable)
 global cell storage::_static;
@@ -43,6 +44,11 @@ global int pool::protocol_fee;
     pool::protocol_fee = storage::protocol_fee;
 
     storage::_static = ds~load_ref();
+    if (ds.slice_refs() > 0) {
+        storage::pool_commitments_dict = ds~load_ref();
+    } else {
+        storage::pool_commitments_dict = new_dict();
+    }
     slice static_data = storage::_static.begin_parse();
     storage::router_address = static_data~load_msg_addr();
     storage::token0_address = static_data~load_msg_addr();
@@ -70,5 +76,6 @@ global int pool::protocol_fee;
         .store_uint(storage::lp_fee, 16)
         .store_uint(storage::protocol_fee, 16)
         .store_ref(storage::_static)
+        .store_ref(storage::pool_commitments_dict)
     .end_cell());
 }

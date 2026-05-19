@@ -288,7 +288,7 @@ export function SwapPage() {
             </p>
           ) : null}
 
-          <motion.div
+          <div
             className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100/75"
             data-testid="swap-quote"
           >
@@ -302,7 +302,7 @@ export function SwapPage() {
             ) : (
               <span>Enter amount and slippage to preview minimum received, impact, and ION fee.</span>
             )}
-          </motion.div>
+          </div>
 
           <NeonButton
             className="w-full"

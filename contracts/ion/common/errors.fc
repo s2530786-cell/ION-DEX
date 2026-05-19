@@ -16,6 +16,18 @@ const error::empty_not_allowed = 96;
 const error::max_in_ratio = 97;
 const error::empty_cell = 99;
 
+;; Sandwich defense (commit-reveal + pool size cap)
+const error::swap_expired = 401;
+const error::swap_too_large = 402;
+const error::swap_not_committed = 403;
+const error::swap_hash_mismatch = 404;
+const error::swap_not_revealed = 405;
+
+;; Bridge double-signature (ION inbox)
+const error::bridge_insufficient_sigs = 410;
+const error::bridge_invalid_validator = 411;
+const error::bridge_not_admin = 412;
+
 ;; Jetton transfer bounce / routing (router + pool ingress)
 const error::transfer_bounce_invalid_request = 100;
 const error::transfer_bounce_invalid_pool = 101;

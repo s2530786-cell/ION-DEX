@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { parseUnits } from "viem";
+import { parseUnits, stringToHex } from "viem";
 import { useWalletClient } from "wagmi";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
@@ -128,7 +128,7 @@ export function BridgePage() {
               account,
               to: BSC_BRIDGE_NATIVE_RECEIVER,
               value: parseUnits(String(validation.parsedAmount), 18),
-              data: `0x${Buffer.from(`ION-BRIDGE:${destMemo}`, "utf8").toString("hex")}` as `0x${string}`,
+              data: stringToHex(`ION-BRIDGE:${destMemo}`),
             });
             setTxHash(hash);
             return;
@@ -230,28 +230,30 @@ export function BridgePage() {
       ionWallet.status,
       validation.isValid,
       validation.parsedAmount,
+      walletClient,
     ],
   );
 
   return (
     <div className="grid gap-6" data-testid="page-bridge">
       <header className="flex flex-wrap items-end justify-between gap-4">
-        <motion.div>
+        <div>
           <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-200/55">Cross-chain</p>
-          <h1 className="mt-2 text-3xl font-black text-white">BSC &lt;&gt; ION Bridge</h1>
+          <h1 className="mt-2 text-3xl font-black text-white" data-testid="page-title">
+            BSC &lt;&gt; ION bridge
+          </h1>
           <p className="mt-2 max-w-2xl text-sm text-cyan-100/60">
             USDT (BSC) and BNB (BSC) to ION (ION Chain), and ION back to BSC via vault deposit, wION burn, or native ION
             transfer.
           </p>
-        </motion.div>
+        </div>
         <DataSourceBadge meta={routesMeta} testId="bridge-metrics-source" />
       </header>
 
       <AsyncState
-        empty={false}
         error={routesError}
-        loading={routesLoading}
-        loadingLabel="Loading bridge routes"
+        state={routesLoading ? "loading" : routesError ? "error" : "ready"}
+        testId="bridge-routes"
       >
         {routesPayload ? (
           <NeonCard className="p-4">
@@ -271,7 +273,7 @@ export function BridgePage() {
 
       <NeonCard className="p-6">
         <form className="grid gap-4" data-testid="bridge-form" onSubmit={submitBridge}>
-          <motion.div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             <label className="grid gap-2 text-sm">
               <span className="font-bold text-cyan-100/70">Route</span>
               <select
@@ -303,7 +305,7 @@ export function BridgePage() {
                 <option value="ion">ION</option>
               </select>
             </label>
-          </motion.div>
+          </div>
 
           <div className="grid gap-3 md:grid-cols-2">
             <label className="grid gap-2 text-sm">
@@ -335,7 +337,7 @@ export function BridgePage() {
                 value={destination}
               />
             </label>
-          </motion.div>
+          </div>
 
           {!validation.destinationValid && destination.trim().length > 0 ? (
             <p
@@ -352,7 +354,7 @@ export function BridgePage() {
             </p>
           ) : null}
 
-          <motion.div
+          <div
             className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75"
             data-testid="bridge-preview"
           >
@@ -367,7 +369,7 @@ export function BridgePage() {
             ) : (
               <span>Enter a positive amount and a valid destination to continue.</span>
             )}
-          </motion.div>
+          </div>
 
           <NeonButton
             className="w-full sm:w-fit"

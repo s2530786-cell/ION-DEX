@@ -1,5 +1,9 @@
 {
   "devDependencies": {
+    "@ton-community/func-js": "^0.9.1",
     "claude-flow": "3.7.0-alpha.35"
+  },
+  "dependencies": {
+    "ipfs-only-hash": "^4.0.0"
   }
 }

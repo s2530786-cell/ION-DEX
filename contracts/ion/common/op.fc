@@ -71,6 +71,16 @@ const op::update_pool_code = "update_pool_code query_id:uint64 jetton_wallet0:Ms
 
 const op::internal_update_pool_code = "internal_update_pool_code query_id:uint64 upgrade_pool_code:^Cell = InternalMsgBody"c & 0x7fffffff;
 
+;; -- Sandwich defense: commit-reveal swap (anti front-running) --
+const op::commit_swap = 0xdeb00001;
+const op::reveal_swap = 0xdeb00002;
+
+;; -- ION bridge inbox (double-signature large transfers) --
+const op::lock_bridge_inbound = 0xdeb10001;
+const op::bridge_add_validator = 0xdeb10002;
+const op::bridge_remove_validator = 0xdeb10003;
+const op::bridge_set_threshold = 0xdeb10004;
+
 ;; -- ION-specific: burn hooks --
 const op::burn_notification_ion = "burn_notification_ion query_id:uint64 amount:Coins from_address:MsgAddress = InternalMsgBody"c & 0x7fffffff;
 
