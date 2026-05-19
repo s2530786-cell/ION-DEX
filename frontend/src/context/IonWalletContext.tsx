@@ -11,6 +11,13 @@ import { fetchIonAddressBalanceNano, formatIonBalanceFromNano } from "@/lib/ionC
 import { connectIonExtensionWallet, subscribeIonExtensionAccounts } from "@/wallet/ionExtension";
 import { connectIonOnlineWallet, readIonOnlineAddressFromUrl } from "@/wallet/ionOnline";
 import { connectIonTonConnectWallet } from "@/wallet/ionTonConnect";
+import { sendIonWalletTransaction, type IonTransactionResult } from "@/wallet/ionSendTransaction";
+import {
+  buildSwapIntentComment,
+  SWAP_INTENT_AMOUNT_NANO,
+  type IonSwapIntent,
+} from "@/wallet/ionSwapTx";
+import { disconnectTonConnectSdkWallet, restoreTonConnectSdkWallet } from "@/wallet/ionTonConnectSdk";
 import type { IonWalletKind, IonWalletSnapshot } from "@/wallet/ionTypes";
 import { isIonExtensionInstalled } from "@/wallet/ionExtension";
 
@@ -24,6 +31,7 @@ type IonWalletContextValue = {
   connect: (kind: IonWalletKind) => Promise<void>;
   disconnect: () => void;
   refreshBalance: () => Promise<void>;
+  sendSwapIntent: (intent: IonSwapIntent) => Promise<IonTransactionResult>;
 };
 
 const STORAGE_KEY = "ion_dex_ion_wallet_v1";
@@ -144,11 +152,33 @@ export function IonWalletProvider({ children }: PropsWithChildren) {
   );
 
   const disconnect = useCallback(() => {
-    setSnapshot(null);
+    setSnapshot((current) => {
+      if (current?.kind === "walletconnect") {
+        void disconnectTonConnectSdkWallet();
+      }
+      return null;
+    });
     setStatus("disconnected");
     setError(null);
     persistSnapshot(null);
   }, []);
+
+  const sendSwapIntent = useCallback(
+    async (intent: IonSwapIntent): Promise<IonTransactionResult> => {
+      if (!snapshot || status !== "connected") {
+        throw new Error("请先连接 ION 钱包（扩展、Online+ 或 TonConnect QR）。");
+      }
+      const comment = buildSwapIntentComment(intent);
+      const result = await sendIonWalletTransaction(snapshot.kind, {
+        fromAddress: snapshot.address,
+        amountNano: SWAP_INTENT_AMOUNT_NANO,
+        comment,
+      });
+      await refreshBalance(snapshot.address, snapshot.kind);
+      return result;
+    },
+    [refreshBalance, snapshot, status],
+  );
 
   useEffect(() => {
     const redirected = readIonOnlineAddressFromUrl();
@@ -163,6 +193,14 @@ export function IonWalletProvider({ children }: PropsWithChildren) {
     }
     if (persisted.kind === "ion-browser" && !isIonExtensionInstalled()) {
       localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+    if (persisted.kind === "walletconnect") {
+      void restoreTonConnectSdkWallet().then((address) => {
+        if (address) {
+          void applyConnected("walletconnect", address);
+        }
+      });
       return;
     }
     void applyConnected(persisted.kind, persisted.address);
@@ -201,8 +239,9 @@ export function IonWalletProvider({ children }: PropsWithChildren) {
         }
         await refreshBalance(snapshot.address, snapshot.kind);
       },
+      sendSwapIntent,
     }),
-    [connect, disconnect, error, hasIonExtension, refreshBalance, snapshot, status],
+    [connect, disconnect, error, hasIonExtension, refreshBalance, sendSwapIntent, snapshot, status],
   );
 
   return <IonWalletContext.Provider value={value}>{children}</IonWalletContext.Provider>;

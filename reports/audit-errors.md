@@ -3054,3 +3054,277 @@ No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts
 ```
 
 ```
+
+## func-compile — 2026-05-19T15:26:12.595Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:26:12.595Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:28:15.038Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:28:15.039Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:29:07.031Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:29:07.032Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:29:40.038Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:29:40.038Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:30:18.181Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:30:18.182Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:32:19.652Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:32:19.652Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:33:44.811Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:33:44.811Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:34:22.690Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:34:22.690Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:36:22.972Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:36:22.973Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:38:23.660Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:38:23.660Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:40:17.760Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:40:17.761Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:40:50.767Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:40:50.767Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:42:09.337Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:42:09.337Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:42:42.346Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:42:42.348Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:44:24.527Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:44:24.528Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:46:14.941Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:46:14.940Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:47:22.307Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:47:22.308Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:48:05.167Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:48:05.167Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:49:57.044Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:49:57.045Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:52:00.095Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:52:00.095Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:53:56.982Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:53:56.984Z
+```
+
+```
+
+## solhint — 2026-05-19T15:54:05.823Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## solhint — 2026-05-19T15:54:06.343Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## func-compile — 2026-05-19T15:55:07.019Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:55:07.019Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:55:54.479Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:55:54.479Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:56:31.867Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:56:31.867Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:57:50.326Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:57:50.327Z
+```
+
+```
+
+## solhint — 2026-05-19T15:57:58.928Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## solhint — 2026-05-19T15:57:59.920Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```

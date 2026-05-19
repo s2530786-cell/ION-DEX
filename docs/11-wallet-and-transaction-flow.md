@@ -20,7 +20,7 @@
 
 - `docs/10-config-and-environments.md`（链 ID、合约地址）
 - `docs/13-oracle-and-price-policy.md`（报价与最小输出）
-- 官方 ION 钱包 SDK / Online+ 文档（Pending）
+- 官方实现：`ion-official/ion-browser-wallet`（`window.ton`）、`ion-dex-frontend` 的 `wallet-connect.js`（Online+ / `wallet.ice.io`）
 - P0-4 真实 RPC
 
 ## 架构（建议）
@@ -49,7 +49,7 @@ TransactionOrchestrator
 | 能力 | V1 | V2+ |
 |------|----|-----|
 | EVM 连接 + 余额读 | 壳 + 只读 | 完整 |
-| ION 钱包连接 | 壳或单一官方路径 | Online+ 深链 |
+| ION 钱包连接 | 已接官方协议（扩展 / Online+ / TonConnect 桥） | 独立 WC QR SDK、链上 swap 签名 |
 | Swap 模拟 + 签名 | 必须 | — |
 | 限价/网格链上执行 | 否 | V3 + keeper |
 

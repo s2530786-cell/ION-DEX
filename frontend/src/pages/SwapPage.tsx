@@ -4,6 +4,8 @@ import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { useIonWallet } from "@/context/IonWalletContext";
+import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useApiResource } from "@/hooks/useApiResource";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 
@@ -33,7 +35,17 @@ function ratesFromTickers(tickers: MarketTicker[]): Record<SwapToken, number> {
   return rates;
 }
 
+function swapNeedsIonWallet(fromToken: SwapToken, toToken: SwapToken): boolean {
+  return fromToken === "ION" || toToken === "ION";
+}
+
+function swapNeedsEvmWallet(fromToken: SwapToken): boolean {
+  return fromToken === "BNB" || fromToken === "USDT";
+}
+
 export function SwapPage() {
+  const ionWallet = useIonWallet();
+  const evmWallet = useEvmWallet();
   const fetchTickers = useCallback(
     (signal: AbortSignal) => fetchMarketTickers(signal),
     [],
@@ -47,7 +59,9 @@ export function SwapPage() {
   const [toToken, setToToken] = useState<SwapToken>("ION");
   const [payAmount, setPayAmount] = useState("");
   const [slippage, setSlippage] = useState("0.5");
-  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const validation = useMemo(() => {
     const parsedPay = Number(payAmount);
@@ -65,33 +79,91 @@ export function SwapPage() {
         ? Math.min(3.5, Math.max(0.05, (parsedPay / 1000) * 0.4))
         : null;
 
+    const needsIon = swapNeedsIonWallet(fromToken, toToken);
+    const needsEvm = swapNeedsEvmWallet(fromToken);
+    const ionReady = ionWallet.status === "connected" && ionWallet.snapshot;
+    const evmReady = evmWallet.status === "connected" && evmWallet.snapshot;
+
+    let walletBlock: string | null = null;
+    if (needsIon && !ionReady) {
+      walletBlock = "连接 ION 钱包（扩展 / Online+ / TonConnect QR）以签名 swap。";
+    } else if (needsEvm && !needsIon && !evmReady) {
+      walletBlock = "连接 MetaMask / Injected 以在 BSC 上支付。";
+    } else if (needsIon && needsEvm && !ionReady) {
+      walletBlock = "跨链报价需要 ION 钱包签名 swap intent。";
+    }
+
     return {
       payValid,
       slippageValid,
       sameToken,
-      isValid: payValid && slippageValid && !sameToken,
+      isValid: payValid && slippageValid && !sameToken && !walletBlock,
       receive,
       impactPct,
+      walletBlock,
+      needsIon,
+      ionReady,
     };
-  }, [fromToken, payAmount, rates, slippage, toToken]);
+  }, [
+    evmWallet.snapshot,
+    evmWallet.status,
+    fromToken,
+    ionWallet.snapshot,
+    ionWallet.status,
+    payAmount,
+    rates,
+    slippage,
+    toToken,
+  ]);
 
   function flipPair() {
     setFromToken(toToken);
     setToToken(fromToken);
-    setSubmitted(false);
+    setConfirmation(null);
+    setSubmitError(null);
   }
 
-  function submitSwap(event: FormEvent<HTMLFormElement>) {
+  async function submitSwap(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (validation.isValid) {
-      setSubmitted(true);
+    if (!validation.isValid || validation.receive === null) {
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+    setConfirmation(null);
+
+    try {
+      if (validation.needsIon) {
+        const result = await ionWallet.sendSwapIntent({
+          fromToken,
+          toToken,
+          payAmount,
+          slippagePct: slippage,
+          receiveEstimate: validation.receive.toFixed(6),
+        });
+        const proof =
+          result.kind === "tonconnect-sdk"
+            ? `TonConnect BOC ${result.proof.slice(0, 18)}…`
+            : "扩展已确认 ton_sendTransaction";
+        setConfirmation(
+          `Swap intent 已通过 ION 钱包签名上链（${proof}）。AMM 路由合约接入后将把同一 intent 路由到池子。`,
+        );
+      } else {
+        setSubmitError("当前交易对需要 ION 链签名；请将 ION 加入交易对并连接 ION 钱包。");
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Swap 签名失败。";
+      setSubmitError(message);
+    } finally {
+      setSubmitting(false);
     }
   }
 
   return (
     <div className="mx-auto max-w-lg" data-testid="page-swap">
       <NeonCard className="min-h-[28rem]" variant="magenta">
-        <form className="grid gap-4" onSubmit={submitSwap}>
+        <form className="grid gap-4" onSubmit={(event) => void submitSwap(event)}>
           <div className="mb-1 flex items-center justify-between">
             <div>
               <p className="text-2xl font-black">Swap</p>
@@ -112,11 +184,21 @@ export function SwapPage() {
             <span className="sr-only">Ticker feed loaded</span>
           </AsyncState>
 
+          {validation.walletBlock ? (
+            <p
+              className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-4 py-3 text-sm text-amber-100"
+              data-testid="swap-wallet-hint"
+            >
+              {validation.walletBlock}
+            </p>
+          ) : null}
+
           <TokenRow
             label="From"
             onSelect={(token) => {
               setFromToken(token);
-              setSubmitted(false);
+              setConfirmation(null);
+              setSubmitError(null);
             }}
             selected={fromToken}
             testId="swap-from-token"
@@ -137,7 +219,8 @@ export function SwapPage() {
             label="To"
             onSelect={(token) => {
               setToToken(token);
-              setSubmitted(false);
+              setConfirmation(null);
+              setSubmitError(null);
             }}
             selected={toToken}
             testId="swap-to-token"
@@ -153,7 +236,8 @@ export function SwapPage() {
               inputMode="decimal"
               onChange={(event) => {
                 setPayAmount(event.target.value);
-                setSubmitted(false);
+                setConfirmation(null);
+                setSubmitError(null);
               }}
               placeholder="0.00"
               value={payAmount}
@@ -170,7 +254,8 @@ export function SwapPage() {
               inputMode="decimal"
               onChange={(event) => {
                 setSlippage(event.target.value);
-                setSubmitted(false);
+                setConfirmation(null);
+                setSubmitError(null);
               }}
               value={slippage}
             />
@@ -194,36 +279,46 @@ export function SwapPage() {
             </p>
           ) : null}
 
-          <div
+          {submitError ? (
+            <p
+              className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
+              data-testid="swap-error"
+            >
+              {submitError}
+            </p>
+          ) : null}
+
+          <motion.div
             className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100/75"
             data-testid="swap-quote"
           >
             {validation.isValid && validation.receive !== null ? (
               <span>
                 Quote: receive ~{validation.receive.toFixed(4)} {toToken} · price impact ~
-                {validation.impactPct?.toFixed(2)}% · min received after {slippage}% slip · protocol
-                fee in ION · source {tickers.meta?.source ?? "offline"}
+                {validation.impactPct?.toFixed(2)}% · min received after {slippage}% slip · ION
+                pairs use <code className="text-cyan-50">ton_sendTransaction</code> intent · source{" "}
+                {tickers.meta?.source ?? "offline"}
               </span>
             ) : (
               <span>Enter amount and slippage to preview minimum received, impact, and ION fee.</span>
             )}
-          </div>
+          </motion.div>
 
           <NeonButton
             className="w-full"
             data-testid="swap-submit"
-            disabled={!validation.isValid}
+            disabled={!validation.isValid || submitting}
             type="submit"
           >
-            Swap
+            {submitting ? "等待钱包签名…" : "Swap"}
           </NeonButton>
 
-          {submitted ? (
+          {confirmation ? (
             <p
               className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
               data-testid="swap-confirmation"
             >
-              Swap draft ready for wallet signing. On-chain routing remains gated behind DEX contracts.
+              {confirmation}
             </p>
           ) : null}
         </form>

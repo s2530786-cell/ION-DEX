@@ -16,6 +16,8 @@
     "audit:high": "node scripts/audit-high.mjs"
   },
   "dependencies": {
+    "@ton/core": "^0.63.1",
+    "@tonconnect/sdk": "^3.4.1",
     "framer-motion": "latest",
     "lightweight-charts": "latest",
     "lucide-react": "latest",
@@ -23,16 +25,16 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "autoprefixer": "latest",
     "postcss": "latest",
+    "start-server-and-test": "^2.1.2",
     "tailwindcss": "latest",
     "typescript": "latest",
-    "vite": "latest",
-    "@playwright/test": "^1.52.0",
-    "start-server-and-test": "^2.1.2"
+    "vite": "latest"
   }
 }
