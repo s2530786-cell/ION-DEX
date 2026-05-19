@@ -55,6 +55,18 @@ global cell storage::lp_wallet_code;
         CARRY_REMAINING_GAS);
 }
 
+slice deployer::router_address() impure inline {
+    cell router_data = begin_cell()
+        .store_bool(0)
+        .store_slice(storage::admin_address)
+        .store_ref(storage::pool_code)
+        .store_ref(storage::lp_account_code)
+        .store_ref(storage::lp_wallet_code)
+        .store_ref(begin_cell().end_cell())
+    .end_cell();
+    return utils::basechain_address_from_code_and_data(storage::router_code, router_data);
+}
+
 () deploy_pool(slice token0, slice token1) impure {
     int deploy_value = gas::pool::provide_lp + storage_fee::pool;
     throw_unless(error::insufficient_gas, ctx.at(BALANCE) > deploy_value);
@@ -62,9 +74,11 @@ global cell storage::lp_wallet_code;
     ;; Validate token ordering (canonical: lower address first)
     throw_if(error::invalid_token, equal_slices(token0, token1));
 
-    ;; Address must match router::get_pool_address (canonical pool_state layout)
+    slice router_addr = deployer::router_address();
+
+    ;; Must match router::get_pool_address static layout (router in slot 0)
     cell pool_state = begin_cell()
-        .store_slice(storage::admin_address)
+        .store_slice(router_addr)
         .store_slice(token0)
         .store_slice(token1)
         .store_ref(storage::lp_wallet_code)

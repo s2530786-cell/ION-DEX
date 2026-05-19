@@ -32,6 +32,10 @@ When done: update SESSION_STATE.md, say "ALL TASKS DONE".
 
 ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
+## User preference (2026-05-19)
+
+- **不要每次询问确认**：Agent 对验证、修复、workflow、scoped 前端/文档改动自行执行并汇报结果；仅在密钥/主网/不可逆删除/需求歧义时联系 Master。
+
 ## Hard Rules
 
 - All source files must be UTF-8 without BOM.
@@ -192,10 +196,14 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 
 ## Agent automation (Cursor Hooks)
 
+**全自动工作流（本地一键）**：`scripts\agent-autonomous-workflow.cmd`（preflight → FunC 22/22 → `agent-verify`）。VS Code：**Run Task** → **`ION DEX: autonomous workflow (preflight+compile+verify)`**（默认测试任务）。
+
+**Canonical ordered workflow (steps 0–9):** see **`docs/08-ci-agent-automation.md`** section **自动工作流列表**.
+
 - **stop**: Runs `.cursor/hooks/ion-verify-on-stop.cmd`: if `scripts\compile-func.mjs` exists, compile `contracts/ion` first; then `scripts\agent-verify.cmd` (equiv. `verify-full.cmd` with `ION_VERIFY_NONINTERACTIVE=1`). Hook config `.cursor/hooks.json`: `timeout` 900, `failClosed: false`.
 - **every save (Agent / Tab)**: `afterFileEdit` / `afterTabFileEdit` invoke `node scripts/ion-on-save-pipeline.mjs --cursor-hook` (quick encoding check on `file_path` + `compile-func.mjs`); `timeout` 540, `failClosed: false`.
-- **every save (Ctrl+S)**: `.vscode/settings.json` ? **Run On Save** (`emeraldwalk.RunOnSave`); see `.vscode/extensions.json` recommendation. Without the extension, only Agent/Tab hook paths run the on-save compile gate.
-- **Session memory order**: `.memory-bank/README.md` -> `docs/99-current-progress.md` -> narrative/history in `SESSION_STATE.md`. Treat `docs/99-current-progress.md` as canonical progress vs dated bullets here.
+- **every save (Ctrl+S)**: `.vscode/settings.json` → **Run On Save** (`emeraldwalk.RunOnSave`); see `.vscode/extensions.json` recommendation. Without the extension, only Agent/Tab hook paths run the on-save compile gate.
+- **Session memory order**: `.memory-bank/README.md` → `docs/99-current-progress.md` → narrative/history in `SESSION_STATE.md`. Treat `docs/99-current-progress.md` as canonical progress vs dated bullets here.
 - **VS Code**: See `.vscode/tasks.json` labels starting with `ION DEX:` (agent-verify, verify-full-save-log, verify-100).
 
 ## Next Action

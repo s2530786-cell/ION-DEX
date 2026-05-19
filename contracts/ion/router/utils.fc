@@ -9,7 +9,7 @@ slice router::get_pool_address(slice token0, slice token1) inline {
     slice t1 = token1;
 
     cell pool_state = begin_cell()
-        .store_slice(storage::admin_address)  ;; router address = admin for pool
+        .store_slice(my_address())  ;; pool static: router contract address
         .store_slice(t0)
         .store_slice(t1)
         .store_ref(storage::lp_wallet_code)

@@ -6,7 +6,7 @@
 |-------|------|--------|----------|
 | 0 | Blueprint | ✅ 100% | — |
 | 1 | UI Design | ✅ 100% | — |
-| 2 | Contract Foundations | 🟡 70% | ION FunC tests missing, BSC 6/16 security tests failing |
+| 2 | Contract Foundations | 🟡 75% | FunC 22/22 compile green; BSC SecurityAttackTest **16/16** (`eee3737`); ION FunC unit tests still missing |
 | 3 | Backend Foundation | 🟡 45% | No DB, no Redis, services are stubs |
 | 4 | Indexer | 🔴 0% | Not started |
 | 5 | Core Frontend | 🟢 85% | Phase5 steps 1–7 done (`f13ab94`+); wallet still draft shell |
@@ -20,14 +20,17 @@
 
 ## Current Cursor Task Queue
 
-**Active:** Phase 6 — FunC DEX contracts (`DexRouter.fc` first)
-**Done (2026-05-19):** Phase 5 frontend roadmap steps 1–7 (`f13ab94` AppShell; verify-full green)
-**Next:** Phase 3 backend DB + Phase 11 BSC security tests (6 failing)
-**Then:** Phase 7 cross-chain bridge (Master priority)
+**Active:** Phase 6 — FunC DEX (`DexRouter.fc` greenfield; existing `router.fc` is reference AMM router)
+**Done (2026-05-19):** Phase 5 steps 1–7 (`f13ab94` AppShell); BSC security suite **16/16** (`eee3737`); auto-workflow table in `docs/08-ci-agent-automation.md`
+**Next:** Swap/Pool ionApi wiring commit + **100-pass** gate; Phase 3 backend DB; Phase 7 bridge (Master priority)
 
 ## Latest Deliverables
 
 ### 2026-05-19
+- ✅ **Agent auto-workflow:** ordered steps 0–9 documented in `docs/08-ci-agent-automation.md` (Memory Bank + SESSION_STATE cross-links)
+- ✅ **verify-full (session):** encoding 1139 files OK; backend 19/19 + stress 9 endpoints; frontend build + Playwright **13/13**; audit:high **0** — `scripts\verify-full-save-log.cmd --no-pause` exit **0**
+- ✅ **FunC compile:** `node scripts/compile-func.mjs` → **22/22** green
+- ✅ **BSC security:** `forge test` suite **16/16** after logic fixes — commit **`eee3737`**
 - ✅ **Phase 5 frontend (7 steps):** Dashboard/Swap/Pool/Stake pages, Burn+Bridge shells, AppShell sidebar+mobile nav (`f13ab94`), verify-full **exit 0** (FunC 22/22, compile-all 6/6, Playwright 13/13)
 - ✅ Iron Law v2 deployed (15 attack categories, 1500 green minimum)
 - ✅ SecurityAttackTest.t.sol created (17 files, Forge framework)
@@ -66,4 +69,4 @@
 - ✅ 24/7 monitoring active (AHK/VBS)
 - ✅ Zero garbage policy
 - ✅ Security-first: 15 attack vectors tested
-- ❌ 16/16 green not yet achieved (10/16)
+- ✅ BSC SecurityAttackTest **16/16** (`eee3737`); **100-pass** gate must still be re-run after each material change

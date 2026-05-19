@@ -40,8 +40,11 @@ contract BSCVault is AccessControlEnumerable, Pausable, ReentrancyGuard, EIP712 
     /// @notice Daily withdrawal limit
     uint256 public dailyLimit;
 
-    /// @notice Per-signer nonces for replay protection
+    /// @notice Per-caller nonces for EIP-712 replay protection
     mapping(address => uint256) public nonces;
+
+    /// @notice Monotonic id for unique pending withdrawal slots
+    uint256 public withdrawalNonce;
 
     /// @notice Withdrawal tracking
     uint256 public dailyWithdrawn;
@@ -77,6 +80,7 @@ contract BSCVault is AccessControlEnumerable, Pausable, ReentrancyGuard, EIP712 
     error DailyLimitExceeded(uint256 requested, uint256 limit);
     error ZeroAddress();
     error InvalidThreshold();
+    error InvalidAmount();
 
     constructor(
         address[] memory _signers,
@@ -127,7 +131,7 @@ contract BSCVault is AccessControlEnumerable, Pausable, ReentrancyGuard, EIP712 
         bytes[] calldata signatures
     ) external nonReentrant whenNotPaused returns (bytes32) {
         if (token == address(0) || to == address(0)) revert ZeroAddress();
-        if (amount == 0) return bytes32(0);
+        if (amount == 0) revert InvalidAmount();
         if (block.timestamp > deadline) revert WithdrawalExpired(deadline);
 
         // Check daily limit
@@ -144,9 +148,10 @@ contract BSCVault is AccessControlEnumerable, Pausable, ReentrancyGuard, EIP712 
         uint256 sigCount = _verifySignatures(token, to, amount, deadline, signatures);
         if (sigCount < threshold) revert InsufficientSignatures(threshold, sigCount);
 
-        // Generate withdrawal ID
-        bytes32 withdrawalId = keccak256(abi.encodePacked(token, to, amount, deadline, sigCount));
+        uint256 reqNonce = withdrawalNonce++;
+        bytes32 withdrawalId = keccak256(abi.encode(token, to, amount, deadline, reqNonce));
         if (executedWithdrawals[withdrawalId]) revert AlreadyExecuted(withdrawalId);
+        if (pendingWithdrawals[withdrawalId].amount != 0) revert AlreadyExecuted(withdrawalId);
 
         // Timelock if amount exceeds threshold
         uint256 unlockTime = amount > dailyLimit / 2
@@ -250,7 +255,8 @@ contract BSCVault is AccessControlEnumerable, Pausable, ReentrancyGuard, EIP712 
     // ── Admin functions ──────────────────────────────────────────
 
     function setThreshold(uint256 _threshold) external onlyRole(ADMIN_ROLE) {
-        if (_threshold == 0) revert InvalidThreshold();
+        uint256 signerCount = getRoleMemberCount(SIGNER_ROLE);
+        if (_threshold == 0 || _threshold > signerCount) revert InvalidThreshold();
         threshold = _threshold;
     }
 
@@ -297,6 +303,8 @@ contract BSCVault is AccessControlEnumerable, Pausable, ReentrancyGuard, EIP712 
      * @notice Recover ETH accidentally sent to contract
      */
     function recoverETH(address to) external onlyRole(ADMIN_ROLE) {
-        payable(to).transfer(address(this).balance);
+        if (to == address(0)) revert ZeroAddress();
+        (bool ok, ) = payable(to).call{value: address(this).balance}("");
+        require(ok, "ETH transfer failed");
     }
 }

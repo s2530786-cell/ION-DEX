@@ -706,11 +706,11 @@ contract SecurityAttackTest is Test {
         vm.expectRevert();
         vault.executeWithdrawal(wid);
 
-        // 14c. Zero-amount withdrawal shouldn't create state
+        // 14c. Zero-amount withdrawal must revert (no phantom pending slot)
         bytes[] memory sigs = _getMultiSig(address(token), user, 0, block.timestamp + 3600);
         vm.prank(user);
-        bytes32 zeroWid = vault.requestWithdrawal(address(token), user, 0, block.timestamp + 3600, sigs);
-        assertEq(zeroWid, bytes32(0), "Logic: zero withdrawal created hash");
+        vm.expectRevert(BSCVault.InvalidAmount.selector);
+        vault.requestWithdrawal(address(token), user, 0, block.timestamp + 3600, sigs);
 
         // 14d. Withdrawing more than deposited  blocked by daily limit and balance
         uint256 vaultBal = token.balanceOf(address(vault));
