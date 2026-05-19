@@ -25,6 +25,9 @@ It is designed to include:
 - [x] **Smart Contracts (BSC)**: BSCFeeVault.sol + BSCVault.sol + IonWrapper.sol (Foundry/forge-std, 16 attack vectors implemented)
 - [x] **Data Stack**: 6-engine real-time price feed (PancakeSwap + Binance + CMC + GeckoTerminal + DexScreener + ION Indexer v3) — all free, zero API cost
 - [x] **Price Verification**: 3-source cross-check (CMC $0.0001389 | GeckoTerminal $0.0001411 | DexScreener $0.0001398) — deviation <1.5%
+- [x] **ION Domain Resolution**: Forward (.ion→address) + Reverse (address→.ion) via ION Indexer v3 DNS API
+- [x] **Bridge Security**: Cross-chain decimal conversion, lock/release status tracking, BSC 12-confirmation finality
+- [x] **Performance**: Debounce, throttle, async queue, and rate-limiter hooks for high-frequency DEX trading
 - [x] **Wallet Providers**: IonWalletProvider.tsx + EvmWalletProvider.tsx (no mock/placeholder)
 - [x] **Pages**: SwapPage.tsx, BridgePage.tsx, PoolPage.tsx, StakePage.tsx, DashboardPage.tsx
 - [x] **UI Components**: NeonButton, NeonCard, AppShell, AuroraGalaxyBackground, MarketChart, DataSourceBadge
