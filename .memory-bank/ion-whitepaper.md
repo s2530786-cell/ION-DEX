@@ -1,8 +1,21 @@
 # 📖 ION (Ice Open Network) 白皮书摘要 — 架构与性能
 
-> **来源：ice-blockchain GitHub 组织全部公开仓库 README**
+> **来源：ice-blockchain GitHub 组织全仓库 README + ice.io 官网**
 > **编写日期：2026-05-20 | 旺财**
 > **用途：Cursor/DEX 开发时参考链层能力上限**
+
+---
+
+## 🏢 项目信息
+
+| 项目 | 值 |
+|------|-----|
+| 项目名 | Ice Open Network (ION) |
+| 运营方 | Ice Labs / ice Labs Limited |
+| 官网 | https://ice.io (WordPress, 最后更新 2026-04-06) |
+| GitHub | https://github.com/ice-blockchain |
+| 定位 | "Unmatched speed and scalability for a decentralized future" |
+| 推特 | https://twitter.com/ice_blockchain |
 
 ---
 
@@ -137,3 +150,32 @@ ice-blockchain/subzero
 4. FunC 编译器有修改（如 `#pragma version >=0.4.4` 支持）
 5. addr_none 是 TVM type 00 (2 zero bits)，非 EVM 0xdEaD
 6. 索引器端点路径：`/indexer/v3/` 非标准 TON Indexer 路径
+
+---
+
+## 🎯 Master 钦定发展路线（2026-05-20）
+
+> **"先借鸡生蛋，然后自己链上，再繁荣发展。"**
+
+### 三阶段路线
+```
+阶段1: 借鸡生蛋 (现在)
+  BSC PancakeSwap → ION/WBNB 池子 → 外部用户用 wION 交易
+  六引擎免费数据栈 → 零成本启动
+
+阶段2: 自建生态 (DEX上线后)
+  ION 链部署 DEX 合约 → IONX/USDT, IONX/WION 原生池
+  ION Indexer 覆盖链上全数据
+  Bridge 打通 ION↔BSC 双向流通
+
+阶段3: 繁荣发展 (全球)
+  ION 百万TPS 承载十亿用户
+  多区域 RPC/Indexer 集群
+  外部数据源仅为验证参考，主数据来自自建节点
+```
+
+### 关键决策
+- ✅ 零成本启动：六引擎全免费（CMC+Binance+Gecko+DexScreener+PancakeSwap+ION Indexer）
+- ✅ 不买CMC昂贵API：六引擎数据栈超免费额度7%，10亿用户也不会超
+- ✅ 链层不瓶颈：ION百万TPS，DEX瓶颈在工程不在链
+- ✅ 扩容路径清晰：公共RPC → 自建节点 → 集群 → 多区域 → 全球CDN
