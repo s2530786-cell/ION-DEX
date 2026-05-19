@@ -1,4 +1,4 @@
-# SESSION_STATE.md — Phase 5 ION DEX Frontend
+﻿# SESSION_STATE.md — Phase 5 ION DEX Frontend
 
 ## Current Task
 **Phase 5 Step 7: E2E nav scoping** —杩涜涓?
@@ -26,3 +26,20 @@
 - `.cursor/rules/auto-audit.mdc` — auto-audit on file changes
 - `.cursor/rules/12-factor-agents.mdc` — Zero Garbage, DAG-only
 
+
+## Active Task (2026-05-20 03:00)
+
+**TASK 6.1-6.2**: Sandwich Defense + Bridge Double-Signature (P0)
+
+See: .memory-bank/task-sandwich-doublesig.md
+
+### Quick Summary
+1. pool.fc: commit-reveal anti-front-running + max 5% pool swap + block-level deadline
+2. Bridge: 2-of-3 validator double-sig for transfers >
+   - BSC side: EIP-712 + validator set in BSCFeeVault.sol
+   - ION side: validator pubkey dict in bridge.fc or vault.fc
+
+**Files to modify**: pool.fc, op.fc, errors.fc, BSCFeeVault.sol, vault.fc, params.fc
+**New files**: IBridgeValidator.sol (interface)
+
+**Step 0**: Read .memory-bank/task-sandwich-doublesig.md for full spec
