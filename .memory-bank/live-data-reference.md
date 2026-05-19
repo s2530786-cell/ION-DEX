@@ -49,10 +49,13 @@
 | ION JSON RPC | `https://api.mainnet.ice.io/http/v2/jsonRPC` |
 | ION Indexer v3 | `https://api.mainnet.ice.io/indexer/v3/` |
 | ION Explorer | `https://explorer.ice.io` |
-| 质押年化 | ~25% APR |
-| Master 质押量 | ~397万 ION |
-| 总持仓 | ~407万~417万 ION |
-| ⚠️ 注 | 质押数据走 Indexer v3，RPC 格式可能不兼容标准 TON SDK |
+| 选举人合约 | `-1:3333333333333333333333333333333333333333333333333333333333333333` |
+| **全网络总质押** | **~57.71亿 ION** (elector balance, 实时链上) |
+| **总供应量** | **~113.6亿 ION** (CMC 市场数据, `price × 11.36×10^9`) |
+| **质押率** | **~50.8%** (57.71B / 113.6B) |
+| **年化收益率** | **~25% APR** |
+| **当前区块** | `18714644` (2026-05-19 23:27) |
+| ⚠️ 注 | 质押数据查 elector 合约余额 → `getAddressBalance(elector)` |
 
 ---
 
@@ -154,7 +157,7 @@ CMC_API_KEY=    ← ⚠️ 需 Master 提供
 |------|------|--------|
 | 行情 | `backend/src/services/live/markets-live.ts` | CMC / PancakeSwap |
 | 烧币 | `backend/src/services/live/burn-live.ts` | BSC RPC `balanceOf(deadAddr)` |
-| 质押 | `backend/src/services/live/config-live.ts` | ION Indexer v3 |
+| 质押 | `backend/src/services/live/staking-live.ts` | ION JSON RPC `getAddressBalance(elector)` ✅ |
 | 域名 | （待实现） | ION Indexer v3 DNS records |
 | 价格 | `backend/src/upstream/cmc.ts` | CMC Pro API |
 | 链上 | `backend/src/upstream/bsc-rpc.ts` | BSC JSON RPC |
