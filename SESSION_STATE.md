@@ -30,6 +30,12 @@ SESSION START — ION DEX Full Pipeline
      → 钱包对接方式: EIP-1193 injected provider → ethers.js BrowserProvider → wagmi/viem connector
      → 每个钱包必须检测 window.ethereum / window.okxwallet / window.bitkeep / window.trustwallet
      → mock/假钱包/假余额/假交易哈希=死刑
+  10. 不读 Master 个人持仓当官方数据 — 所有数据对接官方/链上实时数据源:
+     → 质押: 查 elector 合约余额 `getAddressBalance(elector)` → 实时链上，不写死
+     → 行情: CMC Pro API → 实时报价
+     → 烧币: BSC deadAddr 余额 → 实时链上
+     → 域名: ION DNS 记录 → 实时链上
+     → 价格: PancakeSwap Router 链上报价 → 实时的
 ═══════════════════════════════════════════
 ✅ DO — 以下指令按顺序执行，做完一条 commit 一条。不许跳。
 

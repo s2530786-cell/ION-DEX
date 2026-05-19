@@ -7,7 +7,8 @@ description: Plans and implements ION DEX backend/API/data integrations. Use whe
 
 ## Data Domains
 
-> **⚠️ 所有真实地址和端点见 `.memory-bank/live-data-reference.md` — 启动必读。**
+> **🔴 铁律：所有数据对接官方/链上实时数据源。不读 Master 个人持仓，不写死数字。**
+> **启动必读：`.memory-bank/live-data-reference.md` — 所有真实地址和端点。**
 
 Use this skill for data and backend work around:
 
