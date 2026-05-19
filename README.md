@@ -21,17 +21,19 @@ It is designed to include:
 **Active development — contracts compiled, data stack live, frontend in progress.**
 
 ### Completed
-- [x] **Smart Contracts**: FeeDistributor.fc (FunC, 796 bytes, compiled ✅) + BSCFeeVault.sol (Solidity)
+- [x] **Smart Contracts (ION)**: FeeDistributor.fc (FunC, 796 bytes, compiled ✅)
+- [x] **Smart Contracts (BSC)**: BSCFeeVault.sol + BSCVault.sol + IonWrapper.sol (Foundry/forge-std, 16 attack vectors implemented)
 - [x] **Data Stack**: 6-engine real-time price feed (PancakeSwap + Binance + CMC + GeckoTerminal + DexScreener + ION Indexer v3) — all free, zero API cost
 - [x] **Price Verification**: 3-source cross-check (CMC $0.0001389 | GeckoTerminal $0.0001411 | DexScreener $0.0001398) — deviation <1.5%
-- [x] **Wallet Providers**: IonWalletProvider.tsx + EvmWalletProvider.tsx
-- [x] **Bridge UI**: BridgePage.tsx (ION ↔ BSC)
-- [x] **Swap UI**: SwapPage.tsx
+- [x] **Wallet Providers**: IonWalletProvider.tsx + EvmWalletProvider.tsx (no mock/placeholder)
+- [x] **Pages**: SwapPage.tsx, BridgePage.tsx, PoolPage.tsx, StakePage.tsx, DashboardPage.tsx
+- [x] **UI Components**: NeonButton, NeonCard, AppShell, AuroraGalaxyBackground, MarketChart, DataSourceBadge
+- [x] **Security**: Full BSC test suite — Reentrancy, FlashLoan, Sandwich, Oracle, AccessControl, Bridge, DoS, Governance, Overflow, PhantomToken, Proxy, Quantum, Signature, Timestamp attackers
 
 ### In Progress
 - [ ] ION DEX core contracts (IONX token, AMM pool, router)
 - [ ] Backend API with multi-source caching (TTL 15s)
-- [ ] Security test framework (10 attack vectors × 1000 tests each)
+- [ ] Security test framework (1000 tests/vector)
 - [ ] CI/CD pipeline
 
 **Commit history**: 62 commits across architecture, contracts, data tools, and frontend.
