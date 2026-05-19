@@ -8,7 +8,7 @@ Root contracts / fragments checked: 22
   op.fc âœ? (40 bytes)
   params.fc âœ? (40 bytes)
   utils.fc âœ? (40 bytes)
-  deployer.fc âœ? (616 bytes)
+  deployer.fc âœ? (708 bytes)
   lp_account.fc âœ? (660 bytes)
   lp_wallet.fc âœ? (692 bytes)
   get.fc âœ? (352 bytes)

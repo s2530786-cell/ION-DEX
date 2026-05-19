@@ -81,6 +81,7 @@ const ENTRY_BASES = new Set([
   'pool.fc',
   'router.fc',
   'vault.fc',
+  'FeeDistributor.fc',
 ]);
 
 /** recv_internal stub so codegen produces TVM entry / Fift main */

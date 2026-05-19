@@ -14,9 +14,12 @@ declare global {
   }
 }
 
+import type { EvmWalletKind } from "@/wallet/evmConnectors";
+
 export type EvmWalletSnapshot = {
   address: string;
   chainId: number;
   balanceBnb: string | null;
   balanceSource: "backend" | "unavailable";
+  walletKind: EvmWalletKind | null;
 };

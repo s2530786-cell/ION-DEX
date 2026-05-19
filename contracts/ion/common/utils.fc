@@ -1,11 +1,6 @@
 ;; ── ION DEX Utility Functions ───────────────────────────────────
 
-;; addr_none helper — ION chain burn destination (TVM type 00)
-;; In TON/ION, burning coins means sending to addr_none.
-;; This is different from EVM's 0x000...dEaD address.
-slice new_addr_none() impure inline {
-    return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
-}
+;; ION burn uses addr_none() from funcbox (TVM type 00), not EVM 0xdEaD.
 
 slice utils::get_excesses_address(slice _addr) impure inline {
     _addr = _addr.address::is_none() ? ctx.at(SENDER) : _addr;

@@ -1,9 +1,12 @@
-﻿#pragma version >=0.4.4;
+#pragma version >=0.4.4;
 
 #include "common/common.fc";
 
-;; ION DEX fee distributor 鈥?all protocol fees settled in native ION.
+;; ION DEX fee distributor — all protocol fees settled in native ION.
 ;; Split (bps, sum = 10000): 35% burn / 25% team / 20% staking / 15% treasury / 5% operations
+;;
+;; Burn: ION chain uses addr_none (TVM type 00, 2 zero bits) — not EVM 0xdEaD.
+;; When coins are sent to addr_none, they are permanently removed from total supply.
 
 const fee::bps_burn = 3500;
 const fee::bps_team = 2500;
@@ -11,7 +14,7 @@ const fee::bps_staking = 2000;
 const fee::bps_treasury = 1500;
 const fee::bps_ops = 500;
 
-const op::deposit_ion_fee = "deposit_ion_fee query_id:uint64 = InternalMsgBody"c & 0x7fffffff;
+const op::deposit_ion_fee = "deposit_ion_fee query_id:uint64 amount:Coins = InternalMsgBody"c & 0x7fffffff;
 const op::distribute_ion_fee = "distribute_ion_fee query_id:uint64 = InternalMsgBody"c & 0x7fffffff;
 
 global slice storage::owner_address;
@@ -49,12 +52,13 @@ global int storage::total_distributed;
     .end_cell());
 }
 
+;; Send native ION coins to dest address
 () fee::send_native(slice dest, int amount, int mode) impure inline {
     if (amount <= 0) {
         return ();
     }
     var msg = begin_cell()
-        .store_uint(0x10, 6)
+        .store_uint(0x18, 6)
         .store_slice(dest)
         .store_coins(amount)
         .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
@@ -62,76 +66,85 @@ global int storage::total_distributed;
     send_raw_message(msg, mode);
 }
 
-() handle_deposit_ion_fee() impure {
-    int incoming = ctx.at(VALUE);
-    throw_unless(error::invalid_amount, incoming > 0);
-    storage::accrued_fees += incoming;
-    storage::save();
-}
-
-() handle_distribute_ion_fee() impure {
-    throw_unless(error::zero_output, storage::accrued_fees > 0);
-
-    int reserve = gas::vault::withdraw_fee + storage_fee::vault * 3;
-    throw_unless(error::insufficient_gas, ctx.at(BALANCE) > reserve);
-
-    int distributable = storage::accrued_fees;
-    int burn_amt = muldiv(distributable, fee::bps_burn, params::fee_divider);
-    int team_amt = muldiv(distributable, fee::bps_team, params::fee_divider);
-    int staking_amt = muldiv(distributable, fee::bps_staking, params::fee_divider);
-    int treasury_amt = muldiv(distributable, fee::bps_treasury, params::fee_divider);
-    int ops_amt = distributable - burn_amt - team_amt - staking_amt - treasury_amt;
-
-    ;; Burn on ION: native coins sent to addr_none (supply reduction).
-    if (burn_amt > 0) {
-        fee::send_native(new_addr_none(), burn_amt, 128);
+;; Burn coins by sending to addr_none (TVM address type 00).
+;; On TON/ION, addr_none is the 2-bit prefix "00" — no human-readable address.
+() fee::burn_coins(int amount) impure inline {
+    if (amount <= 0) {
+        return ();
     }
-    if (team_amt > 0) {
-        fee::send_native(storage::team_address, team_amt, 1);
-    }
-    if (staking_amt > 0) {
-        fee::send_native(storage::staking_address, staking_amt, 1);
-    }
-    if (treasury_amt > 0) {
-        fee::send_native(storage::treasury_address, treasury_amt, 1);
-    }
-    if (ops_amt > 0) {
-        fee::send_native(storage::operations_address, ops_amt, 1);
-    }
-
-    storage::total_distributed += distributable;
-    storage::accrued_fees = 0;
-    storage::save();
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_uint(0, 2)          ;; addr_none prefix = 00
+        .store_coins(amount)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+    .end_cell();
+    send_raw_message(msg, 128);
 }
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
     throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
 
-    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
-    if ctx.at(IS_BOUNCED) {
+    ;; Parse incoming message manually — no ctx.at() dependency
+    slice cs = in_msg_full.begin_parse();
+    int flags = cs~load_uint(4);
+    int is_bounced = flags & 1;
+
+    if is_bounced {
         return ();
     }
 
-    throw_unless(error::wrong_workchain, ctx.at(SENDER).address::check_workchain(params::workchain));
+    slice sender = cs~load_msg_addr();
+    cs~load_msg_addr(); ;; dest — ignored for this contract
+    cs~load_coins();    ;; value — use msg_value instead
+
+    int op = in_msg_body~load_uint(32);
+    in_msg_body~load_uint(64);      ;; query_id — ignored
+
+    throw_unless(error::wrong_workchain, sender.address::check_workchain(params::workchain));
     storage::load();
 
-    if ctx.at(OPCODE) == op::deposit_ion_fee {
+    if op == op::deposit_ion_fee {
         throw_unless(
             error::invalid_caller,
-            equal_slices(ctx.at(SENDER), storage::router_address)
-            | equal_slices(ctx.at(SENDER), storage::owner_address),
+            equal_slices(sender, storage::router_address)
+            | equal_slices(sender, storage::owner_address)
         );
-        handle_deposit_ion_fee();
+        ;; Parse amount from remaining body
+        int amount = in_msg_body~load_coins();
+        throw_unless(error::invalid_amount, amount > 0);
+        storage::accrued_fees += amount;
+        storage::save();
         return ();
     }
 
-    if ctx.at(OPCODE) == op::distribute_ion_fee {
+    if op == op::distribute_ion_fee {
         throw_unless(
             error::invalid_caller,
-            equal_slices(ctx.at(SENDER), storage::router_address)
-            | equal_slices(ctx.at(SENDER), storage::owner_address),
+            equal_slices(sender, storage::router_address)
+            | equal_slices(sender, storage::owner_address)
         );
-        handle_distribute_ion_fee();
+        throw_unless(error::zero_output, storage::accrued_fees > 0);
+
+        int reserve = gas::vault::withdraw_fee + storage_fee::vault * 3;
+        throw_unless(error::insufficient_gas, my_balance > reserve);
+
+        int distributable = storage::accrued_fees;
+        int burn_amt = muldiv(distributable, fee::bps_burn, params::fee_divider);
+        int team_amt = muldiv(distributable, fee::bps_team, params::fee_divider);
+        int staking_amt = muldiv(distributable, fee::bps_staking, params::fee_divider);
+        int treasury_amt = muldiv(distributable, fee::bps_treasury, params::fee_divider);
+        int ops_amt = distributable - burn_amt - team_amt - staking_amt - treasury_amt;
+
+        ;; Distribute: 35% burn / 25% team / 20% staking / 15% treasury / 5% ops
+        fee::burn_coins(burn_amt);
+        fee::send_native(storage::team_address, team_amt, 1);
+        fee::send_native(storage::staking_address, staking_amt, 1);
+        fee::send_native(storage::treasury_address, treasury_amt, 1);
+        fee::send_native(storage::operations_address, ops_amt, 1);
+
+        storage::total_distributed += distributable;
+        storage::accrued_fees = 0;
+        storage::save();
         return ();
     }
 
@@ -148,3 +161,6 @@ int get_total_distributed() method_id {
     return storage::total_distributed;
 }
 
+int get_burn_ratio() method_id {
+    return muldiv(fee::bps_burn, 10000, params::fee_divider);  ;; 35%
+}

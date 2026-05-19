@@ -3328,3 +3328,721 @@ No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts
 No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
 
 ```
+
+## func-compile — 2026-05-19T15:59:44.382Z
+```
+
+```
+
+## func-compile — 2026-05-19T15:59:44.383Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:00:24.845Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:00:24.845Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:01:44.119Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:01:44.119Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:03:40.329Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:03:40.330Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:05:38.341Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:05:38.341Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:07:08.240Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:07:08.843Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:07:29.153Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:07:29.777Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:07:50.255Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:07:53.760Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:08:11.460Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:08:14.887Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:09:38.281Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/pool/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/router/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+
+```
+
+## func-compile — 2026-05-19T16:09:38.301Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/pool/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/router/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+
+```
+
+## func-compile — 2026-05-19T16:10:12.490Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/pool/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/router/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+
+```
+
+## func-compile — 2026-05-19T16:10:12.608Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/pool/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/router/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+
+```
+
+## solhint — 2026-05-19T16:10:36.438Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## solhint — 2026-05-19T16:10:38.215Z
+```
+No files to lint! check glob arguments "D:\openclaw-tools\ion-dex-nuke\contracts\bsc\src\**\*.sol" and ignore files.
+
+```
+
+## func-compile — 2026-05-19T16:10:57.739Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/pool/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/router/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+
+```
+
+## func-compile — 2026-05-19T16:10:57.842Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/pool/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/router/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+
+```
+
+## func-compile — 2026-05-19T16:11:28.639Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/pool/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/router/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+
+```
+
+## func-compile — 2026-05-19T16:11:28.801Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/pool/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/router/../common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/utils.fc:7:24: error: undefined function `.store_addr`, defining a global function of unknown type
+      return begin_cell().store_addr(addr_none).end_cell().begin_parse().load_msg_addr();
+                         ^
+
+```
+
+## func-compile — 2026-05-19T16:12:36.968Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:12:37.403Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:13:18.645Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:13:18.815Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:13:39.348Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:13:39.444Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:14:00.306Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:14:00.655Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:14:22.126Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:14:22.217Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:15:03.005Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:15:03.577Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:15:30.382Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/FeeDistributor.fc:66:27: error: undefined function `VALUE`, defining a global function of unknown type
+      int incoming = ctx.at(VALUE);
+                            ^
+
+```
+
+## func-compile — 2026-05-19T16:15:30.947Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/FeeDistributor.fc:66:27: error: undefined function `VALUE`, defining a global function of unknown type
+      int incoming = ctx.at(VALUE);
+                            ^
+
+```
+
+## func-compile — 2026-05-19T16:15:53.261Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/FeeDistributor.fc:66:27: error: undefined function `VALUE`, defining a global function of unknown type
+      int incoming = ctx.at(VALUE);
+                            ^
+
+```
+
+## func-compile — 2026-05-19T16:15:53.658Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/FeeDistributor.fc:66:27: error: undefined function `VALUE`, defining a global function of unknown type
+      int incoming = ctx.at(VALUE);
+                            ^
+
+```
+
+## func-compile — 2026-05-19T16:16:14.730Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/FeeDistributor.fc:68:27: error: undefined function `VALUE`, defining a global function of unknown type
+      int incoming = ctx.at(VALUE);
+                            ^
+
+```
+
+## func-compile — 2026-05-19T16:16:15.093Z
+```
+D:/openclaw-tools/ion-dex-nuke/contracts/ion/FeeDistributor.fc:68:27: error: undefined function `VALUE`, defining a global function of unknown type
+      int incoming = ctx.at(VALUE);
+                            ^
+
+```
+
+## func-compile — 2026-05-19T16:16:41.579Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:16:41.940Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:17:02.546Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:17:02.954Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:17:46.306Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:17:46.973Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:18:06.998Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:18:07.583Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:18:58.156Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:18:58.580Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:21:22.541Z
+```
+
+```
+
+## func-compile — 2026-05-19T16:21:22.542Z
+```
+
+```
