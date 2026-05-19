@@ -215,6 +215,40 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 13. Accelerators (2026-05-18): Worktrees + review/audit for non-trivial work.
 14. Claude-Flow/RuFlo (2026-05-18): Pinned **`3.7.0-alpha.35`**; main has no MCP/daemon/WASM ? treat as constrained local tool; **`verify-full-save-log`** **OK** separately from dependency audit findings.
 15. Phase 3 Bridge/Domain slice (2026-05-19): **`fetchBridgeRoutes`** / **`fetchDomainResolve`**; **`BridgeMetricsRow`** + **`DomainMetricsRow`** (`custodian.ion`); E2E **`bridge-metrics-source`** / **`domain-metrics-source`**; **`verify-full-save-log.cmd --no-pause`** exit **0**; Playwright **13 passed**. **`verify-100.ps1`** retries Windows transient **`-1073741502`** per step once; heavy 100-pass: run from **standalone** **`cmd`/`pwsh`** if Cursor shell flaky. Next: **`/api/bridge/routes`** registry parity, Redis/PostgreSQL drafts.
+## 🔥 旺财总经理 24/7 Auto-Workflow (2026-05-19 铁律)
+
+> 旺财总经理下达。死命令。永不停止。
+
+### Iron Law Cycle (每个开发部分必须循环)：
+```
+读 SESSION_STATE.md → 编译 → 审计漏洞 → 修复 → 重编译 → commit →
+100次压力测试 → 通不过回第三步重来
+```
+
+### Continuous Operation Protocol
+
+**You work 24 hours a day. Never idle. Never stop.**
+
+1. **完成 Phase N → 立即开始 Phase N+1。不等。不休息。**
+2. **每 30 分钟运行一次：recompile → audit → fix → commit 循环。**
+3. **遇到阻塞 → 记录到 SESSION_STATE.md，commit 当前进度，找下一个独立任务继续。**
+4. **绝不输出 "waiting for user" —— 找其他事做或重跑审计。**
+5. **每次 git commit 必须 push 到 `origin 2026-05-19-q7fx`。**
+
+### 100-Pass Iron Gate
+- **100/100 GREEN 是底线。** 99 绿 + 1 红 = FAIL。
+- **区块链公司最严厉审计标准** — 每次都要过：重入、溢出、权限控制、逻辑错误、边界值。
+- **暴力测试** — 模糊输入、畸形数据、边界值、竞态条件。
+- 任何测试失败 → 回到审计步骤（Step 3），不作弊。
+
+### Post Phase 5 Roadmap
+
+After Phase 5 (frontend):
+- **Phase 6:** FunC contracts (DexRouter, IonAmmPool, LimitOrderBook, GridStrategyVault, StakingPool, FeeDistributor, Treasury, OracleAdapter, DomainMarketplace, DomainResolverAdapter) — each contract: write → compile → audit → 100 tests → commit
+- **Phase 7:** BSC contracts (BSCVault.sol, BridgeVerifier.sol, BSCFeeVault.sol) — each contract: write → forge build → audit → 100 tests → commit
+- **Phase 8:** Indexer + Backend complete → 全栈集成测试 100 pass
+- **Phase 9:** E2E 部署 → 主网上线前最终审计
+
 ## Memory MCP Candidates
 
 - `alioshr/memory-bank-mcp`: recommended project memory bank.

@@ -46,6 +46,23 @@ This caps zombie processes. Do NOT use bare `taskkill /f /im node.exe` — only 
 - **Every line in a `.fc` file must be valid FunC syntax or a comment starting with `;;`.** If a line doesn't compile, it doesn't belong.
 - **After EVERY file edit**, run `node scripts/compile-func.mjs` and confirm zero new errors before moving on.
 
+# 🔥 Master's Iron Law of Development (开发铁律 — 2026-05-19)
+
+> 旺财总经理下达，死命令。Every development phase MUST follow this cycle:
+
+```
+读 SESSION_STATE.md → 编译 → 审计漏洞 → 修复 → 重编译 → commit →
+100次压力测试 → 通不过回第三步重来
+```
+
+**这是每一个开发部分都需要做的事情，这是铁律。**
+
+### ⚡ Absolute Requirements
+- **100 GREEN PASSES MINIMUM** — No exceptions. 99 green + 1 red = FAIL.
+- **Blockchain company most stringent audit standards** — Check: reentrancy, overflow, access control, logic errors, edge cases.
+- **Brute-force attack testing** — Fuzz inputs, malformed data, boundary values, race conditions.
+- **If ANY test fails → back to STEP 3 (audit).** No skipping. No "it's probably fine."
+
 # Mandatory Workflow — Every Session
 
 **This is Master's standing order. Execute from step 1 EVERY time.**
@@ -61,6 +78,16 @@ STEP 7: Run `node scripts/stress-test-100.js` → 100-pass verification
 STEP 8: If any test fails → go back to STEP 3
 STEP 9: All 100 pass → git commit + update SESSION_STATE.md → DONE
 ```
+
+### 🌐 24/7 Continuous Operation Protocol
+
+**You work 24 hours a day, 7 days a week. Never idle. Never wait for human input.**
+
+- After completing Phase N → immediately start Phase N+1.
+- After completing all phases → run full audit + 100 tests again.
+- If you encounter a blocking issue → document it, commit partial work, move to next independent task.
+- **NEVER say "waiting for user" — find another task or re-run audits.**
+- Every 30 minutes: recompile all contracts → audit → fix → commit cycle.
 
 **RULES:**
 - Never skip a step. Never assume something passed without running it.
