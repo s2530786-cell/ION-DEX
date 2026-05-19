@@ -498,3 +498,27 @@ Skills: **`ion-contract-audit`**, **`ion-official-source`**. Official tree: **`D
 - Log path when stdout quiet: **`%TEMP%\ion-verify-full.txt`**.
 - Encode everything **UTF-8 without BOM**.
 - Agents should track progress via **git history** + **`docs/99-current-progress.md`** entries per milestone.
+
+---
+
+## 🔄 RESUME POINT — 2026-05-19 23:00 Session Restart
+
+**Why restarting:** 三条红线 + 9 DO NOT + 真数据源 + 结构化指令 全部更新，必须重启加载。
+
+**Current checkpoint:** `5d584a9` — 118 files committed, working tree clean.
+
+**Cursor's last known work:**
+- Created `backend/src/services/live/` (CMC/PancakeSwap/ION API adapters) — 需要验证是真实现还是空壳
+- Created `backend/src/db/` (migrations + ORM) — 含 mock，需清理
+- Created `frontend/src/wallet/`, `frontend/src/context/` — 钱包注入框架
+- Modified `backend/src/services/markets.ts` — 仍含 10 个 mock，**必须删除所有 mock**
+- Created 14 篇 docs/09~22 — 架构文档
+
+**Resume at TASK 2:** `node scripts/compile-func.mjs` → 目标 22/22 PASS
+
+**⚠️ First thing after restart — READ:**
+1. `.cursor/rules/ion-dex-iron-law.mdc` (三红线在最顶部)
+2. `.memory-bank/architecture-audit.md` (P0→P3 优先级)
+3. `SESSION_STATE.md` (本文件，TASK 0-4 指令)
+
+**绝对不能做的三件事:** 撒谎 / 写假代码 / 出中文乱码
