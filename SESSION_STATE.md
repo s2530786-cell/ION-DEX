@@ -48,6 +48,7 @@ SESSION START — ION DEX Full Pipeline
 
 ═══════════════════════════════════════════
 🏗️ TASK 1 (FIRST!): 费用/钱包/桥 框架 → 代码落地
+  📖 操作手册: .memory-bank/implementation-playbook.md ← 照着这个写，别自己猜
   本任务把已有的设计文档转为可运行的代码。
   每完成一个子任务 commit 一次。build 不过不进下一个。
 
@@ -587,14 +588,16 @@ Skills: **`ion-contract-audit`**, **`ion-official-source`**. Official tree: **`D
 
 **Resume at TASK 2:** `node scripts/compile-func.mjs` → 目标 22/22 PASS
 
-**⚠️ First thing after restart — ④ 份铁律必读（缺一不可）:**
+**⚠️ First thing after restart — ④ 份铁律 + ① 份操作手册必读（缺一不可）:**
 1. `.cursor/rules/ion-dex-iron-law.mdc` — 三红线 + 安全铁律
 2. `.memory-bank/live-data-reference.md` — 所有真实地址 (ION/PancakeSwap/CMC/RPC/钱包)
 3. `.memory-bank/strategy-borrow-liquidity.md` — 借鸡生蛋战略
 4. `.memory-bank/architecture-audit.md` — P0→P3 优先级
+5. `.memory-bank/implementation-playbook.md` — **操作手册: 每个接口的具体代码写法**
 
-**读完后立即执行 TASK 1:** 费用/钱包/桥框架→代码 (1a→1b→1c→1d→1e→1f)
+**读完后立即执行 TASK 1:** 费用/钱包/桥框架→代码
+照着 implementation-playbook.md 的具体代码模板写，不自己猜
 每条 commit 一次。build 不过不进下一条。
-**红线: 不读铁律不动手。不开文档不写码。mock/placeholder/假数据=死刑。**
+**红线: 不读铁律不动手。不开手册不写码。mock/placeholder/假数据=死刑。**
 
 **绝对不能做的三件事:** 撒谎 / 写假代码 / 出中文乱码
