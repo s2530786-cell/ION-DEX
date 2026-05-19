@@ -80,6 +80,14 @@ for ($i = 1; $i -le $Iterations; $i++) {
   $funcExit = Run-StepResilient "func-compile" {
     cmd.exe /d /c "node scripts\compile-func.mjs"
   }
+  # func-js sporadically exits 1 on Windows under tight loops (busy AV / temp contention); retry once.
+  if ($funcExit -eq 1) {
+    Write-Log ("RETRY_FUNC_COMPILE_SOFT firstExit=1 sleepMs=1500")
+    Start-Sleep -Milliseconds 1500
+    $funcExit = Run-StepResilient "func-compile-exit1-retry" {
+      cmd.exe /d /c "node scripts\compile-func.mjs"
+    }
+  }
 
   Set-Location $root
   $encodingScript = Join-Path $root "scripts\check-encoding.ps1"

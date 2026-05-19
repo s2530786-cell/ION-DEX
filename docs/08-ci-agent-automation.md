@@ -76,7 +76,7 @@ If you bootstrap from scratch instead of cloning this repo:
 | FunC then full verify in one CMD | `scripts\task2-func-loop.cmd` |
 | Above + 100 iterations (`verify-100.ps1`, long) | `scripts\task2-func-loop.cmd --with-100` |
 
-`verify-100.ps1` runs **`func-compile`** at the start of **every** pass, so FunC stays on the critical path during the 100-run gate.
+`verify-100.ps1` runs **`func-compile`** at the start of **every** pass, so FunC stays on the critical path during the 100-run gate. If `func-compile` returns exit **`1`** once (sometimes seen under Windows tight loops / temp contention), the script sleeps **1500ms** and retries that step **once** before failing the pass.
 
 ### After every save (Agent / Tab + editor Ctrl+S)
 
