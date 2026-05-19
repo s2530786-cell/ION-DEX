@@ -36,7 +36,9 @@ type BusinessPageConfig = {
   checklist: string[];
 };
 
-const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
+export type BusinessPageKey = Exclude<PageKey, "swap" | "dashboard" | "pool" | "stake">;
+
+const pageConfigs: Record<BusinessPageKey, BusinessPageConfig> = {
   trade: {
     eyebrow: "Professional Trading",
     title: "ION spot order desk",
@@ -64,34 +66,6 @@ const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
       { label: "Settlement", value: "ION fees", tone: "gold" },
     ],
     checklist: ["Grid bounds", "Take-profit / stop-loss", "Bot defense", "Strategy history"],
-  },
-  pool: {
-    eyebrow: "Liquidity",
-    title: "ION liquidity pools",
-    description:
-      "Pool management shell for adding liquidity, LP position cards, fee growth, and impermanent-loss alerts.",
-    icon: Layers3,
-    primaryAction: "Add Liquidity",
-    metrics: [
-      { label: "TVL", value: "$1.23M", tone: "cyan" },
-      { label: "Pool Fee", value: "ION based", tone: "gold" },
-      { label: "Positions", value: "0 active", tone: "magenta" },
-    ],
-    checklist: ["LP mint flow", "Slippage guard", "Pool analytics", "Position withdrawal"],
-  },
-  stake: {
-    eyebrow: "Yield",
-    title: "DEX staking hub",
-    description:
-      "Staking shell for official staking, DEX staking, ecosystem staking totals, and dynamic APR adjustments.",
-    icon: ShieldCheck,
-    primaryAction: "Stake ION",
-    metrics: [
-      { label: "DEX APR", value: "25.5%", tone: "gold" },
-      { label: "Official Stake", value: "TBD", tone: "cyan" },
-      { label: "Ecosystem Stake", value: "TBD", tone: "magenta" },
-    ],
-    checklist: ["Dynamic APR model", "Reward vesting", "Unstake queue", "Treasury split"],
   },
   bridge: {
     eyebrow: "Cross-chain",
@@ -1317,7 +1291,7 @@ function AIMarketPanel() {
   );
 }
 
-export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
+export function BusinessPage({ page }: { page: BusinessPageKey }) {
   const config = pageConfigs[page];
   const Icon = config.icon;
 
@@ -1344,9 +1318,7 @@ export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
             </p>
           </div>
 
-          {page === "stake" ? (
-            <StakeMetricsRow />
-          ) : page === "burn" ? (
+          {page === "burn" ? (
             <BurnMetricsRow />
           ) : page === "bridge" ? (
             <BridgeMetricsRow />
@@ -1365,8 +1337,6 @@ export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
 
           {page === "trade" ? <TradeOrderPanel /> : null}
           {page === "grid" ? <GridStrategyPanel /> : null}
-          {page === "pool" ? <PoolLiquidityPanel /> : null}
-          {page === "stake" ? <StakeHubPanel /> : null}
           {page === "bridge" ? <BridgeTransferPanel /> : null}
           {page === "burn" ? <BurnAnalyticsPanel /> : null}
           {page === "domain" ? <DomainTradingPanel /> : null}

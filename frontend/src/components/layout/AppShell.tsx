@@ -1,10 +1,23 @@
-import { Bell, CheckCircle2, Globe2, LogOut, ShieldCheck, UserCircle2, Wallet } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Bell,
+  CheckCircle2,
+  Globe2,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  ShieldCheck,
+  UserCircle2,
+  Wallet,
+  X,
+} from "lucide-react";
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 
 export type PageKey =
+  | "dashboard"
   | "swap"
   | "trade"
   | "grid"
