@@ -10,67 +10,111 @@
 
 ## Step 1: 补 force_chain 跨链防护
 **文件**: `func/nft-collection.fc`
-**位置**: `recv_internal` 中解析 sender_address 后
-**加代码**:
-```
-force_chain(sender_address);
-```
+**当前代码上下文** (找到这段):
+```func
+    if (flags & 1) { ;; ignore all bounced messages
+        return ();
+    }
+    slice sender_address = cs~load_msg_addr();
 
-**文件**: `func/nft-item.fc`
-**验证**: 已有 force_chain 检查，确认无误
+    int op = in_msg_body~load_uint(32);
+```
+**在 `slice sender_address = cs~load_msg_addr();` 下一行插入**:
+```func
+    force_chain(sender_address);
+```
+**修改后全文**:
+```func
+    if (flags & 1) { ;; ignore all bounced messages
+        return ();
+    }
+    slice sender_address = cs~load_msg_addr();
+    force_chain(sender_address);
 
-## Step 2: 加防重复铸造
+    int op = in_msg_body~load_uint(32);
+```
+**为什么**: force_chain 验证消息来自同一条链，阻止跨链重放攻击。
+**验证**: `grep "force_chain" func/nft-collection.fc` 应返回一行匹配。
+
+## Step 2: 防重复铸造 (验证)
 **文件**: `func/nft-collection.fc`
-**位置**: deploy nft 流程，在 `int item_index = slice_hash(domain);` 后
-**加代码**:
-```
-;; 检查域名是否已被铸造
-cell minted_cell = config_param(dns_config_id);
-if (~ cell_null?(minted_cell)) {
-    slice minted_cs = minted_cell.begin_parse();
-    cell minted_dict = minted_cs~load_dict();
-    (slice existing, int found) = minted_dict.udict_get?(256, item_index);
-    throw_if(205, found);
-}
-```
-（Zeus 已有类似逻辑，验证无误即可）
+**当前代码上下文** (找到这段):
+```func
+        int item_index = slice_hash(domain);
 
-## Step 3: 提高最小域名长度
-**文件**: `func/nft-collection.fc`
-**修改**: `len > 3 * 8` → `len >= 4 * 8`（确保 ≥4 字符）
-（Zeus 已是 4 字符，验证即可）
+        cell config_cell = config_param(dns_config_id);
+```
+**Zeus 已有这段逻辑 — 只需验证存在**:
+```func
+        cell config_cell = config_param(dns_config_id);
+        if (~ cell_null?(config_cell)) {
+            slice config_cs = config_cell.begin_parse();
+            cell config = config_cs~load_dict();
+            (slice config_value, int found) = config.udict_get?(256, item_index);
+            throw_if(205, found);
+        }
+```
+**为什么**: 防止相同域名被重复铸造（sha256碰撞虽极低概率但需防御）。
+**验证**: `grep "throw_if(205" func/nft-collection.fc` 应返回一行匹配。
 
-## Step 4: 加 ION 专属 TLD
+## Step 3: 最小域名长度 (验证)
 **文件**: `func/nft-collection.fc`
-**修改**: get_full_domain() 返回 `.ion` 而非 `.ton`
+**目标行**: 找到 `throw_unless(200, len > 3 * 8); ;; minimum 4 characters`
+**Zeus 已正确 — 只需验证**: 这行已经要求最小4字符(3*8=24bits, >表示至少25bits即4字节)。
+**验证**: `grep "minimum 4 characters" func/nft-collection.fc` 应返回一行匹配。
+
+## Step 4: 加 ION 专属 TLD ⚠️ 核心改动
+**文件1**: `func/params.fc`
+**当前没有 `const::ion` 定义，需要在文件末尾追加**:
+```func
+const ion = "ion"H;  ;; ION domain TLD
+```
+
+**文件2**: `func/nft-collection.fc` (新建 get_full_domain 方法)
+**当前 Zeus 版没有 get_full_domain() 方法 — 需要在 dnsresolve 方法之前插入**:
 ```func
 slice get_full_domain() method_id {
+    var (content, nft_item_code) = load_data();
+    ;; Return ".ion" TLD for this collection
     return begin_cell()
-        .store_slice(const::ion)  ;; 改为 ION
-        .store_uint(0, 8)
-        .store_slice(domain.begin_parse())
+        .store_slice(const::ion)
         .store_uint(0, 8)
         .end_cell()
         .begin_parse();
 }
 ```
-**注意**: const::ion 需要在 params.fc 中定义，值为 "ion" 的 ASCII
+**注意**: collection 层面的 get_full_domain 返回 TLD `.ion`，item 层面的返回完整域名如 `swap.ion`。
+**验证**: `grep "ion"H func/params.fc` 应返回一行。
 
-## Step 5: 编译验证
+## Step 5: 编译验证 ⚠️ 死命令
 ```bash
 cd func
 ./compile.sh
-# 验证无编译错误
-# 验证 nft-collection.fc 和 nft-item.fc 通过
 ```
+**必须看到**: 所有合约编译通过，无 error。
+**如果编译失败**: 检查 const::ion 定义是否正确，检查 force_chain 拼写。
+**验证清单**:
+- [ ] nft-collection.fc 编译通过
+- [ ] nft-item.fc 编译通过  
+- [ ] ion-dns.fc 编译通过
+- [ ] root-dns.fc 编译通过
 
-## 参考
-- Zeus 完整代码: `D:\openclaw-data\workspace\zeus-dns\func\`
-- Roman 完整代码: `D:\openclaw-data\workspace\roman-dns\`
-- 审计报告: `D:\openclaw-data\workspace\roman-dns\SECURITY-AUDIT.md`
+## 完工标准
+- `grep "force_chain" func/nft-collection.fc` → 有结果
+- `grep "const::ion" func/params.fc` → 有结果
+- `grep "get_full_domain" func/nft-collection.fc` → 有结果
+- `./compile.sh` → exit 0
+
+## 参考文件
+| 文件 | 路径 |
+|------|------|
+| Zeus收藏合约 | `D:\openclaw-data\workspace\zeus-dns\func\nft-collection.fc` |
+| Zeus域名项 | `D:\openclaw-data\workspace\zeus-dns\func\nft-item.fc` |
+| Zeus参数 | `D:\openclaw-data\workspace\zeus-dns\func\params.fc` |
+| 审计报告 | `D:\openclaw-data\workspace\roman-dns\SECURITY-AUDIT.md` |
 
 ## 提交
 ```bash
-git add func/
-git commit -m "feat: ION DNS enhancement — force_chain, anti-duplicate, .ion TLD"
+git add func/params.fc func/nft-collection.fc
+git commit -m "feat: ION DNS enhancement — force_chain, anti-duplicate verify, .ion TLD"
 ```
