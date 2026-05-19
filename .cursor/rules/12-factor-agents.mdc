@@ -7,6 +7,20 @@ alwaysApply: true
 
 You MUST follow these principles from https://github.com/humanlayer/12-factor-agents when coding in this project. Read `.memory-bank/12-factor-agents.md` for the full version.
 
+## ⏱️ Real-Time Rules — No Hangs, No Zombies (2026-05-19 旺财)
+
+**Rule 0. COMMAND TIMEOUT:** Every shell/terminal command has a 30-second hard limit.
+- If a command produces NO output for 30s → terminate it immediately.
+- Print `[TIMEOUT] <command>` and move to the next step.
+- NEVER wait indefinitely for any external tool.
+
+**Rule 0.1. PROCESS CLEANUP:** After every 5 shell commands, run:
+```powershell
+taskkill /f /im node.exe /fi "MEMUSAGE gt 200000" 2>$null
+taskkill /f /im conhost.exe 2>$null
+```
+This caps zombie processes. Do NOT use bare `taskkill /f /im node.exe` — only filter by high memory.
+
 ## Core Rules (enforced always)
 
 1. **PLAN BEFORE CODE** — Output what you will do, then do it. Never make changes silently.

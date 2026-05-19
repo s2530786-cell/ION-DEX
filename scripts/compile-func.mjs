@@ -7,6 +7,19 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { compileFunc } from '@ton-community/func-js';
 
+/** Timeout per file (ms) — WASM compiler can hang indefinitely */
+const COMPILE_TIMEOUT_MS = 15_000;
+
+/** Promise.timeout helper */
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`TIMEOUT ${label}`)), ms),
+    ),
+  ]);
+}
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'contracts', 'ion');
 function toPosix(p) {
   return p.replace(/\\/g, '/');
@@ -199,10 +212,14 @@ for (const targetAbs of rootFiles) {
       sourcesPayload = { ...deps, [probeKey]: body + RECV_STUB };
     }
 
-    const result = await compileFunc({
-      targets: compileTargets,
-      sources: sourcesPayload,
-    });
+    const result = await withTimeout(
+      compileFunc({
+        targets: compileTargets,
+        sources: sourcesPayload,
+      }),
+      COMPILE_TIMEOUT_MS,
+      title,
+    );
 
     if (result.status === 'error') {
       const msg = result.message.substring(0, 320);
