@@ -30,6 +30,8 @@ $excludeDirs = @(
   "out", "coverage", ".vite", ".cache",
   "target", "artifacts", "cache",
   "__pycache__", ".venv", "venv",
+  # Playwright / E2E artifacts (ephemeral; paths can disappear mid-scan on Windows).
+  "test-results", "playwright-report", "blob-report",
   # Local official ION reference clone; ignored by git and not maintained by this repo.
   "ion",
   ".git"

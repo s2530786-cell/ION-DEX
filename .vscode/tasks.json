@@ -29,7 +29,7 @@
     {
       "label": "ION DEX: Task2 Func compile then agent-verify",
       "type": "shell",
-      "command": "cmd /d /c echo ION^ DEX Task2 chain: compile-func + agent-verify finished.",
+      "command": "powershell -NoProfile -Command exit 0",
       "dependsOn": [
         "ION DEX: compile-func.mjs",
         "ION DEX: agent-verify (noninteractive)"

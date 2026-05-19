@@ -1,44 +1,29 @@
 # Current Session State
 
-## 🎯 PHASE 5 前端路线图 — 自动执行，无需确认
+## 🎯 Master Prompt — Copy to Composer + Ctrl+Shift+Enter
 
 ```
-PHASE 5: Core Frontend — 按步骤依次完成，每步 build 验证 → commit
+SESSION START — Full Pipeline
 
-STEP 1: DashboardPage.tsx 数据接入
-  - 硬编码数据 → ionApi.ts 实时调用
-  - 添加 loading skeleton / error / empty 三态
-  - npm run build 通过 → git commit
+4 tasks, do in order, commit after each.
 
-STEP 2: SwapPage.tsx（新建）
-  - 参考 react-bits 组件库: D:\openclaw-data\workspace\repos\react-bits
-  - 代币选择器、数量输入、滑点、报价
-  - 移动端 320px 响应式
-  - npm run build 通过 → git commit
+TASK 1: Read SESSION_STATE.md fully.
+TASK 2: Run node scripts/compile-func.mjs. Fix all errors. 22/22 green. Git commit.
+TASK 3: Build production DEX frontend. Ref component library:
+  D:\openclaw-data\workspace\repos\react-bits (110+ components, browse first).
+  - Replace hardcoded data in DashboardPage.tsx/BusinessPages.tsx with ionApi.ts
+  - Swap panel: real validation, token selector, slippage
+  - Market chart: lightweight-charts with real data
+  - Stats: TVL/APR/Burn from ionApi
+  - Skeleton/loading/error/empty states everywhere
+  - Follow react-bits patterns, no custom design from scratch
+  - Mobile responsive (320px-4K)
+  - After each component: npm run build in frontend/
+  Git commit when done.
+TASK 4: Run scripts/verify-100.ps1. 100/100 GREEN. Retry on fail. Git commit.
 
-STEP 3: PoolPage.tsx（新建）
-  - 池列表 + 添加/移除 LP + 收益计算
-  - npm run build 通过 → git commit
-
-STEP 4: StakePage.tsx（新建）
-  - 质押面板、收益、解锁倒计时
-  - npm run build 通过 → git commit
-
-STEP 5: Burn + Bridge 面板
-  - 销毁统计、跨链状态
-  - npm run build 通过 → git commit
-
-STEP 6: AppShell 导航完善
-  - 侧边栏 + 汉堡菜单 + 路由过渡
-  - npm run build 通过 → git commit
-
-STEP 7: 全栈验证
-  - node scripts/compile-func.mjs 22/22
-  - node scripts/compile-all.js 6/6
-  - npm run build 零 error
-  - git commit + push
-
-规则: 零垃圾 | 每步 build 验证 | UI 从 react-bits 挑 | 自动接受不改动 | 不等人
+ZERO GARBAGE: No pinyin/placeholder/hi/test. UTF-8 no BOM. Max 2 blank lines.
+When done: update SESSION_STATE.md, say "ALL TASKS DONE".
 ```
 
 ---
@@ -209,7 +194,7 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 
 - **stop**: Runs `.cursor/hooks/ion-verify-on-stop.cmd`: if `scripts\compile-func.mjs` exists, compile `contracts/ion` first; then `scripts\agent-verify.cmd` (equiv. `verify-full.cmd` with `ION_VERIFY_NONINTERACTIVE=1`). Hook config `.cursor/hooks.json`: `timeout` 900, `failClosed: false`.
 - **every save (Agent / Tab)**: `afterFileEdit` / `afterTabFileEdit` invoke `node scripts/ion-on-save-pipeline.mjs --cursor-hook` (quick encoding check on `file_path` + `compile-func.mjs`); `timeout` 540, `failClosed: false`.
-- **every save (Ctrl+S)**: `.vscode/settings.json` --- **Run On Save** (`emeraldwalk.RunOnSave`); see `.vscode/extensions.json` recommendation. Without the extension, only Agent/Tab hook paths run the on-save compile gate.
+- **every save (Ctrl+S)**: `.vscode/settings.json` ? **Run On Save** (`emeraldwalk.RunOnSave`); see `.vscode/extensions.json` recommendation. Without the extension, only Agent/Tab hook paths run the on-save compile gate.
 - **Session memory order**: `.memory-bank/README.md` -> `docs/99-current-progress.md` -> narrative/history in `SESSION_STATE.md`. Treat `docs/99-current-progress.md` as canonical progress vs dated bullets here.
 - **VS Code**: See `.vscode/tasks.json` labels starting with `ION DEX:` (agent-verify, verify-full-save-log, verify-100).
 
@@ -223,12 +208,12 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 6. For every development task, proactively load `.cursor/skills/cursor-engineering-workflow/SKILL.md` and `.cursor/skills/ion-dev-accelerators/SKILL.md` as needed; use `docs/cursor-docs-feature-memory.md` and `docs/development-accelerators-memory.md` as local references.
 7. Do not wait for the user to request worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy when they would improve the task.
 8. Phase 5 / nav + E2E (2026-05-18): Encoding scan OK; `/ion/` reference excluded via `.gitignore`; **`scripts\verify-100.ps1`** **`RESULT=GREEN`**; **`npm run verify`** uses **`tcp:127.0.0.1:59333`** readiness; Playwright **12 passed**, **`audit:high`** **0**; **`hidden lg:flex`** nav caveat fixed with scrollable nav strip.
-9. Wallet/Profile shell (2026-05-18): `AppShell` wallet opens local provider picker; profile drafted; disconnect without keys; verify --- **`npm run verify`** **13 passed**, **`audit:high`** **0**, 100-pass **`RESULT=GREEN`**.
-10. External reference architecture (2026-05-18): **`docs/09-reference-architecture.md`** --- gateways (`tyk`/`shenyu`/`ocelot`) are pattern refs only; Phase 3 BFF-first.
+9. Wallet/Profile shell (2026-05-18): `AppShell` wallet opens local provider picker; profile drafted; disconnect without keys; verify ? **`npm run verify`** **13 passed**, **`audit:high`** **0**, 100-pass **`RESULT=GREEN`**.
+10. External reference architecture (2026-05-18): **`docs/09-reference-architecture.md`** ? gateways (`tyk`/`shenyu`/`ocelot`) are pattern refs only; Phase 3 BFF-first.
 11. Skills (2026-05-18): `skill-vetter`, **`self-evolving`**, **`tavily`**, **`find-skill`**, **`luke-agent-browser-clawdbot`**, **`summarize-pro`** wired in **`AGENTS.md`**.
 12. Workflow (2026-05-18): Prefer **`cursor-engineering-workflow`** + **`self-evolving`** loops.
 13. Accelerators (2026-05-18): Worktrees + review/audit for non-trivial work.
-14. Claude-Flow/RuFlo (2026-05-18): Pinned **`3.7.0-alpha.35`**; main has no MCP/daemon/WASM --- treat as constrained local tool; **`verify-full-save-log`** **OK** separately from dependency audit findings.
+14. Claude-Flow/RuFlo (2026-05-18): Pinned **`3.7.0-alpha.35`**; main has no MCP/daemon/WASM ? treat as constrained local tool; **`verify-full-save-log`** **OK** separately from dependency audit findings.
 15. Phase 3 Bridge/Domain slice (2026-05-19): **`fetchBridgeRoutes`** / **`fetchDomainResolve`**; **`BridgeMetricsRow`** + **`DomainMetricsRow`** (`custodian.ion`); E2E **`bridge-metrics-source`** / **`domain-metrics-source`**; **`verify-full-save-log.cmd --no-pause`** exit **0**; Playwright **13 passed**. **`verify-100.ps1`** retries Windows transient **`-1073741502`** per step once; heavy 100-pass: run from **standalone** **`cmd`/`pwsh`** if Cursor shell flaky. Next: **`/api/bridge/routes`** registry parity, Redis/PostgreSQL drafts.
 ## Memory MCP Candidates
 
@@ -261,16 +246,16 @@ Skills: **`ion-contract-audit`**, **`ion-official-source`**. Official tree: **`D
 
 **FunC (`contracts/ion/`)**, in order:
 
-1. **`DexRouter.fc`** --- swap routing, path resolution, fee forwarding  
-2. **`IonAmmPool.fc`** --- constant-product AMM, liquidity add/remove, swap, fees  
-3. **`LimitOrderBook.fc`** --- orders / match / cancel  
-4. **`GridStrategyVault.fc`** --- grid params, rebalance, LP bookkeeping  
-5. **`StakingPool.fc`** --- deposit/withdraw rewards, emergency path  
-6. **`FeeDistributor.fc`** --- fee collection + treasury splits  
-7. **`Treasury.fc`** --- multisig treasury  
-8. **`OracleAdapter.fc`** --- signed prices + TWAP fallback  
-9. **`DomainMarketplace.fc`** --- `.ion` marketplace  
-10. **`DomainResolverAdapter.fc`** --- resolution + ownership proofs  
+1. **`DexRouter.fc`** ? swap routing, path resolution, fee forwarding  
+2. **`IonAmmPool.fc`** ? constant-product AMM, liquidity add/remove, swap, fees  
+3. **`LimitOrderBook.fc`** ? orders / match / cancel  
+4. **`GridStrategyVault.fc`** ? grid params, rebalance, LP bookkeeping  
+5. **`StakingPool.fc`** ? deposit/withdraw rewards, emergency path  
+6. **`FeeDistributor.fc`** ? fee collection + treasury splits  
+7. **`Treasury.fc`** ? multisig treasury  
+8. **`OracleAdapter.fc`** ? signed prices + TWAP fallback  
+9. **`DomainMarketplace.fc`** ? `.ion` marketplace  
+10. **`DomainResolverAdapter.fc`** ? resolution + ownership proofs  
 
 **BSC (`contracts/bsc/`, Foundry):** **`BSCVault.sol`**, **`BridgeVerifier.sol`**, **`BSCFeeVault.sol`**.
 

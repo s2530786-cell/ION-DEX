@@ -80,27 +80,17 @@ for ($i = 1; $i -le $Iterations; $i++) {
   $funcExit = Run-StepResilient "func-compile" {
     cmd.exe /d /c "node scripts\compile-func.mjs"
   }
-  # func-js sporadically exits 1 on Windows under tight loops (busy AV / temp contention); retry once.
-  if ($funcExit -eq 1) {
-    Write-Log ("RETRY_FUNC_COMPILE_SOFT firstExit=1 sleepMs=1500")
-    Start-Sleep -Milliseconds 1500
-    $funcExit = Run-StepResilient "func-compile-exit1-retry" {
-      cmd.exe /d /c "node scripts\compile-func.mjs"
-    }
-  }
 
   Set-Location $root
   $encodingScript = Join-Path $root "scripts\check-encoding.ps1"
-  # Route encoding through cmd.exe so we do not nest powershell.exe inside the host that runs this script
-  # (nested hosts under Cursor sometimes collapse with STATUS_DLL_INIT_FAILED / broken pipes).
   $encodingExit = Run-StepResilient "encoding" {
-    cmd.exe /d /c "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$encodingScript`""
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File $encodingScript
   }
   if ($encodingExit -ne 0) {
-    Write-Log ("RETRY_ENCODING_AFTER_FAIL firstExit=" + $encodingExit + " sleepMs=800")
-    Start-Sleep -Milliseconds 800
-    $encodingExit = Run-StepResilient "encoding-retry-after-fail" {
-      cmd.exe /d /c "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$encodingScript`""
+    Write-Log ("RETRY_ENCODING_AFTER_FAIL firstExit=" + $encodingExit + " sleepMs=400")
+    Start-Sleep -Milliseconds 400
+    $encodingExit = Run-Step -Name "encoding-retry-final" -Command {
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -File $encodingScript
     }
   }
 
