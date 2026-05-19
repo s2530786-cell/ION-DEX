@@ -1,0 +1,138 @@
+[2026-05-19T07:33:17.547Z] 👁️ Auto-Watcher started — watching .sol / .fc files
+[2026-05-19T07:33:17.551Z]    Debounce: 3000ms | Min interval: 10000ms
+[2026-05-19T07:33:17.551Z]    Logs: D:\openclaw-tools\ion-dex-nuke\reports\audit-history.log
+[2026-05-19T07:33:17.551Z]    Errors: D:\openclaw-tools\ion-dex-nuke\reports\audit-errors.md
+[2026-05-19T07:33:44.192Z] 👁️ Auto-Watcher started — watching .sol / .fc files
+[2026-05-19T07:33:44.197Z]    Debounce: 3000ms | Min interval: 10000ms
+[2026-05-19T07:33:44.197Z]    Logs: D:\openclaw-tools\ion-dex-nuke\reports\audit-history.log
+[2026-05-19T07:33:44.198Z]    Errors: D:\openclaw-tools\ion-dex-nuke\reports\audit-errors.md
+[2026-05-19T07:55:05.571Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T07:55:05.572Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T07:55:35.126Z] ✅ FunC compile OK
+[2026-05-19T07:55:35.266Z] ✅ FunC compile OK
+[2026-05-19T07:55:38.127Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T07:55:38.267Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T07:56:07.478Z] ✅ FunC compile OK
+[2026-05-19T07:56:07.564Z] ✅ FunC compile OK
+[2026-05-19T08:05:18.316Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:05:18.316Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:05:48.320Z] ❌ FunC compile FAILED
+[2026-05-19T08:05:48.321Z] ❌ FunC compile FAILED
+[2026-05-19T08:06:13.948Z] 👁️ Auto-Watcher started — watching .sol / .fc files
+[2026-05-19T08:06:13.954Z]    Debounce: 3000ms | Min interval: 10000ms
+[2026-05-19T08:06:13.955Z]    Logs: D:\openclaw-tools\ion-dex-nuke\reports\audit-history.log
+[2026-05-19T08:06:13.955Z]    Errors: D:\openclaw-tools\ion-dex-nuke\reports\audit-errors.md
+[2026-05-19T08:15:05.992Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:15:05.993Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:15:05.993Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:15:35.996Z] ❌ FunC compile FAILED
+[2026-05-19T08:15:35.997Z] ❌ FunC compile FAILED
+[2026-05-19T08:15:35.998Z] ❌ FunC compile FAILED
+[2026-05-19T08:20:06.109Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:20:06.110Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:20:06.110Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:20:36.114Z] ❌ FunC compile FAILED
+[2026-05-19T08:20:36.114Z] ❌ FunC compile FAILED
+[2026-05-19T08:20:36.114Z] ❌ FunC compile FAILED
+[2026-05-19T08:20:39.116Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:20:39.117Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:20:39.118Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:21:09.122Z] ❌ FunC compile FAILED
+[2026-05-19T08:21:09.122Z] ❌ FunC compile FAILED
+[2026-05-19T08:21:09.125Z] ❌ FunC compile FAILED
+[2026-05-19T08:25:06.226Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:25:06.226Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:25:06.226Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:25:36.230Z] ❌ FunC compile FAILED
+[2026-05-19T08:25:36.230Z] ❌ FunC compile FAILED
+[2026-05-19T08:25:36.230Z] ❌ FunC compile FAILED
+[2026-05-19T08:37:48.406Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:37:48.406Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:37:48.406Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:37:57.721Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:37:57.722Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:37:57.730Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:38:00.736Z] 🔄 AUDIT triggered by: \contracts\bsc\test\mocks\MockERC20.sol
+[2026-05-19T08:38:00.735Z] 🔄 AUDIT triggered by: \contracts\bsc\test\mocks\MockERC20.sol
+[2026-05-19T08:38:00.741Z] 🔄 AUDIT triggered by: \contracts\bsc\test\mocks\MockERC20.sol
+[2026-05-19T08:38:04.194Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:38:04.209Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:38:04.501Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:42:14.210Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:42:14.210Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:42:14.210Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:42:44.213Z] ❌ FunC compile FAILED
+[2026-05-19T08:42:44.213Z] ❌ FunC compile FAILED
+[2026-05-19T08:42:44.213Z] ❌ FunC compile FAILED
+[2026-05-19T08:44:48.678Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:44:48.678Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:44:48.678Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:44:55.918Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:44:55.919Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:44:55.962Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:45:38.730Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:45:38.730Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:45:38.730Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:45:45.803Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:45:46.045Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:45:46.059Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:45:54.721Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:45:54.721Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:45:54.723Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:46:01.856Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:46:02.018Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:46:02.023Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:49:44.063Z] 🔄 AUDIT triggered by: \contracts\bsc\test\attackers\AccessControlAttacker.sol
+[2026-05-19T08:49:44.064Z] 🔄 AUDIT triggered by: \contracts\bsc\test\attackers\AccessControlAttacker.sol
+[2026-05-19T08:49:44.064Z] 🔄 AUDIT triggered by: \contracts\bsc\test\attackers\AccessControlAttacker.sol
+[2026-05-19T08:49:52.368Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:49:52.387Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:49:52.393Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:55:06.872Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:55:06.872Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:55:06.873Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:55:36.876Z] ❌ FunC compile FAILED
+[2026-05-19T08:55:36.876Z] ❌ FunC compile FAILED
+[2026-05-19T08:55:36.877Z] ❌ FunC compile FAILED
+[2026-05-19T08:55:39.879Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:55:39.879Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:55:39.879Z] ⚡ FUNC AUDIT: 1 file(s) changed
+[2026-05-19T08:56:09.883Z] ❌ FunC compile FAILED
+[2026-05-19T08:56:09.884Z] ❌ FunC compile FAILED
+[2026-05-19T08:56:09.884Z] ❌ FunC compile FAILED
+[2026-05-19T08:58:41.509Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:58:41.509Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:58:41.510Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:58:50.809Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:58:50.826Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:58:50.875Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:59:30.574Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:59:30.574Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:59:30.574Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T08:59:39.720Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:59:39.751Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T08:59:39.775Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:00:07.859Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:00:07.860Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:00:07.860Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:00:16.998Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:00:17.195Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:00:17.200Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:02:25.573Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:02:25.573Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:02:25.573Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:02:34.238Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:02:34.297Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:02:34.331Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:03:54.982Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:03:54.982Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:03:54.982Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:04:03.096Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:04:03.164Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:04:03.186Z] ❌ 2 FAILURES: forge test, solhint
+[2026-05-19T09:04:08.503Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:04:08.503Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:04:08.503Z] 🔄 AUDIT triggered by: \contracts\bsc\test\SecurityAttackTest.t.sol
+[2026-05-19T09:04:17.190Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:04:17.228Z] ❌ 1 FAILURES: solhint
+[2026-05-19T09:04:17.259Z] ❌ 1 FAILURES: solhint

@@ -1,0 +1,1 @@
+{ "extends": "solhint:recommended", "rules": { "compiler-version": ["warn","^0.8.20"], "no-empty-blocks": "error", "reentrancy": "error", "avoid-low-level-calls": "error" } }
