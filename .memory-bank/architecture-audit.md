@@ -5,6 +5,13 @@
 **Audit type:** Comprehensive architecture gap analysis (2nd pass)
 **Status:** ACTIVE — Cursor to build missing modules in priority order
 
+## CORE MISSION (Master's Directive)
+
+ION DEX exists for ONE reason: **ION chain has no native DEX and ION(ION) is not listed on any CEX.**
+Without ION DEX, ION tokens have NOWHERE to trade. The chain is dead without liquidity.
+
+**Bottom line: ION DEX = ION ecosystem's sole liquidity lifeline. Success or failure of the entire chain depends on this project.**
+
 ---
 
 ## Current State Summary
