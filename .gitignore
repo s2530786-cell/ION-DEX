@@ -11,6 +11,8 @@ frontend/test-results/
 # Backend
 backend/node_modules/
 backend/dist/
+backend/data/*.sqlite
+backend/data/*.sqlite-*
 
 # Root tooling dependencies
 node_modules/
@@ -21,3 +23,6 @@ node_modules/
 # OS / editor
 Thumbs.db
 .DS_Store
+
+# Cursor rules (contain local API keys / secrets)
+.cursor/rules/
