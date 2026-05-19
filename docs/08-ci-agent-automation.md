@@ -1,5 +1,47 @@
 # CI and agent automation
 
+## 自动工作流列表（Agent 必遵 — 对齐铁律 / Memory Bank）
+
+每次开发会话按顺序执行；任一步失败则**停在当前步修复**，不得跳步或带着红/黄状态前进。
+
+| 步 | 动作 | 命令 / 入口 | 通过标准 |
+|----|------|-------------|----------|
+| 0 | **读记忆 + 铁律** | `.memory-bank/README.md` → **`.memory-bank/development-iron-law-preflight.md`** → `.cursor/rules/ion-dex-iron-law.mdc` → `docs/99-current-progress.md` → `SESSION_STATE.md` | 明确 Phase；双链 1500 / 100 绿 / 压力测试命令 |
+| 1 | **选 Skill** | 合约 `ion-contract-audit`；前端 `ion-web3-ui`；后端 `ion-data-backend`；流程 `cursor-engineering-workflow` | 与改动域一致 |
+| 2 | **编译 FunC** | `node scripts/compile-func.mjs` | **22/22** 绿（deployable roots + fragment probes） |
+| 3 | **合约审计** | `.cursor/skills/ion-contract-audit/SKILL.md`（15 类攻击清单） | 无未修复严重项；BSC 改动另跑 `forge test` |
+| 4 | **实现 / 修复** | 单职责、单文件优先；UTF-8 无 BOM；零垃圾 JSX/FunC | 每修一个文件 → 重跑步 2 |
+| 5 | **单次全量验证** | `scripts\agent-verify.cmd` 或 `scripts\verify-full-save-log.cmd --no-pause` | exit **0**；日志 `%TEMP%\ion-verify-full.txt` |
+| 6 | **git commit** | 一合约 / 一页面 / 一服务 ≈ 一提交 | 信息可追溯 |
+| 7 | **100-pass 铁门** | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-100.ps1` | **PASS 100/100**，**RESULT=GREEN**，exit **0** |
+| 8 | **更新进度** | `docs/99-current-progress.md` + `SESSION_STATE.md` | 附命令输出证据 |
+| 9 | **push** | `git push origin 2026-05-19-q7fx` | 远程与本地一致 |
+
+**100-pass 每轮子步骤**（`verify-100.ps1` 内顺序）：`func-compile` → encoding → backend verify → backend audit:high → backend stress → frontend verify → frontend audit:high。Windows 退出码 `-1073741502` 每步自动重试一次。
+
+**保存时自动门**（不必等 Agent 手动触发）：
+
+- Cursor Hook `afterFileEdit` / `afterTabFileEdit` → `node scripts/ion-on-save-pipeline.mjs --cursor-hook`（编码快检 + FunC 全量编译）
+- Agent **stop** → `.cursor/hooks/ion-verify-on-stop.cmd`（FunC + `agent-verify`）
+- VS Code **Ctrl+S**（需扩展 `emeraldwalk.RunOnSave`）→ 同上 pipeline
+
+**VS Code 任务**（`.vscode/tasks.json`）：`ION DEX: autonomous workflow (preflight+compile+verify)`（默认测试任务，一键步 0+2+5）| `compile-func.mjs` | `agent-verify (noninteractive)` | `verify-full-save-log --no-pause` | `verify-100.ps1`。
+
+**本地一键全自动门**（Windows）：`scripts\agent-autonomous-workflow.cmd` → `automation-preflight.mjs` → `compile-func.mjs` → `agent-verify.cmd`。
+
+### 定时 / 无人值守自动门（2026-05-19）
+
+| 场景 | 命令 / 入口 |
+|------|-------------|
+| 统一入口（设模式） | `set ION_AUTO_MODE=quick\|standard\|iron\|verify100\|dual100` 后 `scripts\automation-scheduled-gate.cmd` |
+| 注册 Windows 计划任务 | `powershell -File scripts\register-windows-scheduled-tasks.ps1` → 30m quick、日 standard、日 iron |
+| 100 绿后台长跑 | `scripts\start-verify-100-background.cmd` → 日志 `%TEMP%\ion-verify-100-bg-*.log` |
+| VS Code 任务 | `ION DEX: auto gate (standard)` / `iron-law-security` / `verify-100 (background)` |
+| GitHub 每日 | `.github/workflows/ion-dex-scheduled-gates.yml`（02:30 UTC） |
+| PR/Push | `.github/workflows/ion-dex-verify.yml`（含 dual-chain-audit） |
+
+`verify-100.ps1`：每轮 `backend-stress` 失败会 **自动重试 1 次**（2s 间隔），降低长跑偶发失败率。
+
 ## Session startup — read memory before coding
 
 Agents should hydrate context in this order:
@@ -31,7 +73,7 @@ Environment variables recognised by `scripts\verify-full.cmd`:
 
 ### `verify-100.ps1` passes (ordering)
 
-Each numbered pass runs, in order: **`func-compile`** (`node scripts\compile-func.mjs`), **encoding**, **backend verify**, **backend audit:high**, **backend stress**, **frontend verify**, **frontend audit:high**.
+Each numbered pass runs, in order: **`func-contract-test`** (`node scripts\func-contract-test.mjs` — includes `compile-func.mjs` 22/22 + 6 deployable `codeBoc` golden checks), **encoding**, **backend verify**, **backend audit:high**, **backend stress**, **frontend verify**, **frontend audit:high**.
 
 If **`encoding`** exits non‑zero, the script **sleeps briefly and retries `check-encoding.ps1` once** (helps with rare editor BOM races).
 

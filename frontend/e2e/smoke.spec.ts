@@ -77,6 +77,12 @@ test.describe("ION DEX smoke", () => {
     }
   });
 
+  test("hash route opens swap page directly", async ({ page }) => {
+    await page.goto("/#/swap");
+    await expect(page.getByTestId("page-swap")).toBeVisible();
+    await expect(page).toHaveURL(/#\/swap/);
+  });
+
   test("top navigation opens business page shells", async ({ page }) => {
     await page.goto("/");
 

@@ -1,0 +1,5 @@
+{
+  "name": "ION DEX Cloud Agent",
+  "install": "set -euxo pipefail\nexport PATH=\"$HOME/.foundry/bin:$PATH\"\nif ! command -v forge >/dev/null 2>&1; then\n  curl -L https://foundry.paradigm.xyz | bash\n  # shellcheck disable=SC1090\n  [ -f \"$HOME/.bashrc\" ] && . \"$HOME/.bashrc\" || true\n  export PATH=\"$HOME/.foundry/bin:$PATH\"\n  foundryup\nfi\nnode -v\nnpm -v\nforge --version\ncd backend && npm ci && cd ..\ncd frontend && npm ci && npx playwright install --with-deps chromium && cd ..\nnode scripts/compile-func.mjs",
+  "start": "export PATH=\"$HOME/.foundry/bin:$PATH\" && node scripts/automation-preflight.mjs"
+}

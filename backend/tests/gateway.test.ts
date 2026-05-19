@@ -243,6 +243,12 @@ describe("ION DEX API gateway", () => {
     assert.equal(data.preferences.riskWarnings, true);
   });
 
+  it("rejects invalid wallet balance addresses", async () => {
+    const invalid = await requestJson("/api/wallet/bsc-balance?address=not-an-address");
+    assert.equal(invalid.status, 400);
+    assert.equal(invalid.body.error?.code, "ION_DEX_E_INVALID_ADDRESS");
+  });
+
   it("returns typed errors for unknown routes and invalid methods", async () => {
     const notFound = await requestJson("/api/missing");
     assert.equal(notFound.status, 404);

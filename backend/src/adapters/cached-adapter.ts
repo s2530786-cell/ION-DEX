@@ -47,7 +47,7 @@ export class CachedSourceAdapter<T, TParams = void> implements SourceAdapter<T, 
     this.load = options.load;
   }
 
-  fetch(params: TParams): AdapterFetchResult<T> {
+  async fetch(params: TParams): Promise<AdapterFetchResult<T>> {
     const key = this.cacheKey(params);
     const lookup = this.cache.get<T>(key);
 

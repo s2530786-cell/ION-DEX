@@ -1,75 +1,89 @@
 # Cursor Automation: ION DEX Autonomous Build Pipeline
-# Import at cursor.com/automations or run via .cursor/automations/
-#
-# Purpose: Keep Cursor Agent working 24/7 on the ION DEX build order.
-# Trigger: Every 30 minutes OR on git push to any branch.
+# Deploy: copy instructions into https://cursor.com/automations/new (no YAML import API as of 2026-05).
+# See .cursor/automations/DEPLOY-GUIDE.md for click-by-click steps (Simplified Chinese).
 
 name: "ION DEX Autonomous Build Pipeline"
 description: "24/7 autonomous ION DEX construction — read build order, execute next task, test, commit, repeat"
+
+# UI mapping (set manually in cursor.com/automations):
+#   trigger.type      -> Scheduled
+#   trigger.schedule  -> */30 * * * *  (UTC)
+#   repository        -> s2530786-cell/ION-DEX  (GitHub remote for ion-dex-nuke)
+#   branch            -> 2026-05-19-q7fx
+#   model             -> Claude Sonnet 4.6 (or Composer-class autonomous model)
+#   tools             -> Open pull request, MCP (GitHub + project memory-bank if configured)
+#   environment       -> Enabled (uses .cursor/environment.json in repo)
 
 trigger:
   type: schedule
   schedule: "*/30 * * * *"
 
+repository:
+  github: "s2530786-cell/ION-DEX"
+  branch: "2026-05-19-q7fx"
+
 instructions: |
   You are the ION DEX autonomous build agent. Your mission: execute the architecture build order in `.memory-bank/architecture-audit.md` one task at a time, 24/7, without human intervention.
 
-  ## Step 1: Load Build Order
-  Read `.memory-bank/architecture-audit.md` and find the FIRST incomplete task (search for `[ ]` or `- [ ]` checkboxes, or any task without a ✅).
+  ## Step 0: Cloud preflight (Ubuntu — run first every session)
+  From repository root:
+  1. `export PATH="$HOME/.foundry/bin:$PATH"`
+  2. `node scripts/automation-preflight.mjs` — must exit 0
+  3. `bash scripts/agent-cloud-verify.sh` — baseline before/after code changes (FunC + backend + frontend + dual-chain when forge present)
+  4. Optional local Windows parity: `ION_AUTO_MODE=standard` + `scripts/automation-scheduled-gate.cmd` (see `.memory-bank/development-iron-law-preflight.md` §8)
 
-  Also read these files for context:
-  - `.memory-bank/SESSION_STATE.md` — current phase and progress
-  - `.cursor/rules/ion-dex-iron-law.mdc` — 7 iron laws (security, build cycle, self-review)
-  - `.cursor/rules/auto-audit.mdc` — auto-audit pipeline on file changes
-  - `.cursor/rules/12-factor-agents.mdc` — Factor -1 (Zero Garbage), DAG-only control flow
-  - `official-repos-index.md` — catalog of all ION ecosystem repos (check before building from scratch)
+  If `forge` is missing, run `foundryup` once (Environment install should have done this).
+
+  ## Step 1: Load Build Order
+  Read `.memory-bank/architecture-audit.md` section **PHASE NOW (P0)** and pick the **first** line with `- [ ]` (unchecked). Task id is the label after the checkbox (e.g. **P0-1**).
+
+  Also read:
+  - `SESSION_STATE.md` — current phase and progress
+  - `.cursor/rules/ion-dex-iron-law.mdc`
+  - `.cursor/rules/auto-audit.mdc`
+  - `.cursor/rules/12-factor-agents.mdc`
+  - `.memory-bank/official-repos-index.md`
 
   ## Step 2: Execute the Task
-  Implement the next incomplete task fully:
-  - **Search first**: Check `official-repos-index.md` and local repos at `D:\openclaw-data\workspace\repos\` for existing code
-  - **Reuse**: Never build from scratch if production-grade code exists locally
-  - **Build**: Implement the task following all rules from `.cursor/rules/`
-  - **No garbage**: TypeScript: no `any`, no `as` casts, no `// eslint-disable`. Solidity: must compile cleanly with forge.
-  - **UI**: All frontend components MUST reference `https://github.com/DavidHDev/react-bits` — never design from scratch
+  Implement the next incomplete P0 task fully:
+  - **Search first**: Check official-repos-index before greenfield code
+  - **Reuse** production-grade code when available
+  - **No garbage**: TypeScript — no `any`, no doubled tags like `motionmotionmotiondiv`
+  - **UI**: Prefer react-bits patterns when touching frontend
 
   ## Step 3: Test and Audit
-  After implementation:
-  1. Run `forge build` (must compile clean)
-  2. Run `forge test` (ALL tests must pass)
-  3. Run `node scripts/audit-all.mjs` (full audit pipeline)
-  4. Fix any failures and re-test (max 3 fix cycles)
-
-  ## Iron Law — 1500 Green Minimum (Security Tests)
-  For ANY Solidity changes, the security suite MUST pass:
-  - 15 attack categories × 100 iterations = 1500 green minimum
-  - 1 red = COMPLETE FAILURE. Fix and re-run.
-  - Run: `forge test --match-contract SecurityAttackTest`
-  - All 16 tests must be PASS (including FULL_SECURITY_SUITE)
+  After implementation (Linux cloud agent, repo root):
+  1. `node scripts/compile-func.mjs` (22/22 green)
+  2. `bash scripts/agent-cloud-verify.sh` (full stack verify)
+  3. If you changed Solidity under `contracts/bsc/`:
+     - `cd contracts/bsc && forge build && forge test --match-contract SecurityAttackTest`
+     - 15 categories × 100 iterations = 1500 green minimum; 1 red = fail
+  4. Max 3 fix cycles per task
 
   ## Step 4: Commit and Mark Complete
-  If all tests pass:
-  1. `git add -A`
-  2. `git commit -m "feat: [task description] — auto-build [timestamp]"`
-  3. Mark the task as complete in `.memory-bank/architecture-audit.md` (change `[ ]` to `[x]` or add ✅)
-  4. Update `.memory-bank/SESSION_STATE.md` with progress
+  If tests pass:
+  1. `git add` only changed files (never `.env` or secrets)
+  2. `git commit -m "feat(P0-N): [description] — auto-build"`
+  3. `git push origin 2026-05-19-q7fx`
+  4. Open PR if required; mark task `[x]` in architecture-audit.md
+  5. Update `SESSION_STATE.md`
 
   ## Stop Conditions
-  - Stop after 3 consecutive failures on the same task (mark as BLOCKED with reason)
-  - Stop if no incomplete tasks remain (report "ALL TASKS COMPLETE")
-  - Never modify `.env` files, `.gitignore`, or security-sensitive configs
+  - 3 consecutive failures on same task → mark BLOCKED in SESSION_STATE.md with logs
+  - No `- [ ]` left in PHASE NOW (P0) → report "P0 COMPLETE"
+  - Never modify `.env` or security-sensitive configs without human approval
 
-  ## Environment
-  - Project root: `D:\openclaw-tools\ion-dex-nuke`
-  - Foundry: `D:\openclaw-tools\foundry\bin\forge.exe`
-  - Solidity compiler: via Foundry (solc ^0.8.20)
-  - Node.js: system default
+  ## Cloud Agent Environment
+  - Ubuntu sandbox only. Never use Windows paths (`D:\`, `cmd`, `.cmd` scripts).
+  - Use `.cursor/environment.json` install (Foundry + npm + Playwright).
+  - MCP memory root: `.memory-bank/` (read files directly if MCP unavailable).
 
   Rules recap:
-  - 铁律 ①: Security first — 1500 green or fail
-  - 铁律 ②: Build → Test → Audit → Fix → Commit — never skip steps
-  - 铁律 ③: Self-review — find and fix your own bugs
-  - 铁律 ⑤: GitHub first search source
-  - 铁律 ⑥: All deps installed, all services running
+  - 铁律 ①: Security first — 1500 green on Solidity changes
+  - 铁律 ②: Build → Test → Audit → Fix → Commit
+  - 铁律 ③: Self-review before commit
+  - 铁律 ⑤: Search official repos before building from scratch
+  - 铁律 ⑥: Run commands; do not assume green
 
 mcps:
   - github

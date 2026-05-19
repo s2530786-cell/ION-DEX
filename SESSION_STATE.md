@@ -3,27 +3,155 @@
 ## 🎯 Master Prompt — Copy to Composer + Ctrl+Shift+Enter
 
 ```
-SESSION START — Full Pipeline
+SESSION START — ION DEX Full Pipeline
 
-4 tasks, do in order, commit after each.
+═══════════════════════════════════════════
+📋 PURPOSE: 把 ION DEX 从 mock 骨架建成可上线产品
+  目标：ION 链用户能用 DEX 交易 ION↔USDT
+  路径：前端真数据 → 后端真API → 桥部署 → PancakeSwap LP
+═══════════════════════════════════════════
+🚫 DO NOT — 绝对禁止
+  1. 不写 mock/placeholder/硬编码假数据 — 每个接口对接真实数据源
+  2. 不跳过验证 — npm run build 必须 0 error，script 必须全绿
+  3. 不凭空设计UI — 必须从 react-bits 110组件里选
+  4. 不询问确认 — 改代码/修bug/跑测试直接干，只报告结果
+  5. 不浪费主网 gas — 先在 BSC 测试网跑通，验证全绿后再上主网
+  6. 不动 ION 链内建协议合约 — multisig-code.fc(config_param 71) 和 votes-collector.fc(config_param 72) 是 ION L1 协议层的，只能读、不能写、不能部署覆盖
+  7. 不提交包含 API Key 的代码 — 检查 crsr_/sk-/ghp_/ARK_API_KEY 再 git add
+  8. 不产出中文乱码 — 所有文件 UTF-8 无 BOM，中文必须正常显示
+     → 写文件后立即读回检查：中文是否可读？出现 锟斤拷/烫烫烫 → 重写
+  9. 不写假钱包/假数据源 — 所有数据来自:
+     → CMC (`pro-api.coinmarketcap.com`)
+     → PancakeSwap Router (`0x10ED43C718714eb63d5aA57B78B54704E256024E`)
+     → Uniswap V3 Quoter (`0xb27308f9F90D2F3dcC8a55F0917A4D7AE73A3276`)
+     → 真实钱包注入 (MetaMask/OKX/Trust via ethers.js/wagmi/viem)
+     → mock/假钱包/假余额/假交易哈希=死刑
+═══════════════════════════════════════════
+✅ DO — 以下指令按顺序执行，做完一条 commit 一条。不许跳。
 
-TASK 1: Read SESSION_STATE.md fully.
-TASK 2: Run node scripts/compile-func.mjs. Fix all errors. 22/22 green. Git commit.
-TASK 3: Build production DEX frontend. Ref component library:
-  D:\openclaw-data\workspace\repos\react-bits (110+ components, browse first).
-  - Replace hardcoded data in DashboardPage.tsx/BusinessPages.tsx with ionApi.ts
-  - Swap panel: real validation, token selector, slippage
-  - Market chart: lightweight-charts with real data
-  - Stats: TVL/APR/Burn from ionApi
-  - Skeleton/loading/error/empty states everywhere
-  - Follow react-bits patterns, no custom design from scratch
-  - Mobile responsive (320px-4K)
-  - After each component: npm run build in frontend/
-  Git commit when done.
-TASK 4: Run scripts/verify-100.ps1. 100/100 GREEN. Retry on fail. Git commit.
+📖 TASK 0: 读全量审计
+  打开: .memory-bank/architecture-audit.md
+  里面写了：24个模块哪些是真哪些是假、P0→P3执行顺序、Agent Build Order
+  checkbox 第一个没勾的就是你现在该干的活
+  → 没读就不许动手写代码
 
-ZERO GARBAGE: No pinyin/placeholder/hi/test. UTF-8 no BOM. Max 2 blank lines.
-When done: update SESSION_STATE.md, say "ALL TASKS DONE".
+📖 TASK 1: 读本文件完整内容
+
+⚙️ TASK 2: 编译 FunC 合约
+  命令: node scripts/compile-func.mjs
+  验收: 终端输出 22/22 PASS
+  失败: 读错误→定位根因→修复→重跑→直到全绿
+  全绿前不许进入 TASK 3
+
+🏗️ TASK 3: 前端真数据改造（这是大头，每改一个文件跑一次 build，不过不改下一个）
+  组件参考: D:\openclaw-data\workspace\repos\react-bits
+  钱包库: wagmi/viem + ethers.js，注入真实浏览器钱包，不写假 provider
+  
+  3a. 价格数据 [frontend/src/lib/ionApi.ts]
+      → 删掉所有 mock return
+      → ION 价格走 PancakeSwap Router.getAmountsOut(1 ION, [USDT])
+      → BSC 价格走 CMC API
+      → 调完 CMC API 立刻缓存 localStorage，5分钟过期
+      → npm run build 过 → git commit -m "feat: real price from CMC + PancakeSwap"
+  
+  3b. Dashboard [frontend/src/pages/DashboardPage.tsx]
+      → 不再硬编码任何数字
+      → TVL = 调 PancakeSwap 查 LP 池储备量
+      → 24h volume = 调 BSC 区块浏览器 indexer
+      → APR = 从 ionApi.ts 取真实质押收益
+      → 显示 "Last updated: HH:MM:SS" 时间戳
+      → build 过 → commit
+  
+  3c. Swap 面板 [frontend/src/pages/SwapPage.tsx]
+      → 连接真实钱包: useAccount() → wagmi injected provider
+      → Token 选择器: 从 CMC top100 + PancakeSwap 已有池子拉列表
+      → 报价: 调 PancakeSwap Router.getAmountsOut(inputAmount, [tokenPath])
+      → 滑点: 显示 0.1%/0.5%/1% 选项，写入 swap 参数
+      → 执行: 调 Router.swapExactTokensForTokens()，用户签名
+      → 交易后显示 BSC 浏览器 tx hash 链接
+      → build 过 → commit
+  
+  3d. 行情图 [frontend/src/components/chart/ 新建]
+      → 用 lightweight-charts 或 TradingView widget
+      → 数据走 CMC 历史价格 API 或 PancakeSwap 池子价格事件
+      → 时间: 1H/4H/1D/1W/1M 可切换
+      → build 过 → commit
+  
+  3e. Pool 页 [frontend/src/pages/PoolPage.tsx]
+      → 展示 PancakeSwap 上真实 LP 池: ION/USDT, ION/BNB
+      → 添加流动性按钮 → 调 Router.addLiquidity()
+      → 移除流动性按钮 → 调 Router.removeLiquidity()
+      → 显示你的 LP 仓位余额
+      → build 过 → commit
+  
+  3f. 通用状态
+      → loading: skeleton 骨架屏
+      → error: 红色提示 + 重试按钮
+      → empty: "暂无数据" + 引导文字
+      → 移动端: 320px~4K 全适配
+
+✅ TASK 4: 全栈验证
+  命令: powershell -File scripts/verify-100.ps1
+  验收: 终端输出 PASS 100/100, RESULT=GREEN
+  失败: 读报错→定位根因→修复→重跑→直到全绿
+  全绿前不许汇报 done
+
+═══ 每个 TASK 单独 commit，commit message 格式: feat/fix/chore: 中文简述 ═══
+
+═══════════════════════════════════════════
+✅ DONE 标准 — 每个TASK判定
+  TASK 2: 终端输出 "22/22 green" 或 "All contracts compiled"
+  TASK 3: npm run build → exit 0, 无 error/warning
+  TASK 4: 终端输出 "PASS 100/100, RESULT=GREEN"
+  不全绿 → 没完成 → 不汇报 done
+  
+  ⚠️ 额外检查（每次 commit 前）:
+    → npm run build 报 any Chinese garbled? → FAIL
+    → 打开 .tsx/.fc 文件看到的不是正常中文而是 锟斤拷/烫烫烫/问号? → FAIL
+    → 编码验证: file 命令输出不是 "UTF-8" → FAIL
+    → 任一 FAIL → 不 commit → 用 UTF-8 重写文件 → 再读确认
+═══════════════════════════════════════════
+📊 完成后: git push && 更新 SESSION_STATE.md && 汇报"ALL TASKS DONE"
+
+---
+
+## 🌉 BRIDGE DEPLOYMENT — Master's Roadmap (2026-05-19)
+
+**Priority: After current DEX frontend tasks complete.**
+
+### Architecture
+```
+ION链 ION  →  官桥  →  ION(BSC)  →  PancakeSwap ION/USDT LP  →  可交易
+```
+
+### Shortest Path (3 Steps)
+1. **升级 & 部署 Bridge.sol** — Solidity 0.7.0→0.8.26, 对接 BSCVault.sol
+   - Source: `D:\openclaw-tools\ice-blockchain-bridge\solidity\Bridge.sol`
+   - Verifier: `SignatureChecker.sol` (ECDSA)
+   - Deployer: `IONBridgeRouterMainnetDeployer.sol`
+2. **启动桥 Relayer** — Node.js 服务监控双链事件
+   - ION→BSC: 监听 votes-collector (config_param 72) 放行事件
+   - BSC→ION: 监听 Bridge.sol Mint/Burn 事件
+3. **创建 PancakeSwap LP** — ION(BSC)/USDT 交易对 + 注入初始流动性
+   - Router: `0x10ED43C718714eb63d5aA57B78B54704E256024E`
+   - Factory: `0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73`
+   - USDT: `0x55d398326f99059fF775485246999027B3197955`
+
+### ION 链端（已就绪，不需改动）
+| 合约 | Config | 功能 |
+|------|--------|------|
+| multisig-code.fc | param(71) | n-of-k 验证者多签 |
+| votes-collector.fc | param(72) | ECDSA 签名收集+放行 |
+
+### BSC 端（需部署）
+- Bridge.sol (已有, 升级版本)
+- BSCVault.sol (已有基础)
+- BSC多签合约 (镜像 multisig-code.fc)
+
+### Deployment Scripts Available
+- `D:\openclaw-tools\ion-bridge-deploy\` — 70 文件, 含 .fif 部署脚本
+
+Read before starting: `.memory-bank/architecture-audit.md`, `.cursor/skills/ion-official-source/SKILL.md`.
 ```
 
 ---
@@ -35,6 +163,24 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 ## User preference (2026-05-19)
 
 - **不要每次询问确认**：Agent 对验证、修复、workflow、scoped 前端/文档改动自行执行并汇报结果；仅在密钥/主网/不可逆删除/需求歧义时联系 Master。
+- **每次开发前必读铁律**：起手读 `.memory-bank/development-iron-law-preflight.md` + `.cursor/rules/ion-dex-iron-law.mdc` + `ion-dex-memory` Skill；双链审计与 100 绿命令见预检文档。
+
+## Hard Rules
+
+## 🎯 PRIORITY ORDER — Build This First (2026-05-19 22:02)
+
+> Source: `.memory-bank/architecture-audit.md` (24 gaps found)
+
+| Priority | Count | Key Items |
+|----------|-------|-----------|
+| 🔴 **P0** | 6 | Security tests→16/16, FunC tests, Backend DB, API→real data, Cross-chain bridge, Deploy scripts |
+| 🟠 **P1** | 6 | Indexer, Oracle, Circuit breaker, Liquidity mining, Wallet, Error handling |
+| 🟡 **P2** | 8 | Governance, CI/CD, Monitoring, Docker, SDK, Upgrades, Analytics, Security ops |
+| 🔵 **P3** | 4 | Mobile, Fiat, Limit orders, i18n |
+
+**Rule:** P0→P1→P2→P3. Never skip. Read `.memory-bank/architecture-audit.md` for full details.
+
+---
 
 ## Hard Rules
 
@@ -75,6 +221,7 @@ These rules are permanent. No agent or developer may remove or weaken them.
 
 ## Current State
 
+- **2026-05-19 20:53** — `scripts\verify-100.ps1` **运行中**（后台，约 95s/轮）；已修复 `backend` 幂等 bootstrap 返回 `migrationsApplied: []`；`verify-full-save-log.cmd` **exit 0**；FunC **22/22**；`SecurityAttackTest` **1500/1500**。
 - Frontend scaffold exists under `frontend/`.
 - Current frontend has a Vite/React/Tailwind skeleton and initial dashboard components.
 - There are generated `.js` ghost files under `frontend/src/` from earlier TypeScript emits; these must be cleaned once shell/filesystem execution is reliable.
@@ -208,6 +355,8 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 
 ## Next Action
 
+**Current (2026-05-19):** Dual-chain audit gates — `scripts/dual-chain-audit.mjs` (ION FunC **1500/1500** static + BSC **SecurityAttackTest 16/16**), `scripts/func-security-audit.mjs`, `scripts/verify-100-dual-chain.ps1`. `verify-100.ps1` 每轮含 `dual-chain-audit`. **Next:** 跑满 `verify-100-dual-chain.ps1 -Iterations 100`；P0-4 RPC+CMC。
+
 1. Continue development with real shell execution via Desktop Commander.
 2. Use `cd frontend && npm run dev:local` for frontend runtime verification on `http://localhost:3001/`.
 3. Use `D:/openclaw-tools/ion` as the official ION reference source for FunC style, DNS, wallet, multisig, tonlib, lite-client, and API schemes.
@@ -313,7 +462,11 @@ After Phase 5 (frontend):
 
 ### Autonomous block (baseline)
 
-Per **`.cursor/rules/ion-autonomous-verify.mdc`**: Task 1 baseline **`303745a`**. Task 2 FunC compile gate GREEN (vault fee withdraw ACL). **`scripts/task2-func-loop.cmd`** / **`verify-100.ps1`** available.
+Per **`.cursor/rules/ion-autonomous-verify.mdc`**: Task 1 baseline **`303745a`**.
+
+**铁律循环 2026-05-19：** 编译 **22/22** → 审计修复 → 重编译 → commit **`7b29f8b`** → **`forge test` SecurityAttackTest 1500/1500** → **`verify-100.ps1` 运行中**。
+
+修复摘要：`BSCVault` 单调 `withdrawalNonce`、零额 revert、`setThreshold` 上限、`recoverETH` call；FunC `deployer`/`router::get_pool_address` 写入真实 router 地址。
 
 **NEXT:** Phase 6 FunC greenfield (`DexRouter.fc` …) per roadmap below; BSC security tests; backend DB layer.
 

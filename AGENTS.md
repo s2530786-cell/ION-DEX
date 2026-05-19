@@ -24,6 +24,14 @@ Before working on this project, load and follow:
 - `.cursor/skills/summarize-pro/SKILL.md` when summarizing long docs, logs, transcripts, diffs, research results, or verification output.
 - `.cursor/skills/claude-flow/SKILL.md` when using Claude-Flow/RuFlo for AI agent orchestration, swarm planning, MCP diagnostics, multi-agent decomposition, or controlled local agent experiments.
 
+## AI Red Lines (Master — non-negotiable)
+
+Read **`.memory-bank/ai-red-lines.md`** every session before coding.
+
+1. **No false claims** — Never say work is done without command output, file paths, or on-chain evidence. No lip service.
+2. **No hollow code or fake data** — Production paths must use real RPC/indexer/CMC and real wallet sign+broadcast; mocks must be explicitly labeled.
+3. **Self-check every write** — UTF-8 without BOM, scan diffs for mojibake (`鈫?`, `鈥?`, etc.), run `scripts\check-encoding.ps1` and scoped verify before claiming completion.
+
 ## Core Requirements
 
 - Source encoding: UTF-8 without BOM only.
@@ -57,6 +65,7 @@ ION DEX is planned as an OKX Web3 wallet style DEX for ION with:
 
 ## Development Process
 
+0. **Iron law preflight (before any code edit):** Read `.memory-bank/development-iron-law-preflight.md`, `.memory-bank/README.md`, and follow `.cursor/rules/ion-dex-iron-law.mdc`. Load `ion-dex-memory` Skill every session.
 1. Read `SESSION_STATE.md`.
 2. Read current engineering docs under `docs/`.
 3. For every development task, proactively load the Cursor workflow and development accelerator context:

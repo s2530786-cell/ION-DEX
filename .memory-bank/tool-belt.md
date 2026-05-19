@@ -18,7 +18,7 @@
 ### Auto-Execution Pipeline
 | Script | Function |
 |--------|----------|
-| `node scripts/audit-all.mjs` | Full audit: forge→test→solhint→slither→tsc→build |
+| `node scripts/audit-all.mjs` | Full audit: forge→ test→ solhint→ slither→ tsc→ build |
 | `node scripts/auto-watcher.mjs` | File watcher: auto-runs audit on .sol/.fc/.ts changes |
 | `reports/audit-history.log` | Audit execution log |
 | `reports/audit-errors.md` | Error report (only when failures) |

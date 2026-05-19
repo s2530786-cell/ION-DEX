@@ -11,11 +11,11 @@ describe("source adapters", () => {
     // no-op; each test uses its own registry instance
   });
 
-  it("returns mock source on first fetch and cache source on second fetch", () => {
+  it("returns mock source on first fetch and cache source on second fetch", async () => {
     const registry = createAdapterRegistry(clock);
 
-    const first = registry.market.fetch();
-    const second = registry.market.fetch();
+    const first = await registry.market.fetch();
+    const second = await registry.market.fetch();
 
     assert.equal(first.source, "mock");
     assert.equal(first.cacheHit, false);
@@ -25,9 +25,9 @@ describe("source adapters", () => {
     assert.equal(second.stale, false);
   });
 
-  it("exposes adapter health snapshots with upstream status", () => {
+  it("exposes adapter health snapshots with upstream status", async () => {
     const registry = createAdapterRegistry(clock);
-    registry.burn.fetch();
+    await registry.burn.fetch();
 
     const health = registry.listHealth();
     const burn = health.find((entry) => entry.adapterKey === "burn");
@@ -38,12 +38,12 @@ describe("source adapters", () => {
     assert.match(burn?.lastUpdatedAt ?? "", /^2026-05-18T/);
   });
 
-  it("caches domain resolutions per name", () => {
+  it("caches domain resolutions per name", async () => {
     const registry = createAdapterRegistry(clock);
 
-    const first = registry.domain.fetch({ name: "demo.ion" });
-    const second = registry.domain.fetch({ name: "demo.ion" });
-    const other = registry.domain.fetch({ name: "other.ion" });
+    const first = await registry.domain.fetch({ name: "demo.ion" });
+    const second = await registry.domain.fetch({ name: "demo.ion" });
+    const other = await registry.domain.fetch({ name: "other.ion" });
 
     assert.equal(first.cacheHit, false);
     assert.equal(second.cacheHit, true);

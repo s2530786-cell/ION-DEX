@@ -123,6 +123,22 @@ export async function fetchDomainResolve(name: string, signal?: AbortSignal): Pr
   return fetchApi<DomainResolution>(`/api/domain/resolve?name=${query}`, signal);
 }
 
+export type BscWalletBalance = {
+  address: string;
+  balanceWei: string;
+  balanceBnb: string;
+  chainId: number;
+  rpcUrl: string;
+};
+
+export async function fetchBscWalletBalance(
+  address: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<BscWalletBalance>> {
+  const query = encodeURIComponent(address);
+  return fetchApi<BscWalletBalance>(`/api/wallet/bsc-balance?address=${query}`, signal);
+}
+
 export function formatIonAmount(value: string): string {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) {

@@ -64,7 +64,7 @@ LLM 把自然语言转成工具调用。人在 IDE 里说话 → Agent 翻译成
 **必须：** 一个 Task = 一个 Agent 职责。不把"编译合约 + 压力测试 + 写文档"塞进一个 session。
 
 ### Factor 11: Trigger from Anywhere
-Agent 从任何地方触发——git hook、cron、IDE 输入、人工消息。
+Agent 从任何地方触发—— git hook、cron、IDE 输入、人工消息。
 **必须：** 每个 Task 结束后主动检查下一个 Task，自己不闲着。
 
 ### Factor 12: Stateless Reducer

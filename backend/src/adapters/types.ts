@@ -31,6 +31,6 @@ export type AdapterHealthSnapshot = {
 export interface SourceAdapter<T, TParams = void> {
   readonly key: string;
   readonly upstream: UpstreamKind;
-  fetch(params: TParams): AdapterFetchResult<T>;
+  fetch(params: TParams): Promise<AdapterFetchResult<T>>;
   getHealth(): AdapterHealthSnapshot;
 }

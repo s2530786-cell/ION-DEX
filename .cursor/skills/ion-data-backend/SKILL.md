@@ -19,6 +19,29 @@ Use this skill for data and backend work around:
 
 ## Reliability Rules
 
+### 🔴 RED LINE: NO MOCK / NO FAKE DATA
+> All backend services must connect to REAL chain data. Zero tolerance for:
+> - `return { price: 0.42 }` (hardcoded)
+> - `status: "mock"`, `source: "mock"`, `relayerStatus: "mocked"`
+> - Empty adapters, fake DB connections, placeholder API endpoints
+> - Fake wallet connections, fake balances, fake transaction hashes
+> If you cannot connect to the real data source, DO NOT write a mock substitute — search GitHub/Google/StackOverflow for the right approach, then implement it for real.
+> **Prefer 1 real endpoint over 100 mock endpoints.**
+
+### ✅ APPROVED REAL DATA SOURCES (ONLY THESE)
+> | Domain | Source | Format |
+> |--------|--------|--------|
+> | **Prices** | CMC API (`pro-api.coinmarketcap.com`) | JSON, API key in env |
+> | **BSC Price/Reserves** | PancakeSwap Router `0x10ED43C718714eb63d5aA57B78B54704E256024E` | On-chain `getAmountsOut` |
+> | **ETH Price/Liquidity** | Uniswap V3 Quoter `0xb27308f9F90D2F3dcC8a55F0917A4D7AE73A3276` (BSC) | On-chain `quoteExactInputSingle` |
+> | **ION Chain Data** | `https://api.mainnet.ice.io/http/v2/` + `https://api.mainnet.ice.io/indexer/v3/` | JSON RPC |
+> | **BSC RPC** | Public RPC or configurable endpoint | JSON RPC |
+> | **Wallet** | ethers.js / wagmi / viem → real injected provider (MetaMask/OKX/Trust) | EIP-1193 |
+> | **Staking** | ION链 `get_stake_info` / `get_validator_list` RPC | On-chain call |
+> | **Burn** | BSC burn address + ION mainnet burn events | Indexer query |
+> | **Bridge** | BSCVault events + ION validators (multisig-code.fc param71) | On-chain events |
+> **Mock = 死刑。CMC/PancakeSwap/Uniswap/真实钱包 四选一，没有其他选项。**
+
 - Treat every external API as unreliable: add timeout, retry policy, rate-limit handling, and clear stale-data state.
 - Store source, timestamp, and confidence for every important data point.
 - Never mix unofficial values with official values without labeling provenance.

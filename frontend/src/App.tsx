@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
+import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
 import { BusinessPage, type BusinessPageKey } from "@/pages/BusinessPages";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { PoolPage } from "@/pages/PoolPage";
@@ -45,10 +46,21 @@ function PageRouter({
 }
 
 export function App() {
-  const [activePage, setActivePage] = useState<PageKey>("dashboard");
+  const [activePage, setActivePage] = useState<PageKey>(() => pageKeyFromHash());
+
+  const navigate = useCallback((page: PageKey) => {
+    setActivePage(page);
+    writePageHash(page);
+  }, []);
+
+  useEffect(() => {
+    const onHashChange = () => setActivePage(pageKeyFromHash());
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   return (
-    <AppShell activePage={activePage} onPageChange={setActivePage}>
+    <AppShell activePage={activePage} onPageChange={navigate}>
       <AnimatePresence mode="wait">
         <motion.div
           key={activePage}
@@ -57,7 +69,7 @@ export function App() {
           initial={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
         >
-          <PageRouter onNavigate={setActivePage} page={activePage} />
+          <PageRouter onNavigate={navigate} page={activePage} />
         </motion.div>
       </AnimatePresence>
     </AppShell>

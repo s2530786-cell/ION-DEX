@@ -1,19 +1,48 @@
 import { ArrowDownUp } from "lucide-react";
-import { useMemo, useState, type FormEvent } from "react";
+import { useCallback, useMemo, useState, type FormEvent } from "react";
+import { DataSourceBadge } from "@/components/data/DataSourceBadge";
+import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { useApiResource } from "@/hooks/useApiResource";
+import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 
 type SwapToken = "BNB" | "ION" | "USDT";
 
 const tokens: SwapToken[] = ["BNB", "ION", "USDT"];
 
-const mockRates: Record<SwapToken, number> = {
+const fallbackRates: Record<SwapToken, number> = {
   BNB: 642.2,
   ION: 6.02,
   USDT: 1,
 };
 
+const fallbackTickers: MarketTicker[] = [
+  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
+  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
+  { symbol: "USDT", priceUsd: 1, displayPrice: "$1.00", change24hPct: 0.01, displayChange: "+0.01%" },
+];
+
+function ratesFromTickers(tickers: MarketTicker[]): Record<SwapToken, number> {
+  const rates = { ...fallbackRates };
+  for (const ticker of tickers) {
+    if (ticker.symbol === "BNB" || ticker.symbol === "ION" || ticker.symbol === "USDT") {
+      rates[ticker.symbol] = ticker.priceUsd;
+    }
+  }
+  return rates;
+}
+
 export function SwapPage() {
+  const fetchTickers = useCallback(
+    (signal: AbortSignal) => fetchMarketTickers(signal),
+    [],
+  );
+  const tickers = useApiResource(fetchTickers, fallbackTickers, {
+    isEmpty: (data) => data.length === 0,
+  });
+  const rates = useMemo(() => ratesFromTickers(tickers.data), [tickers.data]);
+
   const [fromToken, setFromToken] = useState<SwapToken>("BNB");
   const [toToken, setToToken] = useState<SwapToken>("ION");
   const [payAmount, setPayAmount] = useState("");
@@ -28,8 +57,8 @@ export function SwapPage() {
       Number.isFinite(parsedSlippage) && parsedSlippage >= 0.1 && parsedSlippage <= 5;
     const sameToken = fromToken === toToken;
 
-    const fromUsd = mockRates[fromToken];
-    const toUsd = mockRates[toToken];
+    const fromUsd = rates[fromToken];
+    const toUsd = rates[toToken];
     const receive = payValid && toUsd > 0 ? (parsedPay * fromUsd) / toUsd : null;
     const impactPct =
       payValid && receive !== null
@@ -44,7 +73,7 @@ export function SwapPage() {
       receive,
       impactPct,
     };
-  }, [fromToken, payAmount, slippage, toToken]);
+  }, [fromToken, payAmount, rates, slippage, toToken]);
 
   function flipPair() {
     setFromToken(toToken);
@@ -70,6 +99,18 @@ export function SwapPage() {
             </div>
             <ArrowDownUp className="text-cyan-200" />
           </div>
+
+          <DataSourceBadge meta={tickers.meta} testId="swap-quote-source" />
+
+          <AsyncState
+            emptyMessage="Market prices unavailable."
+            error={tickers.error}
+            onRetry={tickers.reload}
+            state={tickers.state}
+            testId="swap-tickers"
+          >
+            <span className="sr-only">Ticker feed loaded</span>
+          </AsyncState>
 
           <TokenRow
             label="From"
@@ -161,7 +202,7 @@ export function SwapPage() {
               <span>
                 Quote: receive ~{validation.receive.toFixed(4)} {toToken} · price impact ~
                 {validation.impactPct?.toFixed(2)}% · min received after {slippage}% slip · protocol
-                fee in ION (mock)
+                fee in ION · source {tickers.meta?.source ?? "offline"}
               </span>
             ) : (
               <span>Enter amount and slippage to preview minimum received, impact, and ION fee.</span>

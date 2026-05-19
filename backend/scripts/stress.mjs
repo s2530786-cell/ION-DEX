@@ -1,11 +1,20 @@
 import { performance } from "node:perf_hooks";
-import { createApp } from "../dist/src/server.js";
+
+process.env.NODE_ENV = process.env.NODE_ENV ?? "test";
+process.env.ION_DATA_MODE = process.env.ION_DATA_MODE ?? "test-mock";
+delete process.env.CMC_API_KEY;
+
+const { createApp } = await import("../dist/src/server.js");
 
 const endpoints = [
   {
     path: "/api/health",
     p95LimitMs: 200,
-    expect: (data) => data.status === "ok" && Array.isArray(data.dataSources) && data.dataSources.length >= 4,
+    expect: (data) =>
+      data.status === "ok" &&
+      Array.isArray(data.dataSources) &&
+      data.dataSources.length >= 4 &&
+      (data.database?.status === "ok" || data.database?.status === "disabled"),
   },
   {
     path: "/api/config/public",

@@ -1,72 +1,67 @@
-# Current Progress (Auto-updated by 旺财, 2026-05-19)
+# Current Progress (Updated 2026-05-19)
+
+> **Milestone authority:** `docs/17-release-milestones.md`  
+> **Blueprint pack:** `docs/09-blueprint-index.md` → `docs/10`–`docs/22`（含资产/消息、官方集成、keeper、admin、分析）
 
 ## Phase Status Summary
 
 | Phase | Name | Status | Blockers |
 |-------|------|--------|----------|
-| 0 | Blueprint | ✅ 100% | — |
+| 0 | Blueprint | ✅ 100% | `docs/10`–`17` added; `docs/01` Pending 仍待官方确认 |
 | 1 | UI Design | ✅ 100% | — |
-| 2 | Contract Foundations | 🟡 75% | FunC 22/22 compile green; BSC SecurityAttackTest **16/16** (`eee3737`); ION FunC unit tests still missing |
-| 3 | Backend Foundation | 🟡 45% | No DB, no Redis, services are stubs |
-| 4 | Indexer | 🔴 0% | Not started |
-| 5 | Core Frontend | 🟢 85% | Phase5 steps 1–7 done (`f13ab94`+); wallet still draft shell |
-| 6 | Oracle/Keeper/Grid | 🔴 0% | Not started |
-| 7 | Bridge | 🔴 5% | Bridge page UI exists, contracts needed |
-| 8 | Domain/ID | 🔴 0% | Not started |
-| 9 | AI/Sentinel | 🔴 0% | Not started |
-| 10 | Admin/Transparency | 🔴 0% | Not started |
-| 11 | Security Testing | 🟡 30% | BSC tests started (10/16 pass), ION tests zero |
-| 12 | Mainnet Launch | 🔴 0% | Blocked on all above |
+| 2 | Contract Foundations | 🟢 90% | FunC 22/22 + P0-2 golden; BSC **16/16** + dual-chain 1500; DexRouter.fc 未建 |
+| 3 | Backend Foundation | 🟡 55% | **P0-3 DB** ✅；服务仍 mock → **P0-4** |
+| 4 | Indexer | 🔴 0% | 设计见 `docs/12` |
+| 5 | Core Frontend | 🟢 85% | Phase5 1–7 ✅；钱包/链上未接 |
+| 6 | Oracle/Keeper/Grid | 🔴 0% | `docs/13` |
+| 7 | Bridge | 🟡 10% | UI 壳（BusinessPages）；`docs/14` / P0-5 |
+| 8 | Domain/ID | 🔴 0% | `docs/15` |
+| 9 | AI/Sentinel | 🔴 0% | V3 |
+| 10 | Admin/Transparency | 🔴 0% | — |
+| 11 | Security Testing | 🟢 85% | BSC 1500 ✅；ION 1500 静态 ✅；TVM 动态待补 |
+| 12 | Mainnet Launch | 🔴 0% | `docs/17` checklist |
 
-## Current Cursor Task Queue
+## Current Engineering Queue
 
-**Active:** Phase 6 — FunC DEX (`DexRouter.fc` greenfield; existing `router.fc` is reference AMM router)
-**Done (2026-05-19):** Phase 5 steps 1–7 (`f13ab94` AppShell); BSC security suite **16/16** (`eee3737`); auto-workflow table in `docs/08-ci-agent-automation.md`
-**Next:** Swap/Pool ionApi wiring commit + **100-pass** gate; Phase 3 backend DB; Phase 7 bridge (Master priority)
+| Priority | Task | Milestone | Status |
+|----------|------|-----------|--------|
+| **Now** | **P0-4** Real data RPC + CMC | M1 | ⬜ |
+| Next | DexRouter.fc scaffold | M4 prep | ⬜ |
+| Next | Wallet adapter V1 | M1 | ⬜ |
+| Parallel | P0-5 Bridge | M3 | ⬜ |
+| Gate | verify-100 100/100 GREEN | M0→M5 | 🟡 曾 7–8/100 后 stress 偶发失败；已加重试 |
 
-## Latest Deliverables
+## Latest Deliverables (2026-05-19)
 
-### 2026-05-19
-- ✅ **Agent auto-workflow:** ordered steps 0–9 documented in `docs/08-ci-agent-automation.md` (Memory Bank + SESSION_STATE cross-links)
-- ✅ **verify-full (session):** encoding 1139 files OK; backend 19/19 + stress 9 endpoints; frontend build + Playwright **13/13**; audit:high **0** — `scripts\verify-full-save-log.cmd --no-pause` exit **0**
-- ✅ **FunC compile:** `node scripts/compile-func.mjs` → **22/22** green
-- ✅ **BSC security:** `forge test` suite **16/16** after logic fixes — commit **`eee3737`**
-- ✅ **Phase 5 frontend (7 steps):** Dashboard/Swap/Pool/Stake pages, Burn+Bridge shells, AppShell sidebar+mobile nav (`f13ab94`), verify-full **exit 0** (FunC 22/22, compile-all 6/6, Playwright 13/13)
-- ✅ Iron Law v2 deployed (15 attack categories, 1500 green minimum)
-- ✅ SecurityAttackTest.t.sol created (17 files, Forge framework)
-- ✅ EIP-712 signatures working with proper private key derivation
-- ✅ Reentrancy test: 100/100 green
-- ✅ Oracle test: 100/100 green
-- ✅ Overflow test: 100/100 green
-- ✅ DoS test: 100/100 green
-- ✅ Phantom token test: 100/100 green
-- ✅ Bridge attack test: 100/100 green
-- ✅ Proxy test: 100/100 green
-- ✅ Signature forgery test: 100/100 green
-- ✅ Logic bugs test: 100/100 green
-- ✅ Quantum resistance test: 100/100 green
-- ❌ Flash loan test: 0/100 (test logic bug, NOT contract vulnerability)
-- ❌ Sandwich test: 0/100 (reverts on setup)
-- ❌ Access control test: 0/100 (expectRevert logic bug)
-- ❌ Timestamp test: 0/100 (test expectations wrong)
-- ❌ Governance test: 0/100 (test expectations wrong)
-- ✅ Architecture gap analysis: 24 missing items identified
-- ✅ Architecture audit written to .memory-bank/architecture-audit.md
+- ✅ Blueprint **`docs/09`–`docs/22`**（10–17 核心 + 18–22 扩展；每项含目标/边界/依赖/退出标准）
+- ✅ P0-1 BSC SecurityAttackTest **16/16** (1500)
+- ✅ P0-2 `func-contract-test.mjs` + bytecode golden
+- ✅ P0-3 Backend DB migrations (SQLite/Postgres)
+- ✅ Dual-chain gate `scripts/dual-chain-audit.mjs`
+- ✅ Automation: `automation-scheduled-gate.cmd`, Windows 计划任务, GHA scheduled gates
+- ✅ `automation-scheduled-gate` **standard** 门本地 **RESULT=GREEN**（含 dual-chain）
+- 🟡 verify-100 后台运行中 / 需重跑到 100/100
 
-## Next Actions for Cursor
+## Verification snapshot
 
-1. Read `.memory-bank/architecture-audit.md`
-2. Fix 6 failing security tests (FlashLoan, Sandwich, AccessControl, Timestamp, Governance, FULL_SUITE)
-3. Run `forge test` → must get 16/16 green
-4. Build ION FunC test framework (Phase 2 remaining)
-5. Build backend database layer (Phase 3)
-6. Complete backend API stubs (Phase 3)
-7. Cross-chain bridge deployment (Phase 7 — Master priority)
+| Check | Result |
+|-------|--------|
+| `compile-func.mjs` | 22/22 |
+| `func-security-audit.mjs` | 1500/1500 |
+| `SecurityAttackTest` | 16/16 |
+| `verify-full-save-log` | exit 0（近期会话） |
+| `verify-100` | 未达 100/100（进行中/需重跑） |
+
+## Next Actions
+
+1. 实施 **P0-4**（`docs/10` registry + `docs/12` 读路径）
+2. **M1** 钱包流（`docs/11`）+ Swap 真实模拟
+3. 重跑 **`scripts\verify-100.ps1`** 至 `RESULT=GREEN`
+4. P0-5 桥（`docs/14`）与 Master 确认 **M3** 排期
 
 ## Iron Law Compliance
 
-- ✅ 1000-pass rule enforced in cursor rules
-- ✅ 24/7 monitoring active (AHK/VBS)
-- ✅ Zero garbage policy
-- ✅ Security-first: 15 attack vectors tested
-- ✅ BSC SecurityAttackTest **16/16** (`eee3737`); **100-pass** gate must still be re-run after each material change
+- ✅ 15×100 双链审计脚本
+- ✅ 自动门：保存 Hook、计划任务、GHA
+- ✅ 零垃圾 / UTF-8
+- 🟡 100-pass 铁门 — 以 `verify-100` 摘要为准

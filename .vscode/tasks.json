@@ -15,6 +15,18 @@
       }
     },
     {
+      "label": "ION DEX: func-contract-test.mjs",
+      "type": "shell",
+      "command": "node scripts\\func-contract-test.mjs",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "group": "build"
+    },
+    {
       "label": "ION DEX: compile-func.mjs",
       "type": "shell",
       "command": "node scripts\\compile-func.mjs",
@@ -25,6 +37,21 @@
         "showReuseMessage": false
       },
       "group": "build"
+    },
+    {
+      "label": "ION DEX: autonomous workflow (preflight+compile+verify)",
+      "type": "shell",
+      "command": "scripts\\agent-autonomous-workflow.cmd",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
     },
     {
       "label": "ION DEX: Task2 Func compile then agent-verify",
@@ -80,6 +107,45 @@
         "panel": "shared"
       },
       "group": "test"
+    },
+    {
+      "label": "ION DEX: iron-law-security",
+      "type": "shell",
+      "command": "scripts\\iron-law-security.cmd",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "group": "test"
+    },
+    {
+      "label": "ION DEX: dual-chain-audit",
+      "type": "shell",
+      "command": "node scripts\\dual-chain-audit.mjs",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "group": "test"
+    },
+    {
+      "label": "ION DEX: auto gate (standard)",
+      "type": "shell",
+      "command": "cmd.exe /d /c \"set ION_AUTO_MODE=standard&& call scripts\\automation-scheduled-gate.cmd\"",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "group": "test"
+    },
+    {
+      "label": "ION DEX: verify-100 (background)",
+      "type": "shell",
+      "command": "scripts\\start-verify-100-background.cmd",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "group": "test"
+    },
+    {
+      "label": "ION DEX: register Windows scheduled tasks",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\register-windows-scheduled-tasks.ps1",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
     }
   ]
 }

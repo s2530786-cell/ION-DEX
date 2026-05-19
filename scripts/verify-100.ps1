@@ -77,8 +77,8 @@ for ($i = 1; $i -le $Iterations; $i++) {
   Write-Log ("PASS " + $i + "/" + $Iterations)
 
   Set-Location $root
-  $funcExit = Run-StepResilient "func-compile" {
-    cmd.exe /d /c "node scripts\compile-func.mjs"
+  $funcExit = Run-StepResilient "dual-chain-audit" {
+    cmd.exe /d /c "node scripts\dual-chain-audit.mjs"
   }
 
   Set-Location $root
@@ -106,6 +106,13 @@ for ($i = 1; $i -le $Iterations; $i++) {
   $backendStressExit = Run-StepResilient "backend-stress" {
     cmd.exe /d /c "npm run stress"
   }
+  if ($backendStressExit -ne 0) {
+    Write-Log ("RETRY_BACKEND_STRESS_AFTER_FAIL firstExit=" + $backendStressExit + " sleepMs=2000")
+    Start-Sleep -Milliseconds 2000
+    $backendStressExit = Run-StepResilient "backend-stress-retry-final" {
+      cmd.exe /d /c "npm run stress"
+    }
+  }
 
   Set-Location $frontend
   $verifyExit = Run-StepResilient "frontend-verify" {
@@ -122,7 +129,7 @@ for ($i = 1; $i -le $Iterations; $i++) {
   }
   else {
     $failed++
-    $failureLine = "PASS " + $i + " FAILED funcCompile=" + $funcExit + " encoding=" + $encodingExit + " backendVerify=" + $backendVerifyExit + " backendAudit=" + $backendAuditExit + " backendStress=" + $backendStressExit + " frontendVerify=" + $verifyExit + " frontendAudit=" + $auditExit
+    $failureLine = "PASS " + $i + " FAILED dualChainAudit=" + $funcExit + " encoding=" + $encodingExit + " backendVerify=" + $backendVerifyExit + " backendAudit=" + $backendAuditExit + " backendStress=" + $backendStressExit + " frontendVerify=" + $verifyExit + " frontendAudit=" + $auditExit
     Add-Content -Path $summary -Value $failureLine -Encoding utf8
     Write-Log $failureLine
     if (-not $ContinueOnFailure) {

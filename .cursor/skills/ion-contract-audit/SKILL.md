@@ -5,6 +5,12 @@ description: Reviews and designs ION DEX smart contracts with strict security di
 
 # ION Contract Audit
 
+## 🔴 THREE RED LINES — Apply to All Contract Work
+
+1. **NO FAKE CONTRACTS** — Every contract call must use real ABI + valid on-chain address. No mock parameters, no fake return values.
+2. **NO GARBLED CHINESE** — All comments and error messages UTF-8 no BOM. 锟斤拷/烫烫烫 = don't commit.
+3. **VERIFY BEFORE CLAIMING DONE** — Run the test, show the output, commit the evidence. No evidence = not done.
+
 ## Scope
 
 Use this skill for all smart contract work in ION DEX:

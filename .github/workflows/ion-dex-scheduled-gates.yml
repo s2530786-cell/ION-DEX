@@ -1,0 +1,69 @@
+name: ION DEX scheduled gates
+
+on:
+  schedule:
+    # Daily 02:30 UTC
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+    inputs:
+      gate:
+        description: "Gate profile"
+        required: true
+        default: standard
+        type: choice
+        options:
+          - quick
+          - standard
+          - iron
+
+concurrency:
+  group: ion-dex-scheduled-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Cloud verify (FunC + backend + frontend + dual-chain)
+        run: bash scripts/agent-cloud-verify.sh
+        env:
+          ION_VERIFY_NONINTERACTIVE: "1"
+          CI: "1"
+
+      - name: Heavy backend stress (iron profile)
+        if: github.event.inputs.gate == 'iron' || (github.event_name == 'schedule' && github.event.inputs.gate == '')
+        working-directory: backend
+        env:
+          ION_STRESS_PROFILE: heavy
+          ION_STRESS_REQUESTS: "500"
+          ION_STRESS_CONCURRENCY: "48"
+        run: npm run stress

@@ -18,8 +18,8 @@ export type PublicConfig = {
     status: "draft" | "planned" | "enabled";
   }>;
   provenance: {
-    source: "mock";
-    status: "mocked";
+    source: "mock" | "upstream";
+    status: "mocked" | "healthy" | "degraded";
     note: string;
   };
 };

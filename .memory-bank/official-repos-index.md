@@ -128,7 +128,7 @@
 6. 写 ION 端部署脚本 (复用 `ion-bridge-deploy/`)
 7. 写 Relayer 服务 (Node.js, 监控双链)
 8. 写 PancakeSwap LP 创建脚本
-9. 写 `BridgePage.tsx` 前端页面
+9. 在 `BusinessPages.tsx` 桥接区接入钱包签名与桥 API（不单独建 `BridgePage.tsx`；见 `docs/14`）
 10. 联调测试：ION 链 ION → 桥 → BSC ION → PancakeSwap 可交易
 
 ### PancakeSwap LP 创建流程

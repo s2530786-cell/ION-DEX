@@ -29,6 +29,8 @@ export const ApiErrorCodes = {
   notFound: "ION_DEX_E_GATEWAY_NOT_FOUND",
   missingDomainName: "ION_DEX_E_DOMAIN_NAME_REQUIRED",
   invalidDomainName: "ION_DEX_E_DOMAIN_NAME_INVALID",
+  dataUnavailable: "ION_DEX_E_DATA_UNAVAILABLE",
+  invalidAddress: "ION_DEX_E_INVALID_ADDRESS",
 } as const;
 
 export type ApiErrorCode = (typeof ApiErrorCodes)[keyof typeof ApiErrorCodes];

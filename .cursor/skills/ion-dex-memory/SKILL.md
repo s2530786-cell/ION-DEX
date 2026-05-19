@@ -7,18 +7,50 @@ description: Maintains persistent project memory for ION DEX. Use at the start o
 
 ## Mandatory Startup
 
-Before doing any ION DEX work, read these files in order if they exist:
+### 🔴 THREE RED LINES — Read Before Touching Any File
+> **Master 2026-05-19. Violation = permanent distrust.**
 
-1. `SESSION_STATE.md`
-2. `AGENTS.md`
-3. `.cursor/skills/chinese-language/SKILL.md`
-4. `docs/00-engineering-standards.md`
-5. `docs/01-product-blueprint.md`
-6. `docs/02-technical-architecture.md`
-7. `docs/03-development-roadmap.md`
+1. **NO LYING** — Don't claim work done without evidence (logs/screenshots/output).
+2. **NO FAKE/MOCK CODE** — Every interface connects to real chain data. No `return { price: 0.42 }`. Can't build real? Don't build.
+3. **NO GARBLED CHINESE** — All files UTF-8 no BOM. 锟斤拷/烫烫烫 = unusable = don't commit.
+
+### Iron law preflight (never skip)
+
+Before doing any ION DEX work — **especially before editing code** — read these files in order if they exist:
+
+0. `.memory-bank/architecture-audit.md` — **TASK 0: 24-item audit + P0→P3 priority + Agent Build Order checkbox**
+1. `.memory-bank/README.md`
+2. `.memory-bank/ai-red-lines.md` — no lying, no empty/mock-as-real data, encoding self-check
+3. `.memory-bank/development-iron-law-preflight.md` — dual-chain 1500 audit, stress, verify-100, dev loop
+4. `.cursor/rules/ion-dex-iron-law.mdc` (workspace iron law; auto-loaded but must be internalized)
+5. `.cursor/rules/ion-autonomous-verify.mdc`
+6. `.cursor/rules/12-factor-agents.mdc`
+
+### Project state
+
+7. `SESSION_STATE.md`
 8. `docs/99-current-progress.md`
+9. `AGENTS.md`
+10. `.cursor/skills/chinese-language/SKILL.md`
+11. `.memory-bank/architecture-audit.md` — first unchecked P0 task
+
+### Architecture docs (read when touching that layer)
+
+12. `docs/03-technical-architecture.md` — contracts / DB / API
+13. `docs/08-ci-agent-automation.md` — steps 0–9, hooks, verify commands
+
+Optional legacy roadmap files: `docs/00-engineering-standards.md`, `docs/01-product-blueprint.md`, `docs/03-development-roadmap.md` — only if the current task references them.
 
 If a file is missing, do not assume its contents. Recreate it only when the user asks or when it is necessary to preserve current project memory.
+
+## Security verification memory (2026-05-19)
+
+- **ION chain:** `scripts/func-security-audit.mjs` — 15 categories × 100 = 1500 green; plus `scripts/func-contract-test.mjs`.
+- **BSC chain:** `contracts/bsc/test/SecurityAttackTest.t.sol` — 15 × 100 = 1500 including **quantum resistance** (category 15).
+- **Both chains:** `scripts/dual-chain-audit.mjs` after every contract change.
+- **100-pass gates:** `scripts/verify-100.ps1` (full stack + Playwright E2E); `scripts/verify-100-dual-chain.ps1` (dual-chain only). May run in parallel.
+- **Stress:** `backend/npm run stress`; heavy via `ION_STRESS_PROFILE=heavy` in `scripts/iron-law-security.cmd`.
+- **Rule:** 1499 green + 1 red = FAIL. Do not claim completion without command evidence.
 
 ## What To Remember
 
@@ -53,6 +85,19 @@ At the end of each session, update `SESSION_STATE.md` with:
 - Exact next action
 - Commands the user must run if shell is unavailable
 - Important decisions made in the session
+
+## Encoding self-check (mandatory after every write)
+
+Chinese or punctuation in `.md` / `.mdc` / comments must not ship with mojibake.
+
+**After creating or editing any file with Chinese:**
+
+1. Save as **UTF-8 without BOM** only.
+2. Scan the diff for known garbage: `鈫?`, `鈥?`, `鉁?`, `鉂?`, `馃`, `脳`, `?? ` (broken heading), `鏃鸿储` (wrong name).
+3. Use normal punctuation: `—` (em dash), `→` (arrow), `×` (multiply), with a space after when followed by a word (e.g. `— 完成`, not `—完成`).
+4. Run `powershell -File scripts\check-encoding.ps1` when the shell is available; fix before claiming done.
+
+**Optional repair:** `node scripts/fix-architecture-audit-encoding.mjs` for `.memory-bank/architecture-audit.md` spacing drift.
 
 ## Verification Rules
 

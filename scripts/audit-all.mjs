@@ -57,9 +57,13 @@ function auditForge() {
 // ─── 2. FORGE TEST ───
 function auditForgeTest() {
   console.log('\n🧪 FORGE TEST');
-  run('forge test', `D:\\openclaw-tools\\foundry\\bin\\forge.exe test --no-match-path "**/attackers/**"`, {
+  run('forge test (unit)', `D:\\openclaw-tools\\foundry\\bin\\forge.exe test --no-match-path "**/attackers/**"`, {
     cwd: join(ROOT, 'contracts', 'bsc'),
     timeout: 300000
+  });
+  run('SecurityAttackTest 1500', `D:\\openclaw-tools\\foundry\\bin\\forge.exe test --match-contract SecurityAttackTest --summary`, {
+    cwd: join(ROOT, 'contracts', 'bsc'),
+    timeout: 600000
   });
 }
 
@@ -88,10 +92,17 @@ function auditSlither() {
 function auditFunc() {
   console.log('\n⚡ FUNC');
   const script = join(ROOT, 'scripts', 'compile-func.mjs');
-  if (existsSync(script)) {
+  const contractTest = join(ROOT, 'scripts', 'func-contract-test.mjs');
+  const funcSecurity = join(ROOT, 'scripts', 'func-security-audit.mjs');
+  if (existsSync(contractTest)) {
+    run('func-contract-test', `node "${contractTest}"`, { timeout: 120000 });
+  } else if (existsSync(script)) {
     run('compile-func', `node "${script}"`, { timeout: 60000 });
   } else {
-    results.push('⚠️ compile-func.mjs (not found)');
+    results.push('⚠️ func-contract-test.mjs (not found)');
+  }
+  if (existsSync(funcSecurity)) {
+    run('func-security-audit', `node "${funcSecurity}"`, { timeout: 180000 });
   }
 }
 

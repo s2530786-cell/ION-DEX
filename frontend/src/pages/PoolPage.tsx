@@ -1,10 +1,15 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useApiResource } from "@/hooks/useApiResource";
-import { fetchStakingSummary, type StakingSummary } from "@/lib/ionApi";
+import {
+  fetchMarketTickers,
+  fetchStakingSummary,
+  type MarketTicker,
+  type StakingSummary,
+} from "@/lib/ionApi";
 
 type PoolRow = {
   id: string;
@@ -14,10 +19,40 @@ type PoolRow = {
   aprPct: number;
 };
 
-const mockPools: PoolRow[] = [
+const fallbackPools: PoolRow[] = [
   { id: "bnb-ion", pair: "BNB / ION", tvlUsd: 1_240_000, volume24hUsd: 182_000, aprPct: 31.8 },
   { id: "ion-usdt", pair: "ION / USDT", tvlUsd: 640_000, volume24hUsd: 96_500, aprPct: 22.4 },
 ];
+
+const fallbackTickers: MarketTicker[] = [
+  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
+  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
+];
+
+function buildPoolRows(staking: StakingSummary, tickers: MarketTicker[]): PoolRow[] {
+  const lpUsd = Number(staking.lpStakedUsd);
+  const primaryTvl = Number.isFinite(lpUsd) && lpUsd > 0 ? lpUsd : fallbackPools[0]?.tvlUsd ?? 1_240_000;
+  const bnbPrice = tickers.find((row) => row.symbol === "BNB")?.priceUsd ?? 642.2;
+  const ionPrice = tickers.find((row) => row.symbol === "ION")?.priceUsd ?? 6.02;
+  const volPrimary = Math.round(primaryTvl * 0.15);
+  const volSecondary = Math.round(primaryTvl * 0.08);
+  return [
+    {
+      id: "bnb-ion",
+      pair: "BNB / ION",
+      tvlUsd: primaryTvl,
+      volume24hUsd: volPrimary,
+      aprPct: staking.apr.lpMiningPct,
+    },
+    {
+      id: "ion-usdt",
+      pair: "ION / USDT",
+      tvlUsd: Math.round(primaryTvl * (ionPrice / Math.max(bnbPrice, 1))),
+      volume24hUsd: volSecondary,
+      aprPct: staking.apr.dexPct,
+    },
+  ];
+}
 
 const fallbackStaking: StakingSummary = {
   totalStakedIon: "452000000",
@@ -28,18 +63,32 @@ const fallbackStaking: StakingSummary = {
 };
 
 export function PoolPage() {
-  const staking = useApiResource(
-    (signal) => fetchStakingSummary(signal),
-    fallbackStaking,
+  const fetchStaking = useCallback((signal: AbortSignal) => fetchStakingSummary(signal), []);
+  const fetchTickers = useCallback((signal: AbortSignal) => fetchMarketTickers(signal), []);
+  const staking = useApiResource(fetchStaking, fallbackStaking);
+  const tickers = useApiResource(fetchTickers, fallbackTickers, {
+    isEmpty: (data) => data.length === 0,
+  });
+  const pools = useMemo(
+    () => buildPoolRows(staking.data, tickers.data),
+    [staking.data, tickers.data],
   );
   const [mode, setMode] = useState<"add" | "remove">("add");
-  const [selectedPool, setSelectedPool] = useState(mockPools[0]?.id ?? "");
+  const [selectedPool, setSelectedPool] = useState(fallbackPools[0]?.id ?? "");
   const [bnbAmount, setBnbAmount] = useState("");
   const [ionAmount, setIonAmount] = useState("");
   const [slippage, setSlippage] = useState("0.5");
   const [submitted, setSubmitted] = useState(false);
 
-  const pool = mockPools.find((row) => row.id === selectedPool) ?? mockPools[0];
+  useEffect(() => {
+    if (!pools.some((row) => row.id === selectedPool)) {
+      setSelectedPool(pools[0]?.id ?? "");
+    }
+  }, [pools, selectedPool]);
+
+  const pool = pools.find((row) => row.id === selectedPool) ?? pools[0];
+  const bnbUsd = tickers.data.find((row) => row.symbol === "BNB")?.priceUsd ?? 642.2;
+  const ionUsd = tickers.data.find((row) => row.symbol === "ION")?.priceUsd ?? 6.02;
 
   const validation = useMemo(() => {
     const parsedBnb = Number(bnbAmount);
@@ -54,11 +103,11 @@ export function PoolPage() {
       Number.isFinite(parsedSlippage) && parsedSlippage >= 0.1 && parsedSlippage <= 5;
     const yieldIon =
       amountsValid && pool
-        ? ((parsedBnb * 642.2 + parsedIon * 6.02) * (pool.aprPct / 100)) / 365
+        ? ((parsedBnb * bnbUsd + parsedIon * ionUsd) * (pool.aprPct / 100)) / 365
         : null;
 
     return { amountsValid, slippageValid, isValid: amountsValid && slippageValid, yieldIon };
-  }, [bnbAmount, ionAmount, pool, slippage]);
+  }, [bnbAmount, bnbUsd, ionAmount, ionUsd, pool, slippage]);
 
   function submitPool(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -75,7 +124,30 @@ export function PoolPage() {
           ION liquidity pools
         </h1>
 
-        <div className="mt-6 overflow-x-auto rounded-2xl border border-white/10">
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <DataSourceBadge meta={staking.meta} testId="pool-staking-source" />
+          <DataSourceBadge meta={tickers.meta} testId="pool-ticker-source" />
+        </div>
+
+        <AsyncState
+          emptyMessage="Pool metrics unavailable."
+          error={staking.error ?? tickers.error}
+          onRetry={() => {
+            staking.reload();
+            tickers.reload();
+          }}
+          state={
+            staking.state === "loading" || tickers.state === "loading"
+              ? "loading"
+              : staking.state === "error" || tickers.state === "error"
+                ? "error"
+                : staking.state === "empty" || tickers.state === "empty"
+                  ? "empty"
+                  : "ready"
+          }
+          testId="pool-metrics"
+        >
+          <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10">
           <table className="min-w-full text-left text-sm" data-testid="pool-list">
             <thead className="bg-white/[0.04] text-cyan-100/55">
               <tr>
@@ -86,7 +158,7 @@ export function PoolPage() {
               </tr>
             </thead>
             <tbody>
-              {mockPools.map((row) => (
+              {pools.map((row) => (
                 <tr
                   className={`border-t border-white/10 ${
                     row.id === selectedPool ? "bg-cyan-300/[0.08]" : ""
@@ -113,7 +185,8 @@ export function PoolPage() {
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        </AsyncState>
 
         <form className="mt-6 grid gap-4" data-testid="pool-form" onSubmit={submitPool}>
           <div className="flex flex-wrap gap-2">

@@ -14,7 +14,9 @@ import {
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { NeonButton } from "@/components/ui/NeonButton";
+import { useEvmWallet } from "@/context/EvmWalletContext";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
+import { shortenAddress } from "@/wallet/injectedEvm";
 
 export type PageKey =
   | "dashboard"
@@ -47,6 +49,7 @@ type AppShellProps = PropsWithChildren<{
 }>;
 
 export function AppShell({ activePage, children, onPageChange }: AppShellProps) {
+  const evmWallet = useEvmWallet();
   const [walletPanelOpen, setWalletPanelOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [connectedProvider, setConnectedProvider] = useState<WalletProviderKey | null>(null);
@@ -54,6 +57,15 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     () => walletProviders.find((provider) => provider.key === connectedProvider) ?? null,
     [connectedProvider],
   );
+  const walletButtonLabel = useMemo(() => {
+    if (evmWallet.status === "connected" && evmWallet.snapshot) {
+      return shortenAddress(evmWallet.snapshot.address);
+    }
+    if (connectedProvider && selectedProvider) {
+      return "Wallet Ready";
+    }
+    return "Wallet Connect";
+  }, [connectedProvider, evmWallet.snapshot, evmWallet.status, selectedProvider]);
 
   function selectPage(page: PageKey) {
     onPageChange(page);
@@ -193,14 +205,18 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 type="button"
               >
                 <Wallet size={16} />
-                {selectedProvider ? "Wallet Ready" : "Wallet Connect"}
+                {walletButtonLabel}
               </NeonButton>
 
               {walletPanelOpen ? (
                 <WalletConnectPanel
                   connectedProvider={selectedProvider}
+                  evmWallet={evmWallet}
                   onConnect={(provider) => setConnectedProvider(provider)}
-                  onDisconnect={() => setConnectedProvider(null)}
+                  onDisconnect={() => {
+                    setConnectedProvider(null);
+                    evmWallet.disconnect();
+                  }}
                 />
               ) : null}
             </div>
@@ -267,7 +283,7 @@ function NavList({
   );
 }
 
-type WalletProviderKey = "online" | "ion-browser" | "walletconnect";
+type WalletProviderKey = "injected" | "online" | "ion-browser" | "walletconnect";
 
 type WalletProvider = {
   key: WalletProviderKey;
@@ -277,6 +293,12 @@ type WalletProvider = {
 };
 
 const walletProviders: WalletProvider[] = [
+  {
+    key: "injected",
+    name: "MetaMask / Injected",
+    label: "BSC account via eth_requestAccounts",
+    status: "Live BNB balance via backend RPC",
+  },
   {
     key: "online",
     name: "Online+ Wallet",
@@ -299,13 +321,18 @@ const walletProviders: WalletProvider[] = [
 
 function WalletConnectPanel({
   connectedProvider,
+  evmWallet,
   onConnect,
   onDisconnect,
 }: {
   connectedProvider: WalletProvider | null;
+  evmWallet: ReturnType<typeof useEvmWallet>;
   onConnect: (provider: WalletProviderKey) => void;
   onDisconnect: () => void;
 }) {
+  const evmConnected = evmWallet.status === "connected" && evmWallet.snapshot;
+  const showInjectedSession = connectedProvider?.key === "injected" && evmConnected;
+
   return (
     <div
       className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[min(22rem,calc(100vw-2rem))] rounded-[1.6rem] border border-cyan-200/20 bg-slate-950/95 p-4 shadow-[0_0_36px_rgba(36,247,255,0.24)] backdrop-blur-xl"
@@ -317,24 +344,60 @@ function WalletConnectPanel({
         </div>
         <div>
           <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-100/50">
-            Wallet Shell
+            {showInjectedSession ? "EVM Wallet" : "Wallet Shell"}
           </p>
           <p className="mt-1 text-lg font-black text-white">
-            {connectedProvider ? connectedProvider.name : "Choose provider"}
+            {showInjectedSession
+              ? shortenAddress(evmWallet.snapshot!.address)
+              : connectedProvider
+                ? connectedProvider.name
+                : "Choose provider"}
           </p>
         </div>
       </div>
 
-      {connectedProvider ? (
-        <div className="grid gap-3" data-testid="profile-menu">
-          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-3 text-sm text-emerald-100">
+      {showInjectedSession ? (
+        <motion.div className="grid gap-3" data-testid="profile-menu">
+          <motion.div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-3 text-sm text-emerald-100">
+            <p className="font-black" data-testid="wallet-confirmation">
+              {connectedProvider!.name} connected on chain {evmWallet.snapshot!.chainId}
+            </p>
+            <p className="mt-1 font-mono text-xs text-emerald-100/80">{evmWallet.snapshot!.address}</p>
+            <p className="mt-2 text-emerald-100/70">
+              BNB balance:{" "}
+              {evmWallet.snapshot!.balanceBnb
+                ? `${evmWallet.snapshot!.balanceBnb} BNB`
+                : "unavailable (start backend on :8787 or check RPC)"}{" "}
+              · source: {evmWallet.snapshot!.balanceSource}
+            </p>
+          </motion.div>
+          <button
+            className="rounded-full border border-cyan-300/25 bg-cyan-300/[0.08] px-4 py-2 text-sm font-black text-cyan-100"
+            onClick={() => void evmWallet.refreshBalance()}
+            type="button"
+          >
+            Refresh balance
+          </button>
+          <button
+            className="flex items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
+            data-testid="wallet-disconnect"
+            onClick={onDisconnect}
+            type="button"
+          >
+            <LogOut size={16} />
+            Disconnect
+          </button>
+        </motion.div>
+      ) : connectedProvider ? (
+        <motion.div className="grid gap-3" data-testid="profile-menu">
+          <motion.div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-3 text-sm text-emerald-100">
             <p className="font-black" data-testid="wallet-confirmation">
               {connectedProvider.name} draft session ready
             </p>
             <p className="mt-1 text-emerald-100/70">
-              Profile, ION ID badges, and wallet signing remain mocked until adapters land.
+              Profile and ION-native signing are not wired yet. Use MetaMask / Injected for real BSC accounts.
             </p>
-          </div>
+          </motion.div>
           <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3">
             <UserCircle2 className="text-cyan-200" size={24} />
             <div>
@@ -351,25 +414,41 @@ function WalletConnectPanel({
             <LogOut size={16} />
             Disconnect draft
           </button>
-        </div>
+        </motion.div>
       ) : (
-        <div className="grid gap-2">
+        <motion.div className="grid gap-2">
+          {evmWallet.error ? (
+            <p className="rounded-2xl border border-rose-300/25 bg-rose-300/[0.08] px-3 py-2 text-xs text-rose-100">
+              {evmWallet.error}
+            </p>
+          ) : null}
           {walletProviders.map((provider) => (
             <button
-              className="rounded-2xl border border-white/10 bg-white/[0.05] p-3 text-left transition hover:border-cyan-200/35 hover:bg-cyan-300/[0.08]"
+              className="rounded-2xl border border-white/10 bg-white/[0.05] p-3 text-left transition hover:border-cyan-200/35 hover:bg-cyan-300/[0.08] disabled:cursor-not-allowed disabled:opacity-50"
               data-testid={`wallet-provider-${provider.key}`}
+              disabled={provider.key === "injected" && !evmWallet.hasInjectedProvider}
               key={provider.key}
-              onClick={() => onConnect(provider.key)}
+              onClick={() => {
+                if (provider.key === "injected") {
+                  void evmWallet.connectInjected().then(() => onConnect("injected"));
+                  return;
+                }
+                onConnect(provider.key);
+              }}
               type="button"
             >
               <span className="block text-sm font-black text-white">{provider.name}</span>
               <span className="mt-1 block text-xs text-cyan-100/55">{provider.label}</span>
+              {provider.key === "injected" && !evmWallet.hasInjectedProvider ? (
+                <span className="mt-1 block text-xs text-amber-200/80">No window.ethereum detected</span>
+              ) : null}
             </button>
           ))}
           <p className="mt-2 rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-3 py-2 text-xs text-amber-100/75">
-            Draft only: no private keys, no RPC calls, no wallet signatures are requested.
+            Injected wallet uses real eth_requestAccounts + backend BSC RPC for BNB balance. ION-native wallets
+            remain preview shells until official adapters ship.
           </p>
-        </div>
+        </motion.div>
       )}
     </div>
   );

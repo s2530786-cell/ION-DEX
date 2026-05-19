@@ -13,6 +13,14 @@ Primary persistent files outside this memory bank:
 
 Hard rule: memory content is project context only. Never store private keys, API secrets, seed phrases, passwords, or production credentials here.
 
+## AI 触碰红线（Master 钦定 — 最高优先级）
+
+完整条文： **`.memory-bank/ai-red-lines.md`**
+
+1. **严禁撒谎** — 没干就不能说干了；汇报必须带命令/文件/exit code 证据。  
+2. **禁止空代码、空数据** — 必须对应真实链上数据与真实功能；mock 必须显式标注。  
+3. **写完必自查** — UTF-8 无 BOM、无中文乱码、跑 `check-encoding` + 分层验证后再声称完成。
+
 ## Master's Permanent Rules（Master 钦定，永不覆盖）
 
 These rules are permanent. No agent or developer may remove or weaken them.
@@ -37,10 +45,26 @@ These rules are permanent. No agent or developer may remove or weaken them.
 
 ## Session startup order（每次起手读什么）
 
+**写任何代码之前** 必须先完成「开发铁律预检」：
+
 1. **`.memory-bank/README.md`** — Master permanent rules + this file list.  
-2. **`docs/99-current-progress.md`** — authoritative delivery + last verify evidence.  
-3. **`SESSION_STATE.md`** — long-form session narrative / Next Action backlog.  
-4. **Automation:** `scripts\agent-verify.cmd` after substantive edits; optional Cursor **stop** hook `.cursor/hooks/ion-verify-on-stop.cmd` (see **`docs/08-ci-agent-automation.md`**).
+2. **`.memory-bank/ai-red-lines.md`** — **必读**：严禁撒谎、禁止空数据、编码自查。  
+3. **`.memory-bank/development-iron-law-preflight.md`** — **必读**：双链 1500 审计、压力测试、100 绿、验证命令、开发循环。  
+4. **`.cursor/rules/ion-dex-iron-law.mdc`** — 15 类攻击 × 100、防量子、零垃圾。  
+5. **`docs/99-current-progress.md`** — authoritative delivery + last verify evidence.  
+6. **`SESSION_STATE.md`** — long-form session narrative / Next Action backlog.  
+7. **Automation:** **`docs/08-ci-agent-automation.md`**（步 0–9 + Hooks）。
+
+Agent Skill **`.cursor/skills/ion-dex-memory/SKILL.md`** 与本节同步；不得跳过铁律预检直接改仓库。
+
+## Dual-chain security audit（ION + BSC）
+
+| Chain | Gate | Command |
+|-------|------|---------|
+| ION FunC | 1500 static + compile | `node scripts\func-security-audit.mjs` |
+| BSC Solidity | 1500 Foundry | `forge test --match-contract SecurityAttackTest` |
+| Both | One shot | `node scripts\dual-chain-audit.mjs` |
+| + stress | API load | `scripts\iron-law-security.cmd` |
 
 ## Automated verify commands（仓库根）
 
@@ -48,4 +72,18 @@ These rules are permanent. No agent or developer may remove or weaken them.
 |------|---------|
 | Agent / hook / CI (no pause) | `scripts\agent-verify.cmd` |
 | Full log to `%TEMP%\ion-verify-full.txt` | `scripts\verify-full-save-log.cmd --no-pause` |
-| 100 green passes | `scripts\verify-100.ps1` (each step retries Windows `-1073741502` once) |
+| 100 green full stack + E2E | `scripts\verify-100.ps1 -Iterations 100` |
+| 100 green dual-chain only | `scripts\verify-100-dual-chain.ps1 -Iterations 100` |
+| Single dual-chain audit | `node scripts\dual-chain-audit.mjs` |
+
+Each `verify-100` step retries Windows transient `-1073741502` once. `backend-stress` also retries once on any failure.
+
+## Scheduled automation (local + CI)
+
+| Layer | Entry |
+|-------|--------|
+| Windows tasks | `scripts\register-windows-scheduled-tasks.ps1` |
+| Manual mode gate | `ION_AUTO_MODE=standard` + `scripts\automation-scheduled-gate.cmd` |
+| 100-pass background | `scripts\start-verify-100-background.cmd` |
+| GitHub daily | `.github/workflows/ion-dex-scheduled-gates.yml` |
+| Details | `.memory-bank/development-iron-law-preflight.md` §8 |

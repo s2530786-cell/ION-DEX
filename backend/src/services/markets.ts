@@ -5,7 +5,7 @@ export type MarketTicker = {
   change24hPct: number;
   displayChange: string;
   provenance: {
-    source: "mock";
+    source: "mock" | "cmc";
     note: string;
   };
 };

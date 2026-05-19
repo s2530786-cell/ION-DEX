@@ -34,6 +34,18 @@ jobs:
         shell: pwsh
         run: ./scripts/check-encoding.ps1
 
+      - name: FunC compile gate
+        run: node scripts/compile-func.mjs
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Dual-chain audit (ION 1500 + BSC SecurityAttackTest)
+        run: node scripts/dual-chain-audit.mjs
+
+      - name: Automation preflight
+        run: node scripts/automation-preflight.mjs
+
       - name: Install backend deps
         working-directory: backend
         run: npm ci
