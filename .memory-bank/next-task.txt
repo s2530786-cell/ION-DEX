@@ -1,1 +1,4 @@
-﻿task: sandwich-double-sig | pool.fc anti-front-running + bridge 2-of-3 validator double-sig | step 0: read .memory-bank/task-sandwich-doublesig.md
+TASK: ION DNS contract merge — Zeus + Roman enhancement
+See: .memory-bank/task-dns-merge.md
+Priority: HIGH
+Previous tasks (sandwich + bridge) still pending — do DNS first as it's simpler

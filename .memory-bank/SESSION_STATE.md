@@ -1,4 +1,4 @@
-﻿# SESSION_STATE.md — Phase 5 ION DEX Frontend
+# SESSION_STATE.md — Phase 5 ION DEX Frontend
 
 ## Current Task
 **Phase 5 Step 7: E2E nav scoping** —杩涜涓?

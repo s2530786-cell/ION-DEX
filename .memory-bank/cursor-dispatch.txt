@@ -1,0 +1,28 @@
+P0 TASKS with detailed guides:
+
+TASK 6.1 — Sandwich Attack Defense
+GUIDE: .memory-bank/guide-sandwich-defense.md
+FILES: op.fc (+2 opcodes), errors.fc (+4 errors), pool.fc (+commit-reveal flow +5% max swap)
+HOW: 
+  Step 1: Add op::commit_swap and op::reveal_swap to op.fc
+  Step 2: Add 4 error codes to errors.fc
+  Step 3: Add commitment dict to pool storage
+  Step 4: Add commit_swap handler in recv_internal
+  Step 5: Add reveal_swap handler with hash verification + 5% check
+  Step 6: Add MAX_SWAP_PERCENT constant
+  Step 7: Compile with func -PA
+
+TASK 6.2 — Bridge Double-Signature
+GUIDE: .memory-bank/guide-bridge-doublesig.md
+FILES: IBridgeValidator.sol (NEW), BSCFeeVault.sol (+EIP-712+validator set), params.fc (+config), vault.fc (+sig check)
+HOW:
+  Step 1: Create IBridgeValidator.sol interface
+  Step 2: Add validator set + EIP-712 to BSCFeeVault.sol
+  Step 3: Modify lockTokens() to check threshold + verify 2-of-3 signatures
+  Step 4: Add signature recovery helper (_countValidSignatures, _recover)
+  Step 5: Add governance functions (add/remove validator, set threshold)
+  Step 6: Add bridge config to params.fc
+  Step 7: Add validator sig check to vault.fc inbound handler
+  Step 8: forge build + func -PA
+
+COMPILE after each file change. Report compilation result.
