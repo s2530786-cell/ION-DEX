@@ -18,7 +18,23 @@ It is designed to include:
 
 ## Current Stage
 
-The project is currently in blueprint and architecture setup.
+**Active development — contracts compiled, data stack live, frontend in progress.**
+
+### Completed
+- [x] **Smart Contracts**: FeeDistributor.fc (FunC, 796 bytes, compiled ✅) + BSCFeeVault.sol (Solidity)
+- [x] **Data Stack**: 6-engine real-time price feed (PancakeSwap + Binance + CMC + GeckoTerminal + DexScreener + ION Indexer v3) — all free, zero API cost
+- [x] **Price Verification**: 3-source cross-check (CMC $0.0001389 | GeckoTerminal $0.0001411 | DexScreener $0.0001398) — deviation <1.5%
+- [x] **Wallet Providers**: IonWalletProvider.tsx + EvmWalletProvider.tsx
+- [x] **Bridge UI**: BridgePage.tsx (ION ↔ BSC)
+- [x] **Swap UI**: SwapPage.tsx
+
+### In Progress
+- [ ] ION DEX core contracts (IONX token, AMM pool, router)
+- [ ] Backend API with multi-source caching (TTL 15s)
+- [ ] Security test framework (10 attack vectors × 1000 tests each)
+- [ ] CI/CD pipeline
+
+**Commit history**: 62 commits across architecture, contracts, data tools, and frontend.
 
 ## Documentation
 
