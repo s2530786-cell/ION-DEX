@@ -113,7 +113,7 @@ function runCompileFunc() {
 
 /** @returns {{ ok: true } | { ok: false; reason: string }} */
 function scanGarbage(filePath) {
-  if (!/\.fc$/.test(filePath)) return { ok: true };
+  if (!/\.(?:fc|tsx?)$/.test(filePath)) return { ok: true };
   
   let lines;
   try {
@@ -128,11 +128,18 @@ function scanGarbage(filePath) {
     /^(hello|hi|test|asdf|todo|fixme|wtf|foo|bar|baz|blah|meh|temp|tmp|xxx|ggg|abc|123|qwerty|fubar)$/i,
     /^[a-z]{1,5}$/i,  // single short random words not in comment
     /^[a-z]+\d+[a-z]*$/i,  // like "thing123"
+    /motion(motion)+div/i,  // Agent JSX garbage like "motionmotiondiv"
+    /<\w{20,}>/i,  // suspiciously long tag names
   ];
 
   const violations = [];
   let blankStreak = 0;
   let inBlockComment = false;
+
+  const isTs = filePath.endsWith('.tsx') || filePath.endsWith('.ts');
+  const commentPrefix = isTs ? '//' : ';;';
+  const blockOpen = isTs ? '/*' : '{-';
+  const blockClose = isTs ? '*/' : '-}';
 
   for (let i = 0; i < lines.length; i++) {
     const raw = lines[i];
@@ -140,8 +147,8 @@ function scanGarbage(filePath) {
     const lineNum = i + 1;
 
     // Track block comments
-    if (trimmed.startsWith('{-')) inBlockComment = true;
-    if (trimmed.endsWith('-}')) { inBlockComment = false; continue; }
+    if (trimmed.includes(blockOpen)) inBlockComment = true;
+    if (trimmed.includes(blockClose)) { inBlockComment = false; continue; }
     if (inBlockComment) continue;
 
     // Track blank lines
@@ -157,7 +164,10 @@ function scanGarbage(filePath) {
     }
 
     // Skip comments
-    if (trimmed.startsWith(';;')) continue;
+    if (trimmed.startsWith(commentPrefix)) continue;
+
+    // For TSX/TS: also skip import/export lines and JSX fragments
+    if (isTs && /^(import |export |type |interface |\/\/|const |let |var |function |return |<|>|{|}|\(|\)|;|\}|\{|@)/.test(trimmed)) continue;
 
     // Check for garbage patterns
     for (const pattern of GARBAGE_PATTERNS) {
@@ -209,8 +219,8 @@ function main() {
     return;
   }
 
-  // Garbage scan for .fc files
-  if (/\.fc$/.test(normAbs)) {
+  // Garbage scan for .fc, .tsx, .ts files
+  if (/\.(?:fc|tsx?)$/.test(normAbs)) {
     const garbage = scanGarbage(normAbs);
     if (!garbage.ok) {
       console.error('[ion-on-save] 🚫 GARBAGE DETECTED:', garbage.reason);
