@@ -1,0 +1,109 @@
+#pragma version >=0.4.4;
+
+const int sandwich::commit_key_bits = 256;
+
+int sandwich_sender_key(slice sender) impure inline {
+    return slice_hash(sender);
+}
+
+() sandwich_enforce_max_swap(int amount_in, int reserve_in) impure inline {
+    int max_swap = muldiv(reserve_in, params::max_swap_bps, params::fee_divider);
+    throw_unless(error::swap_too_large, amount_in <= max_swap);
+}
+
+() sandwich_verify_swap_commitment(
+    slice from_user,
+    int amount_in,
+    int min_out,
+    int tx_deadline,
+    int nonce
+) impure inline {
+    int sender_key = sandwich_sender_key(from_user);
+    (cell commitment_cell, int found) = storage::pool_commitments_dict.udict_get_ref?(
+        sandwich::commit_key_bits, sender_key);
+    throw_unless(error::swap_not_committed, found);
+
+    slice commitment = commitment_cell.begin_parse();
+    int committed_amount = commitment~load_coins();
+    int committed_min_out = commitment~load_coins();
+    int committed_deadline = commitment~load_uint(64);
+    int committed_nonce = commitment~load_uint(64);
+    int created_at = commitment~load_uint(32);
+    int revealed = commitment~load_uint(1);
+    commitment.end_parse();
+
+    throw_unless(error::swap_not_revealed, revealed == 1);
+    throw_unless(error::swap_expired, now() <= committed_deadline);
+    throw_unless(error::swap_hash_mismatch, committed_amount == amount_in);
+    throw_unless(error::swap_hash_mismatch, committed_min_out == min_out);
+    throw_unless(error::swap_hash_mismatch, committed_deadline == tx_deadline);
+    throw_unless(error::swap_hash_mismatch, committed_nonce == nonce);
+
+    int min_reveal_at = created_at + params::commit_reveal_min_blocks * 5;
+    throw_unless(error::swap_expired, now() >= min_reveal_at);
+
+    storage::pool_commitments_dict~udict_delete?(sandwich::commit_key_bits, sender_key);
+}
+
+() handle_commit_swap() impure inline {
+    slice body = ctx.at(BODY);
+    int amount_in = body~load_coins();
+    int min_out = body~load_coins();
+    int deadline = body~load_uint(64);
+    int nonce = body~load_uint(64);
+    body.end_parse();
+
+    throw_unless(error::swap_expired, deadline > now());
+    throw_unless(error::swap_expired, deadline <= now() + params::commit_max_horizon_sec);
+
+    int sender_key = sandwich_sender_key(ctx.at(SENDER));
+    (cell existing, int exists) = storage::pool_commitments_dict.udict_get_ref?(
+        sandwich::commit_key_bits, sender_key);
+    throw_unless(error::swap_not_committed, ~ exists);
+
+    cell commitment = begin_cell()
+        .store_coins(amount_in)
+        .store_coins(min_out)
+        .store_uint(deadline, 64)
+        .store_uint(nonce, 64)
+        .store_uint(now(), 32)
+        .store_uint(0, 1)
+    .end_cell();
+
+    storage::pool_commitments_dict~udict_set_ref(sandwich::commit_key_bits, sender_key, commitment);
+    storage::save();
+}
+
+() handle_reveal_swap() impure inline {
+    int sender_key = sandwich_sender_key(ctx.at(SENDER));
+    (cell commitment_cell, int found) = storage::pool_commitments_dict.udict_get_ref?(
+        sandwich::commit_key_bits, sender_key);
+    throw_unless(error::swap_not_committed, found);
+
+    slice commitment = commitment_cell.begin_parse();
+    int amount_in = commitment~load_coins();
+    int min_out = commitment~load_coins();
+    int deadline = commitment~load_uint(64);
+    int nonce = commitment~load_uint(64);
+    int created_at = commitment~load_uint(32);
+    int revealed = commitment~load_uint(1);
+    commitment.end_parse();
+
+    throw_unless(error::swap_not_revealed, revealed == 0);
+    throw_unless(error::swap_expired, now() <= deadline);
+
+    int min_reveal_at = created_at + params::commit_reveal_min_blocks * 5;
+    throw_unless(error::swap_expired, now() >= min_reveal_at);
+
+    cell updated = begin_cell()
+        .store_coins(amount_in)
+        .store_coins(min_out)
+        .store_uint(deadline, 64)
+        .store_uint(nonce, 64)
+        .store_uint(created_at, 32)
+        .store_uint(1, 1)
+    .end_cell();
+
+    storage::pool_commitments_dict~udict_set_ref(sandwich::commit_key_bits, sender_key, updated);
+    storage::save();
+}

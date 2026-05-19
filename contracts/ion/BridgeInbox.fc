@@ -1,0 +1,163 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+;; Bridge inbox: large inbound bridge transfers require 2-of-N Ed25519 validator signatures.
+
+global slice storage::admin_address;
+global cell storage::validator_dict;
+global int storage::double_sig_threshold;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::admin_address = ds~load_msg_addr();
+    storage::validator_dict = ds~load_dict();
+    storage::double_sig_threshold = ds~load_coins();
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::admin_address)
+        .store_dict(storage::validator_dict)
+        .store_coins(storage::double_sig_threshold)
+    .end_cell());
+}
+
+int bridge_request_hash(slice sender, int amount, int deadline, int nonce) impure inline {
+    return cell_hash(begin_cell()
+        .store_slice(sender)
+        .store_coins(amount)
+        .store_uint(deadline, 64)
+        .store_uint(nonce, 64)
+    .end_cell());
+}
+
+() bridge_verify_signatures(slice sender, int amount, int deadline, int nonce, slice sigs_cs) impure inline {
+    int msg_hash = bridge_request_hash(sender, amount, deadline, nonce);
+    int sig_count = sigs_cs~load_uint(8);
+    throw_unless(error::bridge_insufficient_sigs, sig_count > 0);
+
+    int valid = 0;
+    cell seen_dict = new_dict();
+    int i = 0;
+    while (i < sig_count) {
+        slice signature = sigs_cs~load_bits(512);
+        int pubkey = sigs_cs~load_uint(256);
+        (slice weight_slice, int found) = storage::validator_dict.udict_get?(256, pubkey);
+        if (found) {
+            weight_slice.end_parse();
+            (slice _seen, int already) = seen_dict.udict_get?(256, pubkey);
+            if (~ already) {
+                if (check_signature(msg_hash, signature, pubkey)) {
+                    seen_dict~udict_set(256, pubkey,
+                        begin_cell().store_uint(1, 8).end_cell().begin_parse());
+                    valid += 1;
+                }
+            }
+        }
+        i += 1;
+        if (valid >= params::bridge_required_sigs) {
+            i = sig_count;
+        }
+    }
+    sigs_cs.end_parse();
+    throw_unless(error::bridge_insufficient_sigs, valid >= params::bridge_required_sigs);
+}
+
+() handle_lock_bridge_inbound() impure inline {
+    slice body = ctx.at(BODY);
+    int amount = body~load_coins();
+    int deadline = body~load_uint(64);
+    int nonce = body~load_uint(64);
+    slice sigs_cs = body;
+
+    throw_unless(error::transfer_bounce_tx_expired, now() <= deadline);
+    throw_if(error::zero_output, amount <= 0);
+
+    if (amount >= storage::double_sig_threshold) {
+        bridge_verify_signatures(ctx.at(SENDER), amount, deadline, nonce, sigs_cs);
+    } else {
+        sigs_cs.end_parse();
+    }
+
+    ;; Acknowledge — actual jetton credit is orchestrated by bridge operator off-chain / follow-up msg.
+    reserves::max_balance(storage_fee::vault);
+    msgs::send_simple(0, ctx.at(SENDER), null(), QCARRY_ALL_BALANCE);
+}
+
+() handle_bridge_add_validator() impure inline {
+    throw_unless(error::bridge_not_admin, equal_slices(ctx.at(SENDER), storage::admin_address));
+    slice body = ctx.at(BODY);
+    int pubkey = body~load_uint(256);
+    int weight = body~load_uint(8);
+    body.end_parse();
+    throw_unless(error::bridge_invalid_validator, weight > 0);
+
+    (slice existing, int found) = storage::validator_dict.udict_get?(256, pubkey);
+    throw_if(error::bridge_invalid_validator, found);
+    storage::validator_dict~udict_set(256, pubkey, begin_cell().store_uint(weight, 8).end_cell().begin_parse());
+    storage::save();
+}
+
+() handle_bridge_remove_validator() impure inline {
+    throw_unless(error::bridge_not_admin, equal_slices(ctx.at(SENDER), storage::admin_address));
+    slice body = ctx.at(BODY);
+    int pubkey = body~load_uint(256);
+    body.end_parse();
+    (slice weight_slice, int found) = storage::validator_dict.udict_get?(256, pubkey);
+    throw_unless(error::bridge_invalid_validator, found);
+    weight_slice.end_parse();
+    storage::validator_dict~udict_delete?(256, pubkey);
+    storage::save();
+}
+
+() handle_bridge_set_threshold() impure inline {
+    throw_unless(error::bridge_not_admin, equal_slices(ctx.at(SENDER), storage::admin_address));
+    slice body = ctx.at(BODY);
+    int new_threshold = body~load_coins();
+    body.end_parse();
+    storage::double_sig_threshold = new_threshold;
+    storage::save();
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx.at(IS_BOUNCED) {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx.at(SENDER).address::check_workchain(params::workchain));
+    storage::load();
+
+    int op = ctx.at(OPCODE);
+
+    if op == op::lock_bridge_inbound {
+        handle_lock_bridge_inbound();
+        return ();
+    }
+    if op == op::bridge_add_validator {
+        handle_bridge_add_validator();
+        return ();
+    }
+    if op == op::bridge_remove_validator {
+        handle_bridge_remove_validator();
+        return ();
+    }
+    if op == op::bridge_set_threshold {
+        handle_bridge_set_threshold();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+() recv_external(slice in_msg_body) impure {
+    throw(error::invalid_call);
+}
+
+cell get_bridge_inbox_data() method_id {
+    return get_data();
+}
