@@ -7,28 +7,110 @@
 
 ---
 
-## 📊 行情数据 (Market Data)
+## 📊 四引擎行情栈 — 全免费数据源（2026-05-20 建成）
 
-### CoinMarketCap
+**策略：四引擎互补 → ION DEX 前端全数据覆盖，零成本。**
+
+| 引擎 | 免费额度 | 角色 | 工具/端点 |
+|------|---------|------|----------|
+| 🟡 **Binance** | 1200次/分 | BNB/USDT 基准价 | `scripts/binance.py` / `api.binance.com/api/v3` |
+| 🔵 **CoinMarketCap** | 11K次/月 | 市值/排名/全市场 | `scripts/cmc.ts` / `pro-api.coinmarketcap.com` |
+| 🦎 **GeckoTerminal** | 30次/分 | K线/OHLCV/池子详情 | `scripts/geckoterminal.py` / `api.geckoterminal.com/api/v2` |
+| 🟣 **DexScreener** | 300次/分 | 秒级价格/买卖统计/FDV | `scripts/dexcreener.py` / `api.dexscreener.com` |
+| ⛓️ **ION Indexer v3** | 无限制 | ION 原生链上全部数据 | `api.mainnet.ice.io/indexer/v3/` — 35+端点 |
+
+### 价格转换链
+```
+ION/USD = ION/WBNB (BSC PancakeSwap 链上) × BNB/USDT (币安)
+         ↓ 独立验证 ↓
+  DexScreener $0.0001398 / GeckoTerminal $0.0001411 / CMC $0.0001389
+```
+
+### ⚠️ 铁律：前端不直调外部API
+所有请求走后端缓存层：
+```
+用户浏览器 → DEX 后端 (/api/prices) → Redis/内存缓存 (TTL 15s) → 多源降级
+```
+
+### CoinMarketCap (已对接 ✅)
 | 项目 | 值 |
 |------|-----|
 | API 地址 | `https://pro-api.coinmarketcap.com` |
+| API Key | `342475df9fa5451aafbb3346be049f03` (已存入 `backend/.env`) |
 | ION CMC ID | `27650` |
 | ION Slug | `ice-decentralized-future` |
-| API Key 位置 | `backend/.env` → `CMC_API_KEY=` |
-| ⚠️ 状态 | **缺 Key，需 Master 提供** |
 | 前端代理路径 | `/api/cmc` (Vite proxy) |
 | 超时 | 12000ms |
 | ION 市值估算 | `price × 11.36 × 10^9` |
 
+### GeckoTerminal (已对接 ✅)
+| 项目 | 值 |
+|------|-----|
+| Base URL | `https://api.geckoterminal.com/api/v2` |
+| Header | `Accept: application/json;version=20230203` |
+| 主要端点 | `/simple/networks/{n}/token_price/{addr}` — 简易查价 |
+| | `/networks/{n}/pools/{addr}/ohlcv/{tf}` — K线数据 |
+| ION 主力池 | PancakeSwap V3 ION/WBNB TVL $258K |
+| 限制 | 30次/分 ⚠️ 前端必须走缓存 |
+
+### DexScreener (已对接 ✅)
+| 项目 | 值 |
+|------|-----|
+| Base URL | `https://api.dexscreener.com` |
+| 主要端点 | `/latest/dex/tokens/{addrs}` — 批量查价 (最多30个) |
+| | `/latest/dex/search?q={query}` — 模糊搜索 |
+| | `/latest/dex/pairs/{chain}/{pair}` — 精确池子 |
+| ION/WBNB Pair | `0x6487725b383954e05cA56F3c2B93a104B3DD2C25` |
+| 额外发现 | ION on Osmosis (OSMO) + Aerodrome (Base/WETH) |
+| 限制 | 300次/分 |
+| ⚠️ | **无K线数据** → K线走 GeckoTerminal |
+
+### Binance (已对接 ✅)
+| 项目 | 值 |
+|------|-----|
+| Base URL | `https://api.binance.com/api/v3` |
+| 主要端点 | `/ticker/price?symbol=BNBUSDT` — BNB基准价 |
+| | `/ticker/24hr?symbol=BNBUSDT` — 24h行情 |
+| | `/klines?symbol=BNBUSDT&interval=1h` — K线 |
+| 限制 | 1200次/分 (权重制) |
+
 ### ION 价格降级路径
-当 CMC 不可用时，走链上查询：
+当外部API不可用时，走链上查询：
 1. PancakeSwap V2 pair: `0x1610eDdFE8CFf46913D2c3A9a2AFE20b0aA4A22E` (ION/USDT)
 2. 调 `Router.getAmountsOut(1 ION, [USDT, BUSD])` 获取报价
+3. 最终兜底：ION Indexer runGetMethod → 调池子合约 get_pool_data()
 
 ---
 
 ## 🔥 销毁数据 (Burn Data)
+
+## ⛓️ ION Indexer v3 — 原生链上全数据（2026-05-20 验证）
+
+> Base: `https://api.mainnet.ice.io/indexer/v3/` | Swagger: 浏览器打开即可
+> 35+ 端点，无需自建索引器。ION DEX 原生链数据全走这里。
+
+### DEX 核心端点
+
+| 端点 | 方法 | 用途 |
+|------|------|------|
+| `/jetton/masters` | GET | 代币列表（IONX, LION 等） |
+| `/jetton/wallets` | GET | 用户代币余额 |
+| `/jetton/transfers` | GET | 交易历史 = DEX 成交记录 |
+| `/runGetMethod` | POST | 调池子合约 get_pool_data() 获取实时状态 |
+| `/transactions` | GET | 全链交易（含 before/after 账户状态） |
+| `/blocks` | GET | 区块实时数据 |
+| `/accountStates` | GET | 合约状态 |
+| `/estimateFee` | POST | 手续费估算 |
+| `/message` | POST | 直接发送链上消息 |
+| `/topAccountsByBalance` | GET | 富豪榜 |
+| `/decode` | GET/POST | 解码 Opcode 和消息体 |
+
+### 其他端点
+`/addressInformation`, `/addressBook`, `/walletInformation`, `/walletStates`,
+`/masterchainInfo`, `/masterchainBlockShards`, `/transactionsByMessage`,
+`/traces`, `/pendingTransactions`, `/pendingTraces`, `/pendingActions`,
+`/metadata`, `/dns/records`, `/vesting`, `/multisig/wallets`, `/multisig/orders`,
+`/nft/collections`, `/nft/items`, `/nft/transfers`, `/adjacentTransactions`
 
 ### ION 主链销毁
 
@@ -147,7 +229,7 @@ BSC_ION_TOKEN_ADDRESS=0xe1ab61f7b093435204df32f5b3a405de55445ea8
 ION_API_BASE_URL=https://api.mainnet.ice.io/http/v2/
 ION_HTTP_TIMEOUT_MS=12000
 CMC_API_BASE_URL=https://pro-api.coinmarketcap.com
-CMC_API_KEY=    ← ⚠️ 需 Master 提供
+CMC_API_KEY=342475df9fa5451aafbb3346be049f03  ← ✅ 已提供
 ```
 
 ---
@@ -156,9 +238,8 @@ CMC_API_KEY=    ← ⚠️ 需 Master 提供
 
 | 缺失项 | 用途 | 影响 |
 |--------|------|------|
-| CMC_API_KEY | 行情实时报价 | 降级走 PancakeSwap 链上查询 |
-| ION/BNB Pair 地址 | 第二个交易对 | 可从 Factory 查询 `getPair(ION, WBNB)` |
-| BSC ION Token 已在上面 ✅ | 烧币查询 | 已填写 |
+| ION/BNB Pair 地址 | 第二个 DEX 交易对 | 可从 Factory 查询 `getPair(ION, WBNB)` |
+| ION 主网提交 GeckoTerminal/DexScreener | 外网收录 | 提交 Listing Request 后可用 |
 
 ---
 
@@ -166,11 +247,22 @@ CMC_API_KEY=    ← ⚠️ 需 Master 提供
 
 | 功能 | 文件 | 数据源 |
 |------|------|--------|
-| 行情 | `backend/src/services/live/markets-live.ts` | CMC / PancakeSwap |
-| 烧币 | `backend/src/services/live/burn-live.ts` | BSC RPC `balanceOf(deadAddr)` |
-| 质押 | `backend/src/services/live/staking-live.ts` | ION JSON RPC `getAddressBalance(elector)` ✅ |
+### 行情
+| 文件 | 类型 | 数据源 |
+|------|------|-------|
+| `scripts/cmc.ts` | TypeScript | CMC Pro API |
+| `scripts/binance.py` | Python | Binance 公开API (BNB/USDT) |
+| `scripts/geckoterminal.py` | Python | GeckoTerminal (K线/池子) |
+| `scripts/dexcreener.py` | Python | DexScreener (秒级价格/txns) |
+
+### 后端实现
+| 功能 | 文件 | 数据源 |
+|------|------|-------|
+| 行情 | `backend/src/services/live/markets-live.ts` | 四引擎 → 缓存 → 前端 |
+| 烧币 | `backend/src/services/live/burn-live.ts` | BSC RPC `balanceOf(0xdEaD)` |
+| 质押 | `backend/src/services/live/staking-live.ts` | ION RPC `getAddressBalance(elector)` ✅ |
+| ION链 | `backend/src/services/live/ion-live.ts` | ION Indexer v3 (35+端点) |
 | 域名 | （待实现） | ION Indexer v3 DNS records |
-| 价格 | `backend/src/upstream/cmc.ts` | CMC Pro API |
 | 链上 | `backend/src/upstream/bsc-rpc.ts` | BSC JSON RPC |
 | 链上 | `backend/src/upstream/ion-api.ts` | ION HTTP v2 API |
 
