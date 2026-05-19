@@ -28,16 +28,27 @@
 
 ---
 
-## 🔥 烧币统计 (Burn Data)
+## 🔥 销毁数据 (Burn Data)
+
+### ION 主链销毁
+
+| 项目 | 值 |
+|------|-----|
+| 销毁方式 | **addr_none** — TVM 地址类型 00，不是人类可读地址 |
+| 机制 | 发送到 addr_none 的币从总供应量中永久移除 |
+| Gas 销毁 | 每次交易约 50% gas 费走 addr_none 销毁 |
+| 追踪字段 | block `value_flow.burned` (CurrencyCollection) |
+| ⚠️ 注意 | **ION 链没有 EVM 0x000...dEaD 销毁地址** |
+
+### BSC 侧销毁 (wION Bridge)
 
 | 项目 | 值 |
 |------|-----|
 | ION BSC Token | `0xe1ab61f7b093435204df32f5b3a405de55445ea8` |
-| BSC 烧币地址 | `0x000000000000000000000000000000000000dEaD` |
+| BSC 销毁地址 | `0x000000000000000000000000000000000000dEaD` |
 | 查询方式 | BSC RPC `balanceOf(burnAddress)` + Transfer 事件 |
 | BSC RPC | `https://bsc-dataseed.binance.org/` |
 | Chain ID | 56 |
-| ⚠️ 备注 | 烧币 = totalSupply - deadAddress balance |
 
 ---
 
