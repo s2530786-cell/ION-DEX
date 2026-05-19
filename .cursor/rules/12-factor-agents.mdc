@@ -1,121 +1,225 @@
 ---
-description: 12-Factor Agent principles — Master's dead law for all coding work
+description: 12-Factor Agent Principles — Master's dead law. No garbage code. All factors enforced on every file.
 alwaysApply: true
+globs: **/*.ts,**/*.tsx,**/*.sol,**/*.fc,**/*.js,**/*.json,**/*.css
 ---
 
-# 12-Factor Agent Principles — 死命令
+# 12-Factor Agent Principles — 死命令（全栈强制）
 
-You MUST follow these principles from https://github.com/humanlayer/12-factor-agents when coding in this project. Read `.memory-bank/12-factor-agents.md` for the full version.
+**来源：** https://github.com/humanlayer/12-factor-agents (20.5K ⭐)
+**指令：** Master 死命令。每行代码必须经得起 12 条原则检验。
 
-## ⏱️ Real-Time Rules — No Hangs, No Zombies (2026-05-19 旺财)
+---
 
-**Rule 0. COMMAND TIMEOUT:** Every shell/terminal command has a 30-second hard limit.
-- If a command produces NO output for 30s → terminate it immediately.
-- Print `[TIMEOUT] <command>` and move to the next step.
-- NEVER wait indefinitely for any external tool.
+## 🔴 Factor -1: ZERO GARBAGE — 零垃圾代码
 
-**Rule 0.1. PROCESS CLEANUP:** After every 5 shell commands, run:
-```powershell
-taskkill /f /im node.exe /fi "MEMUSAGE gt 200000" 2>$null
-taskkill /f /im conhost.exe 2>$null
+**You have a history of producing garbage: `motionmotiondiv`, missing props, fake tags. This ends now.**
+
+### HTML/JSX 零垃圾
+- **NEVER hallucinate HTML tags.** `div` is `div`, not `motionmotiondiv`. `span` is `span`, not `motionspan`.
+- **NEVER invent attributes.** `onClick`, `className`, `style` — only real React props.
+- **NEVER type random text.** No `bianjibianji`, `asdf`, `test123`, pinyin filler, or placeholder garbage.
+- **Every JSX tag must be a valid HTML element or imported React component.** If it's not imported, it doesn't exist.
+
+### TypeScript 零垃圾
+- **NEVER use `any` without explicit justification.** Every parameter, return type, and variable must be typed.
+- **NEVER leave unused imports.** Dead imports = dead code. Remove them.
+- **NEVER skip error handling.** Every `fetch`, `async`, and user input must have try/catch.
+- **NEVER hardcode values that should be typed.** No `"BSC" | "ION"` string unions scattered across files — use shared type.
+
+### 组件零垃圾
+- **Every component MUST have explicit Props type.** No `props: any`, no implicit props.
+- **Every component MUST handle: loading, empty, error, edge cases.** 4 states minimum.
+- **NEVER render without checking data exists.** No `data.value` without `data?.value`.
+- **Import only from project files or node_modules.** No imports from folders that don't exist.
+
+### 自检机制
+- **Before committing: read your diff. Look for anything that doesn't look like real code.**
+- **If you see `motionmotion` or any doubled prefix → FIX IT before commit.**
+- **Run `npx tsc --noEmit` after EVERY .ts/.tsx change. If it fails, fix it now.**
+- **Run `npm run build` before committing frontend changes.**
+
+---
+
+## Factor 1: Natural Language → Tool Calls
+LLM 把自然语言转成工具调用。人在 IDE 里说话 → Agent 翻译成具体命令 → 执行。
+
+**禁止：** 自己做推理后直接改文件不汇报。
+**必须：** 先终端输出计划 → 执行 → 终端输出结果。
+
+---
+
+## Factor 2: Own Your Prompts
+**禁止：** 用任何第三方 prompt 模板而不审查。
+**必须：** 所有 prompt 显式写在规则文件或任务描述中，可控可调。
+
+---
+
+## Factor 3: Own Your Context Window
+精心控制塞进 LLM 注意力的内容。多了会进"痴呆区"（产生 garbage）。
+
+**禁止：** 把整个 codebase dump 进 context window。**这是你产生 garbage 的根本原因。**
+**必须：** 
+- 每个 Task 最多读 5 个文件
+- `SESSION_STATE.md` 里只放当前 Task 要点
+- 读完立即干活，不反复读
+
+---
+
+## Factor 4: Tools as Structured Outputs
+每次工具调用返回结构化日志。
+
+**必须格式：**
 ```
-This caps zombie processes. Do NOT use bare `taskkill /f /im node.exe` — only filter by high memory.
-
-## Core Rules (enforced always)
-
-**🔥 Rule -1. SELF-REVIEW FIRST (自主审查 — 2026-05-19)**
-- Never ask for human confirmation. You must self-review, self-verify, self-patch.
-- After every code change: review your own work → find problems → fix them → re-verify.
-- If you find a vulnerability: fix it immediately. Don't wait for a human to point it out.
-- Treat every file you write as if it will be audited by CertiK / Trail of Bits.
-
-1. **PLAN BEFORE CODE** — Output what you will do, then do it. Never make changes silently.
-2. **OWN YOUR CONTEXT** — Read only files relevant to the current task. Don't dump entire codebase.
-3. **COMPACT ERRORS** — Report errors in 3 lines: type, root cause, fix. No stack traces.
-4. **DEFINED CONTROL FLOW** — Each task: Input → Step 1 → Step 2 → Output → Verify → Commit. No infinite agent loops.
-5. **SMALL FOCUS** — One task at a time. Don't bundle unrelated work.
-6. **STATELESS** — Read state from SESSION_STATE.md, execute, update SESSION_STATE.md. No "I remember from before."
-7. **LAUNCH/PAUSE/RESUME** — If you need human input, pause cleanly and document what you need. Resume exactly where you left off.
-8. **TOOLS AS STRUCTURED OUTPUTS** — Every tool call returns: success/fail + time + summary.
-9. **COMMIT EVERY 5-10 MIN** — Meaningful progress → git commit. Traceable.
-10. **NO TODOS IN CODE** — Fix it now or file an issue. Never leave TODO comments.
-11. **BUILD AND VERIFY** — After every code change: compile → test → confirm green.
-12. **HUMANS FOR CRITICAL** — Contact Master before: sending transactions, modifying mainnet config, deleting files, changing security settings.
-
-# 🚫 Code Quality — Zero Garbage (死命令)
-
-**You previously polluted vault.fc with `bian'jibianji`, `hi`, and 13 consecutive blank lines. This is FORBIDDEN.**
-
-- **NEVER write placeholder text** — No `bian'jibianji`, `hi`, `test`, `TODO`, `asdf`, pinyin, or any non-code text in `.fc` / `.sol` files.
-- **NEVER leave more than 2 consecutive blank lines.**
-- **NEVER corrupt UTF-8 encoding** — Box-drawing characters (`─`, `│`, `└`) must stay intact. Write files with `encoding: utf8` and no BOM.
-- **Every line in a `.fc` file must be valid FunC syntax or a comment starting with `;;`.** If a line doesn't compile, it doesn't belong.
-- **After EVERY file edit**, run `node scripts/compile-func.mjs` and confirm zero new errors before moving on.
-
-# 🔥 Master's Iron Law of Development (开发铁律 — 2026-05-19)
-
-> 旺财总经理下达，死命令。Every development phase MUST follow this cycle:
-
+[TOOL] <command> → exit 0 | 3 files changed | 12.4s
 ```
-读 SESSION_STATE.md → 编译 → 审计漏洞 → 修复 → 重编译 → commit →
-1000次安全攻击测试 → 通不过回第三步重来
+或
 ```
-
-**这是每一个开发部分都需要做的事情，这是铁律。**
-
-### ⚡ Absolute Requirements
-- **1000 GREEN PASSES MINIMUM for smart contract security tests.** 999 green + 1 red = FAIL.
-- **100 GREEN PASSES MINIMUM for frontend/backend integration tests.**
-- **Blockchain company most stringent audit standards** — Check: reentrancy, overflow, access control, logic errors, edge cases.
-- **Brute-force attack testing** — Fuzz inputs, malformed data, boundary values, race conditions.
-- **If ANY test fails → back to STEP 3 (audit).** No skipping. No "it's probably fine."
-
-### 🔒 Security First — Web3 Attack Defense (安全第一位)
-
-**Every smart contract MUST pass these attack simulations:**
-
-1. **Reentrancy attacks** — Cross-function, cross-contract, read-only reentrancy
-2. **Flash loan attacks** — Price manipulation, oracle manipulation, liquidity draining
-3. **Sandwich attacks** — Front-running, back-running, MEV extraction
-4. **Oracle manipulation** — Stale prices, skewed TWAP, flash-loan distorted oracles
-5. **Access control bypass** — Unauthorized admin, role escalation, signature replay
-6. **Integer overflow/underflow** — All arithmetic operations, edge values
-7. **Denial of Service** — Gas exhaustion, block stuffing, unbounded loops
-8. **Phantom token attacks** — Fake tokens, infinite approval, dust attacks
-9. **Timestamp manipulation** — Block.timestamp dependency, deadline bypass
-10. **Quantum resistance verification** — Check post-quantum signature schemes, key sizes, hash functions
-
-**Each attack category: minimum 100 green simulations = 1000 total minimum.**
-
-# Mandatory Workflow — Every Session
-
-**This is Master's standing order. Execute from step 1 EVERY time.**
-
-```
-STEP 1: Read SESSION_STATE.md
-STEP 2: Run `node scripts/compile-func.mjs` → collect all errors
-STEP 3: Audit contracts — 10-point security scan (reentrancy, flash loans, oracle, access control, overflow, DoS, phantom tokens, timestamps, quantum resistance, MEV)
-STEP 4: Fix every error and vulnerability, one file at a time
-STEP 5: After EACH fix → recompile → verify green
-STEP 6: When all errors fixed → git commit
-STEP 7: Run `node scripts/security-attack-test.js` → 1000-pass attack simulation
-STEP 8: If any attack test fails → go back to STEP 3
-STEP 9: All 1000 attack tests pass → git commit + update SESSION_STATE.md → DONE
+[ERROR] <command> → exit 1 | <type> | <root cause> | <fix>
 ```
 
-### 🌐 24/7 Continuous Operation Protocol
+---
 
-**You work 24 hours a day, 7 days a week. Never idle. Never wait for human input.**
+## Factor 5: Unify Execution & Business State
+**必须：** 所有状态写入 `SESSION_STATE.md` 和 `docs/99-current-progress.md`，单一真实来源。不存"我记得上次"。
 
-- After completing Phase N → immediately start Phase N+1.
-- After completing all phases → run full audit + 100 tests again.
-- If you encounter a blocking issue → document it, commit partial work, move to next independent task.
-- **NEVER say "waiting for user" — find another task or re-run audits.**
-- Every 30 minutes: recompile all contracts → audit → fix → commit cycle.
+---
 
-**RULES:**
-- Never skip a step. Never assume something passed without running it.
-- Every file change MUST be followed by recompilation.
-- Audit ≠ compile. Audit means: check for reentrancy, overflow, access control, logic errors.
-- If a step fails, fix it and repeat that step. Don't move forward with known failures.
-- After committing, push to `origin 2026-05-19-q7fx`.
+## Factor 6: Launch / Pause / Resume
+遇到需要人工确认的操作 → 暂停 → 写入 `SESSION_STATE.md` → 等确认后恢复。不死循环。
+
+---
+
+## Factor 7: Contact Humans with Tool Calls
+**必须请求 Master 确认：** 发送交易、修改主网配置、删除文件、变更安全设置。
+
+---
+
+## Factor 8: Own Your Control Flow — DAG ONLY
+**禁止：** 写死循环让 LLM 自己决定下一步。**这是产生 garbage 的第二大原因。**
+
+**必须：** 每个 Task = 明确 DAG：
+```
+读 SESSION_STATE.md 当前步骤
+  →
+步骤 1: 读文件(≤5个)
+  →
+步骤 2: 修改/创建文件
+  →
+步骤 3: 编译/构建
+  →
+步骤 4: 验证绿色
+  →
+步骤 5: git commit
+  →
+步骤 6: 更新 SESSION_STATE.md
+  →
+下一 Task
+```
+
+**任何一个步骤失败 → 修复 → 重新执行该步骤 → 不跳步。**
+
+---
+
+## Factor 9: Compact Errors into Context
+报错：错误类型（1 行）+ 根因（1 行）+ 修复方案（1 行）。**不超过 3 行。** 不堆完整堆栈。
+
+---
+
+## Factor 10: Small, Focused Agents
+一个 Task = 一个职责。不把"编译合约 + 压力测试 + 写文档"塞进一个 session。
+
+**当前 Task 分配：**
+| Agent | Scope | Files |
+|-------|-------|-------|
+| Contract Agent | .sol, .fc | contracts/ only |
+| Test Agent | 安全测试/压力测试 | contracts/test/ only |
+| Backend Agent | .ts 后端 | backend/ only |
+| Frontend Agent | .tsx, .css | frontend/ only |
+
+**禁止跨 Agent 操作。** 前端 Agent 不改合约。合约 Agent 不写前端。
+
+---
+
+## Factor 11: Trigger from Anywhere
+每个 Task 结束后主动检查下一个 Task，自己不闲着。**从不等待，从不 idle。**
+
+---
+
+## Factor 12: Stateless Reducer
+Agent 是纯函数：`(SESSION_STATE.md) → 确定性变换 → (新 SESSION_STATE.md)`。
+不存中间态，不依赖"上次我记住了"。
+
+---
+
+## 🔥 铁律 — 每阶段强制执行
+
+### Phase 1: 编译 (每次改文件后必跑)
+```bash
+# BSC 合约
+forge build
+
+# ION 合约
+node scripts/compile-func.mjs
+
+# 前端
+npx tsc --noEmit && npm run build
+
+# 后端
+npx tsc --noEmit
+```
+
+### Phase 2: 审计（编译通过后必跑）
+- Reentrancy 检查
+- Access control 检查
+- Integer overflow 检查
+- Gas limit 检查
+- 前端: props 完整性检查、import 有效性检查、类型覆盖检查
+
+### Phase 3: 测试（审计通过后必跑）
+```
+forge test                                    # BSC 合约 — 全部必须绿
+node scripts/security-attack-test.js          # 1500 绿底线
+```
+
+### Phase 4: 提交
+```
+git add <changed files>
+git commit -m "<type>: <description>"
+git push origin 2026-05-19-q7fx
+```
+
+### 红绿灯规则
+- 🔴 ANY compile error → STOP → fix → recompile → 不通过不前进
+- 🔴 ANY test fail → STOP → audit → fix → retest → 不通过不前进
+- 🔴 ANY type error → STOP → fix → retype-check → 不通过不前进
+- 🟢 ALL green → commit → push → next task
+
+---
+
+## 🚫 禁止清单
+
+| 禁止 | 原因 |
+|------|------|
+| `motionmotiondiv` 或任何 tag 拼写错误 | 编译不过 |
+| `props: any` | 类型不安全 |
+| `// TODO` 在代码里 | 现在就修 |
+| 超过 2 行连续空行 | 代码质量 |
+| 未 import 的组件 | 运行时错误 |
+| 硬编码 mock 数据替代真实 API | 永远 mock |
+| 删除文件不先确认 | 可能删错 |
+| stash / force push / rebase | 丢失历史 |
+| 在 .fc 里写中文/拼音 | 编译器不支持 |
+| 跳过编译/构建 | 藏 bug |
+| 读超过 10 个文件进 context | 产生 garbage |
+| 无 DAG 的循环 | 死循环+垃圾代码 |
+
+---
+
+## 📂 必读文件（每 session 启动时读一遍）
+
+1. `SESSION_STATE.md` — 当前阶段、当前 Task、状态
+2. `.memory-bank/architecture-audit.md` — 架构审计 + 建设顺序
+3. `docs/99-current-progress.md` — 12 Phase 进度 + 任务队列
+
+**以上 3 个文件，不是 30 个文件。读完就干活。**
