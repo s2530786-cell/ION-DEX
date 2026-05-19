@@ -1,6 +1,5 @@
-int workchain() asm "0 PUSHINT";
-
-() force_chain(slice addr) impure {
-  (int wc, _) = parse_std_addr(addr);
-  throw_unless(333, wc == workchain());
-}
+;; ION DNS Params stub — all constants/utilities moved to dns-utils.fc
+;; This file is kept as a compilation fragment probe
+#pragma version >=0.4.4;
+#include "common/common.fc";
+#include "dns-utils.fc";

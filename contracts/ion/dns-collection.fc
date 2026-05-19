@@ -1,150 +1,252 @@
+;; ION DNS Collection — adapted from Roman (nessshon/dns-contracts)
+;; Compatible with Roman's deployed data format
+;; TLD: .ion (not .ton)
+;; Added: destroyed_count tracking, domain_destroyed notification handler
 #pragma version >=0.4.4;
 #include "common/common.fc";
-#include "dns-params.fc";
 #include "dns-utils.fc";
 
-;; DNS resolver smart contract (implements NFT Collection interface)
-
-;; storage scheme
-;; storage#_ collection_content:^Cell
-;;           nft_item_code:^Cell
-;;           = Storage;
-
-(cell, cell) load_data() inline {
-    var ds = get_data().begin_parse();
+;; ─── Storage ───
+;; storage#_ owner_address:MsgAddress content:^Cell nft_item_code:^Cell royalty_params:^Cell domain:^Cell destroyed_count:int
+(slice, cell, cell, cell, cell, int, cell) load_data() impure {
+    slice ds = get_data().begin_parse();
     return (
-            ds~load_ref(), ;; content
-            ds~load_ref() ;; nft_item_code
+        ds~load_msg_addr(),
+        ds~load_ref(),
+        ds~load_ref(),
+        ds~load_ref(),
+        ds~load_ref(),
+        ds~load_uint(32),      ;; destroyed_count (ION extension)
+        ds~load_ref()           ;; destroyed_domains dict (ION extension)
     );
 }
 
-() save_data(cell content, cell nft_item_code) impure inline {
+() save_data(slice owner_addr, cell content, cell item_code, cell royalty_params, cell domain, int destroyed_count, cell destroyed_domains) impure inline {
     set_data(begin_cell()
-            .store_ref(content)
-            .store_ref(nft_item_code)
-            .end_cell());
+        .store_slice(owner_addr)
+        .store_ref(content)
+        .store_ref(item_code)
+        .store_ref(royalty_params)
+        .store_ref(domain)
+        .store_uint(destroyed_count, 32)
+        .store_ref(destroyed_domains)
+        .end_cell()
+    );
 }
 
-cell calculate_nft_item_state_init(int item_index, cell nft_item_code) {
-    cell data = begin_cell().store_uint(item_index, 256).store_slice(my_address()).end_cell();
-    return begin_cell().store_uint(0, 2).store_dict(nft_item_code).store_dict(data).store_uint(0, 1).end_cell();
+() save_data_roman(slice owner_addr, cell content, cell item_code, cell royalty_params, cell domain, int destroyed_count, cell destroyed_domains) impure inline {
+    save_data(owner_addr, content, item_code, royalty_params, domain, destroyed_count, destroyed_domains);
 }
 
-slice calculate_nft_item_address(int wc, cell state_init) {
-    return begin_cell()
-            .store_uint(4, 3)
-            .store_int(wc, 8)
-            .store_uint(cell_hash(state_init), 256)
-            .end_cell()
-            .begin_parse();
-}
-
-() deploy_nft_item(int item_index, cell nft_item_code, cell nft_content) impure {
-    cell state_init = calculate_nft_item_state_init(item_index, nft_item_code);
-    slice nft_address = calculate_nft_item_address(workchain(), state_init);
+;; ─── Messaging ───
+() send_msg(slice to_address, int amount, int op, int query_id, builder payload, int send_mode) impure inline {
     var msg = begin_cell()
-            .store_uint(0x18, 6)
-            .store_slice(nft_address)
-            .store_coins(0)
-            .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)
-            .store_ref(state_init)
-            .store_ref(nft_content);
-    send_raw_message(msg.end_cell(), 64); ;; carry all the remaining value of the inbound message, fee deducted from amount
+        .store_uint(0x10, 6)
+        .store_slice(to_address)
+        .store_coins(amount)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_uint(op, 32)
+        .store_uint(query_id, 64);
+    if (~ builder_null?(payload)) {
+        msg = msg.store_builder(payload);
+    }
+    send_raw_message(msg.end_cell(), send_mode);
 }
 
+() send_royalty(slice to_address, int query_id, slice data) impure inline {
+    var msg = begin_cell()
+        .store_uint(0x10, 6)
+        .store_slice(to_address)
+        .store_coins(0)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_uint(op::report_royalty_params, 32)
+        .store_uint(query_id, 64)
+        .store_slice(data);
+    send_raw_message(msg.end_cell(), 64);
+}
+
+;; ─── NFT Item Deployment ───
+() deploy_nft_item(slice owner_addr, int item_index, slice subdomain, cell domain, cell item_code) impure {
+    cell state_init = calculate_nft_item_state_init(item_index, item_code);
+    slice nft_address = calculate_nft_item_address(workchain, state_init);
+
+    cell subdomain_cell = begin_cell()
+        .store_slice(subdomain)
+        .end_cell();
+    cell domain_cell = begin_cell()
+        .store_slice(domain.begin_parse())
+        .end_cell();
+    cell payload = begin_cell()
+        .store_uint(1, 32)           ;; query_id placeholder
+        .store_uint(cur_lt(), 64)
+        .store_slice(owner_addr)
+        .store_ref(subdomain_cell)
+        .store_ref(domain_cell)
+        .store_coins(1)              ;; forward_amount placeholder
+        .store_uint(0, 1)
+        .end_cell();
+
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(nft_address)
+        .store_coins(0)
+        .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)
+        .store_ref(state_init)
+        .store_ref(payload);
+    send_raw_message(msg.end_cell(), 64);
+}
+
+;; ─── Main receive ───
 () recv_internal(int msg_value, cell in_msg_full, slice in_msg_body) impure {
-    if (in_msg_body.slice_empty?()) { ;; bounce back empty messages
-        throw(0xffff);
+    if (in_msg_body.slice_empty?()) {
+        return ();
     }
     slice cs = in_msg_full.begin_parse();
     int flags = cs~load_uint(4);
 
-    if (flags & 1) { ;; ignore all bounced messages
+    if (flags & 1) {
         return ();
     }
-    slice sender_address = cs~load_msg_addr();
-    force_chain(sender_address); ;; ION enhancement: prevent cross-chain replay
-
+    slice sender_addr = cs~load_msg_addr();
+    force_chain(sender_addr);
     int op = in_msg_body~load_uint(32);
 
-    var (content, nft_item_code) = load_data();
+    (slice owner_addr, cell content, cell item_code, cell royalty_params, cell domain, int destroyed_count, cell destroyed_domains) = load_data();
 
-    if (op == 0) { ;; deploy new nft
-        int now_time = now();
-        throw_unless(199, now_time > auction_start_time); ;; start of auction
-        slice domain = read_domain_from_comment(in_msg_body);
-        int len = slice_bits(domain);
-        throw_unless(200, len > 3 * 8); ;; minimum 4 characters
-        throw_unless(201, len <= 126 * 8); ;; maxmimum 126 characters
-        throw_unless(202, mod(len, 8) == 0);
-        throw_unless(203, check_domain_string(domain));
-        int min_price = get_min_price(len, now_time);
-        throw_unless(204, msg_value >= min_price);
+    ;; ─── Mint new domain (op == 0) ───
+    if (op == 0) {
+        throw_unless(err::access_denied, equal_slices(sender_addr, owner_addr));
+        throw_unless(err::domain_price_too_low, msg_value >= min_tons_for_mint);
+        slice subdomain = read_domain_from_comment(in_msg_body);
+        int len = slice_bits(subdomain);
 
-        int item_index = slice_hash(domain);
+        throw_unless(err::domain_too_short, len >= 1 * 8);
+        throw_unless(err::domain_too_long, len <= 126 * 8);
+        throw_unless(err::domain_not_aligned, mod(len, 8) == 0);
+        throw_unless(err::domain_invalid_format, check_domain_string(subdomain));
 
-        cell config_cell = config_param(dns_config_id);
-        if (~ cell_null?(config_cell)) {
-            slice config_cs = config_cell.begin_parse();
-            cell config = config_cs~load_dict();
-            (slice config_value, int found) = config.udict_get?(256, item_index);
-            throw_if(205, found);
-        }
-
-        cell nft_content = begin_cell()
-                .store_slice(sender_address)
-                .store_ref(begin_cell().store_slice(domain).end_cell())
-                .end_cell();
-        deploy_nft_item(item_index, nft_item_code, nft_content);
+        int item_index = slice_hash(subdomain);
+        deploy_nft_item(owner_addr, item_index, subdomain, domain, item_code);
         return ();
     }
 
-    if (op == op::fill_up) { ;; just fill-up balance
+    int query_id = in_msg_body~load_uint(64);
+
+    ;; ─── Deploy/Approval flow ───
+    if (op == op::deploy) {
         return ();
     }
-    throw(0xffff);
+    if (op == op::approve) {
+        raw_reserve(min_tons_for_storage, 0);
+        send_msg(owner_addr, 0, op::top_up, query_id, null(), 128);
+        return ();
+    }
+    if (op == op::disapprove) {
+        raw_reserve(min_tons_for_storage, 0);
+        send_msg(owner_addr, 0, op::bounce, query_id, null(), 128);
+        return ();
+    }
+    if (op == op::get_royalty_params) {
+        send_royalty(sender_addr, query_id, royalty_params.begin_parse());
+        return ();
+    }
+
+    ;; ─── ION: Domain destroyed notification from NFT item ───
+    if (op == op::domain_destroyed) {
+        int item_index = in_msg_body~load_uint(256);
+        destroyed_domains~udict_set_ref(256, item_index, begin_cell().store_uint(now(), 64).end_cell());
+        destroyed_count = destroyed_count + 1;
+        save_data(owner_addr, content, item_code, royalty_params, domain, destroyed_count, destroyed_domains);
+        return ();
+    }
+
+    ;; ─── Owner-only operations ───
+    throw_unless(err::access_denied, equal_slices(sender_addr, owner_addr));
+    if (op == op::change_owner) {
+        save_data(in_msg_body~load_msg_addr(), content, item_code, royalty_params, domain, destroyed_count, destroyed_domains);
+        return ();
+    }
+    if (op == op::edit_content) {
+        save_data(owner_addr, in_msg_body~load_ref(), item_code, in_msg_body~load_ref(), domain, destroyed_count, destroyed_domains);
+        return ();
+    }
+    throw(err::unknown_op_code);
 }
 
-;; Get methods
+;; ─── Getter methods ───
+slice get_domain() method_id {
+    (_, _, _, _, cell domain, _, _) = load_data();
+    return domain.begin_parse();
+}
+
+slice get_full_domain() method_id {
+    (_, _, _, _, cell domain, _, _) = load_data();
+    return begin_cell()
+        .store_slice(const::ion)
+        .store_uint(0, 8)
+        .store_slice(domain.begin_parse())
+        .store_uint(0, 8)
+        .end_cell()
+        .begin_parse();
+}
 
 (int, cell, slice) get_collection_data() method_id {
-    var (content, nft_item_code) = load_data();
-    return (-1, content, zero_address());
+    (slice owner_addr, cell content, _, _, _, _, _) = load_data();
+    return (-1, content, owner_addr);
 }
 
 slice get_nft_address_by_index(int index) method_id {
-    var (content, nft_item_code) = load_data();
-    cell state_init = calculate_nft_item_state_init(index, nft_item_code);
-    return calculate_nft_item_address(workchain(), state_init);
+    (_, _, cell item_code, _, _, _, _) = load_data();
+    cell state_init = calculate_nft_item_state_init(index, item_code);
+    return calculate_nft_item_address(workchain, state_init);
 }
 
 cell get_nft_content(int index, cell individual_nft_content) method_id {
-    return individual_nft_content;
+    (_, cell content, _, _, cell domain, _, _) = load_data();
+    slice subdomain = individual_nft_content.begin_parse();
+    (cell name, cell image, cell uri) = create_nft_metadata(content, domain.begin_parse(), subdomain);
+
+    cell keyvalue_map = new_dict();
+    keyvalue_map~udict_set_ref(256, key::name, name);
+    keyvalue_map~udict_set_ref(256, key::image, image);
+    keyvalue_map~udict_set_ref(256, key::uri, uri);
+    return begin_cell().store_uint(0, 8).store_dict(keyvalue_map).end_cell();
 }
 
-;; ION enhancement: return .ion TLD for collection-level resolution
-slice get_full_domain() method_id {
-    return "ion";
+(int, int, slice) royalty_params() method_id {
+    (_, _, _, cell royalty_params, _, _, _) = load_data();
+    slice rs = royalty_params.begin_parse();
+    return (rs~load_uint(16), rs~load_uint(16), rs~load_msg_addr());
 }
 
+;; ─── ION: Get destroyed domains stats ───
+int get_destroyed_count() method_id {
+    (_, _, _, _, _, int destroyed_count, _) = load_data();
+    return destroyed_count;
+}
+
+(int, cell) get_destroyed_info() method_id {
+    (_, _, _, _, _, int destroyed_count, cell destroyed_domains) = load_data();
+    return (destroyed_count, destroyed_domains);
+}
+
+;; ─── DNS resolution (same as Roman) ───
 (int, cell) dnsresolve(slice subdomain, int category) method_id {
-    throw_unless(70, mod(slice_bits(subdomain), 8) == 0);
-
+    throw_unless(err::bad_subdomain_length, mod(slice_bits(subdomain), 8) == 0);
     int starts_with_zero_byte = subdomain.preload_int(8) == 0;
-
-    if (starts_with_zero_byte & (slice_bits(subdomain) == 8)) { ;; "." requested
-        return (8, null());  ;; resolved but no dns-records
+    if (starts_with_zero_byte & (slice_bits(subdomain) == 8)) {
+        return (8, null());
     }
     if (starts_with_zero_byte) {
         subdomain~load_uint(8);
     }
-
     int top_subdomain_bits = get_top_domain_bits(subdomain);
     slice top_subdomain = subdomain~load_bits(top_subdomain_bits);
     int item_index = slice_hash(top_subdomain);
+
     cell result = begin_cell()
-            .store_uint(dns_next_resolver_prefix, 16)
-            .store_slice(get_nft_address_by_index(item_index))
-            .end_cell();
+        .store_uint(dns_next_resolver::prefix, 16)
+        .store_slice(get_nft_address_by_index(item_index))
+        .end_cell();
     return (top_subdomain_bits + (starts_with_zero_byte ? 8 : 0), result);
 }

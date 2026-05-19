@@ -1,50 +1,176 @@
-const int one_month = 2592000; ;; 1 month in seconds = 60 * 60 * 24 * 30
-const int one_year = 31622400; ;; 1 year in seconds = 60 * 60 * 24 * 366
-const int auction_start_time = 1659171600; ;; GMT: Monday, 30 July 2022 谐., 09:00:00
-const int one_ton = 1000000000;
-const int dns_next_resolver_prefix = 0xba93; ;; dns_next_resolver prefix - https://github.com/ton-blockchain/ton/blob/7e3df93ca2ab336716a230fceb1726d81bac0a06/crypto/block/block.tlb#L819
+;; ION DNS Utils — adapted from Roman (nessshon/dns-contracts)
+;; Compatible with Roman's deployed data format
+#include "common/common.fc";
 
-const int dns_config_id = 80; ;; dns black list config param; in testnet -80
+;; ─── DNS Constants ───
+const int workchain = 0;
+const int min_tons_for_mint = 200000000;     ;; 0.2 TON/ION minimum mint fee
+const int min_tons_for_storage = 50000000;   ;; 0.05 TON/ION storage reserve
 
-const int op::fill_up = 0x370fec51;
-const int op::outbid_notification = 0x557cea20;
+const int dns_next_resolver::prefix = 0xba93;
+const int dns_next_resolver::key = "dns_next_resolver"H;
+
+const slice const::dot = ".";
+const slice const::ion = "ion";              ;; ION TLD
+const slice const::png = "png";
+const slice const::json = "json";
+const slice const::slash = "/";
+
+;; ─── Metadata keys ───
+const int key::uri = "uri"H;
+const int key::name = "name"H;
+const int key::image = "image"H;
+const int key::prefix_uri = "prefix_uri"H;
+
+;; ─── Op codes (Roman-compatible) ───
+;; Collection ops
+const int op::deploy = 0x1;
+const int op::change_prices = 0x2;
+const int op::change_owner = 0x3;
+const int op::edit_content = 0x4;
+const int op::get_royalty_params = 0x693d3950;
+const int op::report_royalty_params = 0xa8cb00ad;
+const int op::bounce = 0xffffffff;
+const int op::top_up = 0xd372158c;
+const int op::approve = 0x7b4b42e6;
+const int op::disapprove = 0xe8a0abfe;
+
+;; NFT item ops (from funcbox: op::nft::transfer etc.)
+const int op::transfer = 0x5fcc3d14;
+const int op::ownership_assigned = 0x05138d91;
+const int op::excesses = 0xd53276db;
+const int op::get_static_data = 0x2fcb26a2;
+const int op::report_static_data = 0x8b771735;
 const int op::change_dns_record = 0x4eb1f0f9;
-const int op::process_governance_decision = 0x44beae41;
-const int op::dns_balance_release = 0x4ed14b65;
 
-;; NFT standard op codes — provided by funcbox (op::nft::*)
-const int op::edit_content = 0x1a0b9d51; ;; not in funcbox, defined here
-;; mod provided by funcbox stdlib_ext.fc
+;; ION-specific additions
+const int op::destroy = 0xdeb10010;           ;; destroy/burn domain (ION extension)
+const int op::domain_destroyed = 0xdeb10011;  ;; notification to collection
 
-slice zero_address() {
-    return begin_cell().store_uint(0, 2).end_cell().begin_parse();
+;; ─── Error codes (Roman-compatible + ION additions) ───
+const int err::bad_subdomain_length = 70;
+const int err::domain_too_short = 200;
+const int err::domain_too_long = 201;
+const int err::domain_not_aligned = 202;
+const int err::domain_invalid_format = 203;
+const int err::domain_price_too_low = 204;
+const int err::incorrect_workchain = 333;
+const int err::access_denied = 401;
+const int err::low_balance = 402;
+const int err::invalid_onchain_tag = 412;
+const int err::no_first_zero_byte = 413;
+const int err::already_destroyed = 420;       ;; ION: domain already burned
+const int err::unknown_op_code = 65535;
+
+;; ─── Chain enforcement ───
+() force_chain(slice addr) impure inline {
+    (int wc, _) = parse_std_addr(addr);
+    throw_unless(err::incorrect_workchain, wc == workchain);
 }
 
-;; "ton\0test\0" -> "ton"
+;; ─── Domain utilities ───
+forall X -> (tuple) to_tuple(X x) asm "NOP";
+
+slice int_to_slice(int num) {
+    builder string = begin_cell();
+    tuple chars = null();
+    do {
+        int r = num~divmod(10);
+        chars = cons(r + 48, chars);
+    } until (num == 0);
+    do {
+        int char = chars~list_next();
+        string~store_uint(char, 8);
+    } until (null?(chars));
+    return string.end_cell().begin_parse();
+}
+
+cell store_onchain_data(slice data) {
+    return begin_cell()
+        .store_uint(0, 8)
+        .store_slice(data)
+        .end_cell();
+}
+
+slice load_onchain_data(cell data) {
+    slice cs = data.begin_parse();
+    cs~skip_bits(8);
+    return cs;
+}
+
+slice build_snake_slice(tuple slices) {
+    int len = slices.tlen();
+    cell result = begin_cell().store_slice(slices.at(len - 1)).end_cell();
+    int i = len - 2;
+    while (i >= 0) {
+        result = begin_cell()
+            .store_slice(slices.at(i))
+            .store_ref(result)
+            .end_cell();
+        i = i - 1;
+    }
+    return result.begin_parse();
+}
+
+(cell, cell, cell) create_nft_metadata(cell content, slice domain, slice subdomain) {
+    slice content_slice = load_onchain_data(content);
+    cell content_dict = content_slice~load_dict();
+
+    (cell prefix_uri_cell, _) = content_dict.udict_get_ref?(256, key::prefix_uri);
+    slice prefix_uri = load_onchain_data(prefix_uri_cell);
+    (_, int my_addr_hash) = parse_std_addr(my_address());
+    slice my_addr_hash_slice = int_to_slice(my_addr_hash);
+
+    cell name = store_onchain_data(build_snake_slice(to_tuple([subdomain, const::dot, domain, const::dot, const::ion])));
+    cell image = store_onchain_data(build_snake_slice(to_tuple([prefix_uri, subdomain, const::slash, domain, const::dot, const::png])));
+    cell uri = store_onchain_data(build_snake_slice(to_tuple([prefix_uri, my_addr_hash_slice, const::slash, subdomain, const::slash, domain, const::dot, const::json])));
+    return (name, image, uri);
+}
+
+cell calculate_nft_item_state_init(int item_index, cell item_code) {
+    cell data = begin_cell().store_uint(item_index, 256).store_slice(my_address()).end_cell();
+    return begin_cell()
+        .store_uint(0, 2)
+        .store_dict(item_code)
+        .store_dict(data)
+        .store_uint(0, 1)
+        .end_cell();
+}
+
+slice calculate_nft_item_address(int wc, cell state_init) {
+    int hash = cell_hash(state_init);
+    return begin_cell()
+        .store_uint(4, 3)
+        .store_int(wc, 8)
+        .store_uint(hash, 256)
+        .end_cell()
+        .begin_parse();
+}
+
 int get_top_domain_bits(slice domain) {
     int i = 0;
     int need_break = 0;
     do {
-        int char = domain~load_uint(8); ;; we do not check domain.length because it MUST contains \0 character
+        int char = domain~load_uint(8);
         need_break = char == 0;
         if (~ need_break) {
             i += 8;
         }
     } until (need_break);
-    throw_if(201, i == 0); ;; starts with \0
+    throw_if(err::domain_invalid_format, i == 0);
     return i;
 }
 
-slice read_domain_from_comment(slice in_msg_body) {
+slice read_domain_from_comment(slice comment) {
     int need_break = 0;
     builder result = begin_cell();
     do {
-        result = result.store_slice(in_msg_body~load_bits(in_msg_body.slice_bits()));
-        int refs_len = in_msg_body.slice_refs();
+        result = result.store_slice(comment~load_bits(comment.slice_bits()));
+        int refs_len = comment.slice_refs();
         need_break = refs_len == 0;
         if (~ need_break) {
-            throw_unless(202, refs_len == 1);
-            in_msg_body = in_msg_body~load_ref().begin_parse();
+            throw_unless(err::domain_invalid_format, refs_len == 1);
+            comment = comment~load_ref().begin_parse();
         }
     } until (need_break);
     return result.end_cell().begin_parse();
@@ -58,10 +184,8 @@ int check_domain_string(slice domain) {
         need_break = i == len;
         if (~ need_break) {
             int char = domain~load_uint(8);
-            ;; we can do it because additional UTF-8 character's octets >= 128 -- https://www.ietf.org/rfc/rfc3629.txt
             int is_hyphen = (char == 45);
-            int valid_char = (is_hyphen & (i > 0) & (i < len - 8)) | ((char >= 48) & (char <= 57)) | ((char >= 97) & (char <= 122)); ;; '-' or 0-9 or a-z
-
+            int valid_char = (is_hyphen & (i > 0) & (i < len - 8)) | ((char >= 48) & (char <= 57)) | ((char >= 97) & (char <= 122));
             need_break = ~ valid_char;
             if (~ need_break) {
                 i += 8;
@@ -69,44 +193,4 @@ int check_domain_string(slice domain) {
         }
     } until (need_break);
     return i == len;
-}
-
-(int, int) get_min_price_config(int domain_char_count) {
-    if (domain_char_count == 4) {
-        return (1000, 100);
-    }
-    if (domain_char_count == 5) {
-        return (500, 50);
-    }
-    if (domain_char_count == 6) {
-        return (400, 40);
-    }
-    if (domain_char_count == 7) {
-        return (300, 30);
-    }
-    if (domain_char_count == 8) {
-        return (200, 20);
-    }
-    if (domain_char_count == 9) {
-        return (100, 10);
-    }
-    if (domain_char_count == 10) {
-        return (50, 5);
-    }
-    return (10, 1);
-}
-
-int get_min_price(int domain_bits_length, int now_time) {
-    (int start_min_price, int end_min_price) = get_min_price_config(domain_bits_length / 8);
-    start_min_price *= one_ton;
-    end_min_price *= one_ton;
-    int seconds = now_time - auction_start_time;
-    int months = seconds / one_month;
-    if (months > 21) {
-        return end_min_price;
-    }
-    repeat (months) {
-        start_min_price = start_min_price * 90 / 100;
-    }
-    return start_min_price;
 }
