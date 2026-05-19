@@ -37,27 +37,76 @@ SESSION START — ION DEX Full Pipeline
      → 域名: ION DNS 记录 → 实时链上
      → 价格: PancakeSwap Router 链上报价 → 实时的
 ═══════════════════════════════════════════
-✅ DO — 以下指令按顺序执行，做完一条 commit 一条。不许跳。
+✅ DO — 首要任务: 从文档框架落地为真实代码
 
-📖 TASK 0: 读全量审计 + 数据字典
-  打开: .memory-bank/architecture-audit.md
-  打开: .memory-bank/live-data-reference.md ← NEW! 所有真实地址/端点/Key 位置
-  里面写了：24个模块哪些是真哪些是假、P0→P3执行顺序、Agent Build Order
-  + 每个数据源的地址、合约、RPC URL、检测方式
-  checkbox 第一个没勾的就是你现在该干的活
-  → 没读就不许动手写代码
+🔴🔴🔴 写任何代码之前，必须先读完以下 ④ 份铁律 🔴🔴🔴
+  📜 .cursor/rules/ion-dex-iron-law.mdc       — 三大红线 + 安全铁律
+  📜 .memory-bank/live-data-reference.md      — 所有真实地址/合约/RPC/钱包
+  📜 .memory-bank/strategy-borrow-liquidity.md — 借鸡生蛋战略
+  📜 .memory-bank/architecture-audit.md       — P0→P3 优先级 + 24模块审计
+  没读完这 ④ 份之前，一行代码都不准写。
 
-📖 TASK 1: 读本文件完整内容
+═══════════════════════════════════════════
+🏗️ TASK 1 (FIRST!): 费用/钱包/桥 框架 → 代码落地
+  本任务把已有的设计文档转为可运行的代码。
+  每完成一个子任务 commit 一次。build 不过不进下一个。
 
-⚙️ TASK 2: 编译 FunC 合约
+  1a. FeeDistributor.fc [contracts/ion/FeeDistributor.fc]
+      → 文档: docs/02-tokenomics-and-fees.md
+      → 分配: 35%销毁 / 25%团队 / 20%质押 / 15%国库 / 5%运营
+      → 所有费用以 ION 收取
+      → 编译: node scripts/compile-func.mjs → 必须 PASS
+      → commit -m "feat: FeeDistributor.fc — ION fee split (35/25/20/15/5)"
+
+  1b. BSCFeeVault.sol [contracts/bsc/BSCFeeVault.sol]
+      → BSC侧费用积累库
+      → SafeERC20 + Pausable + EIP-712 + 阈值校验
+      → 使用真实 PancakeSwap Router 地址: 0x10ED43C718714eb63d5aA57B78B54704E256024E
+      → forge build 通过 → commit
+
+  1c. ION 钱包适配器 [frontend/src/wallet/IonWalletProvider.tsx]
+      → 文档: docs/11-wallet-and-transaction-flow.md
+      → 检测 ION Browser Wallet: window.ion / window.ton
+      → 对接 Online+ (ION链内置钱包)
+      → 对接 WalletConnect (TON Connect 协议适配ION链)
+      → 官方钱包代码参考: https://github.com/ice-blockchain/ion
+         (搜索 wallet/extension/inject 相关 TypeScript 文件)
+      → npm run build 通过 → commit
+
+  1d. EVM 钱包适配器 [frontend/src/wallet/EvmWalletProvider.tsx]
+      → 7个钱包全对接:
+        MetaMask: window.ethereum.isMetaMask
+        Binance Web3: window.BinanceChain
+        OKX Web3: window.okxwallet
+        Bitget Web3: window.bitkeep.ethereum
+        Trust Wallet: window.trustwallet
+        Coinbase Wallet: window.coinbaseWalletExtension
+        Rabby: window.rabby
+      → 每个钱包独立 wagmi connector
+      → npm run build 通过 → commit
+
+  1e. 桥操作面板 [frontend/src/pages/BridgePage.tsx]
+      → 文档: docs/14-bridge-operations.md + docs/18-cross-chain-asset-and-messaging.md
+      → Bridge.sol 源码: D:\openclaw-tools\ice-blockchain-bridge\solidity\Bridge.sol
+      → 部署脚本: D:\openclaw-tools\ion-bridge-deploy\
+      → 显示: USDT(BSC)↔ION(ION链) + BNB(BSC)↔ION(ION链)
+      → 调桥合约 deposit/burn 方法
+      → npm run build 通过 → commit
+
+  1f. 费用/桥全部 build 通过 → 打 checkpoint
+      → git commit -m "checkpoint: fee-distributor + wallet-adapters + bridge-page — all build green"
+
+═══════════════════════════════════════════
+⚙️ TASK 2: 编译所有 FunC 合约
   命令: node scripts/compile-func.mjs
   验收: 终端输出 22/22 PASS
   失败: 读错误→定位根因→修复→重跑→直到全绿
   全绿前不许进入 TASK 3
 
-🏗️ TASK 3: 前端真数据改造（这是大头，每改一个文件跑一次 build，不过不改下一个）
+═══════════════════════════════════════════
+🏗️ TASK 3: 前端全部真数据改造
   组件参考: D:\openclaw-data\workspace\repos\react-bits
-  钱包库: wagmi/viem + ethers.js，注入真实浏览器钱包，不写假 provider
+  每改一个文件跑一次 build，不过不改下一个
   
   3a. 价格数据 [frontend/src/lib/ionApi.ts]
       → 删掉所有 mock return
@@ -538,10 +587,14 @@ Skills: **`ion-contract-audit`**, **`ion-official-source`**. Official tree: **`D
 
 **Resume at TASK 2:** `node scripts/compile-func.mjs` → 目标 22/22 PASS
 
-**⚠️ First thing after restart — READ:**
-1. `.cursor/rules/ion-dex-iron-law.mdc` (三红线在最顶部)
-2. `.memory-bank/live-data-reference.md` (所有真实地址 — ION/PancakeSwap/CMC/RPC/钱包)
-3. `.memory-bank/architecture-audit.md` (P0→P3 优先级)
-4. `SESSION_STATE.md` (本文件，TASK 0-4 指令)
+**⚠️ First thing after restart — ④ 份铁律必读（缺一不可）:**
+1. `.cursor/rules/ion-dex-iron-law.mdc` — 三红线 + 安全铁律
+2. `.memory-bank/live-data-reference.md` — 所有真实地址 (ION/PancakeSwap/CMC/RPC/钱包)
+3. `.memory-bank/strategy-borrow-liquidity.md` — 借鸡生蛋战略
+4. `.memory-bank/architecture-audit.md` — P0→P3 优先级
+
+**读完后立即执行 TASK 1:** 费用/钱包/桥框架→代码 (1a→1b→1c→1d→1e→1f)
+每条 commit 一次。build 不过不进下一条。
+**红线: 不读铁律不动手。不开文档不写码。mock/placeholder/假数据=死刑。**
 
 **绝对不能做的三件事:** 撒谎 / 写假代码 / 出中文乱码
