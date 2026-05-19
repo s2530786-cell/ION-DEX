@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="ION DEX">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#24f7ff"/>
+      <stop offset="50%" stop-color="#8d4dff"/>
+      <stop offset="100%" stop-color="#ff3bd4"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="#020617"/>
+  <rect x="36" y="36" width="108" height="108" rx="24" fill="url(#g)" transform="rotate(45 90 90)"/>
+</svg>
