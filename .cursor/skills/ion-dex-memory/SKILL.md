@@ -17,11 +17,12 @@ Before doing any ION DEX work, read these files in order if they exist:
 6. `.memory-bank/live-data-reference.md`
 7. `.memory-bank/implementation-playbook.md`
 8. `.memory-bank/architecture-audit.md`
-9. `.memory-bank/ion-dex-nuke/official-source-index.md`
-10. `docs/01-product-blueprint.md`
-11. `docs/02-technical-architecture.md`
-12. `docs/03-development-roadmap.md`
-13. `docs/99-current-progress.md`
+9. `.memory-bank/security-audit-and-stress-framework.md`
+10. `.memory-bank/ion-dex-nuke/official-source-index.md`
+11. `docs/01-product-blueprint.md`
+12. `docs/02-technical-architecture.md`
+13. `docs/03-development-roadmap.md`
+14. `docs/99-current-progress.md`
 
 If these files do not contain a user-confirmed requirement, search Git history before answering or implementing. Do not rely only on current visible files when the user says a decision was made earlier.
 

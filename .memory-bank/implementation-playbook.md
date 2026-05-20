@@ -8,8 +8,9 @@ Read this before coding chain data, wallet/profile, fees, bridge, domain, or tra
 2. `.memory-bank/overall-design-framework.md`
 3. `.memory-bank/live-data-reference.md`
 4. `.memory-bank/architecture-audit.md`
-5. `.memory-bank/ion-dex-nuke/official-source-index.md`
-6. `SESSION_STATE.md`
+5. `.memory-bank/security-audit-and-stress-framework.md`
+6. `.memory-bank/ion-dex-nuke/official-source-index.md`
+7. `SESSION_STATE.md`
 
 ## Data Integration Order
 
@@ -71,5 +72,6 @@ Required before implementation:
 - Encoding check.
 - Frontend verify and audit.
 - Backend verify, audit, and stress for data work.
+- Security preflight for high-risk work.
 - Browser visual walkthrough for UI work.
 - 100-pass gate for completed feature milestones.

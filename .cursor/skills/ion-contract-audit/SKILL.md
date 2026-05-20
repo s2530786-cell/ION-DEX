@@ -33,6 +33,10 @@ Before calling a contract change complete, check:
 
 For ION-native work, load `ion-official-source` and inspect `D:/openclaw-tools/ion` first. Do not invent ION-specific primitives without checking official references.
 
+## Security Framework Discipline
+
+Before contract, bridge, treasury, staking, burn, oracle, or sentinel work, read `.memory-bank/security-audit-and-stress-framework.md` and `docs/23-security-audit-and-stress-sandbox.md`, then run `node scripts/security-preflight.mjs` when shell access is available.
+
 ## Testing Requirements
 
 Contract work must eventually include:
@@ -42,6 +46,7 @@ Contract work must eventually include:
 - Fuzz/property tests for invariants.
 - Gas snapshots for hot paths.
 - Formal or semi-formal invariant notes for critical accounting.
+- Pressure, gas, or chaos sandbox evidence for completed high-risk flows.
 
 Until the contract test harness exists, mark contract features as design-only and do not claim production readiness.
 

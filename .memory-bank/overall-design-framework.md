@@ -56,12 +56,13 @@ Before any implementation or UI claim, retrieve:
 2. `.memory-bank/live-data-reference.md`
 3. `.memory-bank/implementation-playbook.md`
 4. `.memory-bank/architecture-audit.md`
-5. `.memory-bank/ion-dex-nuke/official-source-index.md`
-6. `docs/05-product-prd.md`
-7. `docs/06-page-flow-and-user-journeys.md`
-8. `docs/09-reference-architecture.md`
-9. `docs/10-ui-design-route.md`
-10. `SESSION_STATE.md`
+5. `.memory-bank/security-audit-and-stress-framework.md`
+6. `.memory-bank/ion-dex-nuke/official-source-index.md`
+7. `docs/05-product-prd.md`
+8. `docs/06-page-flow-and-user-journeys.md`
+9. `docs/09-reference-architecture.md`
+10. `docs/10-ui-design-route.md`
+11. `SESSION_STATE.md`
 
 Also search Git history when current memory appears incomplete.
 
@@ -210,5 +211,6 @@ Do not claim completion without:
 - Encoding check.
 - Frontend verify and high audit.
 - Backend verify/audit/stress for data work.
+- Security preflight and domain-specific audit for high-risk work.
 - Browser walkthrough for UI.
 - 100-pass gate for completed milestones.

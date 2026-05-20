@@ -30,6 +30,7 @@ Before working on this project, load and follow:
 - Communicate with the user in Simplified Chinese by default.
 - Before any development work, read `docs/00-engineering-standards.md` as the development iron law.
 - Before any implementation or UI claim, retrieve `.memory-bank/overall-design-framework.md`, `.memory-bank/live-data-reference.md`, `.memory-bank/implementation-playbook.md`, `.memory-bank/architecture-audit.md`, and `.memory-bank/ion-dex-nuke/official-source-index.md`; search Git history when current memory appears incomplete.
+- Before security-sensitive work, also retrieve `.memory-bank/security-audit-and-stress-framework.md`, read `docs/23-security-audit-and-stress-sandbox.md`, and run `node scripts/security-preflight.mjs` when shell access is available.
 - Before frontend/UI work, read `docs/10-ui-design-route.md` and run `node scripts/dev-preflight.mjs` when shell access is available.
 - Never create UTF-16, GBK, ANSI, or BOM files.
 - Verify encoding after every file write.
@@ -66,6 +67,7 @@ ION DEX is planned as an OKX Web3 wallet style DEX for ION with:
    - `.memory-bank/live-data-reference.md`
    - `.memory-bank/implementation-playbook.md`
    - `.memory-bank/architecture-audit.md`
+   - `.memory-bank/security-audit-and-stress-framework.md`
    - `.memory-bank/ion-dex-nuke/official-source-index.md`
 3. If the current memory bank does not contain a previously discussed detail, search Git history before answering or implementing.
 4. Read current engineering docs under `docs/`.
