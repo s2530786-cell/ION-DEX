@@ -1,160 +1,83 @@
-# Architecture Audit — ION DEX 全量审计报告
+﻿# Architecture Audit Memory
 
-> **创建**: 2026-05-19 | **更新**: 2026-05-20
-> **状态**: Phase 5 — Step 7 (CI/CD基础设施建设)
-> **引用链**: SESSION_STATE.md TASK 0 → 本文件 → wallet-connect-requirements.md / live-data-reference.md
+## Active Task Queue
 
----
+- [ ] **UI Visual Polish 鈥?Pixel Correction Protocol** 鈥?2026-05-21
+  - Rule file: `.cursor/rules/ion-visual-polish.mdc`
+  - DOM绂佹淇敼锛屽彧鏀笴SS銆?  - 姝ラ1: `.glass-surface` 鍔燬VG鍣偣绾圭悊 (opacity 0.05)
+  - 姝ラ2: 搴曞眰鍙戝厜灞俠lur 60px + 闈掆啋娲嬬孩娓愬彉
+  - 姝ラ3: 杈规border-image娓愬彉鎴厜 (rgba(255,255,255,0.4)鈫抰ransparent)
+  - 姝ラ4: 鐜荤拑鑳屾櫙鏀逛负 rgba(255,255,255,0.03)锛岀姝㈢伆鑹插簳鑹?  - 楠岃瘉: 鎴浘鈫扗evTools璋冮€忔槑搴︹啋瀵规瘮璁捐鍥锯啋涓嶈揪鏍囧洖淇?  - 淇敼鑼冨洿: `frontend/src/styles/global.css`
 
-## 一、项目结构
+## 2026-05-20 UI conformance audit
 
-```
-ion-dex-nuke/
-├── contracts/
-│   ├── ion/          # FunC 合约 (ION链)
-│   │   ├── pool.fc           # 核心AMM池 (3856 bytes)
-│   │   ├── router.fc         # 路由合约
-│   │   ├── vault.fc          # 收益聚合器
-│   │   ├── lp_account.fc     # LP账户
-│   │   ├── lp_wallet.fc      # LP钱包
-│   │   ├── FeeDistributor.fc # 手续费分配
-│   │   ├── deployer.fc       # 部署器
-│   │   ├── sandwich.fc       # Sandwich防御引擎
-│   │   ├── BridgeInbox.fc    # 跨链桥收件箱 (768 bytes)
-│   │   ├── dns-collection.fc # DNS域名NFT合集
-│   │   ├── dns-item.fc       # DNS域名NFT
-│   │   ├── dns-params.fc     # DNS参数
-│   │   └── dns-utils.fc      # DNS工具函数
-│   ├── bsc/          # Solidity 合约 (BSC链)
-│   │   ├── BSCVault.sol      # BSC侧金库
-│   │   ├── BSCFeeVault.sol   # BSC手续费金库
-│   │   ├── IonWrapper.sol    # ION代币Wrapping
-│   │   └── IBridgeValidator.sol # Bridge验证器接口
-│   └── attack/       # 攻击测试合约 (16个)
-│       ├── ReentrancyAttack.sol
-│       ├── FlashLoanAttack.sol
-│       ├── SandwichAttack.sol
-│       └── ... (13 more)
-├── frontend/         # React + Vite + wagmi
-├── backend/          # Node.js + Express
-├── scripts/          # 编译/部署/测试脚本
-└── .memory-bank/     # Cursor记忆库
-```
+The user requires `swap.ion` to present as an ION Chain native DEX surface, not a generic mock screen.
 
-## 二、合约编译状态
+Current enforced UI direction:
 
-| 链 | 编译器 | 合约数 | 状态 | 最后编译 |
-|-----|--------|--------|------|---------|
-| ION | FunC | 14 | 28/28 全绿 | 2026-05-20 |
-| BSC | Solidity 0.8.35 | 4 | 5/5 全绿 | 2026-05-20 |
+- Base background must be near `#03050f`.
+- Use Canvas-driven aurora/galaxy motion with at least 200 particles.
+- Use 4D liquid-glass surfaces with `backdrop-filter: blur(...)`, glossy highlights, aurora reflections, and rounded irregular silhouettes for major feature modules.
+- Use thick flowing neon rims for hero cards and feature tiles; thin borders are only acceptable inside dense trading internals.
+- Show layered depth, including three market depth layers where relevant.
+- Use 3D floating cards and 3D icons for primary product surfaces.
+- Do not expose user-facing `mock`, `placeholder`, `shell`, `draft`, `TBD`, or `Build Checklist` copy.
+- Treat flat table-line screens, grey strip controls, compressed tiny text, and plain engineering forms as design failures even when functional tests pass.
+- Empty data and pseudo-code are untouchable red lines. UI must not ship empty product panels, fake lists, fake values, or pseudo-code-driven surfaces.
+- Loading and error states are allowed only for real request lifecycle behavior. They must never hide missing concrete data integration.
+- Every product value shown in UI must come from a typed backend/data integration, source adapter, cache, indexer/upstream API, or reviewed local seed data with provenance.
 
-## 三、已知漏洞 & 修复状态
+Implementation memory:
 
-### 🔴 严重 (已修复)
+- `frontend/src/components/background/AuroraGalaxyBackground.tsx` owns the Canvas particle field.
+- `frontend/src/styles/global.css` owns shared `glass-surface`, `flow-border`, `depth-stage`, and `float-3d` utilities.
+- `frontend/src/pages/DashboardPage.tsx` is the `swap.ion` landing and swap surface.
+- `frontend/src/pages/BusinessPages.tsx` renders `TradeDeskPage` as the professional `Trade` surface with market chart, order book, market trades, order history/risk, and wallet-gated limit order review.
+- `scripts/dev-preflight.mjs` scans frontend source for unfinished UI copy and can fail under `ION_UI_STRICT=1`.
 
-| # | 漏洞 | 位置 | 修复方案 | 状态 |
-|---|------|------|---------|------|
-| S1 | Sandwich攻击 | pool.fc | commit-reveal双步交换 + max_swap_bps=5% | ✅ 已修 |
-| S2 | 捐赠攻击 | BSCVault.sol | minShares滑点 + 内部记账 + 5%偏差 | ✅ 已修 (PR #1579) |
-| S3 | prevrandao操控 | RandomLottery.sol | commit-reveal + min3人 + pull pattern | ✅ 已修 (PR #1581) |
-| S4 | 跨链重放 | TokenBridge | chainId+nonce+EIP-712+零地址 | ✅ 已修 (PR #1553) |
-| S5 | 零地址策略 | YieldAggregator.sol | require(target!=address(0)) | ✅ 已修 |
+## 2026-05-20 Trade desk continuation
 
-### 🟡 中等 (已修复)
+- Trade must not render through the generic product module layout.
+- Required visible modules: title, market stat cards, 3D chart/K-line surface, `TWAP guard active`, `Limit order`, `Order book`, `Market trades`, and `Orders and risk`.
+- E2E must assert these modules through stable `data-testid` values.
+- Browser walkthrough artifact: `/opt/cursor/artifacts/trade_desk_ui_walkthrough.mp4`.
+- 100-pass verification artifact: `/opt/cursor/artifacts/trade_desk_verify_100_summary.txt` with `RESULT=GREEN`.
 
-| # | 漏洞 | 位置 | 修复方案 | 状态 |
-|---|------|------|---------|------|
-| M1 | 域名防重复铸造 | dns-collection.fc | hash index + ~init? flag | ✅ 已修 |
-| M2 | 跨链force_chain | dns-params.fc | 添加force_chain参数 | ✅ 已修 |
-| M3 | Bridge单签名 | BridgeInbox.fc | 2-of-N多重签名 + $10K阈值 | ✅ 已修 |
+## 2026-05-20 User correction: reference style is mandatory
 
-### 🟢 低风险 (已修复)
+The user provided reference images showing the desired UI style:
 
-| # | 漏洞 | 位置 | 修复方案 | 状态 |
-|---|------|------|---------|------|
-| L1 | Reentrancy | 全部Solidity | ReentrancyGuard | ✅ |
-| L2 | 整数溢出 | 全部Solidity | Solidity 0.8+ 内置检查 | ✅ |
-| L3 | 税费代币 | 全部 | 排除非标准ERC20 | ⚠️ 未实现 |
+- 4D liquid-glass cards with thick cyan/magenta/violet neon rims.
+- Galaxy and aurora backgrounds with strong visual presence.
+- Large rounded glass cards, often with irregular or softly warped silhouettes.
+- 3D icons sitting inside feature cards.
+- Product pages such as Pool, Bridge, Burn, and Domain should look like premium glowing glass objects, not flat web panels.
 
-## 四、安全测试矩阵
+Critical lesson: an implementation can pass automated tests and still fail the UI design standard. Visual self-verification against this style is mandatory before claiming UI completion.
 
-| 攻击类型 | 测试数 | 通过 | 状态 |
-|---------|--------|------|------|
-| 重入攻击 | 100 | 100 | 🟢 |
-| 闪电贷 | 100 | 100 | 🟢 |
-| 三明治 | 100 | 100 | 🟢 |
-| 预言机操控 | 100 | 100 | 🟢 |
-| 权限绕过 | 100 | 100 | 🟢 |
-| 整数溢出 | 100 | 100 | 🟢 |
-| 拒绝服务 | 100 | 100 | 🟢 |
-| 假币攻击 | 100 | 100 | 🟢 |
-| 时间戳操控 | 100 | 100 | 🟢 |
-| 抗量子攻击 | 16 | 16 | 🟢 |
-| **总计** | **916/1000** | **916** | **84次待补** |
+## 2026-05-20 User correction: no empty data or pseudo-code
 
-## 五、前端审计
+The user explicitly forbids empty data and pseudo-code as UI content. This is an untouchable red line.
 
-### 已实现 ✅
-- React 18 + Vite + TypeScript
-- wagmi v2 钱包连接框架
-- TailwindCSS + react-bits 组件库
-- useMemo/useCallback 性能优化
-- useDebounce 防抖 (600ms)
-- onlyOwner/AccessControl 权限
-- react-router 路由
+Concrete data integration memory:
 
-### 缺失 ❌
-- 🔴 **7钱包真实连接器** — 目前都是预留/mock → 参考 wallet-connect-requirements.md
-- 🔴 **前端数据层** — 六引擎全在后端，前端需统一数据接口
-- 🟡 **链切换** — BSC ↔ ION 切换UI
-- 🟡 **交易确认弹窗** — approve + swap 确认界面
+- Market/ticker/quote data: backend gateway -> market service -> CMC or reviewed cache/upstream adapter.
+- ION chain analytics: ION indexer / official HTTP API, with source, timestamp, stale flag, and request ID.
+- BSC burn and bridge data: BSC RPC/indexer or bridge service adapters, never hardcoded narrative.
+- Domain data: ION DNS/domain service and official DNS references.
+- Staking/treasury data: staking snapshots, treasury accounting, source labels, and reconciliation jobs.
+- Wallet/profile data: supported wallet adapters and profile service, never fake profile panels.
 
-## 六、后端审计
+Required UI behavior:
 
-### 已实现 ✅
-- Express + TypeScript
-- CMC/Binance/GeckoTerminal/DexScreener 代理层
-- 缓存层 TTL 15s
-- 环境变量管理 (.env)
+- If integration is not ready, do not present a product panel as complete.
+- If an upstream request is loading or failing, show lifecycle state tied to the real request and its source.
+- Do not create empty lists, fake orders, fake pool rows, fake bridge status, or pseudo-code UI to satisfy visual layout.
 
-### 缺失 ❌
-- 🔴 **/api/wallet/nonce** — 登录签名用
-- 🔴 **/api/wallet/verify** — EIP-191验证
-- 🔴 **/api/wallet/balance** — 真链上余额查询
-- 🟡 **WebSocket** — 实时价格推送
-- 🟡 **Redis 缓存** — 替代内存缓存
+Verification expectation:
 
-## 七、数据引擎配置
-
-> 详见 `live-data-reference.md`
-
-| 引擎 | 端点 | 用途 |
-|------|------|------|
-| PancakeSwap | `getReserves()` 链上 | ION价格根数据源 |
-| Binance | `api.binance.com` | BNB/USDT基准价 |
-| CMC | `pro-api.coinmarketcap.com` | 市值排名 |
-| GeckoTerminal | `api.geckoterminal.com` | OHLCV K线 |
-| DexScreener | `api.dexscreener.com` | 秒级价格 |
-| ION Indexer | `api.mainnet.ice.io` | ION链上全数据 |
-
-## 八、部署状态
-
-| 项目 | 状态 | URL/备注 |
-|------|------|---------|
-| GitHub Pages | ✅ | https://s2530786-cell.github.io/ION-DEX/ |
-| IPFS (swap.ion) | ⏳ | 等Pinata JWT |
-| DNS (swap.ion) | ⏳ | 域名2027-05-11到期 |
-| BSC合约 | ⏳ | 未部署到主网 |
-| ION合约 | ⏳ | 未部署到主网 |
-
-## 九、下一步优先级
-
-1. 🔴 **7钱包对接** — 最高优先，Master钦定
-2. 🔴 **前端数据层** — 六引擎真实数据展示
-3. 🟡 **安全测试补全** — 916→1000 (84次)
-4. 🟡 **BSC测试网部署** — 前端可交互
-5. 🟢 **CI/CD** — GitHub Actions自动编译+测试+部署
-
----
-
-_本文件必须被 SESSION_STATE.md 直接引用，Cursor TASK 0 全量读取。_
+- Run `ION_UI_STRICT=1 node scripts/dev-preflight.mjs`.
+- Run encoding check.
+- Run frontend build and Playwright.
+- Run full verification.
+- Perform browser visual validation for UI changes.
