@@ -1,0 +1,143 @@
+;; ── ION DEX Common Library ──────────────────────────────────────────
+;; Based on TON FunC stdlib patterns adapted for ION chain
+;; Note: TON stdlib.fc, params.fc, op-codes.fc are NOT available on
+;; ION chain. This file provides the minimum subset required.
+
+#pragma version >=0.4.4;
+
+#include "gas.fc";
+
+;; ── Operation Codes ──────────────────────────────────────────────
+
+const op::internal_transfer = 432984364;          ;; 0x19C3B6AC
+const op::burn_notification_ext = 3256584228;     ;; 0xC21E65A4
+const op::deposit_ref_fee = 2188830393;           ;; 0x8276BDB9
+const op::withdraw_fee = 3488591206;              ;; 0xCFDE5E66
+const op::vault_pay_to = 2526861840;              ;; 0x969C4810
+const op::direct_add_liquidity = 2318083562;      ;; 0x8A2BAAEA
+const op::cb_add_liquidity = 3265247766;          ;; 0xC2A0C616
+const op::cb_refund_me = 3627831642;              ;; 0xD83A965A
+const op::refund_ok = 2325624112;                 ;; 0x8A9A4D30
+const op::deposit_liq = 596421247;                ;; 0x238C6A7F
+
+;; ── Error Codes ──────────────────────────────────────────────────
+
+const error::invalid_amount = 101;
+const error::insufficient_gas = 102;
+const error::empty_not_allowed = 103;
+const error::wrong_workchain = 104;
+const error::wrong_op = 105;
+const error::zero_output = 106;
+const error::invalid_caller = 107;
+const error::not_owner = 108;
+
+;; ── Chain Parameters ─────────────────────────────────────────────
+
+const params::workchain = 0;
+
+;; ── Message Mode Flags ───────────────────────────────────────────
+
+const CARRY_ALL_BALANCE = 128;
+const DESTROY_IF_ZERO = 32;
+const QCARRY_ALL_BALANCE = 128;
+
+;; ── Context Helpers ──────────────────────────────────────────────
+
+;; Context indices
+const ctx_bounced = 0;
+const ctx_body = 1;
+const ctx_sender = 2;
+const ctx_value = 3;
+const ctx_balance = 4;
+const ctx_fwd_fee = 5;
+const ctx_op = 6;
+
+;; Manual context management (replaces build_ctx/catch_ctx from stdlib)
+global cell ctx::in_msg_full;
+global slice ctx::in_msg_body;
+global int ctx::my_balance;
+global int ctx::msg_value;
+
+() ctx::init(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure inline {
+    ctx::my_balance = my_balance;
+    ctx::msg_value = msg_value;
+    ctx::in_msg_full = in_msg_full;
+    ctx::in_msg_body = in_msg_body;
+}
+
+;; ctx.at helpers
+int ctx::at(int field) method_id {
+    if (field == ctx_bounced) {
+        ;; Check if message was bounced
+        slice cs = in_msg_full.begin_parse();
+        int flags = cs~load_uint(4);
+        return flags & 1;
+    }
+    if (field == ctx_body) {
+        return begin_cell().store_slice(in_msg_body).end_cell().begin_parse().preload_uint(32);
+    }
+    if (field == ctx_sender) {
+        slice cs = in_msg_full.begin_parse();
+        cs~load_uint(4);                    ;; skip flags
+        slice src = cs~load_msg_addr();     ;; source address
+        return begin_cell().store_slice(src).end_cell().begin_parse().preload_uint(256);
+    }
+    if (field == ctx_value) {
+        return msg_value;
+    }
+    if (field == ctx_balance) {
+        return my_balance;
+    }
+    if (field == ctx_fwd_fee) {
+        slice cs = in_msg_full.begin_parse();
+        cs~load_uint(4);                    ;; flags
+        cs~load_msg_addr();                 ;; src
+        cs~load_msg_addr();                 ;; dst
+        cs~load_coins();                    ;; value
+        cs~load_uint(1);                    ;; extracurrency flag
+        cs~load_coins();                    ;; ihr_fee
+        return cs~load_coins();             ;; fwd_fee
+    }
+    if (field == ctx_op) {
+        return in_msg_body.preload_uint(32);
+    }
+    return 0;
+}
+
+;; ── Constants ────────────────────────────────────────────────────
+
+const SENDER = ctx_sender;
+const BODY = ctx_body;
+const BALANCE = ctx_balance;
+const FWD_FEE = ctx_fwd_fee;
+const OPCODE = ctx_op;
+const IS_BOUNCED = ctx_bounced;
+
+;; ── Address Utilities ────────────────────────────────────────────
+
+int address::check_workchain(slice addr, int expected_workchain) method_id {
+    int wc = addr.preload_int(8);
+    return wc == expected_workchain ? ~ null() : 0;
+}
+
+;; ── Reserve Utilities ────────────────────────────────────────────
+
+() reserves::max_balance(int amount) impure inline {
+    raw_reserve(amount, 2);  ;; reserve_exactly mode
+}
+
+;; ── Simple Message Sending ───────────────────────────────────────
+
+() msgs::send_simple(int mode, slice to, cell body, int send_mode) impure inline {
+    send_raw_message(
+        begin_cell()
+            .store_uint(send_mode, 8)
+            .store_slice(to)
+            .store_coins(mode)
+            .store_uint(1, 1)   ;; init state (bounceable)
+            .store_uint(0, 1)   ;; body as ref
+            .store_ref(body)
+        .end_cell(),
+        2  ;; send_message_ignore_errors
+    );
+}

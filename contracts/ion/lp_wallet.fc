@@ -30,6 +30,8 @@ global cell storage::jetton_wallet_code;
 ;; ── Jetton standard handlers ───────────────────────────────────
 
 () handle_transfer() impure {
+    throw_unless(error::not_owner, equal_slices(ctx.at(SENDER), storage::owner_address));
+
     slice body = ctx.at(BODY);
     int query_id = body~load_uint(64);
     int amount = body~load_coins();
@@ -68,6 +70,8 @@ global cell storage::jetton_wallet_code;
 }
 
 () handle_burn() impure {
+    throw_unless(error::not_owner, equal_slices(ctx.at(SENDER), storage::owner_address));
+
     slice body = ctx.at(BODY);
     int query_id = body~load_uint(64);
     int amount = body~load_coins();
