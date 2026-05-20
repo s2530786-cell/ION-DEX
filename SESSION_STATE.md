@@ -160,19 +160,19 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `docs/23-security-audit-and-stress-sandbox.md` turns the framework into an execution checklist and sandbox plan.
   - `scripts/security-preflight.mjs` verifies security memory/docs/skills are present before high-risk work.
   - `scripts/dev-preflight.mjs` now requires the security framework.
-- Cursor Automation YAML import completed on 2026-05-20:
-  - Added `.cursor/automations/ion-dex-autonomous-build.yml` for the user-requested import path `D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml`.
-  - Cursor Cloud could not read the Windows `D:\` source path directly, so the template was restored from Git history and updated for the current Linux Cloud Agent flow.
-  - `docs/08-ci-agent-automation.md` records the file as a source-of-truth Cursor Automations UI import template.
-  - Verification passed: YAML parse `YAML_OK`; encoding scanned 93 files OK; `node scripts/dev-preflight.mjs` OK; `bash scripts/verify-full.sh` OK with backend tests 6 passed, backend audit 0 vulnerabilities, stress smoke passed, frontend Playwright 14 passed, and frontend audit 0 vulnerabilities.
+- Automation YAML import completed on 2026-05-20:
+  - `.cursor/automations/ion-dex-autonomous-build.yml` was imported from historical `D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml` and normalized for the current Cloud Agent branch `cursor/ion-dex-yaml-cfd8`.
+  - The automation prompt now uses current repository-relative memory files, current POSIX verification scripts, and MCP name `ion-dex-memory-bank`.
+  - Verification passed with `bash scripts/check-encoding.sh && bash scripts/verify-full.sh`: encoding OK, backend tests 6 passed, backend audit 0 vulnerabilities, backend stress smoke passed, frontend Playwright 14 passed, frontend audit 0 vulnerabilities.
+  - Commit `55516e0` was pushed to `origin/cursor/ion-dex-yaml-cfd8`.
 
 ## Current Blocker
 
-Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank MCP is loaded. ION official source path is confirmed.
+Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official source path is confirmed. No blocker for the automation YAML import; only the pre-existing `package-lock.json` name change remains outside this task.
 
 ## Next Action
 
-1. Continue development with real shell execution via Desktop Commander.
+1. If needed, open/import the automation manually in Cursor Automations using `.cursor/automations/ion-dex-autonomous-build.yml` as the source of truth.
 2. Use `cd frontend && npm run dev:local` for frontend runtime verification on `http://localhost:3001/`.
 3. Use `D:/openclaw-tools/ion` as the official ION reference source for FunC style, DNS, wallet, multisig, tonlib, lite-client, and API schemes.
 4. Use the relevant project skill before each domain task: official source, UI, contract audit, or data backend.
