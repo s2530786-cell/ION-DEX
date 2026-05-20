@@ -61,7 +61,7 @@ describe("ION DEX API gateway", () => {
     });
 
     assert.equal(response.status, 200);
-    assert.equal(response.body.meta.source, "mock");
+    assert.equal(response.body.meta.source, "local");
     assert.equal(response.body.meta.stale, false);
     assert.equal(response.body.meta.requestId, "test-health-request");
     assert.match(response.body.meta.updatedAt, /^\d{4}-\d{2}-\d{2}T/);
@@ -80,7 +80,7 @@ describe("ION DEX API gateway", () => {
     assert.match(response.body.meta.requestId, /^[A-Za-z0-9._:-]{1,80}$/);
   });
 
-  it("serves public config and supported wallet draft flags", async () => {
+  it("serves public config and supported wallet access flags", async () => {
     const response = await requestJson("/api/config/public");
     const data = response.body.data as {
       appName: string;

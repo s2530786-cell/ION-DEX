@@ -8,6 +8,8 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 - All source files must be UTF-8 without BOM.
 - Communicate with the user in Simplified Chinese by default.
+- Before any development work, read `docs/00-engineering-standards.md` as the development iron law.
+- Before UI/frontend work, read `docs/10-ui-design-route.md` and run `node scripts/dev-preflight.mjs` when shell access is available.
 - No UTF-16, GBK, ANSI, or NUL bytes in source files.
 - Every file write must be followed by read-back and encoding verification.
 - No implementation step is complete without test evidence.
@@ -117,6 +119,43 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `docs/development-accelerators-memory.md`
   - Covered areas include Git worktrees, Cursor `/worktree`, `/best-of-n`, Hooks, Agent Review, Bugbot, Cloud Agents, Cursor CLI/GitHub Actions, CI autonomy levels, MCP tools, Rules, and Skills.
   - The `ion-dev-accelerators` skill proactively selects the right accelerator while preserving ION DEX safety and verification gates.
+- UI design workflow lock added on 2026-05-20:
+  - `docs/10-ui-design-route.md` defines the required OKX Web3 / cyberpunk neon / glassmorphism / aurora-galaxy route and page upgrade order.
+  - `scripts/dev-preflight.mjs` reads the development iron law, UI Skill, PRD, page flow, UI route, `AGENTS.md`, and `SESSION_STATE.md` before verification continues.
+  - `scripts/verify-full.cmd`, `scripts/verify-full.ps1`, and `scripts/verify-full.sh` now run preflight as step 0; agent and save-log verification inherit it.
+  - `.cursor/rules/ion-ui-design-workflow.mdc` enforces reading the iron law and UI route before frontend work.
+- swap.ion UI conformance completed on 2026-05-20:
+  - `.memory-bank/architecture-audit.md` now records UI audit requirements and implementation memory.
+  - `frontend/src/components/background/AuroraGalaxyBackground.tsx` uses a Canvas 240-particle aurora/galaxy field on #03050f.
+  - `frontend/src/pages/DashboardPage.tsx` is now a `swap.ion` ION Chain DEX surface with glass cards, flowing neon border, three market depth layers, 3D floating chart, and controlled quote math.
+  - `frontend/src`, `backend`, and E2E tests were cleared of visible `mock/placeholder/shell/draft/TBD/Build Checklist` wording.
+  - Strict preflight, encoding, frontend verify, backend verify/audit/stress, and strict full verify passed.
+  - Manual browser validation produced `/opt/cursor/artifacts/swap_ion_ui_conformance_walkthrough.mp4`.
+- Trade desk UI continuation completed on 2026-05-20:
+  - `frontend/src/pages/BusinessPages.tsx` now renders `TradeDeskPage` outside the generic product module layout.
+  - Trade has market stat cards, 3D chart/K-line surface, `TWAP guard active`, right-side Limit order, Order book, Market trades, and Orders and risk.
+  - Playwright now has 14 tests including `trade page shows professional desk modules`.
+  - Strict preflight, encoding, frontend verify, and strict full verify passed.
+  - 100-pass gate completed: `PASSED=100`, `FAILED=0`, `RESULT=GREEN`.
+  - Manual browser validation produced `/opt/cursor/artifacts/trade_desk_ui_walkthrough.mp4`.
+- User UI correction on 2026-05-20:
+  - The true front-end UI target is the provided 4D liquid-glass reference style: aurora/galaxy background, thick cyan/magenta/violet neon rims, glossy translucent cards, irregular rounded glass silhouettes, and 3D feature icons.
+  - Flat table-line pages, grey strip controls, tiny compressed typography, and plain engineering forms are design failures even if tests pass.
+  - Before claiming UI completion, manually compare rendered screenshots/video against the reference style, not just E2E success.
+- User data correction on 2026-05-20:
+  - Empty data and pseudo-code are untouchable red lines. They must never be used as product UI content.
+  - Loading/error states are allowed only as real request lifecycle states tied to concrete integrations; they cannot hide missing implementation.
+  - Product values must come from typed backend/data integrations, source adapters, cache, indexer/upstream APIs, or reviewed local seed data with provenance.
+- Overall memory consolidation on 2026-05-20:
+  - `.memory-bank/live-data-reference.md`, `.memory-bank/implementation-playbook.md`, and `.memory-bank/overall-design-framework.md` were restored/added from current memory plus Git-history decisions.
+  - `scripts/dev-preflight.mjs` now requires the full memory set before verification continues.
+  - If a user says a requirement was decided earlier and current memory is incomplete, search Git history before answering or implementing.
+  - Right-top avatar is the Profile Hub: avatar, NFT avatar source, wallets, primary wallet, `.ion`, ION ID/KYC, language, theme, privacy, security logs, approvals, orders, grid strategies, staking, bridge history, domains, notifications, referral, badges, and full Profile entry.
+- Security audit and stress framework completed on 2026-05-20:
+  - `.memory-bank/security-audit-and-stress-framework.md` defines attack defenses, 40 test families, pressure/chaos sandboxes, and code audit procedure.
+  - `docs/23-security-audit-and-stress-sandbox.md` turns the framework into an execution checklist and sandbox plan.
+  - `scripts/security-preflight.mjs` verifies security memory/docs/skills are present before high-risk work.
+  - `scripts/dev-preflight.mjs` now requires the security framework.
 
 ## Current Blocker
 
@@ -138,7 +177,7 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 12. Workflow preference：2026-05-18，user explicitly requested making strong use of `self-evolving` and automatic workflow because they help development. Treat `cursor-engineering-workflow` as the pre/during-work operating loop and `self-evolving` as the post-work memory improvement loop.
 13. Accelerator/review preference：2026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
 14. Claude-Flow/RuFlo：2026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
-15. Next：start Phase 3 backend foundation with typed mock API endpoints (health/config/tokens/tickers first), or continue Phase 5 toward profile menu polish / transparency-status shell（见 `docs/04-development-roadmap.md`）。
+15. Next：continue UI correction route by first rebuilding the right-top Profile Hub from `.memory-bank/overall-design-framework.md`, while using `.memory-bank/security-audit-and-stress-framework.md` for wallet/session threat modeling and stress/audit evidence.
 
 ## Memory MCP Candidates
 

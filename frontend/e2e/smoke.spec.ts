@@ -8,13 +8,13 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("ticker-strip")).toBeVisible();
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
-    await expect(page.getByText("Professional Chart")).toBeVisible();
+    await expect(page.getByText("Professional Trading Surface")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeEnabled();
     await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
   });
 
-  test("wallet shell opens provider picker and profile draft", async ({ page }) => {
+  test("wallet access opens provider picker and profile session", async ({ page }) => {
     await page.goto("/");
 
     await page.getByTestId("wallet-connect").click();
@@ -22,7 +22,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
 
     await page.getByTestId("wallet-provider-online").click();
-    await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet draft session ready");
+    await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet secure session ready");
     await expect(page.getByTestId("profile-menu")).toBeVisible();
     await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Ready");
 
@@ -47,7 +47,7 @@ test.describe("ION DEX smoke", () => {
     }
   });
 
-  test("top navigation opens business page shells", async ({ page }) => {
+  test("top navigation opens business pages", async ({ page }) => {
     await page.goto("/");
 
     const pages = [
@@ -68,7 +68,18 @@ test.describe("ION DEX smoke", () => {
     }
   });
 
-  test("trade page validates and drafts a limit order", async ({ page }) => {
+  test("trade page shows professional desk modules", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("nav-trade").click();
+
+    await expect(page.getByTestId("trade-chart")).toBeVisible();
+    await expect(page.getByTestId("trade-orderbook")).toBeVisible();
+    await expect(page.getByTestId("trade-market-trades")).toBeVisible();
+    await expect(page.getByTestId("trade-history")).toBeVisible();
+    await expect(page.getByText("TWAP guard active")).toBeVisible();
+  });
+
+  test("trade page validates and prepares a limit order", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-trade").click();
 
@@ -83,10 +94,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("trade-submit")).toBeEnabled();
 
     await page.getByTestId("trade-submit").click();
-    await expect(page.getByTestId("trade-confirmation")).toContainText("Draft order ready");
+    await expect(page.getByTestId("trade-confirmation")).toContainText("Order review ready");
   });
 
-  test("grid page validates bounds and drafts a strategy", async ({ page }) => {
+  test("grid page validates bounds and prepares a strategy", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-grid").click();
 
@@ -106,10 +117,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("grid-submit")).toBeEnabled();
 
     await page.getByTestId("grid-submit").click();
-    await expect(page.getByTestId("grid-confirmation")).toContainText("Strategy draft ready");
+    await expect(page.getByTestId("grid-confirmation")).toContainText("Strategy review ready");
   });
 
-  test("pool page validates slippage and drafts liquidity mint", async ({ page }) => {
+  test("pool page validates slippage and prepares liquidity mint", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-pool").click();
 
@@ -126,10 +137,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-submit")).toBeEnabled();
 
     await page.getByTestId("pool-submit").click();
-    await expect(page.getByTestId("pool-confirmation")).toContainText("Liquidity draft ready");
+    await expect(page.getByTestId("pool-confirmation")).toContainText("Liquidity review ready");
   });
 
-  test("stake page drafts stake and unstake payloads", async ({ page }) => {
+  test("stake page prepares stake and unstake payloads", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-stake").click();
 
@@ -141,7 +152,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await page.getByTestId("stake-submit").click();
-    await expect(page.getByTestId("stake-confirmation")).toContainText("Stake draft ready");
+    await expect(page.getByTestId("stake-confirmation")).toContainText("Stake review ready");
 
     await page.getByTestId("stake-mode-unstake").click();
     await page.getByTestId("stake-amount").fill("100");
@@ -149,10 +160,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await page.getByTestId("stake-submit").click();
-    await expect(page.getByTestId("stake-confirmation")).toContainText("Unstake draft ready");
+    await expect(page.getByTestId("stake-confirmation")).toContainText("Unstake review ready");
   });
 
-  test("bridge page validates destination memo and drafts sweep", async ({ page }) => {
+  test("bridge page validates destination memo and prepares sweep", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-bridge").click();
 
@@ -168,10 +179,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("bridge-submit")).toBeEnabled();
 
     await page.getByTestId("bridge-submit").click();
-    await expect(page.getByTestId("bridge-confirmation")).toContainText("Bridge transfer draft ready");
+    await expect(page.getByTestId("bridge-confirmation")).toContainText("Bridge transfer review ready");
   });
 
-  test("burn page enforces memo length and drafts narrative", async ({ page }) => {
+  test("burn page enforces memo length and prepares narrative", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-burn").click();
 
@@ -186,10 +197,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("burn-submit")).toBeEnabled();
 
     await page.getByTestId("burn-submit").click();
-    await expect(page.getByTestId("burn-confirmation")).toContainText("Burn analytics draft ready");
+    await expect(page.getByTestId("burn-confirmation")).toContainText("Burn analytics review ready");
   });
 
-  test("domain page validates label shape and drafts handshake", async ({ page }) => {
+  test("domain page validates label shape and prepares handshake", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-domain").click();
 
@@ -203,10 +214,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("domain-submit")).toBeEnabled();
 
     await page.getByTestId("domain-submit").click();
-    await expect(page.getByTestId("domain-confirmation")).toContainText("Domain handshake draft staged");
+    await expect(page.getByTestId("domain-confirmation")).toContainText("Domain handshake ready");
   });
 
-  test("ai page validates ticker and drafts sentinel brief", async ({ page }) => {
+  test("ai page validates ticker and prepares sentinel brief", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-ai").click();
 
@@ -220,6 +231,6 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("ai-preview")).toContainText("(1d,");
 
     await page.getByTestId("ai-submit").click();
-    await expect(page.getByTestId("ai-confirmation")).toContainText("AI sentinel brief draft ready");
+    await expect(page.getByTestId("ai-confirmation")).toContainText("AI Sentinel brief ready");
   });
 });

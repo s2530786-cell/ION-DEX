@@ -15,9 +15,9 @@ This document tracks the current verification baseline for ION DEX.
 ## Status
 
 1. Frontend UI: build plus Playwright smoke for 375, 768, and 1440 px viewports.
-2. Backend: minimal mock API gateway with health/config/tokens/tickers, API tests, and local stress smoke.
+2. Backend: minimal typed local API gateway with health/config/tokens/tickers, API tests, and local stress smoke.
 3. Smart contracts: pending contract workspace and test harness.
-4. Load tests: backend mock API stress smoke is wired; chain simulators and production-grade load tests remain pending.
+4. Load tests: backend local API stress smoke is wired; chain simulators and production-grade load tests remain pending.
 5. Deployment: pending testnet deployment scripts and rollback runbook.
 6. Security: npm high-severity audit is wired; XSS/CSRF and contract audit checks remain pending.
 

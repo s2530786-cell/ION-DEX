@@ -63,7 +63,7 @@ Staking analytics must show:
 - Official ION staking total.
 - ION DEX staking total.
 - LP staking total.
-- Future ecosystem staking total placeholder.
+- Future ecosystem staking total from a typed staking snapshot source once available.
 - Combined staking total.
 - APR, reward emissions, reward claimed, reward pending, and lock duration distribution.
 

@@ -127,7 +127,7 @@ Must include:
 - Official ION staking total.
 - DEX ION staking total.
 - LP staking total.
-- Future ecosystem staking placeholder.
+- Future ecosystem staking total from typed staking snapshots.
 - APR.
 - Claimable rewards.
 - Lock duration.
@@ -206,7 +206,7 @@ Must include:
 Must include:
 
 - Avatar picker.
-- NFT avatar support placeholder.
+- NFT avatar support via verified wallet/profile media source.
 - Wallet list.
 - Primary wallet.
 - `.ion` primary name.
@@ -241,9 +241,10 @@ Must include:
 - CMC data must be proxied by backend.
 - Chain analytics must come from indexer.
 - Contract state remains source of truth.
-- Frontend must not hardcode official addresses except test placeholders.
+- Frontend must not hardcode official addresses except reviewed test fixtures that cannot appear as production UI.
 - Domain transfer must re-resolve the domain before signing.
 - Identity status must be verified by backend or official identity SDK/API.
+- Empty data and pseudo-code are forbidden as product content. Product UI must be backed by typed backend responses, source adapters, cache, indexer/upstream APIs, or reviewed local seed data with provenance.
 
 ## Security Requirements
 

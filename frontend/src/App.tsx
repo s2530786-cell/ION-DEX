@@ -8,7 +8,11 @@ export function App() {
 
   return (
     <AppShell activePage={activePage} onPageChange={setActivePage}>
-      {activePage === "swap" ? <DashboardPage /> : <BusinessPage page={activePage} />}
+      {activePage === "swap" ? (
+        <DashboardPage onNavigate={setActivePage} />
+      ) : (
+        <BusinessPage page={activePage} />
+      )}
     </AppShell>
   );
 }

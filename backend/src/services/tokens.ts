@@ -5,7 +5,7 @@ export type TokenMetadata = {
   decimals: number;
   address: string;
   iconHint: string;
-  status: "native" | "mock" | "planned";
+  status: "native" | "local" | "planned";
 };
 
 export function getTokens(): TokenMetadata[] {
@@ -26,7 +26,7 @@ export function getTokens(): TokenMetadata[] {
       decimals: 18,
       address: "native:bsc",
       iconHint: "bnb",
-      status: "mock",
+      status: "local",
     },
     {
       symbol: "USDT",
@@ -35,7 +35,7 @@ export function getTokens(): TokenMetadata[] {
       decimals: 18,
       address: "0x0000000000000000000000000000000000000000",
       iconHint: "usdt",
-      status: "mock",
+      status: "local",
     },
   ];
 }

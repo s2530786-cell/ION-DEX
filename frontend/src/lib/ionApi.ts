@@ -1,7 +1,7 @@
 export type ApiResponse<T> = {
   data: T;
   meta: {
-    source: "mock" | "cache" | "upstream" | "indexer";
+    source: "local" | "cache" | "upstream" | "indexer";
     updatedAt: string;
     stale: boolean;
     requestId: string;

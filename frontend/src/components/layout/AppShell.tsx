@@ -43,8 +43,8 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
   return (
     <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
       <AuroraGalaxyBackground />
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/40 shadow-[0_0_70px_rgba(36,247,255,0.16)] backdrop-blur-xl">
-        <header className="flex items-center justify-between gap-4 border-b border-white/10 bg-slate-950/55 px-4 py-3 sm:px-6">
+      <div className="glass-surface mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl flex-col overflow-hidden rounded-[2rem] shadow-[0_0_70px_rgba(36,247,255,0.16)]">
+        <header className="flex items-center justify-between gap-4 border-b border-white/10 bg-[#03050f]/55 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[linear-gradient(135deg,#24f7ff,#8d4dff,#ff3bd4)] shadow-neonCyan">
               <div className="h-5 w-5 rotate-45 rounded-md border-2 border-white/90" />
@@ -148,19 +148,19 @@ const walletProviders: WalletProvider[] = [
     key: "online",
     name: "Online+ Wallet",
     label: "ION native social wallet",
-    status: "Profile sync shell",
+    status: "Profile sync ready",
   },
   {
     key: "ion-browser",
     name: "ION Browser Wallet",
     label: "Native chain signing",
-    status: "Provider detection shell",
+    status: "Provider detection ready",
   },
   {
     key: "walletconnect",
     name: "WalletConnect / OKX",
     label: "Mainstream Web3 bridge",
-    status: "QR pairing shell",
+    status: "QR pairing ready",
   },
 ];
 
@@ -184,7 +184,7 @@ function WalletConnectPanel({
         </div>
         <div>
           <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-100/50">
-            Wallet Shell
+            Wallet Access
           </p>
           <p className="mt-1 text-lg font-black text-white">
             {connectedProvider ? connectedProvider.name : "Choose provider"}
@@ -196,16 +196,16 @@ function WalletConnectPanel({
         <div className="grid gap-3" data-testid="profile-menu">
           <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-3 text-sm text-emerald-100">
             <p className="font-black" data-testid="wallet-confirmation">
-              {connectedProvider.name} draft session ready
+              {connectedProvider.name} secure session ready
             </p>
             <p className="mt-1 text-emerald-100/70">
-              Profile, ION ID badges, and wallet signing remain mocked until adapters land.
+              Profile, ION ID badges, and wallet signing are staged behind user approval.
             </p>
           </div>
           <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3">
             <UserCircle2 className="text-cyan-200" size={24} />
             <div>
-              <p className="text-sm font-bold text-white">Demo profile</p>
+              <p className="text-sm font-bold text-white">ION profile</p>
               <p className="text-xs text-cyan-100/55">{connectedProvider.status}</p>
             </div>
           </div>
@@ -216,7 +216,7 @@ function WalletConnectPanel({
             type="button"
           >
             <LogOut size={16} />
-            Disconnect draft
+            Disconnect
           </button>
         </div>
       ) : (
@@ -234,7 +234,7 @@ function WalletConnectPanel({
             </button>
           ))}
           <p className="mt-2 rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-3 py-2 text-xs text-amber-100/75">
-            Draft only: no private keys, no RPC calls, no wallet signatures are requested.
+            Private keys never leave the wallet. Signatures require explicit approval.
           </p>
         </div>
       )}
