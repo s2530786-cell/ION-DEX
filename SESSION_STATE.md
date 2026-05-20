@@ -160,6 +160,10 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `docs/23-security-audit-and-stress-sandbox.md` turns the framework into an execution checklist and sandbox plan.
   - `scripts/security-preflight.mjs` verifies security memory/docs/skills are present before high-risk work.
   - `scripts/dev-preflight.mjs` now requires the security framework.
+- Agent automatic workflow on 2026-05-20:
+  - `scripts/agent-workflow.mjs` orchestrates memory preflight, security preflight, SESSION_STATE next-action printout, and optional `verify-full` tiers (`memory` | `verify` | `strict`).
+  - `scripts/agent-verify.sh` is the POSIX non-interactive entry (same intent as `scripts/agent-verify.cmd`).
+  - `node scripts/agent-workflow.mjs --tier verify --execute` passed: encoding 100 files OK, backend 12 tests, stress OK, frontend 15 Playwright passed, audit high 0.
 - Quote / slippage / precision minimum loop completed on 2026-05-20:
   - `backend/src/lib/decimal.ts` uses BigInt floor math for decimal parsing/formatting and bps calculations.
   - `backend/src/services/quotes.ts` provides typed quote output with amount units, estimated output, minimum received, protocol fee, fee bps, slippage bps, price impact bps, route, precision, and provenance.
@@ -196,7 +200,8 @@ Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official s
 17. Official ION wallet injection（2026-05-20）：对齐 `ion-chrome-wallet`（`window.ionmask.ionconnect`）、`ion-browser-wallet`（`window.tonwallet.tonconnect`）、`ion-gateway` InjectedProvider；`frontend/src/lib/wallet/ion-official.ts` + `ion-bridge.ts`；TonConnect manifest `frontend/public/ionconnect-manifest.json`；`verify-full` 绿灯（backend 12、frontend 15）。
 18. TonConnect SDK + session watch（2026-05-20）：`@ion-gateway/sdk` 远程桥、`wallet-session-watch`、`subscribeIonConnectStatus`；`verify-full` 绿灯。
 19. TonConnect UI QR 模态（2026-05-20）：`@ion-gateway/ui-react` + `@ion-gateway/ui`；`IonConnectUiProvider` 共享 `getIonConnect()`；`IonConnectModalBridge` + `openIonConnectWalletModal()`；Profile Hub WalletConnect 优先应用内 QR，保留 universalLink 回退；`verify-full` 绿灯（backend 12、frontend 15、audit high 0）。
-20. Next：合约 minimum-output enforcement；`docs/10-ui-design-route.md` 共享玻璃 primitive；继续 liquid-glass 页面合规。
+20. Agent automatic workflow（2026-05-20）：`scripts/agent-workflow.mjs` + `scripts/agent-verify.sh`；开发前强制记忆库 preflight；`--tier verify --execute` 串联 `verify-full` 已绿灯。
+21. Next：合约 minimum-output enforcement；`docs/10-ui-design-route.md` 共享玻璃 primitive；继续 liquid-glass 页面合规（Grid/Pool/Bridge/Burn/Domain/AI）。
 
 ## Memory MCP Candidates
 
