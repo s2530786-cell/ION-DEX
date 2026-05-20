@@ -168,6 +168,7 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - Frontend Swap consumes the backend quote API and displays `bigint-floor / ION 9d`, protocol fee bps, route, minimum received, and price impact.
   - Backend tests cover exact 1 BNB / 1% slippage units: `protocolFeeUnits=266694352`, `estimatedOutputUnits=106411046511`, `minimumReceivedUnits=105346936045`; frontend E2E covers UI display `0.266694 ION (25 bps)` and `105.346936 ION`.
   - Verification passed after this correction: strict preflight, encoding, `frontend npm run verify` with 15 Playwright tests, and `bash scripts/verify-full.sh` with backend 8 tests, backend stress smoke, frontend 15 tests, and high audits at 0 vulnerabilities.
+  - Manual browser validation on `http://127.0.0.1:3001/` produced `/opt/cursor/artifacts/swap_min_received_fee_fix_walkthrough.mp4` and `/opt/cursor/artifacts/swap_min_received_fee_fix_final.webp`.
   - Remaining gaps: contract minimum-output enforcement, oracle/TWAP adapter, and MEV simulations wait for contract/oracle services.
 
 ## Current Blocker
