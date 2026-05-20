@@ -17,6 +17,8 @@ ION DEX must look and feel like a premium OKX Web3-style trading product for the
 - Dense professional trading layout, without copying OKX brand assets.
 - No rough placeholder cards, no plain unfinished panels, no user-facing `shell`, `draft`, `TBD`, or `Build Checklist` copy.
 - Flat table-line screens, grey strip segmented controls, compressed tiny typography, and plain engineering forms fail the design gate.
+- Empty data and pseudo-code are untouchable red lines. Product UI must be backed by concrete typed data integrations, reviewed local seed data, cache, indexer, or upstream/source adapters recorded in project memory.
+- Loading and error states are only real network/request lifecycle states; they must never be used to hide missing data integration.
 - Responsive layouts must be designed and verified at 375px, 768px, and 1440px.
 
 ## Mandatory Reading Before UI Development
@@ -44,11 +46,12 @@ Every implementation loop must follow this order:
 3. Design map: list the exact PRD modules that will be represented in the UI.
 4. Implement: use existing `NeonCard`, `NeonButton`, and `AuroraGalaxyBackground` first; add shared primitives only when they move the UI closer to the 4D liquid-glass reference style.
 5. Replace unfinished surfaces: remove visible `shell`, `draft`, `TBD`, and `Build Checklist` UI from the touched page.
-6. Visual self-check: compare the rendered result against the 4D liquid-glass / aurora galaxy / thick neon rim reference; reject flat table-line or grey-strip layouts.
-7. Verify states: cover default, hover/focus where practical, disabled, error, empty/loading once data is introduced.
-8. Verify breakpoints: 375px, 768px, 1440px.
-9. Run project verification: encoding, frontend verify, audit high, and full verification when required.
-10. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
+6. Data self-check: verify every displayed product value has a typed source from backend/data memory, source adapter, cache, indexer, upstream API, or reviewed local seed data. Reject pseudo-code and empty data.
+7. Visual self-check: compare the rendered result against the 4D liquid-glass / aurora galaxy / thick neon rim reference; reject flat table-line or grey-strip layouts.
+8. Verify states: cover default, hover/focus where practical, disabled, and real loading/error lifecycle states once data is introduced.
+9. Verify breakpoints: 375px, 768px, 1440px.
+10. Run project verification: encoding, frontend verify, audit high, and full verification when required.
+11. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
 
 `scripts/verify-full.cmd`, `scripts/verify-full.ps1`, `scripts/agent-verify.cmd`, and `scripts/verify-full-save-log.cmd --no-pause` must run the preflight automatically.
 
@@ -62,7 +65,7 @@ Every implementation loop must follow this order:
 
 ### 2. Dashboard
 
-- Replace the decorative chart with a real market surface using `lightweight-charts` or a faithful local mock data adapter.
+- Replace the decorative chart with a real market surface using `lightweight-charts` or a faithful reviewed local seed adapter that is clearly wired through typed data boundaries.
 - Make feature cards navigable.
 - Convert Swap from static placeholders to controlled inputs, quote preview, minimum received, ION fee, price impact, and disabled/error states.
 

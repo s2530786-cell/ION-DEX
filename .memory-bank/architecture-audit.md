@@ -14,6 +14,9 @@ Current enforced UI direction:
 - Use 3D floating cards and 3D icons for primary product surfaces.
 - Do not expose user-facing `mock`, `placeholder`, `shell`, `draft`, `TBD`, or `Build Checklist` copy.
 - Treat flat table-line screens, grey strip controls, compressed tiny text, and plain engineering forms as design failures even when functional tests pass.
+- Empty data and pseudo-code are untouchable red lines. UI must not ship empty product panels, fake lists, fake values, or pseudo-code-driven surfaces.
+- Loading and error states are allowed only for real request lifecycle behavior. They must never hide missing concrete data integration.
+- Every product value shown in UI must come from a typed backend/data integration, source adapter, cache, indexer/upstream API, or reviewed local seed data with provenance.
 
 Implementation memory:
 
@@ -42,6 +45,25 @@ The user provided reference images showing the desired UI style:
 - Product pages such as Pool, Bridge, Burn, and Domain should look like premium glowing glass objects, not flat web panels.
 
 Critical lesson: an implementation can pass automated tests and still fail the UI design standard. Visual self-verification against this style is mandatory before claiming UI completion.
+
+## 2026-05-20 User correction: no empty data or pseudo-code
+
+The user explicitly forbids empty data and pseudo-code as UI content. This is an untouchable red line.
+
+Concrete data integration memory:
+
+- Market/ticker/quote data: backend gateway -> market service -> CMC or reviewed cache/upstream adapter.
+- ION chain analytics: ION indexer / official HTTP API, with source, timestamp, stale flag, and request ID.
+- BSC burn and bridge data: BSC RPC/indexer or bridge service adapters, never hardcoded narrative.
+- Domain data: ION DNS/domain service and official DNS references.
+- Staking/treasury data: staking snapshots, treasury accounting, source labels, and reconciliation jobs.
+- Wallet/profile data: supported wallet adapters and profile service, never fake profile panels.
+
+Required UI behavior:
+
+- If integration is not ready, do not present a product panel as complete.
+- If an upstream request is loading or failing, show lifecycle state tied to the real request and its source.
+- Do not create empty lists, fake orders, fake pool rows, fake bridge status, or pseudo-code UI to satisfy visual layout.
 
 Verification expectation:
 

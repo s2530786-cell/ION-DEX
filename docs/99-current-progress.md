@@ -2,6 +2,7 @@
 
 ## Latest Verified Status
 
+- **Data red-line correction（2026-05-20）**：用户明确纠正：空数据和伪代码是不可触碰红线，不能作为产品 UI 内容；加载/错误态只能是真实请求生命周期状态，不能掩盖缺失的数据对接。已写入 `.cursor/skills/ion-web3-ui/SKILL.md`、`.cursor/skills/ion-data-backend/SKILL.md`、`docs/10-ui-design-route.md`、`docs/05-product-prd.md`、`docs/09-reference-architecture.md`、`.memory-bank/architecture-audit.md` 和 `SESSION_STATE.md`。后续产品值必须来自 typed backend/data integration、source adapter、cache、indexer/upstream API 或有 provenance 的 reviewed local seed data。
 - **UI reference-style correction（2026-05-20）**：用户明确纠正：目标不是普通 neon table UI，而是参考图级 4D liquid-glass 风格：银河/极光背景、厚 cyan/magenta/violet 霓虹光边、透明高光玻璃卡、柔性/异形圆角轮廓、3D 功能图标。已写入 `.cursor/skills/ion-web3-ui/SKILL.md`、`docs/10-ui-design-route.md`、`.memory-bank/architecture-audit.md` 和 `SESSION_STATE.md`。后续 UI 自检必须对照该视觉风格；扁平表格线、灰条控件、小字压缩、普通工程表单即使测试通过也判定为设计失败。
 - **Trade desk UI continuation（2026-05-20）**：继续 UI correction route，将 `Trade` 从通用业务卡片升级为独立 OKX-style 专业交易台：顶部行情状态卡、3D K 线/深度视觉、`TWAP guard active`、右侧 Limit order、Order book、Market trades、Orders and risk。Playwright 新增 `trade page shows professional desk modules`，前端验证现在 **14 passed**。浏览器手动验证完成并录制 `/opt/cursor/artifacts/trade_desk_ui_walkthrough.mp4`；关键截图保存为 `/opt/cursor/artifacts/trade_desk_final.webp` 和 `/opt/cursor/artifacts/trade_order_review.webp`。100-pass 门禁完成：`PASSED=100`，`FAILED=0`，`RESULT=GREEN`，摘要保存为 `/opt/cursor/artifacts/trade_desk_verify_100_summary.txt`。
 - **swap.ion UI conformance（2026-05-20）**：按用户要求重做首页视觉合规层：`AuroraGalaxyBackground` 改为 Canvas 240 粒子场 + #03050f 暗底；`DashboardPage` 改为 `swap.ion` ION Chain native DEX surface，包含玻璃拟态卡、流光霓虹边框、三层市场深度、3D 浮动交易图和受控 Swap 报价；清理 `frontend/src` 可见 `mock/placeholder/shell/draft/TBD/Build Checklist` 文案，`ION_UI_STRICT=1 node scripts/dev-preflight.mjs` 通过。浏览器手动验证完成并录制 `/opt/cursor/artifacts/swap_ion_ui_conformance_walkthrough.mp4`；关键截图保存为 `/opt/cursor/artifacts/swap_ion_ui_conformance_final.webp` 和 `/opt/cursor/artifacts/swap_ion_ui_quote_interaction.webp`。`.memory-bank/architecture-audit.md` 已补充 UI 合规审计记忆。
@@ -122,7 +123,7 @@ OK - All files are UTF-8 without BOM, no NUL bytes.
 - Added external reference architecture index:
   - `docs/09-reference-architecture.md`
   - Maps backend gateway patterns, blockchain development references, AI agent references, advanced web design, and AI media repositories into ION DEX phases.
-  - Establishes the immediate Phase 3 recommendation: a minimal typed backend API gateway/BFF with health, config, token list, ticker, burn, staking, bridge, domain, and profile mock endpoints.
+  - Establishes the immediate Phase 3 recommendation: a minimal typed backend API gateway/BFF with health, config, token list, ticker, burn, staking, bridge, domain, and profile local endpoints.
 - Completed the interactive `Trade` and `Grid` frontend milestone:
   - `Trade` now has side/order controls, amount, price, slippage validation, preview, disabled submit state, and wallet-signing draft confirmation.
   - `Grid` now has mode, price bounds, grid count, investment validation, preview, disabled submit state, and AI Sentinel gated draft confirmation.
@@ -153,7 +154,7 @@ OK - All files are UTF-8 without BOM, no NUL bytes.
 - Memory Bank MCP config is written but tools are not yet verified. Cursor needs MCP reload/restart.
 - UI has initial dashboard plus business page shells. `Trade`, `Grid`, `Pool`, `Stake`, `Bridge`, `Burn`, `Domain`, and `AI` now have interactive validated draft flows; wallet/profile is a draft shell with no real wallet SDK yet.
 - After pulling changes, run locally: `cd frontend && npm install && npx playwright install chromium && npm run verify` (agent shell may not update `package-lock.json` in this environment).
-- Visual regression / pixel-diff vs design mockups not yet set up.
+- Visual regression / pixel-diff vs approved visual references not yet set up.
 - Smart contracts and backend services are not yet implemented.
 - ION official codebase path confirmed: `D:/openclaw-tools/ion`.
 - Confirmed remote: `https://github.com/ice-blockchain/ion`.

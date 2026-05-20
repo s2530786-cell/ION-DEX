@@ -19,6 +19,8 @@ Use this skill for data and backend work around:
 
 ## Reliability Rules
 
+- Empty data and pseudo-code are forbidden as product content. If a source is not implemented, document the missing integration and do not let frontend present it as a completed product surface.
+- Reviewed local seed data may be used only when it is typed, source-labeled, deterministic, and explicitly part of the integration path; never call it production data.
 - Treat every external API as unreliable: add timeout, retry policy, rate-limit handling, and clear stale-data state.
 - Store source, timestamp, and confidence for every important data point.
 - Never mix unofficial values with official values without labeling provenance.

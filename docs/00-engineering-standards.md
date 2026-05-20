@@ -56,10 +56,10 @@
 | Dropdown | closed / open / hover item / keyboard nav / outside click |
 | Toast | success / warning / error / info / auto-dismiss / manual close |
 
-### 1.4 极端场景必测
-- 空数据（空列表、空交易历史、空收益曲线）
-- 加载态（骨架屏 ≥ 200ms 才显示，避免闪烁）
-- 错误态（网络错误、超时、4xx、5xx）
+### 1.4 数据与极端场景必测
+- **严禁空数据 / 伪代码 / 假列表作为产品内容**；没有具体数据对接时，不得把页面包装成已完成。
+- 加载态只允许绑定真实请求生命周期（骨架屏 ≥ 200ms 才显示，避免闪烁）
+- 错误态只允许绑定真实请求失败（网络错误、超时、4xx、5xx），并必须暴露来源和重试路径
 - 超长文本（地址、Token symbol、域名）必须截断 + tooltip
 - 注入测试（XSS 字符串、Emoji、Unicode 边界字符、RTL）
 
