@@ -1,13 +1,16 @@
-﻿# Architecture Audit Memory
+# Architecture Audit Memory
 
 ## Active Task Queue
 
-- [ ] **UI Visual Polish 鈥?Pixel Correction Protocol** 鈥?2026-05-21
+- [ ] **UI Visual Polish — Pixel Correction Protocol** — 2026-05-21
   - Rule file: `.cursor/rules/ion-visual-polish.mdc`
-  - DOM绂佹淇敼锛屽彧鏀笴SS銆?  - 姝ラ1: `.glass-surface` 鍔燬VG鍣偣绾圭悊 (opacity 0.05)
-  - 姝ラ2: 搴曞眰鍙戝厜灞俠lur 60px + 闈掆啋娲嬬孩娓愬彉
-  - 姝ラ3: 杈规border-image娓愬彉鎴厜 (rgba(255,255,255,0.4)鈫抰ransparent)
-  - 姝ラ4: 鐜荤拑鑳屾櫙鏀逛负 rgba(255,255,255,0.03)锛岀姝㈢伆鑹插簳鑹?  - 楠岃瘉: 鎴浘鈫扗evTools璋冮€忔槑搴︹啋瀵规瘮璁捐鍥锯啋涓嶈揪鏍囧洖淇?  - 淇敼鑼冨洿: `frontend/src/styles/global.css`
+  - DOM禁止修改，只改CSS。
+  - 步骤1: `.glass-surface` 加SVG噪点纹理 (opacity 0.05)
+  - 步骤2: 底层发光层blur 60px + 青→洋红渐变
+  - 步骤3: 边框border-image渐变截光 (rgba(255,255,255,0.4)→transparent)
+  - 步骤4: 玻璃背景改为 rgba(255,255,255,0.03)，禁止灰色底色
+  - 验证: 截图→DevTools调透明度→对比设计图→不达标回修
+  - 修改范围: `frontend/src/styles/global.css`
 
 ## 2026-05-20 UI conformance audit
 
