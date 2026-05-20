@@ -58,7 +58,7 @@ ION-native wallet injection (verified against official repos + ion-gateway SDK):
 - **Detection contract** (`ice-blockchain/ion-gateway` `InjectedProvider`): `injectedWalletKey in window` and `window[key].ionconnect` with `walletInfo` metadata. Profile Hub also accepts legacy `tonconnect` on `tonwallet`.
 - **Connection**: TonConnect `restoreConnection` then `connect` with `manifestUrl` → `/ionconnect-manifest.json`, item `ton_addr`. Chain IDs: `-239` mainnet, `-3` testnet.
 - **Do not use** guessed globals `window.ionWallet`, `window.iceWallet`, or `window.ionBrowserWallet` — not present in official sources.
-- WalletConnect / OKX QR path: still pending SDK wiring.
+- WalletConnect / TonConnect remote: `@ion-gateway/sdk` + `@ion-gateway/ui-react` (`TonConnectUIProvider`, `useTonConnectModal` QR modal); fallback `universalLink` tab when modal bridge unavailable.
 
 ## Environment Variables
 

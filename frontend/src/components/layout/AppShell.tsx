@@ -1,6 +1,7 @@
 import { Bell, Globe2, ShieldCheck, UserRound } from "lucide-react";
 import { useEffect, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
+import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
 import { ProfileHub } from "@/components/layout/ProfileHub";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import {
@@ -86,6 +87,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 
   return (
     <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
+      <IonConnectModalBridge />
       <AuroraGalaxyBackground />
       <div className="glass-surface mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl flex-col overflow-hidden rounded-[2rem] shadow-[0_0_70px_rgba(36,247,255,0.16)]">
         <header className="flex items-center justify-between gap-4 border-b border-white/10 bg-[#03050f]/55 px-4 py-3 sm:px-6">

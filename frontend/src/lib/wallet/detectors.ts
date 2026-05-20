@@ -137,7 +137,7 @@ function detectWalletConnect(): WalletProbeResult {
     "@ion-gateway/sdk TonConnect bridge",
     null,
     available
-      ? "TonConnect remote bridge ready — opens mobile / universal wallet link"
+      ? "TonConnect remote bridge ready — in-app QR modal via @ion-gateway/ui-react"
       : "TonConnect SDK unavailable during SSR",
   );
 }

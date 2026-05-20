@@ -194,7 +194,9 @@ Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official s
 15. Profile Hub（2026-05-20）：右上角头像入口升级为 typed Profile Hub：`GET /api/profile/session`、10 钱包列表（ION native + 7 EVM 检测器）、头像/KYC/`.ion`/偏好/快捷入口/连接后会话检测；前端 `ProfileHub.tsx` + 隐私模式 ticker 遮罩。单次 `verify-full` 绿灯（backend 10 tests、frontend 15 passed、audit high 0）。`verify-e2e.mjs` 会在 :8787 旧网关缺少 profile 路由时自动重启。
 16. Real wallet detectors（2026-05-20）：`frontend/src/lib/wallet` 浏览器探测 + EVM `eth_requestAccounts`/`eth_chainId`；Profile Hub 显示 Installed/Not detected；live address/chain 合并进 `/api/profile/session`；`realWalletAdapters: true`；`verify-full` 绿灯（backend 11、frontend 15）。
 17. Official ION wallet injection（2026-05-20）：对齐 `ion-chrome-wallet`（`window.ionmask.ionconnect`）、`ion-browser-wallet`（`window.tonwallet.tonconnect`）、`ion-gateway` InjectedProvider；`frontend/src/lib/wallet/ion-official.ts` + `ion-bridge.ts`；TonConnect manifest `frontend/public/ionconnect-manifest.json`；`verify-full` 绿灯（backend 12、frontend 15）。
-18. Next：WalletConnect QR SDK（`@ion-gateway/ui`）、TonConnect 事件监听（disconnect/accountsChanged）、合约 minimum-output enforcement；继续 liquid-glass 页面合规。
+18. TonConnect SDK + session watch（2026-05-20）：`@ion-gateway/sdk` 远程桥、`wallet-session-watch`、`subscribeIonConnectStatus`；`verify-full` 绿灯。
+19. TonConnect UI QR 模态（2026-05-20）：`@ion-gateway/ui-react` + `@ion-gateway/ui`；`IonConnectUiProvider` 共享 `getIonConnect()`；`IonConnectModalBridge` + `openIonConnectWalletModal()`；Profile Hub WalletConnect 优先应用内 QR，保留 universalLink 回退；`verify-full` 绿灯（backend 12、frontend 15、audit high 0）。
+20. Next：合约 minimum-output enforcement；`docs/10-ui-design-route.md` 共享玻璃 primitive；继续 liquid-glass 页面合规。
 
 ## Memory MCP Candidates
 

@@ -4,21 +4,15 @@ import TonConnect, {
   type Wallet,
   type WalletInfo,
 } from "@ion-gateway/sdk";
+import { ionConnectManifestUrl } from "./ion-connect-manifest.js";
 import { inferAddressFormat } from "./network.js";
 import type { LiveWalletConnection } from "./types.js";
 
 let connector: TonConnect | null = null;
 
-function manifestUrl(): string {
-  if (typeof window === "undefined") {
-    return "https://ion.dex/ionconnect-manifest.json";
-  }
-  return `${window.location.origin}/ionconnect-manifest.json`;
-}
-
 export function getIonConnect(): TonConnect {
   if (!connector) {
-    connector = new TonConnect({ manifestUrl: manifestUrl() });
+    connector = new TonConnect({ manifestUrl: ionConnectManifestUrl() });
   }
   return connector;
 }

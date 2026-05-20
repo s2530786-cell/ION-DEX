@@ -1,4 +1,5 @@
 import { connectOfficialNativeWallet } from "./ion-bridge.js";
+import { openIonConnectWalletModal } from "./ion-connect-modal.js";
 import { startTonConnectRemoteSession } from "./ion-connect-sdk.js";
 import { chainIdToNetworkLabel, inferAddressFormat, parseChainIdHex } from "./network.js";
 import { getProbeForKey, isEvmProviderKey, scanBrowserWallets } from "./detectors.js";
@@ -51,6 +52,15 @@ export async function connectWalletProvider(key: WalletProviderKey): Promise<Wal
   }
 
   if (probe.key === "walletconnect") {
+    if (openIonConnectWalletModal()) {
+      return {
+        ok: false,
+        code: "awaiting_wallet",
+        message: "Scan the QR code in the connect modal, then return to ION DEX.",
+        walletName: "TonConnect",
+      };
+    }
+
     const result = await startTonConnectRemoteSession();
     if (result.status === "connected") {
       return { ok: true, connection: result.connection };

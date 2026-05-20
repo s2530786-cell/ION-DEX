@@ -60,6 +60,13 @@ export function ProfileHub({
   const [walletConnectName, setWalletConnectName] = useState<string | null>(null);
 
   useEffect(() => {
+    if (connectedProviderKey === "walletconnect" && liveConnection) {
+      setWalletConnectLink(null);
+      setWalletConnectName(null);
+    }
+  }, [connectedProviderKey, liveConnection]);
+
+  useEffect(() => {
     if (!open) {
       return;
     }
@@ -135,10 +142,14 @@ export function ProfileHub({
           onConnect(key, result.connection);
           return;
         }
-        if (result.code === "awaiting_wallet" && result.universalLink) {
-          setWalletConnectLink(result.universalLink);
-          setWalletConnectName(result.walletName ?? "mobile wallet");
-          window.open(result.universalLink, "_blank", "noopener,noreferrer");
+        if (result.code === "awaiting_wallet") {
+          setWalletConnectName(result.walletName ?? "TonConnect");
+          if (result.universalLink) {
+            setWalletConnectLink(result.universalLink);
+            window.open(result.universalLink, "_blank", "noopener,noreferrer");
+          } else {
+            setWalletConnectLink(null);
+          }
           return;
         }
         setConnectError(result.message);
@@ -151,6 +162,16 @@ export function ProfileHub({
         setConnectingKey(null);
         if (result.ok) {
           onConnect(key, result.connection);
+          return;
+        }
+        if (result.code === "awaiting_wallet") {
+          setWalletConnectName(result.walletName ?? "TonConnect");
+          if (result.universalLink) {
+            setWalletConnectLink(result.universalLink);
+            window.open(result.universalLink, "_blank", "noopener,noreferrer");
+          } else {
+            setWalletConnectLink(null);
+          }
           return;
         }
         setConnectError(result.message);
@@ -309,7 +330,7 @@ export function ProfileHub({
             </section>
           ) : null}
 
-          {walletConnectLink ? (
+          {walletConnectName ? (
             <section
               className="rounded-2xl border border-violet-300/25 bg-violet-400/[0.08] p-3"
               data-testid="walletconnect-awaiting"
@@ -318,16 +339,20 @@ export function ProfileHub({
                 TonConnect · awaiting {walletConnectName}
               </p>
               <p className="mt-1 text-[11px] text-violet-50/80">
-                Approve the connection in your wallet app, then return here. Session updates automatically.
+                {walletConnectLink
+                  ? "Approve the connection in your wallet app, then return here. Session updates automatically."
+                  : "Use the QR connect modal to scan and approve. Session updates automatically when linked."}
               </p>
-              <a
-                className="mt-2 block break-all text-xs font-bold text-cyan-200 underline"
-                href={walletConnectLink}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Open wallet link
-              </a>
+              {walletConnectLink ? (
+                <a
+                  className="mt-2 block break-all text-xs font-bold text-cyan-200 underline"
+                  href={walletConnectLink}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Open wallet link
+                </a>
+              ) : null}
             </section>
           ) : null}
 
