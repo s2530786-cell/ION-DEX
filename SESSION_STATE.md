@@ -174,6 +174,12 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - Fixed frontend E2E runner to avoid orphaned Vite preview processes during repeated verification.
   - Quote precision 100-pass gate completed after the runner fix: `PASSED=100`, `FAILED=0`, `RESULT=GREEN`.
   - Remaining gaps: contract minimum-output enforcement, oracle/TWAP adapter, and MEV simulations wait for contract/oracle services.
+- Minimum-output + liquid-glass desks（2026-05-20）：
+  - `backend/src/lib/minimum-output.ts` 与 `quotes.ts` 共享公式；`contracts/bsc/IonSwapRouter.sol` + `IonSwapPoolMock`；`docs/24-swap-router-minimum-output.md`。
+  - `frontend/src/components/ui/glass/`：`GlassPanel`、`MetricTile`、`PageHero`、`ChartFrame`、`StatusPill`、`RiskNotice`。
+  - `BusinessPages.tsx`：`GridDeskPage`、`PoolDeskPage`、`BridgeDeskPage`、`BurnDeskPage`、`DomainDeskPage`、`AIDeskPage`、`StakeDeskPage`（liquid-glass 台面 + local-seed 标注）。
+  - `scripts/verify-contracts.mjs` 已接入 `scripts/verify-full.sh`（step 2b）；本环境 `forge` 未安装时 SKIP Solidity 测试。
+  - `node scripts/agent-workflow.mjs --tier verify --execute` 绿灯：encoding 127 files OK；backend **14** tests；contract TS math OK；frontend **16** Playwright passed；audit high **0**。
 
 ## Current Blocker
 
@@ -201,7 +207,8 @@ Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official s
 18. TonConnect SDK + session watch（2026-05-20）：`@ion-gateway/sdk` 远程桥、`wallet-session-watch`、`subscribeIonConnectStatus`；`verify-full` 绿灯。
 19. TonConnect UI QR 模态（2026-05-20）：`@ion-gateway/ui-react` + `@ion-gateway/ui`；`IonConnectUiProvider` 共享 `getIonConnect()`；`IonConnectModalBridge` + `openIonConnectWalletModal()`；Profile Hub WalletConnect 优先应用内 QR，保留 universalLink 回退；`verify-full` 绿灯（backend 12、frontend 15、audit high 0）。
 20. Agent automatic workflow（2026-05-20）：`scripts/agent-workflow.mjs` + `scripts/agent-verify.sh`；开发前强制记忆库 preflight；`--tier verify --execute` 串联 `verify-full` 已绿灯。
-21. Next：合约 minimum-output enforcement；`docs/10-ui-design-route.md` 共享玻璃 primitive；继续 liquid-glass 页面合规（Grid/Pool/Bridge/Burn/Domain/AI）。
+21. Minimum-output + liquid-glass desks 已落地并 `verify-full` 绿灯（2026-05-20）；见上条 Current State。
+22. Next：将 glass primitives 复用到 Dashboard/Trade 共享层；`burn-service` / `bridge-status-service` / `ai-market-service` 接线替换 local-seed；部署真实 AMM 并在 calldata 传入 `minimumReceivedUnits`；有 `forge` 的环境跑 `cd contracts && forge test`；重大里程碑后重跑 100-pass 门禁。
 
 ## Memory MCP Candidates
 

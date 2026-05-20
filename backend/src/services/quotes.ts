@@ -1,4 +1,5 @@
-import { applyBpsFloor, formatDecimalUnits, parseDecimalUnits, pow10 } from "../lib/decimal.js";
+import { formatDecimalUnits, parseDecimalUnits, pow10 } from "../lib/decimal.js";
+import { computeMinimumOutputUnits, PROTOCOL_FEE_BPS } from "../lib/minimum-output.js";
 import { getTokens, type TokenMetadata } from "./tokens.js";
 
 export type QuotePayload = {
@@ -35,8 +36,6 @@ export type QuoteInput = {
 };
 
 const MICRO_USD = 1_000_000n;
-const PROTOCOL_FEE_BPS = 25;
-
 const priceUsdMicro: Record<string, bigint> = {
   BNB: 642_200_000n,
   ION: 6_020_000n,
@@ -101,10 +100,8 @@ export function createQuote(input: QuoteInput): QuotePayload {
   const grossOutputUnits =
     (amountInUnits * inputPrice * pow10(outputToken.decimals)) /
     (pow10(inputToken.decimals) * outputPrice);
-  const protocolFeeUnits = applyBpsFloor(grossOutputUnits, PROTOCOL_FEE_BPS);
-  const estimatedOutputUnits = grossOutputUnits - protocolFeeUnits;
-  const minimumReceivedUnits =
-    (estimatedOutputUnits * BigInt(10_000 - input.slippageBps)) / 10_000n;
+  const { estimatedOutputUnits, minimumOutputUnits: minimumReceivedUnits, protocolFeeUnits } =
+    computeMinimumOutputUnits(grossOutputUnits, input.slippageBps, PROTOCOL_FEE_BPS);
   const amountUsdMicro = (amountInUnits * inputPrice) / pow10(inputToken.decimals);
 
   return {

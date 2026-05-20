@@ -110,6 +110,37 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByText("TWAP guard active")).toBeVisible();
   });
 
+  test("grid pool bridge burn domain ai pages show liquid-glass desk modules", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByTestId("nav-grid").click();
+    await expect(page.getByTestId("grid-range-chart")).toBeVisible();
+    await expect(page.getByTestId("grid-templates")).toBeVisible();
+    await expect(page.getByTestId("grid-form")).toBeVisible();
+
+    await page.getByTestId("nav-pool").click();
+    await expect(page.getByTestId("pool-list")).toBeVisible();
+    await expect(page.getByTestId("pool-fee-chart")).toBeVisible();
+    await expect(page.getByTestId("pool-form")).toBeVisible();
+
+    await page.getByTestId("nav-bridge").click();
+    await expect(page.getByTestId("bridge-status-tracker")).toBeVisible();
+    await expect(page.getByTestId("bridge-steps")).toBeVisible();
+
+    await page.getByTestId("nav-burn").click();
+    await expect(page.getByTestId("burn-trend-chart")).toBeVisible();
+    await expect(page.getByTestId("burn-chain-split")).toBeVisible();
+
+    await page.getByTestId("nav-domain").click();
+    await expect(page.getByTestId("domain-marketplace")).toBeVisible();
+    await expect(page.getByTestId("domain-phishing-warn")).toBeVisible();
+
+    await page.getByTestId("nav-ai").click();
+    await expect(page.getByTestId("ai-market-summary")).toBeVisible();
+    await expect(page.getByTestId("ai-signals")).toBeVisible();
+    await expect(page.getByTestId("ai-disclaimer")).toBeVisible();
+  });
+
   test("trade page validates and prepares a limit order", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-trade").click();
