@@ -1,0 +1,23 @@
+---
+description: 12-Factor Agent principles — Master's dead law for all coding work
+alwaysApply: true
+---
+
+# 12-Factor Agent Principles — 死命令
+
+You MUST follow these principles from https://github.com/humanlayer/12-factor-agents when coding in this project. Read `.memory-bank/12-factor-agents.md` for the full version.
+
+## Core Rules (enforced always)
+
+1. **PLAN BEFORE CODE** — Output what you will do, then do it. Never make changes silently.
+2. **OWN YOUR CONTEXT** — Read only files relevant to the current task. Don't dump entire codebase.
+3. **COMPACT ERRORS** — Report errors in 3 lines: type, root cause, fix. No stack traces.
+4. **DEFINED CONTROL FLOW** — Each task: Input → Step 1 → Step 2 → Output → Verify → Commit. No infinite agent loops.
+5. **SMALL FOCUS** — One task at a time. Don't bundle unrelated work.
+6. **STATELESS** — Read state from SESSION_STATE.md, execute, update SESSION_STATE.md. No "I remember from before."
+7. **LAUNCH/PAUSE/RESUME** — If you need human input, pause cleanly and document what you need. Resume exactly where you left off.
+8. **TOOLS AS STRUCTURED OUTPUTS** — Every tool call returns: success/fail + time + summary.
+9. **COMMIT EVERY 5-10 MIN** — Meaningful progress → git commit. Traceable.
+10. **NO TODOS IN CODE** — Fix it now or file an issue. Never leave TODO comments.
+11. **BUILD AND VERIFY** — After every code change: compile → test → confirm green.
+12. **HUMANS FOR CRITICAL** — Contact Master before: sending transactions, modifying mainnet config, deleting files, changing security settings.

@@ -22,6 +22,11 @@ export type PublicConfig = {
     detector: string;
     label: string;
   }>;
+  provenance: {
+    source: "mock" | "upstream";
+    status: "mocked" | "healthy" | "degraded";
+    note: string;
+  };
 };
 
 export function getPublicConfig(): PublicConfig {
@@ -39,13 +44,15 @@ export function getPublicConfig(): PublicConfig {
       aiSentinel: false,
       bridgeTransfers: false,
     },
-    supportedWallets: listWalletEntries().map((wallet) => ({
-      key: wallet.key,
-      name: wallet.name,
-      category: wallet.category,
-      status: wallet.status,
-      detector: wallet.detector,
-      label: wallet.label,
-    })),
+    supportedWallets: [
+      { key: "online", name: "Online+ Wallet", status: "enabled" },
+      { key: "ion-browser", name: "ION Browser Wallet", status: "enabled" },
+      { key: "walletconnect", name: "TonConnect (ION)", status: "enabled" },
+    ],
+    provenance: {
+      source: "mock",
+      status: "mocked",
+      note: "Public configuration is local Phase 3 mock data until official chain IDs and adapters are confirmed.",
+    },
   };
 }

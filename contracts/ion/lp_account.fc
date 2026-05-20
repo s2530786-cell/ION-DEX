@@ -1,0 +1,133 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::user_address;
+global slice storage::pool_address;
+global int storage::amount0;
+global int storage::amount1;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::user_address = ds~load_msg_addr();
+    storage::pool_address = ds~load_msg_addr();
+    storage::amount0 = ds~load_coins();
+    storage::amount1 = ds~load_coins();
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::user_address)
+        .store_slice(storage::pool_address)
+        .store_coins(storage::amount0)
+        .store_coins(storage::amount1)
+    .end_cell());
+}
+
+;; ── Message handler: direct add liquidity ──────────────────────
+
+() handle_direct_add_liquidity() impure {
+    slice body = ctx.at(BODY);
+    int query_id = body~load_uint(64);
+    int am0 = body~load_coins();
+    int am1 = body~load_coins();
+    int min_lp_out = body~load_coins();
+    int fwd_amount = body~load_coins();
+    slice to_user = body~load_msg_addr();
+
+    throw_unless(error::invalid_amount, am0 > 0 & am1 > 0);
+
+    storage::amount0 += am0;
+    storage::amount1 += am1;
+    storage::save();
+
+    ;; Forward to pool for LP minting
+    ;; Pool contract handles the actual LP token minting
+    reserves::max_balance(storage_fee::lp_account);
+    msgs::send_simple(
+        0,
+        storage::pool_address,
+        begin_cell()
+            .store_uint(op::cb_add_liquidity, 32)
+            .store_uint(query_id, 64)
+            .store_coins(storage::amount0)
+            .store_coins(storage::amount1)
+            .store_slice(storage::user_address)
+            .store_coins(min_lp_out)
+            .store_coins(fwd_amount)
+            .store_uint(0, 1)  ;; no custom_payload
+            .store_ref(begin_cell()
+                .store_slice(to_user)
+                .store_slice(storage::user_address)  ;; refund_address
+                .store_slice(storage::user_address)  ;; excess_address
+            .end_cell())
+        .end_cell(),
+        CARRY_ALL_BALANCE);
+
+    ;; Reset tracked amounts
+    storage::amount0 = 0;
+    storage::amount1 = 0;
+}
+
+;; ── Message handler: refund ────────────────────────────────────
+
+() handle_refund() impure {
+    int amount0 = storage::amount0;
+    int amount1 = storage::amount1;
+    storage::amount0 = 0;
+    storage::amount1 = 0;
+    storage::save();
+
+    reserves::max_balance(storage_fee::lp_account);
+
+    ;; Send refund message to user
+    msgs::send_simple(
+        0,
+        storage::user_address,
+        begin_cell()
+            .store_uint(op::refund_ok, 32)
+            .store_uint(0, 64)
+            .store_coins(amount0)
+            .store_coins(amount1)
+        .end_cell(),
+        QCARRY_ALL_BALANCE);
+}
+
+;; ── Main entry ─────────────────────────────────────────────────
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx.at(IS_BOUNCED) {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx.at(SENDER).address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx.at(OPCODE) == op::direct_add_liquidity {
+        handle_direct_add_liquidity();
+        return ();
+    }
+
+    if ctx.at(OPCODE) == op::cb_refund_me {
+        handle_refund();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+;; ── Getters ────────────────────────────────────────────────────
+
+() get_lp_account_data() method_id {
+    storage::load();
+    return (
+        storage::user_address,
+        storage::pool_address,
+        storage::amount0,
+        storage::amount1
+    );
+}
