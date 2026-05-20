@@ -2,6 +2,21 @@
 
 ## Active Task Queue
 
+- [ ] **🔴 PRIORITY 1 — UI 自我识别差距 + 对照设计图修正** — 2026-05-21 06:33 Master指令
+  - **目标**: Cursor 自己看图找差距，不靠人工逐像素纠正
+  - **步骤1**: 自动截图当前 UI（`npx playwright screenshot` 或 DevTools）
+  - **步骤2**: 对照下方 2026-05-20 设计标准逐项比对：
+    - 是否有 4D liquid-glass 厚青光边框？→ 缺则补
+    - 是否有 galaxy/aurora 粒子背景？→ 200+粒子达标？
+    - 玻璃卡片边缘是否 irregular/warped（不规则轮廓）？→ 平直则不合格
+    - 3D 图标是否浮在卡片内部？→ 缺则加
+    - 是否有灰色底色/平直表格/压缩小字？→ 有则违规，必须改
+    - Pool/Bridge/Burn/Domain 页面是否像 premium glowing glass objects？→ 不像则回炉
+  - **步骤3**: 列出差距清单（markdown checklist in `.cursor/logs/ui-gap-YYYY-MM-DD.md`）
+  - **步骤4**: 逐项修 CSS → 截图对比 → 未达标回修 → 全绿则标记 done
+  - **死规则**: DOM禁止修改，只动CSS。背景必须 `#03050f`。禁灰色底色。禁mock/placeholder文字。
+  - **验证**: 修改前后截图对比存入 `.cursor/artifacts/ui-diff-*.png`
+
 - [ ] **UI Visual Polish — Pixel Correction Protocol** — 2026-05-21
   - Rule file: `.cursor/rules/ion-visual-polish.mdc`
   - DOM禁止修改，只改CSS。

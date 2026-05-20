@@ -1,0 +1,61 @@
+# UI 视觉微调协议 — Self-Calibrating Pixel Polish
+
+**核心原则：自己看图 → 自己找差距 → 自己修正。不等人工。**
+
+**规则：禁止修改 DOM 结构，只改 CSS。**
+
+## 阶段 0：自诊断（每次任务启动先跑）
+
+1. **自动截图** — `npx playwright screenshot` 拍下所有页面当前状态，存入 `.cursor/artifacts/ui-before-*.png`
+2. **对照设计标准逐项打分**，写入 `.cursor/logs/ui-gap-YYYY-MM-DD.md`：
+   - [ ] 背景是否为 `#03050f`？不是则 FAIL
+   - [ ] Galaxy/aurora 粒子 ≥ 200 个？不够则 FAIL
+   - [ ] 玻璃卡片是否有 thick cyan/magenta/violet neon rims？薄/无则 FAIL
+   - [ ] 玻璃卡片边缘是否 irregular/warped（不规则轮廓）？平直矩形则 FAIL
+   - [ ] 3D 图标是否浮在卡片内部？无则 FAIL
+   - [ ] 底色是否为 rgba(255,255,255,0.03) 而非灰色？灰底则 FAIL
+   - [ ] Pool/Bridge/Burn/Domain 页面是否像 premium glowing glass objects？平板则 FAIL
+   - [ ] 是否有 mock/placeholder/TBD/假数据文字暴露？有则 FAIL
+3. **差距清单 = 修图计划**，逐项修
+
+## 执行步骤
+
+### 1. 质感噪点 — 玻璃层加 SVG 噪点
+在 `.glass-surface` 规则中添加噪点纹理覆盖层：
+```css
+background-image:
+  url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+```
+噪点层 opacity 设为 0.05，叠加在原有背景之上。
+
+### 2. 底层溢光 — Glow Layer
+在玻璃容器外层（或全局背景）添加发光层：
+- `filter: blur(60px)`（从 40 提到 60）
+- `background: linear-gradient(135deg, rgba(36,247,255,0.12) 0%, rgba(141,77,255,0.08) 40%, rgba(255,59,212,0.10) 100%)`
+- 确保左上角青色→右下角洋红色过渡平滑
+
+### 3. 边框光线截断
+将 `.glass-surface` 的 border 改成：
+```css
+border: 1px solid rgba(255,255,255,0.08);
+border-image: linear-gradient(to bottom right, rgba(255,255,255,0.40), rgba(255,255,255,0.02)) 1;
+```
+效果：光线从左上角射入，在玻璃边缘截断。
+
+### 4. 统一背景色平衡
+将 `.glass-surface` 的背景色改为：
+```css
+background: rgba(255, 255, 255, 0.03);
+```
+**禁止使用任何灰色底色（#808080, gray, rgba(0,0,0,x) 等都不准）。**
+
+## 验证标准
+修改完成后：
+1. 截图当前效果
+2. 在浏览器 DevTools 中手动调大 `rgba` 透明度，确认"透亮度"达标
+3. 截对比图，自评三个维度：噪点感、溢光柔和度、边框光线感
+4. 不达标的回修，直到视觉匹配设计稿
+
+## 文件范围
+- `frontend/src/styles/global.css` — `.glass-surface` 及其他玻璃相关工具类
+- 其他 frontend CSS 文件如有玻璃样式也一并修改
