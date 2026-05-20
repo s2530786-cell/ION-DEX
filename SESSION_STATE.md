@@ -22,6 +22,10 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 ## Current State
 
+- Critical correctness automation on 2026-05-20 found and fixed a CI verification gap:
+  - PR #2 added `scripts/dev-preflight.mjs` to local `verify-full.*`, but GitHub Actions did not run it.
+  - `.github/workflows/ion-dex-verify.yml` now runs `node scripts/dev-preflight.mjs` after Node setup and before encoding/build/audit steps.
+  - Validation: after installing backend/frontend dependencies, `bash scripts/verify-full.sh` passed with preflight OK, encoding 92 files OK, backend 6 tests passed, backend audit 0 vulnerabilities, backend stress passed, frontend build + Playwright 14 passed, and frontend audit 0 vulnerabilities.
 - Frontend scaffold exists under `frontend/`.
 - Current frontend has a Vite/React/Tailwind skeleton and initial dashboard components.
 - There are generated `.js` ghost files under `frontend/src/` from earlier TypeScript emits; these must be cleaned once shell/filesystem execution is reliable.
