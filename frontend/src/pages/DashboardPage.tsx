@@ -71,7 +71,8 @@ function SwapPanel() {
     const isValid = Number.isFinite(amount) && amount > 0 && Number.isFinite(slip) && slip >= 0.1 && slip <= 5;
     const ionOut = isValid ? amount * 106.68 : 0;
     const fee = isValid ? ionOut * 0.0025 : 0;
-    const minReceived = isValid ? (ionOut - fee) * (1 - slip / 100) : 0;
+    const netIonOut = ionOut - fee;
+    const minReceived = isValid ? netIonOut * (1 - slip / 100) : 0;
     return {
       fee,
       ionOut,
@@ -117,10 +118,12 @@ function SwapPanel() {
       <div className="mt-5 grid gap-2 rounded-3xl border border-cyan-300/20 bg-cyan-300/[0.05] p-4 text-xs text-cyan-100/75 backdrop-blur-xl">
         <QuoteRow
           label="Minimum received"
+          testId="swap-min-received"
           value={`${quote.minReceived.toLocaleString(undefined, { maximumFractionDigits: 2 })} ION`}
         />
         <QuoteRow
           label="Protocol fee"
+          testId="swap-protocol-fee"
           value={`${quote.fee.toLocaleString(undefined, { maximumFractionDigits: 2 })} ION`}
         />
         <QuoteRow label="Price impact" value={quote.priceImpact} />
@@ -304,9 +307,9 @@ function Readout({ label, value }: { label: string; value: string }) {
   );
 }
 
-function QuoteRow({ label, value }: { label: string; value: string }) {
+function QuoteRow({ label, testId, value }: { label: string; testId?: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-center justify-between gap-4" data-testid={testId}>
       <span>{label}</span>
       <span className="font-black text-white">{value}</span>
     </div>

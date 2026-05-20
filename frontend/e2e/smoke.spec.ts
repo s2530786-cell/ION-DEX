@@ -14,6 +14,16 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
   });
 
+  test("swap minimum received subtracts protocol fee before slippage", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByTestId("swap-pay").fill("1");
+    await page.getByTestId("swap-slippage").fill("1");
+
+    await expect(page.getByTestId("swap-protocol-fee")).toContainText("0.27 ION");
+    await expect(page.getByTestId("swap-min-received")).toContainText("105.35 ION");
+  });
+
   test("wallet access opens provider picker and profile session", async ({ page }) => {
     await page.goto("/");
 
