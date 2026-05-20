@@ -12,18 +12,21 @@
     "preview:test": "vite preview --host=127.0.0.1 --strictPort",
     "test:e2e": "playwright test",
     "verify:e2e": "playwright test",
-    "verify": "VITE_ION_API_BASE_URL=http://127.0.0.1:8787 npm run build && node scripts/verify-e2e.mjs",
-    "audit:high": "npm audit --audit-level=high"
+    "verify": "npm run build && node scripts/verify-e2e.mjs",
+    "audit:high": "node scripts/audit-high.mjs"
   },
   "dependencies": {
-    "@ion-gateway/sdk": "^3.1.1-beta.0",
-    "@ion-gateway/ui": "^2.1.1-beta.0",
-    "@ion-gateway/ui-react": "^2.1.1-beta.0",
+    "@tanstack/react-query": "^5.100.11",
+    "@ton/core": "^0.63.1",
+    "@tonconnect/sdk": "^3.4.1",
+    "buffer": "^6.0.3",
     "framer-motion": "latest",
     "lightweight-charts": "latest",
     "lucide-react": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "viem": "^2.50.4",
+    "wagmi": "^3.6.15"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",

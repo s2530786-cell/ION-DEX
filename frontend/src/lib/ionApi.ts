@@ -1,11 +1,15 @@
+export type ApiMeta = {
+  source: "mock" | "cache" | "upstream" | "indexer";
+  updatedAt: string;
+  stale: boolean;
+  requestId: string;
+  cacheHit?: boolean;
+  adapter?: string;
+};
+
 export type ApiResponse<T> = {
   data: T;
-  meta: {
-    source: "local" | "cache" | "upstream" | "indexer";
-    updatedAt: string;
-    stale: boolean;
-    requestId: string;
-  };
+  meta: ApiMeta;
 };
 
 export type MarketTicker = {
@@ -14,6 +18,73 @@ export type MarketTicker = {
   displayPrice: string;
   change24hPct: number;
   displayChange: string;
+  provenance?: { source: string; note: string };
+};
+
+export type BurnSummary = {
+  totalBurnedIon: string;
+  bscBurnedIon: string;
+  ionMainnetBurnedIon: string;
+  remainingSupplyIon: string;
+  bscBurnAddress: string;
+  ionBurnSource: string;
+};
+
+export type StakingSummary = {
+  totalStakedIon: string;
+  officialStakedIon: string;
+  dexStakedIon: string;
+  lpStakedUsd: string;
+  apr: {
+    officialPct: number;
+    dexPct: number;
+    lpMiningPct: number;
+  };
+};
+
+export type BridgeRoute = {
+  routeId: string;
+  fromChain: "BSC" | "ION";
+  toChain: "BSC" | "ION";
+  asset: "ION";
+  status: "design" | "mock" | "paused" | "online";
+  minAmountIon: string;
+  maxAmountIon: string;
+  estimatedMinutes: number;
+  confirmationsRequired: number;
+  safeguards: string[];
+};
+
+export type BridgeRoutesPayload = {
+  routes: BridgeRoute[];
+  relayerStatus: "mocked" | "planned" | "online" | "degraded";
+  verifier: {
+    threshold: string;
+    replayProtection: boolean;
+    proofStatus: "planned" | "mocked" | "online";
+  };
+};
+
+export type DomainResolution = {
+  name: string;
+  available: boolean;
+  ownerAddress: string | null;
+  resolvedAddress: string | null;
+  expiresAt: string | null;
+  records: Array<{
+    key: "wallet" | "profile" | "avatar";
+    value: string;
+    status: "mock" | "planned";
+  }>;
+  marketplace: {
+    listed: boolean;
+    floorIon: string;
+    lastSaleIon: string | null;
+  };
+  provenance: {
+    source: "mock";
+    note: string;
+  };
 };
 
 export type TradeQuote = {
@@ -44,17 +115,68 @@ export type TradeQuote = {
 
 const apiBaseUrl = import.meta.env.VITE_ION_API_BASE_URL ?? "http://127.0.0.1:8787";
 
-export async function fetchMarketTickers(signal?: AbortSignal): Promise<ApiResponse<MarketTicker[]>> {
-  const response = await fetch(`${apiBaseUrl}/api/markets/tickers`, {
+async function fetchApi<T>(path: string, signal?: AbortSignal): Promise<ApiResponse<T>> {
+  const response = await fetch(`${apiBaseUrl}${path}`, {
     headers: {
       accept: "application/json",
     },
     signal,
   });
   if (!response.ok) {
-    throw new Error(`Ticker request failed with HTTP ${response.status}`);
+    throw new Error(`API request failed for ${path} with HTTP ${response.status}`);
   }
-  return (await response.json()) as ApiResponse<MarketTicker[]>;
+  return (await response.json()) as ApiResponse<T>;
+}
+
+export async function fetchMarketTickers(signal?: AbortSignal): Promise<ApiResponse<MarketTicker[]>> {
+  return fetchApi<MarketTicker[]>("/api/markets/tickers", signal);
+}
+
+export async function fetchBurnSummary(signal?: AbortSignal): Promise<ApiResponse<BurnSummary>> {
+  return fetchApi<BurnSummary>("/api/burn/summary", signal);
+}
+
+export async function fetchStakingSummary(signal?: AbortSignal): Promise<ApiResponse<StakingSummary>> {
+  return fetchApi<StakingSummary>("/api/staking/summary", signal);
+}
+
+export async function fetchBridgeRoutes(signal?: AbortSignal): Promise<ApiResponse<BridgeRoutesPayload>> {
+  return fetchApi<BridgeRoutesPayload>("/api/bridge/routes", signal);
+}
+
+export async function fetchDomainResolve(name: string, signal?: AbortSignal): Promise<ApiResponse<DomainResolution>> {
+  const query = encodeURIComponent(name);
+  return fetchApi<DomainResolution>(`/api/domain/resolve?name=${query}`, signal);
+}
+
+export type BscWalletBalance = {
+  address: string;
+  balanceWei: string;
+  balanceBnb: string;
+  chainId: number;
+  rpcUrl: string;
+};
+
+export async function fetchBscWalletBalance(
+  address: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<BscWalletBalance>> {
+  const query = encodeURIComponent(address);
+  return fetchApi<BscWalletBalance>(`/api/wallet/bsc-balance?address=${query}`, signal);
+}
+
+export function formatIonAmount(value: string): string {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return value;
+  }
+  return parsed.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+export function formatDataSourceLabel(meta: ApiMeta): string {
+  const adapter = meta.adapter ? ` · ${meta.adapter}` : "";
+  const stale = meta.stale ? " · stale" : "";
+  return `${meta.source}${adapter}${stale}`;
 }
 
 export async function fetchTradeQuote(

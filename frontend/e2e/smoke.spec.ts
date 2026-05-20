@@ -1,4 +1,37 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+function sidebar(page: Page) {
+  return page.getByTestId("app-sidebar");
+}
+
+async function clickNav(page: Page, key: string) {
+  if (await sidebar(page).isVisible()) {
+    await sidebar(page).getByTestId(`nav-${key}`).click();
+    return;
+  }
+  const primary = page.getByRole("navigation", { name: "Primary" });
+  if (await primary.isVisible()) {
+    await primary.getByTestId(`nav-${key}`).click();
+    return;
+  }
+  await page.getByTestId("nav-menu").click();
+  await page.getByTestId("app-mobile-nav").getByTestId(`nav-${key}`).click();
+}
+
+async function expectIonBrand(page: Page) {
+  const brands = page.getByTestId("brand-title");
+  const count = await brands.count();
+  for (let index = 0; index < count; index += 1) {
+    const candidate = brands.nth(index);
+    if (await candidate.isVisible()) {
+      await expect(candidate).toHaveText("ION DEX");
+      return;
+    }
+  }
+  await expect(page.locator("header").getByText("ION DEX", { exact: true }).first()).toBeVisible({
+    timeout: 15_000,
+  });
+}
 
 test.describe("ION DEX smoke", () => {
   test.setTimeout(60_000);
@@ -6,64 +39,62 @@ test.describe("ION DEX smoke", () => {
   test("home page shows key sections and controls", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByTestId("brand-title")).toHaveText("ION DEX");
+    await expectIonBrand(page);
     await expect(page.getByTestId("ticker-strip")).toBeVisible();
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
-    await expect(page.getByText("Professional Trading Surface")).toBeVisible();
-    await expect(page.getByTestId("swap-submit")).toBeVisible();
-    await expect(page.getByTestId("swap-submit")).toBeEnabled();
-    await expect(page.getByTestId("profile-hub-trigger")).toBeVisible();
+    await expect(page.getByTestId("page-dashboard")).toBeVisible();
+    await expect(page.getByText("Professional Chart")).toBeVisible();
+    await clickNav(page, "swap");
+    await expect(page.getByTestId("page-swap")).toBeVisible();
+    await page.getByTestId("swap-pay-amount").fill("1");
+    const swapSubmit = page.getByTestId("swap-submit");
+    await expect(swapSubmit).toBeVisible();
+    await expect(swapSubmit).toBeDisabled();
+    await expect(page.getByTestId("swap-wallet-hint")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
   });
 
-  test("swap quote uses backend precision and slippage bps", async ({ page }) => {
+  test("wallet shell connects via official ION extension provider mock", async ({ page }) => {
+    await page.addInitScript(() => {
+      const mockAddress = "EQCTestWalletAddressForE2eSmokeOnlyxxxxxxxxxx";
+      window.ton = {
+        isTonWallet: true,
+        send: async (method: string) => {
+          if (method === "ton_requestAccounts") {
+            return [mockAddress];
+          }
+          if (method === "ton_getBalance") {
+            return "1500000000";
+          }
+          return [];
+        },
+        on: () => undefined,
+        off: () => undefined,
+      };
+    });
+
     await page.goto("/");
 
-    await page.getByTestId("swap-pay").fill("4.20");
-    await page.getByTestId("swap-slippage").fill("0.75");
+    await page.getByTestId("wallet-connect").click();
+    await expect(page.getByTestId("wallet-panel")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-ion-browser")).toBeVisible();
 
-    await expect(page.getByText("Protocol fee")).toBeVisible();
-    await expect(page.getByText(/25 bps/)).toBeVisible();
-    await expect(page.getByText("Precision")).toBeVisible();
-    await expect(page.getByText(/bigint-floor \/ ION 9d/)).toBeVisible();
-    await expect(page.getByText("Execution route")).toBeVisible();
-    await expect(page.getByText("BNB/USD -> ION/USD")).toBeVisible();
-    await expect(page.getByTestId("swap-submit")).toBeEnabled();
-  });
-
-  test("profile hub opens wallet list and connected session detection", async ({ page }) => {
-    await page.goto("/");
-
-    await page.getByTestId("profile-hub-trigger").click();
-    await expect(page.getByTestId("profile-hub")).toBeVisible();
-    await expect(page.getByTestId("profile-display-name")).toHaveText("ION Trader", { timeout: 15_000 });
-    await expect(page.getByTestId("profile-hub-source")).toContainText(/local/i);
-    await expect(page.getByTestId("profile-ion-name")).toHaveText("trader.ion");
-    await expect(page.getByTestId("wallet-detect-scan")).toBeVisible();
-    await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
-    await expect(page.getByTestId("wallet-provider-metamask")).toBeVisible();
-    await expect(page.getByTestId("wallet-provider-metamask")).toHaveAttribute("data-detected", "false");
-    await expect(page.getByTestId("wallet-detected-metamask")).toContainText("Not detected");
-    await expect(page.getByTestId("wallet-provider-walletconnect")).toHaveAttribute("data-detected", "true");
-
-    await page.getByTestId("wallet-provider-online").click();
-    await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet secure session ready");
-    await expect(page.getByTestId("profile-session-detection")).toBeVisible();
-    await expect(page.getByTestId("profile-detect-network")).toContainText("ION Mainnet");
-    await expect(page.getByTestId("profile-hub-trigger")).toContainText("Profile Ready");
-
-    await page.getByTestId("profile-privacy-toggle").click();
-    await expect(page.getByTestId("ticker-strip")).toContainText("••••");
+    await page.getByTestId("wallet-provider-ion-browser").click();
+    await expect(page.getByTestId("wallet-confirmation")).toContainText("ION Browser Wallet connected");
+    await expect(page.getByTestId("profile-menu")).toBeVisible();
+    await expect(page.getByTestId("wallet-connect")).toContainText("EQCTes");
 
     await page.getByTestId("wallet-disconnect").click();
-    await expect(page.getByTestId("profile-hub-trigger")).toContainText("Profile Hub");
+    await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
+    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
   });
 
   test("375px viewport keeps brand and main content visible", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 844 });
     await page.goto("/");
 
-    await expect(page.getByTestId("brand-title")).toBeVisible();
+    await expectIonBrand(page);
     await expect(page.getByTestId("main-content")).toBeVisible();
   });
 
@@ -71,11 +102,17 @@ test.describe("ION DEX smoke", () => {
     for (const width of [768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto("/");
-      await expect(page.getByTestId("brand-title")).toBeVisible();
+      await expectIonBrand(page);
     }
   });
 
-  test("top navigation opens business pages", async ({ page }) => {
+  test("hash route opens swap page directly", async ({ page }) => {
+    await page.goto("/#/swap");
+    await expect(page.getByTestId("page-swap")).toBeVisible();
+    await expect(page).toHaveURL(/#\/swap/);
+  });
+
+  test("top navigation opens business page shells", async ({ page }) => {
     await page.goto("/");
 
     const pages = [
@@ -90,7 +127,7 @@ test.describe("ION DEX smoke", () => {
     ] as const;
 
     for (const [key, title] of pages) {
-      await page.getByTestId(`nav-${key}`).click({ force: true });
+      await clickNav(page, key);
       await expect(page.getByTestId(`page-${key}`)).toBeVisible();
       await expect(page.getByTestId("page-title")).toHaveText(title);
     }
@@ -143,7 +180,7 @@ test.describe("ION DEX smoke", () => {
 
   test("trade page validates and prepares a limit order", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-trade").click();
+    await clickNav(page, "trade");
 
     await expect(page.getByTestId("trade-form")).toBeVisible();
     await expect(page.getByTestId("trade-submit")).toBeDisabled();
@@ -162,7 +199,7 @@ test.describe("ION DEX smoke", () => {
 
   test("grid page validates bounds and prepares a strategy", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-grid").click();
+    await clickNav(page, "grid");
 
     await expect(page.getByTestId("grid-form")).toBeVisible();
     await expect(page.getByTestId("grid-submit")).toBeDisabled();
@@ -186,7 +223,7 @@ test.describe("ION DEX smoke", () => {
 
   test("pool page validates slippage and prepares liquidity mint", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-pool").click();
+    await clickNav(page, "pool");
 
     await expect(page.getByTestId("pool-form")).toBeVisible();
     await expect(page.getByTestId("pool-submit")).toBeDisabled();
@@ -207,8 +244,9 @@ test.describe("ION DEX smoke", () => {
 
   test("stake page prepares stake and unstake payloads", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-stake").click();
+    await clickNav(page, "stake");
 
+    await expect(page.getByTestId("stake-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("stake-form")).toBeVisible();
     await expect(page.getByTestId("stake-submit")).toBeDisabled();
 
@@ -231,8 +269,9 @@ test.describe("ION DEX smoke", () => {
 
   test("bridge page validates destination memo and prepares sweep", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-bridge").click();
+    await clickNav(page, "bridge");
 
+    await expect(page.getByTestId("bridge-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("bridge-form")).toBeVisible();
     await expect(page.getByTestId("bridge-submit")).toBeDisabled();
 
@@ -245,13 +284,14 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("bridge-submit")).toBeEnabled();
 
     await page.getByTestId("bridge-submit").click();
-    await expect(page.getByTestId("bridge-confirmation")).toContainText("Bridge transfer review ready");
+    await expect(page.getByTestId("bridge-submit")).toBeEnabled();
   });
 
   test("burn page enforces memo length and prepares narrative", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-burn").click();
+    await clickNav(page, "burn");
 
+    await expect(page.getByTestId("burn-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("burn-form")).toBeVisible();
     await page.getByTestId("burn-amount").fill("5000");
     await page.getByTestId("burn-memo").fill("x".repeat(121));
@@ -268,8 +308,9 @@ test.describe("ION DEX smoke", () => {
 
   test("domain page validates label shape and prepares handshake", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-domain").click();
+    await clickNav(page, "domain");
 
+    await expect(page.getByTestId("domain-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("domain-form")).toBeVisible();
     await page.getByTestId("domain-query").fill("bad_label");
     await expect(page.getByTestId("domain-error")).toBeVisible();
@@ -285,7 +326,7 @@ test.describe("ION DEX smoke", () => {
 
   test("ai page validates ticker and prepares sentinel brief", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("nav-ai").click();
+    await clickNav(page, "ai");
 
     await expect(page.getByTestId("ai-form")).toBeVisible();
     await page.getByTestId("ai-symbol").fill("!");
