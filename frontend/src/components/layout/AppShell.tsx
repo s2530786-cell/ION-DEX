@@ -13,6 +13,8 @@ import {
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { NeonButton } from "@/components/ui/NeonButton";
+import ionLogo from "@/assets/ion-logo.jpg";
+import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
@@ -190,15 +192,22 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 <Menu size={18} />
               </button>
               <div className="hidden items-center gap-3 lg:flex">
+                <img
+                  src={ionLogo}
+                  alt="ION DEX"
+                  className="h-8 w-8 rounded-xl object-cover shadow-[0_0_12px_rgba(36,247,255,0.3)]"
+                />
                 <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/55">Navigation</p>
                 <p className="text-sm font-bold text-white">
                   {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
                 </p>
               </div>
               <div className="flex items-center gap-3 lg:hidden">
-                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[linear-gradient(135deg,#24f7ff,#8d4dff,#ff3bd4)] shadow-neonCyan">
-                  <div className="h-5 w-5 rotate-45 rounded-md border-2 border-white/90" />
-                </div>
+                <img
+                  src={ionLogo}
+                  alt="ION DEX"
+                  className="h-10 w-10 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)]"
+                />
                 <div>
                   <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
                     ION DEX
@@ -293,9 +302,11 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 function SidebarBrand() {
   return (
     <div className="flex items-center gap-3">
-      <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[linear-gradient(135deg,#24f7ff,#8d4dff,#ff3bd4)] shadow-neonCyan">
-        <div className="h-5 w-5 rotate-45 rounded-md border-2 border-white/90" />
-      </div>
+      <img
+        src={ionLogo}
+        alt="ION DEX"
+        className="h-10 w-10 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)]"
+      />
       <div>
         <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
           ION DEX
@@ -552,6 +563,7 @@ function WalletConnectPanel({
 }
 
 function TickerStrip() {
+  const [privacyMode, setPrivacyMode] = useState(false);
   const [tickers, setTickers] = useState<MarketTicker[]>(fallbackTickers);
   const [sourceLabel, setSourceLabel] = useState("offline fallback");
 
