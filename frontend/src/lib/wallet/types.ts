@@ -45,7 +45,7 @@ export type LiveWalletConnection = {
   chainId: number;
   networkLabel: string;
   addressFormat: string;
-  detectionSource: "browser-injected";
+  detectionSource: "browser-injected" | "tonconnect-remote";
   /** Official ion-gateway js bridge key (ionmask / tonwallet) when connected via TonConnect injection */
   bridgeKey?: string;
   bridgeField?: "ionconnect" | "tonconnect";
@@ -53,4 +53,10 @@ export type LiveWalletConnection = {
 
 export type WalletConnectResult =
   | { ok: true; connection: LiveWalletConnection }
-  | { ok: false; code: "not_detected" | "user_rejected" | "unsupported" | "provider_error"; message: string };
+  | {
+      ok: false;
+      code: "not_detected" | "user_rejected" | "unsupported" | "provider_error" | "awaiting_wallet";
+      message: string;
+      universalLink?: string;
+      walletName?: string;
+    };

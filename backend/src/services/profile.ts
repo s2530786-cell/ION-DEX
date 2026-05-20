@@ -145,8 +145,8 @@ const walletEntries: WalletEntry[] = [
     name: "WalletConnect / OKX",
     category: "ion-native",
     status: "ready",
-    detector: "walletconnect.v2",
-    label: "Mainstream Web3 bridge",
+    detector: "@ion-gateway/sdk TonConnect bridge",
+    label: "TonConnect remote / mobile bridge",
   },
   {
     key: "metamask",

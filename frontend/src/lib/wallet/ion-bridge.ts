@@ -17,6 +17,8 @@ export type IonConnectBridgeApi = {
     message: { manifestUrl: string; return: string; items: Array<{ name: string }> },
   ) => Promise<IonConnectWalletEvent>;
   restoreConnection: () => Promise<IonConnectWalletEvent>;
+  listen?: (callback: (event: IonConnectWalletEvent) => void) => () => void;
+  disconnect?: () => void | Promise<void>;
 };
 
 type IonConnectWalletEvent =

@@ -3,6 +3,7 @@ import {
   isOfficialNativeBridgeInjected,
   resolveIonConnectBridge,
 } from "./ion-bridge.js";
+import { isTonConnectSdkAvailable } from "./ion-connect-sdk.js";
 import { getOfficialBridgeSpec, type IonOfficialNativeWalletKey } from "./ion-official.js";
 import {
   WALLET_PROVIDER_KEYS,
@@ -129,12 +130,15 @@ function detectBitget(): WalletProbeResult {
 }
 
 function detectWalletConnect(): WalletProbeResult {
+  const available = isTonConnectSdkAvailable();
   return probe(
     "walletconnect",
-    false,
-    "walletconnect.v2",
+    available,
+    "@ion-gateway/sdk TonConnect bridge",
     null,
-    "WalletConnect pairing uses QR flow; install a mobile wallet or enable WC SDK next",
+    available
+      ? "TonConnect remote bridge ready — opens mobile / universal wallet link"
+      : "TonConnect SDK unavailable during SSR",
   );
 }
 

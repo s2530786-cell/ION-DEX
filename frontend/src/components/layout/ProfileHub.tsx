@@ -56,6 +56,8 @@ export function ProfileHub({
   const [detection, setDetection] = useState<WalletDetectionSnapshot>(() => scanBrowserWallets());
   const [connectingKey, setConnectingKey] = useState<string | null>(null);
   const [connectError, setConnectError] = useState<string | null>(null);
+  const [walletConnectLink, setWalletConnectLink] = useState<string | null>(null);
+  const [walletConnectName, setWalletConnectName] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) {
@@ -116,6 +118,8 @@ export function ProfileHub({
   const handleWalletConnect = useCallback(
     async (key: string) => {
       setConnectError(null);
+      setWalletConnectLink(null);
+      setWalletConnectName(null);
       const providerKey = key as WalletProviderKey;
       const probe = getProbeForKey(detection, providerKey);
 
@@ -129,6 +133,12 @@ export function ProfileHub({
         setConnectingKey(null);
         if (result.ok) {
           onConnect(key, result.connection);
+          return;
+        }
+        if (result.code === "awaiting_wallet" && result.universalLink) {
+          setWalletConnectLink(result.universalLink);
+          setWalletConnectName(result.walletName ?? "mobile wallet");
+          window.open(result.universalLink, "_blank", "noopener,noreferrer");
           return;
         }
         setConnectError(result.message);
@@ -296,6 +306,28 @@ export function ProfileHub({
               <p className="mt-2 text-[11px] font-bold text-emerald-100" data-testid="wallet-confirmation">
                 {session.sessionDetection.walletProvider} secure session ready
               </p>
+            </section>
+          ) : null}
+
+          {walletConnectLink ? (
+            <section
+              className="rounded-2xl border border-violet-300/25 bg-violet-400/[0.08] p-3"
+              data-testid="walletconnect-awaiting"
+            >
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-100/70">
+                TonConnect · awaiting {walletConnectName}
+              </p>
+              <p className="mt-1 text-[11px] text-violet-50/80">
+                Approve the connection in your wallet app, then return here. Session updates automatically.
+              </p>
+              <a
+                className="mt-2 block break-all text-xs font-bold text-cyan-200 underline"
+                href={walletConnectLink}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Open wallet link
+              </a>
             </section>
           ) : null}
 

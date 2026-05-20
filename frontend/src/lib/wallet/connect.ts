@@ -1,4 +1,5 @@
 import { connectOfficialNativeWallet } from "./ion-bridge.js";
+import { startTonConnectRemoteSession } from "./ion-connect-sdk.js";
 import { chainIdToNetworkLabel, inferAddressFormat, parseChainIdHex } from "./network.js";
 import { getProbeForKey, isEvmProviderKey, scanBrowserWallets } from "./detectors.js";
 import type {
@@ -50,11 +51,20 @@ export async function connectWalletProvider(key: WalletProviderKey): Promise<Wal
   }
 
   if (probe.key === "walletconnect") {
-    return {
-      ok: false,
-      code: "unsupported",
-      message: "WalletConnect QR flow is not enabled in this build yet.",
-    };
+    const result = await startTonConnectRemoteSession();
+    if (result.status === "connected") {
+      return { ok: true, connection: result.connection };
+    }
+    if (result.status === "awaiting") {
+      return {
+        ok: false,
+        code: "awaiting_wallet",
+        message: `Approve connection in ${result.walletName}, then return to ION DEX.`,
+        universalLink: result.universalLink,
+        walletName: result.walletName,
+      };
+    }
+    return { ok: false, code: "provider_error", message: result.message };
   }
 
   if (!isEvmProviderKey(key)) {

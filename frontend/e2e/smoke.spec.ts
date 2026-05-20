@@ -44,6 +44,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("wallet-provider-metamask")).toBeVisible();
     await expect(page.getByTestId("wallet-provider-metamask")).toHaveAttribute("data-detected", "false");
     await expect(page.getByTestId("wallet-detected-metamask")).toContainText("Not detected");
+    await expect(page.getByTestId("wallet-provider-walletconnect")).toHaveAttribute("data-detected", "true");
 
     await page.getByTestId("wallet-provider-online").click();
     await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet secure session ready");

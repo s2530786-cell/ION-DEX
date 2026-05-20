@@ -3,7 +3,13 @@ import { useEffect, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { ProfileHub } from "@/components/layout/ProfileHub";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
-import type { LiveWalletConnection } from "@/lib/wallet";
+import {
+  disconnectWalletSession,
+  liveConnectionFromTonWallet,
+  subscribeIonConnectStatus,
+  watchWalletSession,
+  type LiveWalletConnection,
+} from "@/lib/wallet";
 
 export type PageKey =
   | "swap"
@@ -39,6 +45,44 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
   const [liveConnection, setLiveConnection] = useState<LiveWalletConnection | null>(null);
   const [selectedAvatarId, setSelectedAvatarId] = useState("aurora-cyan");
   const [privacyMode, setPrivacyMode] = useState(false);
+
+  useEffect(() => {
+    return subscribeIonConnectStatus((wallet) => {
+      if (!wallet) {
+        setConnectedProviderKey((current) => {
+          if (current === "walletconnect") {
+            setLiveConnection(null);
+            return null;
+          }
+          return current;
+        });
+        return;
+      }
+      setConnectedProviderKey("walletconnect");
+      setLiveConnection(liveConnectionFromTonWallet(wallet));
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!liveConnection) {
+      return;
+    }
+    return watchWalletSession(liveConnection, (next) => {
+      if (!next) {
+        setConnectedProviderKey(null);
+        setLiveConnection(null);
+        return;
+      }
+      setLiveConnection(next);
+    });
+  }, [liveConnection?.providerKey, liveConnection?.address, liveConnection?.chainId]);
+
+  const handleDisconnect = () => {
+    void disconnectWalletSession(connectedProviderKey, liveConnection).finally(() => {
+      setConnectedProviderKey(null);
+      setLiveConnection(null);
+    });
+  };
 
   return (
     <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
@@ -134,10 +178,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 setConnectedProviderKey(key);
                 setLiveConnection(live);
               }}
-              onDisconnect={() => {
-                setConnectedProviderKey(null);
-                setLiveConnection(null);
-              }}
+              onDisconnect={handleDisconnect}
               onPrivacyModeChange={setPrivacyMode}
               open={profileHubOpen}
               privacyMode={privacyMode}
