@@ -6,6 +6,7 @@ const endpoints = [
   { path: "/api/config/public", p95LimitMs: 200 },
   { path: "/api/tokens", p95LimitMs: 250 },
   { path: "/api/markets/tickers", p95LimitMs: 300 },
+  { path: "/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=50", p95LimitMs: 300 },
 ];
 
 const requestsPerEndpoint = Number(process.env.ION_STRESS_REQUESTS ?? 80);

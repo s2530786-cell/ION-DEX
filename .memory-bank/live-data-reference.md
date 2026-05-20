@@ -51,12 +51,14 @@ Seven EVM wallet detectors from historical memory:
 - Coinbase Wallet: `window.coinbaseWalletExtension`
 - Rabby: `window.rabby`
 
-ION-native wallet work must verify official injection/signing APIs before implementation:
+ION-native wallet injection (verified against official repos + ion-gateway SDK):
 
-- ION Browser Wallet
-- Online+ Wallet
-- WalletConnect / OKX path
-- Possible TON-compatible provider surface must be confirmed from official ION sources before relying on it.
+- **Online+ / ION Chrome Wallet** (`ice-blockchain/ion-chrome-wallet`): `window.ionmask.ionconnect` (TonConnect bridge), legacy `window.ion`, ready event `ionready`. ion-gateway `jsBridgeKey`: `ionmask`.
+- **ION Browser Wallet** (`ice-blockchain/ion-browser-wallet`): `window.tonwallet.tonconnect` (legacy field name; ion-gateway expects `ionconnect` when rebranded), legacy `window.ton`, ready event `tonready`. ion-gateway `jsBridgeKey`: `tonwallet`.
+- **Detection contract** (`ice-blockchain/ion-gateway` `InjectedProvider`): `injectedWalletKey in window` and `window[key].ionconnect` with `walletInfo` metadata. Profile Hub also accepts legacy `tonconnect` on `tonwallet`.
+- **Connection**: TonConnect `restoreConnection` then `connect` with `manifestUrl` → `/ionconnect-manifest.json`, item `ton_addr`. Chain IDs: `-239` mainnet, `-3` testnet.
+- **Do not use** guessed globals `window.ionWallet`, `window.iceWallet`, or `window.ionBrowserWallet` — not present in official sources.
+- WalletConnect / TonConnect remote: `@ion-gateway/sdk` + `@ion-gateway/ui-react` (`TonConnectUIProvider`, `useTonConnectModal` QR modal); fallback `universalLink` tab when modal bridge unavailable.
 
 ## Environment Variables
 

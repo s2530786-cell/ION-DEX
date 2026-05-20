@@ -160,11 +160,26 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `docs/23-security-audit-and-stress-sandbox.md` turns the framework into an execution checklist and sandbox plan.
   - `scripts/security-preflight.mjs` verifies security memory/docs/skills are present before high-risk work.
   - `scripts/dev-preflight.mjs` now requires the security framework.
-- Automation YAML import completed on 2026-05-20:
-  - `.cursor/automations/ion-dex-autonomous-build.yml` was imported from historical `D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml` and normalized for the current Cloud Agent branch `cursor/ion-dex-yaml-cfd8`.
-  - The automation prompt now uses current repository-relative memory files, current POSIX verification scripts, and MCP name `ion-dex-memory-bank`.
-  - Verification passed with `bash scripts/check-encoding.sh && bash scripts/verify-full.sh`: encoding OK, backend tests 6 passed, backend audit 0 vulnerabilities, backend stress smoke passed, frontend Playwright 14 passed, frontend audit 0 vulnerabilities.
-  - Commit `55516e0` was pushed to `origin/cursor/ion-dex-yaml-cfd8`.
+- Agent automatic workflow on 2026-05-20:
+  - `scripts/agent-workflow.mjs` orchestrates memory preflight, security preflight, SESSION_STATE next-action printout, and optional `verify-full` tiers (`memory` | `verify` | `strict`).
+  - `scripts/agent-verify.sh` is the POSIX non-interactive entry (same intent as `scripts/agent-verify.cmd`).
+  - `node scripts/agent-workflow.mjs --tier verify --execute` passed: encoding 100 files OK, backend 12 tests, stress OK, frontend 15 Playwright passed, audit high 0.
+- Quote / slippage / precision minimum loop completed on 2026-05-20:
+  - `backend/src/lib/decimal.ts` uses BigInt floor math for decimal parsing/formatting and bps calculations.
+  - `backend/src/services/quotes.ts` provides typed quote output with amount units, estimated output, minimum received, protocol fee, fee bps, slippage bps, price impact bps, route, precision, and provenance.
+  - Confirmed and fixed the financial quote bug where the previous frontend minimum received path could apply slippage to gross output before protocol fee. Current calculation uses `estimatedOutputUnits = grossOutputUnits - protocolFeeUnits`, then computes `minimumReceivedUnits` from that net amount.
+  - `/api/trade/quote` is wired through the API gateway.
+  - Frontend Swap consumes the backend quote API and displays `bigint-floor / ION 9d`, protocol fee bps, route, minimum received, and price impact.
+  - Backend tests cover valid quote precision and invalid slippage; backend stress includes quote endpoint; frontend E2E covers backend precision/slippage bps.
+  - Fixed frontend E2E runner to avoid orphaned Vite preview processes during repeated verification.
+  - Quote precision 100-pass gate completed after the runner fix: `PASSED=100`, `FAILED=0`, `RESULT=GREEN`.
+  - Remaining gaps: contract minimum-output enforcement, oracle/TWAP adapter, and MEV simulations wait for contract/oracle services.
+- Minimum-output + liquid-glass desks（2026-05-20）：
+  - `backend/src/lib/minimum-output.ts` 与 `quotes.ts` 共享公式；`contracts/bsc/IonSwapRouter.sol` + `IonSwapPoolMock`；`docs/24-swap-router-minimum-output.md`。
+  - `frontend/src/components/ui/glass/`：`GlassPanel`、`MetricTile`、`PageHero`、`ChartFrame`、`StatusPill`、`RiskNotice`。
+  - `BusinessPages.tsx`：`GridDeskPage`、`PoolDeskPage`、`BridgeDeskPage`、`BurnDeskPage`、`DomainDeskPage`、`AIDeskPage`、`StakeDeskPage`（liquid-glass 台面 + local-seed 标注）。
+  - `scripts/verify-contracts.mjs` 已接入 `scripts/verify-full.sh`（step 2b）；本环境 `forge` 未安装时 SKIP Solidity 测试。
+  - `node scripts/agent-workflow.mjs --tier verify --execute` 绿灯：encoding 127 files OK；backend **14** tests；contract TS math OK；frontend **16** Playwright passed；audit high **0**。
 
 ## Current Blocker
 
@@ -186,8 +201,14 @@ Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official s
 12. Workflow preference：2026-05-18，user explicitly requested making strong use of `self-evolving` and automatic workflow because they help development. Treat `cursor-engineering-workflow` as the pre/during-work operating loop and `self-evolving` as the post-work memory improvement loop.
 13. Accelerator/review preference：2026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
 14. Claude-Flow/RuFlo：2026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
-15. Next：continue UI correction route by first rebuilding the right-top Profile Hub from `.memory-bank/overall-design-framework.md`, while using `.memory-bank/security-audit-and-stress-framework.md` for wallet/session threat modeling and stress/audit evidence.
-16. Automation import follow-up：if the user has a newer local Windows copy of `ion-dex-autonomous-build.yml`, compare it against `.cursor/automations/ion-dex-autonomous-build.yml` before replacing the repository template.
+15. Profile Hub（2026-05-20）：右上角头像入口升级为 typed Profile Hub：`GET /api/profile/session`、10 钱包列表（ION native + 7 EVM 检测器）、头像/KYC/`.ion`/偏好/快捷入口/连接后会话检测；前端 `ProfileHub.tsx` + 隐私模式 ticker 遮罩。单次 `verify-full` 绿灯（backend 10 tests、frontend 15 passed、audit high 0）。`verify-e2e.mjs` 会在 :8787 旧网关缺少 profile 路由时自动重启。
+16. Real wallet detectors（2026-05-20）：`frontend/src/lib/wallet` 浏览器探测 + EVM `eth_requestAccounts`/`eth_chainId`；Profile Hub 显示 Installed/Not detected；live address/chain 合并进 `/api/profile/session`；`realWalletAdapters: true`；`verify-full` 绿灯（backend 11、frontend 15）。
+17. Official ION wallet injection（2026-05-20）：对齐 `ion-chrome-wallet`（`window.ionmask.ionconnect`）、`ion-browser-wallet`（`window.tonwallet.tonconnect`）、`ion-gateway` InjectedProvider；`frontend/src/lib/wallet/ion-official.ts` + `ion-bridge.ts`；TonConnect manifest `frontend/public/ionconnect-manifest.json`；`verify-full` 绿灯（backend 12、frontend 15）。
+18. TonConnect SDK + session watch（2026-05-20）：`@ion-gateway/sdk` 远程桥、`wallet-session-watch`、`subscribeIonConnectStatus`；`verify-full` 绿灯。
+19. TonConnect UI QR 模态（2026-05-20）：`@ion-gateway/ui-react` + `@ion-gateway/ui`；`IonConnectUiProvider` 共享 `getIonConnect()`；`IonConnectModalBridge` + `openIonConnectWalletModal()`；Profile Hub WalletConnect 优先应用内 QR，保留 universalLink 回退；`verify-full` 绿灯（backend 12、frontend 15、audit high 0）。
+20. Agent automatic workflow（2026-05-20）：`scripts/agent-workflow.mjs` + `scripts/agent-verify.sh`；开发前强制记忆库 preflight；`--tier verify --execute` 串联 `verify-full` 已绿灯。
+21. Minimum-output + liquid-glass desks 已落地并 `verify-full` 绿灯（2026-05-20）；见上条 Current State。
+22. Next：将 glass primitives 复用到 Dashboard/Trade 共享层；`burn-service` / `bridge-status-service` / `ai-market-service` 接线替换 local-seed；部署真实 AMM 并在 calldata 传入 `minimumReceivedUnits`；有 `forge` 的环境跑 `cd contracts && forge test`；重大里程碑后重跑 100-pass 门禁。
 
 ## Memory MCP Candidates
 

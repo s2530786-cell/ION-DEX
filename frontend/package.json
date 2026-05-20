@@ -12,10 +12,13 @@
     "preview:test": "vite preview --host=127.0.0.1 --strictPort",
     "test:e2e": "playwright test",
     "verify:e2e": "playwright test",
-    "verify": "npm run build && node scripts/verify-e2e.mjs",
+    "verify": "VITE_ION_API_BASE_URL=http://127.0.0.1:8787 npm run build && node scripts/verify-e2e.mjs",
     "audit:high": "npm audit --audit-level=high"
   },
   "dependencies": {
+    "@ion-gateway/sdk": "^3.1.1-beta.0",
+    "@ion-gateway/ui": "^2.1.1-beta.0",
+    "@ion-gateway/ui-react": "^2.1.1-beta.0",
     "framer-motion": "latest",
     "lightweight-charts": "latest",
     "lucide-react": "latest",
@@ -23,16 +26,16 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "autoprefixer": "latest",
     "postcss": "latest",
+    "start-server-and-test": "^2.1.2",
     "tailwindcss": "latest",
     "typescript": "latest",
-    "vite": "latest",
-    "@playwright/test": "^1.52.0",
-    "start-server-and-test": "^2.1.2"
+    "vite": "latest"
   }
 }

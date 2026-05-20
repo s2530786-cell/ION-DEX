@@ -85,14 +85,91 @@ describe("ION DEX API gateway", () => {
     const data = response.body.data as {
       appName: string;
       featureFlags: { backendGateway: boolean; realWalletAdapters: boolean };
-      supportedWallets: Array<{ key: string }>;
+      supportedWallets: Array<{ key: string; category: string }>;
     };
 
     assert.equal(response.status, 200);
     assert.equal(data.appName, "ION DEX");
     assert.equal(data.featureFlags.backendGateway, true);
-    assert.equal(data.featureFlags.realWalletAdapters, false);
+    assert.equal(data.featureFlags.realWalletAdapters, true);
     assert.ok(data.supportedWallets.some((wallet) => wallet.key === "walletconnect"));
+    assert.ok(data.supportedWallets.some((wallet) => wallet.key === "metamask" && wallet.category === "evm"));
+    assert.equal(data.supportedWallets.length, 10);
+  });
+
+  it("serves profile session with wallet detection when provider is connected", async () => {
+    const response = await requestJson("/api/profile/session?provider=online");
+    const data = response.body.data as {
+      identity: { primaryIonName: string };
+      wallets: { primaryKey: string | null; entries: Array<{ key: string }> };
+      sessionDetection: { network: string; walletProvider: string; addressPreview: string } | null;
+      quickActions: Array<{ key: string }>;
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(data.identity.primaryIonName, "trader.ion");
+    assert.equal(data.wallets.primaryKey, "online");
+    assert.equal(data.wallets.entries.length, 10);
+    assert.ok(data.sessionDetection);
+    assert.equal(data.sessionDetection?.walletProvider, "Online+ Wallet");
+    assert.match(data.sessionDetection?.addressPreview ?? "", /…/);
+    assert.ok(data.quickActions.some((action) => action.key === "security-logs"));
+  });
+
+  it("merges live ION TonConnect address into profile session detection", async () => {
+    const address = "0:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
+    const response = await requestJson(
+      `/api/profile/session?provider=ion-browser&address=${encodeURIComponent(address)}&chainId=-239`,
+    );
+    const data = response.body.data as {
+      sessionDetection: {
+        addressPreview: string;
+        network: string;
+        detectionSource: string;
+        addressFormat: string;
+      } | null;
+    };
+
+    assert.equal(response.status, 200);
+    assert.ok(data.sessionDetection);
+    assert.equal(data.sessionDetection?.detectionSource, "browser-injected");
+    assert.equal(data.sessionDetection?.network, "ION Mainnet");
+    assert.equal(data.sessionDetection?.addressFormat, "ION / TON-style");
+    assert.match(data.sessionDetection?.addressPreview ?? "", /0:12/);
+  });
+
+  it("merges live browser wallet metadata into profile session detection", async () => {
+    const address = "0x1234567890abcdef1234567890abcdef12345678";
+    const response = await requestJson(
+      `/api/profile/session?provider=metamask&address=${encodeURIComponent(address)}&chainId=56`,
+    );
+    const data = response.body.data as {
+      sessionDetection: {
+        addressPreview: string;
+        network: string;
+        detectionSource: string;
+        addressFormat: string;
+      } | null;
+    };
+
+    assert.equal(response.status, 200);
+    assert.ok(data.sessionDetection);
+    assert.equal(data.sessionDetection?.detectionSource, "browser-injected");
+    assert.equal(data.sessionDetection?.network, "BNB Smart Chain");
+    assert.equal(data.sessionDetection?.addressFormat, "EVM checksummed");
+    assert.match(data.sessionDetection?.addressPreview ?? "", /0x1234/);
+  });
+
+  it("serves disconnected profile session without session detection", async () => {
+    const response = await requestJson("/api/profile/session");
+    const data = response.body.data as {
+      sessionDetection: unknown;
+      wallets: { primaryKey: string | null };
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(data.sessionDetection, null);
+    assert.equal(data.wallets.primaryKey, null);
   });
 
   it("serves token metadata", async () => {
@@ -112,6 +189,37 @@ describe("ION DEX API gateway", () => {
     assert.ok(data.length >= 4);
     assert.ok(data.every((ticker) => ticker.displayPrice.startsWith("$")));
     assert.ok(data.some((ticker) => ticker.symbol === "ION" && ticker.displayChange.startsWith("+")));
+  });
+
+  it("serves bigint quote with slippage and fee precision", async () => {
+    const response = await requestJson("/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=50");
+    const data = response.body.data as {
+      amountInUnits: string;
+      estimatedOutputUnits: string;
+      minimumReceivedUnits: string;
+      protocolFeeUnits: string;
+      slippageBps: number;
+      protocolFeeBps: number;
+      precision: { inputDecimals: number; outputDecimals: number; math: string };
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(data.amountInUnits, "2500000000000000000");
+    assert.equal(data.slippageBps, 50);
+    assert.equal(data.protocolFeeBps, 25);
+    assert.equal(data.precision.inputDecimals, 18);
+    assert.equal(data.precision.outputDecimals, 9);
+    assert.equal(data.precision.math, "bigint-floor");
+    assert.ok(BigInt(data.estimatedOutputUnits) > BigInt(data.minimumReceivedUnits));
+    assert.ok(BigInt(data.protocolFeeUnits) > 0n);
+  });
+
+  it("rejects unsafe quote slippage", async () => {
+    const response = await requestJson("/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=900");
+
+    assert.equal(response.status, 400);
+    assert.equal(response.body.error?.code, "invalid_quote_request");
+    assert.match(response.body.error?.message ?? "", /slippageBps/);
   });
 
   it("returns typed errors for unknown routes and invalid methods", async () => {

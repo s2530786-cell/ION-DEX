@@ -12,6 +12,7 @@ import { useMemo, useState, type FormEvent } from "react";
 import type { PageKey } from "@/components/layout/AppShell";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { ChartFrame, GlassPanel, MetricTile, PageHero, RiskNotice, StatusPill } from "@/components/ui/glass";
 
 type BusinessPageConfig = {
   eyebrow: string;
@@ -1237,75 +1238,375 @@ function OrderHistoryPanel() {
   );
 }
 
+const gridTemplates = [
+  { name: "Neutral grid", apr: "12.4%", status: "Armed" },
+  { name: "Arithmetic", apr: "18.1%", status: "Preview" },
+  { name: "Trailing grid", apr: "21.6%", status: "AI guarded" },
+] as const;
+
+const gridLogs = [
+  ["Rebalance #42", "Filled · 420 ION", "2m ago"],
+  ["TP guard", "Held · range intact", "14m ago"],
+  ["Sentinel", "No MEV flag", "1h ago"],
+] as const;
+
+const poolRows = [
+  { pair: "BNB / ION", tvl: "$1.23M", volume: "$412K", apr: "24.8%" },
+  { pair: "ION / USDT", tvl: "$640K", volume: "$188K", apr: "19.2%" },
+] as const;
+
+const bridgeSteps = [
+  { step: "Vault deposit", state: "Confirmed", chain: "BSC" },
+  { step: "Relayer quorum", state: "2 / 3 signed", chain: "Multisig" },
+  { step: "ION release", state: "Pending finality", chain: "ION" },
+] as const;
+
+const burnBars = [42, 68, 55, 88, 72, 95, 61, 80, 74, 90] as const;
+
+const domainListings = [
+  { name: "trader.ion", status: "Owned", price: "—" },
+  { name: "swap.ion", status: "Primary", price: "—" },
+  { name: "vault.ion", status: "Listed", price: "420 ION" },
+] as const;
+
+const aiSignals = [
+  { label: "Trend probability", value: "63% bullish" },
+  { label: "Support", value: "5.82 ION" },
+  { label: "Resistance", value: "6.48 ION" },
+  { label: "Whale flow", value: "+2.1M ION inflow" },
+] as const;
+
+function GridDeskPage() {
+  const config = pageConfigs.grid;
+  return (
+    <div className="grid gap-5" data-testid="page-grid">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics.map((m) => ({ ...m, testId: `grid-metric-${m.label}` }))}
+        title={config.title}
+      />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <div className="grid gap-5">
+          <ChartFrame
+            badge={<StatusPill label="AI Sentinel armed" testId="grid-sentinel" tone="emerald" />}
+            subtitle="5.20 — 7.40 ION"
+            testId="grid-range-chart"
+            title="Range visualization"
+          >
+            <div className="float-3d flex h-48 items-end gap-2 rounded-[1.4rem] border border-fuchsia-200/15 bg-[#03050f]/55 p-4">
+              {burnBars.map((h, i) => (
+                <span
+                  key={i}
+                  className="flex-1 rounded-full bg-gradient-to-t from-fuchsia-500/30 to-cyan-300/80"
+                  style={{ height: `${h}%` }}
+                />
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-cyan-100/55" data-testid="grid-backtest">
+              Backtest preview · local-seed replay · 30d neutral grid +0.8% net of ION fees
+            </p>
+          </ChartFrame>
+          <GlassPanel eyebrow="Strategy log" testId="grid-strategy-log" title="Live bot timeline">
+            <div className="grid gap-2">
+              {gridLogs.map(([title, detail, time]) => (
+                <div key={title} className="grid grid-cols-3 gap-2 rounded-2xl bg-white/[0.04] px-3 py-2 text-sm">
+                  <span className="font-black text-white">{title}</span>
+                  <span className="text-cyan-100/70">{detail}</span>
+                  <span className="text-right text-cyan-100/45">{time}</span>
+                </div>
+              ))}
+            </div>
+          </GlassPanel>
+        </div>
+        <div className="grid gap-5">
+          <NeonCard variant="magenta">
+            <p className="mb-3 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">Strategy templates</p>
+            <div className="grid gap-2" data-testid="grid-templates">
+              {gridTemplates.map((t) => (
+                <GlassPanel key={t.name} className="!p-3">
+                  <p className="font-black text-white">{t.name}</p>
+                  <p className="text-xs text-cyan-100/60">
+                    APR {t.apr} · {t.status}
+                  </p>
+                </GlassPanel>
+              ))}
+            </div>
+          </NeonCard>
+          <RiskNotice
+            body="Grid bounds, investment, and slippage must pass Sentinel before wallet signing. Quotes use backend bigint-floor math."
+            testId="grid-ai-suggestion"
+            title="AI suggestion"
+            tone="fuchsia"
+          />
+          <NeonCard variant="cyan">
+            <GridStrategyPanel />
+          </NeonCard>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PoolDeskPage() {
+  const config = pageConfigs.pool;
+  return (
+    <div className="grid gap-5" data-testid="page-pool">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <GlassPanel eyebrow="Pool list" testId="pool-list" title="ION liquidity pools · local-seed">
+          <div className="grid gap-2">
+            {poolRows.map((row) => (
+              <div key={row.pair} className="grid grid-cols-4 gap-2 rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
+                <span className="font-black text-white">{row.pair}</span>
+                <span className="text-cyan-100/70">{row.tvl}</span>
+                <span className="text-cyan-100/70">{row.volume}</span>
+                <span className="text-right text-amber-200">{row.apr}</span>
+              </div>
+            ))}
+          </div>
+        </GlassPanel>
+        <div className="grid gap-5">
+          <ChartFrame subtitle="LP fee accrual" testId="pool-fee-chart" title="Fee growth">
+            <div className="h-40 rounded-[1.2rem] border border-amber-200/15 bg-[#03050f]/50 p-4 text-sm text-amber-100/80">
+              Impermanent-loss hint: −0.42% vs HODL · reviewed seed model
+            </div>
+          </ChartFrame>
+          <NeonCard variant="gold">
+            <PoolLiquidityPanel />
+          </NeonCard>
+          <GlassPanel testId="pool-lp-position" title="LP position">
+            <p className="text-sm text-cyan-100/75">0 active positions · connect wallet to load indexer-backed LP cards.</p>
+          </GlassPanel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BridgeDeskPage() {
+  const config = pageConfigs.bridge;
+  return (
+    <div className="grid gap-5" data-testid="page-bridge">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <ChartFrame
+          badge={<StatusPill label="Route risk: low" testId="bridge-risk" tone="amber" />}
+          subtitle="Est. 8–14 min"
+          testId="bridge-status-tracker"
+          title="Cross-chain status"
+        >
+          <div className="grid gap-3" data-testid="bridge-steps">
+            {bridgeSteps.map((s) => (
+              <div key={s.step} className="flex items-center justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
+                <span className="font-black text-white">{s.step}</span>
+                <span className="text-cyan-100/65">{s.chain}</span>
+                <span className="text-emerald-200">{s.state}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-cyan-100/50">
+            Source tx · BSC vault · Target release · Proof links from bridge-status-service (wired next)
+          </p>
+        </ChartFrame>
+        <NeonCard variant="cyan">
+          <BridgeTransferPanel />
+        </NeonCard>
+      </div>
+    </div>
+  );
+}
+
+function BurnDeskPage() {
+  const config = pageConfigs.burn;
+  return (
+    <div className="grid gap-5" data-testid="page-burn">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={[
+          { label: "BSC burn", value: "0x…dEaD", tone: "magenta" },
+          { label: "ION burn", value: "Indexer v3", tone: "cyan" },
+          { label: "Combined", value: "2.41M ION", tone: "gold" },
+        ]}
+        title={config.title}
+      />
+      <div className="grid gap-5 lg:grid-cols-2">
+        <ChartFrame subtitle="Dual-chain trend" testId="burn-trend-chart" title="Burn analytics">
+          <div className="flex h-44 items-end gap-2">
+            {burnBars.map((h, i) => (
+              <span
+                key={i}
+                className="flex-1 rounded-t-lg bg-gradient-to-t from-rose-500/40 to-amber-300/90"
+                style={{ height: `${h}%` }}
+              />
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-cyan-100/55" data-testid="burn-chain-split">
+            Chain split · BSC 58% · ION 42% · remaining supply 97.59M ION · local-seed
+          </p>
+        </ChartFrame>
+        <div className="grid gap-5">
+          <GlassPanel testId="burn-proof-links" title="Proof links">
+            <p className="font-mono text-xs text-cyan-100/70">BSC: 0x000000000000000000000000000000000000dEaD</p>
+            <p className="mt-2 font-mono text-xs text-cyan-100/70">ION: api.mainnet.ice.io/indexer/v3/</p>
+          </GlassPanel>
+          <NeonCard variant="magenta">
+            <BurnAnalyticsPanel />
+          </NeonCard>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DomainDeskPage() {
+  const config = pageConfigs.domain;
+  return (
+    <div className="grid gap-5" data-testid="page-domain">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <GlassPanel eyebrow="My domains" testId="domain-marketplace" title="Marketplace · dns.ice.io seed">
+          <div className="grid gap-2">
+            {domainListings.map((d) => (
+              <div key={d.name} className="flex justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
+                <span className="font-black text-cyan-100">{d.name}</span>
+                <span className="text-cyan-100/60">{d.status}</span>
+                <span className="text-amber-200">{d.price}</span>
+              </div>
+            ))}
+          </div>
+        </GlassPanel>
+        <div className="grid gap-5">
+          <RiskNotice
+            body="Homoglyph and phishing checks run before send-to-domain signing. Resolver must match wallet-bound .ion record."
+            testId="domain-phishing-warn"
+            title="Phishing guard"
+            tone="amber"
+          />
+          <NeonCard variant="cyan">
+            <DomainTradingPanel />
+          </NeonCard>
+          <GlassPanel testId="domain-ion-id" title="ION ID / KYC">
+            <p className="text-sm text-cyan-100/75">KYC Pass L2 · expires 2026-11-30 · profile hub linked</p>
+          </GlassPanel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AIDeskPage() {
+  const config = pageConfigs.ai;
+  return (
+    <div className="grid gap-5" data-testid="page-ai">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <ChartFrame
+          badge={<StatusPill label="Risk: medium" testId="ai-risk-score" tone="amber" />}
+          subtitle="ION · 4h horizon"
+          testId="ai-market-summary"
+          title="Market summary"
+        >
+          <div className="grid gap-3 sm:grid-cols-2" data-testid="ai-signals">
+            {aiSignals.map((s) => (
+              <MetricTile key={s.label} label={s.label} tone="cyan" value={s.value} />
+            ))}
+          </div>
+          <p className="mt-4 text-[11px] text-cyan-100/45" data-testid="ai-disclaimer">
+            Not investment advice · offline heuristics until ai-market-service streams live inference.
+          </p>
+        </ChartFrame>
+        <div className="grid gap-5">
+          <GlassPanel testId="ai-grid-suggestion" title="Grid suggestion">
+            <p className="text-sm text-cyan-100/75">Suggested neutral grid 5.6–6.5 ION · 18 levels · Sentinel confidence 71%</p>
+          </GlassPanel>
+          <GlassPanel testId="ai-prediction-history" title="Prediction history">
+            <p className="text-sm text-cyan-100/75">Last 7 calls · 5 aligned · 2 drift · accuracy 71% (local-seed)</p>
+          </GlassPanel>
+          <NeonCard variant="mixed" className="!shadow-neonCyan">
+            <AIMarketPanel />
+          </NeonCard>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StakeDeskPage() {
+  const config = pageConfigs.stake;
+  return (
+    <div className="grid gap-5" data-testid="page-stake">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <div className="grid gap-5 lg:grid-cols-2">
+        <GlassPanel testId="stake-overview" title="Staking overview · indexer seed">
+          <p className="text-sm text-cyan-100/75">Official + DEX staking totals merge through staking-service. Claimable rewards and unstake queue shown after wallet connect.</p>
+        </GlassPanel>
+        <NeonCard variant="gold">
+          <StakeHubPanel />
+        </NeonCard>
+      </div>
+    </div>
+  );
+}
+
 export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
   if (page === "trade") {
     return <TradeDeskPage />;
   }
+  if (page === "grid") {
+    return <GridDeskPage />;
+  }
+  if (page === "pool") {
+    return <PoolDeskPage />;
+  }
+  if (page === "stake") {
+    return <StakeDeskPage />;
+  }
+  if (page === "bridge") {
+    return <BridgeDeskPage />;
+  }
+  if (page === "burn") {
+    return <BurnDeskPage />;
+  }
+  if (page === "domain") {
+    return <DomainDeskPage />;
+  }
+  if (page === "ai") {
+    return <AIDeskPage />;
+  }
 
-  const config = pageConfigs[page];
-  const Icon = config.icon;
-
-  return (
-    <div className="grid gap-5 xl:grid-cols-[1fr_22rem]" data-testid={`page-${page}`}>
-      <NeonCard className="min-h-[31rem]" variant="mixed">
-        <div className="flex h-full flex-col justify-between gap-8">
-          <div>
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
-                  {config.eyebrow}
-                </p>
-                <h1 className="mt-3 max-w-3xl text-4xl font-black text-white sm:text-6xl" data-testid="page-title">
-                  {config.title}
-                </h1>
-              </div>
-              <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl border border-white/10 bg-white/[0.07] text-cyan-200 shadow-neonCyan">
-                <Icon size={34} />
-              </div>
-            </div>
-            <p className="max-w-3xl text-base leading-7 text-cyan-100/68">
-              {config.description}
-            </p>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {config.metrics.map((metric) => (
-              <div
-                key={metric.label}
-                className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}
-              >
-                <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">
-                  {metric.label}
-                </p>
-                <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
-              </div>
-            ))}
-          </div>
-
-          {page === "grid" ? <GridStrategyPanel /> : null}
-          {page === "pool" ? <PoolLiquidityPanel /> : null}
-          {page === "stake" ? <StakeHubPanel /> : null}
-          {page === "bridge" ? <BridgeTransferPanel /> : null}
-          {page === "burn" ? <BurnAnalyticsPanel /> : null}
-          {page === "domain" ? <DomainTradingPanel /> : null}
-          {page === "ai" ? <AIMarketPanel /> : null}
-        </div>
-      </NeonCard>
-
-      <NeonCard variant="cyan">
-        <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Product Modules</p>
-        <div className="mt-5 grid gap-3">
-          {config.checklist.map((item, index) => (
-            <div
-              key={item}
-              className="rounded-2xl border border-white/10 bg-white/[0.05] p-4"
-            >
-              <p className="text-xs font-black text-cyan-200">0{index + 1}</p>
-              <p className="mt-1 font-bold text-white">{item}</p>
-            </div>
-          ))}
-        </div>
-      </NeonCard>
-    </div>
-  );
+  return null;
 }

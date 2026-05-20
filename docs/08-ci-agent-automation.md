@@ -8,8 +8,12 @@ Run the same verification humans use, **without** interactive `pause`, so agents
 
 | Scenario | Command |
 |----------|---------|
+| Agent workflow (memory + plan, dry-run) | `node scripts/agent-workflow.mjs` |
+| Agent workflow (memory + full verify) | `node scripts/agent-workflow.mjs --tier verify --execute` |
+| Agent workflow (strict UI + full verify) | `node scripts/agent-workflow.mjs --tier strict --execute` |
 | Development preflight only | `node scripts/dev-preflight.mjs` |
 | Agent / CI / hooks (no pause) | `scripts\agent-verify.cmd` |
+| POSIX Cloud Agent (no pause) | `bash scripts/agent-verify.sh` |
 | Save full log to `%TEMP%\ion-verify-full.txt`, optional pause at end | `scripts\verify-full-save-log.cmd` |
 | Save log, never pause | `scripts\verify-full-save-log.cmd --no-pause` |
 | Interactive debugging with pause on failure | `scripts\verify-full.cmd` (no `CI` / no `ION_VERIFY_NONINTERACTIVE`) |

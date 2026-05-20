@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("ION DEX smoke", () => {
+  test.setTimeout(60_000);
+
   test("home page shows key sections and controls", async ({ page }) => {
     await page.goto("/");
 
@@ -11,24 +13,50 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByText("Professional Trading Surface")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeEnabled();
-    await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
+    await expect(page.getByTestId("profile-hub-trigger")).toBeVisible();
   });
 
-  test("wallet access opens provider picker and profile session", async ({ page }) => {
+  test("swap quote uses backend precision and slippage bps", async ({ page }) => {
     await page.goto("/");
 
-    await page.getByTestId("wallet-connect").click();
-    await expect(page.getByTestId("wallet-panel")).toBeVisible();
+    await page.getByTestId("swap-pay").fill("4.20");
+    await page.getByTestId("swap-slippage").fill("0.75");
+
+    await expect(page.getByText("Protocol fee")).toBeVisible();
+    await expect(page.getByText(/25 bps/)).toBeVisible();
+    await expect(page.getByText("Precision")).toBeVisible();
+    await expect(page.getByText(/bigint-floor \/ ION 9d/)).toBeVisible();
+    await expect(page.getByText("Execution route")).toBeVisible();
+    await expect(page.getByText("BNB/USD -> ION/USD")).toBeVisible();
+    await expect(page.getByTestId("swap-submit")).toBeEnabled();
+  });
+
+  test("profile hub opens wallet list and connected session detection", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByTestId("profile-hub-trigger").click();
+    await expect(page.getByTestId("profile-hub")).toBeVisible();
+    await expect(page.getByTestId("profile-display-name")).toHaveText("ION Trader", { timeout: 15_000 });
+    await expect(page.getByTestId("profile-hub-source")).toContainText(/local/i);
+    await expect(page.getByTestId("profile-ion-name")).toHaveText("trader.ion");
+    await expect(page.getByTestId("wallet-detect-scan")).toBeVisible();
     await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-metamask")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-metamask")).toHaveAttribute("data-detected", "false");
+    await expect(page.getByTestId("wallet-detected-metamask")).toContainText("Not detected");
+    await expect(page.getByTestId("wallet-provider-walletconnect")).toHaveAttribute("data-detected", "true");
 
     await page.getByTestId("wallet-provider-online").click();
     await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet secure session ready");
-    await expect(page.getByTestId("profile-menu")).toBeVisible();
-    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Ready");
+    await expect(page.getByTestId("profile-session-detection")).toBeVisible();
+    await expect(page.getByTestId("profile-detect-network")).toContainText("ION Mainnet");
+    await expect(page.getByTestId("profile-hub-trigger")).toContainText("Profile Ready");
+
+    await page.getByTestId("profile-privacy-toggle").click();
+    await expect(page.getByTestId("ticker-strip")).toContainText("••••");
 
     await page.getByTestId("wallet-disconnect").click();
-    await expect(page.getByTestId("wallet-provider-walletconnect")).toBeVisible();
-    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
+    await expect(page.getByTestId("profile-hub-trigger")).toContainText("Profile Hub");
   });
 
   test("375px viewport keeps brand and main content visible", async ({ page }) => {
@@ -62,7 +90,7 @@ test.describe("ION DEX smoke", () => {
     ] as const;
 
     for (const [key, title] of pages) {
-      await page.getByTestId(`nav-${key}`).click();
+      await page.getByTestId(`nav-${key}`).click({ force: true });
       await expect(page.getByTestId(`page-${key}`)).toBeVisible();
       await expect(page.getByTestId("page-title")).toHaveText(title);
     }
@@ -73,10 +101,44 @@ test.describe("ION DEX smoke", () => {
     await page.getByTestId("nav-trade").click();
 
     await expect(page.getByTestId("trade-chart")).toBeVisible();
+    await page.getByTestId("trade-orderbook").scrollIntoViewIfNeeded();
     await expect(page.getByTestId("trade-orderbook")).toBeVisible();
+    await page.getByTestId("trade-market-trades").scrollIntoViewIfNeeded();
     await expect(page.getByTestId("trade-market-trades")).toBeVisible();
+    await page.getByTestId("trade-history").scrollIntoViewIfNeeded();
     await expect(page.getByTestId("trade-history")).toBeVisible();
     await expect(page.getByText("TWAP guard active")).toBeVisible();
+  });
+
+  test("grid pool bridge burn domain ai pages show liquid-glass desk modules", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByTestId("nav-grid").click();
+    await expect(page.getByTestId("grid-range-chart")).toBeVisible();
+    await expect(page.getByTestId("grid-templates")).toBeVisible();
+    await expect(page.getByTestId("grid-form")).toBeVisible();
+
+    await page.getByTestId("nav-pool").click();
+    await expect(page.getByTestId("pool-list")).toBeVisible();
+    await expect(page.getByTestId("pool-fee-chart")).toBeVisible();
+    await expect(page.getByTestId("pool-form")).toBeVisible();
+
+    await page.getByTestId("nav-bridge").click();
+    await expect(page.getByTestId("bridge-status-tracker")).toBeVisible();
+    await expect(page.getByTestId("bridge-steps")).toBeVisible();
+
+    await page.getByTestId("nav-burn").click();
+    await expect(page.getByTestId("burn-trend-chart")).toBeVisible();
+    await expect(page.getByTestId("burn-chain-split")).toBeVisible();
+
+    await page.getByTestId("nav-domain").click();
+    await expect(page.getByTestId("domain-marketplace")).toBeVisible();
+    await expect(page.getByTestId("domain-phishing-warn")).toBeVisible();
+
+    await page.getByTestId("nav-ai").click();
+    await expect(page.getByTestId("ai-market-summary")).toBeVisible();
+    await expect(page.getByTestId("ai-signals")).toBeVisible();
+    await expect(page.getByTestId("ai-disclaimer")).toBeVisible();
   });
 
   test("trade page validates and prepares a limit order", async ({ page }) => {
@@ -86,6 +148,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("trade-form")).toBeVisible();
     await expect(page.getByTestId("trade-submit")).toBeDisabled();
 
+    await page.getByTestId("trade-amount").scrollIntoViewIfNeeded();
     await page.getByTestId("trade-amount").fill("1250");
     await page.getByTestId("trade-price").fill("6");
     await page.getByTestId("trade-slippage").fill("0.5");
@@ -104,6 +167,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("grid-form")).toBeVisible();
     await expect(page.getByTestId("grid-submit")).toBeDisabled();
 
+    await page.getByTestId("grid-lower").scrollIntoViewIfNeeded();
     await page.getByTestId("grid-lower").fill("7.4");
     await page.getByTestId("grid-upper").fill("5.2");
     await expect(page.getByTestId("grid-error")).toBeVisible();
@@ -127,6 +191,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-form")).toBeVisible();
     await expect(page.getByTestId("pool-submit")).toBeDisabled();
 
+    await page.getByTestId("pool-bnb").scrollIntoViewIfNeeded();
     await page.getByTestId("pool-bnb").fill("2");
     await page.getByTestId("pool-ion").fill("800");
     await page.getByTestId("pool-slippage").fill("10");
@@ -147,6 +212,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("stake-form")).toBeVisible();
     await expect(page.getByTestId("stake-submit")).toBeDisabled();
 
+    await page.getByTestId("stake-amount").scrollIntoViewIfNeeded();
     await page.getByTestId("stake-amount").fill("250");
     await expect(page.getByTestId("stake-preview")).toContainText("Stake preview:");
     await expect(page.getByTestId("stake-submit")).toBeEnabled();

@@ -55,6 +55,14 @@ Every implementation loop must follow this order:
 
 `scripts/verify-full.cmd`, `scripts/verify-full.ps1`, `scripts/agent-verify.cmd`, and `scripts/verify-full-save-log.cmd --no-pause` must run the preflight automatically.
 
+Cloud Agents and POSIX shells should use the unified orchestrator:
+
+```text
+node scripts/agent-workflow.mjs
+node scripts/agent-workflow.mjs --tier verify --execute
+bash scripts/agent-verify.sh
+```
+
 ## Page Upgrade Route
 
 ### 1. Shared UI Foundation

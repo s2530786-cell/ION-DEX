@@ -1,3 +1,5 @@
+import { listWalletEntries } from "./profile.js";
+
 export type PublicConfig = {
   appName: string;
   environment: "local" | "test" | "preview";
@@ -15,7 +17,10 @@ export type PublicConfig = {
   supportedWallets: Array<{
     key: string;
     name: string;
+    category: "ion-native" | "evm";
     status: "ready" | "planned" | "enabled";
+    detector: string;
+    label: string;
   }>;
 };
 
@@ -30,14 +35,17 @@ export function getPublicConfig(): PublicConfig {
     featureFlags: {
       backendGateway: true,
       walletAccess: true,
-      realWalletAdapters: false,
+      realWalletAdapters: true,
       aiSentinel: false,
       bridgeTransfers: false,
     },
-    supportedWallets: [
-      { key: "online", name: "Online+ Wallet", status: "ready" },
-      { key: "ion-browser", name: "ION Browser Wallet", status: "planned" },
-      { key: "walletconnect", name: "WalletConnect / OKX", status: "ready" },
-    ],
+    supportedWallets: listWalletEntries().map((wallet) => ({
+      key: wallet.key,
+      name: wallet.name,
+      category: wallet.category,
+      status: wallet.status,
+      detector: wallet.detector,
+      label: wallet.label,
+    })),
   };
 }

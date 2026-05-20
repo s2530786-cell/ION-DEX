@@ -42,6 +42,18 @@
 
 This repository does NOT appear to contain ready-made DEX, AMM, staking, burn, bridge, router, liquidity mining, or Jetton DEX contracts. The DEX contracts must be designed separately while reusing official patterns and libraries from the smart contract references above.
 
+## Wallet injection (not in `ice-blockchain/ion` node monorepo)
+
+Verified companion repositories for dApp wallet integration:
+
+| Product | Repository | Injected global | TonConnect bridge field |
+|---|---|---|---|
+| Online+ / ION Chrome extension | `ice-blockchain/ion-chrome-wallet` (`provider.ts`) | `window.ionmask` | `ionconnect` (+ `window.ion` legacy provider) |
+| ION Browser Wallet extension | `ice-blockchain/ion-browser-wallet` (`src/js/extension/provider.js`) | `window.tonwallet` | `tonconnect` (legacy naming; gateway SDK checks `ionconnect`) |
+| TonConnect protocol + detection | `ice-blockchain/ion-gateway` (`packages/sdk/src/provider/injected/`) | `window[jsBridgeKey].ionconnect` | Standard detection via `InjectedProvider.isWalletInjected` |
+
+ION DEX frontend adapters: `frontend/src/lib/wallet/ion-official.ts`, `ion-bridge.ts`.
+
 ## How to use this source later
 
 - For ION DNS/domain features: study `dns-auto-code.fc` and `dns-manual-code.fc` first.

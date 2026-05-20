@@ -30,6 +30,10 @@ echo "=== 2) Backend verify (build + API tests) ==="
 )
 
 echo
+echo "=== 2b) Contract layer (minimum-output + optional forge) ==="
+node scripts/verify-contracts.mjs
+
+echo
 echo "=== 3) Frontend verify (build + Playwright) ==="
 (
   cd frontend

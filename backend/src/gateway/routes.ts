@@ -4,6 +4,8 @@ import { systemClock, toIsoTimestamp, type Clock } from "../lib/clock.js";
 import { getRequestId } from "../lib/request-id.js";
 import { getPublicConfig } from "../services/config.js";
 import { getMarketTickers } from "../services/markets.js";
+import { createQuote, QuoteInputError } from "../services/quotes.js";
+import { getProfileSession } from "../services/profile.js";
 import { getTokens } from "../services/tokens.js";
 
 export type GatewayOptions = {
@@ -72,6 +74,45 @@ export function routeRequest(
     case "/api/markets/tickers":
       writeJson(response, 200, apiResponse(getMarketTickers(), meta));
       return;
+    case "/api/profile/session": {
+      const provider = url.searchParams.get("provider");
+      const address = url.searchParams.get("address") ?? undefined;
+      const chainIdRaw = url.searchParams.get("chainId");
+      const chainId =
+        chainIdRaw !== null && chainIdRaw.length > 0 ? Number(chainIdRaw) : undefined;
+      writeJson(
+        response,
+        200,
+        apiResponse(
+          getProfileSession({
+            providerKey: provider,
+            address,
+            chainId: Number.isFinite(chainId) ? chainId : undefined,
+          }),
+          meta,
+        ),
+      );
+      return;
+    }
+    case "/api/trade/quote": {
+      const slippageBps = Number(url.searchParams.get("slippageBps"));
+      try {
+        const quote = createQuote({
+          amountIn: url.searchParams.get("amountIn") ?? "",
+          inputToken: url.searchParams.get("inputToken") ?? "",
+          outputToken: url.searchParams.get("outputToken") ?? "",
+          slippageBps,
+        });
+        writeJson(response, 200, apiResponse(quote, meta));
+      } catch (error) {
+        if (error instanceof QuoteInputError) {
+          writeJson(response, 400, apiError("invalid_quote_request", error.message, meta));
+          return;
+        }
+        throw error;
+      }
+      return;
+    }
     default:
       writeJson(response, 404, apiError("not_found", `No route registered for ${url.pathname}.`, meta));
   }
