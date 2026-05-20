@@ -15,7 +15,7 @@ export async function loadLivePublicConfig(config: ServerConfig): Promise<Public
     },
     featureFlags: {
       backendGateway: true,
-      walletShell: true,
+      walletAccess: true,
       realWalletAdapters: true,
       aiSentinel: false,
       bridgeTransfers: false,
