@@ -68,6 +68,17 @@ test.describe("ION DEX smoke", () => {
     }
   });
 
+  test("trade page shows professional desk modules", async ({ page }) => {
+    await page.goto("/");
+    await page.getByTestId("nav-trade").click();
+
+    await expect(page.getByTestId("trade-chart")).toBeVisible();
+    await expect(page.getByTestId("trade-orderbook")).toBeVisible();
+    await expect(page.getByTestId("trade-market-trades")).toBeVisible();
+    await expect(page.getByTestId("trade-history")).toBeVisible();
+    await expect(page.getByText("TWAP guard active")).toBeVisible();
+  });
+
   test("trade page validates and prepares a limit order", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId("nav-trade").click();

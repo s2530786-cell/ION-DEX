@@ -131,6 +131,12 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `frontend/src`, `backend`, and E2E tests were cleared of visible `mock/placeholder/shell/draft/TBD/Build Checklist` wording.
   - Strict preflight, encoding, frontend verify, backend verify/audit/stress, and strict full verify passed.
   - Manual browser validation produced `/opt/cursor/artifacts/swap_ion_ui_conformance_walkthrough.mp4`.
+- Trade desk UI continuation completed on 2026-05-20:
+  - `frontend/src/pages/BusinessPages.tsx` now renders `TradeDeskPage` outside the generic product module layout.
+  - Trade has market stat cards, 3D chart/K-line surface, `TWAP guard active`, right-side Limit order, Order book, Market trades, and Orders and risk.
+  - Playwright now has 14 tests including `trade page shows professional desk modules`.
+  - Strict preflight, encoding, frontend verify, and strict full verify passed.
+  - Manual browser validation produced `/opt/cursor/artifacts/trade_desk_ui_walkthrough.mp4`.
 
 ## Current Blocker
 
@@ -152,7 +158,7 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 12. Workflow preference：2026-05-18，user explicitly requested making strong use of `self-evolving` and automatic workflow because they help development. Treat `cursor-engineering-workflow` as the pre/during-work operating loop and `self-evolving` as the post-work memory improvement loop.
 13. Accelerator/review preference：2026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
 14. Claude-Flow/RuFlo：2026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
-15. Next：continue UI correction route by upgrading Trade/Grid/Pool pages from product surfaces into full OKX-style professional layouts, or start Phase 3 backend foundation only after the same development preflight.
+15. Next：continue UI correction route by upgrading Grid and Pool pages into full OKX-style professional layouts, or start Phase 3 backend foundation only after the same development preflight.
 
 ## Memory MCP Candidates
 
