@@ -28,12 +28,30 @@ select {
 
 @layer utilities {
   .glass-surface {
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    position: relative;
+    isolation: isolate;
+    border: 2px solid rgba(120, 210, 255, 0.28);
     background:
-      linear-gradient(145deg, rgba(12, 24, 52, 0.74), rgba(7, 12, 30, 0.52)),
-      rgba(3, 5, 15, 0.58);
-    backdrop-filter: blur(22px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 22px 70px rgba(0, 0, 0, 0.32);
+      linear-gradient(148deg, rgba(18, 42, 92, 0.82) 0%, rgba(8, 14, 38, 0.62) 42%, rgba(52, 18, 72, 0.55) 100%),
+      radial-gradient(circle at 18% 0%, rgba(36, 247, 255, 0.14), transparent 42%),
+      rgba(3, 5, 15, 0.72);
+    backdrop-filter: blur(26px) saturate(1.35);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -18px 42px rgba(36, 247, 255, 0.06),
+      0 0 0 1px rgba(141, 77, 255, 0.12),
+      0 26px 80px rgba(0, 0, 0, 0.42),
+      0 0 48px rgba(36, 247, 255, 0.12);
+  }
+
+  .glass-surface::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(125deg, rgba(255, 255, 255, 0.14) 0%, transparent 34%, transparent 66%, rgba(255, 59, 212, 0.08) 100%);
+    opacity: 0.55;
   }
 
   .flow-border {
@@ -44,13 +62,17 @@ select {
   .flow-border::before {
     content: "";
     position: absolute;
-    inset: -1px;
+    inset: -3px;
     z-index: -1;
     border-radius: inherit;
     background: linear-gradient(115deg, #24f7ff, #8d4dff, #ff3bd4, #ffd166, #24f7ff);
-    background-size: 260% 260%;
-    opacity: 0.9;
+    background-size: 280% 280%;
+    opacity: 0.98;
+    filter: blur(0.4px);
     animation: ionBorderFlow 7s ease infinite;
+    box-shadow:
+      0 0 28px rgba(36, 247, 255, 0.45),
+      0 0 52px rgba(255, 59, 212, 0.22);
   }
 
   .depth-stage {
@@ -59,38 +81,258 @@ select {
   }
 
   .float-3d {
-    transform: rotateX(6deg) rotateY(-7deg) translateZ(0);
+    transform: rotateX(8deg) rotateY(-9deg) translateZ(12px);
     animation: ionFloat3d 9s ease-in-out infinite;
+    filter: drop-shadow(0 18px 28px rgba(36, 247, 255, 0.28));
   }
 
   .text-glow-cyan {
-    text-shadow: 0 0 18px rgba(36, 247, 255, 0.65);
+    text-shadow:
+      0 0 22px rgba(36, 247, 255, 0.75),
+      0 0 44px rgba(36, 247, 255, 0.28);
   }
 
   .text-glow-magenta {
-    text-shadow: 0 0 18px rgba(255, 59, 212, 0.55);
+    text-shadow:
+      0 0 22px rgba(255, 59, 212, 0.62),
+      0 0 40px rgba(141, 77, 255, 0.24);
   }
 
   .neon-border-mask {
     position: relative;
+    isolation: isolate;
+    padding: 3px;
+    border-radius: 1.85rem;
+    background: linear-gradient(118deg, #24f7ff, #8d4dff 32%, #ff3bd4 68%, #ffd166 92%, #24f7ff);
+    background-size: 300% 300%;
+    animation: ionBorderFlow 9s ease infinite;
+    box-shadow:
+      0 0 36px rgba(36, 247, 255, 0.32),
+      0 0 64px rgba(255, 59, 212, 0.18),
+      0 28px 90px rgba(0, 0, 0, 0.38);
   }
 
   .neon-border-mask::before {
     content: "";
     position: absolute;
-    inset: -1px;
-    z-index: -1;
+    inset: 0;
+    z-index: 0;
     border-radius: inherit;
-    background: linear-gradient(115deg, #24f7ff, #8d4dff 38%, #ff3bd4 70%, #ffd166);
-    filter: blur(0.2px);
+    background: linear-gradient(118deg, rgba(36, 247, 255, 0.55), rgba(141, 77, 255, 0.42), rgba(255, 59, 212, 0.48));
+    opacity: 0.35;
+    filter: blur(10px);
+  }
+
+  .neon-border-mask > div {
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(186, 230, 255, 0.22) !important;
+    background:
+      linear-gradient(152deg, rgba(14, 32, 72, 0.9) 0%, rgba(7, 11, 32, 0.72) 45%, rgba(48, 14, 58, 0.78) 100%),
+      radial-gradient(circle at 12% 8%, rgba(36, 247, 255, 0.16), transparent 48%) !important;
+    backdrop-filter: blur(28px) saturate(1.4);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -24px 48px rgba(141, 77, 255, 0.08) !important;
   }
 
   .aurora-noise {
     background-image:
-      radial-gradient(circle at 15% 15%, rgba(36, 247, 255, 0.2), transparent 28%),
-      radial-gradient(circle at 78% 18%, rgba(255, 59, 212, 0.18), transparent 32%),
-      radial-gradient(circle at 52% 78%, rgba(141, 77, 255, 0.22), transparent 32%);
+      radial-gradient(circle at 15% 15%, rgba(36, 247, 255, 0.28), transparent 30%),
+      radial-gradient(circle at 78% 18%, rgba(255, 59, 212, 0.22), transparent 34%),
+      radial-gradient(circle at 52% 78%, rgba(141, 77, 255, 0.26), transparent 34%);
   }
+}
+
+/* Background particles — stronger visibility */
+.pointer-events-none.fixed.inset-0 canvas {
+  opacity: 0.92 !important;
+  filter: saturate(1.25) brightness(1.08);
+}
+
+/* App shell premium rim */
+.glass-surface.max-w-7xl {
+  border-width: 2px;
+  border-color: rgba(36, 247, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 0 1px rgba(141, 77, 255, 0.14),
+    0 0 72px rgba(36, 247, 255, 0.2),
+    0 32px 100px rgba(0, 0, 0, 0.45);
+}
+
+header.border-b {
+  border-bottom-width: 2px !important;
+  border-bottom-color: rgba(36, 247, 255, 0.18) !important;
+  box-shadow: 0 12px 40px rgba(36, 247, 255, 0.08);
+}
+
+/* Nav — remove grey strip feel */
+nav[aria-label="Primary"] {
+  border-width: 2px !important;
+  border-color: rgba(141, 77, 255, 0.28) !important;
+  background:
+    linear-gradient(135deg, rgba(12, 28, 62, 0.88), rgba(8, 12, 34, 0.78)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 28px rgba(36, 247, 255, 0.14) !important;
+}
+
+nav[aria-label="Primary"] button {
+  font-size: 0.8rem !important;
+  letter-spacing: 0.04em;
+}
+
+nav[aria-label="Primary"] button[class*="bg-white/15"] {
+  border: 1px solid rgba(36, 247, 255, 0.35);
+  background: linear-gradient(135deg, rgba(36, 247, 255, 0.22), rgba(141, 77, 255, 0.18)) !important;
+  box-shadow:
+    0 0 22px rgba(36, 247, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  color: #f8fbff !important;
+}
+
+/* Replace flat grey Tailwind fills inside main content */
+[data-testid="main-content"] [class*="bg-white\\/"] {
+  border: 1px solid rgba(120, 200, 255, 0.22) !important;
+  background:
+    linear-gradient(145deg, rgba(16, 36, 78, 0.78), rgba(8, 12, 32, 0.62)),
+    radial-gradient(circle at 20% 0%, rgba(36, 247, 255, 0.1), transparent 55%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 32px rgba(0, 0, 0, 0.28) !important;
+}
+
+[data-testid="main-content"] {
+  perspective: 1200px;
+}
+
+/* 3D floating icon wells (feature tiles + page heroes) */
+[data-testid^="feature-"] .grid.h-14,
+[data-testid^="page-"] .grid.h-16 {
+  transform: rotateX(10deg) rotateY(-8deg) translateZ(16px);
+  animation: ionFloat3d 8s ease-in-out infinite;
+  border: 2px solid rgba(36, 247, 255, 0.35) !important;
+  background:
+    linear-gradient(145deg, rgba(36, 247, 255, 0.22), rgba(141, 77, 255, 0.16), rgba(255, 59, 212, 0.12)) !important;
+  box-shadow:
+    0 16px 36px rgba(36, 247, 255, 0.28),
+    0 0 32px rgba(141, 77, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+}
+
+[data-testid^="feature-"] .grid.h-14 svg,
+[data-testid^="page-"] .grid.h-16 svg {
+  filter: drop-shadow(0 0 12px rgba(36, 247, 255, 0.65));
+}
+
+/* Premium glowing glass — Pool / Bridge / Burn / Domain */
+[data-testid="page-pool"],
+[data-testid="page-bridge"],
+[data-testid="page-burn"],
+[data-testid="page-domain"] {
+  filter: drop-shadow(0 0 40px rgba(36, 247, 255, 0.12));
+}
+
+[data-testid="page-pool"] .neon-border-mask,
+[data-testid="page-bridge"] .neon-border-mask {
+  box-shadow:
+    0 0 48px rgba(36, 247, 255, 0.38),
+    0 0 80px rgba(141, 77, 255, 0.2),
+    0 32px 100px rgba(0, 0, 0, 0.42);
+}
+
+[data-testid="page-burn"] .neon-border-mask,
+[data-testid="page-domain"] .neon-border-mask {
+  box-shadow:
+    0 0 48px rgba(255, 180, 90, 0.28),
+    0 0 72px rgba(255, 59, 212, 0.22),
+    0 32px 100px rgba(0, 0, 0, 0.42);
+}
+
+[data-testid="page-pool"] h1,
+[data-testid="page-bridge"] h1 {
+  text-shadow:
+    0 0 28px rgba(36, 247, 255, 0.45),
+    0 0 56px rgba(141, 77, 255, 0.2);
+}
+
+[data-testid="page-burn"] h1,
+[data-testid="page-domain"] h1 {
+  text-shadow:
+    0 0 28px rgba(255, 209, 102, 0.42),
+    0 0 48px rgba(255, 59, 212, 0.22);
+}
+
+/* Metric tiles on business pages */
+[data-testid^="page-"] .grid.gap-4 > div {
+  border-width: 2px !important;
+  border-color: rgba(36, 247, 255, 0.26) !important;
+  border-radius: 1.5rem !important;
+  background:
+    linear-gradient(150deg, rgba(14, 34, 74, 0.88), rgba(9, 14, 36, 0.72)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 28px rgba(36, 247, 255, 0.14) !important;
+}
+
+[data-testid="page-burn"] .grid.gap-4 > div,
+[data-testid="page-domain"] .grid.gap-4 > div {
+  border-color: rgba(255, 209, 102, 0.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 28px rgba(255, 180, 90, 0.16) !important;
+}
+
+[data-testid^="page-"] .grid.gap-4 > div > p.text-xs {
+  font-size: 0.72rem !important;
+  letter-spacing: 0.16em !important;
+  color: rgba(186, 228, 255, 0.78) !important;
+}
+
+[data-testid^="page-"] .grid.gap-4 > div > p.text-2xl {
+  text-shadow: 0 0 18px rgba(36, 247, 255, 0.28);
+}
+
+/* Feature grid premium tiles */
+[data-testid^="feature-"] .neon-border-mask {
+  min-height: 11.5rem;
+}
+
+[data-testid^="feature-"] button:hover .neon-border-mask {
+  box-shadow:
+    0 0 44px rgba(36, 247, 255, 0.42),
+    0 0 72px rgba(255, 59, 212, 0.24);
+}
+
+[data-testid="feature-pool"] .neon-border-mask,
+[data-testid="feature-bridge"] .neon-border-mask {
+  background: linear-gradient(118deg, #24f7ff, #5ce9ff, #8d4dff, #24f7ff) !important;
+}
+
+[data-testid="feature-burn"] .neon-border-mask,
+[data-testid="feature-domain"] .neon-border-mask {
+  background: linear-gradient(118deg, #ffd166, #ff3bd4, #8d4dff, #ffd166) !important;
+}
+
+/* Form readouts — less flat divider rows */
+[data-testid="main-content"] label.glass-surface,
+[data-testid="main-content"] .glass-surface.rounded-2xl {
+  border-width: 2px;
+}
+
+[data-testid="main-content"] label.glass-surface span.text-xs,
+[data-testid="main-content"] .glass-surface p.text-xs {
+  font-size: 0.72rem !important;
+  letter-spacing: 0.14em !important;
+  color: rgba(190, 232, 255, 0.72) !important;
+}
+
+/* Ticker strip */
+[data-testid="ticker-strip"] {
+  border-top: 2px solid rgba(36, 247, 255, 0.14);
+  border-bottom: 2px solid rgba(255, 59, 212, 0.1);
+  box-shadow: inset 0 8px 32px rgba(36, 247, 255, 0.06);
 }
 
 @keyframes ionSpinSlow {
