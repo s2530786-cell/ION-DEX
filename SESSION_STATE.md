@@ -51,6 +51,7 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 ## Current State
 
+- **Contracts batch（2026-05-21）**：补全 10 个 FunC（`contracts/ion/`：`pool`, `router`, `deployer`, `sandwich`, `FeeDistributor`, `BridgeInbox`, `dns-resolver`, `dns-registrar`, `dns-auction`, `staking-pool`）+ 扩展 `common.fc`/`gas.fc`；4 个 Solidity（`contracts/bsc/`：`BSCVault`, `MockERC20`, `FeeReceiver`, `BridgeRelay`）+ `contracts/test/BSCContracts.t.sol`；`scripts/verify-contracts.mjs` 已更新；`node scripts/verify-contracts.mjs` exit `0`（本机无 `forge`，Solidity 编译测试 SKIP）。`verify-full` 仍因既有 backend TypeScript 错误失败（非本批合约引入）。路径对照见 `contracts/README.md`。
 - Critical correctness automation on 2026-05-20 found and fixed a CI verification gap:
   - PR #2 added `scripts/dev-preflight.mjs` to local `verify-full.*`, but GitHub Actions did not run it.
   - `.github/workflows/ion-dex-verify.yml` now runs `node scripts/dev-preflight.mjs` after Node setup and before encoding/build/audit steps.

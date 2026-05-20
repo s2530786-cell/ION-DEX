@@ -1,4 +1,4 @@
-﻿# Tool Belt — 旺财工具库 (Cursor可用)
+# Tool Belt — 旺财工具库 (Cursor可用)
 
 > Cursor 可调用的本地工具和库。按类别整理。更新日期: 2026-05-20
 

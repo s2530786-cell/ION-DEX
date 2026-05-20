@@ -2,6 +2,8 @@
 
 ## Latest Verified Status
 
+- **Contracts batch（2026-05-21）**：新增 ION FunC 池/路由/部署器/MEV 防御/手续费分配/跨链收件箱/DNS 三件套/质押池；BSC 侧 `BSCVault`、`FeeReceiver`、`BridgeRelay` 与测试用 `MockERC20`；`node scripts/verify-contracts.mjs` 通过。待办：安装 Foundry 后 `forge test -C contracts`；修复 backend `tsc` 后重跑 `verify-full`。
+
 - **Phase 2 Task 1 — 合约静态审计（2026-05-18）**：已通读 `contracts/ion/**/*.fc`（22 文件）、`contracts/bsc` 下 `IonWrapper.sol` / `BSCVault.sol` 与 Foundry 测试。结论：FunC 侧存在未校验 LP 回调发送方、router 部署池静态数据与 deployer 不一致、`#include` 路径错误、`gas::pool::swap` 缺失、stableswap 未接入 swap 等 **Critical/High** 级草稿问题；`BSCVault` 存在 `withdrawalId` 不含 nonce 导致的重复 `requestWithdrawal`/日限额会计风险等 **Medium** 级问题。详见 `SESSION_STATE.md`「Current Task → Task 1」。**本轮未改合约代码**；下一步 Task 2 编译与修复。
 
 - **Phase 3 adapter/cache + frontend read slice（2026-05-18）**：后端新增 `MemoryCache`（TTL/stale）、`CachedSourceAdapter` registry（market/burn/staking/domain）、`gateway-data` 层；`meta` 扩展 `cacheHit`/`adapter`；`/api/health` 含 `dataSources` 健康快照。后端 **19 tests** + stress 9 endpoints 全绿。前端 Stake/Burn 指标卡接入 `/api/staking/summary`、`/api/burn/summary`，保留 offline fallback，E2E 断言 `stake-metrics-source` / `burn-metrics-source`。`scripts\verify-full.cmd`（`ION_VERIFY_NONINTERACTIVE=1`）exit `0`。100-pass gate 已重新启动（前次因开发中前端中断于 PASS 2）。
