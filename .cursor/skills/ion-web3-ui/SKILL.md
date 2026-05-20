@@ -10,8 +10,13 @@ description: Guides ION DEX frontend UI development. Use when building or modify
 ION DEX UI must feel like a premium OKX Web3-style trading product:
 
 - Dark blue/purple base, cyberpunk neon, glassmorphism, aurora and galaxy motion.
-- Thin refined neon borders on all major function blocks.
+- 4D liquid-glass panels with translucent depth, glossy highlights, aurora reflections, and rounded irregular card silhouettes when appropriate.
+- Thick luminous cyan/magenta/violet neon rims on hero cards and feature tiles; major cards should look like glowing glass objects, not flat bordered divs.
+- 3D floating icons/cards for feature modules such as Pool, Bridge, Burn, Domain, Trade, Grid, and AI.
+- Galaxy/starfield/aurora backgrounds must be visually dominant behind the product surface.
+- Thin refined neon borders are acceptable only for dense trading internals; hero surfaces require stronger liquid-glass neon treatment.
 - No rough placeholder cards, no plain unfinished panels.
+- Flat table-line layouts, grey strip controls, tiny compressed text, and plain engineering forms fail the UI standard even if tests pass.
 - Use existing UI primitives first: `NeonCard`, `NeonButton`, `AuroraGalaxyBackground`.
 - Keep layout responsive for 375px, 768px, and 1440px.
 

@@ -10,9 +10,13 @@ ION DEX must look and feel like a premium OKX Web3-style trading product for the
 
 - Dark blue and purple foundation with cyan, violet, magenta, and gold neon accents.
 - Cyberpunk neon, glassmorphism, aurora and galaxy motion.
-- Thin refined neon borders on all major functional blocks.
+- 4D liquid-glass panels: translucent depth, glossy highlights, aurora reflections, and rounded irregular glass silhouettes when the module is a hero card, feature tile, bridge modal, pool panel, burn panel, or domain panel.
+- Thick luminous cyan/magenta/violet neon rims for hero cards and feature tiles; thin borders are only acceptable inside dense trading subpanels.
+- 3D floating icons and cards for all major feature modules.
+- Galaxy/starfield/aurora background must be a visible product identity layer, not a faint decoration.
 - Dense professional trading layout, without copying OKX brand assets.
 - No rough placeholder cards, no plain unfinished panels, no user-facing `shell`, `draft`, `TBD`, or `Build Checklist` copy.
+- Flat table-line screens, grey strip segmented controls, compressed tiny typography, and plain engineering forms fail the design gate.
 - Responsive layouts must be designed and verified at 375px, 768px, and 1440px.
 
 ## Mandatory Reading Before UI Development
@@ -38,12 +42,13 @@ Every implementation loop must follow this order:
 1. Preflight: run `node scripts/dev-preflight.mjs`.
 2. Scope: choose one page or one shared UI primitive only.
 3. Design map: list the exact PRD modules that will be represented in the UI.
-4. Implement: use existing `NeonCard`, `NeonButton`, and `AuroraGalaxyBackground` first; add shared primitives only when they reduce duplication.
+4. Implement: use existing `NeonCard`, `NeonButton`, and `AuroraGalaxyBackground` first; add shared primitives only when they move the UI closer to the 4D liquid-glass reference style.
 5. Replace unfinished surfaces: remove visible `shell`, `draft`, `TBD`, and `Build Checklist` UI from the touched page.
-6. Verify states: cover default, hover/focus where practical, disabled, error, empty/loading once data is introduced.
-7. Verify breakpoints: 375px, 768px, 1440px.
-8. Run project verification: encoding, frontend verify, audit high, and full verification when required.
-9. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
+6. Visual self-check: compare the rendered result against the 4D liquid-glass / aurora galaxy / thick neon rim reference; reject flat table-line or grey-strip layouts.
+7. Verify states: cover default, hover/focus where practical, disabled, error, empty/loading once data is introduced.
+8. Verify breakpoints: 375px, 768px, 1440px.
+9. Run project verification: encoding, frontend verify, audit high, and full verification when required.
+10. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
 
 `scripts/verify-full.cmd`, `scripts/verify-full.ps1`, `scripts/agent-verify.cmd`, and `scripts/verify-full-save-log.cmd --no-pause` must run the preflight automatically.
 
