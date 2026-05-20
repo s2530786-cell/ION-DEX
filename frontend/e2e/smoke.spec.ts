@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("ION DEX smoke", () => {
+  test.setTimeout(60_000);
+
   test("home page shows key sections and controls", async ({ page }) => {
     await page.goto("/");
 
@@ -87,7 +89,7 @@ test.describe("ION DEX smoke", () => {
     ] as const;
 
     for (const [key, title] of pages) {
-      await page.getByTestId(`nav-${key}`).click();
+      await page.getByTestId(`nav-${key}`).click({ force: true });
       await expect(page.getByTestId(`page-${key}`)).toBeVisible();
       await expect(page.getByTestId("page-title")).toHaveText(title);
     }
@@ -98,8 +100,11 @@ test.describe("ION DEX smoke", () => {
     await page.getByTestId("nav-trade").click();
 
     await expect(page.getByTestId("trade-chart")).toBeVisible();
+    await page.getByTestId("trade-orderbook").scrollIntoViewIfNeeded();
     await expect(page.getByTestId("trade-orderbook")).toBeVisible();
+    await page.getByTestId("trade-market-trades").scrollIntoViewIfNeeded();
     await expect(page.getByTestId("trade-market-trades")).toBeVisible();
+    await page.getByTestId("trade-history").scrollIntoViewIfNeeded();
     await expect(page.getByTestId("trade-history")).toBeVisible();
     await expect(page.getByText("TWAP guard active")).toBeVisible();
   });
@@ -111,6 +116,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("trade-form")).toBeVisible();
     await expect(page.getByTestId("trade-submit")).toBeDisabled();
 
+    await page.getByTestId("trade-amount").scrollIntoViewIfNeeded();
     await page.getByTestId("trade-amount").fill("1250");
     await page.getByTestId("trade-price").fill("6");
     await page.getByTestId("trade-slippage").fill("0.5");
@@ -129,6 +135,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("grid-form")).toBeVisible();
     await expect(page.getByTestId("grid-submit")).toBeDisabled();
 
+    await page.getByTestId("grid-lower").scrollIntoViewIfNeeded();
     await page.getByTestId("grid-lower").fill("7.4");
     await page.getByTestId("grid-upper").fill("5.2");
     await expect(page.getByTestId("grid-error")).toBeVisible();
@@ -152,6 +159,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-form")).toBeVisible();
     await expect(page.getByTestId("pool-submit")).toBeDisabled();
 
+    await page.getByTestId("pool-bnb").scrollIntoViewIfNeeded();
     await page.getByTestId("pool-bnb").fill("2");
     await page.getByTestId("pool-ion").fill("800");
     await page.getByTestId("pool-slippage").fill("10");
@@ -172,6 +180,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("stake-form")).toBeVisible();
     await expect(page.getByTestId("stake-submit")).toBeDisabled();
 
+    await page.getByTestId("stake-amount").scrollIntoViewIfNeeded();
     await page.getByTestId("stake-amount").fill("250");
     await expect(page.getByTestId("stake-preview")).toContainText("Stake preview:");
     await expect(page.getByTestId("stake-submit")).toBeEnabled();

@@ -7,6 +7,7 @@ const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";
 const useShell = process.platform === "win32";
 const backendDir = fileURLToPath(new URL("../../backend", import.meta.url));
+const frontendDir = fileURLToPath(new URL("..", import.meta.url));
 
 async function getFreePort() {
   const server = net.createServer();
@@ -123,10 +124,15 @@ const backend = backendAlreadyRunning
       stdio: "inherit",
       shell: useShell,
     });
-const preview = spawn(npmCommand, ["run", "preview:test", "--", "--port", String(port)], {
-  stdio: "inherit",
-  shell: useShell,
-});
+const preview = spawn(
+  process.execPath,
+  ["node_modules/vite/bin/vite.js", "preview", "--host=127.0.0.1", "--strictPort", "--port", String(port)],
+  {
+    cwd: frontendDir,
+    stdio: "inherit",
+    shell: useShell,
+  },
+);
 
 let shuttingDown = false;
 function stopPreview() {
