@@ -1,4 +1,10 @@
 import {
+  formatOfficialDetectorLabel,
+  isOfficialNativeBridgeInjected,
+  resolveIonConnectBridge,
+} from "./ion-bridge.js";
+import { getOfficialBridgeSpec, type IonOfficialNativeWalletKey } from "./ion-official.js";
+import {
   WALLET_PROVIDER_KEYS,
   type Eip1193Provider,
   type WalletDetectionSnapshot,
@@ -21,6 +27,17 @@ function probe(
   note: string,
 ): WalletProbeResult {
   return { key, detected, detector, provider, note };
+}
+
+function detectOfficialNative(profileKey: IonOfficialNativeWalletKey): WalletProbeResult {
+  const spec = getOfficialBridgeSpec(profileKey);
+  const resolved = resolveIonConnectBridge(spec.jsBridgeKey);
+  const detected = resolved !== null;
+  const detector = detected
+    ? `window.${spec.jsBridgeKey}.${resolved!.field} (${spec.officialRepo})`
+    : `window.${spec.jsBridgeKey}.ionconnect|${spec.jsBridgeKey}.tonconnect (${spec.officialRepo})`;
+
+  return probe(profileKey, detected, detector, null, formatOfficialDetectorLabel(profileKey));
 }
 
 function detectRabby(): WalletProbeResult {
@@ -111,33 +128,6 @@ function detectBitget(): WalletProbeResult {
   );
 }
 
-function detectOnlinePlus(): WalletProbeResult {
-  const ionGlobal =
-    typeof window !== "undefined"
-      ? window.ionWallet ?? window.iceWallet ?? null
-      : null;
-  return probe(
-    "online",
-    Boolean(ionGlobal),
-    "window.ionWallet|window.iceWallet",
-    ionGlobal,
-    ionGlobal
-      ? "ION wallet global detected"
-      : "Online+ requires official ION injection; profile session available without injector",
-  );
-}
-
-function detectIonBrowser(): WalletProbeResult {
-  const browserWallet = typeof window !== "undefined" ? (window.ionBrowserWallet ?? null) : null;
-  return probe(
-    "ion-browser",
-    Boolean(browserWallet),
-    "window.ionBrowserWallet",
-    browserWallet,
-    browserWallet ? "ION Browser Wallet detected" : "ION Browser Wallet adapter planned",
-  );
-}
-
 function detectWalletConnect(): WalletProbeResult {
   return probe(
     "walletconnect",
@@ -162,8 +152,8 @@ export function scanBrowserWallets(): WalletDetectionSnapshot {
 
   const rabby = detectRabby();
   const probes: WalletProbeResult[] = [
-    detectOnlinePlus(),
-    detectIonBrowser(),
+    detectOfficialNative("online"),
+    detectOfficialNative("ion-browser"),
     detectWalletConnect(),
     detectMetaMask(rabby.detected),
     detectBinance(),
@@ -191,3 +181,5 @@ export function getProbeForKey(
 export function isEvmProviderKey(key: WalletProviderKey): boolean {
   return !["online", "ion-browser", "walletconnect"].includes(key);
 }
+
+export { isOfficialNativeBridgeInjected };

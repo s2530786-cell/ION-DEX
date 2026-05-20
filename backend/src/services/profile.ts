@@ -82,6 +82,8 @@ export type ProfileSessionContext = {
 };
 
 const CHAIN_NETWORK_LABELS: Record<number, string> = {
+  [-239]: "ION Mainnet",
+  [-3]: "ION Testnet",
   1: "Ethereum Mainnet",
   56: "BNB Smart Chain",
   97: "BNB Smart Chain Testnet",
@@ -127,15 +129,15 @@ const walletEntries: WalletEntry[] = [
     name: "Online+ Wallet",
     category: "ion-native",
     status: "ready",
-    detector: "ion.onlinePlus",
+    detector: "window.ionmask.ionconnect (ice-blockchain/ion-chrome-wallet)",
     label: "ION native social wallet",
   },
   {
     key: "ion-browser",
     name: "ION Browser Wallet",
     category: "ion-native",
-    status: "planned",
-    detector: "ion.browserWallet",
+    status: "ready",
+    detector: "window.tonwallet.tonconnect|ionconnect (ice-blockchain/ion-browser-wallet)",
     label: "Native chain signing",
   },
   {

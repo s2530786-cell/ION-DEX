@@ -135,7 +135,7 @@ export function ProfileHub({
         return;
       }
 
-      if (probe?.detected && probe.provider) {
+      if (probe?.detected) {
         setConnectingKey(key);
         const result = await connectWalletProvider(providerKey);
         setConnectingKey(null);

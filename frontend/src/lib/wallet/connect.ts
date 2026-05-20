@@ -1,3 +1,4 @@
+import { connectOfficialNativeWallet } from "./ion-bridge.js";
 import { chainIdToNetworkLabel, inferAddressFormat, parseChainIdHex } from "./network.js";
 import { getProbeForKey, isEvmProviderKey, scanBrowserWallets } from "./detectors.js";
 import type {
@@ -44,39 +45,20 @@ export async function connectWalletProvider(key: WalletProviderKey): Promise<Wal
     return { ok: false, code: "unsupported", message: "Unknown wallet provider." };
   }
 
-  if (probe.key === "ion-browser") {
+  if (key === "online" || key === "ion-browser") {
+    return connectOfficialNativeWallet(key);
+  }
+
+  if (probe.key === "walletconnect") {
     return {
       ok: false,
       code: "unsupported",
-      message: "ION Browser Wallet adapter is planned; use Online+ or an EVM wallet for now.",
+      message: "WalletConnect QR flow is not enabled in this build yet.",
     };
   }
 
   if (!isEvmProviderKey(key)) {
-    if (!probe.detected || !probe.provider) {
-      return {
-        ok: false,
-        code: "not_detected",
-        message: probe.note,
-      };
-    }
-    const accounts = await requestAccounts(probe.provider);
-    const address = accounts[0];
-    if (!address) {
-      return { ok: false, code: "provider_error", message: "Wallet returned no accounts." };
-    }
-    const chainId = (await readChainId(probe.provider)) ?? 0;
-    return {
-      ok: true,
-      connection: {
-        providerKey: key,
-        address,
-        chainId,
-        networkLabel: chainId > 0 ? chainIdToNetworkLabel(chainId) : "ION network",
-        addressFormat: inferAddressFormat(address),
-        detectionSource: "browser-injected",
-      },
-    };
+    return { ok: false, code: "unsupported", message: probe.note };
   }
 
   if (!probe.detected || !probe.provider) {

@@ -1,4 +1,6 @@
 const CHAIN_LABELS: Record<number, string> = {
+  [-239]: "ION Mainnet",
+  [-3]: "ION Testnet",
   1: "Ethereum Mainnet",
   56: "BNB Smart Chain",
   97: "BNB Smart Chain Testnet",

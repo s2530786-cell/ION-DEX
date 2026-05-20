@@ -116,6 +116,28 @@ describe("ION DEX API gateway", () => {
     assert.ok(data.quickActions.some((action) => action.key === "security-logs"));
   });
 
+  it("merges live ION TonConnect address into profile session detection", async () => {
+    const address = "0:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
+    const response = await requestJson(
+      `/api/profile/session?provider=ion-browser&address=${encodeURIComponent(address)}&chainId=-239`,
+    );
+    const data = response.body.data as {
+      sessionDetection: {
+        addressPreview: string;
+        network: string;
+        detectionSource: string;
+        addressFormat: string;
+      } | null;
+    };
+
+    assert.equal(response.status, 200);
+    assert.ok(data.sessionDetection);
+    assert.equal(data.sessionDetection?.detectionSource, "browser-injected");
+    assert.equal(data.sessionDetection?.network, "ION Mainnet");
+    assert.equal(data.sessionDetection?.addressFormat, "ION / TON-style");
+    assert.match(data.sessionDetection?.addressPreview ?? "", /0:12/);
+  });
+
   it("merges live browser wallet metadata into profile session detection", async () => {
     const address = "0x1234567890abcdef1234567890abcdef12345678";
     const response = await requestJson(

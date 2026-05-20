@@ -46,6 +46,9 @@ export type LiveWalletConnection = {
   networkLabel: string;
   addressFormat: string;
   detectionSource: "browser-injected";
+  /** Official ion-gateway js bridge key (ionmask / tonwallet) when connected via TonConnect injection */
+  bridgeKey?: string;
+  bridgeField?: "ionconnect" | "tonconnect";
 };
 
 export type WalletConnectResult =
