@@ -39,7 +39,7 @@ test.describe("ION DEX smoke", () => {
 
     await expectIonBrand(page);
     await expect(page.getByTestId("ticker-strip")).toBeVisible();
-    await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
+    await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback|mock|MOCK_DATA/i);
     await expect(page.getByTestId("main-content")).toBeVisible();
     await expect(page.getByTestId("page-dashboard")).toBeVisible();
     await expect(page.getByText("Professional Chart")).toBeVisible();

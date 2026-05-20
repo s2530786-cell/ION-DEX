@@ -15,7 +15,8 @@ import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBack
 import { NeonButton } from "@/components/ui/NeonButton";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
-import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
+import { useMockData } from "@/context/MockDataContext";
+import { mockPreviewMeta } from "@/lib/MOCK_DATA";
 import { shortenAddress } from "@/wallet/injectedEvm";
 import {
   EVM_WALLET_LABELS,
@@ -195,9 +196,12 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 </p>
               </div>
               <div className="flex items-center gap-3 lg:hidden">
-                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[linear-gradient(135deg,#24f7ff,#8d4dff,#ff3bd4)] shadow-neonCyan">
-                  <div className="h-5 w-5 rotate-45 rounded-md border-2 border-white/90" />
-                </div>
+                <img
+                  src="/ion-logo.png"
+                  alt="ION DEX"
+                  className="h-10 w-auto rounded-xl"
+                  data-testid="brand-logo"
+                />
                 <div>
                   <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
                     ION DEX
@@ -292,9 +296,12 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 function SidebarBrand() {
   return (
     <div className="flex items-center gap-3">
-      <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[linear-gradient(135deg,#24f7ff,#8d4dff,#ff3bd4)] shadow-neonCyan">
-        <div className="h-5 w-5 rotate-45 rounded-md border-2 border-white/90" />
-      </div>
+      <img
+        src="/ion-logo.png"
+        alt="ION DEX"
+        className="h-10 w-auto rounded-xl"
+        data-testid="brand-logo"
+      />
       <div>
         <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
           ION DEX
@@ -551,29 +558,8 @@ function WalletConnectPanel({
 }
 
 function TickerStrip() {
-  const [tickers, setTickers] = useState<MarketTicker[]>(fallbackTickers);
-  const [sourceLabel, setSourceLabel] = useState("offline fallback");
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchMarketTickers(controller.signal)
-      .then((response) => {
-        setTickers(response.data);
-        setSourceLabel(`${response.meta.source} API`);
-      })
-      .catch(() => {
-        setTickers(fallbackTickers);
-        setSourceLabel("offline fallback");
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
+  const { marketTickers: tickers } = useMockData();
+  const sourceLabel = `${mockPreviewMeta("ticker-strip").source} (MOCK_DATA)`;
 
   return (
     <div
@@ -605,11 +591,3 @@ function TickerStrip() {
   );
 }
 
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
-  { symbol: "BTC", priceUsd: 103420, displayPrice: "$103,420", change24hPct: 0.74, displayChange: "+0.74%" },
-  { symbol: "ETH", priceUsd: 4906, displayPrice: "$4,906", change24hPct: -0.38, displayChange: "-0.38%" },
-  { symbol: "SOL", priceUsd: 218.3, displayPrice: "$218.30", change24hPct: 3.12, displayChange: "+3.12%" },
-  { symbol: "USDT", priceUsd: 1, displayPrice: "$1.00", change24hPct: 0.01, displayChange: "+0.01%" },
-];

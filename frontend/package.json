@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host=127.0.0.1 --port=3001 --strictPort",
     "dev:local": "vite --host=127.0.0.1 --port=3001",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -38,7 +38,7 @@
     "postcss": "latest",
     "start-server-and-test": "^2.1.2",
     "tailwindcss": "latest",
-    "typescript": "latest",
+    "typescript": "6.0.3",
     "vite": "latest"
   }
 }

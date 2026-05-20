@@ -1,20 +1,11 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
-import { useApiResource } from "@/hooks/useApiResource";
-import { fetchStakingSummary, type StakingSummary } from "@/lib/ionApi";
+import { usePreviewResource } from "@/hooks/usePreviewResource";
 
 const UNLOCK_SECONDS = 7 * 24 * 60 * 60;
-
-const fallbackStaking: StakingSummary = {
-  totalStakedIon: "452000000",
-  officialStakedIon: "398000000",
-  dexStakedIon: "54000000",
-  lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
-};
 
 function formatCountdown(seconds: number) {
   const days = Math.floor(seconds / 86400);
@@ -24,8 +15,7 @@ function formatCountdown(seconds: number) {
 }
 
 export function StakePage() {
-  const fetchStaking = useCallback((signal: AbortSignal) => fetchStakingSummary(signal), []);
-  const staking = useApiResource(fetchStaking, fallbackStaking);
+  const staking = usePreviewResource((m) => m.stakingSummary, { metaKey: "staking/summary" });
 
   const [mode, setMode] = useState<"stake" | "unstake">("stake");
   const [amount, setAmount] = useState("");
@@ -61,12 +51,7 @@ export function StakePage() {
 
         <DataSourceBadge meta={staking.meta} testId="stake-metrics-source" />
 
-        <AsyncState
-          error={staking.error}
-          onRetry={staking.reload}
-          state={staking.state}
-          testId="stake-metrics"
-        >
+        <AsyncState error={staking.error} state={staking.state} testId="stake-metrics">
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <Metric label="DEX APR" value={`${staking.data.apr.dexPct}%`} />
             <Metric label="Official stake" value={`${Number(staking.data.officialStakedIon).toLocaleString()} ION`} />

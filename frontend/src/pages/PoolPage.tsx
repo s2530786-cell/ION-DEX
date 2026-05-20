@@ -1,15 +1,10 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
-import { useApiResource } from "@/hooks/useApiResource";
-import {
-  fetchMarketTickers,
-  fetchStakingSummary,
-  type MarketTicker,
-  type StakingSummary,
-} from "@/lib/ionApi";
+import { usePreviewResource } from "@/hooks/usePreviewResource";
+import type { MarketTicker, StakingSummary } from "@/lib/ionApi";
 
 type PoolRow = {
   id: string;
@@ -22,11 +17,6 @@ type PoolRow = {
 const fallbackPools: PoolRow[] = [
   { id: "bnb-ion", pair: "BNB / ION", tvlUsd: 1_240_000, volume24hUsd: 182_000, aprPct: 31.8 },
   { id: "ion-usdt", pair: "ION / USDT", tvlUsd: 640_000, volume24hUsd: 96_500, aprPct: 22.4 },
-];
-
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
 ];
 
 function buildPoolRows(staking: StakingSummary, tickers: MarketTicker[]): PoolRow[] {
@@ -54,20 +44,11 @@ function buildPoolRows(staking: StakingSummary, tickers: MarketTicker[]): PoolRo
   ];
 }
 
-const fallbackStaking: StakingSummary = {
-  totalStakedIon: "452000000",
-  officialStakedIon: "398000000",
-  dexStakedIon: "54000000",
-  lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
-};
-
 export function PoolPage() {
-  const fetchStaking = useCallback((signal: AbortSignal) => fetchStakingSummary(signal), []);
-  const fetchTickers = useCallback((signal: AbortSignal) => fetchMarketTickers(signal), []);
-  const staking = useApiResource(fetchStaking, fallbackStaking);
-  const tickers = useApiResource(fetchTickers, fallbackTickers, {
+  const staking = usePreviewResource((m) => m.stakingSummary, { metaKey: "staking/summary" });
+  const tickers = usePreviewResource((m) => m.marketTickers, {
     isEmpty: (data) => data.length === 0,
+    metaKey: "markets/tickers",
   });
   const pools = useMemo(
     () => buildPoolRows(staking.data, tickers.data),
@@ -132,18 +113,8 @@ export function PoolPage() {
         <AsyncState
           emptyMessage="Pool metrics unavailable."
           error={staking.error ?? tickers.error}
-          onRetry={() => {
-            staking.reload();
-            tickers.reload();
-          }}
           state={
-            staking.state === "loading" || tickers.state === "loading"
-              ? "loading"
-              : staking.state === "error" || tickers.state === "error"
-                ? "error"
-                : staking.state === "empty" || tickers.state === "empty"
-                  ? "empty"
-                  : "ready"
+            staking.state === "empty" || tickers.state === "empty" ? "empty" : "ready"
           }
           testId="pool-metrics"
         >
@@ -251,7 +222,7 @@ export function PoolPage() {
 
       <NeonCard variant="cyan">
         <DataSourceBadge meta={staking.meta} testId="stake-metrics-source" />
-        <AsyncState error={staking.error} onRetry={staking.reload} state={staking.state} testId="pool-yield">
+        <AsyncState error={staking.error} state={staking.state} testId="pool-yield">
           <p className="text-sm text-cyan-100/55">LP mining APR</p>
           <p className="mt-2 text-3xl font-black">{staking.data.apr.lpMiningPct}%</p>
           <p className="mt-2 text-xs text-cyan-100/60">TVL reference ${Number(staking.data.lpStakedUsd).toLocaleString()}</p>

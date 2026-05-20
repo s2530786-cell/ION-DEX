@@ -1,40 +1,62 @@
 /**
  * ION DEX — cyber glass theme tokens (UTF-8, no BOM).
+ * Mandatory visual physics — do not soften without design approval.
  */
 :root {
   --ion-primary: #00ffff;
   --ion-secondary: #ff00ff;
-  --ion-glass-bg: rgba(0, 0, 0, 0.4);
+
+  /* §1 强制性全局视觉参数 */
+  --ion-glass-blur: 24px !important;
+  --ion-glass-border-width: 1px !important;
+  --ion-glass-opacity: 0.15 !important;
+  --ion-glow-blur: 20px !important;
+  --ion-glow-color-start: rgba(0, 255, 255, 0.8) !important;
+  --ion-glow-color-end: rgba(255, 0, 255, 0.8) !important;
+
+  /* Derived (read-only composition) */
+  --ion-glow-gradient: linear-gradient(
+    135deg,
+    var(--ion-glow-color-start),
+    var(--ion-glow-color-end)
+  );
+  --ion-glass-bg: rgba(0, 0, 0, var(--ion-glass-opacity));
+  --ion-glass-edge: rgba(255, 255, 255, 0.15);
   --ion-glass-surface: rgba(255, 255, 255, 0.05);
-  --ion-glass-edge: rgba(255, 255, 255, 0.1);
-  --ion-glass-blur: 16px;
-  --ion-border-blur: 10px;
-  --ion-border-blur-peak: 14px;
-  --ion-glow-spread: 6px;
-  --ion-glow-opacity-min: 0.62;
-  --ion-glow-opacity-max: 0.95;
-  --ion-border-gradient: linear-gradient(135deg, var(--ion-primary), var(--ion-secondary));
-  --ion-shadow-neon-cyan: 0 0 40px rgba(0, 255, 255, 0.38);
-  --ion-shadow-neon-magenta: 0 0 56px rgba(255, 0, 255, 0.28);
+  --ion-glow-spread: 4px;
+  --ion-glow-opacity-min: 0.72;
+  --ion-glow-opacity-max: 1;
+  --ion-border-blur: var(--ion-glow-blur);
+  --ion-border-blur-peak: var(--ion-glow-blur);
+  --ion-border-gradient: var(--ion-glow-gradient);
+  --ion-shadow-neon-cyan: 0 0 64px rgba(0, 255, 255, 0.55);
+  --ion-shadow-neon-magenta: 0 0 72px rgba(255, 0, 255, 0.42);
   --ion-shadow-neon-glass: var(--ion-shadow-neon-cyan), var(--ion-shadow-neon-magenta);
   --ion-glass-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
-}
-
-/* Diagnostic: red outline proves theme.css is compiled into the bundle */
-.neon-glass-card {
-  outline: 5px solid red !important;
 }
 
 @keyframes ionNeonBreath {
   0%,
   100% {
     opacity: var(--ion-glow-opacity-min);
-    filter: blur(var(--ion-border-blur));
+    filter: blur(var(--ion-glow-blur));
     transform: scale(1);
   }
   50% {
     opacity: var(--ion-glow-opacity-max);
-    filter: blur(var(--ion-border-blur-peak));
-    transform: scale(1.012);
+    filter: blur(var(--ion-glow-blur));
+    transform: scale(1.014);
+  }
+}
+
+@keyframes ionBorderFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }

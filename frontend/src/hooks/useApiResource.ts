@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ApiMeta } from "@/lib/ionApi";
+import { ION_API_LIVE_ENABLED, type ApiMeta } from "@/lib/ionApi";
 import { resolveApiLoadState } from "@/lib/apiLoadState";
 
 export type ApiLoadState = "loading" | "ready" | "error" | "empty";
@@ -19,11 +19,17 @@ export function useApiResource<T>(
 ): ApiResource<T> {
   const [data, setData] = useState(fallback);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
-  const [state, setState] = useState<ApiLoadState>("loading");
+  const [state, setState] = useState<ApiLoadState>(() =>
+    ION_API_LIVE_ENABLED ? "loading" : "ready",
+  );
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
+    if (!ION_API_LIVE_ENABLED) {
+      return undefined;
+    }
+
     const controller = new AbortController();
     const timeoutMs = options?.timeoutMs ?? 1200;
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
@@ -37,8 +43,12 @@ export function useApiResource<T>(
         setData(response.data);
         setMeta(response.meta);
         setState(empty ? "empty" : "ready");
+        setError(null);
       })
       .catch((cause: unknown) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         const resolved = resolveApiLoadState(cause, null, false);
         setData(fallback);
         setMeta(null);

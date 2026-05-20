@@ -7,23 +7,16 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { MarketChart, buildSyntheticSeries } from "@/components/charts/MarketChart";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import type { PageKey } from "@/components/layout/AppShell";
-import { useApiResource } from "@/hooks/useApiResource";
-import {
-  fetchBurnSummary,
-  fetchMarketTickers,
-  fetchStakingSummary,
-  formatIonAmount,
-  type BurnSummary,
-  type MarketTicker,
-  type StakingSummary,
-} from "@/lib/ionApi";
+import { usePreviewResource } from "@/hooks/usePreviewResource";
+import type { ApiResource } from "@/hooks/useApiResource";
+import { formatIonAmount, type BurnSummary, type MarketTicker, type StakingSummary } from "@/lib/ionApi";
 
 type FeatureCard = {
   title: string;
@@ -42,44 +35,13 @@ const featureCards: FeatureCard[] = [
   { title: "AI Market", label: "Signals & risk", target: "ai", icon: Bot, color: "cyan" },
 ];
 
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-];
-
-const fallbackBurn: BurnSummary = {
-  totalBurnedIon: "12845000",
-  bscBurnedIon: "8245000",
-  ionMainnetBurnedIon: "4600000",
-  remainingSupplyIon: "987155000",
-  bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
-  ionBurnAddress: "ion-mainnet-burn-address-placeholder",
-  ionBurnSource: "ion-mainnet-burn-source-placeholder",
-};
-
-const fallbackStaking: StakingSummary = {
-  totalStakedIon: "452000000",
-  officialStakedIon: "398000000",
-  dexStakedIon: "54000000",
-  lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
-};
-
 export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
-  const fetchTickers = useCallback(
-    (signal: AbortSignal) => fetchMarketTickers(signal),
-    [],
-  );
-  const fetchBurn = useCallback((signal: AbortSignal) => fetchBurnSummary(signal), []);
-  const fetchStaking = useCallback(
-    (signal: AbortSignal) => fetchStakingSummary(signal),
-    [],
-  );
-
-  const tickers = useApiResource(fetchTickers, fallbackTickers, {
+  const tickers = usePreviewResource((m) => m.marketTickers, {
     isEmpty: (data) => data.length === 0,
+    metaKey: "markets/tickers",
   });
-  const burn = useApiResource(fetchBurn, fallbackBurn);
-  const staking = useApiResource(fetchStaking, fallbackStaking);
+  const burn = usePreviewResource((m) => m.burnSummary, { metaKey: "burn/summary" });
+  const staking = usePreviewResource((m) => m.stakingSummary, { metaKey: "staking/summary" });
 
   const ionTicker = useMemo(
     () => tickers.data.find((ticker) => ticker.symbol === "ION") ?? tickers.data[0],
@@ -134,7 +96,7 @@ function MarketStage({
   chartPoints,
   onNavigate,
 }: {
-  tickers: ReturnType<typeof useApiResource<MarketTicker[]>>;
+  tickers: ApiResource<MarketTicker[]>;
   ionTicker: MarketTicker | undefined;
   chartPoints: ReturnType<typeof buildSyntheticSeries>;
   onNavigate: (page: PageKey) => void;
@@ -167,9 +129,8 @@ function MarketStage({
         <DataSourceBadge meta={tickers.meta} testId="dashboard-chart-source" />
 
         <AsyncState
-          emptyMessage="Market tickers are not available."
           error={tickers.error}
-          onRetry={tickers.reload}
+          skeletonChart
           state={tickers.state}
           testId="dashboard-chart"
         >
@@ -205,8 +166,8 @@ function RightStats({
   tvlLabel,
   burnProgress,
 }: {
-  staking: ReturnType<typeof useApiResource<StakingSummary>>;
-  burn: ReturnType<typeof useApiResource<BurnSummary>>;
+  staking: ApiResource<StakingSummary>;
+  burn: ApiResource<BurnSummary>;
   tvlLabel: string;
   burnProgress: number;
 }) {
@@ -214,12 +175,7 @@ function RightStats({
     <div className="grid gap-5">
       <NeonCard variant="cyan">
         <DataSourceBadge meta={staking.meta} testId="dashboard-tvl-source" />
-        <AsyncState
-          error={staking.error}
-          onRetry={staking.reload}
-          state={staking.state}
-          testId="dashboard-tvl"
-        >
+        <AsyncState error={staking.error} state={staking.state} testId="dashboard-tvl">
           <p className="text-sm text-cyan-100/55">TVL</p>
           <p className="mt-1 text-3xl font-black" data-testid="dashboard-tvl-value">
             {tvlLabel}
@@ -232,12 +188,7 @@ function RightStats({
 
       <NeonCard variant="magenta">
         <DataSourceBadge meta={staking.meta} testId="dashboard-apr-source" />
-        <AsyncState
-          error={staking.error}
-          onRetry={staking.reload}
-          state={staking.state}
-          testId="dashboard-apr"
-        >
+        <AsyncState error={staking.error} state={staking.state} testId="dashboard-apr">
           <p className="text-sm text-cyan-100/55">APR</p>
           <p className="mt-1 text-3xl font-black" data-testid="dashboard-apr-value">
             {staking.data.apr.dexPct}%
@@ -248,12 +199,7 @@ function RightStats({
 
       <NeonCard variant="gold">
         <DataSourceBadge meta={burn.meta} testId="dashboard-burn-source" />
-        <AsyncState
-          error={burn.error}
-          onRetry={burn.reload}
-          state={burn.state}
-          testId="dashboard-burn"
-        >
+        <AsyncState error={burn.error} state={burn.state} testId="dashboard-burn">
           <p className="text-sm text-cyan-100/55">Burn</p>
           <p className="mt-1 text-3xl font-black" data-testid="dashboard-burn-value">
             {formatIonAmount(burn.data.totalBurnedIon)}

@@ -37,12 +37,16 @@
 
 ## 待办（按优先级）
 
-1. 🔴 **7钱包真实对接** — 参考 wallet-connect-requirements.md
-2. 🔴 **前端六引擎数据层** — 参考 live-data-reference.md
-3. 🟡 **CI/CD Pipeline** — Phase 5 Step 7
-4. 🟡 **Sandwich防御验证** — 合约已写好，需功能测试
-5. 🟢 **Bridge双重签名验证** — 合约已写好，需功能测试
-6. 🟢 **swap.ion IPFS部署** — 等Pinata JWT
+1. 🔴🔴🔴 **UI多层玻璃重构** — Master钦定 2026-05-21，读 glass-morphism-multilayer-spec.mdc
+   - 每个组件独立多层玻璃堆叠（5-7层），不能靠外层卡片罩着
+   - 重构顺序: NeonButton → NeonGlassCard增强 → 新建GlassPanel → GlassInput → GlassTab
+2. 🔴 **7钱包真实对接** — 参考 wallet-connect-requirements.md
+3. 🔴 **前端六引擎数据层** — 参考 live-data-reference.md
+4. 🔴 **BSC Solidity合约** — 4个缺失合约从零编写
+5. 🟡 **Sandwich防御验证** — 合约需重写+功能测试
+6. 🟡 **CI/CD Pipeline** — Phase 5 Step 7
+7. 🟢 **Bridge双重签名验证** — 合约需重写+功能测试
+8. 🟢 **swap.ion IPFS部署** — 等Pinata JWT
 
 ## 工作区路径
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { parseUnits, stringToHex } from "viem";
 import { useWalletClient } from "wagmi";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
@@ -7,11 +7,9 @@ import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useEvmWallet } from "@/wallet/EvmWalletProvider";
 import { useIonWallet } from "@/wallet/IonWalletProvider";
-import {
-  fetchBridgeRoutes,
-  type ApiMeta,
-  type BridgeRoutesPayload,
-} from "@/lib/ionApi";
+import { useMockData } from "@/context/MockDataContext";
+import { mockPreviewMeta } from "@/lib/MOCK_DATA";
+import type { ApiMeta, BridgeRoutesPayload } from "@/lib/ionApi";
 import {
   BSC_BRIDGE_NATIVE_RECEIVER,
   BSC_VAULT_ADDRESS,
@@ -42,10 +40,11 @@ export function BridgePage() {
   const ionWallet = useIonWallet();
   const { data: walletClient } = useWalletClient();
 
-  const [routesPayload, setRoutesPayload] = useState<BridgeRoutesPayload | null>(null);
-  const [routesMeta, setRoutesMeta] = useState<ApiMeta | null>(null);
-  const [routesError, setRoutesError] = useState<string | null>(null);
-  const [routesLoading, setRoutesLoading] = useState(true);
+  const mockData = useMockData();
+  const routesPayload: BridgeRoutesPayload = mockData.bridgeRoutes;
+  const routesMeta: ApiMeta = mockPreviewMeta("bridge/routes");
+  const routesError: string | null = null;
+  const routesLoading = false;
 
   const [direction, setDirection] = useState<BridgeDirection>("bsc-ion");
   const [asset, setAsset] = useState<BridgeAsset>("usdt");
@@ -54,24 +53,6 @@ export function BridgePage() {
   const [submitting, setSubmitting] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    setRoutesLoading(true);
-    fetchBridgeRoutes(controller.signal)
-      .then((response) => {
-        setRoutesPayload(response.data);
-        setRoutesMeta(response.meta);
-        setRoutesError(null);
-      })
-      .catch((error: unknown) => {
-        setRoutesError(error instanceof Error ? error.message : "Bridge routes unavailable.");
-        setRoutesPayload(null);
-        setRoutesMeta(null);
-      })
-      .finally(() => setRoutesLoading(false));
-    return () => controller.abort();
-  }, []);
 
   const validation = useMemo(() => {
     const parsedAmount = toPositiveNumber(amount);

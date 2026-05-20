@@ -18,7 +18,8 @@ import {
   usePublicClient,
 } from "wagmi";
 import { bsc } from "wagmi/chains";
-import { fetchBscWalletBalance } from "@/lib/ionApi";
+import { ION_API_LIVE_ENABLED, fetchBscWalletBalance } from "@/lib/ionApi";
+import { MOCK_DATA } from "@/lib/MOCK_DATA";
 import {
   EVM_WALLET_LABELS,
   evmConnectorList,
@@ -84,6 +85,18 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
   );
 
   const refreshBalance = useCallback(async (walletAddress: string) => {
+    if (!ION_API_LIVE_ENABLED) {
+      setSnapshot((current) =>
+        current && current.address.toLowerCase() === walletAddress.toLowerCase()
+          ? {
+              ...current,
+              balanceBnb: MOCK_DATA.defaultBscWalletBalance.balanceBnb,
+              balanceSource: "backend",
+            }
+          : current,
+      );
+      return;
+    }
     try {
       const response = await fetchBscWalletBalance(walletAddress);
       setSnapshot((current) =>

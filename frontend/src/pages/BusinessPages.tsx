@@ -8,16 +8,14 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { useMockData } from "@/context/MockDataContext";
+import { mockPreviewMeta } from "@/lib/MOCK_DATA";
 import {
-  fetchBridgeRoutes,
-  fetchBurnSummary,
-  fetchDomainResolve,
-  fetchStakingSummary,
   formatIonAmount,
   type ApiMeta,
   type BridgeRoutesPayload,
@@ -234,29 +232,8 @@ function formatTitleCase(word: string) {
 }
 
 function BurnMetricsRow() {
-  const [summary, setSummary] = useState<BurnSummary>(fallbackBurnSummary);
-  const [meta, setMeta] = useState<ApiMeta | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchBurnSummary(controller.signal)
-      .then((response) => {
-        setSummary(response.data);
-        setMeta(response.meta);
-      })
-      .catch(() => {
-        setSummary(fallbackBurnSummary);
-        setMeta(null);
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
+  const { burnSummary: summary } = useMockData();
+  const meta: ApiMeta = mockPreviewMeta("burn/summary");
 
   const metrics: MetricCard[] = [
     { label: "Total Burned", value: `${formatIonAmount(summary.totalBurnedIon)} ION`, tone: "gold" },
@@ -268,29 +245,8 @@ function BurnMetricsRow() {
 }
 
 function StakeMetricsRow() {
-  const [summary, setSummary] = useState<StakingSummary>(fallbackStakingSummary);
-  const [meta, setMeta] = useState<ApiMeta | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchStakingSummary(controller.signal)
-      .then((response) => {
-        setSummary(response.data);
-        setMeta(response.meta);
-      })
-      .catch(() => {
-        setSummary(fallbackStakingSummary);
-        setMeta(null);
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
+  const { stakingSummary: summary } = useMockData();
+  const meta: ApiMeta = mockPreviewMeta("staking/summary");
 
   const metrics: MetricCard[] = [
     { label: "DEX APR", value: `${summary.apr.dexPct}%`, tone: "gold" },
@@ -302,29 +258,8 @@ function StakeMetricsRow() {
 }
 
 function BridgeMetricsRow() {
-  const [payload, setPayload] = useState<BridgeRoutesPayload>(fallbackBridgePayload);
-  const [meta, setMeta] = useState<ApiMeta | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchBridgeRoutes(controller.signal)
-      .then((response) => {
-        setPayload(response.data);
-        setMeta(response.meta);
-      })
-      .catch(() => {
-        setPayload(fallbackBridgePayload);
-        setMeta(null);
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
+  const { bridgeRoutes: payload } = useMockData();
+  const meta: ApiMeta = mockPreviewMeta("bridge/routes");
 
   const primary = payload.routes[0];
   const primaryLeg = primary ? `${primary.fromChain} → ${primary.toChain}` : "—";
@@ -338,30 +273,8 @@ function BridgeMetricsRow() {
 }
 
 function DomainMetricsRow() {
-  const previewName = "custodian.ion";
-  const [resolution, setResolution] = useState<DomainResolution>(fallbackDomainCustodian);
-  const [meta, setMeta] = useState<ApiMeta | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchDomainResolve(previewName, controller.signal)
-      .then((response) => {
-        setResolution(response.data);
-        setMeta(response.meta);
-      })
-      .catch(() => {
-        setResolution(fallbackDomainCustodian);
-        setMeta(null);
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
+  const { domainResolution: resolution } = useMockData();
+  const meta: ApiMeta = mockPreviewMeta("domain/resolve");
 
   const listingLabel = resolution.available ? "On market" : "Registered";
   const metrics: MetricCard[] = [

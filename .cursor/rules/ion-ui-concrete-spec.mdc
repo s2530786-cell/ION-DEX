@@ -1,0 +1,166 @@
+---
+description: Concrete code-level UI specification for Cursor — exact CSS, components, checklist
+alwaysApply: true
+---
+
+# ION DEX UI Code Spec
+
+## 1. Exact Color Palette (Tailwind config)
+
+```css
+/* tailwind.config.ts extend.colors — use these, nothing else */
+ion: {
+  bg:       '#0a0a1a',  /* deepest navy */
+  surface:  '#0f0f2a',  /* card base */
+  glass:    'rgba(15,15,42,0.55)', /* glassmorphism fill */
+  cyan:     '#00e5ff',  /* primary neon */
+  magenta:  '#e040fb',  /* secondary neon */
+  violet:   '#b388ff',  /* tertiary neon */
+  gold:     '#ffd740',  /* accent */
+  green:    '#69f0ae',  /* success */
+  red:      '#ff5252',  /* danger */
+  border:   'rgba(0,229,255,0.25)', /* neon border base */
+  'border-strong': 'rgba(0,229,255,0.6)', /* thick neon rim */
+  text:     '#e0e0ff',  /* body */
+  'text-dim': '#8080b0', /* secondary */
+}
+```
+
+## 2. Glass Card Spec (MANDATORY)
+
+Every card/panel MUST use this structure, NOT a plain `<div>`:
+
+```tsx
+<div className="relative rounded-2xl p-[2px] overflow-hidden
+  bg-gradient-to-br from-cyan-500/30 via-violet-500/20 to-magenta-500/30
+  shadow-[0_0_30px_rgba(0,229,255,0.15),0_0_60px_rgba(224,64,251,0.1)]">
+  {/* Glass surface */}
+  <div className="absolute inset-[2px] rounded-2xl bg-[#0f0f2a]/80 backdrop-blur-2xl z-0" />
+  {/* Content */}
+  <div className="relative z-10 p-6">
+    {children}
+  </div>
+</div>
+```
+
+Key rules:
+- Border gradient: cyan → violet → magenta, 0.3/0.2/0.3 opacity
+- Outer glow shadow: cyan 30px + magenta 60px
+- Glass backdrop: `backdrop-blur-2xl` + `bg-[#0f0f2a]/80`
+- Border radius: `rounded-2xl` for cards, `rounded-3xl` for hero
+- Padding: `p-6` default, `p-4` for small inner panels
+
+## 3. Hero Card Spec (feature cards on dashboard)
+
+Hero cards MUST be thicker neon rim (2px pseudo-border via padding trick above, or dedicated thick border):
+
+```tsx
+<div className="relative rounded-3xl p-[3px] overflow-hidden
+  bg-gradient-to-br from-cyan-400/60 via-violet-400/40 to-magenta-400/60
+  shadow-[0_0_40px_rgba(0,229,255,0.25),0_0_80px_rgba(224,64,251,0.15)]
+  hover:shadow-[0_0_60px_rgba(0,229,255,0.4),0_0_100px_rgba(224,64,251,0.25)]
+  transition-shadow duration-500">
+  <div className="relative rounded-[22px] bg-[#0a0a1a]/90 backdrop-blur-3xl p-6 z-10">
+    {children}
+  </div>
+</div>
+```
+
+## 4. NeonButton Spec
+
+```tsx
+<button className="relative px-6 py-3 rounded-xl font-semibold text-sm
+  bg-gradient-to-r from-cyan-500/20 to-violet-500/20
+  border border-cyan-400/40
+  text-cyan-300
+  shadow-[0_0_20px_rgba(0,229,255,0.2)]
+  hover:from-cyan-500/40 hover:to-violet-500/40
+  hover:border-cyan-400/60
+  hover:shadow-[0_0_30px_rgba(0,229,255,0.4)]
+  transition-all duration-300">
+  {children}
+</button>
+```
+
+## 5. Text Typography
+
+```
+Headings: font-bold tracking-wide text-white
+- h1: text-3xl md:text-4xl
+- h2: text-2xl md:text-3xl
+- h3: text-xl
+
+Body: font-normal text-ion-text (e0e0ff)
+- text-sm for secondary info
+- text-xs for labels
+
+Numbers: font-mono tabular-nums
+- Price: text-2xl md:text-3xl text-cyan-300
+- Amount: text-lg text-white
+- Change %: text-sm, green=pos red=neg
+
+NEVER use: text-gray-*, text-slate-*, font-serif, plain white bg
+```
+
+## 6. Background Layer
+
+AuroraGalaxyBackground must be FULL VIEWPORT, z-0, always visible behind all content:
+
+```tsx
+<div className="fixed inset-0 z-0">
+  <AuroraGalaxyBackground />
+</div>
+<div className="relative z-10 min-h-screen">
+  {/* App content */}
+</div>
+```
+
+The background must use SVG/Canvas with:
+- Deep navy base `#0a0a1a`
+- Aurora waves: cyan → violet → magenta gradients, moving slowly
+- Starfield: 200+ small white dots, opacity 0.3-0.7, parallax on scroll
+- Galaxy nebula: large blurred circles in cyan/magenta, very low opacity
+
+## 7. Data Rules (RED LINE)
+
+- NO `mockPreviewMeta` imports in page files
+- NO `GlassPlaceholderSkeleton` in production pages
+- NO `MOCK_DATA` imports
+- NO hardcoded numbers like `$1.23`, `100 ION`
+- Every displayed value MUST come from: ionApi.ts hooks, usePreviewResource, ion-indexer-cache, or real wallet context
+- Loading state = `<AsyncState resource={...}>` wrapping real API call
+- Error state = `<AsyncState>` with retry button
+
+## 8. Responsive Breakpoints
+
+```
+Mobile:  375px  → single column, compact cards, hamburger nav
+Tablet:  768px  → 2-column grid, bottom nav optional
+Desktop: 1440px → full trading layout, sidebar nav, multi-column
+```
+
+Use Tailwind: `grid-cols-1 md:grid-cols-2 xl:grid-cols-3`
+
+## 9. BusinessPages.tsx SPLIT REQUIREMENT
+
+The 43KB BusinessPages.tsx MUST be split into separate page files:
+- `pages/TradePage.tsx` — chart + order book + order form
+- `pages/GridPage.tsx` — grid trading config
+- `pages/BurnPage.tsx` — ION burn interface
+- `pages/DomainPage.tsx` — .ion domain management
+- `pages/AIPage.tsx` — AI analysis panel
+
+Keep shared layouts in `components/layout/`, shared primitives in `components/ui/`.
+
+## 10. Verification After Every Change
+
+```bash
+node scripts/dev-preflight.mjs
+npm run build          # MUST pass
+npm run typecheck      # if available
+npm run verify         # Playwright E2E
+npm run audit:high     # 0 high vulnerabilities
+powershell scripts\check-encoding.ps1  # UTF-8 check
+```
+
+DO NOT commit if any of these fail.

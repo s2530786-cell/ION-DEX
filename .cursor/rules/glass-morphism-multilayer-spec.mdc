@@ -1,0 +1,148 @@
+---
+description: 玻璃拟态多层组件设计规范 — 每个组件都是独立的多层玻璃堆叠体
+alwaysApply: true
+---
+
+# 🔮 玻璃拟态多层组件设计规范（铁律级）
+
+> **Master 钦定（2026-05-21）：** 赛博朋克玻璃拟态不能单层设计。每个组件必须独立具备多层堆叠。
+> **前车之鉴：** NeonGlassCard 只在外壳做了 7 层，内部按钮/输入框/Tab/图表框全是扁平单层 → 视觉差距巨大。
+
+---
+
+## 一、多层玻璃架构（所有组件通用）
+
+每个可见 UI 组件必须至少包含以下层次（从底到顶）：
+
+```
+┌─────────────────────────┐
+│ L7: Content Surface     │  ← 内容（z-10 相对定位）
+├─────────────────────────┤
+│ L6: Inner Light Border  │  ← 内发光边框（1px solid，颜色 variant）
+├─────────────────────────┤
+│ L5: Glossy Highlight    │  ← 斜角高光 sweep（white 5-10%，对角线 115deg）
+├─────────────────────────┤
+│ L4: Aurora Reflection   │  ← 色散反射层（variant色，blur 15-20px，低透明度）
+├─────────────────────────┤
+│ L3: Glass Mid-Layer     │  ← 折射中层（blur 10-16px，渐变覆盖）
+├─────────────────────────┤
+│ L2: Deep Glass Base     │  ← 深度玻璃基底（blur 24-40px，暗色半透明）
+├─────────────────────────┤
+│ L1: Outer Neon Glow     │  ← 外发光环（conic-gradient + blur 8-12px）
+└─────────────────────────┘
+```
+
+**铁律：** 每个组件独立拥有这些层。不是靠外层卡片"罩着"。
+
+---
+
+## 二、组件层级清单（全部需要多层重构）
+
+### 必须重做的组件：
+
+| 优先级 | 组件 | 当前状态 | 目标 |
+|--------|------|---------|------|
+| 🔴 P0 | **NeonButton** | 仅1层高光 | 5层玻璃按钮（glow→base→mid→highlight→border） |
+| 🔴 P0 | **NeonGlassCard** | 7层但视觉太平 | 加深各层透明度/blur，增加3D浮动感 |
+| 🔴 P0 | **GlassPanel** (新建) | 不存在 | 内容面板：6层玻璃，用于图表区/列表区/表单区 |
+| 🟡 P1 | **GlassInput** (新建) | 不存在 | 输入框：5层玻璃，focus时 glow 增强 |
+| 🟡 P1 | **GlassTab** (新建) | 不存在 | Tab导航：5层玻璃，active态变色+加深glow |
+| 🟡 P1 | **GlassBadge/Pill** (新建) | 不存在 | 状态标签：4层玻璃，小巧多层 |
+| 🟢 P2 | **GlassChart** (新建) | 不存在 | 图表框：6层玻璃，深色内底 |
+| 🟢 P2 | **GlassTable** (新建) | 不存在 | 表格容器：5层玻璃，行hover态 |
+
+---
+
+## 三、NeonGlassCard 强化（修正视觉太平的问题）
+
+当前问题：7层都有了但透明度太低、blur不够、没有3D浮动感。
+
+修正参数：
+- L1 外发光：opacity 从 0.18 → **0.28**，blur 从 8px → **14px**
+- L2 深玻璃：bg 从 rgba(3,5,15,0.55) → **rgba(2,4,12,0.65)**，blur 从 32px → **40px**
+- L3 中玻璃：blur 从 12px → **20px**，加 **saturate(1.6)**
+- L4 极光反射：opacity 从 0.25 → **0.32**，blur 从 20px → **28px**
+- L5 高光：加 **transform: skewX(-2deg)** 微斜角
+- L6 内边框：加 **box-shadow: 0 4px 24px rgba(0,0,0,0.5)** 底部投影增加浮动感
+- 新增：`transform: translateZ(0)` + `perspective: 1200px` 开启3D上下文
+- 新增：hover态轻微上浮 `translateY(-2px)` + glow增强
+
+---
+
+## 四、NeonButton 多层重构规范
+
+```
+L1: Outer glow     — conic-gradient(cyan→magenta→violet→cyan), blur 6px, opacity 0.25
+L2: Glass base     — rgba(3,5,15,0.6), blur 20px, border-radius 匹配
+L3: Mid refraction — linear-gradient(135deg, white/0.06, transparent 50%), blur 8px
+L4: Glossy sweep   — linear-gradient(115deg, transparent 40%, white/0.12 50%, transparent 60%)
+L5: Inner border   — 1px solid (variant颜色, opacity 0.25)
+L6: Content        — 文字 z-10
+```
+
+hover 态: L1 glow 增强 1.5x，L4 sweep 移动（transition），整体 scale(1.03)
+active 态: scale(0.97)，L1 glow 减弱
+
+---
+
+## 五、GlassPanel 新建规范（内容区面板）
+
+用途：图表框、订单簿、交易历史、流动性列表等内部面板。
+
+```
+L1: Outer glow     — variant色 blur 10px, opacity 0.12
+L2: Glass base     — rgba(2,4,12,0.5), blur 28px
+L3: Mid glass      — blur 14px, saturate(1.4)
+L4: Aurora refl    — opacity 0.18
+L5: Glossy sweep   — 对角线高光
+L6: Inner border   — 1px variant色, opacity 0.15
+L7: Content        — 内 padding，overflow-auto
+```
+
+圆角：1.25rem（非hero）/ 2rem（hero区域）
+
+---
+
+## 六、GlassInput 新建规范
+
+```
+L1: Outer glow     — blur 5px, opacity 0.15（focus→0.3）
+L2: Glass base     — rgba(3,5,15,0.55), blur 16px
+L3: Mid glass      — blur 8px
+L4: Glossy sweep   — 对角线
+L5: Inner border   — 1px variant色, opacity 0.15（focus→0.4）
+L6: Content        — input元素，bg-transparent，text-white
+```
+
+---
+
+## 七、实现检查清单
+
+每完成一个组件，必须验证：
+- [ ] 至少 5 层独立 div（指针事件穿透 + 绝对定位堆叠）
+- [ ] 外层 glow 可见（不是 0.05 这种看不见的透明度）
+- [ ] 中层有 blur backdrop-filter
+- [ ] 有对角线高光 sweep
+- [ ] 内边框清晰可见
+- [ ] 内容层 z-index 最高
+- [ ] hover/active/focus 态有过渡动画
+- [ ] 在暗色背景 (#03050f) 上效果明显
+- [ ] 圆角统一（卡片 2rem / 面板 1.25rem / 按钮 full / 输入 1rem）
+
+---
+
+## 八、禁止项
+
+❌ 禁止单层 `background: rgba(...)` 就算"玻璃"
+❌ 禁止只用 `backdrop-filter: blur()` 不加其他层
+❌ 禁止外层有玻璃但里面是扁平 div
+❌ 禁止透明度 < 0.08 的"看不见"的 glow
+❌ 禁止没有 hover 态过渡的静态组件
+❌ 禁止使用 `bg-white/[0.04]` 这种假玻璃（这是占位符风格，不是产品风格）
+
+---
+
+## 九、参考基准
+
+目标视觉效果：每一块 UI 拿出来截图，都能独立看出 3 层以上的玻璃堆叠深度。
+参考方向：OKX Web3 钱包 + Apple Vision Pro 玻璃面板 + macOS 模糊深色模式，融合赛博朋克霓虹。

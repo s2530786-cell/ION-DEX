@@ -88,9 +88,24 @@ export type DomainResolution = {
   };
 };
 
+/**
+ * 纯 Mock 预览模式（默认）：不发起任何 /api fetch，数据来自 MOCK_DATA。
+ * 联调后端：设 VITE_ION_API_LIVE=true，MOCK_DATA 仅作 ionApi 失败时的 Fallback。
+ */
+export const ION_API_LIVE_ENABLED = import.meta.env.VITE_ION_API_LIVE === "true";
+
+/** @deprecated 使用 ION_API_LIVE_ENABLED */
+export const ION_USE_STATIC_MOCK = !ION_API_LIVE_ENABLED;
+
 const apiBaseUrl = import.meta.env.VITE_ION_API_BASE_URL ?? "";
 
 async function fetchApi<T>(path: string, signal?: AbortSignal): Promise<ApiResponse<T>> {
+  if (!ION_API_LIVE_ENABLED) {
+    signal?.throwIfAborted();
+    const { resolveStaticMockApi } = await import("@/lib/ionApiMocks");
+    return resolveStaticMockApi<T>(path);
+  }
+
   const response = await fetch(`${apiBaseUrl}${path}`, {
     headers: {
       accept: "application/json",

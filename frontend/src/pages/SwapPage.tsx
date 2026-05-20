@@ -2,28 +2,20 @@ import { ArrowDownUp } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
+import { GlassPlaceholderSkeleton } from "@/components/ui/GlassPlaceholderSkeleton";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { useEvmWallet } from "@/context/EvmWalletContext";
-import { useApiResource } from "@/hooks/useApiResource";
-import {
-  fetchMarketTickers,
-  fetchTradeQuote,
-  type ApiMeta,
-  type MarketTicker,
-  type TradeQuote,
-} from "@/lib/ionApi";
+import { usePreviewResource } from "@/hooks/usePreviewResource";
+import { useMockData } from "@/context/MockDataContext";
+import { mockPreviewMeta } from "@/lib/MOCK_DATA";
+import type { ApiMeta, TradeQuote } from "@/lib/ionApi";
+import { ION_API_LIVE_ENABLED, fetchTradeQuote } from "@/lib/ionApi";
 
 type SwapToken = "BNB" | "ION" | "USDT";
 
 const tokens: SwapToken[] = ["BNB", "ION", "USDT"];
-
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-  { symbol: "USDT", priceUsd: 1, displayPrice: "$1.00", change24hPct: 0.01, displayChange: "+0.01%" },
-];
 
 function swapNeedsIonWallet(fromToken: SwapToken, toToken: SwapToken): boolean {
   return fromToken === "ION" || toToken === "ION";
@@ -36,12 +28,10 @@ function swapNeedsEvmWallet(fromToken: SwapToken): boolean {
 export function SwapPage() {
   const ionWallet = useIonWallet();
   const evmWallet = useEvmWallet();
-  const fetchTickers = useCallback(
-    (signal: AbortSignal) => fetchMarketTickers(signal),
-    [],
-  );
-  const tickers = useApiResource(fetchTickers, fallbackTickers, {
+  const mockData = useMockData();
+  const tickers = usePreviewResource((m) => m.marketTickers, {
     isEmpty: (data) => data.length === 0,
+    metaKey: "markets/tickers",
   });
 
   const [fromToken, setFromToken] = useState<SwapToken>("BNB");
@@ -83,6 +73,22 @@ export function SwapPage() {
     }
 
     const controller = new AbortController();
+
+    if (!ION_API_LIVE_ENABLED) {
+      setQuote(
+        mockData.buildTradeQuote({
+          amountIn: payAmount,
+          inputToken: fromToken,
+          outputToken: toToken,
+          slippageBps,
+        }),
+      );
+      setQuoteMeta(mockPreviewMeta("trade/quote"));
+      setQuoteState("ready");
+      setQuoteError(null);
+      return () => controller.abort();
+    }
+
     setQuoteState("loading");
     setQuoteError(null);
 
@@ -115,7 +121,7 @@ export function SwapPage() {
       });
 
     return () => controller.abort();
-  }, [fromToken, inputValid, payAmount, slippageBps, toToken]);
+  }, [fromToken, inputValid, mockData, payAmount, slippageBps, toToken]);
 
   const validation = useMemo(() => {
     const parsedSlippage = Number(slippage);
@@ -222,13 +228,7 @@ export function SwapPage() {
 
           <DataSourceBadge meta={quoteMeta ?? tickers.meta} testId="swap-quote-source" />
 
-          <AsyncState
-            emptyMessage="Market prices unavailable."
-            error={tickers.error}
-            onRetry={tickers.reload}
-            state={tickers.state}
-            testId="swap-tickers"
-          >
+          <AsyncState error={tickers.error} state={tickers.state} testId="swap-tickers">
             <span className="sr-only">Ticker feed loaded</span>
           </AsyncState>
 
@@ -327,13 +327,13 @@ export function SwapPage() {
             </p>
           ) : null}
 
-          {quoteState === "error" && quoteError ? (
-            <p
-              className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
-              data-testid="swap-error"
-            >
-              {quoteError}
-            </p>
+          {quoteState === "error" || quoteState === "loading" ? (
+            <GlassPlaceholderSkeleton
+              embedded
+              lines={2}
+              minHeight="5.5rem"
+              testId="swap-quote-placeholder"
+            />
           ) : null}
 
           {submitError ? (
@@ -345,25 +345,25 @@ export function SwapPage() {
             </p>
           ) : null}
 
-          <div
-            className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100/75"
-            data-testid="swap-quote"
-          >
-            {quoteState === "loading" ? (
-              <span>Loading quote from backend market feed…</span>
-            ) : validation.quoteReady && validation.quote !== null ? (
-              <span>
-                Quote: est. ~{validation.quote.estimatedOutput} {toToken} · protocol fee ~
-                {validation.quote.protocolFee} {toToken} · min received ~
-                <span data-testid="swap-min-received">{validation.quote.minimumReceived}</span>{" "}
-                {toToken} (after {slippage}% slip) · impact ~{validation.quote.priceImpactBps / 100}
-                % · route {validation.quote.route.join(" → ")} · price via{" "}
-                {validation.quote.provenance.source} ({validation.quote.provenance.priceModel})
-              </span>
-            ) : (
-              <span>Enter amount and slippage to fetch a backend quote from live market tickers.</span>
-            )}
-          </div>
+          {quoteState !== "loading" && quoteState !== "error" ? (
+            <div
+              className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100/75"
+              data-testid="swap-quote"
+            >
+              {validation.quoteReady && validation.quote !== null ? (
+                <span>
+                  Quote: est. ~{validation.quote.estimatedOutput} {toToken} · protocol fee ~
+                  {validation.quote.protocolFee} {toToken} · min received ~
+                  <span data-testid="swap-min-received">{validation.quote.minimumReceived}</span>{" "}
+                  {toToken} (after {slippage}% slip) · impact ~{validation.quote.priceImpactBps / 100}% ·
+                  route {validation.quote.route.join(" → ")} · price via{" "}
+                  {validation.quote.provenance.source} ({validation.quote.provenance.priceModel})
+                </span>
+              ) : (
+                <span>Enter amount and slippage to preview quote from MOCK_DATA.</span>
+              )}
+            </div>
+          ) : null}
 
           <NeonButton
             className="w-full"

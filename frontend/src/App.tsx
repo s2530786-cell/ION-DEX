@@ -1,14 +1,19 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
 import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
-import { BusinessPage, type BusinessPageKey } from "@/pages/BusinessPages";
-import { DashboardPage } from "@/pages/DashboardPage";
-import { PoolPage } from "@/pages/PoolPage";
-import { StakePage } from "@/pages/StakePage";
-import { BridgePage } from "@/pages/BridgePage";
-import { SwapPage } from "@/pages/SwapPage";
-import { NeonGlassCard } from "@/components/ui/NeonGlassCard";
+import type { BusinessPageKey } from "@/pages/BusinessPages";
+
+const DashboardPage = lazy(() =>
+  import("@/pages/DashboardPage").then((m) => ({ default: m.DashboardPage })),
+);
+const SwapPage = lazy(() => import("@/pages/SwapPage").then((m) => ({ default: m.SwapPage })));
+const PoolPage = lazy(() => import("@/pages/PoolPage").then((m) => ({ default: m.PoolPage })));
+const StakePage = lazy(() => import("@/pages/StakePage").then((m) => ({ default: m.StakePage })));
+const BridgePage = lazy(() => import("@/pages/BridgePage").then((m) => ({ default: m.BridgePage })));
+const BusinessPage = lazy(() =>
+  import("@/pages/BusinessPages").then((m) => ({ default: m.BusinessPage })),
+);
 
 const businessPages = new Set<BusinessPageKey>([
   "trade",
@@ -62,25 +67,28 @@ export function App() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
-  useEffect(() => {
-    console.log("NeonGlassCard mounted");
-  }, []);
-
   return (
     <AppShell activePage={activePage} onPageChange={navigate}>
-      <NeonGlassCard style={{ margin: "0 0 1rem", padding: "0.5rem 1rem" }}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activePage}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            initial={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activePage}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          initial={false}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+        >
+          <Suspense
+            fallback={
+              <div
+                className="min-h-[14rem] animate-pulse rounded-3xl bg-white/[0.04]"
+                data-testid="page-loading"
+              />
+            }
           >
             <PageRouter onNavigate={navigate} page={activePage} />
-          </motion.div>
-        </AnimatePresence>
-      </NeonGlassCard>
+          </Suspense>
+        </motion.div>
+      </AnimatePresence>
     </AppShell>
   );
 }

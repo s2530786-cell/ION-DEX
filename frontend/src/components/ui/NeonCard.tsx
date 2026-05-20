@@ -1,23 +1,23 @@
-import type { CSSProperties, PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { NeonGlassCard } from "@/components/ui/NeonGlassCard";
 
 type NeonCardProps = PropsWithChildren<{
   className?: string;
-  variant?: "cyan" | "magenta" | "gold" | "mixed";
+  variant?: "cyan" | "magenta" | "violet" | "gold" | "mixed";
+  hero?: boolean;
+  noAurora?: boolean;
 }>;
 
-const variantBorder: Record<NonNullable<NeonCardProps["variant"]>, string> = {
-  cyan: "cyan",
-  magenta: "#ff00ff",
-  gold: "#fbbf24",
-  mixed: "cyan",
-};
-
-export function NeonCard({ children, className: _className = "", variant = "mixed" }: NeonCardProps) {
-  const surfaceStyle: CSSProperties = {
-    border: `2px solid ${variantBorder[variant]}`,
-    padding: "1.25rem",
-  };
-
-  return <NeonGlassCard style={surfaceStyle}>{children}</NeonGlassCard>;
+export function NeonCard({
+  children,
+  className = "",
+  variant = "mixed",
+  hero = false,
+  noAurora = false,
+}: NeonCardProps) {
+  return (
+    <NeonGlassCard className={className} variant={variant} hero={hero} noAurora={noAurora}>
+      {children}
+    </NeonGlassCard>
+  );
 }
