@@ -163,6 +163,9 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - Frontend Swap consumes the backend quote API and displays `bigint-floor / ION 9d`, protocol fee bps, route, minimum received, and price impact.
   - Backend tests cover valid quote precision and invalid slippage; backend stress includes quote endpoint; frontend E2E covers backend precision/slippage bps.
   - Remaining gaps: contract minimum-output enforcement, oracle/TWAP adapter, and MEV simulations wait for contract/oracle services.
+- Cursor automation YAML import completed on 2026-05-20:
+  - `.cursor/automations/ion-dex-autonomous-build.yml` was restored from Git history commit `fa875f4` because the requested Windows source path is not mounted in Cursor Cloud.
+  - The YAML is a source-of-truth template for manually importing/configuring the Cursor Automation UI, with schedule, repository, mandatory startup reads, Cloud preflight, verification, commit/push, and PR-safe delivery instructions.
 
 ## Current Blocker
 
