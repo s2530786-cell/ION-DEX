@@ -137,11 +137,12 @@ Every response should expose source, timestamp, stale flag, and request ID.
 - 5D galaxy/aurora background.
 - ION DEX 3D logo treatment.
 - Liquid-glass Swap card.
-- Real quote preview.
+- Real quote preview from typed backend quote API.
 - Minimum received.
 - ION fee.
 - Price impact.
 - Execution route.
+- BigInt precision math and `maxSlippageBps` must be visible before wallet review.
 - Market chart surface.
 - Feature cards with 3D icons.
 

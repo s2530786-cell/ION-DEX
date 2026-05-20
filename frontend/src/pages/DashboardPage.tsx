@@ -8,8 +8,9 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { PageKey } from "@/components/layout/AppShell";
+import { fetchTradeQuote, type TradeQuote } from "@/lib/ionApi";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 
@@ -64,23 +65,49 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 function SwapPanel() {
   const [payAmount, setPayAmount] = useState("2.50");
   const [slippage, setSlippage] = useState("0.50");
+  const [quote, setQuote] = useState<TradeQuote | null>(null);
+  const [quoteState, setQuoteState] = useState<"loading" | "ready" | "error">("loading");
 
-  const quote = useMemo(() => {
-    const amount = Number(payAmount);
+  const slippageBps = useMemo(() => {
     const slip = Number(slippage);
-    const isValid = Number.isFinite(amount) && amount > 0 && Number.isFinite(slip) && slip >= 0.1 && slip <= 5;
-    const ionOut = isValid ? amount * 106.68 : 0;
-    const fee = isValid ? ionOut * 0.0025 : 0;
-    const netIonOut = ionOut - fee;
-    const minReceived = isValid ? netIonOut * (1 - slip / 100) : 0;
-    return {
-      fee,
-      ionOut,
-      isValid,
-      minReceived,
-      priceImpact: amount > 8 ? "1.18%" : "0.24%",
-    };
+    return Number.isFinite(slip) ? Math.round(slip * 100) : Number.NaN;
   }, [payAmount, slippage]);
+
+  const inputValid =
+    Number.isFinite(Number(payAmount)) &&
+    Number(payAmount) > 0 &&
+    Number.isInteger(slippageBps) &&
+    slippageBps >= 10 &&
+    slippageBps <= 500;
+
+  useEffect(() => {
+    if (!inputValid) {
+      setQuote(null);
+      setQuoteState("error");
+      return undefined;
+    }
+    const controller = new AbortController();
+    setQuoteState("loading");
+    fetchTradeQuote(
+      {
+        amountIn: payAmount,
+        inputToken: "BNB",
+        outputToken: "ION",
+        slippageBps,
+      },
+      controller.signal,
+    )
+      .then((response) => {
+        setQuote(response.data);
+        setQuoteState("ready");
+      })
+      .catch(() => {
+        setQuote(null);
+        setQuoteState("error");
+      });
+
+    return () => controller.abort();
+  }, [inputValid, payAmount, slippageBps]);
 
   return (
     <NeonCard className="depth-stage min-h-[31rem]" variant="magenta">
@@ -110,7 +137,7 @@ function SwapPanel() {
         <AmountField label="Pay BNB" onChange={setPayAmount} testId="swap-pay" value={payAmount} />
         <Readout
           label="Receive ION"
-          value={quote.ionOut.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+          value={quoteState === "ready" && quote ? quote.estimatedOutput : "Calculating route"}
         />
         <AmountField label="Slippage %" onChange={setSlippage} testId="swap-slippage" value={slippage} />
       </div>
@@ -118,19 +145,24 @@ function SwapPanel() {
       <div className="mt-5 grid gap-2 rounded-3xl border border-cyan-300/20 bg-cyan-300/[0.05] p-4 text-xs text-cyan-100/75 backdrop-blur-xl">
         <QuoteRow
           label="Minimum received"
-          testId="swap-min-received"
-          value={`${quote.minReceived.toLocaleString(undefined, { maximumFractionDigits: 2 })} ION`}
+          value={quoteState === "ready" && quote ? `${quote.minimumReceived} ION` : "Waiting for quote"}
         />
         <QuoteRow
           label="Protocol fee"
-          testId="swap-protocol-fee"
-          value={`${quote.fee.toLocaleString(undefined, { maximumFractionDigits: 2 })} ION`}
+          value={quoteState === "ready" && quote ? `${quote.protocolFee} ION (${quote.protocolFeeBps} bps)` : "Waiting for quote"}
         />
-        <QuoteRow label="Price impact" value={quote.priceImpact} />
-        <QuoteRow label="Execution route" value="ION Chain AMM -> wallet signature" />
+        <QuoteRow label="Price impact" value={quoteState === "ready" && quote ? `${quote.priceImpactBps} bps` : "Waiting for quote"} />
+        <QuoteRow label="Precision" value={quoteState === "ready" && quote ? `${quote.precision.math} / ${quote.outputToken} ${quote.precision.outputDecimals}d` : "Waiting for quote"} />
+        <QuoteRow label="Execution route" value={quoteState === "ready" && quote ? quote.route.join(" -> ") : "Waiting for quote"} />
       </div>
 
-      <NeonButton className="mt-5 w-full" data-testid="swap-submit" disabled={!quote.isValid} type="button">
+      {quoteState === "error" ? (
+        <p className="mt-3 rounded-2xl border border-rose-300/25 bg-rose-300/[0.08] px-4 py-3 text-xs text-rose-100" data-testid="swap-quote-error">
+          Quote unavailable. Check amount, slippage, and backend quote service.
+        </p>
+      ) : null}
+
+      <NeonButton className="mt-5 w-full" data-testid="swap-submit" disabled={quoteState !== "ready" || !quote} type="button">
         Review ION Swap
       </NeonButton>
     </NeonCard>

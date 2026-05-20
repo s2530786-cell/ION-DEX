@@ -114,6 +114,37 @@ describe("ION DEX API gateway", () => {
     assert.ok(data.some((ticker) => ticker.symbol === "ION" && ticker.displayChange.startsWith("+")));
   });
 
+  it("serves bigint quote with slippage and fee precision", async () => {
+    const response = await requestJson("/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=50");
+    const data = response.body.data as {
+      amountInUnits: string;
+      estimatedOutputUnits: string;
+      minimumReceivedUnits: string;
+      protocolFeeUnits: string;
+      slippageBps: number;
+      protocolFeeBps: number;
+      precision: { inputDecimals: number; outputDecimals: number; math: string };
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(data.amountInUnits, "2500000000000000000");
+    assert.equal(data.slippageBps, 50);
+    assert.equal(data.protocolFeeBps, 25);
+    assert.equal(data.precision.inputDecimals, 18);
+    assert.equal(data.precision.outputDecimals, 9);
+    assert.equal(data.precision.math, "bigint-floor");
+    assert.ok(BigInt(data.estimatedOutputUnits) > BigInt(data.minimumReceivedUnits));
+    assert.ok(BigInt(data.protocolFeeUnits) > 0n);
+  });
+
+  it("rejects unsafe quote slippage", async () => {
+    const response = await requestJson("/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=900");
+
+    assert.equal(response.status, 400);
+    assert.equal(response.body.error?.code, "invalid_quote_request");
+    assert.match(response.body.error?.message ?? "", /slippageBps/);
+  });
+
   it("returns typed errors for unknown routes and invalid methods", async () => {
     const notFound = await requestJson("/api/missing");
     assert.equal(notFound.status, 404);

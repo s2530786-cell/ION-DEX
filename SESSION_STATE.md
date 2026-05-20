@@ -160,11 +160,13 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `docs/23-security-audit-and-stress-sandbox.md` turns the framework into an execution checklist and sandbox plan.
   - `scripts/security-preflight.mjs` verifies security memory/docs/skills are present before high-risk work.
   - `scripts/dev-preflight.mjs` now requires the security framework.
-- Automation YAML import completed on 2026-05-20:
-  - `.cursor/automations/ion-dex-autonomous-build.yml` was imported from historical `D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml` and normalized for the current Cloud Agent branch `cursor/ion-dex-yaml-cfd8`.
-  - The automation prompt now uses current repository-relative memory files, current POSIX verification scripts, and MCP name `ion-dex-memory-bank`.
-  - Verification passed with `bash scripts/check-encoding.sh && bash scripts/verify-full.sh`: encoding OK, backend tests 6 passed, backend audit 0 vulnerabilities, backend stress smoke passed, frontend Playwright 14 passed, frontend audit 0 vulnerabilities.
-  - Commit `55516e0` was pushed to `origin/cursor/ion-dex-yaml-cfd8`.
+- Quote / slippage / precision minimum loop completed on 2026-05-20:
+  - `backend/src/lib/decimal.ts` uses BigInt floor math for decimal parsing/formatting and bps calculations.
+  - `backend/src/services/quotes.ts` provides typed quote output with amount units, estimated output, minimum received, protocol fee, fee bps, slippage bps, price impact bps, route, precision, and provenance.
+  - `/api/trade/quote` is wired through the API gateway.
+  - Frontend Swap consumes the backend quote API and displays `bigint-floor / ION 9d`, protocol fee bps, route, minimum received, and price impact.
+  - Backend tests cover valid quote precision and invalid slippage; backend stress includes quote endpoint; frontend E2E covers backend precision/slippage bps.
+  - Remaining gaps: contract minimum-output enforcement, oracle/TWAP adapter, and MEV simulations wait for contract/oracle services.
 
 ## Current Blocker
 
