@@ -160,11 +160,10 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `docs/23-security-audit-and-stress-sandbox.md` turns the framework into an execution checklist and sandbox plan.
   - `scripts/security-preflight.mjs` verifies security memory/docs/skills are present before high-risk work.
   - `scripts/dev-preflight.mjs` now requires the security framework.
-- Automation YAML import completed on 2026-05-20:
-  - `.cursor/automations/ion-dex-autonomous-build.yml` was imported from historical `D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml` and normalized for the current Cloud Agent branch `cursor/ion-dex-yaml-cfd8`.
-  - The automation prompt now uses current repository-relative memory files, current POSIX verification scripts, and MCP name `ion-dex-memory-bank`.
-  - Verification passed with `bash scripts/check-encoding.sh && bash scripts/verify-full.sh`: encoding OK, backend tests 6 passed, backend audit 0 vulnerabilities, backend stress smoke passed, frontend Playwright 14 passed, frontend audit 0 vulnerabilities.
-  - Commit `55516e0` was pushed to `origin/cursor/ion-dex-yaml-cfd8`.
+- Cursor Automation YAML import completed on 2026-05-20:
+  - Added `.cursor/automations/ion-dex-autonomous-build.yml` for the user-requested import path `D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml`.
+  - Cursor Cloud could not read the Windows `D:\` source path directly, so the template was restored from Git history and updated for the current Linux Cloud Agent flow.
+  - `docs/08-ci-agent-automation.md` records the file as a source-of-truth Cursor Automations UI import template.
 
 ## Current Blocker
 
