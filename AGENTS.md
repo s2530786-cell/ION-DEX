@@ -28,6 +28,8 @@ Before working on this project, load and follow:
 
 - Source encoding: UTF-8 without BOM only.
 - Communicate with the user in Simplified Chinese by default.
+- Before any development work, read `docs/00-engineering-standards.md` as the development iron law.
+- Before frontend/UI work, read `docs/10-ui-design-route.md` and run `node scripts/dev-preflight.mjs` when shell access is available.
 - Never create UTF-16, GBK, ANSI, or BOM files.
 - Verify encoding after every file write.
 - Do not claim completion without build/test/lint/security evidence.
@@ -58,19 +60,20 @@ ION DEX is planned as an OKX Web3 wallet style DEX for ION with:
 ## Development Process
 
 1. Read `SESSION_STATE.md`.
-2. Read current engineering docs under `docs/`.
+2. Read `docs/00-engineering-standards.md` before any development, then read current engineering docs under `docs/`.
 3. For every development task, proactively load the Cursor workflow and development accelerator context:
    - `docs/cursor-docs-feature-memory.md`
    - `docs/development-accelerators-memory.md`
-4. Apply `cursor-engineering-workflow` as the active automatic workflow for planning, mode choice, review path, MCP/tool selection, and verification strategy.
-5. Apply `ion-dev-accelerators` before implementation to decide whether worktrees, `/best-of-n`, Agent Review, Bugbot, Hooks, Cloud Agents, CLI automation, MCP, Rules, or Skills should be used.
-6. For multi-stream or high-risk work, prefer isolated Git worktrees/Cursor `/worktree` with separate ports and scoped branches; do not mix unrelated UI, backend, contract, and verification experiments in one working tree when isolation would reduce risk.
-7. Run code review/audit paths before accepting meaningful diffs: Agent Review for local diffs when available, Bugbot for PRs, and domain-specific audit Skills for contract/backend/security-sensitive changes.
-8. **Do not ask the user for permission before every tiny step.** For scoped edits (UX copy, tests, wiring, bugfixes), implement continuously and validate yourself. Ask only when requirements are ambiguous, secrets/credentials are missing, or an action is destructive and irreversible without explicit consent.
-9. Implement in coherent chunks; batch related file edits rather than blocking on human “continue” between each line.
-10. After substantive code edits, **automatically** run verification—use `scripts\agent-verify.cmd` (non-interactive, no `pause`) or `ION_VERIFY_NONINTERACTIVE=1` with `scripts\verify-full.cmd`. Use `scripts\verify-full-save-log.cmd --no-pause` if stdout may be empty, then read `%TEMP%\ion-verify-full.txt`. Only ask the user to run commands when the agent environment cannot execute shells.
-11. After major work, repeated failures, verification fixes, or user corrections, apply `self-evolving` to capture lessons and update `SESSION_STATE.md`, `docs/99-current-progress.md`, relevant Skills, or `AGENTS.md` when useful.
-12. For feature work, run the 100-pass verification gate before moving on to the next feature unless the user waives it.
-13. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
+4. For frontend/UI tasks, read `docs/10-ui-design-route.md` and run `node scripts/dev-preflight.mjs` before implementation; full verification scripts run this automatically as step 0.
+5. Apply `cursor-engineering-workflow` as the active automatic workflow for planning, mode choice, review path, MCP/tool selection, and verification strategy.
+6. Apply `ion-dev-accelerators` before implementation to decide whether worktrees, `/best-of-n`, Agent Review, Bugbot, Hooks, Cloud Agents, CLI automation, MCP, Rules, or Skills should be used.
+7. For multi-stream or high-risk work, prefer isolated Git worktrees/Cursor `/worktree` with separate ports and scoped branches; do not mix unrelated UI, backend, contract, and verification experiments in one working tree when isolation would reduce risk.
+8. Run code review/audit paths before accepting meaningful diffs: Agent Review for local diffs when available, Bugbot for PRs, and domain-specific audit Skills for contract/backend/security-sensitive changes.
+9. **Do not ask the user for permission before every tiny step.** For scoped edits (UX copy, tests, wiring, bugfixes), implement continuously and validate yourself. Ask only when requirements are ambiguous, secrets/credentials are missing, or an action is destructive and irreversible without explicit consent.
+10. Implement in coherent chunks; batch related file edits rather than blocking on human “continue” between each line.
+11. After substantive code edits, **automatically** run verification—use `scripts\agent-verify.cmd` (non-interactive, no `pause`) or `ION_VERIFY_NONINTERACTIVE=1` with `scripts\verify-full.cmd`. Use `scripts\verify-full-save-log.cmd --no-pause` if stdout may be empty, then read `%TEMP%\ion-verify-full.txt`. Only ask the user to run commands when the agent environment cannot execute shells.
+12. After major work, repeated failures, verification fixes, or user corrections, apply `self-evolving` to capture lessons and update `SESSION_STATE.md`, `docs/99-current-progress.md`, relevant Skills, or `AGENTS.md` when useful.
+13. For feature work, run the 100-pass verification gate before moving on to the next feature unless the user waives it.
+14. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
 
 See also `docs/08-ci-agent-automation.md` for GitHub Actions and optional Cursor hooks.

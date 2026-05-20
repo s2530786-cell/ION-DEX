@@ -17,6 +17,7 @@ ION DEX UI must feel like a premium OKX Web3-style trading product:
 
 ## Implementation Rules
 
+- Before any UI edit, read `docs/00-engineering-standards.md` and `docs/10-ui-design-route.md`, then run `node scripts/dev-preflight.mjs` when shell access is available.
 - Do not introduce a new UI framework unless the user approves.
 - Prefer small focused components in `frontend/src/components/` and page shells in `frontend/src/pages/`.
 - Use stable `data-testid` on interactive or E2E-critical elements.

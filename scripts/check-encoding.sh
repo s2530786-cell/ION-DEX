@@ -19,103 +19,102 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-EXCLUDE_DIRS=(
-  "node_modules" "dist" "build" ".next" ".turbo"
-  "out" "coverage" ".vite" ".cache"
-  "target" "artifacts" "cache"
-  "__pycache__" ".venv" "venv"
-  ".git"
-)
-
-INCLUDE_EXTS=(
-  "ts" "tsx" "js" "jsx" "mjs" "cjs"
-  "json" "jsonc" "yml" "yaml" "toml"
-  "md" "txt" "html" "css" "scss"
-  "sol" "fc" "tact" "func"
-  "py" "go" "rs"
-  "sh" "ps1"
-)
-
-# Build find expression
-EXCLUDE_EXPR=()
-for d in "${EXCLUDE_DIRS[@]}"; do
-  EXCLUDE_EXPR+=( -path "*/$d" -prune -o )
-done
-
-INCLUDE_EXPR=()
-first=1
-for ext in "${INCLUDE_EXTS[@]}"; do
-  if [[ $first -eq 1 ]]; then
-    INCLUDE_EXPR+=( -name "*.$ext" )
-    first=0
-  else
-    INCLUDE_EXPR+=( -o -name "*.$ext" )
-  fi
-done
-
 echo
 echo "===== ION DEX Encoding Check ====="
 echo "Root: $PATH_ROOT"
 echo "Mode: $([[ $DO_FIX -eq 1 ]] && echo FIX || echo VERIFY-ONLY)"
 echo
 
-violations=0
-scanned=0
+python3 - "$PATH_ROOT" "$DO_FIX" <<'PY'
+import os
+import sys
+from pathlib import Path
 
-# shellcheck disable=SC2068
-while IFS= read -r -d '' f; do
-  scanned=$((scanned + 1))
+root = Path(sys.argv[1]).resolve()
+do_fix = sys.argv[2] == "1"
 
-  # Read up to first 4 bytes for BOM detection
-  read -r b0 b1 b2 b3 < <(od -An -N4 -tx1 "$f" | tr -s ' ' | sed 's/^ //')
-  b0=${b0:-00}; b1=${b1:-00}; b2=${b2:-00}; b3=${b3:-00}
+include_exts = {
+    ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
+    ".json", ".jsonc", ".yml", ".yaml", ".toml",
+    ".md", ".txt", ".html", ".css", ".scss",
+    ".sol", ".fc", ".tact", ".func",
+    ".py", ".go", ".rs",
+    ".sh", ".ps1",
+}
+exclude_dirs = {
+    "node_modules", "dist", "build", ".next", ".turbo",
+    "out", "coverage", ".vite", ".cache",
+    "target", "artifacts", "cache",
+    "__pycache__", ".venv", "venv",
+    "ion", ".git",
+}
 
-  issues=()
+def included(path: Path) -> bool:
+    return path.suffix in include_exts or path.name == ".env" or path.name.startswith(".env.")
 
-  if [[ "$b0" == "ff" && "$b1" == "fe" ]]; then
-    issues+=("UTF-16 LE BOM")
-  elif [[ "$b0" == "fe" && "$b1" == "ff" ]]; then
-    issues+=("UTF-16 BE BOM")
-  elif [[ "$b0" == "ef" && "$b1" == "bb" && "$b2" == "bf" ]]; then
-    issues+=("UTF-8 BOM")
-  fi
+def decode_for_fix(data: bytes) -> str:
+    if data.startswith(b"\xff\xfe"):
+        return data[2:].decode("utf-16le")
+    if data.startswith(b"\xfe\xff"):
+        return data[2:].decode("utf-16be")
+    if data.startswith(b"\xef\xbb\xbf"):
+        return data[3:].decode("utf-8")
+    if b"\x00" in data:
+        try:
+            return data.decode("utf-16le").replace("\x00", "")
+        except UnicodeDecodeError:
+            return data.replace(b"\x00", b"").decode("utf-8", errors="replace")
+    return data.decode("utf-8")
 
-  if grep -lq $'\x00' "$f" 2>/dev/null; then
-    issues+=("Contains NUL bytes")
-  fi
+violations = []
+fixed = []
+scanned = 0
 
-  if [[ ${#issues[@]} -gt 0 ]]; then
-    violations=$((violations + 1))
-    echo "  FAIL  $f  [${issues[*]}]"
+for current, dirnames, filenames in os.walk(root):
+    dirnames[:] = [name for name in dirnames if name not in exclude_dirs]
+    for filename in filenames:
+        path = Path(current) / filename
+        if not included(path):
+            continue
+        scanned += 1
+        data = path.read_bytes()
+        if not data:
+            continue
+        issues = []
+        if data.startswith(b"\xff\xfe"):
+            issues.append("UTF-16 LE BOM")
+        elif data.startswith(b"\xfe\xff"):
+            issues.append("UTF-16 BE BOM")
+        elif data.startswith(b"\xef\xbb\xbf"):
+            issues.append("UTF-8 BOM")
+        if b"\x00" in data:
+            issues.append("Contains NUL bytes")
+        if not issues:
+            continue
 
-    if [[ $DO_FIX -eq 1 ]]; then
-      tmp=$(mktemp)
-      if [[ "$b0" == "ff" && "$b1" == "fe" ]]; then
-        iconv -f UTF-16LE -t UTF-8 "$f" > "$tmp"
-      elif [[ "$b0" == "fe" && "$b1" == "ff" ]]; then
-        iconv -f UTF-16BE -t UTF-8 "$f" > "$tmp"
-      elif [[ "$b0" == "ef" && "$b1" == "bb" && "$b2" == "bf" ]]; then
-        tail -c +4 "$f" > "$tmp"
-      else
-        # NUL pattern: try UTF-16LE no-BOM
-        iconv -f UTF-16LE -t UTF-8 "$f" 2>/dev/null > "$tmp" || tr -d '\000' < "$f" > "$tmp"
-      fi
-      # Normalize line endings
-      tr -d '\r' < "$tmp" > "$f"
-      rm -f "$tmp"
-      echo "        -> FIXED"
-    fi
-  fi
-done < <(find "$PATH_ROOT" \( ${EXCLUDE_EXPR[@]} \) -type f \( ${INCLUDE_EXPR[@]} \) -print0)
+        rel = path.relative_to(root).as_posix()
+        violations.append((rel, issues))
+        print(f"  FAIL  {rel}  [{', '.join(issues)}]")
 
-echo
-echo "Scanned: $scanned files"
+        if do_fix:
+            text = decode_for_fix(data).replace("\r\n", "\n").replace("\r", "\n")
+            path.write_text(text, encoding="utf-8", newline="\n")
+            fixed.append(rel)
+            print("        -> FIXED")
 
-if [[ $violations -eq 0 ]]; then
-  echo "OK - All files are UTF-8 without BOM, no NUL bytes."
-  exit 0
-fi
+print()
+print(f"Scanned: {scanned} files")
 
-echo "Violations: $violations"
-[[ $DO_FIX -eq 0 ]] && echo "Run with --fix to auto-correct."
-exit 1
+if not violations:
+    print("OK - All files are UTF-8 without BOM, no NUL bytes.")
+    raise SystemExit(0)
+
+if do_fix:
+    print()
+    print(f"FIXED {len(fixed)} files.")
+    raise SystemExit(0)
+
+print(f"Violations: {len(violations)}")
+print("Run with --fix to auto-correct.")
+raise SystemExit(1)
+PY
