@@ -50,6 +50,7 @@ Required UI before signing:
 - Source and destination chain.
 - Token, amount, fee, minimum received or expected result.
 - Price impact or risk notice.
+- Quote precision method, token decimals, and `maxSlippageBps`.
 - Domain re-resolution result when `.ion` is involved.
 - Extra confirmation for high-risk bridge/domain/large actions.
 

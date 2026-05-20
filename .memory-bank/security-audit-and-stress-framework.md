@@ -195,6 +195,7 @@ Use this sequence for every meaningful change:
 
 - k6/wrk production-grade backend load scenarios are not fully implemented.
 - Frontend 10,000-row rendering sandbox is not fully implemented.
+- Swap quote precision now has a backend BigInt quote endpoint and frontend E2E coverage, but contract-level minimum-output enforcement, oracle/TWAP adapters, and MEV simulations remain incomplete until contract and oracle services exist.
 - Contract fuzz/invariant/gas harness is not complete in the current branch.
 - Bridge chaos sandbox is design-level until bridge service/relayer exists.
 - CSP/Trusted Types/CSRF enforcement is not fully wired.
