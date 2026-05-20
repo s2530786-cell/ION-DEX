@@ -146,6 +146,11 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - Empty data and pseudo-code are untouchable red lines. They must never be used as product UI content.
   - Loading/error states are allowed only as real request lifecycle states tied to concrete integrations; they cannot hide missing implementation.
   - Product values must come from typed backend/data integrations, source adapters, cache, indexer/upstream APIs, or reviewed local seed data with provenance.
+- Overall memory consolidation on 2026-05-20:
+  - `.memory-bank/live-data-reference.md`, `.memory-bank/implementation-playbook.md`, and `.memory-bank/overall-design-framework.md` were restored/added from current memory plus Git-history decisions.
+  - `scripts/dev-preflight.mjs` now requires the full memory set before verification continues.
+  - If a user says a requirement was decided earlier and current memory is incomplete, search Git history before answering or implementing.
+  - Right-top avatar is the Profile Hub: avatar, NFT avatar source, wallets, primary wallet, `.ion`, ION ID/KYC, language, theme, privacy, security logs, approvals, orders, grid strategies, staking, bridge history, domains, notifications, referral, badges, and full Profile entry.
 
 ## Current Blocker
 
@@ -167,7 +172,7 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 12. Workflow preference：2026-05-18，user explicitly requested making strong use of `self-evolving` and automatic workflow because they help development. Treat `cursor-engineering-workflow` as the pre/during-work operating loop and `self-evolving` as the post-work memory improvement loop.
 13. Accelerator/review preference：2026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
 14. Claude-Flow/RuFlo：2026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
-15. Next：continue UI correction route by replacing flat Trade/Grid/Pool surfaces with 4D liquid-glass reference-style cards, while replacing local seed values with concrete typed integrations from the backend/data memory; no empty data or pseudo-code is allowed.
+15. Next：continue UI correction route by first rebuilding the right-top Profile Hub from `.memory-bank/overall-design-framework.md`, then replace flat Trade/Grid/Pool surfaces with 4D liquid-glass reference-style cards and concrete typed integrations.
 
 ## Memory MCP Candidates
 

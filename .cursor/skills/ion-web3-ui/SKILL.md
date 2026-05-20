@@ -24,7 +24,8 @@ ION DEX UI must feel like a premium OKX Web3-style trading product:
 
 ## Implementation Rules
 
-- Before any UI edit, read `docs/00-engineering-standards.md` and `docs/10-ui-design-route.md`, then run `node scripts/dev-preflight.mjs` when shell access is available.
+- Before any UI edit, read `docs/00-engineering-standards.md`, `.memory-bank/overall-design-framework.md`, `.memory-bank/live-data-reference.md`, `.memory-bank/implementation-playbook.md`, `.memory-bank/architecture-audit.md`, and `docs/10-ui-design-route.md`, then run `node scripts/dev-preflight.mjs` when shell access is available.
+- For wallet/profile/avatar work, retrieve the Profile Hub requirements from `.memory-bank/overall-design-framework.md` and search Git history if anything is unclear.
 - Do not introduce a new UI framework unless the user approves.
 - Prefer small focused components in `frontend/src/components/` and page shells in `frontend/src/pages/`.
 - Use stable `data-testid` on interactive or E2E-critical elements.

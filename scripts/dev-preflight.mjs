@@ -5,6 +5,11 @@ const root = process.cwd();
 
 const requiredFiles = [
   "docs/00-engineering-standards.md",
+  ".memory-bank/overall-design-framework.md",
+  ".memory-bank/live-data-reference.md",
+  ".memory-bank/implementation-playbook.md",
+  ".memory-bank/architecture-audit.md",
+  ".memory-bank/ion-dex-nuke/official-source-index.md",
   ".cursor/skills/ion-web3-ui/SKILL.md",
   "docs/05-product-prd.md",
   "docs/06-page-flow-and-user-journeys.md",
@@ -15,6 +20,11 @@ const requiredFiles = [
 
 const requiredMarkers = new Map([
   ["docs/00-engineering-standards.md", ["工程交付标准", "前端 UI 验收标准"]],
+  [".memory-bank/overall-design-framework.md", ["Overall Design Framework", "Right-Top Avatar / Profile Hub"]],
+  [".memory-bank/live-data-reference.md", ["Live Data Reference", "Seven EVM wallet detectors"]],
+  [".memory-bank/implementation-playbook.md", ["Implementation Playbook", "Wallet/Profile Integration Order"]],
+  [".memory-bank/architecture-audit.md", ["Architecture Audit Memory", "User correction: no empty data or pseudo-code"]],
+  [".memory-bank/ion-dex-nuke/official-source-index.md", ["Official Source Index", "wallet references"]],
   [".cursor/skills/ion-web3-ui/SKILL.md", ["premium OKX Web3-style", "No rough placeholder cards"]],
   ["docs/05-product-prd.md", ["Page Requirements", "Dashboard", "Trade"]],
   ["docs/10-ui-design-route.md", ["ION DEX UI Design Route Lock", "Automatic Workflow"]],
