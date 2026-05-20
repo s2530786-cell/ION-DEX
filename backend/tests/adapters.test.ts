@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 import { createAdapterRegistry } from "../src/adapters/registry.js";
+import type { AdapterHealthSnapshot } from "../src/adapters/types.js";
 
 describe("source adapters", () => {
   const clock = {
@@ -30,7 +31,7 @@ describe("source adapters", () => {
     await registry.burn.fetch();
 
     const health = registry.listHealth();
-    const burn = health.find((entry) => entry.adapterKey === "burn");
+    const burn = health.find((entry: AdapterHealthSnapshot) => entry.adapterKey === "burn");
 
     assert.ok(burn);
     assert.equal(burn?.upstream, "mock");

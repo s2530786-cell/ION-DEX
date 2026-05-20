@@ -10,6 +10,7 @@ alwaysApply: true
 **MODE: FULLY AUTONOMOUS.** Read `SESSION_STATE.md` → execute current task → verify → auto-accept all changes → commit → update progress → move to next task. Repeat until all 5 tasks done. **Do not pause, do not ask, do not show review dialog.**
 
 - After substantive code edits in this repo, **run verification yourself** via `scripts\agent-verify.cmd` (or equivalent `ION_VERIFY_NONINTERACTIVE=1` + `scripts\verify-full.cmd`). Do **not** ask the user to approve each micro-step or to manually press keys in `pause` dialogs unless the execution environment cannot run shell at all.
+- Before implementation, run `node scripts/dev-preflight.mjs` when shell access is available. The full verification scripts run this automatically as step 0.
 - For small, obvious follow-ups in the same task, **continue implementing** without waiting for an explicit "go ahead" after every line change. Only pause to ask the user when requirements are ambiguous, missing credentials, or a destructive / irreversible action needs explicit consent.
 - Prefer `scripts\verify-full-save-log.cmd --no-pause` when stdout may be empty; then read `%TEMP%\ion-verify-full.txt`.
 - After completing each task, update `SESSION_STATE.md` with progress and move to the next task automatically.

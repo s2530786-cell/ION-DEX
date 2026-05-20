@@ -232,7 +232,12 @@ export function PoolPage() {
             )}
           </div>
 
-          <NeonButton className="w-full sm:w-fit" data-testid="pool-submit" disabled={!validation.isValid} type="submit">
+          <NeonButton
+            className="relative z-10 w-full sm:w-fit"
+            data-testid="pool-submit"
+            disabled={!validation.isValid}
+            type="submit"
+          >
             {mode === "add" ? "Add Liquidity" : "Remove Liquidity"}
           </NeonButton>
 

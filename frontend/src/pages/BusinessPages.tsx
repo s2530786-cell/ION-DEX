@@ -161,6 +161,7 @@ const fallbackBurnSummary: BurnSummary = {
   ionMainnetBurnedIon: "4600000",
   remainingSupplyIon: "987155000",
   bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
+  ionBurnAddress: "ion-mainnet-burn-address-placeholder",
   ionBurnSource: "ion-mainnet-burn-source-placeholder",
 };
 

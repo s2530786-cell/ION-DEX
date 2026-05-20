@@ -97,9 +97,10 @@ export function createAdapterRegistry(
 
   const burn = new AsyncCachedSourceAdapter({
     key: "burn",
-    upstream: "bsc-indexer",
+    upstream: "ion-indexer",
     status: "healthy",
-    note: "BSC RPC ERC20 balanceOf burn address (requires BSC_ION_TOKEN_ADDRESS).",
+    note:
+      "BSC RPC ERC20 balanceOf dead address + ION Indexer v3 official burn wallet (accountStates + ion_transfer windows).",
     cache,
     policy: defaultCachePolicies.burn,
     clock,

@@ -1,3 +1,5 @@
+@import "./theme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,4 +97,44 @@ select {
   to {
     transform: translateX(-50%);
   }
+}
+
+/* NeonGlassCard fallback (class-based); primary path uses inline styles in NeonGlassCard.tsx */
+.neon-glass-card {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  border-radius: 2rem;
+}
+
+.neon-glass-card__glow {
+  pointer-events: none;
+  position: absolute;
+  inset: calc(var(--ion-glow-spread) * -1);
+  z-index: 0;
+  border-radius: inherit;
+  filter: drop-shadow(var(--ion-shadow-neon-cyan)) drop-shadow(var(--ion-shadow-neon-magenta));
+}
+
+.neon-glass-card__glow-blob {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--ion-border-gradient);
+  background-size: 200% 200%;
+  filter: blur(var(--ion-border-blur));
+  animation: ionNeonBreath 4s ease-in-out infinite, ionBorderFlow 8s ease-in-out infinite;
+}
+
+.neon-glass-card__surface {
+  position: relative;
+  z-index: 10;
+  border-radius: inherit;
+  background-color: var(--ion-glass-bg);
+  background-image: var(--ion-glass-grain);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  backdrop-filter: blur(var(--ion-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ion-glass-blur));
+  box-shadow: inset 0 0 0 1px var(--ion-glass-edge);
 }

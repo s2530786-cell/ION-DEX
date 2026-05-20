@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ApiMeta } from "@/lib/ionApi";
+import { resolveApiLoadState } from "@/lib/apiLoadState";
 
 export type ApiLoadState = "loading" | "ready" | "error" | "empty";
 
@@ -38,10 +39,11 @@ export function useApiResource<T>(
         setState(empty ? "empty" : "ready");
       })
       .catch((cause: unknown) => {
+        const resolved = resolveApiLoadState(cause, null, false);
         setData(fallback);
         setMeta(null);
-        setState("error");
-        setError(cause instanceof Error ? cause.message : "Request failed");
+        setState(resolved.state === "error" ? "error" : "empty");
+        setError(resolved.message);
       })
       .finally(() => window.clearTimeout(timeout));
 

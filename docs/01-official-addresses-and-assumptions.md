@@ -20,7 +20,7 @@ Unconfirmed values must not be hardcoded into contracts or frontend production b
 | ION testnet RPC / HTTP API endpoint | Pending | Required for testnet release. |
 | ION wallet connection SDK/API | Pending | Required for ION Browser Wallet and Online+ integration. |
 | Online+ wallet dApp integration API | Pending | Must verify provider object, signing methods, and mobile deep links. |
-| ION mainnet burn address | Pending | Must come from official repo/docs/address book, not guessed. |
+| ION mainnet burn address | Confirmed | `UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ` (ice-blockchain/ion-address-book `system.yaml` → Burn Address). |
 | BSC ION token contract address | Pending | Required for BSC burn stats, bridge, and token list. |
 | BSC ION burn address | Confirmed by requirement | `0x000000000000000000000000000000000000dEaD`. |
 | ION total supply source | Pending | Needed for remaining supply calculation. |

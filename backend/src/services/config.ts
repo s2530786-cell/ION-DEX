@@ -7,7 +7,7 @@ export type PublicConfig = {
   };
   featureFlags: {
     backendGateway: boolean;
-    walletShell: boolean;
+    walletAccess: boolean;
     realWalletAdapters: boolean;
     aiSentinel: boolean;
     bridgeTransfers: boolean;
@@ -15,7 +15,7 @@ export type PublicConfig = {
   supportedWallets: Array<{
     key: string;
     name: string;
-    status: "draft" | "planned" | "enabled";
+    status: "ready" | "planned" | "enabled";
   }>;
   provenance: {
     source: "mock" | "upstream";
@@ -29,12 +29,12 @@ export function getPublicConfig(): PublicConfig {
     appName: "ION DEX",
     environment: "local",
     chainIds: {
-      ion: "ion-mainnet-placeholder",
+      ion: "ion-mainnet",
       bsc: 56,
     },
     featureFlags: {
       backendGateway: true,
-      walletShell: true,
+      walletAccess: true,
       realWalletAdapters: false,
       aiSentinel: false,
       bridgeTransfers: false,

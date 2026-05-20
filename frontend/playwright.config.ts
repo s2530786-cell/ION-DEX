@@ -5,9 +5,11 @@ const previewBaseUrl = process.env.PLAYWRIGHT_BASE_URL ?? `http://${previewHost}
 
 export default defineConfig({
   testDir: "./e2e",
+  workers: process.env.PLAYWRIGHT_BASE_URL ? 1 : undefined,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
+  timeout: 60_000,
   reporter: [["list"]],
   use: {
     baseURL: previewBaseUrl,

@@ -56,7 +56,11 @@ export class MemoryCache {
 
 export const defaultCachePolicies = {
   market: { ttlMs: 30_000, staleTtlMs: 120_000 },
+  klines: { ttlMs: 30_000, staleTtlMs: 120_000 },
   burn: { ttlMs: 60_000, staleTtlMs: 300_000 },
   staking: { ttlMs: 60_000, staleTtlMs: 300_000 },
   domain: { ttlMs: 300_000, staleTtlMs: 600_000 },
+  ionIndexer: { ttlMs: 45_000, staleTtlMs: 180_000 },
+  ionIndexerActions: { ttlMs: 60_000, staleTtlMs: 300_000 },
+  ionIndexerBurn: { ttlMs: 60_000, staleTtlMs: 300_000 },
 } as const satisfies Record<string, CachePolicy>;

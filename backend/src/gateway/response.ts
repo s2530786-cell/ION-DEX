@@ -1,6 +1,6 @@
 import type { ServerResponse } from "node:http";
 
-export type ApiSource = "mock" | "cache" | "upstream" | "indexer";
+export type ApiSource = "local" | "cache" | "upstream" | "indexer";
 
 export type ApiMeta = {
   source: ApiSource;

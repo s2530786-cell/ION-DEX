@@ -4,6 +4,8 @@ export type BurnSummary = {
   ionMainnetBurnedIon: string;
   remainingSupplyIon: string;
   bscBurnAddress: string;
+  /** ION mainnet burn wallet (user-friendly), validated via Indexer v3. */
+  ionBurnAddress: string;
   ionBurnSource: string;
   windows: Array<{
     label: "24h" | "7d" | "30d";
@@ -24,7 +26,8 @@ export function getBurnSummary(): BurnSummary {
     ionMainnetBurnedIon: "4600000.000",
     remainingSupplyIon: "987155000.000",
     bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
-    ionBurnSource: "ion-mainnet-burn-source-placeholder",
+    ionBurnAddress: "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ",
+    ionBurnSource: "mock:ion-mainnet-burn-placeholder",
     windows: [
       { label: "24h", burnedIon: "12500.000", trendPct: 8.4 },
       { label: "7d", burnedIon: "74200.000", trendPct: 12.1 },

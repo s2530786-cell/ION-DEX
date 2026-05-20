@@ -11,6 +11,13 @@ frontend/test-results/
 # Backend
 backend/node_modules/
 backend/dist/
+backend/.env
+backend/.env.local
+backend/.env.*.local
+.env
+.env.local
+!.env.example
+!backend/.env.example
 
 # Root tooling dependencies
 node_modules/

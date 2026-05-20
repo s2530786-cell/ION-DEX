@@ -1,5 +1,6 @@
 import {
   AreaSeries,
+  CandlestickSeries,
   ColorType,
   createChart,
   type IChartApi,
@@ -13,16 +14,49 @@ export type MarketChartPoint = {
   value: number;
 };
 
+export type CandlePoint = {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+};
+
+/** Synthetic OHLC series when live klines are unavailable (dashboard fallback). */
+export function buildSyntheticSeries(priceUsd: number, change24hPct: number): CandlePoint[] {
+  const base = Number.isFinite(priceUsd) && priceUsd > 0 ? priceUsd : 1;
+  const drift = Number.isFinite(change24hPct) ? change24hPct / 100 : 0;
+  const now = Math.floor(Date.now() / 1000);
+  const bars = 48;
+  const points: CandlePoint[] = [];
+  let last = base * (1 - drift * 0.35);
+  for (let index = 0; index < bars; index += 1) {
+    const step = (drift / bars) * (0.6 + Math.sin(index * 0.45) * 0.25);
+    const open = last;
+    const close = open * (1 + step);
+    const high = Math.max(open, close) * (1 + 0.004);
+    const low = Math.min(open, close) * (1 - 0.004);
+    points.push({ time: now - (bars - index) * 3600, open, high, low, close });
+    last = close;
+  }
+  return points;
+}
+
 export function MarketChart({
   points,
+  candles,
+  mode = "area",
   testId = "market-chart",
 }: {
-  points: MarketChartPoint[];
+  points?: MarketChartPoint[];
+  candles?: CandlePoint[];
+  mode?: "area" | "candle";
   testId?: string;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<"Area", Time> | null>(null);
+  const areaRef = useRef<ISeriesApi<"Area", Time> | null>(null);
+  const candleRef = useRef<ISeriesApi<"Candlestick", Time> | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -43,14 +77,23 @@ export function MarketChart({
       height: 280,
     });
 
-    const series = chart.addSeries(AreaSeries, {
-      lineColor: "#24f7ff",
-      topColor: "rgba(36, 247, 255, 0.35)",
-      bottomColor: "rgba(36, 247, 255, 0.02)",
-    });
-
     chartRef.current = chart;
-    seriesRef.current = series;
+
+    if (mode === "candle") {
+      candleRef.current = chart.addSeries(CandlestickSeries, {
+        upColor: "#24f7ff",
+        downColor: "#ff3bd4",
+        borderVisible: false,
+        wickUpColor: "#24f7ff",
+        wickDownColor: "#ff3bd4",
+      });
+    } else {
+      areaRef.current = chart.addSeries(AreaSeries, {
+        lineColor: "#24f7ff",
+        topColor: "rgba(36, 247, 255, 0.35)",
+        bottomColor: "rgba(36, 247, 255, 0.02)",
+      });
+    }
 
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
@@ -65,22 +108,35 @@ export function MarketChart({
       resizeObserver.disconnect();
       chart.remove();
       chartRef.current = null;
-      seriesRef.current = null;
+      areaRef.current = null;
+      candleRef.current = null;
     };
-  }, []);
+  }, [mode]);
 
   useEffect(() => {
-    if (!seriesRef.current || points.length === 0) {
+    if (mode === "candle" && candleRef.current && candles && candles.length > 0) {
+      candleRef.current.setData(
+        candles.map((bar) => ({
+          time: bar.time as Time,
+          open: bar.open,
+          high: bar.high,
+          low: bar.low,
+          close: bar.close,
+        })),
+      );
+      chartRef.current?.timeScale().fitContent();
       return;
     }
-    seriesRef.current.setData(
-      points.map((point) => ({
-        time: point.time as Time,
-        value: point.value,
-      })),
-    );
-    chartRef.current?.timeScale().fitContent();
-  }, [points]);
+    if (mode === "area" && areaRef.current && points && points.length > 0) {
+      areaRef.current.setData(
+        points.map((point) => ({
+          time: point.time as Time,
+          value: point.value,
+        })),
+      );
+      chartRef.current?.timeScale().fitContent();
+    }
+  }, [candles, mode, points]);
 
   return (
     <div
@@ -89,19 +145,4 @@ export function MarketChart({
       ref={containerRef}
     />
   );
-}
-
-export function buildSyntheticSeries(basePrice: number, changePct: number): MarketChartPoint[] {
-  const now = Math.floor(Date.now() / 1000);
-  const drift = changePct / 100;
-  const points: MarketChartPoint[] = [];
-
-  for (let index = 47; index >= 0; index -= 1) {
-    const wave = Math.sin(index / 4) * 0.018 + Math.cos(index / 9) * 0.012;
-    const trend = drift * ((47 - index) / 47);
-    const value = basePrice * (1 + trend + wave);
-    points.push({ time: now - index * 3600, value: Number(value.toFixed(4)) });
-  }
-
-  return points;
 }

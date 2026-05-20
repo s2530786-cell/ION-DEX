@@ -27,6 +27,7 @@ export type BurnSummary = {
   ionMainnetBurnedIon: string;
   remainingSupplyIon: string;
   bscBurnAddress: string;
+  ionBurnAddress: string;
   ionBurnSource: string;
 };
 
@@ -104,6 +105,72 @@ async function fetchApi<T>(path: string, signal?: AbortSignal): Promise<ApiRespo
 
 export async function fetchMarketTickers(signal?: AbortSignal): Promise<ApiResponse<MarketTicker[]>> {
   return fetchApi<MarketTicker[]>("/api/markets/tickers", signal);
+}
+
+export type TradeQuote = {
+  inputToken: string;
+  outputToken: string;
+  amountIn: string;
+  estimatedOutput: string;
+  minimumReceived: string;
+  protocolFee: string;
+  protocolFeeBps: number;
+  slippageBps: number;
+  priceImpactBps: number;
+  route: string[];
+  provenance: {
+    source: "mock" | "cmc" | "cache" | "upstream";
+    priceModel: string;
+    marketNote: string;
+  };
+};
+
+export type KlineInterval = "1h" | "4h" | "1d";
+
+export type KlineBar = {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+};
+
+export type IonKlinesPayload = {
+  symbol: "ION";
+  interval: KlineInterval;
+  poolAddress: string;
+  bars: KlineBar[];
+  provenance: {
+    source: string;
+    note: string;
+  };
+};
+
+export async function fetchIonKlines(
+  interval: KlineInterval,
+  signal?: AbortSignal,
+): Promise<ApiResponse<IonKlinesPayload>> {
+  const params = new URLSearchParams({ interval });
+  return fetchApi<IonKlinesPayload>(`/api/klines/ion?${params.toString()}`, signal);
+}
+
+export async function fetchTradeQuote(
+  input: {
+    amountIn: string;
+    inputToken: string;
+    outputToken: string;
+    slippageBps: number;
+  },
+  signal?: AbortSignal,
+): Promise<ApiResponse<TradeQuote>> {
+  const params = new URLSearchParams({
+    amountIn: input.amountIn,
+    inputToken: input.inputToken,
+    outputToken: input.outputToken,
+    slippageBps: String(input.slippageBps),
+  });
+  return fetchApi<TradeQuote>(`/api/trade/quote?${params.toString()}`, signal);
 }
 
 export async function fetchBurnSummary(signal?: AbortSignal): Promise<ApiResponse<BurnSummary>> {

@@ -56,12 +56,12 @@ api-gateway
 | `GET /api/health` | Gateway health, version, uptime | Phase 3 |
 | `GET /api/config/public` | Public feature flags, chain IDs, supported wallets | Phase 3 |
 | `GET /api/tokens` | Token metadata and supported pairs | Phase 3 |
-| `GET /api/markets/tickers` | Ticker strip and market cards | Phase 3 mock, later CMC/cache |
-| `GET /api/burn/summary` | BSC + ION burn summary with freshness | Phase 3 mock, later indexer |
-| `GET /api/staking/summary` | Official, DEX, LP staking totals | Phase 3 mock, later indexer |
-| `GET /api/bridge/routes` | Supported bridge routes and status copy | Phase 3 mock, later bridge service |
-| `GET /api/domain/resolve?name=` | `.ion` resolver draft contract | Phase 3 mock, later domain service |
-| `GET /api/profile/demo` | Wallet/profile shell data | Phase 3 mock, later wallet/session service |
+| `GET /api/markets/tickers` | Ticker strip and market cards | Typed local seed -> CMC/cache adapter |
+| `GET /api/burn/summary` | BSC + ION burn summary with freshness | Typed local seed -> indexer adapter |
+| `GET /api/staking/summary` | Official, DEX, LP staking totals | Typed local seed -> staking snapshot adapter |
+| `GET /api/bridge/routes` | Supported bridge routes and status copy | Typed local seed -> bridge service adapter |
+| `GET /api/domain/resolve?name=` | `.ion` resolver contract surface | Typed local seed -> domain service adapter |
+| `GET /api/profile/session` | Wallet/profile access data | Typed local seed -> wallet/session service |
 
 All responses should include:
 
@@ -69,7 +69,7 @@ All responses should include:
 {
   "data": {},
   "meta": {
-    "source": "mock|cache|upstream|indexer",
+    "source": "local|cache|upstream|indexer",
     "updatedAt": "ISO-8601",
     "stale": false,
     "requestId": "string"
@@ -117,10 +117,10 @@ backend/
 
 Good first implementation target:
 
-1. Add typed mock API server with health/config/tokens/tickers.
+1. Add typed local API server with health/config/tokens/tickers.
 2. Add backend unit/API tests.
 3. Wire frontend ticker strip and wallet/profile shell to the API with loading/stale/error states.
-4. Preserve offline mock fallback for deterministic Playwright tests.
+4. Preserve reviewed local seed data for deterministic Playwright tests without presenting it as production data.
 
 ## Blockchain Reference Usage
 
@@ -172,7 +172,7 @@ Guardrails:
 
 Recommended next implementation milestone:
 
-1. Create a minimal `backend/` API gateway skeleton with typed mock endpoints.
+1. Create a minimal `backend/` API gateway skeleton with typed local endpoints.
 2. Add backend tests for health/config/tokens/tickers.
 3. Add docs for environment variables and run commands.
 4. Wire one low-risk frontend read path to the backend, preferably ticker strip or public config.

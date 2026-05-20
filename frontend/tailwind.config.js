@@ -5,6 +5,10 @@ export default {
     extend: {
       colors: {
         ion: {
+          primary: "#00ffff",
+          secondary: "#ff00ff",
+          "glass-bg": "rgba(0, 0, 0, 0.4)",
+          "glass-surface": "rgba(255, 255, 255, 0.05)",
           cyan: "#24f7ff",
           blue: "#2563ff",
           violet: "#8d4dff",
@@ -13,9 +17,16 @@ export default {
           ink: "#061024",
         },
       },
+      backgroundImage: {
+        "ion-border-gradient": "linear-gradient(135deg, #00ffff, #ff00ff)",
+      },
+      backdropBlur: {
+        glass: "16px",
+      },
       boxShadow: {
-        neonCyan: "0 0 28px rgba(36, 247, 255, 0.45)",
-        neonMagenta: "0 0 28px rgba(255, 59, 212, 0.38)",
+        neonCyan: "var(--ion-shadow-neon-cyan)",
+        neonMagenta: "var(--ion-shadow-neon-magenta)",
+        neonGlass: "var(--ion-shadow-neon-glass)",
         neonGold: "0 0 28px rgba(255, 209, 102, 0.35)",
       },
       fontFamily: {

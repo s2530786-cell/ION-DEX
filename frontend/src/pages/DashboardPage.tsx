@@ -52,6 +52,7 @@ const fallbackBurn: BurnSummary = {
   ionMainnetBurnedIon: "4600000",
   remainingSupplyIon: "987155000",
   bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
+  ionBurnAddress: "ion-mainnet-burn-address-placeholder",
   ionBurnSource: "ion-mainnet-burn-source-placeholder",
 };
 
@@ -173,7 +174,7 @@ function MarketStage({
           testId="dashboard-chart"
         >
           {chartPoints.length > 0 ? (
-            <MarketChart points={chartPoints} testId="dashboard-market-chart" />
+            <MarketChart candles={chartPoints} mode="candle" testId="dashboard-market-chart" />
           ) : (
             <ChartPlaceholder />
           )}

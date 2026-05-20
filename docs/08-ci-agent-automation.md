@@ -8,15 +8,20 @@ Run the same verification humans use, **without** interactive `pause`, so agents
 
 | Scenario | Command |
 |----------|---------|
+| Development preflight only | `node scripts/dev-preflight.mjs` |
 | Agent / CI / hooks (no pause) | `scripts\agent-verify.cmd` |
 | Save full log to `%TEMP%\ion-verify-full.txt`, optional pause at end | `scripts\verify-full-save-log.cmd` |
 | Save log, never pause | `scripts\verify-full-save-log.cmd --no-pause` |
 | Interactive debugging with pause on failure | `scripts\verify-full.cmd` (no `CI` / no `ION_VERIFY_NONINTERACTIVE`) |
+| POSIX Cloud Agent full verification | `bash scripts/verify-full.sh` |
 
 Environment variables recognised by `scripts\verify-full.cmd`:
 
 - `CI` — skip all pauses (GitHub Actions sets this).
 - `ION_VERIFY_NONINTERACTIVE=1` — skip all pauses (used by `agent-verify.cmd`).
+- `ION_UI_STRICT=1` — turns current unfinished UI copy warnings from `scripts/dev-preflight.mjs` into failures.
+
+`scripts\verify-full.cmd`, `scripts\verify-full.ps1`, `scripts\verify-full.sh`, `scripts\agent-verify.cmd`, and `scripts\verify-full-save-log.cmd --no-pause` run `node scripts/dev-preflight.mjs` before the encoding check.
 
 ## GitHub Actions
 

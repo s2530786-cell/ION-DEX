@@ -1,5 +1,5 @@
 import { ArrowDownUp } from "lucide-react";
-import { useCallback, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -7,34 +7,23 @@ import { NeonCard } from "@/components/ui/NeonCard";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useApiResource } from "@/hooks/useApiResource";
-import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
-import { computeSwapQuoteBreakdown } from "@/lib/swapQuote";
+import {
+  fetchMarketTickers,
+  fetchTradeQuote,
+  type ApiMeta,
+  type MarketTicker,
+  type TradeQuote,
+} from "@/lib/ionApi";
 
 type SwapToken = "BNB" | "ION" | "USDT";
 
 const tokens: SwapToken[] = ["BNB", "ION", "USDT"];
-
-const fallbackRates: Record<SwapToken, number> = {
-  BNB: 642.2,
-  ION: 6.02,
-  USDT: 1,
-};
 
 const fallbackTickers: MarketTicker[] = [
   { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
   { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
   { symbol: "USDT", priceUsd: 1, displayPrice: "$1.00", change24hPct: 0.01, displayChange: "+0.01%" },
 ];
-
-function ratesFromTickers(tickers: MarketTicker[]): Record<SwapToken, number> {
-  const rates = { ...fallbackRates };
-  for (const ticker of tickers) {
-    if (ticker.symbol === "BNB" || ticker.symbol === "ION" || ticker.symbol === "USDT") {
-      rates[ticker.symbol] = ticker.priceUsd;
-    }
-  }
-  return rates;
-}
 
 function swapNeedsIonWallet(fromToken: SwapToken, toToken: SwapToken): boolean {
   return fromToken === "ION" || toToken === "ION";
@@ -54,35 +43,86 @@ export function SwapPage() {
   const tickers = useApiResource(fetchTickers, fallbackTickers, {
     isEmpty: (data) => data.length === 0,
   });
-  const rates = useMemo(() => ratesFromTickers(tickers.data), [tickers.data]);
 
   const [fromToken, setFromToken] = useState<SwapToken>("BNB");
   const [toToken, setToToken] = useState<SwapToken>("ION");
   const [payAmount, setPayAmount] = useState("");
   const [slippage, setSlippage] = useState("0.5");
+  const [quote, setQuote] = useState<TradeQuote | null>(null);
+  const [quoteMeta, setQuoteMeta] = useState<ApiMeta | null>(null);
+  const [quoteState, setQuoteState] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [quoteError, setQuoteError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const validation = useMemo(() => {
+  const slippageBps = useMemo(() => {
+    const slip = Number(slippage);
+    return Number.isFinite(slip) ? Math.round(slip * 100) : Number.NaN;
+  }, [slippage]);
+
+  const inputValid = useMemo(() => {
     const parsedPay = Number(payAmount);
+    return (
+      Number.isFinite(parsedPay) &&
+      parsedPay > 0 &&
+      Number.isInteger(slippageBps) &&
+      slippageBps >= 10 &&
+      slippageBps <= 500 &&
+      fromToken !== toToken
+    );
+  }, [fromToken, payAmount, slippageBps, toToken]);
+
+  useEffect(() => {
+    if (!inputValid) {
+      setQuote(null);
+      setQuoteMeta(null);
+      setQuoteState("idle");
+      setQuoteError(null);
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    setQuoteState("loading");
+    setQuoteError(null);
+
+    fetchTradeQuote(
+      {
+        amountIn: payAmount,
+        inputToken: fromToken,
+        outputToken: toToken,
+        slippageBps,
+      },
+      controller.signal,
+    )
+      .then((response) => {
+        setQuote(response.data);
+        setQuoteMeta(response.meta);
+        setQuoteState("ready");
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+        setQuote(null);
+        setQuoteMeta(null);
+        setQuoteState("error");
+        setQuoteError(
+          error instanceof Error
+            ? error.message
+            : "Quote request failed. Start backend on :8787 or check API proxy.",
+        );
+      });
+
+    return () => controller.abort();
+  }, [fromToken, inputValid, payAmount, slippageBps, toToken]);
+
+  const validation = useMemo(() => {
     const parsedSlippage = Number(slippage);
-    const payValid = Number.isFinite(parsedPay) && parsedPay > 0;
     const slippageValid =
       Number.isFinite(parsedSlippage) && parsedSlippage >= 0.1 && parsedSlippage <= 5;
     const sameToken = fromToken === toToken;
-
-    const fromUsd = rates[fromToken];
-    const toUsd = rates[toToken];
-    const grossOut = payValid && toUsd > 0 ? (parsedPay * fromUsd) / toUsd : null;
-    const impactPct =
-      payValid && grossOut !== null
-        ? Math.min(3.5, Math.max(0.05, (parsedPay / 1000) * 0.4))
-        : null;
-    const quote =
-      grossOut !== null && impactPct !== null && slippageValid
-        ? computeSwapQuoteBreakdown(grossOut, parsedSlippage, impactPct)
-        : null;
+    const payValid = Number.isFinite(Number(payAmount)) && Number(payAmount) > 0;
 
     const needsIon = swapNeedsIonWallet(fromToken, toToken);
     const needsEvm = swapNeedsEvmWallet(fromToken);
@@ -98,14 +138,15 @@ export function SwapPage() {
       walletBlock = "跨链报价需要 ION 钱包签名 swap intent。";
     }
 
+    const quoteReady = quoteState === "ready" && quote !== null;
+
     return {
       payValid,
       slippageValid,
       sameToken,
-      isValid: payValid && slippageValid && !sameToken && !walletBlock && quote !== null,
-      grossOut,
+      isValid: payValid && slippageValid && !sameToken && !walletBlock && quoteReady,
       quote,
-      impactPct,
+      quoteReady,
       walletBlock,
       needsIon,
       ionReady,
@@ -117,7 +158,8 @@ export function SwapPage() {
     ionWallet.snapshot,
     ionWallet.status,
     payAmount,
-    rates,
+    quote,
+    quoteState,
     slippage,
     toToken,
   ]);
@@ -146,7 +188,7 @@ export function SwapPage() {
           toToken,
           payAmount,
           slippagePct: slippage,
-          receiveEstimate: validation.quote.minReceived.toFixed(6),
+          receiveEstimate: validation.quote.minimumReceived,
         });
         const proof =
           result.kind === "tonconnect-sdk"
@@ -178,7 +220,7 @@ export function SwapPage() {
             <ArrowDownUp className="text-cyan-200" />
           </div>
 
-          <DataSourceBadge meta={tickers.meta} testId="swap-quote-source" />
+          <DataSourceBadge meta={quoteMeta ?? tickers.meta} testId="swap-quote-source" />
 
           <AsyncState
             emptyMessage="Market prices unavailable."
@@ -285,6 +327,15 @@ export function SwapPage() {
             </p>
           ) : null}
 
+          {quoteState === "error" && quoteError ? (
+            <p
+              className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
+              data-testid="swap-error"
+            >
+              {quoteError}
+            </p>
+          ) : null}
+
           {submitError ? (
             <p
               className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
@@ -298,26 +349,26 @@ export function SwapPage() {
             className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100/75"
             data-testid="swap-quote"
           >
-            {validation.isValid && validation.quote !== null ? (
+            {quoteState === "loading" ? (
+              <span>Loading quote from backend market feed…</span>
+            ) : validation.quoteReady && validation.quote !== null ? (
               <span>
-                Quote: gross ~{validation.quote.grossOut.toFixed(4)} {toToken} · protocol fee ~
-                {validation.quote.protocolFee.toFixed(6)} {toToken} · min received ~
-                <span data-testid="swap-min-received">
-                  {validation.quote.minReceived.toFixed(6)}
-                </span>{" "}
-                {toToken} (after {slippage}% slip) · impact ~{validation.quote.priceImpactPct.toFixed(2)}
-                % · ION pairs use <code className="text-cyan-50">ton_sendTransaction</code> intent ·
-                source {tickers.meta?.source ?? "offline"}
+                Quote: est. ~{validation.quote.estimatedOutput} {toToken} · protocol fee ~
+                {validation.quote.protocolFee} {toToken} · min received ~
+                <span data-testid="swap-min-received">{validation.quote.minimumReceived}</span>{" "}
+                {toToken} (after {slippage}% slip) · impact ~{validation.quote.priceImpactBps / 100}
+                % · route {validation.quote.route.join(" → ")} · price via{" "}
+                {validation.quote.provenance.source} ({validation.quote.provenance.priceModel})
               </span>
             ) : (
-              <span>Enter amount and slippage to preview minimum received, impact, and ION fee.</span>
+              <span>Enter amount and slippage to fetch a backend quote from live market tickers.</span>
             )}
           </div>
 
           <NeonButton
             className="w-full"
             data-testid="swap-submit"
-            disabled={!validation.isValid || submitting}
+            disabled={!validation.isValid || submitting || quoteState === "loading"}
             type="submit"
           >
             {submitting ? "等待钱包签名…" : "Swap"}

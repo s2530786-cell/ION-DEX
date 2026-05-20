@@ -1,7 +1,10 @@
 import { createServer, type Server } from "node:http";
 import { pathToFileURL } from "node:url";
+import { loadBackendDotEnv } from "./config/load-env.js";
 import { bootstrapDatabase, bootstrapDatabaseAsync } from "./db/index.js";
 import { routeRequest } from "./gateway/routes.js";
+
+loadBackendDotEnv();
 
 let databaseReady = false;
 

@@ -4,6 +4,9 @@ export type ServerConfig = {
   dataMode: DataMode;
   bscRpcUrl: string;
   ionApiBaseUrl: string;
+  ionIndexerOrigin: string;
+  ionMainnetBurnAddress: string;
+  ionTotalSupplyIon: string;
   cmcApiKey: string | null;
   cmcApiBaseUrl: string;
   bscIonTokenAddress: string | null;
@@ -13,6 +16,9 @@ export type ServerConfig = {
 
 const DEFAULT_BSC_RPC = "https://bsc-dataseed.binance.org/";
 const DEFAULT_ION_API = "https://api.mainnet.ice.io/http/v2/";
+const DEFAULT_ION_INDEXER_ORIGIN = "https://api.mainnet.ice.io";
+const DEFAULT_ION_MAINNET_BURN_ADDRESS = "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ";
+const DEFAULT_ION_TOTAL_SUPPLY_ION = "1000000000";
 const DEFAULT_CMC_API = "https://pro-api.coinmarketcap.com";
 
 function parseDataMode(raw: string | undefined): DataMode {
@@ -42,6 +48,10 @@ export function loadServerConfig(env: NodeJS.ProcessEnv = process.env): ServerCo
     dataMode: parseDataMode(env.ION_DATA_MODE),
     bscRpcUrl: env.BSC_RPC_URL?.trim() || DEFAULT_BSC_RPC,
     ionApiBaseUrl: env.ION_CHAIN_RPC?.trim() || env.ION_API_BASE_URL?.trim() || DEFAULT_ION_API,
+    ionIndexerOrigin: env.ION_INDEXER_ORIGIN?.trim() || DEFAULT_ION_INDEXER_ORIGIN,
+    ionMainnetBurnAddress:
+      env.ION_MAINNET_BURN_ADDRESS?.trim() || DEFAULT_ION_MAINNET_BURN_ADDRESS,
+    ionTotalSupplyIon: env.ION_TOTAL_SUPPLY_ION?.trim() || DEFAULT_ION_TOTAL_SUPPLY_ION,
     cmcApiKey: env.CMC_API_KEY?.trim() || null,
     cmcApiBaseUrl: env.CMC_API_BASE_URL?.trim() || DEFAULT_CMC_API,
     bscIonTokenAddress: normalizedIonToken,
