@@ -83,3 +83,109 @@ export async function fetchTradeQuote(
   }
   return (await response.json()) as ApiResponse<TradeQuote>;
 }
+
+export type PublicConfig = {
+  appName: string;
+  environment: string;
+  chainIds: { ion: string; bsc: number };
+  featureFlags: {
+    backendGateway: boolean;
+    walletAccess: boolean;
+    realWalletAdapters: boolean;
+    aiSentinel: boolean;
+    bridgeTransfers: boolean;
+  };
+  supportedWallets: Array<{
+    key: string;
+    name: string;
+    category: "ion-native" | "evm";
+    status: "ready" | "planned" | "enabled";
+    detector: string;
+    label: string;
+  }>;
+};
+
+export type ProfileSession = {
+  provenance: { source: string; description: string };
+  identity: {
+    displayName: string;
+    primaryIonName: string;
+    ionIdStatus: "verified" | "pending" | "unlinked";
+    kycPass: { level: string; expiresAt: string; badge: string };
+  };
+  avatar: {
+    selectedId: string;
+    options: Array<{
+      id: string;
+      label: string;
+      kind: "gradient" | "nft";
+      preview: string;
+      provenance: string;
+    }>;
+    nftSource: { label: string; status: string; mediaUrl: string | null };
+  };
+  wallets: {
+    primaryKey: string | null;
+    entries: Array<{
+      key: string;
+      name: string;
+      category: "ion-native" | "evm";
+      status: "ready" | "planned" | "enabled";
+      detector: string;
+      label: string;
+    }>;
+  };
+  domains: {
+    primaryName: string;
+    records: Array<{ name: string; type: string; value: string }>;
+  };
+  preferences: {
+    language: string;
+    region: string;
+    theme: "galaxy-neon" | "aurora-dark";
+    animation: "full" | "reduced";
+    privacyMode: boolean;
+  };
+  quickActions: Array<{
+    key: string;
+    label: string;
+    description: string;
+    routeHint: string;
+    count: number | null;
+  }>;
+  sessionDetection: {
+    network: string;
+    walletProvider: string;
+    addressFormat: string;
+    language: string;
+    ionName: string;
+    identityStatus: string;
+    addressPreview: string;
+  } | null;
+};
+
+export async function fetchPublicConfig(signal?: AbortSignal): Promise<ApiResponse<PublicConfig>> {
+  const response = await fetch(`${apiBaseUrl}/api/config/public`, {
+    headers: { accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`Config request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as ApiResponse<PublicConfig>;
+}
+
+export async function fetchProfileSession(
+  provider?: string | null,
+  signal?: AbortSignal,
+): Promise<ApiResponse<ProfileSession>> {
+  const params = provider ? `?provider=${encodeURIComponent(provider)}` : "";
+  const response = await fetch(`${apiBaseUrl}/api/profile/session${params}`, {
+    headers: { accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`Profile session request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as ApiResponse<ProfileSession>;
+}

@@ -11,7 +11,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByText("Professional Trading Surface")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeEnabled();
-    await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
+    await expect(page.getByTestId("profile-hub-trigger")).toBeVisible();
   });
 
   test("swap quote uses backend precision and slippage bps", async ({ page }) => {
@@ -29,21 +29,28 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("swap-submit")).toBeEnabled();
   });
 
-  test("wallet access opens provider picker and profile session", async ({ page }) => {
+  test("profile hub opens wallet list and connected session detection", async ({ page }) => {
     await page.goto("/");
 
-    await page.getByTestId("wallet-connect").click();
-    await expect(page.getByTestId("wallet-panel")).toBeVisible();
+    await page.getByTestId("profile-hub-trigger").click();
+    await expect(page.getByTestId("profile-hub")).toBeVisible();
+    await expect(page.getByTestId("profile-display-name")).toHaveText("ION Trader", { timeout: 15_000 });
+    await expect(page.getByTestId("profile-hub-source")).toContainText(/local/i);
+    await expect(page.getByTestId("profile-ion-name")).toHaveText("trader.ion");
     await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-metamask")).toBeVisible();
 
     await page.getByTestId("wallet-provider-online").click();
     await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet secure session ready");
-    await expect(page.getByTestId("profile-menu")).toBeVisible();
-    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Ready");
+    await expect(page.getByTestId("profile-session-detection")).toBeVisible();
+    await expect(page.getByTestId("profile-detect-network")).toContainText("ION Mainnet");
+    await expect(page.getByTestId("profile-hub-trigger")).toContainText("Profile Ready");
+
+    await page.getByTestId("profile-privacy-toggle").click();
+    await expect(page.getByTestId("ticker-strip")).toContainText("••••");
 
     await page.getByTestId("wallet-disconnect").click();
-    await expect(page.getByTestId("wallet-provider-walletconnect")).toBeVisible();
-    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
+    await expect(page.getByTestId("profile-hub-trigger")).toContainText("Profile Hub");
   });
 
   test("375px viewport keeps brand and main content visible", async ({ page }) => {

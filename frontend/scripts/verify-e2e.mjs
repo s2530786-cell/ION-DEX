@@ -88,7 +88,30 @@ const backendBuild = spawnSync(npmCommand, ["run", "build"], {
 if (backendBuild.status !== 0) {
   throw new Error(`Backend build failed with ${backendBuild.status}`);
 }
-const backendAlreadyRunning = await isTcpOpen(8787);
+async function backendHasProfileRoute() {
+  try {
+    const response = await fetch("http://127.0.0.1:8787/api/profile/session");
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+const backendPortOpen = await isTcpOpen(8787);
+let backendAlreadyRunning = backendPortOpen && (await backendHasProfileRoute());
+if (backendPortOpen && !backendAlreadyRunning) {
+  console.warn("Stale backend on :8787 missing /api/profile/session — restarting gateway.");
+  if (process.platform === "win32") {
+    spawnSync("cmd.exe", ["/d", "/c", "for /f \"tokens=5\" %a in ('netstat -ano ^| findstr :8787') do taskkill /PID %a /F"], {
+      stdio: "ignore",
+      shell: false,
+    });
+  } else {
+    spawnSync("bash", ["-lc", "lsof -ti :8787 | xargs -r kill"], { stdio: "ignore" });
+  }
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  backendAlreadyRunning = false;
+}
 const backend = backendAlreadyRunning
   ? null
   : spawn(process.execPath, ["dist/src/server.js"], {

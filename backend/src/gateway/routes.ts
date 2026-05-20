@@ -5,6 +5,7 @@ import { getRequestId } from "../lib/request-id.js";
 import { getPublicConfig } from "../services/config.js";
 import { getMarketTickers } from "../services/markets.js";
 import { createQuote, QuoteInputError } from "../services/quotes.js";
+import { getProfileSession } from "../services/profile.js";
 import { getTokens } from "../services/tokens.js";
 
 export type GatewayOptions = {
@@ -73,6 +74,11 @@ export function routeRequest(
     case "/api/markets/tickers":
       writeJson(response, 200, apiResponse(getMarketTickers(), meta));
       return;
+    case "/api/profile/session": {
+      const provider = url.searchParams.get("provider");
+      writeJson(response, 200, apiResponse(getProfileSession(provider), meta));
+      return;
+    }
     case "/api/trade/quote": {
       const slippageBps = Number(url.searchParams.get("slippageBps"));
       try {

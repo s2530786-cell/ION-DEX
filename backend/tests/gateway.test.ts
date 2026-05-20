@@ -85,7 +85,7 @@ describe("ION DEX API gateway", () => {
     const data = response.body.data as {
       appName: string;
       featureFlags: { backendGateway: boolean; realWalletAdapters: boolean };
-      supportedWallets: Array<{ key: string }>;
+      supportedWallets: Array<{ key: string; category: string }>;
     };
 
     assert.equal(response.status, 200);
@@ -93,6 +93,39 @@ describe("ION DEX API gateway", () => {
     assert.equal(data.featureFlags.backendGateway, true);
     assert.equal(data.featureFlags.realWalletAdapters, false);
     assert.ok(data.supportedWallets.some((wallet) => wallet.key === "walletconnect"));
+    assert.ok(data.supportedWallets.some((wallet) => wallet.key === "metamask" && wallet.category === "evm"));
+    assert.equal(data.supportedWallets.length, 10);
+  });
+
+  it("serves profile session with wallet detection when provider is connected", async () => {
+    const response = await requestJson("/api/profile/session?provider=online");
+    const data = response.body.data as {
+      identity: { primaryIonName: string };
+      wallets: { primaryKey: string | null; entries: Array<{ key: string }> };
+      sessionDetection: { network: string; walletProvider: string; addressPreview: string } | null;
+      quickActions: Array<{ key: string }>;
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(data.identity.primaryIonName, "trader.ion");
+    assert.equal(data.wallets.primaryKey, "online");
+    assert.equal(data.wallets.entries.length, 10);
+    assert.ok(data.sessionDetection);
+    assert.equal(data.sessionDetection?.walletProvider, "Online+ Wallet");
+    assert.match(data.sessionDetection?.addressPreview ?? "", /…/);
+    assert.ok(data.quickActions.some((action) => action.key === "security-logs"));
+  });
+
+  it("serves disconnected profile session without session detection", async () => {
+    const response = await requestJson("/api/profile/session");
+    const data = response.body.data as {
+      sessionDetection: unknown;
+      wallets: { primaryKey: string | null };
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(data.sessionDetection, null);
+    assert.equal(data.wallets.primaryKey, null);
   });
 
   it("serves token metadata", async () => {
