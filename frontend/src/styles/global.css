@@ -5,7 +5,7 @@
 :root {
   color-scheme: dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #030716;
+  background: #03050f;
   color: #f8fbff;
 }
 
@@ -27,6 +27,42 @@ select {
 }
 
 @layer utilities {
+  .glass-surface {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+      linear-gradient(145deg, rgba(12, 24, 52, 0.74), rgba(7, 12, 30, 0.52)),
+      rgba(3, 5, 15, 0.58);
+    backdrop-filter: blur(22px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 22px 70px rgba(0, 0, 0, 0.32);
+  }
+
+  .flow-border {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .flow-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(115deg, #24f7ff, #8d4dff, #ff3bd4, #ffd166, #24f7ff);
+    background-size: 260% 260%;
+    opacity: 0.9;
+    animation: ionBorderFlow 7s ease infinite;
+  }
+
+  .depth-stage {
+    perspective: 1400px;
+    transform-style: preserve-3d;
+  }
+
+  .float-3d {
+    transform: rotateX(6deg) rotateY(-7deg) translateZ(0);
+    animation: ionFloat3d 9s ease-in-out infinite;
+  }
+
   .text-glow-cyan {
     text-shadow: 0 0 18px rgba(36, 247, 255, 0.65);
   }
@@ -94,5 +130,15 @@ select {
   }
   to {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes ionFloat3d {
+  0%,
+  100% {
+    transform: rotateX(6deg) rotateY(-7deg) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: rotateX(3deg) rotateY(6deg) translate3d(0, -10px, 24px);
   }
 }

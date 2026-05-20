@@ -6,6 +6,13 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
+Write-Host "=== 0) Development preflight ==="
+node (Join-Path $root "scripts\dev-preflight.mjs")
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
+
+Write-Host ""
 Write-Host "=== 1) Encoding check ==="
 $encodingScript = Join-Path $root "scripts\check-encoding.ps1"
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File $encodingScript

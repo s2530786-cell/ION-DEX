@@ -24,6 +24,15 @@ if errorlevel 1 (
 echo Repo root: %CD%
 echo.
 
+echo === 0) Development preflight ===
+node "%CD%\scripts\dev-preflight.mjs"
+if errorlevel 1 (
+  echo ERROR: development preflight failed with exit code !ERRORLEVEL!
+  if not defined _ION_VNP pause
+  exit /b 1
+)
+
+echo.
 echo === 1) Encoding check ===
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%CD%\scripts\check-encoding.ps1"
 if errorlevel 1 (

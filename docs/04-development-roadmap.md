@@ -108,7 +108,7 @@ Deliverables:
 - Pool.
 - Stake.
 - Burn.
-- Bridge placeholder/status shell.
+- Bridge status surface backed by typed route/status data.
 - Profile menu.
 - Wallet connection shell.
 
@@ -162,9 +162,9 @@ Deliverables:
 - Domain resolver adapter.
 - Domain service.
 - `.ion` address resolution.
-- Domain profile and marketplace shell.
+- Domain profile and marketplace surface.
 - Identity service.
-- ION ID / KYC Pass status verification shell.
+- ION ID / KYC Pass status verification surface.
 - Profile identity badges.
 
 Exit criteria:
