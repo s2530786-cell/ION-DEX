@@ -3,6 +3,7 @@ import { useEffect, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { ProfileHub } from "@/components/layout/ProfileHub";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
+import type { LiveWalletConnection } from "@/lib/wallet";
 
 export type PageKey =
   | "swap"
@@ -35,6 +36,7 @@ type AppShellProps = PropsWithChildren<{
 export function AppShell({ activePage, children, onPageChange }: AppShellProps) {
   const [profileHubOpen, setProfileHubOpen] = useState(false);
   const [connectedProviderKey, setConnectedProviderKey] = useState<string | null>(null);
+  const [liveConnection, setLiveConnection] = useState<LiveWalletConnection | null>(null);
   const [selectedAvatarId, setSelectedAvatarId] = useState("aurora-cyan");
   const [privacyMode, setPrivacyMode] = useState(false);
 
@@ -125,12 +127,17 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 
             <ProfileHub
               connectedProviderKey={connectedProviderKey}
+              liveConnection={liveConnection}
               onAvatarChange={setSelectedAvatarId}
               onClose={() => setProfileHubOpen(false)}
-              onConnect={(key) => {
+              onConnect={(key, live) => {
                 setConnectedProviderKey(key);
+                setLiveConnection(live);
               }}
-              onDisconnect={() => setConnectedProviderKey(null)}
+              onDisconnect={() => {
+                setConnectedProviderKey(null);
+                setLiveConnection(null);
+              }}
               onPrivacyModeChange={setPrivacyMode}
               open={profileHubOpen}
               privacyMode={privacyMode}

@@ -91,7 +91,7 @@ describe("ION DEX API gateway", () => {
     assert.equal(response.status, 200);
     assert.equal(data.appName, "ION DEX");
     assert.equal(data.featureFlags.backendGateway, true);
-    assert.equal(data.featureFlags.realWalletAdapters, false);
+    assert.equal(data.featureFlags.realWalletAdapters, true);
     assert.ok(data.supportedWallets.some((wallet) => wallet.key === "walletconnect"));
     assert.ok(data.supportedWallets.some((wallet) => wallet.key === "metamask" && wallet.category === "evm"));
     assert.equal(data.supportedWallets.length, 10);
@@ -114,6 +114,28 @@ describe("ION DEX API gateway", () => {
     assert.equal(data.sessionDetection?.walletProvider, "Online+ Wallet");
     assert.match(data.sessionDetection?.addressPreview ?? "", /…/);
     assert.ok(data.quickActions.some((action) => action.key === "security-logs"));
+  });
+
+  it("merges live browser wallet metadata into profile session detection", async () => {
+    const address = "0x1234567890abcdef1234567890abcdef12345678";
+    const response = await requestJson(
+      `/api/profile/session?provider=metamask&address=${encodeURIComponent(address)}&chainId=56`,
+    );
+    const data = response.body.data as {
+      sessionDetection: {
+        addressPreview: string;
+        network: string;
+        detectionSource: string;
+        addressFormat: string;
+      } | null;
+    };
+
+    assert.equal(response.status, 200);
+    assert.ok(data.sessionDetection);
+    assert.equal(data.sessionDetection?.detectionSource, "browser-injected");
+    assert.equal(data.sessionDetection?.network, "BNB Smart Chain");
+    assert.equal(data.sessionDetection?.addressFormat, "EVM checksummed");
+    assert.match(data.sessionDetection?.addressPreview ?? "", /0x1234/);
   });
 
   it("serves disconnected profile session without session detection", async () => {

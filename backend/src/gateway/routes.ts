@@ -76,7 +76,22 @@ export function routeRequest(
       return;
     case "/api/profile/session": {
       const provider = url.searchParams.get("provider");
-      writeJson(response, 200, apiResponse(getProfileSession(provider), meta));
+      const address = url.searchParams.get("address") ?? undefined;
+      const chainIdRaw = url.searchParams.get("chainId");
+      const chainId =
+        chainIdRaw !== null && chainIdRaw.length > 0 ? Number(chainIdRaw) : undefined;
+      writeJson(
+        response,
+        200,
+        apiResponse(
+          getProfileSession({
+            providerKey: provider,
+            address,
+            chainId: Number.isFinite(chainId) ? chainId : undefined,
+          }),
+          meta,
+        ),
+      );
       return;
     }
     case "/api/trade/quote": {

@@ -37,8 +37,11 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("profile-display-name")).toHaveText("ION Trader", { timeout: 15_000 });
     await expect(page.getByTestId("profile-hub-source")).toContainText(/local/i);
     await expect(page.getByTestId("profile-ion-name")).toHaveText("trader.ion");
+    await expect(page.getByTestId("wallet-detect-scan")).toBeVisible();
     await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
     await expect(page.getByTestId("wallet-provider-metamask")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-metamask")).toHaveAttribute("data-detected", "false");
+    await expect(page.getByTestId("wallet-detected-metamask")).toContainText("Not detected");
 
     await page.getByTestId("wallet-provider-online").click();
     await expect(page.getByTestId("wallet-confirmation")).toContainText("Online+ Wallet secure session ready");

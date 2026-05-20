@@ -12,17 +12,27 @@ import {
   UserRound,
   Wallet,
 } from "lucide-react";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { fetchProfileSession, type ProfileSession } from "@/lib/ionApi";
+import {
+  connectWalletProvider,
+  getProbeForKey,
+  isEvmProviderKey,
+  scanBrowserWallets,
+  type LiveWalletConnection,
+  type WalletDetectionSnapshot,
+  type WalletProviderKey,
+} from "@/lib/wallet";
 
 type ProfileHubProps = {
   open: boolean;
   connectedProviderKey: string | null;
+  liveConnection: LiveWalletConnection | null;
   selectedAvatarId: string;
   privacyMode: boolean;
   onClose: () => void;
-  onConnect: (providerKey: string) => void;
+  onConnect: (providerKey: string, live: LiveWalletConnection | null) => void;
   onDisconnect: () => void;
   onAvatarChange: (avatarId: string) => void;
   onPrivacyModeChange: (enabled: boolean) => void;
@@ -31,6 +41,7 @@ type ProfileHubProps = {
 export function ProfileHub({
   open,
   connectedProviderKey,
+  liveConnection,
   selectedAvatarId,
   privacyMode,
   onClose,
@@ -42,6 +53,20 @@ export function ProfileHub({
   const [session, setSession] = useState<ProfileSession | null>(null);
   const [loadState, setLoadState] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [sourceLabel, setSourceLabel] = useState("");
+  const [detection, setDetection] = useState<WalletDetectionSnapshot>(() => scanBrowserWallets());
+  const [connectingKey, setConnectingKey] = useState<string | null>(null);
+  const [connectError, setConnectError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    setDetection(scanBrowserWallets());
+    const interval = window.setInterval(() => {
+      setDetection(scanBrowserWallets());
+    }, 2500);
+    return () => window.clearInterval(interval);
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -49,7 +74,14 @@ export function ProfileHub({
     }
     const controller = new AbortController();
     setLoadState("loading");
-    fetchProfileSession(connectedProviderKey, controller.signal)
+    fetchProfileSession(
+      {
+        provider: connectedProviderKey,
+        address: liveConnection?.address,
+        chainId: liveConnection?.chainId,
+      },
+      controller.signal,
+    )
       .then((response) => {
         setSession(response.data);
         setSourceLabel(response.meta.source);
@@ -63,7 +95,7 @@ export function ProfileHub({
         setLoadState("error");
       });
     return () => controller.abort();
-  }, [open, connectedProviderKey, onPrivacyModeChange]);
+  }, [open, connectedProviderKey, liveConnection, onPrivacyModeChange]);
 
   const selectedAvatar = useMemo(
     () =>
@@ -79,6 +111,45 @@ export function ProfileHub({
   const evmWallets = useMemo(
     () => session?.wallets.entries.filter((wallet) => wallet.category === "evm") ?? [],
     [session],
+  );
+
+  const handleWalletConnect = useCallback(
+    async (key: string) => {
+      setConnectError(null);
+      const providerKey = key as WalletProviderKey;
+      const probe = getProbeForKey(detection, providerKey);
+
+      if (isEvmProviderKey(providerKey)) {
+        if (!probe?.detected) {
+          setConnectError(probe?.note ?? "Wallet extension not detected in this browser.");
+          return;
+        }
+        setConnectingKey(key);
+        const result = await connectWalletProvider(providerKey);
+        setConnectingKey(null);
+        if (result.ok) {
+          onConnect(key, result.connection);
+          return;
+        }
+        setConnectError(result.message);
+        return;
+      }
+
+      if (probe?.detected && probe.provider) {
+        setConnectingKey(key);
+        const result = await connectWalletProvider(providerKey);
+        setConnectingKey(null);
+        if (result.ok) {
+          onConnect(key, result.connection);
+          return;
+        }
+        setConnectError(result.message);
+        return;
+      }
+
+      onConnect(key, null);
+    },
+    [detection, onConnect],
   );
 
   if (!open) {
@@ -143,6 +214,26 @@ export function ProfileHub({
             </div>
           </header>
 
+          <section
+            className="rounded-2xl border border-cyan-200/20 bg-cyan-300/[0.06] p-3"
+            data-testid="wallet-detect-scan"
+          >
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100/55">Browser wallet scan</p>
+            <p className="mt-1 text-sm text-cyan-50/90">
+              {detection.installedCount} injector{detection.installedCount === 1 ? "" : "s"} detected in this browser
+            </p>
+            <p className="mt-1 text-[10px] text-cyan-100/45">
+              Probes follow `.memory-bank/live-data-reference.md` EVM detectors. EVM wallets require an installed
+              extension before connect.
+            </p>
+          </section>
+
+          {connectError ? (
+            <p className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-3 py-2 text-xs text-amber-100" data-testid="wallet-connect-error">
+              {connectError}
+            </p>
+          ) : null}
+
           <section>
             <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-cyan-100/45">Avatar picker</p>
             <div className="flex gap-2" data-testid="profile-avatar-picker">
@@ -177,6 +268,9 @@ export function ProfileHub({
               data-testid="profile-session-detection"
             >
               <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-100/60">Session detection</p>
+              <p className="mt-1 text-[10px] uppercase tracking-wide text-emerald-200/70" data-testid="profile-detect-source">
+                Source: {session.sessionDetection.detectionSource}
+              </p>
               <dl className="mt-2 grid gap-1 text-xs text-emerald-50/90">
                 <div className="flex justify-between gap-2">
                   <dt className="text-emerald-100/55">Network</dt>
@@ -209,14 +303,18 @@ export function ProfileHub({
             <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-cyan-100/45">Wallets</p>
             <WalletGroup
               connectedKey={connectedProviderKey}
+              connectingKey={connectingKey}
+              detection={detection}
               label="ION native"
-              onConnect={onConnect}
+              onConnect={handleWalletConnect}
               wallets={ionWallets}
             />
             <WalletGroup
               connectedKey={connectedProviderKey}
+              connectingKey={connectingKey}
+              detection={detection}
               label="EVM detectors"
-              onConnect={onConnect}
+              onConnect={handleWalletConnect}
               wallets={evmWallets}
             />
           </section>
@@ -311,41 +409,67 @@ function WalletGroup({
   label,
   wallets,
   connectedKey,
+  connectingKey,
+  detection,
   onConnect,
 }: {
   label: string;
   wallets: ProfileSession["wallets"]["entries"];
   connectedKey: string | null;
+  connectingKey: string | null;
+  detection: WalletDetectionSnapshot;
   onConnect: (key: string) => void;
 }) {
   return (
     <div className="mb-2">
       <p className="mb-1 text-[10px] font-black uppercase tracking-wide text-slate-300/70">{label}</p>
       <div className="grid gap-1">
-        {wallets.map((wallet) => (
-          <button
-            key={wallet.key}
-            type="button"
-            className={`rounded-2xl border p-2 text-left transition ${
-              connectedKey === wallet.key
-                ? "border-emerald-300/35 bg-emerald-300/[0.1]"
-                : "border-white/10 bg-white/[0.04] hover:border-cyan-200/30"
-            }`}
-            data-testid={`wallet-provider-${wallet.key}`}
-            disabled={wallet.status === "planned"}
-            onClick={() => onConnect(wallet.key)}
-          >
-            <span className="flex items-center gap-2">
-              <Wallet size={14} className="text-cyan-200" />
-              <span className="text-sm font-bold text-white">{wallet.name}</span>
-              {connectedKey === wallet.key ? (
-                <span className="ml-auto text-[10px] font-black uppercase text-emerald-200">Primary</span>
+        {wallets.map((wallet) => {
+          const probe = getProbeForKey(detection, wallet.key as WalletProviderKey);
+          const detected = probe?.detected ?? false;
+          const isConnecting = connectingKey === wallet.key;
+          const evmBlocked = isEvmProviderKey(wallet.key as WalletProviderKey) && !detected;
+
+          return (
+            <button
+              key={wallet.key}
+              type="button"
+              className={`rounded-2xl border p-2 text-left transition ${
+                connectedKey === wallet.key
+                  ? "border-emerald-300/35 bg-emerald-300/[0.1]"
+                  : evmBlocked
+                    ? "border-white/10 bg-white/[0.02] opacity-80"
+                    : "border-white/10 bg-white/[0.04] hover:border-cyan-200/30"
+              }`}
+              data-testid={`wallet-provider-${wallet.key}`}
+              data-detected={detected ? "true" : "false"}
+              disabled={wallet.status === "planned" || isConnecting}
+              onClick={() => onConnect(wallet.key)}
+            >
+              <span className="flex items-center gap-2">
+                <Wallet size={14} className="text-cyan-200" />
+                <span className="text-sm font-bold text-white">{wallet.name}</span>
+                <span
+                  className={`ml-auto text-[10px] font-black uppercase ${
+                    detected ? "text-emerald-200" : "text-slate-400"
+                  }`}
+                  data-testid={`wallet-detected-${wallet.key}`}
+                >
+                  {wallet.status === "planned"
+                    ? "Planned"
+                    : detected
+                      ? "Installed"
+                      : "Not detected"}
+                </span>
+              </span>
+              <span className="mt-1 block text-[11px] text-cyan-100/55">{wallet.label}</span>
+              <span className="mt-1 block font-mono text-[10px] text-slate-400/80">{wallet.detector}</span>
+              {isConnecting ? (
+                <span className="mt-1 block text-[10px] font-bold text-cyan-200">Requesting wallet approval…</span>
               ) : null}
-            </span>
-            <span className="mt-1 block text-[11px] text-cyan-100/55">{wallet.label}</span>
-            <span className="mt-1 block font-mono text-[10px] text-slate-400/80">{wallet.detector}</span>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

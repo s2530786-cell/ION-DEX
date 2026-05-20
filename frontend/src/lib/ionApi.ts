@@ -161,7 +161,14 @@ export type ProfileSession = {
     ionName: string;
     identityStatus: string;
     addressPreview: string;
+    detectionSource: "browser-injected" | "local-seed";
   } | null;
+};
+
+export type ProfileSessionQuery = {
+  provider?: string | null;
+  address?: string;
+  chainId?: number;
 };
 
 export async function fetchPublicConfig(signal?: AbortSignal): Promise<ApiResponse<PublicConfig>> {
@@ -176,11 +183,21 @@ export async function fetchPublicConfig(signal?: AbortSignal): Promise<ApiRespon
 }
 
 export async function fetchProfileSession(
-  provider?: string | null,
+  query: ProfileSessionQuery = {},
   signal?: AbortSignal,
 ): Promise<ApiResponse<ProfileSession>> {
-  const params = provider ? `?provider=${encodeURIComponent(provider)}` : "";
-  const response = await fetch(`${apiBaseUrl}/api/profile/session${params}`, {
+  const params = new URLSearchParams();
+  if (query.provider) {
+    params.set("provider", query.provider);
+  }
+  if (query.address) {
+    params.set("address", query.address);
+  }
+  if (typeof query.chainId === "number" && Number.isFinite(query.chainId)) {
+    params.set("chainId", String(query.chainId));
+  }
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  const response = await fetch(`${apiBaseUrl}/api/profile/session${suffix}`, {
     headers: { accept: "application/json" },
     signal,
   });

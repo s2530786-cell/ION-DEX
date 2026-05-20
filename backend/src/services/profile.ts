@@ -71,8 +71,55 @@ export type ProfileSession = {
     ionName: string;
     identityStatus: string;
     addressPreview: string;
+    detectionSource: "browser-injected" | "local-seed";
   } | null;
 };
+
+export type ProfileSessionContext = {
+  providerKey?: string | null;
+  address?: string;
+  chainId?: number;
+};
+
+const CHAIN_NETWORK_LABELS: Record<number, string> = {
+  1: "Ethereum Mainnet",
+  56: "BNB Smart Chain",
+  97: "BNB Smart Chain Testnet",
+  42161: "Arbitrum One",
+  10: "Optimism",
+  137: "Polygon",
+};
+
+function formatAddressPreview(address: string): string {
+  const trimmed = address.trim();
+  if (trimmed.length <= 12) {
+    return trimmed;
+  }
+  if (trimmed.includes(":")) {
+    return `${trimmed.slice(0, 4)}…${trimmed.slice(-4)}`;
+  }
+  if (trimmed.startsWith("0x") && trimmed.length > 10) {
+    return `${trimmed.slice(0, 6)}…${trimmed.slice(-4)}`;
+  }
+  return `${trimmed.slice(0, 4)}…${trimmed.slice(-4)}`;
+}
+
+function inferAddressFormat(address: string): string {
+  if (address.startsWith("0x")) {
+    return "EVM checksummed";
+  }
+  if (address.includes(":")) {
+    return "ION / TON-style";
+  }
+  if (address.startsWith("UQ") || address.startsWith("EQ")) {
+    return "ION user-friendly";
+  }
+  return "Unknown";
+}
+
+function chainIdToNetwork(chainId: number): string {
+  return CHAIN_NETWORK_LABELS[chainId] ?? `EVM chain ${chainId}`;
+}
 
 const walletEntries: WalletEntry[] = [
   {
@@ -263,15 +310,20 @@ const providerSessionSeeds: Record<
   },
 };
 
-export function getProfileSession(providerKey?: string | null): ProfileSession {
+export function getProfileSession(context: ProfileSessionContext = {}): ProfileSession {
+  const providerKey = context.providerKey ?? null;
   const wallet = walletEntries.find((entry) => entry.key === providerKey) ?? null;
   const sessionSeed = providerKey ? providerSessionSeeds[providerKey] : null;
+  const liveAddress = context.address?.trim() ?? "";
+  const hasLiveAddress = liveAddress.length > 0;
+  const hasLiveChain = typeof context.chainId === "number" && Number.isFinite(context.chainId);
 
   return {
     provenance: {
       source: "local-seed",
-      description:
-        "Reviewed local profile session for UI wiring. Replace with wallet/session service once adapters are enabled.",
+      description: hasLiveAddress
+        ? "Profile session merged with browser-injected wallet metadata (address/chain from client detectors)."
+        : "Reviewed local profile session for UI wiring. Identity and quick actions remain on local seed until profile-service is live.",
     },
     identity: {
       displayName: "ION Trader",
@@ -320,16 +372,30 @@ export function getProfileSession(providerKey?: string | null): ProfileSession {
       { key: "notifications", label: "Notifications", description: "Price, risk, and identity alerts", routeHint: "profile/notifications", count: 5 },
       { key: "referral", label: "Referral & badges", description: "Invite rewards and achievement badges", routeHint: "profile/referral", count: 7 },
     ],
-    sessionDetection: wallet && sessionSeed
-      ? {
-          network: sessionSeed.network,
-          walletProvider: wallet.name,
-          addressFormat: sessionSeed.addressFormat,
-          language: "zh-CN",
-          ionName: sessionSeed.ionName,
-          identityStatus: sessionSeed.identityStatus,
-          addressPreview: sessionSeed.addressPreview,
-        }
+    sessionDetection: wallet
+      ? hasLiveAddress
+        ? {
+            network: hasLiveChain ? chainIdToNetwork(context.chainId as number) : sessionSeed?.network ?? "Unknown network",
+            walletProvider: wallet.name,
+            addressFormat: inferAddressFormat(liveAddress),
+            language: "zh-CN",
+            ionName: sessionSeed?.ionName ?? "trader.ion",
+            identityStatus: sessionSeed?.identityStatus ?? "ION ID linked via wallet",
+            addressPreview: formatAddressPreview(liveAddress),
+            detectionSource: "browser-injected",
+          }
+        : sessionSeed
+          ? {
+              network: sessionSeed.network,
+              walletProvider: wallet.name,
+              addressFormat: sessionSeed.addressFormat,
+              language: "zh-CN",
+              ionName: sessionSeed.ionName,
+              identityStatus: sessionSeed.identityStatus,
+              addressPreview: sessionSeed.addressPreview,
+              detectionSource: "local-seed",
+            }
+          : null
       : null,
   };
 }

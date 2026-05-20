@@ -35,7 +35,7 @@ export function getPublicConfig(): PublicConfig {
     featureFlags: {
       backendGateway: true,
       walletAccess: true,
-      realWalletAdapters: false,
+      realWalletAdapters: true,
       aiSentinel: false,
       bridgeTransfers: false,
     },
