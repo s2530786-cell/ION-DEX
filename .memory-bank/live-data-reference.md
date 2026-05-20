@@ -31,7 +31,7 @@
 
 ### 3. CMC
 - **端点**: `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=ION`
-- **API Key**: `342475df9fa5451aafbb3346be049f03`
+- **API Key**: 由 `backend/.env` 提供 (`CMC_API_KEY`)
 - **Header**: `X-CMC_PRO_API_KEY: <key>`
 
 ### 4. GeckoTerminal
@@ -71,8 +71,25 @@
 | `/api/wallet/nonce?address=0x...` | GET | `{nonce}` | 登录签名用 |
 | `/api/wallet/verify` | POST | `{token}` | JWT签发 |
 
+## Seven EVM wallet detectors
+
+EVM钱包检测覆盖7种注入提供商，优先使用EIP-6963多钱包发现：
+
+| 检测器 | 检测对象 | 优先级 |
+|--------|---------|--------|
+| EIP-6963 | 多钱包Provider发现 | 🔴 P0 |
+| MetaMask | `window.ethereum.isMetaMask` | 🔴 P0 |
+| OKX Wallet | `window.okxwallet` | 🟡 P1 |
+| Trust Wallet | `window.trustwallet` | 🟡 P1 |
+| Coinbase | `window.coinbaseWalletExtension` | 🟡 P1 |
+| Binance Wallet | `window.BinanceChain` | 🟡 P1 |
+| Injected Generic | `window.ethereum` (fallback) | 🟢 P2 |
+
+真实文件: `frontend/src/lib/wallet/detectors.ts` (189行, 7个检测器完整实现)
+
 ## 禁止事项
 
 - ❌ 禁止前端直调外部API — 必须走后端缓存层
 - ❌ 禁止mock价格数据 — 必须真实API/链上查询
 - ❌ 禁止硬编码池子地址以外的任何数据
+- ❌ 禁止泄露API Key — 所有密钥走.env
