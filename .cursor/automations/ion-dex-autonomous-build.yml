@@ -1,0 +1,126 @@
+# Cursor Automation: ION DEX Autonomous Build Pipeline
+#
+# Source request:
+# - Import target: D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml
+# - The Windows path is not mounted in Cursor Cloud; this file restores the
+#   historical automation template from Git history and updates it for the
+#   current repository layout and Linux Cloud Agent environment.
+#
+# Cursor Automations are configured in the Cursor Automations UI. As of the
+# currently indexed Cursor docs, declarative YAML files are best treated as
+# source-of-truth templates for manual import/copy into cursor.com/automations.
+
+name: "ION DEX Autonomous Build Pipeline"
+description: "Autonomous ION DEX build loop with project memory, verification gates, commits, and PR-safe delivery."
+
+# UI mapping for cursor.com/automations:
+#   Trigger      -> Scheduled, every 30 minutes (UTC): */30 * * * *
+#   Repository   -> s2530786-cell/ION-DEX
+#   Base branch  -> main
+#   Work branch  -> let Cursor create a task branch, or use the configured automation branch
+#   Tools        -> GitHub, Open pull request, project memory if configured
+#   Environment  -> Cursor Cloud Agent Linux environment
+
+trigger:
+  type: schedule
+  schedule: "*/30 * * * *"
+
+repository:
+  github: "s2530786-cell/ION-DEX"
+  baseBranch: "main"
+
+instructions: |
+  You are the ION DEX autonomous build agent. Work in small, reviewable slices
+  and follow the repository instructions in AGENTS.md before touching code.
+
+  ## 0. Mandatory startup reads
+  Read these files before planning or editing:
+  - AGENTS.md
+  - SESSION_STATE.md
+  - docs/00-engineering-standards.md
+  - docs/99-current-progress.md
+  - .memory-bank/overall-design-framework.md
+  - .memory-bank/live-data-reference.md
+  - .memory-bank/implementation-playbook.md
+  - .memory-bank/architecture-audit.md
+  - .memory-bank/security-audit-and-stress-framework.md
+  - .memory-bank/ion-dex-nuke/official-source-index.md
+  - docs/cursor-docs-feature-memory.md
+  - docs/development-accelerators-memory.md
+
+  If the task touches frontend/UI, also read:
+  - .cursor/skills/ion-web3-ui/SKILL.md
+  - docs/05-product-prd.md
+  - docs/06-page-flow-and-user-journeys.md
+  - docs/10-ui-design-route.md
+
+  If the task touches contracts, bridge, wallet/session, fees, treasury,
+  staking, burn, DNS, backend data APIs, auth, caching, deployment, or
+  verification scripts, run the matching security/data/contract skill and
+  include a threat-model note in the final report.
+
+  ## 1. Cloud preflight
+  From the repository root, run:
+  - node scripts/dev-preflight.mjs
+
+  Do not continue if preflight fails. Fix the cause first.
+
+  ## 2. Select exactly one next task
+  Use SESSION_STATE.md and docs/99-current-progress.md to choose the next
+  smallest task that is not blocked. Prefer current project guidance over old
+  historical memory. If the current memory bank appears incomplete, search Git
+  history before implementing.
+
+  For feature work, do not start a new feature unless the latest completed
+  feature has the required full green verification evidence, including the
+  100-pass gate when AGENTS.md requires it or when the user has not waived it.
+
+  ## 3. Implementation rules
+  - Keep edits scoped to the selected task.
+  - Preserve UTF-8 without BOM and no NUL bytes for every written file.
+  - Do not edit .env files, private keys, seed phrases, production secrets, or
+    security-sensitive configs without explicit human approval.
+  - Do not use force push, destructive git commands, or broad cleanup.
+  - Do not introduce user-facing mock, placeholder, shell, draft, TBD, or Build
+    Checklist copy.
+  - Do not present empty data, fake values, fake lists, or pseudo-code as
+    product UI content.
+  - Use typed backend/data integrations or reviewed local seed data with
+    provenance for product values.
+  - Follow existing project patterns before adding abstractions.
+
+  ## 4. Verification
+  After edits, run the strongest applicable verification available in the
+  Linux Cloud environment:
+  - bash scripts/verify-full.sh
+
+  For frontend-only narrow edits, also ensure frontend verify is covered by the
+  full script. For high-risk backend/data/security work, run the relevant
+  preflight or domain-specific checks required by AGENTS.md and the memory bank.
+
+  If verification fails:
+  1. Read the failing log.
+  2. Fix the root cause.
+  3. Re-run verification.
+  4. Stop after three consecutive failures on the same root cause and record a
+     BLOCKED entry in SESSION_STATE.md with the exact failing command and log
+     summary.
+
+  ## 5. Review and delivery
+  Before final delivery:
+  - Review the diff against BUGBOT.md focus areas.
+  - Update docs/99-current-progress.md.
+  - Update SESSION_STATE.md.
+  - Stage only the files changed for this task.
+  - Commit with a concise descriptive message.
+  - Push to the configured work branch.
+  - Open or update a pull request when the automation environment supports it.
+
+  Never claim completion without command evidence for preflight, encoding,
+  build/test, E2E smoke where applicable, and high-severity audit.
+
+mcps:
+  - github
+  - memory-bank
+
+model: "auto"
