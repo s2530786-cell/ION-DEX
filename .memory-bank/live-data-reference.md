@@ -1,89 +1,78 @@
-# Live Data Reference
+# 📊 Live Data Reference — 六引擎真实数据对接
 
-This is the current data authority for ION DEX frontend, backend, and wallet work. Read before implementing any UI that displays product values.
+> **Master钦定**: 前端不直调外部API，走后端缓存层(TTL 15s)，零mock数据。
+> **引用**: architecture-audit.md → 本文件 → 各引擎API详情
 
-## Market Data
+---
 
-- CoinMarketCap base URL: `https://pro-api.coinmarketcap.com`
-- ION CMC ID: `27650`
-- ION slug: `ice-decentralized-future`
-- API key location: `backend/.env` as `CMC_API_KEY`
-- Frontend must access CMC only through backend.
-- If CMC is unavailable, use reviewed chain-backed fallback:
-  - PancakeSwap V2 ION/USDT pair: `0x1610eDdFE8CFf46913D2c3A9a2AFE20b0aA4A22E`
-  - PancakeSwap V2 router: `0x10ED43C718714eb63d5aA57B78B54704E256024E`
-  - PancakeSwap V2 factory: `0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73`
+## 引擎总览
 
-## BSC Burn And Token Data
+| 引擎 | 优先级 | 数据类型 | 免费额度 | 后端文件 |
+|------|--------|---------|---------|---------|
+| 🥞 PancakeSwap | 🔴 P0 | ION价格根数据 | 无限 | `backend/src/services/pancake.ts` |
+| Binance | 🔴 P0 | BNB/USDT基准价 | 1200次/分 | `backend/src/services/binance.ts` |
+| 🪙 CMC | 🟡 P1 | 市值/排名 | 11K次/月 | `backend/src/services/cmc.ts` |
+| 🦎 GeckoTerminal | 🟡 P1 | OHLCV K线 | 30次/分 | `backend/src/services/gecko.ts` |
+| 🔍 DexScreener | 🟡 P1 | 秒级价格 | 300次/分 | `backend/src/services/dexscreener.ts` |
+| ⛓️ ION Indexer | 🟡 P1 | ION链上全数据 | 无限 | `backend/src/services/ion-indexer.ts` |
 
-- BSC ION token: `0xe1ab61f7b093435204df32f5b3a405de55445ea8`
-- BSC burn address: `0x000000000000000000000000000000000000dEaD`
-- BSC RPC: `https://bsc-dataseed.binance.org/`
-- BSC chain ID: `56`
-- Burn query path: token `balanceOf(deadAddress)` plus Transfer events.
+## API 详情
 
-## ION Chain Data
+### 1. PancakeSwap (BSC链上，根数据源)
+- **Pool**: `0x6487725b383954e05cA56F3c2B93a104B3DD2C25` (ION/WBNB)
+- **方法**: `getReserves()` — 链上直接读，不经过任何API
+- **RPC**: `https://bsc-dataseed1.binance.org`
+- **价格计算**: `ION_price = (reserve1 / reserve0) * BNB_price`
 
-- ION HTTP API: `https://api.mainnet.ice.io/http/v2/`
-- ION JSON RPC: `https://api.mainnet.ice.io/http/v2/jsonRPC`
-- ION Indexer v3: `https://api.mainnet.ice.io/indexer/v3/`
-- ION Explorer: `https://explorer.ice.io`
-- ION chain analytics must come from indexer / official HTTP API.
-- ION burn accounting should use chain value-flow burn semantics where applicable, not an EVM-style dead address assumption.
+### 2. Binance
+- **端点**: `https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT`
+- **K线**: `https://api.binance.com/api/v3/klines?symbol=BNBUSDT&interval=1m`
+- **深度**: `https://api.binance.com/api/v3/depth?symbol=BNBUSDT&limit=20`
 
-## Domain Data
+### 3. CMC
+- **端点**: `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=ION`
+- **API Key**: `342475df9fa5451aafbb3346be049f03`
+- **Header**: `X-CMC_PRO_API_KEY: <key>`
 
-- Product domain: `swap.ion`
-- DNS registry surface: `dns.ice.io`
-- Known owner record from historical memory: `UQCMEABQ9m41v7nWv0fiC_LGyf0svOvt_GbBQXOIRwJX8LiA`
-- `.ion` resolution must use ION-native DNS / Indexer records.
-- Domain transfer must re-resolve immediately before signing.
+### 4. GeckoTerminal
+- **端点**: `https://api.geckoterminal.com/api/v2/networks/bsc/pools/0x6487725b383954e05cA56F3c2B93a104B3DD2C25/ohlcv/hour`
+- **Header**: `Accept: application/json;version=20230203`
+- **限速**: 30次/分 → 后端缓存TTL 30s
 
-## Wallet Data
+### 5. DexScreener
+- **端点**: `https://api.dexscreener.com/latest/dex/pairs/bsc/0x6487725b383954e05cA56F3c2B93a104B3DD2C25`
+- **响应**: 秒级价格 + 24h统计 + 交易量 + FDV
 
-Seven EVM wallet detectors from historical memory:
+### 6. ION Indexer v3
+- **端点**: `https://api.mainnet.ice.io/indexer/v3/`
+- **文档**: `https://api.mainnet.ice.io/indexer/v3/index.html`
+- **35+端点**: accounts, blocks, transactions, messages, jettons, nft, dns, staking
 
-- MetaMask: `window.ethereum.isMetaMask`
-- Binance Web3: `window.BinanceChain`
-- OKX Web3: `window.okxwallet`
-- Bitget Web3: `window.bitkeep.ethereum`
-- Trust Wallet: `window.trustwallet`
-- Coinbase Wallet: `window.coinbaseWalletExtension`
-- Rabby: `window.rabby`
+## 后端缓存架构
 
-ION-native wallet injection (verified against official repos + ion-gateway SDK):
-
-- **Online+ / ION Chrome Wallet** (`ice-blockchain/ion-chrome-wallet`): `window.ionmask.ionconnect` (TonConnect bridge), legacy `window.ion`, ready event `ionready`. ion-gateway `jsBridgeKey`: `ionmask`.
-- **ION Browser Wallet** (`ice-blockchain/ion-browser-wallet`): `window.tonwallet.tonconnect` (legacy field name; ion-gateway expects `ionconnect` when rebranded), legacy `window.ton`, ready event `tonready`. ion-gateway `jsBridgeKey`: `tonwallet`.
-- **Detection contract** (`ice-blockchain/ion-gateway` `InjectedProvider`): `injectedWalletKey in window` and `window[key].ionconnect` with `walletInfo` metadata. Profile Hub also accepts legacy `tonconnect` on `tonwallet`.
-- **Connection**: TonConnect `restoreConnection` then `connect` with `manifestUrl` → `/ionconnect-manifest.json`, item `ton_addr`. Chain IDs: `-239` mainnet, `-3` testnet.
-- **Do not use** guessed globals `window.ionWallet`, `window.iceWallet`, or `window.ionBrowserWallet` — not present in official sources.
-- WalletConnect / TonConnect remote: `@ion-gateway/sdk` + `@ion-gateway/ui-react` (`TonConnectUIProvider`, `useTonConnectModal` QR modal); fallback `universalLink` tab when modal bridge unavailable.
-
-## Environment Variables
-
-```text
-ION_DATA_MODE=auto
-BSC_RPC_URL=https://bsc-dataseed.binance.org/
-BSC_CHAIN_ID=56
-BSC_ION_TOKEN_ADDRESS=0xe1ab61f7b093435204df32f5b3a405de55445ea8
-ION_API_BASE_URL=https://api.mainnet.ice.io/http/v2/
-ION_HTTP_TIMEOUT_MS=12000
-CMC_API_BASE_URL=https://pro-api.coinmarketcap.com
-CMC_API_KEY=
+```
+前端 → GET /api/price/ion → 后端 → 检查缓存(TTL 15s)
+                                      ├─ 命中 → 返回
+                                      └─ 未命中 → PancakeSwap(getReserves) + Binance(BNB/USDT)
+                                               → 写入缓存
+                                               → 返回
 ```
 
-## Backend Mapping
+## 前端API规范
 
-- Markets: `backend/src/services/live/markets-live.ts` -> CMC / PancakeSwap
-- Burn: `backend/src/services/live/burn-live.ts` -> BSC RPC + ION indexer
-- Config/staking surface: `backend/src/services/live/config-live.ts` -> ION APIs / reviewed sources
-- CMC upstream: `backend/src/upstream/cmc.ts`
-- BSC upstream: `backend/src/upstream/bsc-rpc.ts`
-- ION upstream: `backend/src/upstream/ion-api.ts`
+| 端点 | 方法 | 返回 | 说明 |
+|------|------|------|------|
+| `/api/price/ion` | GET | `{price, change24h, volume24h}` | ION综合价格 |
+| `/api/price/bnb` | GET | `{price, change24h}` | BNB基准价 |
+| `/api/klines/ion` | GET | `[{time, open, high, low, close, volume}]` | ION K线 |
+| `/api/market/ion` | GET | `{marketCap, rank, fdv, supply}` | ION市值数据 |
+| `/api/pool/ion` | GET | `{reserve0, reserve1, tvl, volume24h}` | PancakeSwap池子 |
+| `/api/wallet/balance?address=0x...` | GET | `{bnb, ion, usdt, busd}` | 真链上余额 |
+| `/api/wallet/nonce?address=0x...` | GET | `{nonce}` | 登录签名用 |
+| `/api/wallet/verify` | POST | `{token}` | JWT签发 |
 
-## Hard Data Rules
+## 禁止事项
 
-- No empty data, fake values, fake lists, or pseudo-code product UI.
-- If a key or endpoint is missing, record the blocker and do not present the UI as complete.
-- All financial values need source, timestamp, stale flag, and request ID where possible.
+- ❌ 禁止前端直调外部API — 必须走后端缓存层
+- ❌ 禁止mock价格数据 — 必须真实API/链上查询
+- ❌ 禁止硬编码池子地址以外的任何数据
