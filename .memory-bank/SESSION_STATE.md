@@ -40,13 +40,19 @@
 1. 🔴🔴🔴 **UI多层玻璃重构** — Master钦定 2026-05-21，读 glass-morphism-multilayer-spec.mdc
    - 每个组件独立多层玻璃堆叠（5-7层），不能靠外层卡片罩着
    - 重构顺序: NeonButton → NeonGlassCard增强 → 新建GlassPanel → GlassInput → GlassTab
-2. 🔴 **7钱包真实对接** — 参考 wallet-connect-requirements.md
-3. 🔴 **前端六引擎数据层** — 参考 live-data-reference.md
-4. 🔴 **BSC Solidity合约** — 4个缺失合约从零编写
-5. 🟡 **Sandwich防御验证** — 合约需重写+功能测试
-6. 🟡 **CI/CD Pipeline** — Phase 5 Step 7
-7. 🟢 **Bridge双重签名验证** — 合约需重写+功能测试
-8. 🟢 **swap.ion IPFS部署** — 等Pinata JWT
+2. 🔴🔴 **全设备响应式布局** — Master钦定 2026-05-21，读 responsive-design-spec.mdc
+   - 断点: 375px / 768px / 1024px / 1440px
+   - AppShell: sidebar→topBar+bottomTab 切换
+   - 所有页面适配每断点
+   - Safari safe-area / 触摸优化
+   - 尾部兼容（微信浏览器等）
+3. 🔴 **7钱包真实对接** — 参考 wallet-connect-requirements.md
+4. 🔴 **前端六引擎数据层** — 参考 live-data-reference.md
+5. 🔴 **BSC Solidity合约** — 4个缺失合约从零编写
+6. 🟡 **Sandwich防御验证** — 合约需重写+功能测试
+7. 🟡 **CI/CD Pipeline** — Phase 5 Step 7
+8. 🟢 **Bridge双重签名验证** — 合约需重写+功能测试
+9. 🟢 **swap.ion IPFS部署** — 等Pinata JWT
 
 ## 工作区路径
 

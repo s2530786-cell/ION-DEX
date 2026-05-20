@@ -1,0 +1,348 @@
+---
+description: ION DEX 全设备响应式设计规范 — 所有屏幕尺寸+所有浏览器的自适应布局
+alwaysApply: true
+---
+
+# 📱 全设备响应式设计规范（Master 2026-05-21 钦定）
+
+> **铁律：** 不满足响应式规范的 UI 修改不允许合入。每个页面必须验证 375px / 768px / 1024px / 1440px 四个断点。
+
+---
+
+## 一、断点定义
+
+| 断点 | 别名 | 目标设备 | Tailwind |
+|------|------|---------|----------|
+| ≥1440px | **4K/desktop** | 27寸+显示器 | `2xl:` (1440px, 自定义) |
+| 1024~1439px | **laptop** | 笔记本/小屏桌面 | `lg:` (1024px) |
+| 768~1023px | **tablet** | iPad / 折叠屏 | `md:` (768px, 自定义) |
+| 375~767px | **mobile** | 手机竖屏 | `sm:` (640px) 及以下 |
+| ≤374px | **small phone** | iPhone SE/直板机 | 无 @media 兜底 |
+
+Tailwind 默认 sm=640px, lg=1024px 不够用。需在 `tailwind.config.js` 加 md=768px, 2xl=1440px。
+
+### tailwind.config.js 修改
+
+```js
+screens: {
+  'sm': '640px',
+  'md': '768px',
+  'lg': '1024px',
+  'xl': '1280px',
+  '2xl': '1440px',
+}
+```
+
+---
+
+## 二、全局布局响应式行为
+
+### 2.1 外壳 (AppShell)
+
+```text
+DESKTOP (≥1024px):
+┌─────────────────────────────────────────┐
+│  ← sidebar 224px →  │    main area     │
+│                      │                  │
+│  static sidebar      │  page content    │
+│  brand + nav list    │  fills remaining │
+│  no scroll (nav)     │  scrolls if tall │
+└─────────────────────────────────────────┘
+
+TABLET (768~1023px):
+┌────────────────────────┐
+│  mobile-top-bar        │
+│  logo  [hamburger]     │
+│  ticker strip (scroll) │
+├────────────────────────┤
+│  page content fills    │
+│  (stacked, not side by │
+│   side)                │
+├────────────────────────┤
+│  bottom tab nav        │  ← 5主功能Tab固定底部
+│  [Dash|Swap|Trade|Grid│
+│   |More▸]              │
+└────────────────────────┘
+
+MOBILE (≤767px):
+┌────────────────────┐
+│  compact top bar   │
+│  [≡] logo  [👤]    │
+├────────────────────┤
+│  ticker strip (1-2 │
+│  price items, h-8) │
+├────────────────────┤
+│  content (full w)  │
+├────────────────────┤
+│  bottom tabs       │  ← 4主功能Tab
+└────────────────────┘
+```
+
+### 2.2 Header 组件
+
+| 元素 | Desktop (≥1024) | Tablet (768-1023) | Mobile (≤767) |
+|------|----------------|-------------------|----------------|
+| Logo | 侧边栏顶部 | 顶栏左侧 | 顶栏左侧 |
+| Ticker strip | 顶栏，全宽，横向滚动 | 顶栏下，横向滚动 | 只显示前2个币，紧凑 |
+| Nav links | 侧边栏列表 | 汉堡菜单侧滑 | 底部 Tab Bar |
+| Wallet button | 顶栏右侧 | 顶栏右侧 | 顶栏右侧，圆形图标 |
+| Notification bell | 顶栏，钱包旁 | 同左 | 同左，缩小 |
+| Menu hamburger | 不显示 | 顶栏左侧 | 顶栏左侧 |
+
+### 2.3 底部 Tab Bar（移动端/平板专用）
+
+固定在 viewport 底部，`z-50`，5个主功能 Tab：
+```
+[⬡ Dashboard] [⇄ Swap] [📊 Trade] [▦ Grid] [⋮ More]
+```
+
+`⋮ More` 展开底部分享菜单（Pool、Bridge、Stake、Burn、Domain、AI）。
+
+---
+
+## 三、页面响应式布局矩阵
+
+### 3.1 Dashboard (主页)
+
+| 模块 | Desktop (≥1024) | Tablet (768-1023) | Mobile (≤767) |
+|------|----------------|-------------------|----------------|
+| ION 价格卡片 | 右上角，固定220px宽 | 顶栏下，全宽 | 顶栏下，全宽 |
+| Market Chart | 左栏主力，宽60% | 全宽，h-48 | 全宽，h-36 |
+| Feature Cards (6个) | 3列网格 | 2列网格 | 1列纵向stack |
+| 系统状态 | 右下角 inline | 底部折叠 | 隐藏或折叠 |
+
+### 3.2 Swap (兑换)
+
+| 模块 | Desktop | Tablet | Mobile |
+|------|---------|--------|--------|
+| 兑换卡片 | 居中，max-w-md (448px) | 居中，max-w-sm (384px) | 全宽，左右padding 16px |
+| Token列表 | 弹出modal，全屏 | modal，全屏 | bottom sheet，向上弹 |
+| 设置按钮 | 右上角小图标 | 同左 | 同左 |
+| 滑点编辑 | inline tooltip | 同左 | 底部分享 |
+
+### 3.3 Trade (专业交易)
+
+Desktop (≥1024) — 三栏布局：
+```
+┌──────────────┬──────────────────┬──────────────┐
+│  Order Book  │   Chart+Depth    │ Order Form   │
+│  (220px)     │   (flex-1)       │ (320px)      │
+│              │                  │              │
+│  Bids/Asks   │   Lightweight    │ Market/Limit │
+│  compact     │   Charts         │ Price input  │
+│  15 rows     │   TVL + Vol      │ Amount input │
+│              │                  │ Open Orders  │
+└──────────────┴──────────────────┴──────────────┘
+```
+
+Tablet (768-1023) — 两栏可切换：
+```
+┌─────────────────────────┬──────────────┐
+│  Chart (primary)        │ Order Form   │
+│  占据2/3                │ 320px        │
+│  (轻触切换为Order Book) │              │
+├─────────────────────────┴──────────────┤
+│ Bottom: Market Trades + Open Orders    │
+│ (水平滚动，紧凑显示)                    │
+└────────────────────────────────────────┘
+```
+
+Mobile (≤767) — 全屏Tab切换：
+```
+┌─────────────────────┐
+│ [Chart|Book|Form]   │  ← 水平Tab切换
+├─────────────────────┤
+│  当前Tab内容全屏    │
+│                     │
+│  (Tab 1: 图表)      │
+│  (Tab 2: 订单簿)    │
+│  (Tab 3: 下单表单)  │
+└─────────────────────┘
+```
+
+### 3.4 Grid (网格交易)
+
+| Desktop | Tablet | Mobile |
+|---------|--------|--------|
+| 左侧策略列表(320px) + 主区域 | 顶部参数(折叠) > 策略列表 > 模拟 | 全屏，参数折叠面板，swipe导航 |
+
+### 3.5 Pool (流动性池)
+
+| Desktop | Tablet | Mobile |
+|---------|--------|--------|
+| 2列：池列表(left) + 池详情(right) | 单列：顶部列表，底部详情 | 全屏单列，详情从底部弹出sheet |
+
+### 3.6 Stake (质押)
+
+| Desktop | Tablet | Mobile |
+|---------|--------|--------|
+| 2x2 四象限布局 | 2列网格 | 1列纵向stack |
+
+### 3.7 Bridge (跨链桥)
+
+| Desktop | Tablet | Mobile |
+|---------|--------|--------|
+| 居中卡片，max-w-md，两侧显示链状态 | 居中缩小卡片 | 全宽表单 |
+
+### 3.8 Burn (销毁分析)
+
+| Desktop | Tablet | Mobile |
+|---------|--------|--------|
+| 左侧2D图表 + 右侧统计 | 全宽图表 + 下方统计 | 图表紧凑 + 统计列表 |
+
+### 3.9 Domain & AI（轻量页面）
+
+| Desktop | Tablet | Mobile |
+|---------|--------|--------|
+| 居中卡片区域 | 居中缩小 | 全宽堆叠 |
+
+---
+
+## 四、组件响应式行为
+
+### NeonGlassCard
+- Desktop: `rounded-[2rem] p-6` + inner shadow 增强
+- Tablet: `rounded-[1.5rem] p-4` 
+- Mobile: `rounded-[1.25rem] p-3`
+
+### NeonButton
+- Desktop: `px-5 py-3 text-sm`
+- Tablet: `px-4 py-2.5 text-sm`
+- Mobile: `px-3 py-2 text-xs`, 可全宽 (w-full)
+
+### 输入框 (GlassInput)
+- Desktop: `h-12 text-base`
+- Tablet/Mobile: `h-10 text-sm`
+
+### 图表 (MarketChart)
+- Desktop: `h-[24rem]` 
+- Tablet: `h-[18rem]`
+- Mobile: `h-[12rem]`
+
+### Data Table
+- Desktop: 显示所有列
+- Tablet: 隐藏次要列（可点击展开）
+- Mobile: 卡片化显示（每行1个卡片，非表格）
+
+### Ticker Strip
+- Desktop: 全币种滚动
+- Tablet: 主要币种(前6个)
+- Mobile: 核心币种(前2个: ION/BNB)
+
+---
+
+## 五、浏览器兼容性
+
+| 浏览器 | 最低版本 | 特殊处理 |
+|--------|---------|---------|
+| Chrome | 90+ | 主力目标 |
+| Edge | 90+ | Chromium兼容，无特殊处理 |
+| Firefox | 90+ | 测试 backdrop-filter, -moz- 前缀 |
+| Safari (iOS) | 14.5+ | `-webkit-backdrop-filter`, safe-area-inset |
+| Safari (macOS) | 14+ | `-webkit-backdrop-filter` |
+| 微信内置浏览器 | X5内核 | 降级模式：无backdrop-filter时显示纯色背景 |
+| 手机自带浏览器 (三星/Huawei) | WebView | 参考Chrome行为 |
+| Opera Mini | - | 极度降级：fallback纯暗色+扁平UI |
+
+### Safari / iOS 特殊处理
+
+```css
+/* Safe area for notch phones */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+```
+
+### 降级策略
+
+| CSS特性 | 不支持时的fallback |
+|---------|------------------|
+| `backdrop-filter: blur()` | 纯 `rgba(3,5,15,0.7)` 暗色背景 |
+| `-webkit-backdrop-filter` | 同上 |
+| CSS conic-gradient | 用 linear-gradient 替代 |
+| CSS :has() selector | 用 JS class 替代 |
+| CSS container queries | 无影响，用 media queries |
+| CSS animation | 静态显示，无动画 |
+| CSS clamp() | 用 min/max 兜底 |
+
+---
+
+## 六、测试验证要求
+
+在每个断点下验证：
+- [ ] 无水平滚动条
+- [ ] 所有交互元素可点（最小 touch target 44x44px）
+- [ ] 内容无重叠/溢出
+- [ ] 玻璃拟态效果可见
+- [ ] 导航可到达所有页面
+- [ ] 文本不截断/不溢出
+- [ ] 表单可用（输入框可见）
+- [ ] 底部 Tab Bar 不遮挡内容
+
+### Body 最小宽度
+```css
+body {
+  min-width: 320px;  /* ✅ 已有 */
+}
+```
+
+---
+
+## 七、触摸优化
+
+### 移动端触摸目标
+- 所有按钮、链接、Tab 最小 44x44px (Apple HIG)
+- 按钮间距 ≥8px
+- 输入框焦点态自动滚入可视区域
+- 拖拽操作有触感反馈 (Android vibrate / iOS haptic)
+
+### 手势支持
+- 左滑/右滑切换 Tab
+- 下拉刷新 (符合平台习惯)
+- 点击空白关闭弹窗/keyboard
+
+---
+
+## 八、字体尺寸响应式
+
+| 元素 | Desktop | Tablet | Mobile |
+|------|---------|--------|--------|
+| 页面标题 h1 | 2rem (32px) | 1.5rem (24px) | 1.25rem (20px) |
+| 卡片标题 h2 | 1.25rem (20px) | 1.125rem (18px) | 1rem (16px) |
+| 正文 | 0.938rem (15px) | 0.875rem (14px) | 0.8125rem (13px) |
+| 辅助文字 | 0.8125rem (13px) | 0.75rem (12px) | 0.6875rem (11px) |
+| 价格数字 | clamp(1.2rem, 2vw, 1.8rem) | 同上 | clamp(1rem, 5vw, 1.4rem) |
+
+---
+
+## 九、禁止项
+
+❌ 禁止固定宽度（`w-[480px]` 这种）
+❌ 禁止忽略 safe-area-inset（iPhone notch 会被导航栏挡住）
+❌ 禁止只测 desktop 就提交
+❌ 禁止移动端用 desktop 的 hover 效果
+❌ 禁止 `overflow: hidden` 切断内容（仅外壳可用）
+❌ 禁止文字溢出容器
+❌ 禁止 touch target < 44px
+❌ 禁止底部 Tab Bar + content 被 notch 遮挡
+
+---
+
+## 十、实现顺序（按优先级）
+
+1. 🔴 **全局响应式布局框架** — AppShell 重构：sidebar ↔ topBar+bottomTab 切换
+2. 🔴 **Dashboard 响应式** — 卡片网格 + 图表自适应
+3. 🔴 **Swap 响应式** — 兑换卡片适配 + token 列表 bottom sheet
+4. 🟡 **Trade 响应式** — 三栏→两栏→单Tab切换
+5. 🟡 **所有次级页面适配** — Pool/Stake/Bridge/Burn/Grid/Domain/AI
+6. 🟢 **Safari safe-area + 触摸优化** — 最后的打磨
+7. 🟢 **浏览器兼容性降级** — 微信/Opera/旧版 fallback

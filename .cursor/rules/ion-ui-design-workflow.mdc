@@ -10,5 +10,6 @@ alwaysApply: true
 - Run `node scripts/dev-preflight.mjs` before implementation when shell access is available. Full verification scripts run it automatically.
 - UI work must follow the locked direction: OKX Web3-inspired, dark blue/purple base, cyberpunk neon, glassmorphism, aurora/galaxy motion, thin refined neon borders, and responsive behavior at 375px, 768px, and 1440px.
 - **MULTI-LAYER REQUIREMENT (Master 2026-05-21):** Every visible UI component MUST have its own independent 5-7 layer glass stack. Read `.cursor/rules/glass-morphism-multilayer-spec.mdc` before touching any component. Single-layer flat components are FAIL.
+- **RESPONSIVE REQUIREMENT (Master 2026-05-21):** Read `.cursor/rules/responsive-design-spec.mdc` before any layout work. Every page must work at 375px/768px/1024px/1440px. Safari safe-area, touch targets ≥44px, no horizontal scroll.
 - Do not add new user-facing `shell`, `draft`, `TBD`, placeholder cards, or `Build Checklist` panels. Replace touched unfinished surfaces with product UI modules from the PRD.
 - After UI changes, run encoding, frontend verify, high audit, and the required full verification flow.
