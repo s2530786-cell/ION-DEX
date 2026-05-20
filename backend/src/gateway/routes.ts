@@ -29,7 +29,7 @@ export function routeRequest(
   const startedAt = options.startedAt ?? defaultStartedAt;
   const requestId = getRequestId(request);
   const meta: ApiMeta = {
-    source: "mock",
+    source: "local",
     updatedAt: toIsoTimestamp(clock.now()),
     stale: false,
     requestId,

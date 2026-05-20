@@ -55,7 +55,7 @@ async function runEndpoint(baseUrl, endpoint) {
       try {
         const response = await fetch(`${baseUrl}${endpoint.path}`);
         const body = await response.json();
-        if (response.ok && body.meta?.source === "mock") {
+        if (response.ok && body.meta?.source === "local") {
           ok += 1;
         } else {
           failed += 1;

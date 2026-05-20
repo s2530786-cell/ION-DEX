@@ -23,6 +23,8 @@ const requiredMarkers = new Map([
 
 const unfinishedPatterns = [
   /\bBuild Checklist\b/i,
+  /\bmock(?:ed)?\b/i,
+  /\bplaceholder\b/i,
   /\bshell\b/i,
   /\bdraft\b/i,
   /\bTBD\b/i,
