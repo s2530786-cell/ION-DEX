@@ -1,7 +1,11 @@
 ;; ── ION DEX Common Library ──────────────────────────────────────────
-;; Based on TON FunC stdlib patterns adapted for ION chain
-;; Note: TON stdlib.fc, params.fc, op-codes.fc are NOT available on
-;; ION chain. This file provides the minimum subset required.
+;; ⚠️ ION-Chain-Specific: This library replaces TON stdlib functions
+;; (build_ctx, catch_ctx, etc.) that may not be available on ION chain.
+;; Must be verified with the ION chain FunC compiler before deployment.
+;;
+;; Uses global-variable context model instead of polymorphic ctx.at()
+;; because FunC functions cannot return both int and slice from the
+;; same function signature.
 
 #pragma version >=0.4.4;
 
@@ -38,86 +42,65 @@ const params::workchain = 0;
 ;; ── Message Mode Flags ───────────────────────────────────────────
 
 const CARRY_ALL_BALANCE = 128;
+const QCARRY_ALL_BALANCE = 128;   ;; alias for quiet mode
 const DESTROY_IF_ZERO = 32;
-const QCARRY_ALL_BALANCE = 128;
 
-;; ── Context Helpers ──────────────────────────────────────────────
+;; ── Context Globals ──────────────────────────────────────────────
+;; Stored as typed globals because FunC ctx.at() cannot return both
+;; int and slice from the same function.
 
-;; Context indices
-const ctx_bounced = 0;
-const ctx_body = 1;
-const ctx_sender = 2;
-const ctx_value = 3;
-const ctx_balance = 4;
-const ctx_fwd_fee = 5;
-const ctx_op = 6;
+global slice ctx::body_slice;       ;; BODY  - message body as slice
+global slice ctx::sender_slice;     ;; SENDER - sender address
+global int ctx::opcode_val;         ;; OPCODE - 32-bit operation code
+global int ctx::is_bounced;         ;; IS_BOUNCED - bounce flag
+global int ctx::balance_val;        ;; BALANCE - contract balance
+global int ctx::fwd_fee_val;        ;; FWD_FEE - forward fee
+global int ctx::msg_value_val;      ;; message value
 
-;; Manual context management (replaces build_ctx/catch_ctx from stdlib)
-global cell ctx::in_msg_full;
-global slice ctx::in_msg_body;
-global int ctx::my_balance;
-global int ctx::msg_value;
+;; Context field index constants (for compatibility with ctx.at convention)
+const BODY = 1;
+const SENDER = 2;
+const OPCODE = 3;
+const IS_BOUNCED = 4;
+const BALANCE = 5;
+const FWD_FEE = 6;
 
 () ctx::init(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure inline {
-    ctx::my_balance = my_balance;
-    ctx::msg_value = msg_value;
-    ctx::in_msg_full = in_msg_full;
-    ctx::in_msg_body = in_msg_body;
+    ;; Store raw slices/values into typed globals
+    ctx::msg_value_val = msg_value;
+    ctx::balance_val = my_balance;
+    ctx::body_slice = in_msg_body;
+    ctx::opcode_val = in_msg_body.preload_uint(32);
+
+    ;; Extract sender address
+    slice cs = in_msg_full.begin_parse();
+    int flags = cs~load_uint(4);
+    ctx::is_bounced = flags & 1;
+    ctx::sender_slice = cs~load_msg_addr();
+
+    ;; Parse remaining header fields for fwd_fee
+    cs~load_msg_addr();             ;; dst
+    cs~load_coins();                ;; value
+    cs~load_uint(1);                ;; extracurrency flag
+    cs~load_coins();                ;; ihr_fee
+    ctx::fwd_fee_val = cs~load_coins();  ;; fwd_fee
 }
 
-;; ctx.at helpers
-int ctx::at(int field) method_id {
-    if (field == ctx_bounced) {
-        ;; Check if message was bounced
-        slice cs = in_msg_full.begin_parse();
-        int flags = cs~load_uint(4);
-        return flags & 1;
-    }
-    if (field == ctx_body) {
-        return begin_cell().store_slice(in_msg_body).end_cell().begin_parse().preload_uint(32);
-    }
-    if (field == ctx_sender) {
-        slice cs = in_msg_full.begin_parse();
-        cs~load_uint(4);                    ;; skip flags
-        slice src = cs~load_msg_addr();     ;; source address
-        return begin_cell().store_slice(src).end_cell().begin_parse().preload_uint(256);
-    }
-    if (field == ctx_value) {
-        return msg_value;
-    }
-    if (field == ctx_balance) {
-        return my_balance;
-    }
-    if (field == ctx_fwd_fee) {
-        slice cs = in_msg_full.begin_parse();
-        cs~load_uint(4);                    ;; flags
-        cs~load_msg_addr();                 ;; src
-        cs~load_msg_addr();                 ;; dst
-        cs~load_coins();                    ;; value
-        cs~load_uint(1);                    ;; extracurrency flag
-        cs~load_coins();                    ;; ihr_fee
-        return cs~load_coins();             ;; fwd_fee
-    }
-    if (field == ctx_op) {
-        return in_msg_body.preload_uint(32);
-    }
-    return 0;
-}
+;; ── Typed context accessors (use these instead of ctx.at) ────────
 
-;; ── Constants ────────────────────────────────────────────────────
-
-const SENDER = ctx_sender;
-const BODY = ctx_body;
-const BALANCE = ctx_balance;
-const FWD_FEE = ctx_fwd_fee;
-const OPCODE = ctx_op;
-const IS_BOUNCED = ctx_bounced;
+slice ctx::body() inline { return ctx::body_slice; }
+slice ctx::sender() inline { return ctx::sender_slice; }
+int   ctx::opcode() inline { return ctx::opcode_val; }
+int   ctx::isBounced() inline { return ctx::is_bounced; }
+int   ctx::balance() inline { return ctx::balance_val; }
+int   ctx::fwdFee() inline { return ctx::fwd_fee_val; }
+int   ctx::value() inline { return ctx::msg_value_val; }
 
 ;; ── Address Utilities ────────────────────────────────────────────
 
-int address::check_workchain(slice addr, int expected_workchain) method_id {
+int address::check_workchain(slice addr, int expected_workchain) inline {
     int wc = addr.preload_int(8);
-    return wc == expected_workchain ? ~ null() : 0;
+    return wc == expected_workchain ? -1 : 0;
 }
 
 ;; ── Reserve Utilities ────────────────────────────────────────────
@@ -134,7 +117,7 @@ int address::check_workchain(slice addr, int expected_workchain) method_id {
             .store_uint(send_mode, 8)
             .store_slice(to)
             .store_coins(mode)
-            .store_uint(1, 1)   ;; init state (bounceable)
+            .store_uint(1, 1)   ;; bounceable
             .store_uint(0, 1)   ;; body as ref
             .store_ref(body)
         .end_cell(),
