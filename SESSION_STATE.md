@@ -166,6 +166,7 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 - Cursor automation YAML import completed on 2026-05-20:
   - `.cursor/automations/ion-dex-autonomous-build.yml` was restored from Git history commit `fa875f4` because the requested Windows source path is not mounted in Cursor Cloud.
   - The YAML is a source-of-truth template for manually importing/configuring the Cursor Automation UI, with schedule, repository, mandatory startup reads, Cloud preflight, verification, commit/push, and PR-safe delivery instructions.
+  - Verification after import: `bash scripts/verify-full.sh` passed with preflight OK, encoding 95 files OK, backend tests 8 passed, backend audit high 0 vulnerabilities, backend stress smoke passed, frontend Playwright 15 passed, and frontend audit high 0 vulnerabilities.
 
 ## Current Blocker
 
