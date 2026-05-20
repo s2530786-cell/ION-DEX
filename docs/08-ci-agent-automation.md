@@ -29,6 +29,14 @@ Workflow: `.github/workflows/ion-dex-verify.yml`
 
 Runs on every **push** and **pull_request**, plus manual **workflow_dispatch**: encoding check, `npm ci`, Playwright Chromium, `npm run verify`, `npm run audit:high`. The workflow targets `frontend/` at repo root (same layout after syncing `frontend/` next to `ion/`).
 
+## Cursor Automation template
+
+Template: `.cursor/automations/ion-dex-autonomous-build.yml`
+
+The template records the autonomous build prompt requested from `D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml`. Cursor Cloud cannot mount that Windows path directly, so the repository template was restored from Git history and adapted to the current Linux Cloud Agent flow: read project memory, run `node scripts/dev-preflight.mjs`, run `bash scripts/verify-full.sh` after edits, update progress memory, commit only scoped task files, and avoid secrets or destructive git commands.
+
+Current Cursor documentation indexed in this repo describes Automations as configured through the Cursor Automations UI. Treat this YAML as a source-of-truth import template for copying into `cursor.com/automations` until Cursor exposes a stable repository YAML import schema.
+
 ## Cursor Hooks (optional)
 
 Full Playwright on **every** agent stop is slow. Prefer letting the agent run `scripts\agent-verify.cmd` after edits.

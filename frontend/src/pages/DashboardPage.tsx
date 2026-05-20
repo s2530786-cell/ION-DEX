@@ -71,7 +71,7 @@ function SwapPanel() {
     const isValid = Number.isFinite(amount) && amount > 0 && Number.isFinite(slip) && slip >= 0.1 && slip <= 5;
     const ionOut = isValid ? amount * 106.68 : 0;
     const fee = isValid ? ionOut * 0.0025 : 0;
-    const minReceived = isValid ? ionOut * (1 - slip / 100) : 0;
+    const minReceived = isValid ? (ionOut - fee) * (1 - slip / 100) : 0;
     return {
       fee,
       ionOut,

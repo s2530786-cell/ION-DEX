@@ -160,6 +160,11 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - `docs/23-security-audit-and-stress-sandbox.md` turns the framework into an execution checklist and sandbox plan.
   - `scripts/security-preflight.mjs` verifies security memory/docs/skills are present before high-risk work.
   - `scripts/dev-preflight.mjs` now requires the security framework.
+- Cursor Automation YAML import completed on 2026-05-20:
+  - Added `.cursor/automations/ion-dex-autonomous-build.yml` for the user-requested import path `D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml`.
+  - Cursor Cloud could not read the Windows `D:\` source path directly, so the template was restored from Git history and updated for the current Linux Cloud Agent flow.
+  - `docs/08-ci-agent-automation.md` records the file as a source-of-truth Cursor Automations UI import template.
+  - Verification passed: YAML parse `YAML_OK`; encoding scanned 93 files OK; `node scripts/dev-preflight.mjs` OK; `bash scripts/verify-full.sh` OK with backend tests 6 passed, backend audit 0 vulnerabilities, stress smoke passed, frontend Playwright 14 passed, and frontend audit 0 vulnerabilities.
 
 ## Current Blocker
 
@@ -182,6 +187,7 @@ Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank
 13. Accelerator/review preference：2026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
 14. Claude-Flow/RuFlo：2026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
 15. Next：continue UI correction route by first rebuilding the right-top Profile Hub from `.memory-bank/overall-design-framework.md`, while using `.memory-bank/security-audit-and-stress-framework.md` for wallet/session threat modeling and stress/audit evidence.
+16. Automation import follow-up：if the user has a newer local Windows copy of `ion-dex-autonomous-build.yml`, compare it against `.cursor/automations/ion-dex-autonomous-build.yml` before replacing the repository template.
 
 ## Memory MCP Candidates
 
