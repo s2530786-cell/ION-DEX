@@ -30,6 +30,9 @@ jobs:
             backend/package-lock.json
             frontend/package-lock.json
 
+      - name: Development preflight
+        run: node scripts/dev-preflight.mjs
+
       - name: Encoding check
         shell: pwsh
         run: ./scripts/check-encoding.ps1
