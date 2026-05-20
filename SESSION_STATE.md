@@ -163,9 +163,11 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 - Quote / slippage / precision minimum loop completed on 2026-05-20:
   - `backend/src/lib/decimal.ts` uses BigInt floor math for decimal parsing/formatting and bps calculations.
   - `backend/src/services/quotes.ts` provides typed quote output with amount units, estimated output, minimum received, protocol fee, fee bps, slippage bps, price impact bps, route, precision, and provenance.
+  - Confirmed and fixed the financial quote bug where the previous frontend minimum received path could apply slippage to gross output before protocol fee. Current calculation uses `estimatedOutputUnits = grossOutputUnits - protocolFeeUnits`, then computes `minimumReceivedUnits` from that net amount.
   - `/api/trade/quote` is wired through the API gateway.
   - Frontend Swap consumes the backend quote API and displays `bigint-floor / ION 9d`, protocol fee bps, route, minimum received, and price impact.
-  - Backend tests cover valid quote precision and invalid slippage; backend stress includes quote endpoint; frontend E2E covers backend precision/slippage bps.
+  - Backend tests cover exact 1 BNB / 1% slippage units: `protocolFeeUnits=266694352`, `estimatedOutputUnits=106411046511`, `minimumReceivedUnits=105346936045`; frontend E2E covers UI display `0.266694 ION (25 bps)` and `105.346936 ION`.
+  - Verification passed after this correction: strict preflight, encoding, `frontend npm run verify` with 15 Playwright tests, and `bash scripts/verify-full.sh` with backend 8 tests, backend stress smoke, frontend 15 tests, and high audits at 0 vulnerabilities.
   - Remaining gaps: contract minimum-output enforcement, oracle/TWAP adapter, and MEV simulations wait for contract/oracle services.
 
 ## Current Blocker
@@ -188,8 +190,7 @@ Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official s
 12. Workflow preference：2026-05-18，user explicitly requested making strong use of `self-evolving` and automatic workflow because they help development. Treat `cursor-engineering-workflow` as the pre/during-work operating loop and `self-evolving` as the post-work memory improvement loop.
 13. Accelerator/review preference：2026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
 14. Claude-Flow/RuFlo：2026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
-15. Next：continue UI correction route by first rebuilding the right-top Profile Hub from `.memory-bank/overall-design-framework.md`, while using `.memory-bank/security-audit-and-stress-framework.md` for wallet/session threat modeling and stress/audit evidence.
-16. Automation import follow-up：if the user has a newer local Windows copy of `ion-dex-autonomous-build.yml`, compare it against `.cursor/automations/ion-dex-autonomous-build.yml` before replacing the repository template.
+15. Next：continue UI correction route by first rebuilding the right-top Profile Hub from `.memory-bank/overall-design-framework.md`, while using `.memory-bank/security-audit-and-stress-framework.md` for wallet/session threat modeling and stress/audit evidence. Quote bug follow-up, if needed, is contract-level minimum-output enforcement once swap contracts/router exist.
 
 ## Memory MCP Candidates
 
