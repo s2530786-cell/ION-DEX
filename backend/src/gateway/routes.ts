@@ -93,7 +93,7 @@ export async function routeRequest(
               dataSources: listAdapterHealth(),
               database: getDatabaseHealth(),
             },
-            buildMeta(clock, requestId, "mock"),
+            buildMeta(clock, requestId, "local"),
           ),
         );
         return;
