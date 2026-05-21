@@ -32,6 +32,7 @@ Before working on this project, load and follow:
 - Before any implementation or UI claim, retrieve `.memory-bank/overall-design-framework.md`, `.memory-bank/live-data-reference.md`, `.memory-bank/implementation-playbook.md`, `.memory-bank/architecture-audit.md`, and `.memory-bank/ion-dex-nuke/official-source-index.md`; search Git history when current memory appears incomplete.
 - Before security-sensitive work, also retrieve `.memory-bank/security-audit-and-stress-framework.md`, read `docs/23-security-audit-and-stress-sandbox.md`, and run `node scripts/security-preflight.mjs` when shell access is available.
 - Before frontend/UI work, read `docs/10-ui-design-route.md` and run `node scripts/dev-preflight.mjs` when shell access is available.
+- After every frontend/UI task completes, deliver a UI visual self-audit report per `docs/11-ui-visual-self-audit-gate.md` (template: `docs/templates/ui-visual-self-audit-TEMPLATE.md`). Engineering verify green does not replace this report.
 - Never create UTF-16, GBK, ANSI, or BOM files.
 - Verify encoding after every file write.
 - Do not claim completion without build/test/lint/security evidence.

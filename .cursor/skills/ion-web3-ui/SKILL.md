@@ -41,6 +41,18 @@ Run the project verification flow:
 - Frontend verify: `npm run verify`
 - High audit: `npm run audit:high`
 
+### Mandatory UI visual self-audit (iron law)
+
+After **every** UI-related task completes (not optional):
+
+1. Read `docs/11-ui-visual-self-audit-gate.md`.
+2. Copy `docs/templates/ui-visual-self-audit-TEMPLATE.md` to `docs/ui-deliverable-self-audit-YYYY-MM-DD.md` (add scope suffix if needed).
+3. Fill **Part A: thinking process** and **Part B: gap audit** against reference screenshots and `.memory-bank/overall-design-framework.md`.
+4. State explicitly whether **engineering verify** and **visual design gate** passed (they can differ).
+5. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
+
+Example deliverable: `docs/ui-deliverable-self-audit-2026-05-21.md`.
+
 For feature continuation, the project gate is 100 full green verification runs via `scripts\verify-100.ps1`.
 
 ## E2E Expectations

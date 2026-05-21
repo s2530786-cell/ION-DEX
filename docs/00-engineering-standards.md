@@ -74,6 +74,21 @@
 - 首屏 FCP ≤ 1.5s，TTI ≤ 3s
 - 关键依赖懒加载（lightweight-charts、framer-motion 路由级 split）
 
+### 1.7 UI 视觉自检报告（铁律 · 2026-05-21）
+
+**每次 UI / 前端页面、布局、样式、玻璃组件相关工作完成后**，必须额外产出一份交付自检报告，**不得**用 `verify-full` / Playwright 绿灯代替。
+
+| 规则 | 强制等级 |
+|---|---|
+| 报告须对照用户/项目**成品参考图** + `docs/10-ui-design-route.md` + `.memory-bank/overall-design-framework.md` | 阻断 |
+| 报告须含 **思考过程** + **结构化差距矩阵** + **P0/P1/P2 整改路线** + **附件索引** | 阻断 |
+| 须明确区分 **工程验证通过** 与 **视觉门禁通过** | 阻断 |
+| 模板：`docs/templates/ui-visual-self-audit-TEMPLATE.md` | 必须 |
+| 铁律全文：`docs/11-ui-visual-self-audit-gate.md` | 必须 |
+| 示例：`docs/ui-deliverable-self-audit-2026-05-21.md` | 参考 |
+
+未提交报告 = UI 任务未完成 = 不得对用户宣称「UI 已按设计交付」。
+
 ---
 
 ## 2. 智能合约验收标准

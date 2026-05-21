@@ -11,3 +11,4 @@ alwaysApply: true
 - UI work must follow the locked direction: OKX Web3-inspired, dark blue/purple base, cyberpunk neon, glassmorphism, aurora/galaxy motion, thin refined neon borders, and responsive behavior at 375px, 768px, and 1440px.
 - Do not add new user-facing `shell`, `draft`, `TBD`, placeholder cards, or `Build Checklist` panels. Replace touched unfinished surfaces with product UI modules from the PRD.
 - After UI changes, run encoding, frontend verify, high audit, and the required full verification flow.
+- **Iron law (2026-05-21)**: After every UI task, deliver `docs/ui-deliverable-self-audit-YYYY-MM-DD.md` from `docs/templates/ui-visual-self-audit-TEMPLATE.md`, comparing reference design images and overall framework (`docs/11-ui-visual-self-audit-gate.md`). `verify-full` green does not replace this report.

@@ -51,7 +51,8 @@ Every implementation loop must follow this order:
 8. Verify states: cover default, hover/focus where practical, disabled, and real loading/error lifecycle states once data is introduced.
 9. Verify breakpoints: 375px, 768px, 1440px.
 10. Run project verification: encoding, frontend verify, audit high, and full verification when required.
-11. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
+11. **Mandatory UI visual self-audit report** (iron law): after UI work completes, write `docs/ui-deliverable-self-audit-YYYY-MM-DD.md` using `docs/templates/ui-visual-self-audit-TEMPLATE.md`. Compare rendered UI against reference images and `docs/11-ui-visual-self-audit-gate.md` + memory-bank framework. Engineering green does not pass the visual gate.
+12. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
 
 `scripts/verify-full.cmd`, `scripts/verify-full.ps1`, `scripts/agent-verify.cmd`, and `scripts/verify-full-save-log.cmd --no-pause` must run the preflight automatically.
 
@@ -117,6 +118,7 @@ bash scripts/agent-verify.sh
 
 A UI change is not acceptable unless it has:
 
+- **UI visual self-audit deliverable** per `docs/11-ui-visual-self-audit-gate.md` (thinking process + gap matrix + P0/P1/P2 plan + attachments).
 - Encoding verification evidence.
 - `frontend` build and Playwright evidence.
 - `npm run audit:high` evidence.
