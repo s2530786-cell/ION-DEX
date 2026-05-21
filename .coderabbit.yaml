@@ -1,82 +1,134 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# ION DEX — CodeRabbit 审查配置 (Master 钦定 2026-05-21)
 language: "en-US"
 early_access: true
+enable_free_tier: true
+tone_instructions: |
+  Direct and actionable. Each finding: severity + file:line + concrete fix diff.
+  DeFi security implications prioritized. Skip compliments.
+
+# ── PR 审查 ──
 reviews:
   profile: "assertive"
   request_changes_workflow: true
   high_level_summary: true
+  high_level_summary_in_walkthrough: true
   poem: false
   review_status: true
   review_details: true
   sequence_diagrams: true
+  changed_files_summary: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: true
+  suggested_reviewers: true
+  collapse_walkthrough: false
+  commit_status: true
+  enable_prompt_for_ai_agents: true
   auto_review:
     enabled: true
     drafts: true
+    auto_incremental_review: true
+  # ── 路径级指令 ──
   path_instructions:
-    # ── Smart Contracts (ION FunC) ──
     - path: "contracts/**/*.fc"
       instructions: |
         ION FunC smart contract review. Validate:
-        1. Reentrancy protection (check reserve/commit pattern)
-        2. Integer overflow/underflow (use safe math)
-        3. Access control (ensure only owner/admin can call privileged ops)
-        4. Gas optimization (minimize storage ops, loop bounds)
-        5. Message routing (op code handling, bounce handling)
-        6. ION-specific: sendBoc format, seqno management, validator interactions
+        1. Reentrancy protection (reserve/commit pattern)
+        2. Integer overflow/underflow (safe math)
+        3. Access control (owner/admin gating)
+        4. Gas optimization (storage ops, loop bounds)
+        5. Message routing (op codes, bounce handling)
+        6. ION-specific: sendBoc format, seqno, validator interactions
     - path: "contracts/**/*.sol"
       instructions: |
-        BSC Solidity smart contract review. Validate:
-        1. OpenZeppelin best practices (Ownable, ReentrancyGuard, Pausable)
-        2. Reentrancy attack vectors (CEI pattern)
-        3. Integer overflow (Solidity ^0.8.x auto-check)
-        4. Access control and role management
-        5. Flash loan attack resistance
-        6. Sandwich attack resistance
-        7. Oracle manipulation resistance
-        8. Gas optimization for BSC
-    # ── Backend Services ──
+        BSC Solidity smart contract review. Must flag:
+        1. Missing ReentrancyGuard / CEI violations
+        2. Integer overflow (Solidity ^0.8.x warnings)
+        3. Access control gaps (Ownable, roles)
+        4. Flash loan / sandwich / oracle manipulation vectors
+        5. Gas optimization for BSC
+        6. Missing events for state changes
+    - path: "frontend/**/*.{ts,tsx}"
+      instructions: |
+        Frontend React/TypeScript review:
+        1. ZERO mock/hardcoded prices — use live API hooks
+        2. Wallet order: ION Browser → Online+ → EVM wallets
+        3. Responsive mobile-first design
+        4. Glass morphism UI consistency
+        5. Error boundaries + loading states
+        6. UTF-8 encoding, no mojibake in Chinese text
     - path: "backend/**/*.ts"
       instructions: |
-        Backend TypeScript service review. Validate:
-        1. No mock/placeholder/hardcoded data — every endpoint must connect to real data sources
+        Backend TypeScript review:
+        1. ZERO mock/placeholder/TODO — every endpoint real
         2. Input validation for all API endpoints
-        3. Error handling (try/catch, proper error propagation)
-        4. Database connection management (always close, use connection pooling)
-        5. Rate limiting and DDoS protection
-        6. ION RPC calls: proxy required, network error handling
-        7. No secrets in code (use env vars)
-    # ── Frontend ──
-    - path: "frontend/**/*.tsx"
-      instructions: |
-        Frontend React/TypeScript review. Validate:
-        1. No hardcoded prices or mock data — use live API hooks
-        2. Wallet connection: ION Browser first, Online+ second, EVM third
-        3. Responsive design (mobile-first)
-        4. Glass morphism UI consistency (use existing NeonButton/GlassCard components)
-        5. Proper error boundaries and loading states
-        6. UTF-8 encoding (no 乱码 — Chinese text must be readable)
-    # ── Tests ──
+        3. DB connection management (always close, pool)
+        4. ION RPC: proxy required, network error handling
+        5. No secrets in code — env vars only
+        6. Rate limiting where applicable
     - path: "**/*.test.{ts,tsx}"
       instructions: |
-        Test file review. Validate:
-        1. Tests must actually test real functionality (no empty/pass-through tests)
-        2. Contract tests: 10 attack types × 100 passes each minimum
-        3. Integration tests: real RPC/mock RPC with proper fixtures
-        4. Frontend tests: user interaction flows, not just render checks
-  auto_incremental_review: true
-  collapse_details: false
-  enable_free_tier: true
-  tone_instructions: |
-    Be direct and actionable. Each finding must include:
-    - Severity (🔴Critical 🟠Major 🟡Minor ⚪Nit)
-    - File:line reference
-    - Concrete fix with code diff
-    - Security implication for DeFi contracts
-    Skip compliments — focus on what needs to be fixed.
+        Test files: verify real functionality, not skeleton. Contract tests
+        require 10 attack types × 100 passes each minimum. No empty tests.
+    # ION DEX 核心文件 (高优先级 + 套利算法专用)
+    - path: "frontend/src/pages/SwapPage.tsx"
+      instructions: |
+        Core swap page. Price impact MUST come from real pool reserves
+        (ionApi.ts), never hardcoded. Slippage calculation uses AMM curve.
+        Protocol fee deducted before min-received check.
+    - path: "frontend/src/wallet/**/*.ts"
+      instructions: |
+        Wallet layer: ION Browser first. Validation for recipient address
+        and amountNano before tx construction. isIonExtensionInstalled()
+        check for browser extension availability.
+    - path: "backend/src/db/**/*.ts"
+      instructions: |
+        Database layer: ION_DB_DRIVER must win over DATABASE_URL. Always
+        close connections (try/finally). No SQL injection via raw queries.
+  # ── 安全分析工具 ──
+  tools:
+    semgrep:
+      enabled: true
+    gitleaks:
+      enabled: true
+    trufflehog:
+      enabled: true
+    eslint:
+      enabled: true
+    oxc:
+      enabled: true
+    actionlint:
+      enabled: true
+    shellcheck:
+      enabled: true
+    markdownlint:
+      enabled: true
+  # ── 合入前检查 ──
+  pre_merge_checks:
+    description:
+      mode: "error"
+    title:
+      mode: "warning"
+      requirements: "Title must follow conventional-commits format: type(scope): description"
+    custom_checks:
+      - name: "No mock data in production paths"
+        instructions: |
+          Scan backend/src/services/ and frontend/src/pages/ for any mock,
+          placeholder, TODO, or hardcoded sample data. If found, FAIL.
+        mode: "error"
+
+# ── 对话 ──
 chat:
   auto_reply: true
+
+# ── 知识库 ──
 knowledge_base:
   learnings:
     scope: "repository"
   code_guidelines:
     scope: "repository"
+  web_search:
+    enabled: true
