@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, easeIn, easeInOut, easeOut, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const SPLASH_KEY = "ion-dex-splash-shown";
@@ -23,32 +23,32 @@ const auroraPulse = {
   transition: {
     duration: 4,
     repeat: Infinity,
-    ease: "easeInOut",
+    ease: easeInOut,
   },
 };
 
 const logoReveal = {
   initial: { scale: 0.3, opacity: 0, filter: "blur(20px)" },
   animate: { scale: 1, opacity: 1, filter: "blur(0px)" },
-  transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] as const },
 };
 
 const titleReveal = {
   initial: { y: 30, opacity: 0 },
   animate: { y: 0, opacity: 1 },
-  transition: { duration: 0.6, delay: 0.2, ease: "easeOut" },
+  transition: { duration: 0.6, delay: 0.2, ease: easeOut },
 };
 
 const subtitleReveal = {
   initial: { y: 20, opacity: 0 },
   animate: { y: 0, opacity: 1 },
-  transition: { duration: 0.5, delay: 0.35, ease: "easeOut" },
+  transition: { duration: 0.5, delay: 0.35, ease: easeOut },
 };
 
 const lineItem = (delay: number) => ({
   initial: { x: -20, opacity: 0 },
   animate: { x: 0, opacity: 1 },
-  transition: { duration: 0.4, delay, ease: "easeOut" },
+  transition: { duration: 0.4, delay, ease: easeOut },
 });
 
 interface SplashScreenProps {
@@ -59,7 +59,6 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
   const [phase, setPhase] = useState<"show" | "exit">("show");
 
   useEffect(() => {
-    // Auto-dismiss after 3.2s
     const timer = setTimeout(() => setPhase("exit"), 3200);
     return () => clearTimeout(timer);
   }, []);
@@ -71,7 +70,6 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
     }
   }, [phase, onComplete]);
 
-  // Mark shown so we never replay during this session
   useEffect(() => {
     try {
       sessionStorage.setItem(SPLASH_KEY, "1");
@@ -87,7 +85,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
           key="splash"
           className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: "easeIn" }}
+          transition={{ duration: 0.5, ease: easeIn }}
         >
           {/* ── Aurora background ── */}
           <div className="pointer-events-none absolute inset-0 bg-[#03050f]" />
@@ -102,7 +100,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
               scale: [1, 1.06, 1],
               opacity: [0.5, 0.7, 0.5],
             }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 5, repeat: Infinity, ease: easeInOut }}
           />
           {/* particle grid */}
           <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:radial-gradient(circle,rgba(255,255,255,0.9)_1px,transparent_1.2px)] [background-size:36px_36px]" />
@@ -156,7 +154,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
             <motion.div
               animate={{ opacity: [0.3, 0.7, 0.3], scaleX: [0.4, 1, 0.4] }}
               className="mt-2 h-[2px] w-64 rounded-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: easeInOut }}
             />
           </div>
         </motion.div>
