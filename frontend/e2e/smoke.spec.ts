@@ -10,7 +10,8 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("ticker-strip")).toBeVisible();
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
-    await expect(page.getByText("Professional Trading Surface")).toBeVisible();
+    await expect(page.getByTestId("swap-market-stage")).toBeVisible();
+    await expect(page.getByTestId("swap-panel")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeEnabled();
     await expect(page.getByTestId("profile-hub-trigger")).toBeVisible();

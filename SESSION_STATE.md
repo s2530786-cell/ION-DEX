@@ -208,7 +208,8 @@ Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official s
 19. TonConnect UI QR 模态（2026-05-20）：`@ion-gateway/ui-react` + `@ion-gateway/ui`；`IonConnectUiProvider` 共享 `getIonConnect()`；`IonConnectModalBridge` + `openIonConnectWalletModal()`；Profile Hub WalletConnect 优先应用内 QR，保留 universalLink 回退；`verify-full` 绿灯（backend 12、frontend 15、audit high 0）。
 20. Agent automatic workflow（2026-05-20）：`scripts/agent-workflow.mjs` + `scripts/agent-verify.sh`；开发前强制记忆库 preflight；`--tier verify --execute` 串联 `verify-full` 已绿灯。
 21. Minimum-output + liquid-glass desks 已落地并 `verify-full` 绿灯（2026-05-20）；见上条 Current State。
-22. Next：将 glass primitives 复用到 Dashboard/Trade 共享层；`burn-service` / `bridge-status-service` / `ai-market-service` 接线替换 local-seed；部署真实 AMM 并在 calldata 传入 `minimumReceivedUnits`；有 `forge` 的环境跑 `cd contracts && forge test`；重大里程碑后重跑 100-pass 门禁。
+22. Dashboard/Trade 玻璃层（2026-05-20）：`DashboardPage` 与 `TradeDeskPage` 统一玻璃 primitive；`GlassPanel.flowBorder`；Playwright `channel: chrome`；`verify-full` 绿灯（frontend **16** Playwright）。
+23. Next：`burn-service` / `bridge-status-service` / `ai-market-service` 接线替换 local-seed；`ProfileHub` 玻璃化；`lightweight-charts` 真实 K 线；部署 AMM + calldata `minimumReceivedUnits`；重大里程碑后 100-pass 门禁。
 
 ## Memory MCP Candidates
 

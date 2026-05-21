@@ -1102,64 +1102,55 @@ function AIMarketPanel() {
 }
 
 function TradeDeskPage() {
+  const config = pageConfigs.trade;
+  const heroMetrics = tradeStats.map((stat, index) => ({
+    label: stat.label,
+    value: stat.value,
+    tone: (index === 0 ? "emerald" : index === 1 ? "cyan" : index === 2 ? "magenta" : "gold") as
+      | "cyan"
+      | "magenta"
+      | "gold"
+      | "emerald",
+    testId: `trade-metric-${stat.label.replace(/\s+/g, "-").toLowerCase()}`,
+  }));
+
   return (
     <div className="grid gap-5" data-testid="page-trade">
-      <NeonCard variant="mixed">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
-              Professional Trading
-            </p>
-            <h1 className="mt-3 text-4xl font-black text-white sm:text-6xl" data-testid="page-title">
-              ION spot order desk
-            </h1>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-cyan-100/68">
-              BNB / ION professional trading surface with depth, live tape, limit controls, wallet review, and ION fee visibility.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-4 lg:min-w-[34rem]">
-            {tradeStats.map((stat) => (
-              <div key={stat.label} className="glass-surface rounded-2xl px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/45">{stat.label}</p>
-                <p className={`mt-2 text-xl font-black ${stat.tone}`}>{stat.value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </NeonCard>
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={heroMetrics}
+        title={config.title}
+      />
 
       <div className="grid gap-5 xl:grid-cols-[1fr_24rem]">
         <div className="grid gap-5">
-          <div className="flow-border rounded-[2rem] p-px" data-testid="trade-chart">
-            <div className="glass-surface depth-stage relative min-h-[28rem] overflow-hidden rounded-[2rem] p-5">
-              <div className="absolute inset-0 aurora-noise opacity-70" />
-              <div className="absolute left-1/2 top-1/2 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_220deg,rgba(36,247,255,0.24),transparent_28%,rgba(255,59,212,0.3),transparent_58%,rgba(255,209,102,0.16),transparent_82%)] blur-3xl" />
-              <div className="relative z-10 flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">BNB / ION</p>
-                  <p className="mt-1 text-3xl font-black text-white">6.024</p>
-                </div>
-                <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-2 text-xs font-black text-emerald-100">
-                  TWAP guard active
-                </span>
-              </div>
-              <div className="float-3d relative z-10 mt-8 h-72 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-5 shadow-[0_35px_90px_rgba(36,247,255,0.13)]">
-                <div className="absolute inset-x-6 top-1/4 h-px bg-cyan-100/10" />
-                <div className="absolute inset-x-6 top-1/2 h-px bg-cyan-100/10" />
-                <div className="absolute inset-x-6 top-3/4 h-px bg-cyan-100/10" />
-                <div className="relative flex h-full items-end gap-2">
-                  {tradeCandles.map((candle, index) => (
-                    <div key={index} className="flex flex-1 items-end justify-center">
-                      <span
-                        className={`w-full max-w-[0.55rem] rounded-full ${candle.tone} shadow-[0_0_16px_currentColor]`}
-                        style={{ height: candle.height, marginBottom: candle.offset }}
-                      />
-                    </div>
-                  ))}
-                </div>
+          <ChartFrame
+            badge={
+              <StatusPill label="TWAP guard active" testId="trade-twap-guard" tone="emerald" />
+            }
+            minHeightClass="min-h-[28rem]"
+            subtitle="6.024"
+            testId="trade-chart"
+            title="BNB / ION"
+          >
+            <div className="relative float-3d h-72 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-5 shadow-[0_35px_90px_rgba(36,247,255,0.13)]">
+              <div className="absolute inset-x-6 top-1/4 h-px bg-cyan-100/10" />
+              <div className="absolute inset-x-6 top-1/2 h-px bg-cyan-100/10" />
+              <div className="absolute inset-x-6 top-3/4 h-px bg-cyan-100/10" />
+              <div className="relative flex h-full items-end gap-2">
+                {tradeCandles.map((candle, index) => (
+                  <div key={index} className="flex flex-1 items-end justify-center">
+                    <span
+                      className={`w-full max-w-[0.55rem] rounded-full ${candle.tone} shadow-[0_0_16px_currentColor]`}
+                      style={{ height: candle.height, marginBottom: candle.offset }}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          </ChartFrame>
 
           <div className="grid gap-5 lg:grid-cols-2">
             <MarketTape />
@@ -1168,12 +1159,9 @@ function TradeDeskPage() {
         </div>
 
         <div className="grid gap-5">
-          <NeonCard variant="magenta">
-            <p className="mb-4 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">
-              Limit order
-            </p>
+          <GlassPanel eyebrow="Order entry" flowBorder testId="trade-limit-order" title="Limit order">
             <TradeOrderPanel />
-          </NeonCard>
+          </GlassPanel>
           <OrderBookPanel />
         </div>
       </div>
@@ -1183,9 +1171,8 @@ function TradeDeskPage() {
 
 function OrderBookPanel() {
   return (
-    <NeonCard variant="cyan">
-      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Order book</p>
-      <div className="mt-4 grid gap-2" data-testid="trade-orderbook">
+    <GlassPanel eyebrow="Depth" testId="trade-orderbook-panel" title="Order book">
+      <div className="grid gap-2" data-testid="trade-orderbook">
         {tradeOrderBook.map((row) => (
           <div key={`${row.side}-${row.price}`} className="relative overflow-hidden rounded-2xl bg-white/[0.04] px-4 py-3">
             <span
@@ -1200,15 +1187,14 @@ function OrderBookPanel() {
           </div>
         ))}
       </div>
-    </NeonCard>
+    </GlassPanel>
   );
 }
 
 function MarketTape() {
   return (
-    <NeonCard variant="cyan">
-      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Market trades</p>
-      <div className="mt-4 grid gap-3" data-testid="trade-market-trades">
+    <GlassPanel eyebrow="Tape" testId="trade-market-trades-panel" title="Market trades">
+      <div className="grid gap-3" data-testid="trade-market-trades">
         {marketTrades.map(([price, amount, side]) => (
           <div key={`${price}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">
             <span className={side === "Buy" ? "font-black text-emerald-200" : "font-black text-rose-200"}>{price}</span>
@@ -1217,15 +1203,14 @@ function MarketTape() {
           </div>
         ))}
       </div>
-    </NeonCard>
+    </GlassPanel>
   );
 }
 
 function OrderHistoryPanel() {
   return (
-    <NeonCard variant="gold">
-      <p className="text-sm uppercase tracking-[0.28em] text-amber-200/70">Orders and risk</p>
-      <div className="mt-4 grid gap-3" data-testid="trade-history">
+    <GlassPanel eyebrow="Risk" testId="trade-history-panel" title="Orders and risk">
+      <div className="grid gap-3" data-testid="trade-history">
         {orderHistory.map(([kind, amount, status]) => (
           <div key={`${kind}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">
             <span className="font-black text-white">{kind}</span>
@@ -1234,7 +1219,7 @@ function OrderHistoryPanel() {
           </div>
         ))}
       </div>
-    </NeonCard>
+    </GlassPanel>
   );
 }
 

@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { PageKey } from "@/components/layout/AppShell";
 import { fetchTradeQuote, type TradeQuote } from "@/lib/ionApi";
 import { NeonButton } from "@/components/ui/NeonButton";
-import { NeonCard } from "@/components/ui/NeonCard";
+import { ChartFrame, GlassPanel, MetricTile } from "@/components/ui/glass";
 
 type FeatureCard = {
   title: string;
@@ -51,7 +51,7 @@ const orderBook = [
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
   return (
-    <div className="grid gap-5 xl:grid-cols-[22rem_1fr_19rem]">
+    <div className="grid gap-5 xl:grid-cols-[22rem_1fr_19rem]" data-testid="page-swap">
       <SwapPanel />
       <MarketStage />
       <RightStats />
@@ -84,15 +84,16 @@ function SwapPanel() {
     if (!inputValid) {
       setQuote(null);
       setQuoteState("error");
-      return undefined;
+      return;
     }
+
     const controller = new AbortController();
     setQuoteState("loading");
     fetchTradeQuote(
       {
-        amountIn: payAmount,
         inputToken: "BNB",
         outputToken: "ION",
+        amountIn: payAmount,
         slippageBps,
       },
       controller.signal,
@@ -110,17 +111,15 @@ function SwapPanel() {
   }, [inputValid, payAmount, slippageBps]);
 
   return (
-    <NeonCard className="depth-stage min-h-[31rem]" variant="magenta">
-      <div className="mb-5 flex items-center justify-between">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.28em] text-fuchsia-200/75">
-            swap.ion
-          </p>
-          <p className="mt-2 text-3xl font-black">ION Chain Swap</p>
-          <p className="text-sm text-cyan-100/60">Native route for BNB / ION execution</p>
-        </div>
-        <ArrowDownUp className="text-cyan-200" />
-      </div>
+    <GlassPanel
+      className="depth-stage min-h-[31rem]"
+      eyebrow="swap.ion"
+      flowBorder
+      testId="swap-panel"
+      title="ION Chain Swap"
+      action={<ArrowDownUp className="text-cyan-200" />}
+    >
+      <p className="-mt-2 mb-4 text-sm text-cyan-100/60">Native route for BNB / ION execution</p>
 
       <div className="flow-border mb-4 flex items-center justify-between rounded-3xl p-px">
         <div className="glass-surface flex w-full items-center justify-between rounded-3xl p-3">
@@ -145,10 +144,12 @@ function SwapPanel() {
       <div className="mt-5 grid gap-2 rounded-3xl border border-cyan-300/20 bg-cyan-300/[0.05] p-4 text-xs text-cyan-100/75 backdrop-blur-xl">
         <QuoteRow
           label="Minimum received"
+          testId="swap-min-received"
           value={quoteState === "ready" && quote ? `${quote.minimumReceived} ION` : "Waiting for quote"}
         />
         <QuoteRow
           label="Protocol fee"
+          testId="swap-protocol-fee"
           value={quoteState === "ready" && quote ? `${quote.protocolFee} ION (${quote.protocolFeeBps} bps)` : "Waiting for quote"}
         />
         <QuoteRow label="Price impact" value={quoteState === "ready" && quote ? `${quote.priceImpactBps} bps` : "Waiting for quote"} />
@@ -165,82 +166,75 @@ function SwapPanel() {
       <NeonButton className="mt-5 w-full" data-testid="swap-submit" disabled={quoteState !== "ready" || !quote} type="button">
         Review ION Swap
       </NeonButton>
-    </NeonCard>
+    </GlassPanel>
   );
 }
 
 function MarketStage() {
   return (
-    <NeonCard className="depth-stage min-h-[31rem]" variant="cyan">
-      <div className="flex h-full flex-col gap-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
-              Professional Trading Surface
-            </p>
-            <h1 className="mt-2 text-3xl font-black text-white sm:text-5xl">
-              swap.ion <span className="text-glow-magenta text-fuchsia-300">Galaxy</span>
-            </h1>
-          </div>
-          <Sparkles className="text-cyan-200" />
-        </div>
-
-        <div className="relative min-h-[22rem] flex-1 overflow-hidden rounded-[1.8rem] border border-cyan-200/20 bg-[#03050f]/70 shadow-[0_35px_90px_rgba(0,0,0,0.42)]">
-          <div className="absolute inset-0 aurora-noise opacity-80" />
-          <div className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_20deg,rgba(36,247,255,0.1),rgba(255,59,212,0.28),rgba(141,77,255,0.18),rgba(36,247,255,0.1))] blur-2xl [animation:ionSpinSlow_160s_linear_infinite]" />
-          <div className="absolute inset-x-4 top-4 grid grid-cols-1 gap-3 sm:inset-x-8 sm:top-8 sm:grid-cols-3">
-            {depthRows.map((row) => (
-              <div key={row.label} className="glass-surface rounded-2xl px-4 py-3">
-                <p className="text-xs text-cyan-100/55">{row.label}</p>
-                <p className="mt-1 text-xl font-black">{row.price}</p>
-                <p className={`text-xs font-bold ${row.tone}`}>{row.change}</p>
-              </div>
-            ))}
-          </div>
-          <div className="float-3d absolute bottom-8 left-5 right-5 h-48 rounded-[2rem] border border-fuchsia-300/20 bg-slate-950/55 p-5 shadow-[0_28px_80px_rgba(255,59,212,0.18)] backdrop-blur-2xl sm:left-8 sm:right-8">
-            <div className="absolute inset-x-8 top-1/2 h-px bg-cyan-200/20" />
-            <div className="relative flex h-full items-end gap-2">
-              {Array.from({ length: 42 }).map((_, index) => {
-                const height = 34 + ((index * 29) % 128);
-                const magenta = index % 5 === 0;
-                return (
-                  <div key={index} className="flex flex-1 items-end justify-center">
-                    <div
-                      className={`w-full max-w-[0.65rem] rounded-full ${
-                        magenta ? "bg-fuchsia-400" : "bg-cyan-300"
-                      } shadow-[0_0_16px_currentColor]`}
-                      style={{ height }}
-                    />
-                  </div>
-                );
-              })}
+    <ChartFrame
+      badge={
+        <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-2 text-xs font-bold text-emerald-100">
+          Route health: liquid
+        </span>
+      }
+      minHeightClass="min-h-[31rem]"
+      subtitle="Galaxy market surface"
+      testId="swap-market-stage"
+      title="swap.ion"
+    >
+      <div className="relative min-h-[22rem] overflow-hidden rounded-[1.8rem] border border-cyan-200/20 bg-[#03050f]/70 shadow-[0_35px_90px_rgba(0,0,0,0.42)]">
+        <div className="absolute inset-0 aurora-noise opacity-80" />
+        <div className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_20deg,rgba(36,247,255,0.1),rgba(255,59,212,0.28),rgba(141,77,255,0.18),rgba(36,247,255,0.1))] blur-2xl [animation:ionSpinSlow_160s_linear_infinite]" />
+        <div className="absolute inset-x-4 top-4 grid grid-cols-1 gap-3 sm:inset-x-8 sm:top-8 sm:grid-cols-3">
+          {depthRows.map((row) => (
+            <div key={row.label} className="glass-surface rounded-2xl px-4 py-3">
+              <p className="text-xs text-cyan-100/55">{row.label}</p>
+              <p className="mt-1 text-xl font-black">{row.price}</p>
+              <p className={`text-xs font-bold ${row.tone}`}>{row.change}</p>
             </div>
-          </div>
-          <p className="absolute bottom-6 left-6 rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-2 text-xs font-bold text-emerald-100">
-            Route health: liquid / slippage guard active
-          </p>
+          ))}
         </div>
+        <div className="float-3d absolute bottom-8 left-5 right-5 h-48 rounded-[2rem] border border-fuchsia-300/20 bg-slate-950/55 p-5 shadow-[0_28px_80px_rgba(255,59,212,0.18)] backdrop-blur-2xl sm:left-8 sm:right-8">
+          <div className="absolute inset-x-8 top-1/2 h-px bg-cyan-200/20" />
+          <div className="relative flex h-full items-end gap-2">
+            {Array.from({ length: 42 }).map((_, index) => {
+              const height = 34 + ((index * 29) % 128);
+              const magenta = index % 5 === 0;
+              return (
+                <div key={index} className="flex flex-1 items-end justify-center">
+                  <div
+                    className={`w-full max-w-[0.65rem] rounded-full ${
+                      magenta ? "bg-fuchsia-400" : "bg-cyan-300"
+                    } shadow-[0_0_16px_currentColor]`}
+                    style={{ height }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <p className="absolute bottom-6 left-6 rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-2 text-xs font-bold text-emerald-100">
+          Slippage guard active
+        </p>
       </div>
-    </NeonCard>
+    </ChartFrame>
   );
 }
 
 function RightStats() {
   return (
     <div className="grid gap-5">
-      <NeonCard variant="cyan">
-        <p className="text-sm text-cyan-100/55">Native liquidity</p>
-        <p className="mt-1 text-3xl font-black">$1,234,567</p>
-        <p className="mt-1 text-xs text-emerald-300">+12.8% weekly depth</p>
-      </NeonCard>
-      <NeonCard variant="magenta">
-        <p className="text-sm text-cyan-100/55">Swap protection</p>
-        <p className="mt-1 text-3xl font-black">0.24%</p>
-        <p className="mt-1 text-xs text-cyan-200">current price impact</p>
-      </NeonCard>
-      <NeonCard variant="gold">
-        <p className="text-sm text-cyan-100/55">Order book</p>
-        <div className="mt-3 grid gap-2 text-xs">
+      <GlassPanel testId="swap-stat-liquidity" title="Native liquidity">
+        <MetricTile label="TVL" tone="cyan" value="$1,234,567" />
+        <p className="mt-2 text-xs text-emerald-300">+12.8% weekly depth</p>
+      </GlassPanel>
+      <GlassPanel testId="swap-stat-protection" title="Swap protection">
+        <MetricTile label="Price impact" tone="magenta" value="0.24%" />
+        <p className="mt-2 text-xs text-cyan-200">current route impact</p>
+      </GlassPanel>
+      <GlassPanel eyebrow="Depth" testId="swap-orderbook" title="Order book">
+        <div className="grid gap-2 text-xs">
           {orderBook.map(([price, size, depth]) => (
             <div key={price} className="relative overflow-hidden rounded-xl bg-white/[0.04] px-3 py-2">
               <span
@@ -254,14 +248,14 @@ function RightStats() {
             </div>
           ))}
         </div>
-      </NeonCard>
+      </GlassPanel>
     </div>
   );
 }
 
 function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6" data-testid="swap-feature-grid">
       {featureCards.map((card) => {
         const Icon = card.icon;
         return (
@@ -272,9 +266,9 @@ function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
             onClick={() => onNavigate(card.page)}
             type="button"
           >
-            <NeonCard variant={card.color} className="min-h-[11rem] transition group-hover:-translate-y-1">
+            <GlassPanel className="min-h-[11rem] transition group-hover:-translate-y-1" flowBorder testId={`feature-card-${card.page}`}>
               <div className="flex h-full flex-col justify-between gap-5">
-                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.07] text-cyan-200 shadow-neonCyan">
+                <div className="float-3d grid h-14 w-14 place-items-center rounded-2xl border border-cyan-200/20 bg-white/[0.07] text-cyan-200 shadow-neonCyan">
                   <Icon size={28} />
                 </div>
                 <div>
@@ -282,7 +276,7 @@ function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
                   <p className="text-sm text-cyan-100/55">{card.label}</p>
                 </div>
               </div>
-            </NeonCard>
+            </GlassPanel>
           </button>
         );
       })}

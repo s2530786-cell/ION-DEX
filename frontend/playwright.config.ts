@@ -12,6 +12,8 @@ export default defineConfig({
   use: {
     baseURL: previewBaseUrl,
     trace: "on-first-retry",
+    // Prefer system Chrome when Playwright browser cache is unavailable (cloud agents).
+    channel: process.env.PLAYWRIGHT_CHANNEL ?? "chrome",
   },
   projects: [
     {

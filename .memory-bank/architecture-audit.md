@@ -22,8 +22,8 @@ Implementation memory:
 
 - `frontend/src/components/background/AuroraGalaxyBackground.tsx` owns the Canvas particle field.
 - `frontend/src/styles/global.css` owns shared `glass-surface`, `flow-border`, `depth-stage`, and `float-3d` utilities.
-- `frontend/src/pages/DashboardPage.tsx` is the `swap.ion` landing and swap surface.
-- `frontend/src/pages/BusinessPages.tsx` renders `TradeDeskPage` as the professional `Trade` surface with market chart, order book, market trades, order history/risk, and wallet-gated limit order review.
+- `frontend/src/pages/DashboardPage.tsx` is the `swap.ion` landing and swap surface (uses shared `GlassPanel` / `ChartFrame` / `MetricTile` from `frontend/src/components/ui/glass/`).
+- `frontend/src/pages/BusinessPages.tsx` renders `TradeDeskPage` as the professional `Trade` surface (`PageHero`, `ChartFrame`, `GlassPanel` modules) with market chart, order book, market trades, order history/risk, and wallet-gated limit order review.
 - `scripts/dev-preflight.mjs` scans frontend source for unfinished UI copy and can fail under `ION_UI_STRICT=1`.
 
 ## 2026-05-20 Trade desk continuation
