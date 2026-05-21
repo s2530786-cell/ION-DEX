@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
 import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
 import type { BusinessPageKey } from "@/pages/BusinessPages";
+import { shouldShowSplash, SplashScreen } from "@/components/SplashScreen";
 
 const DashboardPage = lazy(() =>
   import("@/pages/DashboardPage").then((m) => ({ default: m.DashboardPage })),
@@ -55,6 +56,9 @@ function PageRouter({
 
 export function App() {
   const [activePage, setActivePage] = useState<PageKey>(() => pageKeyFromHash());
+  const [splashDone, setSplashDone] = useState(false);
+
+  const showSplash = useMemo(() => shouldShowSplash(), []);
 
   const navigate = useCallback((page: PageKey) => {
     setActivePage(page);
@@ -66,6 +70,10 @@ export function App() {
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
+
+  if (showSplash && !splashDone) {
+    return <SplashScreen onComplete={() => setSplashDone(true)} />;
+  }
 
   return (
     <AppShell activePage={activePage} onPageChange={navigate}>

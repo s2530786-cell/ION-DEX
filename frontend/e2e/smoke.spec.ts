@@ -34,6 +34,11 @@ async function expectIonBrand(page: Page) {
 }
 
 test.describe("ION DEX smoke", () => {
+  test.beforeEach(async ({ page }) => {
+    // Skip splash screen in tests (fresh browser context each run)
+    await page.addInitScript(() => sessionStorage.setItem("ion-dex-splash-shown", "1"));
+  });
+
   test("home page shows key sections and controls", async ({ page }) => {
     await page.goto("/");
 
