@@ -73,9 +73,14 @@ export async function connectIonExtensionWallet(): Promise<string> {
     );
   }
 
+  const send = window.ton.send;
+  if (!send) {
+    throw new Error("ION 扩展未暴露 ton_requestAccounts 接口。");
+  }
+
   let response: unknown;
   try {
-    response = await window.ton.send("ton_requestAccounts");
+    response = await send("ton_requestAccounts");
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(`用户拒绝连接或扩展报错：${message}`);
@@ -90,10 +95,11 @@ export async function connectIonExtensionWallet(): Promise<string> {
 
 export async function readIonExtensionBalance(address: string): Promise<string> {
   const ton = window.ton;
-  if (!ton) {
+  const send = ton?.send;
+  if (!ton || !send) {
     throw new Error("ION extension not available");
   }
-  const response = await ton.send("ton_getBalance", [address]);
+  const response = await send("ton_getBalance", [address]);
   if (typeof response === "string" || typeof response === "number") {
     return String(response);
   }
@@ -107,7 +113,7 @@ export function subscribeIonExtensionAccounts(
   onAddress: (address: string | null) => void,
   onDisconnect: () => void,
 ): (() => void) | null {
-  const ton: TonProviderLike | undefined = window.ton;
+  const ton = window.ton;
   if (!ton?.on) {
     return null;
   }

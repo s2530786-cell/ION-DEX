@@ -89,19 +89,22 @@ const backendBuild = spawnSync(npmCommand, ["run", "build"], {
 if (backendBuild.status !== 0) {
   throw new Error(`Backend build failed with ${backendBuild.status}`);
 }
-async function backendHasProfileRoute() {
+async function backendReadyForE2e() {
   try {
-    const response = await fetch("http://127.0.0.1:8787/api/profile/session");
-    return response.ok;
+    const [profile, staking] = await Promise.all([
+      fetch("http://127.0.0.1:8787/api/profile/session"),
+      fetch("http://127.0.0.1:8787/api/staking/summary"),
+    ]);
+    return profile.ok && staking.ok;
   } catch {
     return false;
   }
 }
 
 const backendPortOpen = await isTcpOpen(8787);
-let backendAlreadyRunning = backendPortOpen && (await backendHasProfileRoute());
+let backendAlreadyRunning = backendPortOpen && (await backendReadyForE2e());
 if (backendPortOpen && !backendAlreadyRunning) {
-  console.warn("Stale backend on :8787 missing /api/profile/session — restarting gateway.");
+  console.warn("Stale backend on :8787 is not E2E-ready (test-mock staking/profile) — restarting gateway.");
   if (process.platform === "win32") {
     spawnSync("cmd.exe", ["/d", "/c", "for /f \"tokens=5\" %a in ('netstat -ano ^| findstr :8787') do taskkill /PID %a /F"], {
       stdio: "ignore",
@@ -119,6 +122,8 @@ const backend = backendAlreadyRunning
       cwd: backendDir,
       env: {
         ...process.env,
+        NODE_ENV: "test",
+        ION_DATA_MODE: "test-mock",
         BACKEND_PORT: "8787",
       },
       stdio: "inherit",

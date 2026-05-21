@@ -26,6 +26,7 @@ const apiErrorCodes = {
   notFound: "ION_DEX_E_GATEWAY_NOT_FOUND",
   missingDomainName: "ION_DEX_E_DOMAIN_NAME_REQUIRED",
   invalidDomainName: "ION_DEX_E_DOMAIN_NAME_INVALID",
+  invalidQuoteRequest: "ION_DEX_E_INVALID_QUOTE_REQUEST",
 } as const;
 
 let server: Server;
@@ -217,7 +218,7 @@ describe("ION DEX API gateway", () => {
     }>;
 
     assert.equal(response.status, 200);
-    assert.equal(response.body.meta.source, "mock");
+    assert.equal(response.body.meta.source, "local");
     assert.equal(response.body.meta.adapter, "market");
     assert.equal(response.body.meta.cacheHit, false);
     assert.ok(data.length >= 4);
@@ -230,7 +231,7 @@ describe("ION DEX API gateway", () => {
     const first = await requestJson("/api/markets/tickers");
     const second = await requestJson("/api/markets/tickers");
 
-    assert.equal(first.body.meta.source, "mock");
+    assert.equal(first.body.meta.source, "local");
     assert.equal(second.body.meta.source, "cache");
     assert.equal(second.body.meta.cacheHit, true);
     assert.equal(second.body.meta.adapter, "market");
@@ -246,7 +247,7 @@ describe("ION DEX API gateway", () => {
     };
 
     assert.equal(response.status, 200);
-    assert.equal(response.body.meta.source, "mock");
+    assert.equal(response.body.meta.source, "local");
     assert.equal(response.body.meta.adapter, "burn");
     assert.ok(Number(data.totalBurnedIon) > 0);
     assert.equal(data.bscBurnAddress, "0x000000000000000000000000000000000000dEaD");
@@ -353,7 +354,7 @@ describe("ION DEX API gateway", () => {
     const response = await requestJson("/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=900");
 
     assert.equal(response.status, 400);
-    assert.equal(response.body.error?.code, "invalid_quote_request");
+    assert.equal(response.body.error?.code, apiErrorCodes.invalidQuoteRequest);
     assert.match(response.body.error?.message ?? "", /slippageBps/);
   });
 
@@ -413,7 +414,7 @@ describe("ION DEX API gateway", () => {
     const response = await requestJson("/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=900");
 
     assert.equal(response.status, 400);
-    assert.equal(response.body.error?.code, "invalid_quote_request");
+    assert.equal(response.body.error?.code, apiErrorCodes.invalidQuoteRequest);
     assert.match(response.body.error?.message ?? "", /slippageBps/);
   });
 

@@ -26,14 +26,4 @@ export type IonWalletSnapshot = {
   network: string;
 };
 
-declare global {
-  interface Window {
-    ton?: TonProviderLike;
-    tonwallet?: {
-      provider?: TonProviderLike;
-      tonconnect?: TonConnectBridgeLike;
-    };
-    tonProtocolVersion?: number;
-    okxwallet?: { request?: (args: { method: string; params?: unknown[] }) => Promise<unknown> };
-  }
-}
+/** Window globals for ION/Ton providers are declared in src/vite-env.d.ts */

@@ -2,6 +2,8 @@ import {
   ArrowLeftRight,
   BarChart3,
   Bot,
+  Coins,
+  Droplets,
   Flame,
   Globe2,
   LayoutGrid,
@@ -1451,6 +1453,18 @@ const gridLogs = [
   ["Sentinel", "No MEV flag", "1h ago"],
 ] as const;
 
+const marketTrades = [
+  ["6.12 ION", "1.2 BNB", "Buy"],
+  ["6.08 ION", "0.8 BNB", "Sell"],
+  ["6.15 ION", "2.1 BNB", "Buy"],
+] as const;
+
+const orderHistory = [
+  ["Limit · BNB/ION", "1.5 BNB", "Open"],
+  ["Market · BNB/ION", "0.4 BNB", "Filled"],
+  ["Stop · BNB/ION", "0.9 BNB", "Cancelled"],
+] as const;
+
 const poolRows = [
   { pair: "BNB / ION", tvl: "$1.23M", volume: "$412K", apr: "24.8%" },
   { pair: "ION / USDT", tvl: "$640K", volume: "$188K", apr: "19.2%" },
@@ -1551,7 +1565,17 @@ function GridDeskPage() {
 }
 
 function PoolDeskPage() {
-  const config = pageConfigs.pool;
+  const config = {
+    eyebrow: "Liquidity",
+    title: "ION liquidity pools",
+    description: "Pool desk for LP positions, fee accrual, and add/remove liquidity flows.",
+    icon: Droplets,
+    metrics: [
+      { label: "Pairs", value: "BNB / ION", tone: "cyan" as const },
+      { label: "TVL", value: "$1.23M", tone: "gold" as const },
+      { label: "APR", value: "24.8%", tone: "magenta" as const },
+    ],
+  };
   return (
     <div className="grid gap-5" data-testid="page-pool">
       <PageHero
@@ -1761,7 +1785,17 @@ function AIDeskPage() {
 }
 
 function StakeDeskPage() {
-  const config = pageConfigs.stake;
+  const config = {
+    eyebrow: "Staking",
+    title: "ION staking hub",
+    description: "Stake ION for DEX rewards, lock tiers, and claimable yield with wallet-aware flows.",
+    icon: Coins,
+    metrics: [
+      { label: "APR", value: "18.4%", tone: "gold" as const },
+      { label: "Lock", value: "90d tier", tone: "cyan" as const },
+      { label: "Rewards", value: "ION", tone: "magenta" as const },
+    ],
+  };
   return (
     <div className="grid gap-5" data-testid="page-stake">
       <PageHero

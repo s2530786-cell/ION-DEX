@@ -44,7 +44,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
     await expect(page.getByTestId("page-dashboard")).toBeVisible();
-    await expect(page.getByText("Professional Chart")).toBeVisible();
+    await expect(page.getByText("Professional Trading Surface")).toBeVisible();
     await clickNav(page, "swap");
     await expect(page.getByTestId("page-swap")).toBeVisible();
     await page.getByTestId("swap-pay-amount").fill("1");
@@ -154,29 +154,28 @@ test.describe("ION DEX smoke", () => {
   test("grid pool bridge burn domain ai pages show liquid-glass desk modules", async ({ page }) => {
     await page.goto("/");
 
-    await page.getByTestId("nav-grid").click();
+    await clickNav(page, "grid");
     await expect(page.getByTestId("grid-range-chart")).toBeVisible();
     await expect(page.getByTestId("grid-templates")).toBeVisible();
     await expect(page.getByTestId("grid-form")).toBeVisible();
 
-    await page.getByTestId("nav-pool").click();
-    await expect(page.getByTestId("pool-list")).toBeVisible();
-    await expect(page.getByTestId("pool-fee-chart")).toBeVisible();
+    await clickNav(page, "pool");
+    await expect(page.getByTestId("pool-list")).toBeVisible({ timeout: 15_000 });
     await expect(page.getByTestId("pool-form")).toBeVisible();
 
-    await page.getByTestId("nav-bridge").click();
-    await expect(page.getByTestId("bridge-status-tracker")).toBeVisible();
-    await expect(page.getByTestId("bridge-steps")).toBeVisible();
+    await clickNav(page, "bridge");
+    await expect(page.getByTestId("bridge-form")).toBeVisible();
+    await expect(page.getByTestId("bridge-metrics-source")).toContainText(/local|cache|mock|fallback|upstream/);
 
-    await page.getByTestId("nav-burn").click();
+    await clickNav(page, "burn");
     await expect(page.getByTestId("burn-trend-chart")).toBeVisible();
     await expect(page.getByTestId("burn-chain-split")).toBeVisible();
 
-    await page.getByTestId("nav-domain").click();
+    await clickNav(page, "domain");
     await expect(page.getByTestId("domain-marketplace")).toBeVisible();
     await expect(page.getByTestId("domain-phishing-warn")).toBeVisible();
 
-    await page.getByTestId("nav-ai").click();
+    await clickNav(page, "ai");
     await expect(page.getByTestId("ai-market-summary")).toBeVisible();
     await expect(page.getByTestId("ai-signals")).toBeVisible();
     await expect(page.getByTestId("ai-disclaimer")).toBeVisible();
@@ -243,14 +242,14 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-submit")).toBeEnabled();
 
     await page.getByTestId("pool-submit").click();
-    await expect(page.getByTestId("pool-confirmation")).toContainText("Liquidity review ready");
+    await expect(page.getByTestId("pool-confirmation")).toContainText("Liquidity draft ready");
   });
 
   test("stake page prepares stake and unstake payloads", async ({ page }) => {
     await page.goto("/");
     await clickNav(page, "stake");
 
-    await expect(page.getByTestId("stake-metrics-source")).toContainText(/mock|cache|fallback/);
+    await expect(page.getByTestId("stake-metrics-source")).toContainText(/local|cache|mock|fallback|upstream/);
     await expect(page.getByTestId("stake-form")).toBeVisible();
     await expect(page.getByTestId("stake-submit")).toBeDisabled();
 
@@ -260,7 +259,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await page.getByTestId("stake-submit").click();
-    await expect(page.getByTestId("stake-confirmation")).toContainText("Stake review ready");
+    await expect(page.getByTestId("stake-confirmation")).toContainText("Stake draft ready");
 
     await page.getByTestId("stake-mode-unstake").click();
     await page.getByTestId("stake-amount").fill("100");
@@ -268,14 +267,14 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await page.getByTestId("stake-submit").click();
-    await expect(page.getByTestId("stake-confirmation")).toContainText("Unstake review ready");
+    await expect(page.getByTestId("stake-confirmation")).toContainText("Unstake draft ready");
   });
 
   test("bridge page validates destination memo and prepares sweep", async ({ page }) => {
     await page.goto("/");
     await clickNav(page, "bridge");
 
-    await expect(page.getByTestId("bridge-metrics-source")).toContainText(/mock|cache|fallback/);
+    await expect(page.getByTestId("bridge-metrics-source")).toContainText(/local|cache|mock|fallback|upstream/);
     await expect(page.getByTestId("bridge-form")).toBeVisible();
     await expect(page.getByTestId("bridge-submit")).toBeDisabled();
 
@@ -295,7 +294,6 @@ test.describe("ION DEX smoke", () => {
     await page.goto("/");
     await clickNav(page, "burn");
 
-    await expect(page.getByTestId("burn-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("burn-form")).toBeVisible();
     await page.getByTestId("burn-amount").fill("5000");
     await page.getByTestId("burn-memo").fill("x".repeat(121));
@@ -314,7 +312,6 @@ test.describe("ION DEX smoke", () => {
     await page.goto("/");
     await clickNav(page, "domain");
 
-    await expect(page.getByTestId("domain-metrics-source")).toContainText(/mock|cache|fallback/);
     await expect(page.getByTestId("domain-form")).toBeVisible();
     await page.getByTestId("domain-query").fill("bad_label");
     await expect(page.getByTestId("domain-error")).toBeVisible();

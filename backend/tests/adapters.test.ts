@@ -11,13 +11,13 @@ describe("source adapters", () => {
     // no-op; each test uses its own registry instance
   });
 
-  it("returns mock source on first fetch and cache source on second fetch", async () => {
+  it("returns local source on first fetch and cache source on second fetch", async () => {
     const registry = createAdapterRegistry(clock);
 
     const first = await registry.market.fetch();
     const second = await registry.market.fetch();
 
-    assert.equal(first.source, "mock");
+    assert.equal(first.source, "local");
     assert.equal(first.cacheHit, false);
     assert.equal(first.provenance.adapterKey, "market");
     assert.equal(second.source, "cache");

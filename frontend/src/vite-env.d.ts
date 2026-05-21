@@ -1,7 +1,11 @@
 /// <reference types="vite/client" />
 
 type IonEip1193Provider = {
-  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+  request: (args: { method: string; params?: unknown[] | Record<string, unknown> }) => Promise<unknown>;
+  send?: (method: string, params?: unknown[]) => Promise<unknown>;
+  on?: (event: string, handler: (...args: unknown[]) => void) => void;
+  off?: (event: string, handler: (...args: unknown[]) => void) => void;
+  removeListener?: (event: string, handler: (...args: unknown[]) => void) => void;
   isMetaMask?: boolean;
   isRabby?: boolean;
   isBraveWallet?: boolean;
@@ -30,7 +34,11 @@ type IonLegacyProvider = IonEip1193Provider & {
 };
 
 /** ice-blockchain/ion-browser-wallet — extension/provider.js */
-type TonLegacyProvider = IonEip1193Provider;
+type TonLegacyProvider = IonEip1193Provider & {
+  isTonWallet?: boolean;
+  isOpenMask?: boolean;
+  isTonProvider?: boolean;
+};
 
 interface Window {
   ethereum?: IonEip1193Provider;

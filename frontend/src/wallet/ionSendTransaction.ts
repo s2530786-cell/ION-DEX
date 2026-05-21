@@ -23,13 +23,15 @@ export async function sendIonWalletTransaction(
     return { kind: "tonconnect-sdk", proof: boc };
   }
 
-  if (!window.ton) {
+  const ton = window.ton;
+  const send = ton?.send;
+  if (!ton || !send) {
     throw new Error("未检测到 ION 钱包扩展。请安装扩展或使用 TonConnect (QR)。");
   }
 
   let response: unknown;
   try {
-    response = await window.ton.send("ton_sendTransaction", [
+    response = await send("ton_sendTransaction", [
       {
         to: built.to,
         value: built.value,
