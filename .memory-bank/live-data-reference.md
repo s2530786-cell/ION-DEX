@@ -5,6 +5,15 @@
 
 ---
 
+## Hard Data Rules
+
+- 前端禁止硬编码假行情、假 TVL、假 24h 成交量或假回测收益；允许 loading / empty / error 占位（`—`、骨架屏、说明文案）。
+- 所有展示数值必须来自 `ionApi` / gateway 响应或链上只读查询；`ApiMeta` 与 `DataSourceBadge` / `DataProvenanceBadge` 必须可见。
+- 上游未提供字段时显示 `—`，不得用静态数字填充（例如池子 24h volume）。
+- E2E 与 `scripts/security-preflight.mjs` 以本节约束为准；`ION_DATA_MODE=test-mock` 仅用于 CI，且 mock 仍经后端网关。
+
+---
+
 ## 引擎总览
 
 | 引擎 | 优先级 | 数据类型 | 免费额度 | 后端文件 |

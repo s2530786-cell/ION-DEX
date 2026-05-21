@@ -4,6 +4,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useApiResource } from "@/hooks/useApiResource";
+import { buildPoolRowsFromApi, formatUsdCompact } from "@/lib/poolDeskData";
 import {
   fetchMarketTickers,
   fetchStakingSummary,
@@ -11,70 +12,31 @@ import {
   type StakingSummary,
 } from "@/lib/ionApi";
 
-type PoolRow = {
-  id: string;
-  pair: string;
-  tvlUsd: number;
-  volume24hUsd: number;
-  aprPct: number;
-};
+const emptyTickers: MarketTicker[] = [];
 
-const fallbackPools: PoolRow[] = [
-  { id: "bnb-ion", pair: "BNB / ION", tvlUsd: 1_240_000, volume24hUsd: 182_000, aprPct: 31.8 },
-  { id: "ion-usdt", pair: "ION / USDT", tvlUsd: 640_000, volume24hUsd: 96_500, aprPct: 22.4 },
-];
-
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-];
-
-function buildPoolRows(staking: StakingSummary, tickers: MarketTicker[]): PoolRow[] {
-  const lpUsd = Number(staking.lpStakedUsd);
-  const primaryTvl = Number.isFinite(lpUsd) && lpUsd > 0 ? lpUsd : fallbackPools[0]?.tvlUsd ?? 1_240_000;
-  const bnbPrice = tickers.find((row) => row.symbol === "BNB")?.priceUsd ?? 642.2;
-  const ionPrice = tickers.find((row) => row.symbol === "ION")?.priceUsd ?? 6.02;
-  const volPrimary = Math.round(primaryTvl * 0.15);
-  const volSecondary = Math.round(primaryTvl * 0.08);
-  return [
-    {
-      id: "bnb-ion",
-      pair: "BNB / ION",
-      tvlUsd: primaryTvl,
-      volume24hUsd: volPrimary,
-      aprPct: staking.apr.lpMiningPct,
-    },
-    {
-      id: "ion-usdt",
-      pair: "ION / USDT",
-      tvlUsd: Math.round(primaryTvl * (ionPrice / Math.max(bnbPrice, 1))),
-      volume24hUsd: volSecondary,
-      aprPct: staking.apr.dexPct,
-    },
-  ];
-}
-
-const fallbackStaking: StakingSummary = {
-  totalStakedIon: "452000000",
-  officialStakedIon: "398000000",
-  dexStakedIon: "54000000",
-  lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
+const emptyStaking: StakingSummary = {
+  totalStakedIon: "",
+  officialStakedIon: "",
+  dexStakedIon: "",
+  lpStakedUsd: "",
+  apr: { officialPct: 0, dexPct: 0, lpMiningPct: 0 },
 };
 
 export function PoolPage() {
   const fetchStaking = useCallback((signal: AbortSignal) => fetchStakingSummary(signal), []);
   const fetchTickers = useCallback((signal: AbortSignal) => fetchMarketTickers(signal), []);
-  const staking = useApiResource(fetchStaking, fallbackStaking);
-  const tickers = useApiResource(fetchTickers, fallbackTickers, {
+  const staking = useApiResource(fetchStaking, emptyStaking, { timeoutMs: 15_000 });
+  const tickers = useApiResource(fetchTickers, emptyTickers, {
     isEmpty: (data) => data.length === 0,
+    timeoutMs: 15_000,
   });
+  const poolsReady = staking.state === "ready" && tickers.state === "ready";
   const pools = useMemo(
-    () => buildPoolRows(staking.data, tickers.data),
-    [staking.data, tickers.data],
+    () => (poolsReady ? buildPoolRowsFromApi(staking.data, tickers.data) : []),
+    [poolsReady, staking.data, tickers.data],
   );
   const [mode, setMode] = useState<"add" | "remove">("add");
-  const [selectedPool, setSelectedPool] = useState(fallbackPools[0]?.id ?? "");
+  const [selectedPool, setSelectedPool] = useState("");
   const [bnbAmount, setBnbAmount] = useState("");
   const [ionAmount, setIonAmount] = useState("");
   const [slippage, setSlippage] = useState("0.5");
@@ -87,8 +49,8 @@ export function PoolPage() {
   }, [pools, selectedPool]);
 
   const pool = pools.find((row) => row.id === selectedPool) ?? pools[0];
-  const bnbUsd = tickers.data.find((row) => row.symbol === "BNB")?.priceUsd ?? 642.2;
-  const ionUsd = tickers.data.find((row) => row.symbol === "ION")?.priceUsd ?? 6.02;
+  const bnbUsd = tickers.data.find((row) => row.symbol === "BNB")?.priceUsd;
+  const ionUsd = tickers.data.find((row) => row.symbol === "ION")?.priceUsd;
 
   const validation = useMemo(() => {
     const parsedBnb = Number(bnbAmount);
@@ -102,7 +64,12 @@ export function PoolPage() {
     const slippageValid =
       Number.isFinite(parsedSlippage) && parsedSlippage >= 0.1 && parsedSlippage <= 5;
     const yieldIon =
-      amountsValid && pool
+      amountsValid &&
+      pool &&
+      typeof bnbUsd === "number" &&
+      typeof ionUsd === "number" &&
+      Number.isFinite(bnbUsd) &&
+      Number.isFinite(ionUsd)
         ? ((parsedBnb * bnbUsd + parsedIon * ionUsd) * (pool.aprPct / 100)) / 365
         : null;
 
@@ -129,6 +96,7 @@ export function PoolPage() {
           <DataSourceBadge meta={tickers.meta} testId="pool-ticker-source" />
         </div>
 
+        <div className="mt-4" data-testid="pool-list">
         <AsyncState
           emptyMessage="Pool metrics unavailable."
           error={staking.error ?? tickers.error}
@@ -147,8 +115,8 @@ export function PoolPage() {
           }
           testId="pool-metrics"
         >
-          <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10">
-          <table className="min-w-full text-left text-sm" data-testid="pool-list">
+          <div className="overflow-x-auto rounded-2xl border border-white/10">
+          <table className="min-w-full text-left text-sm">
             <thead className="bg-white/[0.04] text-cyan-100/55">
               <tr>
                 <th className="px-4 py-3">Pool</th>
@@ -178,8 +146,10 @@ export function PoolPage() {
                       {row.pair}
                     </button>
                   </td>
-                  <td className="px-4 py-3">${row.tvlUsd.toLocaleString()}</td>
-                  <td className="px-4 py-3">${row.volume24hUsd.toLocaleString()}</td>
+                  <td className="px-4 py-3">{formatUsdCompact(row.tvlUsd)}</td>
+                  <td className="px-4 py-3">
+                    {row.volume24hUsd === null ? "—" : formatUsdCompact(row.volume24hUsd)}
+                  </td>
                   <td className="px-4 py-3">{row.aprPct}%</td>
                 </tr>
               ))}
@@ -187,6 +157,7 @@ export function PoolPage() {
           </table>
           </div>
         </AsyncState>
+        </div>
 
         <form className="mt-6 grid gap-4" data-testid="pool-form" onSubmit={submitPool}>
           <div className="flex flex-wrap gap-2">

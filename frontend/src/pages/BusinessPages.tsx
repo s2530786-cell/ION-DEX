@@ -10,15 +10,20 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { IonCandleChart } from "@/components/charts/IonCandleChart";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
+import { AsyncState } from "@/components/ui/AsyncState";
 import { ChartFrame, GlassPanel, MetricTile, PageHero, RiskNotice, StatusPill } from "@/components/ui/glass";
+import { usePoolDeskData } from "@/hooks/usePoolDeskData";
+import { useApiResource, type ApiLoadState } from "@/hooks/useApiResource";
 import { useMarketCandles, useMarketOrderBook, useSwapMarketStats } from "@/hooks/useMarketSurface";
+import { formatUsdCompact } from "@/lib/poolDeskData";
+import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import {
   fetchBridgeRoutes,
   fetchBurnSummary,
@@ -1338,6 +1343,8 @@ function TradeDeskPage() {
         eyebrow={config.eyebrow}
         icon={config.icon}
         metrics={heroMetrics}
+        metricsState={statsState === "ready" ? "ready" : statsState === "error" ? "error" : "loading"}
+        testId="trade-page-hero"
         title={config.title}
       />
 
@@ -1493,35 +1500,101 @@ const aiSignals = [
 
 function GridDeskPage() {
   const config = pageConfigs.grid;
+  const fetchTickers = useCallback((signal: AbortSignal) => fetchMarketTickers(signal), []);
+  const tickers = useApiResource(fetchTickers, [] as MarketTicker[], {
+    isEmpty: (data) => data.length === 0,
+  });
+  const { candles, loadState: candleState, provenanceLabel: candleProv } = useMarketCandles(
+    "BNB/ION",
+    "15m",
+  );
+
+  const heroMetrics = useMemo(() => {
+    if (tickers.state !== "ready") {
+      return config.metrics.map((m) => ({ ...m, value: "—", testId: `grid-metric-${m.label}` }));
+    }
+    const ion = tickers.data.find((row) => row.symbol === "ION");
+    return [
+      {
+        label: "ION",
+        value: ion?.displayPrice ?? "—",
+        tone: "gold" as const,
+        testId: "grid-metric-ion",
+      },
+      {
+        label: "24h",
+        value: ion?.displayChange ?? "—",
+        tone: "cyan" as const,
+        testId: "grid-metric-24h",
+      },
+      {
+        label: "Strategies",
+        value: config.metrics[0]?.value ?? "5 modes",
+        tone: "magenta" as const,
+        testId: "grid-metric-strategies",
+      },
+    ];
+  }, [config.metrics, tickers.data, tickers.state]);
+
+  const rangeBars = useMemo(() => {
+    if (candleState !== "ready" || candles.length === 0) {
+      return [];
+    }
+    const closes = candles.slice(-12).map((c) => c.close);
+    const min = Math.min(...closes);
+    const max = Math.max(...closes);
+    const span = Math.max(max - min, 0.0001);
+    return closes.map((close) => Math.round(((close - min) / span) * 100));
+  }, [candleState, candles]);
+
+  const rangeSubtitle =
+    candleState === "ready" && candles.length > 0
+      ? `${candles[0]?.close.toFixed(2)} — ${candles[candles.length - 1]?.close.toFixed(2)} ION`
+      : "BNB / ION";
+
   return (
     <div className="grid gap-5" data-testid="page-grid">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={config.metrics.map((m) => ({ ...m, testId: `grid-metric-${m.label}` }))}
+        metrics={heroMetrics}
+        metricsMeta={tickers.meta}
+        metricsState={tickers.state}
         title={config.title}
       />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <div className="grid gap-5">
           <ChartFrame
             badge={<StatusPill label="AI Sentinel armed" testId="grid-sentinel" tone="emerald" />}
-            subtitle="5.20 — 7.40 ION"
+            subtitle={rangeSubtitle}
             testId="grid-range-chart"
             title="Range visualization"
           >
             <div className="float-3d flex h-48 items-end gap-2 rounded-[1.4rem] border border-fuchsia-200/15 bg-[#03050f]/55 p-4">
-              {burnBars.map((h, i) => (
-                <span
-                  key={i}
-                  className="flex-1 rounded-full bg-gradient-to-t from-fuchsia-500/30 to-cyan-300/80"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
+              {rangeBars.length > 0
+                ? rangeBars.map((h, i) => (
+                    <span
+                      key={i}
+                      className="flex-1 rounded-full bg-gradient-to-t from-fuchsia-500/30 to-cyan-300/80"
+                      style={{ height: `${h}%` }}
+                    />
+                  ))
+                : (
+                  <span className="text-xs text-cyan-100/55">Loading candle range…</span>
+                )}
             </div>
-            <p className="mt-3 text-xs text-cyan-100/55" data-testid="grid-backtest">
-              Backtest preview · local-seed replay · 30d neutral grid +0.8% net of ION fees
-            </p>
+            {candleProv ? (
+              <DataProvenanceBadge
+                className="mt-3"
+                label={candleProv}
+                testId="grid-range-provenance"
+              />
+            ) : (
+              <p className="mt-3 text-xs text-cyan-100/55" data-testid="grid-backtest">
+                Candle range from markets API — bounds set in the strategy form below.
+              </p>
+            )}
           </ChartFrame>
           <GlassPanel eyebrow="Strategy log" testId="grid-strategy-log" title="Live bot timeline">
             <div className="grid gap-2">
@@ -1565,43 +1638,67 @@ function GridDeskPage() {
 }
 
 function PoolDeskPage() {
+  const desk = usePoolDeskData();
   const config = {
     eyebrow: "Liquidity",
     title: "ION liquidity pools",
     description: "Pool desk for LP positions, fee accrual, and add/remove liquidity flows.",
     icon: Droplets,
-    metrics: [
-      { label: "Pairs", value: "BNB / ION", tone: "cyan" as const },
-      { label: "TVL", value: "$1.23M", tone: "gold" as const },
-      { label: "APR", value: "24.8%", tone: "magenta" as const },
-    ],
   };
+  const metricsMeta = desk.staking.meta ?? desk.tickers.meta;
+
   return (
     <div className="grid gap-5" data-testid="page-pool">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={config.metrics}
+        metrics={desk.heroMetrics}
+        metricsMeta={metricsMeta}
+        metricsState={desk.combinedState}
         title={config.title}
       />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
-        <GlassPanel eyebrow="Pool list" testId="pool-list" title="ION liquidity pools · local-seed">
-          <div className="grid gap-2">
-            {poolRows.map((row) => (
-              <div key={row.pair} className="grid grid-cols-4 gap-2 rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
-                <span className="font-black text-white">{row.pair}</span>
-                <span className="text-cyan-100/70">{row.tvl}</span>
-                <span className="text-cyan-100/70">{row.volume}</span>
-                <span className="text-right text-amber-200">{row.apr}</span>
-              </div>
-            ))}
+        <GlassPanel eyebrow="Pool list" testId="pool-list" title="ION liquidity pools">
+          <div className="mb-3 flex flex-wrap gap-2">
+            <DataSourceBadge meta={desk.staking.meta} testId="pool-desk-staking-source" />
+            <DataSourceBadge meta={desk.tickers.meta} testId="pool-desk-ticker-source" />
           </div>
+          <AsyncState
+            emptyMessage="Pool metrics unavailable."
+            error={desk.combinedError}
+            onRetry={desk.reload}
+            state={desk.combinedState}
+            testId="pool-desk-metrics"
+          >
+            <div className="grid gap-2">
+              {desk.pools.map((row) => (
+                <div
+                  key={row.id}
+                  className="grid grid-cols-4 gap-2 rounded-2xl bg-white/[0.04] px-4 py-3 text-sm"
+                >
+                  <span className="font-black text-white">{row.pair}</span>
+                  <span className="text-cyan-100/70">{formatUsdCompact(row.tvlUsd)}</span>
+                  <span className="text-cyan-100/70">
+                    {row.volume24hUsd === null ? "—" : formatUsdCompact(row.volume24hUsd)}
+                  </span>
+                  <span className="text-right text-amber-200">{row.aprPct}%</span>
+                </div>
+              ))}
+            </div>
+          </AsyncState>
         </GlassPanel>
         <div className="grid gap-5">
-          <ChartFrame subtitle="LP fee accrual" testId="pool-fee-chart" title="Fee growth">
+          <ChartFrame subtitle="LP fee APR from staking API" testId="pool-fee-chart" title="Fee growth">
             <div className="h-40 rounded-[1.2rem] border border-amber-200/15 bg-[#03050f]/50 p-4 text-sm text-amber-100/80">
-              Impermanent-loss hint: −0.42% vs HODL · reviewed seed model
+              {desk.ready ? (
+                <span>
+                  LP mining APR {desk.staking.data.apr.lpMiningPct}% · DEX staking APR{" "}
+                  {desk.staking.data.apr.dexPct}%
+                </span>
+              ) : (
+                <span>Loading staking metrics…</span>
+              )}
             </div>
           </ChartFrame>
           <NeonCard variant="gold">

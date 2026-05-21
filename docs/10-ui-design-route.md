@@ -70,6 +70,7 @@ bash scripts/agent-verify.sh
 
 - Visual tokens: `frontend/src/styles/theme.css` (`--neon-primary`, `--neon-secondary`, `--glass-background`, `--border-gradient`) and `tailwind.config.js` (`neon.primary`, `neon.secondary`, `bg-glass`, `bg-neon-border`).
 - Reusable rim card: `frontend/src/components/ui/NeonGlassCard.tsx` (frosted `backdrop-blur-lg` inner layer, cyan→purple `::before` gradient rim). Presentational only — no fabricated metrics inside the primitive.
+- **Phase 2（2026-05-20）**：`PageHero` 与 Dashboard 首屏 `MarketStage` 已改用 `NeonGlassCard`；Hero/Desk 指标来自 `fetchMarketTickers` / `fetchTradeQuote` / `fetchStakingSummary` 等 gateway API（无硬编码行情）。`PoolPage` + `PoolDeskPage` 池列表由 `buildPoolRowsFromApi` 派生，24h 成交量无上游字段时显示 `—`。`useApiResource` 修复 Strict Mode / 不稳定 deps 导致的重复 abort。
 - Add a reusable glass panel primitive for inner blocks.
 - Add trading surface primitives: chart frame, order book table, status pill, metric tile, timeline step, risk notice.
 - Move repeated user-facing copy into page-local constants that can later feed i18n.

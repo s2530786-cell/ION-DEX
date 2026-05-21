@@ -2,6 +2,7 @@
 
 ## Latest Verified Status
 
+- **NeonGlassCard 第二阶段（2026-05-20）**：`PageHero` / Dashboard `dashboard-market-stage` 换用 `NeonGlassCard`；`useDashboardMarket`、`usePoolDeskData`、`poolDeskData.buildPoolRowsFromApi` 仅消费 gateway 数据；`useApiResource` 取消不稳定 effect 依赖并忽略 Strict Mode 清理 abort。验证：`cd frontend && npm run verify` → build OK、Playwright **16 passed**。`.memory-bank/live-data-reference.md` 补全 **Hard Data Rules**（security-preflight）。
 - **P0 市场面（2026-05-22）**：后端 `market-surface`（`/api/markets/candles|depth|orderbook|swap-stats`）；前端 `IonCandleChart`（lightweight-charts）、`useMarketSurface` hooks、`DataProvenanceBadge`；Dashboard/Trade 移除硬编码 K 线/盘口/深度/TVL。验证：`verify-full` 绿灯（backend **15** tests、frontend **16** Playwright）。自检：`docs/ui-deliverable-self-audit-2026-05-22-p0.md`。下一步：P0 续 Burn/Bridge/AI API，P1 视觉统一。
 - **UI 视觉自检铁律（2026-05-21）**：用户要求每次 UI 做完必须产出「对照设计图 + 总体框架」自检报告。已固化：`docs/11-ui-visual-self-audit-gate.md`、模板 `docs/templates/ui-visual-self-audit-TEMPLATE.md`；并写入 `docs/00-engineering-standards.md` §1.7、`docs/10-ui-design-route.md`、`AGENTS.md`、`.cursor/rules/ion-ui-design-workflow.mdc`、`ion-web3-ui` Skill。
 - **UI 交付自检实例（2026-05-21）**：`docs/ui-deliverable-self-audit-2026-05-21.md`（思考过程 + 审计结论）；精简结论 `docs/ui-visual-self-audit-2026-05-21.md`。结论：**工程 verify 绿灯 ≠ 视觉门禁通过**。参考图：`docs/ui-audit-screenshots/ref-*.png`。

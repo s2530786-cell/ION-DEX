@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ApiMeta } from "@/lib/ionApi";
 
 export type ApiLoadState = "loading" | "ready" | "error" | "empty";
@@ -21,23 +21,32 @@ export function useApiResource<T>(
   const [state, setState] = useState<ApiLoadState>("loading");
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
 
   useEffect(() => {
     const controller = new AbortController();
-    const timeoutMs = options?.timeoutMs ?? 1200;
+    const timeoutMs = optionsRef.current?.timeoutMs ?? 1200;
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+    let cancelled = false;
 
     setState("loading");
     setError(null);
 
     fetcher(controller.signal)
       .then((response) => {
-        const empty = options?.isEmpty?.(response.data) ?? false;
+        if (cancelled) {
+          return;
+        }
+        const empty = optionsRef.current?.isEmpty?.(response.data) ?? false;
         setData(response.data);
         setMeta(response.meta);
         setState(empty ? "empty" : "ready");
       })
       .catch((cause: unknown) => {
+        if (cancelled) {
+          return;
+        }
         setData(fallback);
         setMeta(null);
         setState("error");
@@ -46,10 +55,11 @@ export function useApiResource<T>(
       .finally(() => window.clearTimeout(timeout));
 
     return () => {
+      cancelled = true;
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [fetcher, fallback, options?.isEmpty, options?.timeoutMs, reloadToken]);
+  }, [fetcher, reloadToken]);
 
   return {
     data,

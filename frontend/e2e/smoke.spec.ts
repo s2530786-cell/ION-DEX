@@ -231,6 +231,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-form")).toBeVisible();
     await expect(page.getByTestId("pool-submit")).toBeDisabled();
 
+    const poolRow = page.getByTestId("pool-row-bnb-ion");
+    await expect(poolRow).toBeVisible({ timeout: 15_000 });
+    await poolRow.click();
+
     await page.getByTestId("pool-bnb").scrollIntoViewIfNeeded();
     await page.getByTestId("pool-bnb").fill("2");
     await page.getByTestId("pool-ion").fill("800");
@@ -238,7 +242,9 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-error")).toBeVisible();
 
     await page.getByTestId("pool-slippage").fill("0.5");
-    await expect(page.getByTestId("pool-preview")).toContainText("Liquidity preview:");
+    await expect(page.getByTestId("pool-preview")).toContainText("Liquidity preview:", {
+      timeout: 15_000,
+    });
     await expect(page.getByTestId("pool-submit")).toBeEnabled();
 
     await page.getByTestId("pool-submit").click();

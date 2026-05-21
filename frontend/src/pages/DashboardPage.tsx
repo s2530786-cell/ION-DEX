@@ -8,22 +8,24 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useCallback, useMemo } from "react";
-import { MarketChart, buildSyntheticSeries } from "@/components/charts/MarketChart";
+import { MarketChart } from "@/components/charts/MarketChart";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
+import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { NeonGlassCard } from "@/components/ui/NeonGlassCard";
 import type { PageKey } from "@/components/layout/AppShell";
 import { useApiResource } from "@/hooks/useApiResource";
+import { useDashboardMarket } from "@/hooks/useDashboardMarket";
 import {
   fetchBurnSummary,
-  fetchMarketTickers,
   fetchStakingSummary,
   formatIonAmount,
   type BurnSummary,
-  type MarketTicker,
   type StakingSummary,
 } from "@/lib/ionApi";
+import { formatUsdCompact } from "@/lib/poolDeskData";
 
 type FeatureCard = {
   title: string;
@@ -31,10 +33,6 @@ type FeatureCard = {
   target: PageKey;
   icon: typeof Layers3;
   color: "cyan" | "magenta" | "gold";
-};
-
-type DashboardPageProps = {
-  onNavigate: (page: PageKey) => void;
 };
 
 const featureCards: FeatureCard[] = [
@@ -46,83 +44,58 @@ const featureCards: FeatureCard[] = [
   { title: "AI Market", label: "Signals & risk", target: "ai", icon: Bot, color: "cyan" },
 ];
 
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-];
-
-const fallbackBurn: BurnSummary = {
-  totalBurnedIon: "12845000",
-  bscBurnedIon: "8245000",
-  ionMainnetBurnedIon: "4600000",
-  remainingSupplyIon: "987155000",
-  bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
-  ionBurnSource: "ion-mainnet-burn-source-placeholder",
+const emptyBurn: BurnSummary = {
+  totalBurnedIon: "",
+  bscBurnedIon: "",
+  ionMainnetBurnedIon: "",
+  remainingSupplyIon: "",
+  bscBurnAddress: "",
+  ionBurnSource: "",
 };
 
-const fallbackStaking: StakingSummary = {
-  totalStakedIon: "452000000",
-  officialStakedIon: "398000000",
-  dexStakedIon: "54000000",
-  lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
+const emptyStaking: StakingSummary = {
+  totalStakedIon: "",
+  officialStakedIon: "",
+  dexStakedIon: "",
+  lpStakedUsd: "",
+  apr: { officialPct: 0, dexPct: 0, lpMiningPct: 0 },
 };
 
 export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
-  const fetchTickers = useCallback(
-    (signal: AbortSignal) => fetchMarketTickers(signal),
-    [],
-  );
+  const market = useDashboardMarket();
+
   const fetchBurn = useCallback((signal: AbortSignal) => fetchBurnSummary(signal), []);
   const fetchStaking = useCallback(
     (signal: AbortSignal) => fetchStakingSummary(signal),
     [],
   );
 
-  const tickers = useApiResource(fetchTickers, fallbackTickers, {
-    isEmpty: (data) => data.length === 0,
-  });
-  const burn = useApiResource(fetchBurn, fallbackBurn);
-  const staking = useApiResource(fetchStaking, fallbackStaking);
-
-  const ionTicker = useMemo(
-    () => tickers.data.find((ticker) => ticker.symbol === "ION") ?? tickers.data[0],
-    [tickers.data],
-  );
-
-  const chartPoints = useMemo(() => {
-    if (!ionTicker) {
-      return [];
-    }
-    return buildSyntheticSeries(ionTicker.priceUsd, ionTicker.change24hPct);
-  }, [ionTicker]);
-
-  const tvlLabel = useMemo(() => {
-    const lpUsd = Number(staking.data.lpStakedUsd);
-    if (!Number.isFinite(lpUsd)) {
-      return `$${staking.data.lpStakedUsd}`;
-    }
-    return lpUsd >= 1_000_000
-      ? `$${(lpUsd / 1_000_000).toFixed(2)}M`
-      : `$${lpUsd.toLocaleString()}`;
-  }, [staking.data.lpStakedUsd]);
+  const burn = useApiResource(fetchBurn, emptyBurn);
+  const staking = useApiResource(fetchStaking, emptyStaking);
 
   const burnProgress = useMemo(() => {
+    if (burn.state !== "ready") {
+      return 0;
+    }
     const burned = Number(burn.data.totalBurnedIon);
     const remaining = Number(burn.data.remainingSupplyIon);
     if (!Number.isFinite(burned) || !Number.isFinite(remaining) || burned + remaining <= 0) {
-      return 62;
+      return 0;
     }
     return Math.min(100, Math.round((burned / (burned + remaining)) * 100));
-  }, [burn.data.remainingSupplyIon, burn.data.totalBurnedIon]);
+  }, [burn.data.remainingSupplyIon, burn.data.totalBurnedIon, burn.state]);
+
+  const tvlLabel = useMemo(() => {
+    if (staking.state !== "ready") {
+      return "—";
+    }
+    const lpUsd = Number(staking.data.lpStakedUsd);
+    return formatUsdCompact(lpUsd);
+  }, [staking.data.lpStakedUsd, staking.state]);
 
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_18rem]" data-testid="page-dashboard">
-      <MarketStage
-        chartPoints={chartPoints}
-        ionTicker={ionTicker}
-        onNavigate={onNavigate}
-        tickers={tickers}
-      />
+      <MarketStage market={market} onNavigate={onNavigate} />
       <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
       <div className="xl:col-span-2">
         <FeatureGrid onNavigate={onNavigate} />
@@ -132,18 +105,23 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
 }
 
 function MarketStage({
-  tickers,
-  ionTicker,
-  chartPoints,
+  market,
   onNavigate,
 }: {
-  tickers: ReturnType<typeof useApiResource<MarketTicker[]>>;
-  ionTicker: MarketTicker | undefined;
-  chartPoints: ReturnType<typeof buildSyntheticSeries>;
+  market: ReturnType<typeof useDashboardMarket>;
   onNavigate: (page: PageKey) => void;
 }) {
+  const chartState =
+    market.candleState === "loading"
+      ? "loading"
+      : market.candleState === "error"
+        ? "error"
+        : market.chartPoints.length === 0
+          ? "empty"
+          : "ready";
+
   return (
-    <NeonCard className="min-h-[28rem]" variant="cyan">
+    <NeonGlassCard className="min-h-[28rem]" testId="dashboard-market-stage">
       <div className="flex h-full flex-col">
         <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -167,37 +145,50 @@ function MarketStage({
           </div>
         </div>
 
-        <DataSourceBadge meta={tickers.meta} testId="dashboard-chart-source" />
+        <div className="mb-3 flex flex-wrap gap-2">
+          <DataSourceBadge meta={market.tickers.meta} testId="dashboard-chart-source" />
+          {market.quote.meta ? (
+            <DataSourceBadge meta={market.quote.meta} testId="dashboard-quote-source" />
+          ) : null}
+          {market.candleProv ? (
+            <DataProvenanceBadge label={market.candleProv} testId="dashboard-candles-provenance" />
+          ) : null}
+        </div>
 
         <AsyncState
-          emptyMessage="Market tickers are not available."
-          error={tickers.error}
-          onRetry={tickers.reload}
-          state={tickers.state}
+          emptyMessage="Market candles are not available."
+          error={market.tickers.error ?? (market.candleState === "error" ? "Candles unavailable" : null)}
+          onRetry={() => {
+            market.tickers.reload();
+            market.quote.reload();
+          }}
+          state={chartState}
           testId="dashboard-chart"
         >
-          {chartPoints.length > 0 ? (
-            <MarketChart points={chartPoints} testId="dashboard-market-chart" />
+          {market.chartPoints.length > 0 ? (
+            <MarketChart points={market.chartPoints} testId="dashboard-market-chart" />
           ) : (
             <ChartPlaceholder />
           )}
-          {ionTicker ? (
+          {market.quoteLine ? (
             <p className="mt-3 text-sm text-cyan-100/75" data-testid="dashboard-ion-quote">
-              ION {ionTicker.displayPrice} · {ionTicker.displayChange} · AI Signal:{" "}
-              {ionTicker.change24hPct >= 0 ? "Bullish" : "Cautious"}{" "}
-              {Math.abs(ionTicker.change24hPct).toFixed(1)}%
+              {market.quoteLine.ticker}
+              <br />
+              <span className="text-cyan-100/60">{market.quoteLine.swap}</span>
             </p>
+          ) : market.tickers.state === "loading" || market.quote.state === "loading" ? (
+            <p className="mt-3 text-sm text-cyan-100/55">Loading market quote…</p>
           ) : null}
         </AsyncState>
       </div>
-    </NeonCard>
+    </NeonGlassCard>
   );
 }
 
 function ChartPlaceholder() {
   return (
     <div className="grid h-[17.5rem] place-items-center rounded-[1.25rem] border border-white/10 bg-black/30 text-sm text-cyan-100/60">
-      Waiting for ticker data
+      Waiting for market data
     </div>
   );
 }
@@ -263,7 +254,7 @@ function RightStats({
           </p>
           <div className="mt-4 h-2 rounded-full bg-white/10">
             <div
-              className="h-2 rounded-full bg-[linear-gradient(90deg,#24f7ff,#ff3bd4,#ffd166)]"
+              className="h-2 rounded-full bg-[linear-gradient(90deg,#00ffff,#ff00ff,#ffd166)]"
               style={{ width: `${burnProgress}%` }}
             />
           </div>
