@@ -137,7 +137,7 @@ import { ATTACK_TYPES, type ShieldData } from "./shield-types";
                     style={{ width: `${Math.min(testPct, 100)}%` }} />
                 </div>
                 <div className="mt-2 flex gap-2 text-[10px]">
-                  <span className="rounded bg-rose-400/10 px-2 py-0.5 text-rose-200">棣冩瘒 {data?.totalBlocked ?? 0} blocked</span>
+                  <span className="rounded bg-rose-400/10 px-2 py-0.5 text-rose-200">Blocked {data?.totalBlocked ?? 0}</span>
                   <span className="rounded bg-cyan-400/10 px-2 py-0.5 text-cyan-200">{testPct}% green</span>
                   {testPct < 100 && <span className="ml-auto text-rose-200/60">{data ? data.testsTarget - data.testsPassed : 0} left</span>}
                 </div>
@@ -158,7 +158,7 @@ import { ATTACK_TYPES, type ShieldData } from "./shield-types";
                     const active = status && status.lastBlock && (Date.now() - new Date(status.lastBlock).getTime() < 3600000);
                     return (
                       <Fragment key={atk.id}>
-                        <span className="border-t border-white/5 py-1.5 font-bold text-white">{atk.icon} {atk.name}</span>
+                        <span className="border-t border-white/5 py-1.5 font-mono font-bold text-white">{atk.name}</span>
                         <span className="border-t border-white/5 px-2 py-1.5 text-right font-mono text-rose-200/70">{detected}</span>
                         <span className="border-t border-white/5 px-2 py-1.5 text-right font-mono text-rose-200/70">{blocked}</span>
                         <span className={`border-t border-white/5 py-1.5 text-right font-bold ${active ? "text-rose-200" : "text-emerald-200/60"}`}>
@@ -197,4 +197,4 @@ import { ATTACK_TYPES, type ShieldData } from "./shield-types";
     </div>
   );
 }
-
+

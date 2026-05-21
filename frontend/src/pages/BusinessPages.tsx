@@ -1078,7 +1078,7 @@ function AIMarketPanel() {
           { label: "Twitter", value: "twitter" },
           { label: "Smart Money", value: "signals" },
           { label: "Token Audit", value: "audit" },
-          { label: "🛡️ Shield", value: "shield" },
+          { label: "Shield", value: "shield" },
         ]}
         testId="ai-tab"
         value={tab}
