@@ -1,5 +1,8 @@
 # ION DEX UI 视觉自检报告
 
+> **完整交付版（含思考过程）**：`docs/ui-deliverable-self-audit-2026-05-21.md`  
+> **铁律与模板**：`docs/11-ui-visual-self-audit-gate.md`、`docs/templates/ui-visual-self-audit-TEMPLATE.md`
+
 **日期**：2026-05-21  
 **分支**：`cursor/ui-design-workflow-44c9`  
 **对照依据**：用户提供的成品参考截图（`/tmp/computer-use/*.webp`，已转 PNG 至 `docs/ui-audit-screenshots/ref-*.png`）、`docs/10-ui-design-route.md`、`.memory-bank/architecture-audit.md`、当前代码与本地 dev（`http://127.0.0.1:3001/`）
