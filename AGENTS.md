@@ -115,3 +115,7 @@ No Docker, PostgreSQL, Redis, or external services required at this stage.
 - The root `package.json` only contains `claude-flow` as a devDependency (AI orchestration tool with known audit findings). It is not needed for running the app or tests.
 - `frontend/package.json` uses `latest` tags for many dependencies. `npm install` may resolve different versions across sessions; if E2E tests break after a fresh install, check for breaking upstream changes.
 - The backend must be built (`npm run build`) before it can be started or tested — there is no `ts-node` or similar dev runner.
+- The backend TypeScript build reports type errors but still emits JavaScript (`noEmitOnError` defaults to `false` in tsconfig). The `npm run build` exit code is non-zero but `dist/` is still populated and runnable.
+- The `@ion-gateway/ui-react`, `@ion-gateway/ui`, and `@ion-gateway/sdk` packages are planned ION-specific SDKs not yet published to npm. The update script creates local stubs in `node_modules` so Vite can resolve these imports. If the real packages are published later, remove the stubs and add them to `package.json`.
+- For Playwright E2E tests on Cloud Agent VMs, use `PLAYWRIGHT_LAUNCH_OPTIONS='{"channel":"chrome"}'` to use the pre-installed system Chrome (`/usr/local/bin/google-chrome`) instead of downloading Playwright's bundled Chromium (which is blocked by network restrictions).
+- The backend uses Node.js built-in SQLite (experimental in Node 22) for local persistence — no external database setup needed.
