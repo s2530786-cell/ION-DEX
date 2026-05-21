@@ -6,6 +6,7 @@ alwaysApply: true
 # ION DEX UI design workflow
 
 - Before any development work, read `docs/00-engineering-standards.md`. Treat it as the development iron law.
+- **IRON LAW — Code Brevity (Master 2026-05-21):** Shorter is better. If functionality works in 100-200 lines, do NOT write thousands. Component files ≤300 lines, utility functions ≤200 lines. Over the limit → split into separate files. Before writing a single line, ask: can this be done in 200 lines? Short code = fewer bugs, faster review, easier maintenance.
 - Before frontend/UI work, also read `.cursor/skills/ion-web3-ui/SKILL.md`, `docs/05-product-prd.md`, `docs/06-page-flow-and-user-journeys.md`, and `docs/10-ui-design-route.md`.
 - Run `node scripts/dev-preflight.mjs` before implementation when shell access is available. Full verification scripts run it automatically.
 - UI work must follow the locked direction: OKX Web3-inspired, dark blue/purple base, cyberpunk neon, glassmorphism, aurora/galaxy motion, thin refined neon borders, and responsive behavior at 375px, 768px, and 1440px.
