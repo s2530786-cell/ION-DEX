@@ -1418,7 +1418,7 @@ function TwitterFeedPanel() {
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">Twitter Intelligence Feed</p>
         <span className="rounded-full bg-sky-400/15 px-2 py-0.5 text-[10px] font-black text-sky-200">
-          syndication.twitter.com
+          Social Signals
         </span>
       </div>
 
@@ -1536,7 +1536,7 @@ function CryptoPanel() {
     <div className="grid gap-3" data-testid="ai-crypto-sentiment">
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">Market Sentiment Engine</p>
-        <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">Google News + CoinGecko</span>
+        <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">Market Intelligence</span>
       </div>
       {loading ? (
         <GlassPanel variant="cyan" noAurora padding="sm"><p className="animate-pulse text-sm text-cyan-200">Aggregating signals...</p></GlassPanel>
@@ -1571,7 +1571,7 @@ function CryptoPanel() {
                 <GlassPanel key={i} variant={feedTab === "bullish" ? "cyan" : feedTab === "bearish" ? "magenta" : "mixed"} noAurora padding="sm">
                   <p className="text-xs font-bold text-white leading-relaxed">{sig.title}</p>
                   <div className="mt-1 flex items-center gap-2 text-[10px]">
-                    <span className="text-cyan-200/50">{sig.outlet || sig.source}</span>
+                    <span className="text-cyan-200/50">{sig.category || "news"}</span>
                     {sig.influencer && <span className="rounded bg-amber-400/10 px-1 text-amber-200">@{sig.influencer}</span>}
                     {sig.category && <span className="text-cyan-200/30">{sig.category}</span>}
                     <span className="ml-auto text-cyan-200/40">{sig.ai.confidence}% conf</span>
