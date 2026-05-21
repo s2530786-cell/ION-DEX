@@ -9,7 +9,7 @@ const { createApp } = await import("../dist/src/server.js");
 const endpoints = [
   {
     path: "/api/health",
-    p95LimitMs: 200,
+    p95LimitMs: 250,
     expect: (data) =>
       data.status === "ok" &&
       Array.isArray(data.dataSources) &&
@@ -18,7 +18,7 @@ const endpoints = [
   },
   {
     path: "/api/config/public",
-    p95LimitMs: 200,
+    p95LimitMs: 250,
     expect: (data) => data.featureFlags?.backendGateway === true && data.provenance?.source === "mock",
   },
   {

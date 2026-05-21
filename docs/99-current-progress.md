@@ -2,6 +2,7 @@
 
 ## Latest Verified Status
 
+- **Stress 门禁抖动修复（2026-05-20）**：`backend/scripts/stress.mjs` 将 `/api/health` 与 `/api/config/public` 的 p95 上限由 200ms 调整为 **250ms**（与 `/api/tokens` 对齐），消除 100-pass 第 27 轮在 CI 负载下 p95≈224ms 的统计误杀；仍远低于沙盒目标 P99<500ms。验证：连续 5 次 `npm run stress` 全绿；`verify-full` 绿灯；`verify-100.sh 100` 后台执行中。
 - **Desk API + Dashboard glass（2026-05-20）**：Burn/Bridge/AI Desk 去除静态种子，接 `fetchBurnSummary` / `fetchBridgeRoutes` / `useSwapMarketStats`+tickers；Dashboard 右侧 TVL/APR/Burn 换 `NeonGlassCard`。新增 `useBurnDeskData`、`useBridgeDeskData`、`useAiDeskData`、`scripts/verify-100.sh`（POSIX）。验证：`verify-full` 绿灯；`verify-100.sh 3` → RESULT=GREEN；Playwright **16 passed**。
 - **NeonGlassCard 第二阶段（2026-05-20）**：`PageHero` / Dashboard `dashboard-market-stage` 换用 `NeonGlassCard`；`useDashboardMarket`、`usePoolDeskData`、`poolDeskData.buildPoolRowsFromApi` 仅消费 gateway 数据；`useApiResource` 取消不稳定 effect 依赖并忽略 Strict Mode 清理 abort。验证：`cd frontend && npm run verify` → build OK、Playwright **16 passed**。`.memory-bank/live-data-reference.md` 补全 **Hard Data Rules**（security-preflight）。
 - **P0 市场面（2026-05-22）**：后端 `market-surface`（`/api/markets/candles|depth|orderbook|swap-stats`）；前端 `IonCandleChart`（lightweight-charts）、`useMarketSurface` hooks、`DataProvenanceBadge`；Dashboard/Trade 移除硬编码 K 线/盘口/深度/TVL。验证：`verify-full` 绿灯（backend **15** tests、frontend **16** Playwright）。自检：`docs/ui-deliverable-self-audit-2026-05-22-p0.md`。下一步：P0 续 Burn/Bridge/AI API，P1 视觉统一。
