@@ -11,8 +11,9 @@ import {
   Wallet,
   X,
 } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NeonButton } from "@/components/ui/NeonButton";
+import { ProfileAvatar, useAvatar, avatarUrl } from "@/components/ion/ProfileAvatar";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { shortenAddress } from "@/wallet/injectedEvm";
@@ -23,6 +24,7 @@ import {
   type EvmWalletKind,
 } from "@/wallet/evmConnectors";
 import type { IonWalletKind } from "@/wallet/ionTypes";
+import { reverseResolve } from "@/utils/ionDomain";
 import { isIonExtensionInstalled } from "@/wallet/ionExtension";
 
 // ── Types ──────────────────────────────────────────────────────
@@ -63,6 +65,82 @@ const walletProviders: WalletProvider[] = [
   })),
 ];
 
+// ── Domain Tab ──────────────────────────────────────────────────
+function DomainTab({ connected, walletAddress, isIon }: {
+  connected: boolean | string | null; walletAddress: string | null; isIon: boolean;
+}) {
+  const [domainName, setDomainName] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [transferAddr, setTransferAddr] = useState("");
+
+  useEffect(() => {
+    if (walletAddress && isIon) {
+      setLoading(true);
+      reverseResolve(walletAddress)
+        .then(setDomainName)
+        .finally(() => setLoading(false));
+    }
+  }, [walletAddress, isIon]);
+
+  return (
+    <div className="grid gap-3">
+      {/* Owned Domain */}
+      <div className="rounded-2xl border border-violet-300/20 bg-violet-300/[0.05] p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Globe2 size={18} className="text-violet-300" />
+          <p className="text-sm font-black text-violet-100">ION Domain</p>
+        </div>
+        {!connected ? (
+          <p className="text-xs text-amber-100/60">Connect an ION wallet to view your domains.</p>
+        ) : loading ? (
+          <p className="animate-pulse text-xs text-violet-100/60">Looking up domains...</p>
+        ) : domainName ? (
+          <div className="flex items-center justify-between rounded-xl bg-white/[0.06] px-3 py-2">
+            <span className="font-mono text-sm font-bold text-emerald-200">{domainName}</span>
+            <span className="text-[10px] text-emerald-200/50">Owned</span>
+          </div>
+        ) : (
+          <p className="text-xs text-violet-100/50">No .ion domain found for this wallet.</p>
+        )}
+        <NeonButton
+          className="mt-3 w-full text-xs"
+          onClick={() => window.open("https://dns.ice.io", "_blank")}
+          type="button"
+        >
+          <ExternalLink size={12} className="mr-1.5 inline" />
+          Register at dns.ice.io
+        </NeonButton>
+      </div>
+
+      {/* Transfer */}
+      {connected && domainName && (
+        <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.04] p-3">
+          <p className="mb-2 text-xs font-bold text-amber-100">Transfer Domain</p>
+          <input
+            className="mb-2 w-full rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 font-mono text-xs text-cyan-100 placeholder:text-cyan-100/30"
+            onChange={(e) => setTransferAddr(e.target.value)}
+            placeholder="Recipient ION address (UQ...)"
+            type="text"
+            value={transferAddr}
+          />
+          <button
+            className="w-full rounded-xl bg-amber-400/10 px-3 py-2 text-xs font-bold text-amber-200 transition hover:bg-amber-400/20"
+            disabled={!transferAddr}
+            onClick={() => window.open(
+              `https://dns.ice.io/transfer?domain=${encodeURIComponent(domainName)}&to=${encodeURIComponent(transferAddr)}`,
+              "_blank"
+            )}
+            type="button"
+          >
+            <ExternalLink size={12} className="mr-1 inline" />
+            Open Transfer on dns.ice.io
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Component ──────────────────────────────────────────────────
 export function UserAvatar() {
   const evmWallet = useEvmWallet();
@@ -87,6 +165,8 @@ export function UserAvatar() {
   const showIonSession = ionConnected && connectedProvider;
 
   const connected = showInjectedSession || showIonSession;
+  const [avatarCid, uploadAvatar] = useAvatar();
+  const [uploading, setUploading] = useState(false);
 
   // ── Avatar display ──────────────────────────────────────────
   const avatarLabel = useMemo(() => {
@@ -154,20 +234,28 @@ export function UserAvatar() {
         onClick={() => setPanelOpen((o) => !o)}
         type="button"
       >
-        {/* Avatar circle with gradient + neon ring */}
-        <div
-          className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm font-black shadow-neonCyan transition-all ${
-            connected
-              ? "bg-gradient-to-br from-cyan-400/30 to-violet-400/30 ring-2 ring-cyan-300/40"
-              : "bg-white/[0.08] ring-1 ring-white/15"
-          }`}
-        >
-          {connected ? (
-            <CheckCircle2 size={16} className="text-cyan-200" />
-          ) : (
-            <User size={16} className="text-cyan-100/70" />
-          )}
-        </div>
+        {/* Avatar circle — image or icon */}
+        {avatarCid ? (
+          <img
+            alt="avatar"
+            className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-cyan-300/40 shadow-neonCyan"
+            src={avatarUrl(avatarCid) ?? ""}
+          />
+        ) : (
+          <div
+            className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm font-black shadow-neonCyan transition-all ${
+              connected
+                ? "bg-gradient-to-br from-cyan-400/30 to-violet-400/30 ring-2 ring-cyan-300/40"
+                : "bg-white/[0.08] ring-1 ring-white/15"
+            }`}
+          >
+            {connected ? (
+              <CheckCircle2 size={16} className="text-cyan-200" />
+            ) : (
+              <User size={16} className="text-cyan-100/70" />
+            )}
+          </div>
+        )}
         {avatarLabel ? (
           <span className="text-xs font-bold text-cyan-50">{avatarLabel}</span>
         ) : (
@@ -205,6 +293,24 @@ export function UserAvatar() {
             {/* ── Tab: Info ──────────────────────────────────── */}
             {tab === "info" && (
               <div className="grid gap-3">
+                {/* Avatar upload */}
+                <div className="flex items-center gap-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-3">
+                  <ProfileAvatar
+                    cid={avatarCid}
+                    onUpload={async (f) => { setUploading(true); try { await uploadAvatar(f); } finally { setUploading(false); } }}
+                    size={48}
+                  />
+                  <div className="text-xs text-cyan-100/60">
+                    {uploading ? (
+                      <span className="animate-pulse">Uploading to IPFS...</span>
+                    ) : avatarCid ? (
+                      <span>Avatar on IPFS. Tap to change.</span>
+                    ) : (
+                      <span>Tap to set profile avatar.</span>
+                    )}
+                  </div>
+                </div>
+
                 {!connected && (
                   <p className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-3 py-2 text-xs text-amber-100/75">
                     No wallet connected. Switch to Connect tab.
@@ -340,36 +446,17 @@ export function UserAvatar() {
 
             {/* ── Tab: Domain ─────────────────────────────────── */}
             {tab === "domain" && (
-              <div className="grid gap-3">
-                <div className="rounded-2xl border border-violet-300/20 bg-violet-300/[0.05] p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Globe2 size={18} className="text-violet-300" />
-                    <p className="text-sm font-black text-violet-100">ION Domain (dns.ice.io)</p>
-                  </div>
-                  <div className="grid gap-2">
-                    <NeonButton
-                      className="w-full text-xs"
-                      onClick={() => window.open("https://dns.ice.io", "_blank")}
-                      type="button"
-                    >
-                      <ExternalLink size={12} className="mr-1.5 inline" />
-                      Open dns.ice.io
-                    </NeonButton>
-                    <p className="text-xs text-violet-100/50 text-center mt-1">
-                      Domain registration · bidding · transfer via ION DNS contracts
-                    </p>
-                  </div>
-                </div>
-
-                {connected && (
-                  <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.05] p-3">
-                    <p className="text-xs text-amber-100/70 flex items-center gap-1.5">
-                      <ShieldCheck size={14} />
-                      Connected wallet can bind ION domains. Full domain management coming via backend integration.
-                    </p>
-                  </div>
-                )}
-              </div>
+              <DomainTab
+                connected={Boolean(connected)}
+                walletAddress={
+                  showInjectedSession && evmWallet.snapshot
+                    ? evmWallet.snapshot.address
+                    : showIonSession && ionWallet.snapshot
+                      ? ionWallet.snapshot.address
+                      : null
+                }
+                isIon={Boolean(showIonSession)}
+              />
             )}
 
             {/* Close button */}
