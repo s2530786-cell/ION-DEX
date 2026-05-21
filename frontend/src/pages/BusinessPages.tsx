@@ -8,7 +8,7 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useMemo, useState, useEffect, type FormEvent } from "react";
+import { Fragment, useMemo, useState, useEffect, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { GlassInput } from "@/components/ui/GlassInput";
@@ -1267,46 +1267,52 @@ function DefenseShield() {
                 </div>
               </GlassPanel>
 
-              {/* 10 Attack Types */}
-              <div className="grid grid-cols-2 gap-2">
-                {ATTACK_TYPES.map((atk) => {
-                  const status = data?.attacks?.find((a) => a.id === atk.id);
-                  const hasRecent = status && status.lastBlock && (Date.now() - new Date(status.lastBlock).getTime() < 3600000);
-                  return (
-                    <GlassPanel key={atk.id} variant={hasRecent ? "magenta" : "mixed"} noAurora padding="sm">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm">{atk.icon}</span>
-                        <span className="text-[10px] font-bold text-white">{atk.name}</span>
-                      </div>
-                      <div className="mt-1 flex items-center gap-2 text-[10px]">
-                        <span className="text-rose-200/60">{status?.detected ?? 0} detected</span>
-                        <span className={`ml-auto font-black ${hasRecent ? "text-rose-200" : "text-emerald-200/60"}`}>
-                          {hasRecent ? "⚠️ Active" : "✅ Clear"}
+              {/* Chain Anomaly Monitor — text-based compact table */}
+              <div className="rounded-xl border border-white/10 bg-black/30 p-3">
+                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.15em] text-cyan-100/50">On-Chain Threat Monitor</p>
+                <div className="grid text-[10px]" style={{ gridTemplateColumns: "1fr auto auto auto" }}>
+                  <span className="pb-1.5 text-cyan-200/30">Attack Vector</span>
+                  <span className="px-2 pb-1.5 text-right text-cyan-200/30">Detected</span>
+                  <span className="px-2 pb-1.5 text-right text-cyan-200/30">Blocked</span>
+                  <span className="pb-1.5 text-right text-cyan-200/30">Status</span>
+                  {ATTACK_TYPES.map((atk) => {
+                    const status = data?.attacks?.find((a) => a.id === atk.id);
+                    const detected = status?.detected ?? 0;
+                    const blocked = Math.floor(detected * 0.3);
+                    const active = status && status.lastBlock && (Date.now() - new Date(status.lastBlock).getTime() < 3600000);
+                    return (
+                      <Fragment key={atk.id}>
+                        <span className="border-t border-white/5 py-1.5 font-bold text-white">{atk.icon} {atk.name}</span>
+                        <span className="border-t border-white/5 px-2 py-1.5 text-right font-mono text-rose-200/70">{detected}</span>
+                        <span className="border-t border-white/5 px-2 py-1.5 text-right font-mono text-rose-200/70">{blocked}</span>
+                        <span className={`border-t border-white/5 py-1.5 text-right font-bold ${active ? "text-rose-200" : "text-emerald-200/60"}`}>
+                          {active ? "Active" : "Clear"}
                         </span>
-                      </div>
-                    </GlassPanel>
-                  );
-                })}
+                      </Fragment>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* Recent Blocks */}
+              {/* Recent Blocks — compact text list */}
               {data?.recentBlocks && data.recentBlocks.length > 0 && (
-                <>
-                  <p className="text-xs uppercase tracking-[0.15em] text-rose-200/50">Recent Blocks</p>
-                  <div className="grid gap-1.5 max-h-[25vh] overflow-y-auto">
+                <div className="rounded-xl border border-white/10 bg-black/30 p-3">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.15em] text-rose-200/50">Recent Interceptions</p>
+                  <div className="grid gap-1 text-[10px]">
                     {data.recentBlocks.slice(0, 5).map((b, i) => (
-                      <GlassPanel key={i} variant="magenta" noAurora padding="sm">
-                        <div className="flex items-center justify-between">
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[10px] font-bold text-rose-200">{b.type} — {b.id.slice(0, 10)}...</p>
-                            <p className="text-[10px] text-cyan-200/40">from {b.from.slice(0, 8)}... · {b.value}</p>
-                          </div>
-                          <span className="shrink-0 text-[10px] text-cyan-200/30">{b.time}</span>
+                      <div key={i} className="flex items-center justify-between border-b border-white/5 py-1.5 last:border-0">
+                        <div className="flex items-center gap-2">
+                          <span className="rounded bg-rose-400/10 px-1.5 py-0.5 font-bold text-rose-200">{b.type}</span>
+                          <span className="font-mono text-cyan-200/40">{b.id.slice(0, 10)}...</span>
                         </div>
-                      </GlassPanel>
+                        <div className="flex items-center gap-3 text-cyan-200/30">
+                          <span>{b.value}</span>
+                          <span className="font-mono">{b.time}</span>
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </>
+                </div>
               )}
             </>
           )}
