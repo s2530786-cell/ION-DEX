@@ -92,7 +92,8 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(37,99,255,0.28),transparent_45%),radial-gradient(circle_at_20%_75%,rgba(255,59,212,0.18),transparent_35%),linear-gradient(180deg,#03050f_0%,rgba(3,5,15,0.9)_60%,#03050f_100%)]" />
           <motion.div
             className="pointer-events-none absolute left-[-12%] top-[10%] h-[50rem] w-[100rem] rounded-[50%] bg-[linear-gradient(90deg,transparent,rgba(36,247,255,0.4),rgba(141,77,255,0.25),rgba(255,59,212,0.35),transparent)] blur-3xl"
-            {...auroraPulse}
+            animate={auroraPulse.animate}
+            transition={auroraPulse.transition}
           />
           <motion.div
             className="pointer-events-none absolute right-[-18%] top-[-8%] h-[50rem] w-[80rem] rounded-[50%] bg-[radial-gradient(circle,rgba(36,247,255,0.35),rgba(141,77,255,0.2)_42%,transparent_70%)] blur-3xl"
@@ -108,7 +109,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
           {/* ── Content ── */}
           <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center">
             {/* Logo */}
-            <motion.div className="relative" {...logoReveal}>
+            <motion.div className="relative" initial={logoReveal.initial} animate={logoReveal.animate} transition={logoReveal.transition}>
               <div className="absolute -inset-6 rounded-full bg-cyan-400/20 blur-2xl" />
               <img
                 alt="ION DEX"
@@ -118,7 +119,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
             </motion.div>
 
             {/* Title */}
-            <motion.div {...titleReveal}>
+            <motion.div initial={titleReveal.initial} animate={titleReveal.animate} transition={titleReveal.transition}>
               <h1 className="text-5xl font-black tracking-tight text-glow-cyan sm:text-6xl">
                 ION DEX
               </h1>
@@ -127,7 +128,9 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
             {/* Subtitle */}
             <motion.p
               className="text-sm uppercase tracking-[0.35em] text-cyan-200/55 sm:text-base"
-              {...subtitleReveal}
+              initial={subtitleReveal.initial}
+              animate={subtitleReveal.animate}
+              transition={subtitleReveal.transition}
             >
               Trade the future of ION
             </motion.p>
@@ -138,7 +141,9 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
                 <motion.div
                   key={b.key}
                   className="flex flex-col items-center"
-                  {...lineItem(b.delay)}
+                  initial={lineItem(b.delay).initial}
+                  animate={lineItem(b.delay).animate}
+                  transition={lineItem(b.delay).transition}
                 >
                   <span className="text-xs font-black tracking-wide text-cyan-200 sm:text-sm">
                     {b.label}
