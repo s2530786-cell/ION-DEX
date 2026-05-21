@@ -1,27 +1,27 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useApiResource } from "@/hooks/useApiResource";
 import { fetchStakingSummary, type StakingSummary } from "@/lib/ionApi";
-
-const UNLOCK_SECONDS = 7 * 24 * 60 * 60;
+import {
+  DEX_DRAFT_STAKE_NOTE,
+  formatStakingAprLabel,
+  OFFICIAL_LIQUID_STAKE_RECEIPT,
+  OFFICIAL_LIQUID_STAKE_STEPS,
+  OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX,
+} from "@/lib/officialStakingSemantics";
 
 const fallbackStaking: StakingSummary = {
   totalStakedIon: "452000000",
   officialStakedIon: "398000000",
   dexStakedIon: "54000000",
   lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
+  apr: { officialPct: null, dexPct: null, lpMiningPct: 31.8 },
+  officialRewardAsset: "LION",
+  officialUnstakeRoundHoursApprox: OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX,
 };
-
-function formatCountdown(seconds: number) {
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  return `${days}d ${hours}h ${minutes}m`;
-}
 
 export function StakePage() {
   const fetchStaking = useCallback((signal: AbortSignal) => fetchStakingSummary(signal), []);
@@ -30,14 +30,6 @@ export function StakePage() {
   const [mode, setMode] = useState<"stake" | "unstake">("stake");
   const [amount, setAmount] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [unlockLeft, setUnlockLeft] = useState(UNLOCK_SECONDS);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setUnlockLeft((value) => (value > 0 ? value - 1 : 0));
-    }, 1000);
-    return () => window.clearInterval(timer);
-  }, []);
 
   const validation = useMemo(() => {
     const parsed = Number(amount);
@@ -51,13 +43,20 @@ export function StakePage() {
     }
   }
 
+  const unstakeHours =
+    staking.data.officialUnstakeRoundHoursApprox ?? OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX;
+  const receipt = staking.data.officialRewardAsset ?? OFFICIAL_LIQUID_STAKE_RECEIPT;
+
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_22rem]" data-testid="page-stake">
       <NeonCard variant="mixed" className="min-h-[31rem]">
         <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">Yield</p>
         <h1 className="mt-2 text-4xl font-black text-white sm:text-5xl" data-testid="page-title">
-          DEX staking hub
+          ION staking hub
         </h1>
+        <p className="mt-2 text-sm text-cyan-100/70" data-testid="stake-subtitle">
+          Official liquid staking (ION → {receipt}) and DEX draft fee pool — do not mix the two flows.
+        </p>
 
         <DataSourceBadge meta={staking.meta} testId="stake-metrics-source" />
 
@@ -68,13 +67,46 @@ export function StakePage() {
           testId="stake-metrics"
         >
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <Metric label="DEX APR" value={`${staking.data.apr.dexPct}%`} />
-            <Metric label="Official stake" value={`${Number(staking.data.officialStakedIon).toLocaleString()} ION`} />
-            <Metric label="DEX stake" value={`${Number(staking.data.dexStakedIon).toLocaleString()} ION`} />
+            <Metric
+              label="Official APR"
+              testId="stake-metric-official-apr"
+              value={formatStakingAprLabel(staking.data.apr.officialPct, "Dynamic · live TBD")}
+            />
+            <Metric
+              label="Official stake"
+              testId="stake-metric-official"
+              value={`${Number(staking.data.officialStakedIon).toLocaleString()} ION`}
+            />
+            <Metric
+              label={`Receipt (${receipt})`}
+              testId="stake-metric-receipt"
+              value={receipt}
+            />
           </div>
         </AsyncState>
 
-        <form className="mt-8 grid gap-4" data-testid="stake-form" onSubmit={submitStake}>
+        <div
+          className="mt-6 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.06] p-4"
+          data-testid="stake-official-panel"
+        >
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-100/55">
+            Official network staking
+          </p>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-cyan-100/75">
+            {OFFICIAL_LIQUID_STAKE_STEPS.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </div>
+
+        <p className="mt-4 text-xs text-amber-100/80" data-testid="stake-dex-draft-note">
+          {DEX_DRAFT_STAKE_NOTE}
+        </p>
+
+        <form className="mt-6 grid gap-4" data-testid="stake-form" onSubmit={submitStake}>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-100/55">
+            DEX draft pool (not official LION)
+          </p>
           <div className="flex flex-wrap gap-2">
             <button
               className={`rounded-full px-4 py-2 text-xs font-black ${mode === "stake" ? "bg-white/15 text-white" : "text-cyan-100/60"}`}
@@ -85,7 +117,7 @@ export function StakePage() {
               }}
               type="button"
             >
-              Stake ION
+              Stake ION (draft)
             </button>
             <button
               className={`rounded-full px-4 py-2 text-xs font-black ${mode === "unstake" ? "bg-white/15 text-white" : "text-cyan-100/60"}`}
@@ -96,7 +128,7 @@ export function StakePage() {
               }}
               type="button"
             >
-              Unstake ION
+              Unstake ION (draft)
             </button>
           </div>
 
@@ -123,11 +155,12 @@ export function StakePage() {
           >
             {validation.isValid ? (
               <span>
-                {mode === "stake" ? "Stake" : "Unstake"} preview: {amount} ION · advertised DEX APR{" "}
-                {staking.data.apr.dexPct}% · unlock queue {formatCountdown(unlockLeft)}
+                DEX draft {mode === "stake" ? "stake" : "unstake"} preview: {amount} ION · APR{" "}
+                {formatStakingAprLabel(staking.data.apr.dexPct, "not wired")}. Official unstake ~{unstakeHours}h
+                (validation round).
               </span>
             ) : (
-              <span>Enter an amount to preview staking payloads and unlock timing.</span>
+              <span>Enter an amount to preview DEX draft staking payloads only.</span>
             )}
           </div>
 
@@ -137,7 +170,7 @@ export function StakePage() {
             disabled={!validation.isValid}
             type="submit"
           >
-            {mode === "stake" ? "Stake ION" : "Unstake ION"}
+            {mode === "stake" ? "Stake ION (draft)" : "Unstake ION (draft)"}
           </NeonButton>
 
           {submitted ? (
@@ -146,29 +179,38 @@ export function StakePage() {
               data-testid="stake-confirmation"
             >
               {mode === "stake"
-                ? "Stake draft ready for wallet signing."
-                : "Unstake draft ready for wallet signing."}
+                ? "DEX draft stake ready for wallet signing — not the official LION deposit."
+                : "DEX draft unstake ready — official release follows the ~20h validation round."}
             </p>
           ) : null}
         </form>
       </NeonCard>
 
       <NeonCard variant="cyan">
-        <p className="text-sm text-cyan-100/55">Unlock countdown</p>
-        <p className="mt-2 text-3xl font-black" data-testid="stake-unlock-countdown">
-          {formatCountdown(unlockLeft)}
+        <p className="text-sm text-cyan-100/55">Official unstake timing</p>
+        <p className="mt-2 text-3xl font-black" data-testid="stake-unlock-round">
+          ~{unstakeHours}h
         </p>
         <p className="mt-2 text-xs text-cyan-100/60">
-          Mock unstake cooldown for testnet staking hub UX.
+          Per ice.io / liquid-staking-contract: funds release at the next validation round, not the 7-day mock
+          cooldown used in earlier DEX-only drafts.
         </p>
       </NeonCard>
     </div>
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({
+  label,
+  value,
+  testId,
+}: {
+  label: string;
+  value: string;
+  testId?: string;
+}) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4" data-testid={testId}>
       <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">{label}</p>
       <p className="mt-2 text-xl font-black text-white">{value}</p>
     </div>

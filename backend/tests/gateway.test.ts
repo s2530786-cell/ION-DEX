@@ -269,7 +269,8 @@ describe("ION DEX API gateway", () => {
     assert.equal(response.status, 200);
     assert.ok(Number(data.totalStakedIon) > 0);
     assert.equal(data.rewardAsset, "ION");
-    assert.ok(data.apr.dexPct > 0);
+    assert.equal(data.apr.dexPct, null);
+    assert.equal((data as { officialRewardAsset?: string }).officialRewardAsset, "LION");
     assert.ok(data.lockOptions.some((option) => option.days === 90));
   });
 

@@ -17,6 +17,7 @@ Before designing ION-native contracts or integrations, inspect this local reposi
 
 - **Official existing codebases are the standard.** Read and cite them before every implementation. If official repos, address book, or `docs/ion-official-canonical-addresses.md` already define behavior, **use that** — do not fabricate wrappers (wION), burn paths, or contract APIs.
 - Cross-chain bridge: prefer `ice-blockchain/ice-swap` + `bridge-solidity` over DEX-draft shortcuts.
+- Retail staking: prefer `ice-blockchain/liquid-staking-contract` (ION → LION) over `contracts/ion/staking-pool.fc` for user-facing official flows.
 - Confirmed BSC on-chain facts (import from shared constants, do not scatter literals):
   - ION ERC-20: `0xe1ab61f7b093435204df32f5b3a405de55445ea8`
   - Burn sink: `0x000000000000000000000000000000000000dEaD`
@@ -37,7 +38,7 @@ For relevant work, read the smallest needed subset:
 
 ## Important Caveat
 
-The official repository is a node/tooling/reference contract monorepo. It does not provide a ready-made DEX, AMM, staking, burn, bridge, or router contract. DEX-specific contracts must be designed separately while reusing official style, patterns, and interfaces where appropriate.
+The `ion` node monorepo does not provide a retail DEX stake UI contract. **Official user liquid staking** lives in `ice-blockchain/liquid-staking-contract` (see `docs/ion-official-staking-reference.md`). DEX `staking-pool.fc` is draft-only. DEX AMM/bridge/burn must still be designed separately while reusing official patterns.
 
 ## Usage Rules
 

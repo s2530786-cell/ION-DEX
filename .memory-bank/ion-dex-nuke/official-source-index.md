@@ -69,6 +69,23 @@ Doc: `docs/ion-official-canonical-addresses.md`. Code: `frontend/src/lib/officia
 
 **Iron law:** official `ice-blockchain/*` repos are the standard; consult before coding; do not invent wION or wrapper burn flows.
 
+## Official liquid staking (retail — not `staking-pool.fc`)
+
+| Repo | Role |
+|---|---|
+| `ice-blockchain/liquid-staking-contract` | Pool + Controller + pool jetton; `pool::deposit` (`0x47d54391`), elector `new_stake` / `recover_stake` |
+| `ice-blockchain/ion` → `elector-code.fc` | Validator election system contract (not retail stake UI) |
+| `ice-blockchain/nominator-pool` | Large nominator pools (TON-style) |
+
+Product facts:
+
+- Stake **ION** → receive **LION** (liquid receipt jetton).
+- Unstake releases at the **next validation round** (~20h per public docs), not DEX mock 7-day locks.
+- Official APR is **dynamic** — do not hard-code fixed DEX APR as official.
+- ION DEX `contracts/ion/staking-pool.fc` is a **draft fee-reward pool** only.
+
+Doc: `docs/ion-official-staking-reference.md`. Frontend: `frontend/src/lib/officialStakingSemantics.ts`.
+
 ## Wallet injection (not in `ice-blockchain/ion` node monorepo)
 
 Verified companion repositories for dApp wallet integration:

@@ -46,7 +46,7 @@ export function buildPoolRowsFromApi(staking: StakingSummary, tickers: MarketTic
       id: "ion-usdt",
       pair: "ION / USDT",
       tvlUsd: secondaryTvl,
-      aprPct: staking.apr.dexPct,
+      aprPct: staking.apr.dexPct ?? staking.apr.lpMiningPct,
       volume24hUsd: null,
     },
   ];

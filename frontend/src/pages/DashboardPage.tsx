@@ -58,7 +58,7 @@ const emptyStaking: StakingSummary = {
   officialStakedIon: "",
   dexStakedIon: "",
   lpStakedUsd: "",
-  apr: { officialPct: 0, dexPct: 0, lpMiningPct: 0 },
+  apr: { officialPct: null, dexPct: null, lpMiningPct: 0 },
 };
 
 export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
@@ -234,9 +234,9 @@ function RightStats({
         >
           <p className="text-sm text-cyan-100/55">APR</p>
           <p className="mt-1 text-3xl font-black" data-testid="dashboard-apr-value">
-            {staking.data.apr.dexPct}%
+            {staking.data.apr.lpMiningPct}%
           </p>
-          <p className="mt-1 text-xs text-cyan-200">Dynamic DEX staking rate</p>
+          <p className="mt-1 text-xs text-cyan-200">LP mining APR (DEX draft stake APR not wired)</p>
         </AsyncState>
       </NeonGlassCard>
 

@@ -119,7 +119,7 @@ test.describe("ION DEX smoke", () => {
       ["trade", "ION spot order desk"],
       ["grid", "On-chain spot grid"],
       ["pool", "ION liquidity pools"],
-      ["stake", "DEX staking hub"],
+      ["stake", "ION staking hub"],
       ["bridge", "BSC <> ION bridge"],
       ["burn", "Dual-chain burn tracker"],
       ["domain", "Domain trading and binding"],
@@ -261,19 +261,19 @@ test.describe("ION DEX smoke", () => {
 
     await page.getByTestId("stake-amount").scrollIntoViewIfNeeded();
     await page.getByTestId("stake-amount").fill("250");
-    await expect(page.getByTestId("stake-preview")).toContainText("Stake preview:");
+    await expect(page.getByTestId("stake-preview")).toContainText("DEX draft stake preview:");
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await page.getByTestId("stake-submit").click();
-    await expect(page.getByTestId("stake-confirmation")).toContainText("Stake draft ready");
+    await expect(page.getByTestId("stake-confirmation")).toContainText("DEX draft stake ready");
 
     await page.getByTestId("stake-mode-unstake").click();
     await page.getByTestId("stake-amount").fill("100");
-    await expect(page.getByTestId("stake-preview")).toContainText("Unstake preview:");
+    await expect(page.getByTestId("stake-preview")).toContainText("DEX draft unstake preview:");
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await page.getByTestId("stake-submit").click();
-    await expect(page.getByTestId("stake-confirmation")).toContainText("Unstake draft ready");
+    await expect(page.getByTestId("stake-confirmation")).toContainText("DEX draft unstake ready");
   });
 
   test("bridge page validates destination memo and prepares sweep", async ({ page }) => {

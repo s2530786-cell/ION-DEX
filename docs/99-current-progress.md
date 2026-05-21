@@ -2,6 +2,8 @@
 
 ## Latest Verified Status
 
+- **官方质押语义对齐（2026-05-20）**：新增 `docs/ion-official-staking-reference.md`、`frontend/src/lib/officialStakingSemantics.ts`、`useStakeDeskData`；Stake 页区分 **liquid-staking-contract（ION→LION、~20h 轮次解押）** 与 DEX 草稿 `staking-pool.fc`；移除硬编码 25.5% DEX APR；后端 `staking.ts` 标明 `officialRewardAsset: LION`、`apr.officialPct/dexPct: null` 直至索引器接入。验证：`verify-full` 绿灯，Playwright **16 passed**。
+
 - **官方铁律 + BSC 常量固化（2026-05-20）**：新增 `docs/ion-official-canonical-addresses.md`、前后端 `officialIonAddresses` / `official-ion-addresses`、`.cursor/rules/ion-official-authority.mdc`；`AGENTS.md` / 工程标准 §0.1 / `ion-official-source` Skill 写明「官方库即标准、禁止臆造」。BSC ION `0xe1ab61f7…`、销毁 `0x000…dead` 全仓引用；后端默认 `BSC_ION_TOKEN_ADDRESS`。验证：`verify-full` 绿灯，Playwright **16 passed**。
 
 - **Bridge 语义对齐官方 ice-swap（2026-05-20）**：移除错误的 `VITE_ION_WRAPPER_ADDRESS` / `wrapper.burn` ION→BSC 路径（非官方 wION 销毁）；ION→BSC 仅 ION 钱包链上确认 + UI 说明官方 Bridge `mint` 领取步骤；新增 `frontend/src/lib/officialBridgeSemantics.ts`；`bridgeDecimals` 去掉 wION 命名。依据 `ice-blockchain/ice-swap`（`Bridge` = bridge-solidity fork，`IONBridgeRouter` mint/burn）。验证：`verify-full` 绿灯，Playwright **16 passed**。

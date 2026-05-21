@@ -1,14 +1,24 @@
+/**
+ * Staking summary for gateway. Official LION liquid staking totals require
+ * liquid-staking-contract pool/indexer — see docs/ion-official-staking-reference.md.
+ */
+
 export type StakingSummary = {
   totalStakedIon: string;
   officialStakedIon: string;
   dexStakedIon: string;
   lpStakedUsd: string;
   apr: {
-    officialPct: number;
-    dexPct: number;
+    /** Official network liquid staking — dynamic until live adapter. */
+    officialPct: number | null;
+    /** DEX draft fee-reward pool — not LION staking. */
+    dexPct: number | null;
     lpMiningPct: number;
   };
+  /** Official liquid receipt jetton (LION). DEX draft rewards remain ION. */
   rewardAsset: "ION";
+  officialRewardAsset: "LION";
+  officialUnstakeRoundHoursApprox: number;
   lockOptions: Array<{
     label: string;
     days: number;
@@ -17,6 +27,8 @@ export type StakingSummary = {
   provenance: {
     source: "mock";
     note: string;
+    officialRepo: string;
+    dexDraftContract: string;
   };
 };
 
@@ -27,11 +39,13 @@ export function getStakingSummary(): StakingSummary {
     dexStakedIon: "54000000.000",
     lpStakedUsd: "12800000.00",
     apr: {
-      officialPct: 18.2,
-      dexPct: 25.5,
+      officialPct: null,
+      dexPct: null,
       lpMiningPct: 31.8,
     },
     rewardAsset: "ION",
+    officialRewardAsset: "LION",
+    officialUnstakeRoundHoursApprox: 20,
     lockOptions: [
       { label: "Flexible", days: 0, aprBoostPct: 0 },
       { label: "30 days", days: 30, aprBoostPct: 2.5 },
@@ -39,7 +53,10 @@ export function getStakingSummary(): StakingSummary {
     ],
     provenance: {
       source: "mock",
-      note: "Phase 3 mock staking totals; official staking and DEX staking adapters are pending.",
+      note:
+        "Mock aggregates only. Official retail staking: ice-blockchain/liquid-staking-contract (ION→LION, ~20h round unstake). DEX hub forms target contracts/ion/staking-pool.fc draft — not the official pool.",
+      officialRepo: "https://github.com/ice-blockchain/liquid-staking-contract",
+      dexDraftContract: "contracts/ion/staking-pool.fc",
     },
   };
 }

@@ -20,6 +20,7 @@
 - 前端：`frontend/src/lib/officialIonAddresses.ts`
 - 后端：`backend/src/constants/official-ion-addresses.ts`
 - 跨链语义：`frontend/src/lib/officialBridgeSemantics.ts`
+- 质押语义：`frontend/src/lib/officialStakingSemantics.ts`（见 `docs/ion-official-staking-reference.md`）
 - 官方仓库索引：`.memory-bank/ion-dex-nuke/official-source-index.md`
 
 ## 官方仓库（写桥/销毁/钱包前必读）
@@ -31,6 +32,8 @@
 | `ice-blockchain/bridge-solidity` | TON↔EVM 桥上游 |
 | `ice-blockchain/ion-gateway` | TonConnect / 钱包注入 |
 | `ice-blockchain/ion-address-book` | 生态合约地址簿（优先于猜测） |
+| `ice-blockchain/liquid-staking-contract` | 零售流动性质押（ION → LION） |
+| `ice-blockchain/nominator-pool` | 大额提名池（非零售 Stake UI） |
 
 ## 仍须从官方源确认（勿猜）
 

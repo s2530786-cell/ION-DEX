@@ -9,7 +9,7 @@ const emptyStaking: StakingSummary = {
   officialStakedIon: "",
   dexStakedIon: "",
   lpStakedUsd: "",
-  apr: { officialPct: 0, dexPct: 0, lpMiningPct: 0 },
+  apr: { officialPct: null, dexPct: null, lpMiningPct: 0 },
 };
 
 function dashMetrics(): PageHeroMetric[] {

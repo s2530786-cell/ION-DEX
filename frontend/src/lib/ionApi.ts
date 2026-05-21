@@ -110,10 +110,13 @@ export type StakingSummary = {
   dexStakedIon: string;
   lpStakedUsd: string;
   apr: {
-    officialPct: number;
-    dexPct: number;
+    officialPct: number | null;
+    dexPct: number | null;
     lpMiningPct: number;
   };
+  rewardAsset?: "ION";
+  officialRewardAsset?: "LION";
+  officialUnstakeRoundHoursApprox?: number;
 };
 
 export type BridgeRoute = {

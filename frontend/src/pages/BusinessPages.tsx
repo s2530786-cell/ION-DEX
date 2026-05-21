@@ -25,6 +25,14 @@ import { useBridgeDeskData } from "@/hooks/useBridgeDeskData";
 import { useDomainDeskData } from "@/hooks/useDomainDeskData";
 import { useBurnDeskData } from "@/hooks/useBurnDeskData";
 import { usePoolDeskData } from "@/hooks/usePoolDeskData";
+import { useStakeDeskData } from "@/hooks/useStakeDeskData";
+import {
+  DEX_DRAFT_STAKE_NOTE,
+  formatStakingAprLabel,
+  OFFICIAL_LIQUID_STAKE_RECEIPT,
+  OFFICIAL_LIQUID_STAKE_STEPS,
+  OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX,
+} from "@/lib/officialStakingSemantics";
 import { useApiResource, type ApiLoadState } from "@/hooks/useApiResource";
 import { useMarketCandles, useMarketOrderBook, useSwapMarketStats } from "@/hooks/useMarketSurface";
 import { formatUsdCompact } from "@/lib/poolDeskData";
@@ -185,7 +193,9 @@ const fallbackStakingSummary: StakingSummary = {
   officialStakedIon: "398000000",
   dexStakedIon: "54000000",
   lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
+  apr: { officialPct: null, dexPct: null, lpMiningPct: 31.8 },
+  officialRewardAsset: "LION",
+  officialUnstakeRoundHoursApprox: OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX,
 };
 
 const fallbackBridgePayload: BridgeRoutesPayload = {
@@ -308,9 +318,17 @@ function StakeMetricsRow() {
   }, []);
 
   const metrics: MetricCard[] = [
-    { label: "DEX APR", value: `${summary.apr.dexPct}%`, tone: "gold" },
+    {
+      label: "Official APR",
+      value: formatStakingAprLabel(summary.apr.officialPct, "Dynamic"),
+      tone: "gold",
+    },
     { label: "Official Stake", value: `${formatIonAmount(summary.officialStakedIon)} ION`, tone: "cyan" },
-    { label: "DEX Stake", value: `${formatIonAmount(summary.dexStakedIon)} ION`, tone: "magenta" },
+    {
+      label: "Receipt",
+      value: summary.officialRewardAsset ?? OFFICIAL_LIQUID_STAKE_RECEIPT,
+      tone: "magenta",
+    },
   ];
 
   return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="stake-metrics-source" />;
@@ -711,8 +729,6 @@ function GridStrategyPanel() {
   );
 }
 
-const DEX_ADVERTISED_APR_PERCENT = 25.5;
-
 function PoolLiquidityPanel() {
   const [bnbAmount, setBnbAmount] = useState("");
   const [ionAmount, setIonAmount] = useState("");
@@ -879,12 +895,14 @@ function StakeHubPanel() {
       >
         {validation.isValid ? (
           <span>
-            {mode === "stake" ? "Stake" : "Unstake"} preview: {amount} ION · advertised DEX APR{" "}
-            {DEX_ADVERTISED_APR_PERCENT}% · vesting and unstake queue enforced by contracts later.
+            DEX draft {mode === "stake" ? "stake" : "unstake"} preview: {amount} ION · targets{" "}
+            <code className="text-cyan-100">staking-pool.fc</code>, not official LION pool. Official unstake
+            ~{OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX}h per validation round via ION Wallet.
           </span>
         ) : (
           <span>
-            Enter an amount to preview treasury-safe staking payloads and APR assumptions from the hub metrics card.
+            Enter an amount to preview DEX draft stake payloads. Official staking: ION → {OFFICIAL_LIQUID_STAKE_RECEIPT}{" "}
+            on liquid-staking-contract (see ice.io/staking).
           </span>
         )}
       </div>
@@ -899,8 +917,8 @@ function StakeHubPanel() {
           data-testid="stake-confirmation"
         >
           {mode === "stake"
-            ? "Stake review ready for wallet signing. Reward streams stay gated behind staking contract wiring."
-            : "Unstake review ready for wallet signing. Cooldown rules stay gated behind staking contract wiring."}
+            ? "DEX draft stake review ready. Official LION staking uses ION Chrome Wallet + liquid-staking-contract deposit."
+            : "DEX draft unstake review ready. Official unstake follows validation round release (~20h), not this mock form."}
         </p>
       ) : null}
     </form>
@@ -1571,8 +1589,8 @@ function PoolDeskPage() {
             <div className="h-40 rounded-[1.2rem] border border-amber-200/15 bg-[#03050f]/50 p-4 text-sm text-amber-100/80">
               {desk.ready ? (
                 <span>
-                  LP mining APR {desk.staking.data.apr.lpMiningPct}% · DEX staking APR{" "}
-                  {desk.staking.data.apr.dexPct}%
+                  LP mining APR {desk.staking.data.apr.lpMiningPct}% · DEX draft APR{" "}
+                  {formatStakingAprLabel(desk.staking.data.apr.dexPct, "not wired")}
                 </span>
               ) : (
                 <span>Loading staking metrics…</span>
@@ -1849,31 +1867,32 @@ function AIDeskPage() {
 }
 
 function StakeDeskPage() {
-  const config = {
-    eyebrow: "Staking",
-    title: "ION staking hub",
-    description: "Stake ION for DEX rewards, lock tiers, and claimable yield with wallet-aware flows.",
-    icon: Coins,
-    metrics: [
-      { label: "APR", value: "18.4%", tone: "gold" as const },
-      { label: "Lock", value: "90d tier", tone: "cyan" as const },
-      { label: "Rewards", value: "ION", tone: "magenta" as const },
-    ],
-  };
+  const desk = useStakeDeskData();
   return (
     <div className="grid gap-5" data-testid="page-stake">
       <PageHero
-        description={config.description}
-        eyebrow={config.eyebrow}
-        icon={config.icon}
-        metrics={config.metrics}
-        title={config.title}
+        description="Official liquid staking (ION → LION, liquid-staking-contract) is separate from the DEX draft fee-reward pool below."
+        eyebrow="Staking"
+        icon={Coins}
+        metrics={desk.heroMetrics}
+        title="ION staking hub"
       />
       <div className="grid gap-5 lg:grid-cols-2">
-        <GlassPanel testId="stake-overview" title="Staking overview · indexer seed">
-          <p className="text-sm text-cyan-100/75">Official + DEX staking totals merge through staking-service. Claimable rewards and unstake queue shown after wallet connect.</p>
+        <GlassPanel testId="stake-overview" title="Official network staking (LION)">
+          <DataSourceBadge meta={desk.staking.meta} testId="stake-desk-source" />
+          <p className="text-sm text-cyan-100/75" data-testid="stake-official-overview">
+            {desk.overviewLine}
+          </p>
+          <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-cyan-100/70" data-testid="stake-official-steps">
+            {OFFICIAL_LIQUID_STAKE_STEPS.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
         </GlassPanel>
         <NeonCard variant="gold">
+          <p className="mb-4 text-xs text-amber-100/80" data-testid="stake-dex-draft-note">
+            {DEX_DRAFT_STAKE_NOTE}
+          </p>
           <StakeHubPanel />
         </NeonCard>
       </div>
