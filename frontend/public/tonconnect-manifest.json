@@ -1,0 +1,17 @@
+{
+  "url": "https://ion-dex.app",
+  "name": "ION DEX",
+  "iconUrl": "https://ion-dex.app/icon.png",
+  "termsOfUseUrl": "https://ion-dex.app/terms",
+  "privacyPolicyUrl": "https://ion-dex.app/privacy",
+  "manifestVersion": "0.1",
+  "items": [
+    {
+      "id": "0",
+      "name": "ION DEX",
+      "description": "ION Chain DEX — Swap, Pool, Stake on ION",
+      "url": "https://ion-dex.app",
+      "iconUrl": "https://ion-dex.app/icon.png"
+    }
+  ]
+}
