@@ -10,9 +10,29 @@ import { join } from "node:path";
 
 const root = process.cwd();
 const required = [
-  "contracts/bsc/IonSwapRouter.sol",
-  "contracts/test/MinimumOutput.t.sol",
   "contracts/foundry.toml",
+  "contracts/bsc/IonSwapRouter.sol",
+  "contracts/bsc/BSCVault.sol",
+  "contracts/bsc/MockERC20.sol",
+  "contracts/bsc/FeeReceiver.sol",
+  "contracts/bsc/BridgeRelay.sol",
+  "contracts/test/MinimumOutput.t.sol",
+  "contracts/test/BSCContracts.t.sol",
+  "contracts/ion/common/common.fc",
+  "contracts/ion/common/gas.fc",
+  "contracts/ion/vault.fc",
+  "contracts/ion/lp_account.fc",
+  "contracts/ion/lp_wallet.fc",
+  "contracts/ion/pool.fc",
+  "contracts/ion/router.fc",
+  "contracts/ion/deployer.fc",
+  "contracts/ion/sandwich.fc",
+  "contracts/ion/FeeDistributor.fc",
+  "contracts/ion/BridgeInbox.fc",
+  "contracts/ion/dns-resolver.fc",
+  "contracts/ion/dns-registrar.fc",
+  "contracts/ion/dns-auction.fc",
+  "contracts/ion/staking-pool.fc",
   "backend/src/lib/minimum-output.ts",
   "docs/24-swap-router-minimum-output.md",
 ];
@@ -40,7 +60,7 @@ const forge = spawnSync("forge", ["test", "-C", join(root, "contracts")], {
   encoding: "utf8",
 });
 if (forge.status === 0) {
-  console.log(forge.stdout);
+  if (forge.stdout) console.log(forge.stdout);
   console.log("OK - forge test passed.");
 } else if (forge.error?.code === "ENOENT") {
   console.log("SKIP - forge not installed; Solidity sources and TS math tests are the gate for this environment.");

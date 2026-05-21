@@ -1,16 +1,76 @@
 import { performance } from "node:perf_hooks";
-import { createApp } from "../dist/src/server.js";
+
+process.env.NODE_ENV = process.env.NODE_ENV ?? "test";
+process.env.ION_DATA_MODE = process.env.ION_DATA_MODE ?? "test-mock";
+delete process.env.CMC_API_KEY;
+
+const { createApp } = await import("../dist/src/server.js");
 
 const endpoints = [
-  { path: "/api/health", p95LimitMs: 200 },
-  { path: "/api/config/public", p95LimitMs: 200 },
-  { path: "/api/tokens", p95LimitMs: 250 },
-  { path: "/api/markets/tickers", p95LimitMs: 300 },
-  { path: "/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=50", p95LimitMs: 300 },
+  {
+    path: "/api/health",
+    p95LimitMs: 200,
+    expect: (data) =>
+      data.status === "ok" &&
+      Array.isArray(data.dataSources) &&
+      data.dataSources.length >= 4 &&
+      (data.database?.status === "ok" || data.database?.status === "disabled"),
+  },
+  {
+    path: "/api/config/public",
+    p95LimitMs: 200,
+    expect: (data) => data.featureFlags?.backendGateway === true && data.provenance?.source === "mock",
+  },
+  {
+    path: "/api/tokens",
+    p95LimitMs: 250,
+    expect: (data) =>
+      Array.isArray(data) &&
+      data.some((token) => token.symbol === "ION") &&
+      data.every((token) => token.status === "mock" && token.provenance?.source === "mock"),
+  },
+  {
+    path: "/api/markets/tickers",
+    p95LimitMs: 300,
+    expect: (data) =>
+      Array.isArray(data) &&
+      data.some((ticker) => ticker.symbol === "ION") &&
+      data.every((ticker) => ticker.provenance?.source === "mock"),
+  },
+  {
+    path: "/api/markets/candles?symbol=BNB/ION&interval=15m&limit=60",
+    p95LimitMs: 350,
+    expect: (data) => Array.isArray(data.candles) && data.candles.length > 0 && data.provenance?.source === "local-seed",
+  },
+  {
+    path: "/api/markets/orderbook?symbol=BNB/ION",
+    p95LimitMs: 350,
+    expect: (data) => Array.isArray(data.levels) && data.levels.length > 0,
+  },
+  {
+    path: "/api/markets/swap-stats?pair=BNB/ION",
+    p95LimitMs: 350,
+    expect: (data) => data.stats?.lastPrice && data.provenance?.source === "local-seed",
+  },
+  {
+    path: "/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=50",
+    p95LimitMs: 300,
+    expect: (data) => data.estimatedOutput && data.provenance?.source === "local-seed",
+  },
+  {
+    path: "/api/profile/session?provider=metamask",
+    p95LimitMs: 300,
+    expect: (data) => data.wallets?.primaryKey === "metamask" && data.sessionDetection?.walletProvider,
+  },
+  { path: "/api/burn/summary", p95LimitMs: 300, expect: (data) => Number(data.totalBurnedIon) > 0 },
+  { path: "/api/staking/summary", p95LimitMs: 300, expect: (data) => data.rewardAsset === "ION" },
+  { path: "/api/bridge/routes", p95LimitMs: 300, expect: (data) => Array.isArray(data.routes) && data.routes.length >= 2 },
+  { path: "/api/domain/resolve?name=demo.ion", p95LimitMs: 300, expect: (data) => data.name === "demo.ion" && data.available === false },
+  { path: "/api/profile/demo", p95LimitMs: 300, expect: (data) => data.kycPass?.storesRawKyc === false },
 ];
 
-const requestsPerEndpoint = Number(process.env.ION_STRESS_REQUESTS ?? 80);
-const concurrency = Number(process.env.ION_STRESS_CONCURRENCY ?? 16);
+const requestsPerEndpoint = Number(process.env.ION_STRESS_REQUESTS ?? 120);
+const concurrency = Number(process.env.ION_STRESS_CONCURRENCY ?? 24);
 
 const server = createApp();
 
@@ -56,7 +116,12 @@ async function runEndpoint(baseUrl, endpoint) {
       try {
         const response = await fetch(`${baseUrl}${endpoint.path}`);
         const body = await response.json();
-        if (response.ok && body.meta?.source === "local") {
+        const validSource =
+          body.meta?.source === "mock" ||
+          body.meta?.source === "cache" ||
+          body.meta?.source === "local" ||
+          body.meta?.source === "upstream";
+        if (response.ok && validSource && body.meta?.requestId && endpoint.expect(body.data)) {
           ok += 1;
         } else {
           failed += 1;

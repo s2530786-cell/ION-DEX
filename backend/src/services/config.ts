@@ -22,6 +22,11 @@ export type PublicConfig = {
     detector: string;
     label: string;
   }>;
+  provenance: {
+    source: "mock" | "upstream";
+    status: "mocked" | "healthy" | "degraded";
+    note: string;
+  };
 };
 
 export function getPublicConfig(): PublicConfig {
@@ -47,5 +52,10 @@ export function getPublicConfig(): PublicConfig {
       detector: wallet.detector,
       label: wallet.label,
     })),
+    provenance: {
+      source: "mock",
+      status: "mocked",
+      note: "Public configuration is local Phase 3 mock data until official chain IDs and adapters are confirmed.",
+    },
   };
 }

@@ -7,6 +7,8 @@ export type ApiMeta = {
   updatedAt: string;
   stale: boolean;
   requestId: string;
+  cacheHit?: boolean;
+  adapter?: string;
 };
 
 export type ApiResponse<T> = {
@@ -16,11 +18,23 @@ export type ApiResponse<T> = {
 
 export type ApiErrorResponse = {
   error: {
-    code: string;
+    code: ApiErrorCode;
     message: string;
   };
   meta: ApiMeta;
 };
+
+export const ApiErrorCodes = {
+  methodNotAllowed: "ION_DEX_E_GATEWAY_METHOD_NOT_ALLOWED",
+  notFound: "ION_DEX_E_GATEWAY_NOT_FOUND",
+  missingDomainName: "ION_DEX_E_DOMAIN_NAME_REQUIRED",
+  invalidDomainName: "ION_DEX_E_DOMAIN_NAME_INVALID",
+  dataUnavailable: "ION_DEX_E_DATA_UNAVAILABLE",
+  invalidAddress: "ION_DEX_E_INVALID_ADDRESS",
+  invalidQuoteRequest: "ION_DEX_E_INVALID_QUOTE_REQUEST",
+} as const;
+
+export type ApiErrorCode = (typeof ApiErrorCodes)[keyof typeof ApiErrorCodes];
 
 export function apiResponse<T>(data: T, meta: ApiMeta): ApiResponse<T> {
   return { data, meta };
@@ -41,16 +55,17 @@ export function writeJson(
   response.end(JSON.stringify(payload));
 }
 
-export function writeNoContent(response: ServerResponse): void {
+export function writeNoContent(response: ServerResponse, requestId: string): void {
   response.writeHead(204, {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, OPTIONS",
     "Access-Control-Allow-Headers": "content-type, x-request-id",
+    "X-Request-Id": requestId,
   });
   response.end();
 }
 
-export function apiError(code: string, message: string, meta: ApiMeta): ApiErrorResponse {
+export function apiError(code: ApiErrorCode, message: string, meta: ApiMeta): ApiErrorResponse {
   return {
     error: {
       code,

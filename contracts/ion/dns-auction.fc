@@ -1,0 +1,118 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::resolver_address;
+global cell storage::auction_dict;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::resolver_address = ds~load_msg_addr();
+    storage::auction_dict = ds~load_dict();
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::resolver_address)
+        .store_dict(storage::auction_dict)
+    .end_cell());
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::dns_bid {
+        slice body = ctx::body();
+        int query_id = body~load_uint(64);
+        cell name_cell = body~load_ref();
+        int bid_amount = ctx::value();
+        slice bidder = ctx::sender();
+        int key = cell_hash(name_cell);
+
+        throw_unless(error::invalid_amount, bid_amount > 0);
+
+        (slice entry, int found) = storage::auction_dict.udict_get?(256, key);
+        int high_bid = 0;
+        int ends_at = now() + 3600;
+        if found {
+            slice es = entry;
+            high_bid = es~load_coins();
+            ends_at = es~load_uint(32);
+            es~load_msg_addr();
+            es.end_parse();
+            throw_unless(error::invalid_amount, bid_amount > high_bid);
+        }
+
+        storage::auction_dict~udict_set(
+            256,
+            key,
+            begin_cell()
+                .store_coins(bid_amount)
+                .store_uint(ends_at, 32)
+                .store_slice(bidder)
+                .store_ref(name_cell)
+            .end_cell().begin_parse());
+        storage::save();
+
+        msgs::send_simple(
+            0,
+            bidder,
+            begin_cell().store_uint(op::dns_bid, 32).store_uint(query_id, 64).store_coins(bid_amount).end_cell(),
+            QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    if ctx::opcode() == op::dns_settle_auction {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+        slice body = ctx::body();
+        int query_id = body~load_uint(64);
+        cell name_cell = body~load_ref();
+        int key = cell_hash(name_cell);
+
+        (slice entry, int found) = storage::auction_dict.udict_get?(256, key);
+        throw_unless(error::auction_not_active, found);
+
+        slice es = entry;
+        int winning_bid = es~load_coins();
+        int ends_at = es~load_uint(32);
+        slice winner = es~load_msg_addr();
+        es.end_parse();
+
+        throw_unless(error::auction_not_active, now() >= ends_at);
+
+        storage::auction_dict~udict_delete?(256, key);
+        storage::save();
+
+        msgs::send_simple(
+            0,
+            storage::resolver_address,
+            begin_cell()
+                .store_uint(op::dns_register, 32)
+                .store_uint(query_id, 64)
+                .store_ref(name_cell)
+                .store_slice(winner)
+                .store_uint(now() + 31536000, 32)
+            .end_cell(),
+            QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+() get_auction_data() method_id {
+    storage::load();
+    return (storage::owner_address, storage::resolver_address);
+}

@@ -8,7 +8,8 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { IonCandleChart } from "@/components/charts/IonCandleChart";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -16,6 +17,18 @@ import { NeonCard } from "@/components/ui/NeonCard";
 import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
 import { ChartFrame, GlassPanel, MetricTile, PageHero, RiskNotice, StatusPill } from "@/components/ui/glass";
 import { useMarketCandles, useMarketOrderBook, useSwapMarketStats } from "@/hooks/useMarketSurface";
+import {
+  fetchBridgeRoutes,
+  fetchBurnSummary,
+  fetchDomainResolve,
+  fetchStakingSummary,
+  formatIonAmount,
+  type ApiMeta,
+  type BridgeRoutesPayload,
+  type BurnSummary,
+  type DomainResolution,
+  type StakingSummary,
+} from "@/lib/ionApi";
 
 type BusinessPageConfig = {
   eyebrow: string;
@@ -27,7 +40,9 @@ type BusinessPageConfig = {
   checklist: string[];
 };
 
-const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
+export type BusinessPageKey = Exclude<PageKey, "swap" | "dashboard" | "pool" | "stake">;
+
+const pageConfigs: Record<BusinessPageKey, BusinessPageConfig> = {
   trade: {
     eyebrow: "Professional Trading",
     title: "ION spot order desk",
@@ -55,34 +70,6 @@ const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
       { label: "Settlement", value: "ION fees", tone: "gold" },
     ],
     checklist: ["Grid bounds", "Take-profit / stop-loss", "Bot defense", "Strategy history"],
-  },
-  pool: {
-    eyebrow: "Liquidity",
-    title: "ION liquidity pools",
-    description:
-      "Pool management surface for adding liquidity, LP position cards, fee growth, and impermanent-loss alerts.",
-    icon: Layers3,
-    primaryAction: "Add Liquidity",
-    metrics: [
-      { label: "TVL", value: "$1.23M", tone: "cyan" },
-      { label: "Pool Fee", value: "ION based", tone: "gold" },
-      { label: "Positions", value: "0 active", tone: "magenta" },
-    ],
-    checklist: ["LP mint flow", "Slippage guard", "Pool analytics", "Position withdrawal"],
-  },
-  stake: {
-    eyebrow: "Yield",
-    title: "DEX staking hub",
-    description:
-      "Staking hub for official staking, DEX staking, ecosystem staking totals, and dynamic APR adjustments.",
-    icon: ShieldCheck,
-    primaryAction: "Stake ION",
-    metrics: [
-      { label: "DEX APR", value: "25.5%", tone: "gold" },
-      { label: "Official Stake", value: "Indexer feed", tone: "cyan" },
-      { label: "Ecosystem Stake", value: "Governance feed", tone: "magenta" },
-    ],
-    checklist: ["Dynamic APR model", "Reward vesting", "Unstake queue", "Treasury split"],
   },
   bridge: {
     eyebrow: "Cross-chain",
@@ -148,18 +135,246 @@ const toneClass: Record<BusinessPageConfig["metrics"][number]["tone"], string> =
   gold: "text-amber-200 shadow-neonGold",
 };
 
-const marketTrades = [
-  ["6.024", "4,820", "Buy"],
-  ["6.021", "2,114", "Sell"],
-  ["6.019", "8,430", "Buy"],
-  ["6.016", "1,902", "Sell"],
-] as const;
+type MetricCard = { label: string; value: string; tone: "cyan" | "magenta" | "gold" };
 
-const orderHistory = [
-  ["Limit buy", "1,250 ION", "Review"],
-  ["Grid rebalance", "420 ION", "Filled"],
-  ["Stake claim", "88 ION", "Settled"],
-] as const;
+function MetricsGrid({ metrics, sourceTestId, meta }: { metrics: MetricCard[]; sourceTestId: string; meta: ApiMeta | null }) {
+  return (
+    <>
+      <DataSourceBadge meta={meta} testId={sourceTestId} />
+      <div className="grid gap-4 md:grid-cols-3">
+        {metrics.map((metric) => (
+          <MetricCardView key={metric.label} metric={metric} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function MetricCardView({ metric }: { metric: MetricCard }) {
+  return (
+    <div className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}>
+      <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">{metric.label}</p>
+      <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
+    </div>
+  );
+}
+
+const fallbackBurnSummary: BurnSummary = {
+  totalBurnedIon: "12845000",
+  bscBurnedIon: "8245000",
+  ionMainnetBurnedIon: "4600000",
+  remainingSupplyIon: "987155000",
+  bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
+  ionBurnSource: "ion-mainnet-burn-source-placeholder",
+};
+
+const fallbackStakingSummary: StakingSummary = {
+  totalStakedIon: "452000000",
+  officialStakedIon: "398000000",
+  dexStakedIon: "54000000",
+  lpStakedUsd: "12800000",
+  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
+};
+
+const fallbackBridgePayload: BridgeRoutesPayload = {
+  routes: [
+    {
+      routeId: "bsc-ion-ion",
+      fromChain: "BSC",
+      toChain: "ION",
+      asset: "ION",
+      status: "mock",
+      minAmountIon: "10.000",
+      maxAmountIon: "500000.000",
+      estimatedMinutes: 12,
+      confirmationsRequired: 15,
+      safeguards: ["vault-limit", "relayer-threshold", "replay-protection", "manual-pause"],
+    },
+    {
+      routeId: "ion-bsc-ion",
+      fromChain: "ION",
+      toChain: "BSC",
+      asset: "ION",
+      status: "design",
+      minAmountIon: "10.000",
+      maxAmountIon: "250000.000",
+      estimatedMinutes: 18,
+      confirmationsRequired: 8,
+      safeguards: ["release-limit", "relayer-threshold", "proof-audit-log", "manual-pause"],
+    },
+  ],
+  relayerStatus: "mocked",
+  verifier: {
+    threshold: "3-of-5 draft",
+    replayProtection: true,
+    proofStatus: "planned",
+  },
+};
+
+const fallbackDomainCustodian: DomainResolution = {
+  name: "custodian.ion",
+  available: true,
+  ownerAddress: null,
+  resolvedAddress: null,
+  expiresAt: null,
+  records: [],
+  marketplace: {
+    listed: true,
+    floorIon: "2500.000",
+    lastSaleIon: null,
+  },
+  provenance: {
+    source: "mock",
+    note: "Offline fallback resolver preview.",
+  },
+};
+
+function formatTitleCase(word: string) {
+  if (!word) {
+    return word;
+  }
+  return `${word.slice(0, 1).toUpperCase()}${word.slice(1)}`;
+}
+
+function BurnMetricsRow() {
+  const [summary, setSummary] = useState<BurnSummary>(fallbackBurnSummary);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchBurnSummary(controller.signal)
+      .then((response) => {
+        setSummary(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setSummary(fallbackBurnSummary);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const metrics: MetricCard[] = [
+    { label: "Total Burned", value: `${formatIonAmount(summary.totalBurnedIon)} ION`, tone: "gold" },
+    { label: "BSC Burn", value: `${formatIonAmount(summary.bscBurnedIon)} ION`, tone: "magenta" },
+    { label: "Remaining", value: `${formatIonAmount(summary.remainingSupplyIon)} ION`, tone: "cyan" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="burn-metrics-source" />;
+}
+
+function StakeMetricsRow() {
+  const [summary, setSummary] = useState<StakingSummary>(fallbackStakingSummary);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchStakingSummary(controller.signal)
+      .then((response) => {
+        setSummary(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setSummary(fallbackStakingSummary);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const metrics: MetricCard[] = [
+    { label: "DEX APR", value: `${summary.apr.dexPct}%`, tone: "gold" },
+    { label: "Official Stake", value: `${formatIonAmount(summary.officialStakedIon)} ION`, tone: "cyan" },
+    { label: "DEX Stake", value: `${formatIonAmount(summary.dexStakedIon)} ION`, tone: "magenta" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="stake-metrics-source" />;
+}
+
+function BridgeMetricsRow() {
+  const [payload, setPayload] = useState<BridgeRoutesPayload>(fallbackBridgePayload);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchBridgeRoutes(controller.signal)
+      .then((response) => {
+        setPayload(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setPayload(fallbackBridgePayload);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const primary = payload.routes[0];
+  const primaryLeg = primary ? `${primary.fromChain} → ${primary.toChain}` : "—";
+  const metrics: MetricCard[] = [
+    { label: "Primary Route", value: primaryLeg, tone: "cyan" },
+    { label: "Relayers", value: formatTitleCase(payload.relayerStatus), tone: "gold" },
+    { label: "Verifier", value: payload.verifier.threshold, tone: "magenta" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="bridge-metrics-source" />;
+}
+
+function DomainMetricsRow() {
+  const previewName = "custodian.ion";
+  const [resolution, setResolution] = useState<DomainResolution>(fallbackDomainCustodian);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchDomainResolve(previewName, controller.signal)
+      .then((response) => {
+        setResolution(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setResolution(fallbackDomainCustodian);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const listingLabel = resolution.available ? "On market" : "Registered";
+  const metrics: MetricCard[] = [
+    { label: "Resolver Preview", value: resolution.name, tone: "cyan" },
+    { label: "Registry", value: listingLabel, tone: "gold" },
+    { label: "Floor (mock)", value: `${resolution.marketplace.floorIon} ION`, tone: "magenta" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="domain-metrics-source" />;
+}
 
 function toPositiveNumber(value: string) {
   const parsed = Number(value);
@@ -1091,7 +1306,7 @@ function TradeDeskPage() {
     {
       label: "Last price",
       value: statsState === "ready" && stats ? stats.lastPrice : "—",
-      tone: "emerald" as const,
+      tone: "gold" as const,
       testId: "trade-metric-last-price",
     },
     {
@@ -1141,6 +1356,7 @@ function TradeDeskPage() {
             <div className="relative float-3d h-72 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-4 shadow-[0_35px_90px_rgba(36,247,255,0.13)]">
               <IonCandleChart candles={candles} loadState={candleState} testId="trade-candle-chart" className="h-full" />
             </div>
+            {statsProv ? <DataProvenanceBadge className="mt-2" label={statsProv} testId="trade-stats-provenance" /> : null}
           </ChartFrame>
 
           <div className="grid gap-5 lg:grid-cols-2">
@@ -1191,8 +1407,9 @@ function OrderBookPanel() {
 
 function MarketTape() {
   return (
-    <GlassPanel eyebrow="Tape" testId="trade-market-trades-panel" title="Market trades">
-      <div className="grid gap-3" data-testid="trade-market-trades">
+    <NeonCard variant="cyan">
+      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Market trades</p>
+      <div className="mt-4 grid gap-3" data-testid="trade-market-trades">
         {marketTrades.map(([price, amount, side]) => (
           <div key={`${price}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">
             <span className={side === "Buy" ? "font-black text-emerald-200" : "font-black text-rose-200"}>{price}</span>
@@ -1201,14 +1418,15 @@ function MarketTape() {
           </div>
         ))}
       </div>
-    </GlassPanel>
+    </NeonCard>
   );
 }
 
 function OrderHistoryPanel() {
   return (
-    <GlassPanel eyebrow="Risk" testId="trade-history-panel" title="Orders and risk">
-      <div className="grid gap-3" data-testid="trade-history">
+    <NeonCard variant="gold">
+      <p className="text-sm uppercase tracking-[0.28em] text-amber-200/70">Orders and risk</p>
+      <div className="mt-4 grid gap-3" data-testid="trade-history">
         {orderHistory.map(([kind, amount, status]) => (
           <div key={`${kind}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">
             <span className="font-black text-white">{kind}</span>
@@ -1217,7 +1435,7 @@ function OrderHistoryPanel() {
           </div>
         ))}
       </div>
-    </GlassPanel>
+    </NeonCard>
   );
 }
 
@@ -1565,18 +1783,12 @@ function StakeDeskPage() {
   );
 }
 
-export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
+export function BusinessPage({ page }: { page: BusinessPageKey }) {
   if (page === "trade") {
     return <TradeDeskPage />;
   }
   if (page === "grid") {
     return <GridDeskPage />;
-  }
-  if (page === "pool") {
-    return <PoolDeskPage />;
-  }
-  if (page === "stake") {
-    return <StakeDeskPage />;
   }
   if (page === "bridge") {
     return <BridgeDeskPage />;

@@ -1,5 +1,17 @@
 # Architecture Audit Memory
 
+## Active Task Queue
+
+- [ ] **UI Visual Polish — Pixel Correction Protocol** — 2026-05-21
+  - Rule file: `.cursor/rules/ion-visual-polish.mdc`
+  - DOM禁止修改，只改CSS。
+  - 步骤1: `.glass-surface` 加SVG噪点纹理 (opacity 0.05)
+  - 步骤2: 底层发光层blur 60px + 青→洋红渐变
+  - 步骤3: 边框border-image渐变截光 (rgba(255,255,255,0.4)→transparent)
+  - 步骤4: 玻璃背景改为 rgba(255,255,255,0.03)，禁止灰色底色
+  - 验证: 截图→DevTools调透明度→对比设计图→不达标回修
+  - 修改范围: `frontend/src/styles/global.css`
+
 ## 2026-05-20 UI conformance audit
 
 The user requires `swap.ion` to present as an ION Chain native DEX surface, not a generic mock screen.

@@ -1,0 +1,116 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::registrar_address;
+global cell storage::domain_dict;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::registrar_address = ds~load_msg_addr();
+    storage::domain_dict = ds~load_dict();
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::registrar_address)
+        .store_dict(storage::domain_dict)
+    .end_cell());
+}
+
+int dns::hash_name(slice name) inline {
+    return name.slice_hash();
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::dns_resolve {
+        slice body = ctx::body();
+        int query_id = body~load_uint(64);
+        slice name = body~load_ref().begin_parse();
+        int key = dns::hash_name(name);
+
+        (slice entry, int found) = storage::domain_dict.udict_get?(256, key);
+        throw_unless(error::domain_unavailable, found);
+
+        slice es = entry;
+        slice owner = es~load_msg_addr();
+        int expires_at = es~load_uint(32);
+        es.end_parse();
+
+        msgs::send_simple(
+            0,
+            ctx::sender(),
+            begin_cell()
+                .store_uint(op::dns_resolve, 32)
+                .store_uint(query_id, 64)
+                .store_slice(owner)
+                .store_uint(expires_at, 32)
+            .end_cell(),
+            QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    if ctx::opcode() == op::dns_register {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::registrar_address));
+        slice body = ctx::body();
+        slice name = body~load_ref().begin_parse();
+        slice owner = body~load_msg_addr();
+        int expires_at = body~load_uint(32);
+        int key = dns::hash_name(name);
+
+        (slice _, int exists) = storage::domain_dict.udict_get?(256, key);
+        throw_unless(error::domain_unavailable, exists == 0);
+
+        storage::domain_dict~udict_set(
+            256,
+            key,
+            begin_cell().store_slice(owner).store_uint(expires_at, 32).end_cell().begin_parse());
+        storage::save();
+        return ();
+    }
+
+    if ctx::opcode() == op::dns_transfer {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::registrar_address));
+        slice body = ctx::body();
+        slice name = body~load_ref().begin_parse();
+        slice new_owner = body~load_msg_addr();
+        int key = dns::hash_name(name);
+
+        (slice entry, int found) = storage::domain_dict.udict_get?(256, key);
+        throw_unless(error::domain_unavailable, found);
+
+        slice es = entry;
+        es~load_msg_addr();
+        int expires_at = es~load_uint(32);
+        storage::domain_dict~udict_set(
+            256,
+            key,
+            begin_cell().store_slice(new_owner).store_uint(expires_at, 32).end_cell().begin_parse());
+        storage::save();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+slice dns_resolve(slice name) method_id {
+    storage::load();
+    int key = dns::hash_name(name);
+    (slice entry, int found) = storage::domain_dict.udict_get?(256, key);
+    throw_unless(error::domain_unavailable, found);
+    return entry;
+}
