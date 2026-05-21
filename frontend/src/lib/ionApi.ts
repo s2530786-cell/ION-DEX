@@ -161,6 +161,26 @@ export type DomainResolution = {
   };
 };
 
+export type DomainListingRow = {
+  name: string;
+  status: "Owned" | "Listed" | "Available" | "Primary";
+  priceIon: string;
+  available: boolean;
+};
+
+export type DomainShowcasePayload = {
+  listings: DomainListingRow[];
+  identity: {
+    primaryIonName: string;
+    kycPass: {
+      level: string;
+      expiresAt: string;
+      badge: string;
+    };
+  };
+  provenance: DomainResolution["provenance"];
+};
+
 export type TradeQuote = {
   inputToken: string;
   outputToken: string;
@@ -221,6 +241,12 @@ export async function fetchBridgeRoutes(signal?: AbortSignal): Promise<ApiRespon
 export async function fetchDomainResolve(name: string, signal?: AbortSignal): Promise<ApiResponse<DomainResolution>> {
   const query = encodeURIComponent(name);
   return fetchApi<DomainResolution>(`/api/domain/resolve?name=${query}`, signal);
+}
+
+export async function fetchDomainShowcase(
+  signal?: AbortSignal,
+): Promise<ApiResponse<DomainShowcasePayload>> {
+  return fetchApi<DomainShowcasePayload>("/api/domain/showcase", signal);
 }
 
 export type BscWalletBalance = {

@@ -21,6 +21,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { ChartFrame, GlassPanel, MetricTile, PageHero, RiskNotice, StatusPill } from "@/components/ui/glass";
 import { useAiDeskData } from "@/hooks/useAiDeskData";
 import { useBridgeDeskData } from "@/hooks/useBridgeDeskData";
+import { useDomainDeskData } from "@/hooks/useDomainDeskData";
 import { useBurnDeskData } from "@/hooks/useBurnDeskData";
 import { usePoolDeskData } from "@/hooks/usePoolDeskData";
 import { useApiResource, type ApiLoadState } from "@/hooks/useApiResource";
@@ -1475,12 +1476,6 @@ const orderHistory = [
   ["Stop · BNB/ION", "0.9 BNB", "Cancelled"],
 ] as const;
 
-const domainListings = [
-  { name: "trader.ion", status: "Owned", price: "—" },
-  { name: "swap.ion", status: "Primary", price: "—" },
-  { name: "vault.ion", status: "Listed", price: "420 ION" },
-] as const;
-
 function GridDeskPage() {
   const config = pageConfigs.grid;
   const fetchTickers = useCallback((signal: AbortSignal) => fetchMarketTickers(signal), []);
@@ -1830,26 +1825,45 @@ function BurnDeskPage() {
 
 function DomainDeskPage() {
   const config = pageConfigs.domain;
+  const desk = useDomainDeskData();
+
   return (
     <div className="grid gap-5" data-testid="page-domain">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={config.metrics}
+        metrics={desk.heroMetrics}
+        metricsMeta={desk.showcase.meta}
+        metricsState={desk.showcase.state}
         title={config.title}
       />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
-        <GlassPanel eyebrow="My domains" testId="domain-marketplace" title="Marketplace · dns.ice.io seed">
-          <div className="grid gap-2">
-            {domainListings.map((d) => (
-              <div key={d.name} className="flex justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
-                <span className="font-black text-cyan-100">{d.name}</span>
-                <span className="text-cyan-100/60">{d.status}</span>
-                <span className="text-amber-200">{d.price}</span>
-              </div>
-            ))}
-          </div>
+        <GlassPanel eyebrow="My domains" testId="domain-marketplace" title="Marketplace · gateway resolver">
+          <DataSourceBadge meta={desk.showcase.meta} testId="domain-metrics-source" />
+          <AsyncState
+            emptyMessage="No domain listings returned from showcase API."
+            error={desk.showcase.error}
+            onRetry={desk.showcase.reload}
+            state={desk.showcase.state}
+            testId="domain-showcase"
+          >
+            <div className="mt-3 grid gap-2">
+              {desk.listings.map((d) => (
+                <div
+                  key={d.name}
+                  className="flex justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm"
+                >
+                  <span className="font-black text-cyan-100">{d.name}</span>
+                  <span className="text-cyan-100/60">{d.status}</span>
+                  <span className="text-amber-200">{d.priceIon}</span>
+                </div>
+              ))}
+            </div>
+          </AsyncState>
+          <p className="mt-3 text-xs text-cyan-100/50">
+            Rows from GET /api/domain/showcase (resolver catalog) — not static UI seeds.
+          </p>
         </GlassPanel>
         <div className="grid gap-5">
           <RiskNotice
@@ -1862,7 +1876,7 @@ function DomainDeskPage() {
             <DomainTradingPanel />
           </NeonCard>
           <GlassPanel testId="domain-ion-id" title="ION ID / KYC">
-            <p className="text-sm text-cyan-100/75">KYC Pass L2 · expires 2026-11-30 · profile hub linked</p>
+            <p className="text-sm text-cyan-100/75">{desk.kycLine}</p>
           </GlassPanel>
         </div>
       </div>

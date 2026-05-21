@@ -283,6 +283,20 @@ describe("ION DEX API gateway", () => {
     assert.equal(data.verifier.replayProtection, true);
   });
 
+  it("serves domain showcase listings from resolver catalog", async () => {
+    const response = await requestJson("/api/domain/showcase");
+    const data = response.body.data as {
+      listings: Array<{ name: string; status: string; priceIon: string }>;
+      identity: { primaryIonName: string; kycPass: { badge: string } };
+    };
+
+    assert.equal(response.status, 200);
+    assert.ok(data.listings.some((row) => row.name === "demo.ion" && row.status === "Owned"));
+    assert.ok(data.listings.some((row) => row.name === "trader.ion" && row.status === "Primary"));
+    assert.equal(data.identity.primaryIonName, "trader.ion");
+    assert.equal(data.identity.kycPass.badge, "KYC Pass");
+  });
+
   it("resolves valid .ion domains and rejects invalid domain names", async () => {
     const resolved = await requestJson("/api/domain/resolve?name=Demo.ION");
     const resolvedData = resolved.body.data as {

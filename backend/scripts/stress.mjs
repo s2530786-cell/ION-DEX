@@ -65,6 +65,11 @@ const endpoints = [
   { path: "/api/burn/summary", p95LimitMs: 300, expect: (data) => Number(data.totalBurnedIon) > 0 },
   { path: "/api/staking/summary", p95LimitMs: 300, expect: (data) => data.rewardAsset === "ION" },
   { path: "/api/bridge/routes", p95LimitMs: 300, expect: (data) => Array.isArray(data.routes) && data.routes.length >= 2 },
+  {
+    path: "/api/domain/showcase",
+    p95LimitMs: 300,
+    expect: (data) => Array.isArray(data.listings) && data.listings.length >= 3 && data.identity?.primaryIonName,
+  },
   { path: "/api/domain/resolve?name=demo.ion", p95LimitMs: 300, expect: (data) => data.name === "demo.ion" && data.available === false },
   { path: "/api/profile/demo", p95LimitMs: 300, expect: (data) => data.kycPass?.storesRawKyc === false },
 ];

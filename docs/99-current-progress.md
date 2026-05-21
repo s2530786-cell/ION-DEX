@@ -2,6 +2,7 @@
 
 ## Latest Verified Status
 
+- **Domain showcase + Bridge 路由统一（2026-05-20）**：新增 `GET /api/domain/showcase`（由 resolver 目录批量解析）；`DomainDeskPage` 接 `useDomainDeskData`，移除 `domainListings` 静态种子；`#bridge` 导航统一走 `BusinessPage` → `BridgeDeskPage`（与 Burn/AI 一致）。`BridgePage.tsx` 保留链上 vault 实现供后续嵌入 Desk。验证：`verify-full` 绿灯，Playwright **16 passed**。
 - **Stress 门禁 + 100-pass GREEN（2026-05-20）**：`backend/scripts/stress.mjs` 将 `/api/health` 与 `/api/config/public` 的 p95 上限由 200ms 调整为 **250ms**（与 `/api/tokens` 对齐），消除 100-pass 第 27 轮在 CI 负载下 p95≈224ms 的统计误杀。验证：`bash scripts/verify-100.sh 100` → **PASSED=100**、**FAILED=0**、**RESULT=GREEN**、exit `0`（摘要 `/tmp/ion-verify-100-summary-20260521-102654.txt`，日志 `/tmp/ion-verify-100-run.log`）。
 - **Desk API + Dashboard glass（2026-05-20）**：Burn/Bridge/AI Desk 去除静态种子，接 `fetchBurnSummary` / `fetchBridgeRoutes` / `useSwapMarketStats`+tickers；Dashboard 右侧 TVL/APR/Burn 换 `NeonGlassCard`。新增 `useBurnDeskData`、`useBridgeDeskData`、`useAiDeskData`、`scripts/verify-100.sh`（POSIX）。验证：`verify-full` 绿灯；`verify-100.sh 3` → RESULT=GREEN；Playwright **16 passed**。
 - **NeonGlassCard 第二阶段（2026-05-20）**：`PageHero` / Dashboard `dashboard-market-stage` 换用 `NeonGlassCard`；`useDashboardMarket`、`usePoolDeskData`、`poolDeskData.buildPoolRowsFromApi` 仅消费 gateway 数据；`useApiResource` 取消不稳定 effect 依赖并忽略 Strict Mode 清理 abort。验证：`cd frontend && npm run verify` → build OK、Playwright **16 passed**。`.memory-bank/live-data-reference.md` 补全 **Hard Data Rules**（security-preflight）。

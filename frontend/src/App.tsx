@@ -6,12 +6,12 @@ import { BusinessPage, type BusinessPageKey } from "@/pages/BusinessPages";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { PoolPage } from "@/pages/PoolPage";
 import { StakePage } from "@/pages/StakePage";
-import { BridgePage } from "@/pages/BridgePage";
 import { SwapPage } from "@/pages/SwapPage";
 
 const businessPages = new Set<BusinessPageKey>([
   "trade",
   "grid",
+  "bridge",
   "burn",
   "domain",
   "ai",
@@ -37,8 +37,6 @@ function PageRouter({
       return <PoolPage />;
     case "stake":
       return <StakePage />;
-    case "bridge":
-      return <BridgePage />;
     default:
       if (isBusinessPage(page)) {
         return <BusinessPage page={page} />;

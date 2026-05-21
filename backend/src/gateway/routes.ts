@@ -10,6 +10,7 @@ import {
   fetchStakingSummary,
   listAdapterHealth,
 } from "../data/gateway-data.js";
+import { getDomainShowcase } from "../services/domain.js";
 import { fetchBscWalletBalance, fetchPublicConfig } from "../services/config-gateway.js";
 import { getBridgeRoutes } from "../services/bridge.js";
 import { getDemoProfile, getProfileSession } from "../services/profile.js";
@@ -167,6 +168,13 @@ export async function routeRequest(
       }
       case "/api/bridge/routes":
         writeJson(response, 200, apiResponse(getBridgeRoutes(), buildMeta(clock, requestId, "local")));
+        return;
+      case "/api/domain/showcase":
+        writeJson(
+          response,
+          200,
+          apiResponse(getDomainShowcase(), buildMeta(clock, requestId, "local")),
+        );
         return;
       case "/api/domain/resolve": {
         const validation = validateIonDomainName(url.searchParams.get("name"));

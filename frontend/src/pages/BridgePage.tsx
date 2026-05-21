@@ -1,3 +1,7 @@
+/**
+ * On-chain BSC ↔ ION bridge panel (wagmi / vault contracts).
+ * Primary nav route: `#bridge` → `BusinessPage` → `BridgeDeskPage` (gateway metrics + transfer form).
+ */
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { parseUnits, stringToHex } from "viem";
 import { useWalletClient } from "wagmi";
