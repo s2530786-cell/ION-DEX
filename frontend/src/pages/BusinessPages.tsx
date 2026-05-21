@@ -1060,6 +1060,39 @@ function DomainTradingPanel() {
 }
 
 function AIMarketPanel() {
+  const [tab, setTab] = useState<"monitor" | "analyzer">("monitor");
+
+  return (
+    <div className="grid gap-4">
+      <SegmentedControl
+        label="AI Mode"
+        onChange={setTab}
+        options={[
+          { label: "World Monitor", value: "monitor" },
+          { label: "Sentinel Analyzer", value: "analyzer" },
+        ]}
+        testId="ai-tab"
+        value={tab}
+      />
+
+      {tab === "monitor" ? (
+        <div className="overflow-hidden rounded-2xl border border-white/10" data-testid="ai-world-monitor">
+          <iframe
+            src="https://worldmonitor.app"
+            title="World Monitor - Real-Time Global Intelligence"
+            className="h-[70vh] w-full border-0"
+            sandbox="allow-scripts allow-same-origin allow-popups"
+            loading="lazy"
+          />
+        </div>
+      ) : (
+        <SentinelAnalyzer />
+      )}
+    </div>
+  );
+}
+
+function SentinelAnalyzer() {
   const [symbol, setSymbol] = useState("ION");
   const [horizon, setHorizon] = useState<"1h" | "4h" | "1d">("4h");
   const [depth, setDepth] = useState<"quick" | "standard" | "deep">("standard");
