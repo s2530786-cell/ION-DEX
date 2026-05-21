@@ -41,3 +41,24 @@ const storage_fee::lp_account = 1000000;  ;; 0.001 ION
 const storage_fee::lp_wallet = 1000000;   ;; 0.001 ION
 const storage_fee::est_jetton_wallet = 10000000; ;; 0.010 ION
 const storage_fee::vault = 1000000;  ;; 0.001 ION
+
+const gas::deployer::deploy_pool = 33000000;
+const gas::sandwich::commit = 11000000;
+const gas::sandwich::reveal = 22000000;
+const gas::fee_distributor::distribute = 22000000;
+const gas::bridge::process = 33000000;
+const gas::dns::register = 22000000;
+const gas::dns::resolve = 11000000;
+const gas::dns::auction = 22000000;
+const gas::staking::deposit = 22000000;
+const gas::staking::withdraw = 22000000;
+const gas::staking::claim = 22000000;
+
+const storage_fee::deployer = 1000000;
+const storage_fee::sandwich = 1000000;
+const storage_fee::fee_distributor = 1000000;
+const storage_fee::bridge = 10000000;
+const storage_fee::dns_resolver = 1000000;
+const storage_fee::dns_registrar = 1000000;
+const storage_fee::dns_auction = 1000000;
+const storage_fee::staking = 10000000;
