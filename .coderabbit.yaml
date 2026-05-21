@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+early_access: true
+reviews:
+  profile: "assertive"
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  review_details: true
+  sequence_diagrams: true
+  auto_review:
+    enabled: true
+    drafts: true
+  path_instructions:
+    # ── Smart Contracts (ION FunC) ──
+    - path: "contracts/**/*.fc"
+      instructions: |
+        ION FunC smart contract review. Validate:
+        1. Reentrancy protection (check reserve/commit pattern)
+        2. Integer overflow/underflow (use safe math)
+        3. Access control (ensure only owner/admin can call privileged ops)
+        4. Gas optimization (minimize storage ops, loop bounds)
+        5. Message routing (op code handling, bounce handling)
+        6. ION-specific: sendBoc format, seqno management, validator interactions
+    - path: "contracts/**/*.sol"
+      instructions: |
+        BSC Solidity smart contract review. Validate:
+        1. OpenZeppelin best practices (Ownable, ReentrancyGuard, Pausable)
+        2. Reentrancy attack vectors (CEI pattern)
+        3. Integer overflow (Solidity ^0.8.x auto-check)
+        4. Access control and role management
+        5. Flash loan attack resistance
+        6. Sandwich attack resistance
+        7. Oracle manipulation resistance
+        8. Gas optimization for BSC
+    # ── Backend Services ──
+    - path: "backend/**/*.ts"
+      instructions: |
+        Backend TypeScript service review. Validate:
+        1. No mock/placeholder/hardcoded data — every endpoint must connect to real data sources
+        2. Input validation for all API endpoints
+        3. Error handling (try/catch, proper error propagation)
+        4. Database connection management (always close, use connection pooling)
+        5. Rate limiting and DDoS protection
+        6. ION RPC calls: proxy required, network error handling
+        7. No secrets in code (use env vars)
+    # ── Frontend ──
+    - path: "frontend/**/*.tsx"
+      instructions: |
+        Frontend React/TypeScript review. Validate:
+        1. No hardcoded prices or mock data — use live API hooks
+        2. Wallet connection: ION Browser first, Online+ second, EVM third
+        3. Responsive design (mobile-first)
+        4. Glass morphism UI consistency (use existing NeonButton/GlassCard components)
+        5. Proper error boundaries and loading states
+        6. UTF-8 encoding (no 乱码 — Chinese text must be readable)
+    # ── Tests ──
+    - path: "**/*.test.{ts,tsx}"
+      instructions: |
+        Test file review. Validate:
+        1. Tests must actually test real functionality (no empty/pass-through tests)
+        2. Contract tests: 10 attack types × 100 passes each minimum
+        3. Integration tests: real RPC/mock RPC with proper fixtures
+        4. Frontend tests: user interaction flows, not just render checks
+  auto_incremental_review: true
+  collapse_details: false
+  enable_free_tier: true
+  tone_instructions: |
+    Be direct and actionable. Each finding must include:
+    - Severity (🔴Critical 🟠Major 🟡Minor ⚪Nit)
+    - File:line reference
+    - Concrete fix with code diff
+    - Security implication for DeFi contracts
+    Skip compliments — focus on what needs to be fixed.
+chat:
+  auto_reply: true
+knowledge_base:
+  learnings:
+    scope: "repository"
+  code_guidelines:
+    scope: "repository"
