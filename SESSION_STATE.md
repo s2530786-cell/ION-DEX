@@ -34,36 +34,38 @@
 | 5 | 补充 Business 页面交互 (Trade/Grid/Burn/Domain/AI) | 每个页面有真实表单+交互，非标题壳 |
 | 6 | 前端视觉纠正 | 多层玻璃态 + 响应式布局 |
 
-## 💰 BOUNTY TASK — Wormhole Audit
+## 💰 BOUNTY — Immunefi Wormhole Audit
 
-```js
-// TASK 0.5 — 旺财派单 2026-05-21
-// 直接跑这个脚本:
-// node D:\openclaw-data\workspace\scripts\wormhole-audit.mjs
-// 可选参数: clone | rules | index | scan | setup | report | check | done | all
+```
+node scripts/bounty-wormhole.cjs clone     # step 1
+git add . && git commit -m "audit(wormhole): step 1 clone"
 
-const task = {
-  id: "wormhole-001",
-  platform: "immunefi",
-  target: "Wormhole Cross-Chain Bridge",
-  language: "Solidity",
-  reward: "$2,000-$10,000",
-  deadline: "2026-05-28",
-  repo: "https://github.com/wormhole-foundation/wormhole",
-  script: "D:\\openclaw-data\\workspace\\scripts\\wormhole-audit.mjs",
-  queue: "D:\\openclaw-data\\workspace\\scripts\\pipeline\\queue\\task-wormhole-001.json",
-  output: "D:\\openclaw-data\\workspace\\scripts\\pipeline\\reports\\wormhole\\",
-  done: "D:\\openclaw-data\\workspace\\scripts\\pipeline\\queue\\done-wormhole-001.json",
-  rules: [
-    "NO_FAKE_CODE — 所有 PoC 真实链上验证",
-    "WRITE_VERIFY — 写完立刻 forge test",
-    "SECURITY_FIRST — 1000 次全绿",
-    "NO_DIRECT_SUBMIT — 等我+Master审批",
-  ]
-};
+node scripts/bounty-wormhole.cjs read      # step 2
+git add . && git commit -m "audit(wormhole): step 2 read rules"
+
+node scripts/bounty-wormhole.cjs index     # step 3
+git add . && git commit -m "audit(wormhole): step 3 contract index"
+
+node scripts/bounty-wormhole.cjs scan      # step 4
+git add . && git commit -m "audit(wormhole): step 4 attack surface scan"
+
+node scripts/bounty-wormhole.cjs setup     # step 5
+git add . && git commit -m "audit(wormhole): step 5 foundry fork setup"
+
+node scripts/bounty-wormhole.cjs report    # step 6
+git add . && git commit -m "audit(wormhole): step 6 immunefi reports"
+
+node scripts/bounty-wormhole.cjs check     # step 7
+git add . && git commit -m "audit(wormhole): step 7 final check"
+
+node scripts/bounty-wormhole.cjs done      # step 8 — notify 旺财
+git add . && git commit -m "audit(wormhole): step 8 done marker"
 ```
 
-`node D:\openclaw-data\workspace\scripts\wormhole-audit.mjs clone`
+> task.json: `D:\openclaw-data\workspace\scripts\pipeline\queue\task-wormhole-001.json`
+> reports: `D:\openclaw-data\workspace\scripts\pipeline\reports\wormhole\`
+> deadline: 2026-05-28 | reward: $2K-$10K | platform: Immunefi
+> ⚠️ DO NOT submit directly. Wait for 旺财 review + Master approval.
 
 ## 🟡 P1 任务队列
 
