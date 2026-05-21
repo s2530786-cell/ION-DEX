@@ -1,0 +1,483 @@
+{
+  "updated": "2026-05-21T11:40:42.675Z",
+  "source": "Twitter (syndication.twitter.com)",
+  "totalAccounts": 15,
+  "accountsFetched": 7,
+  "totalFetched": 456,
+  "newTweets": 456,
+  "marketSentiment": {
+    "netScore": "9.5",
+    "mood": "⚪ Neutral",
+    "color": "#94a3b8",
+    "totalSignals": 21,
+    "bullCount": 4,
+    "bearCount": 2
+  },
+  "signals": [
+    {
+      "id": "1519480761749016577",
+      "text": "Next I��m buying Coca-Cola to put the cocaine back in",
+      "created_at": "Thu Apr 28 00:56:58 +0000 2022",
+      "likes": 4226087,
+      "retweets": 582753,
+      "replies": 168115,
+      "views": 0,
+      "url": "https://x.com/elonmusk/status/1519480761749016577",
+      "accountId": "elonmusk",
+      "name": "Elon Musk",
+      "tier": "S",
+      "tags": [
+        "tech",
+        "crypto",
+        "macro"
+      ],
+      "ai": {
+        "sentiment": "bullish",
+        "confidence": 58,
+        "reason": "100% bullish"
+      }
+    },
+    {
+      "id": "1812258574049157405",
+      "text": "https://t.co/6eOgN9UdOy",
+      "created_at": "Sat Jul 13 22:51:28 +0000 2024",
+      "likes": 3216365,
+      "retweets": 378276,
+      "replies": 69400,
+      "views": 0,
+      "url": "https://x.com/elonmusk/status/1812258574049157405",
+      "accountId": "elonmusk",
+      "name": "Elon Musk",
+      "tier": "S",
+      "tags": [
+        "tech",
+        "crypto",
+        "macro"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2027651077865157033",
+      "text": "https://t.co/BZuJDudLej",
+      "created_at": "Sat Feb 28 07:44:23 +0000 2026",
+      "likes": 997737,
+      "retweets": 154556,
+      "replies": 150381,
+      "views": 0,
+      "url": "https://x.com/realDonaldTrump/status/2027651077865157033",
+      "accountId": "realDonaldTrump",
+      "name": "Donald Trump",
+      "tier": "S",
+      "tags": [
+        "macro",
+        "regulation"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2028505632123326484",
+      "text": "https://t.co/uAxTGrJisv",
+      "created_at": "Mon Mar 02 16:20:05 +0000 2026",
+      "likes": 602756,
+      "retweets": 77708,
+      "replies": 158583,
+      "views": 0,
+      "url": "https://x.com/realDonaldTrump/status/2028505632123326484",
+      "accountId": "realDonaldTrump",
+      "name": "Donald Trump",
+      "tier": "S",
+      "tags": [
+        "macro",
+        "regulation"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2056827052851105947",
+      "text": "Horrible Congressman Thomas Massie put out an old Endorsement, from many years ago, of him by me long before I found out that he was the Worst Congressman in the History of our Country. I endorsed Ed Gallrein, a true American Patriot, which Massie knows full well, so the",
+      "created_at": "Tue May 19 19:59:18 +0000 2026",
+      "likes": 266231,
+      "retweets": 37784,
+      "replies": 49840,
+      "views": 0,
+      "url": "https://x.com/realDonaldTrump/status/2056827052851105947",
+      "accountId": "realDonaldTrump",
+      "name": "Donald Trump",
+      "tier": "S",
+      "tags": [
+        "macro",
+        "regulation"
+      ],
+      "ai": {
+        "sentiment": "bullish",
+        "confidence": 58,
+        "reason": "100% bullish"
+      }
+    },
+    {
+      "id": "1614148296788041734",
+      "text": "Oops, #bitcoin is still here. ??",
+      "created_at": "Sat Jan 14 06:31:58 +0000 2023",
+      "likes": 297299,
+      "retweets": 2798,
+      "replies": 2175,
+      "views": 0,
+      "url": "https://x.com/cz_binance/status/1614148296788041734",
+      "accountId": "cz_binance",
+      "name": "CZ Binance",
+      "tier": "S",
+      "tags": [
+        "exchange",
+        "bnb"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "1570306185391378434",
+      "text": "And we finalized! Happy merge all. This is a big moment for the Ethereum ecosystem. Everyone who helped make the merge happen should feel very proud today.",
+      "created_at": "Thu Sep 15 06:59:04 +0000 2022",
+      "likes": 172992,
+      "retweets": 40198,
+      "replies": 9038,
+      "views": 0,
+      "url": "https://x.com/VitalikButerin/status/1570306185391378434",
+      "accountId": "VitalikButerin",
+      "name": "Vitalik Buterin",
+      "tier": "S",
+      "tags": [
+        "eth",
+        "l1"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "1496695587495981056",
+      "text": "Reminder: Ethereum is neutral, but I am not.",
+      "created_at": "Thu Feb 24 03:56:49 +0000 2022",
+      "likes": 99622,
+      "retweets": 12217,
+      "replies": 3790,
+      "views": 0,
+      "url": "https://x.com/VitalikButerin/status/1496695587495981056",
+      "accountId": "VitalikButerin",
+      "name": "Vitalik Buterin",
+      "tier": "S",
+      "tags": [
+        "eth",
+        "l1"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "1554445653929066496",
+      "text": "We need less divide in the world. More building.",
+      "created_at": "Tue Aug 02 12:34:58 +0000 2022",
+      "likes": 107957,
+      "retweets": 1418,
+      "replies": 1812,
+      "views": 0,
+      "url": "https://x.com/cz_binance/status/1554445653929066496",
+      "accountId": "cz_binance",
+      "name": "CZ Binance",
+      "tier": "S",
+      "tags": [
+        "exchange",
+        "bnb"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2057327547411570907",
+      "text": "SpaceX is actively hiring world-class engineers/physicists for SpaceXAI, even if you have zero prior experience in AI. Smart humans figure it out fast. Please send an email with ~3 bullet points demonstrating evidence of exceptional ability to ai_eng@spacex.com.",
+      "created_at": "Thu May 21 05:08:05 +0000 2026",
+      "likes": 70574,
+      "retweets": 9336,
+      "replies": 5266,
+      "views": 0,
+      "url": "https://x.com/elonmusk/status/2057327547411570907",
+      "accountId": "elonmusk",
+      "name": "Elon Musk",
+      "tier": "S",
+      "tags": [
+        "tech",
+        "crypto",
+        "macro"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "1496695424387801090",
+      "text": "����֧ߧ� ��ѧ�����֧� ��֧�֧ߧڧ֧� �����ڧߧ� ���ܧѧ٧ѧ���� ��� �ӧ�٧ާ�اߧ���� �ާڧ�ߧ�ԧ� ��֧�֧ߧڧ� ������ �� ���ܧ�ѧڧߧ�� �� �ӧާ֧��� ����ԧ� �ߧѧ�ѧ�� �ӧ�ۧߧ�. ����� ���֧����ݧ֧ߧڧ� �����ڧ� ��ܧ�ѧڧߧ�ܧ�ԧ� �� �����ܧ�ԧ� �ߧѧ��է�. ������ �ا֧ݧѧ�� �ӧ�֧� �ҧ֧٧��ѧ�ߧ����, ����� �٧ߧѧ�, ���� �ߧ� �ܧѧܧ�� �ҧ֧٧��ѧ�ߧ���� �ߧ� �ҧ�է֧�. ���ݧѧӧ",
+      "created_at": "Thu Feb 24 03:56:11 +0000 2022",
+      "likes": 62450,
+      "retweets": 11393,
+      "replies": 2664,
+      "views": 0,
+      "url": "https://x.com/VitalikButerin/status/1496695424387801090",
+      "accountId": "VitalikButerin",
+      "name": "Vitalik Buterin",
+      "tier": "S",
+      "tags": [
+        "eth",
+        "l1"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2050391023034216808",
+      "text": "Read my book, Freedom of Money. From my childhood to founding Binance, challenges we faced, wandering the Earth, stories (from my perspective) about Luna/UST, FTX/SBF, dealing with US DOJ, SEC, going through jail (as the only person in US history to ever go to jail for a single",
+      "created_at": "Sat May 02 01:44:48 +0000 2026",
+      "likes": 4412,
+      "retweets": 880,
+      "replies": 1433,
+      "views": 0,
+      "url": "https://x.com/cz_binance/status/2050391023034216808",
+      "accountId": "cz_binance",
+      "name": "CZ Binance",
+      "tier": "S",
+      "tags": [
+        "exchange",
+        "bnb"
+      ],
+      "ai": {
+        "sentiment": "bearish",
+        "confidence": 58,
+        "reason": "100% bearish"
+      }
+    },
+    {
+      "id": "1743221098349535361",
+      "text": "?? Embrace a Decentralized Tomorrow with Ice's Vision! ?? Join over 2 million visionaries who have successfully completed KYC, gearing up for the #BSC distribution and the anticipated $ICE listing. ???��? Dive into our latest video to see how #IceNetwork is crafting a https://t.co/S8VzhqL6fb",
+      "created_at": "Fri Jan 05 10:41:11 +0000 2024",
+      "likes": 658074,
+      "retweets": 359315,
+      "replies": 268044,
+      "views": 0,
+      "url": "https://x.com/ice_blockchain/status/1743221098349535361",
+      "accountId": "ice_blockchain",
+      "name": "ICE Blockchain",
+      "tier": "A",
+      "tags": [
+        "ion",
+        "ecosystem"
+      ],
+      "ai": {
+        "sentiment": "bullish",
+        "confidence": 58,
+        "reason": "100% bullish"
+      }
+    },
+    {
+      "id": "1750123523819876372",
+      "text": "?? Big Reveal! ?? ?? We're thrilled to introduce the Snowman Meme (SNOW) Coin on the #Ethereum Blockchain! The official meme coin of our vibrant, decentralized community! Fair launch on #Uniswap! ?? #ETH Contract Address: 0xd1f3d2f5c12a205fc912358878b089eae48a557f ?? https://t.co/S66iZHxguQ",
+      "created_at": "Wed Jan 24 11:48:58 +0000 2024",
+      "likes": 612367,
+      "retweets": 276934,
+      "replies": 221002,
+      "views": 0,
+      "url": "https://x.com/ice_blockchain/status/1750123523819876372",
+      "accountId": "ice_blockchain",
+      "name": "ICE Blockchain",
+      "tier": "A",
+      "tags": [
+        "ion",
+        "ecosystem"
+      ],
+      "ai": {
+        "sentiment": "bullish",
+        "confidence": 58,
+        "reason": "100% bullish"
+      }
+    },
+    {
+      "id": "2052284905816531338",
+      "text": "? Some of you may think we went silent because we stopped working on ION. We didn��t. As we said weeks ago, we are still here, still building, and still fighting to put the project back on the right path. Yes, the team is smaller now. But I still believe this team is capable",
+      "created_at": "Thu May 07 07:10:25 +0000 2026",
+      "likes": 1131,
+      "retweets": 244,
+      "replies": 433,
+      "views": 0,
+      "url": "https://x.com/ice_blockchain/status/2052284905816531338",
+      "accountId": "ice_blockchain",
+      "name": "ICE Blockchain",
+      "tier": "A",
+      "tags": [
+        "ion",
+        "ecosystem"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2056738791310893158",
+      "text": "You keep the wins. We cover your first loss on PancakeSwap Perps. There��s never been a sweeter time to trade. It��s a piece of cake. ???? Try Perps on us �� https://t.co/lp64q9mcdx How it works �� https://t.co/ykfw2wD2sn https://t.co/5uWoGCe5I1",
+      "created_at": "Tue May 19 14:08:34 +0000 2026",
+      "likes": 203,
+      "retweets": 33,
+      "replies": 26,
+      "views": 0,
+      "url": "https://x.com/PancakeSwap/status/2056738791310893158",
+      "accountId": "PancakeSwap",
+      "name": "PancakeSwap",
+      "tier": "A",
+      "tags": [
+        "defi",
+        "bsc"
+      ],
+      "ai": {
+        "sentiment": "bearish",
+        "confidence": 58,
+        "reason": "100% bearish"
+      }
+    },
+    {
+      "id": "2057125012889325761",
+      "text": "Duplicate tokens are confusing Balances across chains are now unified ?? https://t.co/jJTN5HAhQv",
+      "created_at": "Wed May 20 15:43:17 +0000 2026",
+      "likes": 176,
+      "retweets": 18,
+      "replies": 33,
+      "views": 0,
+      "url": "https://x.com/Uniswap/status/2057125012889325761",
+      "accountId": "Uniswap",
+      "name": "Uniswap",
+      "tier": "A",
+      "tags": [
+        "defi",
+        "dex"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2057378361257693529",
+      "text": "���Ϥ褦�������ޤ� ???? PancakeSwap is looking for a Japan Ambassador. ?? Someone on the ground to lead local events, grow the community, and bring DeFi to life in your region. Sound like you? Apply �� https://t.co/K1SkrrfsTJ https://t.co/rGD7Vgzgh0",
+      "created_at": "Thu May 21 08:30:00 +0000 2026",
+      "likes": 52,
+      "retweets": 13,
+      "replies": 17,
+      "views": 0,
+      "url": "https://x.com/PancakeSwap/status/2057378361257693529",
+      "accountId": "PancakeSwap",
+      "name": "PancakeSwap",
+      "tier": "A",
+      "tags": [
+        "defi",
+        "bsc"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2057418728829255681",
+      "text": "BTCB-WBNB on PancakeSwap: TVL +$3M ?? BTCB-WBNB on other platforms: TVL -$10M ?? LPs migrate where capital works harder. Better capital efficiency, better yield. The best BTCB-WBNB venue is on PancakeSwap. Get your stack �� https://t.co/RgHfCNDzR3 https://t.co/wVaMsKdPZo",
+      "created_at": "Thu May 21 11:10:24 +0000 2026",
+      "likes": 27,
+      "retweets": 3,
+      "replies": 6,
+      "views": 0,
+      "url": "https://x.com/PancakeSwap/status/2057418728829255681",
+      "accountId": "PancakeSwap",
+      "name": "PancakeSwap",
+      "tier": "A",
+      "tags": [
+        "defi",
+        "bsc"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2057167502866583820",
+      "text": "Live on Uniswap Web App and Uniswap Wallet https://t.co/WSQ9msXni1",
+      "created_at": "Wed May 20 18:32:07 +0000 2026",
+      "likes": 14,
+      "retweets": 0,
+      "replies": 3,
+      "views": 0,
+      "url": "https://x.com/Uniswap/status/2057167502866583820",
+      "accountId": "Uniswap",
+      "name": "Uniswap",
+      "tier": "A",
+      "tags": [
+        "defi",
+        "dex"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 50,
+        "reason": "No signal"
+      }
+    },
+    {
+      "id": "2056832795209592874",
+      "text": "RT @OpenZeppelin: Last week we announced the OpenZeppelin Continuous Security Program. Proud to have these teams already running on the mo��",
+      "created_at": "Tue May 19 20:22:07 +0000 2026",
+      "likes": 0,
+      "retweets": 6,
+      "replies": 0,
+      "views": 0,
+      "url": "https://x.com/Uniswap/status/2056832795209592874",
+      "accountId": "Uniswap",
+      "name": "Uniswap",
+      "tier": "A",
+      "tags": [
+        "defi",
+        "dex"
+      ],
+      "ai": {
+        "sentiment": "neutral",
+        "confidence": 55,
+        "reason": "Mixed"
+      }
+    }
+  ]
+}
