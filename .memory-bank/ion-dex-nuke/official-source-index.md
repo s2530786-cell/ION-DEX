@@ -42,6 +42,22 @@
 
 This repository does NOT appear to contain ready-made DEX, AMM, staking, burn, bridge, router, liquidity mining, or Jetton DEX contracts. The DEX contracts must be designed separately while reusing official patterns and libraries from the smart contract references above.
 
+## Official cross-chain bridge (not in `ion` node monorepo)
+
+| Repo | Role |
+|---|---|
+| `ice-blockchain/ice-swap` | Bridge-Swap: `IONSwap` (ICE v1↔v2 on BSC), `Bridge` (ICE v2 BSC↔ION, fork of TON-community bridge-solidity), `IONBridgeRouter` facade (`mint` / `burn`) |
+| `ice-blockchain/bridge-solidity` | Upstream TON↔EVM bridge contracts referenced by ice-swap |
+
+Product facts for ION DEX UI copy:
+
+- No separate **wION** brand; BSC `0xe1ab61f7b093435204df32f5b3a405de55445ea8` is the same **ION** asset (18 decimals on BSC).
+- **ION → BSC**: confirm transfer on ION Chain, then claim on BSC via Bridge oracle `mint` / router — not a BSC-side wrapper burn during the ION step.
+- **BSC → ION**: Bridge burns BSC ION (ICE v2) and credits ION network after quorum.
+- Total supply cap **21.1B ION** (non-inflationary narrative).
+
+Frontend reference: `frontend/src/lib/officialBridgeSemantics.ts`.
+
 ## Wallet injection (not in `ice-blockchain/ion` node monorepo)
 
 Verified companion repositories for dApp wallet integration:

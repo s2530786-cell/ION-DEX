@@ -7,16 +7,14 @@ import {
   BSC_BRIDGE_NATIVE_RECEIVER,
   BSC_VAULT_ADDRESS,
   ION_BSC_TOKEN,
-  ION_WRAPPER_ADDRESS,
   USDT_BSC_TOKEN,
   bscVaultAbi,
-  bridgeContractsConfigured,
+  bscVaultBridgeConfigured,
   erc20Abi,
-  ionWrapperAbi,
-  randomBridgeTxHash,
   type BridgeAsset,
   type BridgeDirection,
 } from "@/lib/bridgeContracts";
+import { ION_TO_BSC_STEPS, ION_TOTAL_SUPPLY_CAP } from "@/lib/officialBridgeSemantics";
 import type { BridgeRoutesPayload } from "@/lib/ionApi";
 import { buildIonSendTransactionParams } from "@/wallet/ionSwapTx";
 import { useEvmWallet } from "@/wallet/EvmWalletProvider";
@@ -197,7 +195,7 @@ export function BridgeTransferPanel({ routesPayload }: BridgeTransferPanelProps)
             setStagedOffline(true);
             return;
           }
-          if (!bridgeContractsConfigured() || !evmWallet.publicClient || !walletClient) {
+          if (!bscVaultBridgeConfigured() || !evmWallet.publicClient || !walletClient) {
             setStagedOffline(true);
             return;
           }
@@ -258,32 +256,6 @@ export function BridgeTransferPanel({ routesPayload }: BridgeTransferPanelProps)
 
         if (ionWallet.status !== "connected" || !ionWallet.snapshot) {
           setStagedOffline(true);
-          return;
-        }
-
-        if (
-          asset === "ion" &&
-          ION_WRAPPER_ADDRESS &&
-          evmWallet.publicClient &&
-          evmWallet.snapshot &&
-          walletClient
-        ) {
-          const bridgeTxHash = randomBridgeTxHash();
-          const account = evmWallet.snapshot.address as `0x${string}`;
-          const decimals = await evmWallet.publicClient.readContract({
-            address: ION_BSC_TOKEN,
-            abi: erc20Abi,
-            functionName: "decimals",
-          });
-          const rawAmount = parseUnits(String(validation.parsedAmount), decimals);
-          const hash = await walletClient.writeContract({
-            account,
-            address: ION_WRAPPER_ADDRESS,
-            abi: ionWrapperAbi,
-            functionName: "burn",
-            args: [rawAmount, bridgeTxHash],
-          });
-          setTxHash(hash);
           return;
         }
 
@@ -410,14 +382,34 @@ export function BridgeTransferPanel({ routesPayload }: BridgeTransferPanelProps)
             {activeRoute
               ? ` · ${activeRoute.minAmountIon}–${activeRoute.maxAmountIon} ION · ~${activeRoute.estimatedMinutes} min`
               : ""}
-            {bridgeContractsConfigured()
-              ? " · on-chain vault/wrapper configured"
-              : " · set VITE_BSC_VAULT_ADDRESS / VITE_ION_WRAPPER_ADDRESS for contract calls"}
+            {direction === "ion-bsc"
+              ? ` · fixed ${ION_TOTAL_SUPPLY_CAP} ION supply · claim on BSC follows official Bridge mint`
+              : bscVaultBridgeConfigured()
+                ? " · draft BSC vault configured (BSC→ION experiments)"
+                : " · set VITE_BSC_VAULT_ADDRESS for draft BSC→ION vault deposits"}
           </span>
         ) : (
           <span>Enter a positive amount and a valid destination to continue.</span>
         )}
       </div>
+
+      {direction === "ion-bsc" ? (
+        <div
+          className="rounded-2xl border border-violet-300/20 bg-violet-400/[0.06] px-4 py-3 text-sm text-violet-100/85"
+          data-testid="bridge-official-flow"
+        >
+          <p className="font-bold text-violet-100">Official ION → BSC (no wION)</p>
+          <ol className="mt-2 list-decimal space-y-1 pl-5 text-violet-100/75">
+            {ION_TO_BSC_STEPS.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+          <p className="mt-2 text-xs text-violet-100/55">
+            Submit below starts step 1 on ION Chain only. BSC receipt uses ice-swap Bridge oracle mint, not a BSC burn of
+            a wrapped token.
+          </p>
+        </div>
+      ) : null}
 
       <NeonButton
         className="w-full sm:w-fit"
@@ -425,7 +417,11 @@ export function BridgeTransferPanel({ routesPayload }: BridgeTransferPanelProps)
         disabled={!validation.isValid || submitting}
         type="submit"
       >
-        {submitting ? "Submitting…" : "Submit Bridge Transfer"}
+        {submitting
+          ? "Submitting…"
+          : direction === "ion-bsc"
+            ? "Confirm on ION Chain"
+            : "Submit Bridge Transfer"}
       </NeonButton>
 
       {txHash ? (

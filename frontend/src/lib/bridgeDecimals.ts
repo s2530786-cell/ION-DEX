@@ -2,7 +2,7 @@
  * Bridge token decimals and chain-specific mapping
  * 
  * ION native: 9 decimals (like TON)
- * BSC tokens: varies (USDT=18, wION=18, BNB=18)
+ * BSC tokens: varies (ION ERC-20=18, USDT=18, BNB=18) — same ION asset, not a separate wION ticker
  * 
  * Lock: BSC side — tokens locked in Vault contract
  * Release: ION side — equivalent tokens minted/unlocked
@@ -19,7 +19,7 @@ export interface ChainToken {
 
 export const BSC_TOKENS: Record<string, ChainToken> = {
   ION: {
-    symbol: 'wION',
+    symbol: 'ION',
     decimals: 18,
     address: '0xe1ab61f7b093435204df32f5b3a405de55445ea8',
     minBridge: '1000',
@@ -78,7 +78,7 @@ export const ION_REQUIRED_CONFIRMATIONS = 1;
 
 /**
  * Convert amount between chains accounting for decimal differences.
- * e.g. 1000 ION (9 decimals) → 1000 wION (18 decimals)
+ * e.g. 1000 ION (9 decimals) → 1000 ION on BSC (18 decimals)
  */
 export function convertDecimals(
   amount: string,

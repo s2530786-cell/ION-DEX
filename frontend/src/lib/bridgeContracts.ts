@@ -15,9 +15,12 @@ export const PANCAKE_ROUTER_BSC =
 
 export const BSC_VAULT_ADDRESS = import.meta.env.VITE_BSC_VAULT_ADDRESS as Address | undefined;
 
-export const ION_WRAPPER_ADDRESS = import.meta.env.VITE_ION_WRAPPER_ADDRESS as Address | undefined;
-
 export const BSC_BRIDGE_NATIVE_RECEIVER = import.meta.env.VITE_BSC_BRIDGE_NATIVE_RECEIVER as
+  | Address
+  | undefined;
+
+/** Optional: official ice-swap Bridge / IONBridgeRouter on BSC (mint with oracle signatures). */
+export const ION_BRIDGE_ROUTER_ADDRESS = import.meta.env.VITE_ION_BRIDGE_ROUTER_ADDRESS as
   | Address
   | undefined;
 
@@ -31,20 +34,11 @@ export const bscVaultAbi = parseAbi([
   "function deposit(address token, uint256 amount)",
 ]);
 
-export const ionWrapperAbi = parseAbi([
-  "function burn(uint256 amount, bytes32 bridgeTxHash)",
-]);
-
 export type BridgeAsset = "usdt" | "bnb" | "ion";
 
 export type BridgeDirection = "bsc-ion" | "ion-bsc";
 
-export function bridgeContractsConfigured(): boolean {
-  return Boolean(BSC_VAULT_ADDRESS && ION_WRAPPER_ADDRESS);
-}
-
-export function randomBridgeTxHash(): `0x${string}` {
-  const bytes = new Uint8Array(32);
-  crypto.getRandomValues(bytes);
-  return `0x${Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")}`;
+/** Draft BSC vault deposit path (BSC → ION experiments only). */
+export function bscVaultBridgeConfigured(): boolean {
+  return Boolean(BSC_VAULT_ADDRESS);
 }

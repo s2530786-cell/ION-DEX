@@ -2,6 +2,8 @@
 
 ## Latest Verified Status
 
+- **Bridge 语义对齐官方 ice-swap（2026-05-20）**：移除错误的 `VITE_ION_WRAPPER_ADDRESS` / `wrapper.burn` ION→BSC 路径（非官方 wION 销毁）；ION→BSC 仅 ION 钱包链上确认 + UI 说明官方 Bridge `mint` 领取步骤；新增 `frontend/src/lib/officialBridgeSemantics.ts`；`bridgeDecimals` 去掉 wION 命名。依据 `ice-blockchain/ice-swap`（`Bridge` = bridge-solidity fork，`IONBridgeRouter` mint/burn）。验证：待 `verify-full`。
+
 - **Bridge Desk 链上表单嵌入（2026-05-20）**：抽取 `components/bridge/BridgeTransferPanel.tsx`（USDT/BNB/ION、BSC vault / ION wallet 提交）；`BridgeDeskPage` 传入 gateway `routesPayload`；无钱包时保留离线 staging 确认（E2E 兼容）。`BridgePage` 改为 `BusinessPage page=bridge` 薄封装。验证：frontend **16 passed**。
 - **Domain showcase + Bridge 路由统一（2026-05-20）**：新增 `GET /api/domain/showcase`（由 resolver 目录批量解析）；`DomainDeskPage` 接 `useDomainDeskData`，移除 `domainListings` 静态种子；`#bridge` 导航统一走 `BusinessPage` → `BridgeDeskPage`（与 Burn/AI 一致）。`BridgePage.tsx` 保留链上 vault 实现供后续嵌入 Desk。验证：`verify-full` 绿灯，Playwright **16 passed**。
 - **Stress 门禁 + 100-pass GREEN（2026-05-20）**：`backend/scripts/stress.mjs` 将 `/api/health` 与 `/api/config/public` 的 p95 上限由 200ms 调整为 **250ms**（与 `/api/tokens` 对齐），消除 100-pass 第 27 轮在 CI 负载下 p95≈224ms 的统计误杀。验证：`bash scripts/verify-100.sh 100` → **PASSED=100**、**FAILED=0**、**RESULT=GREEN**、exit `0`（摘要 `/tmp/ion-verify-100-summary-20260521-102654.txt`，日志 `/tmp/ion-verify-100-run.log`）。
