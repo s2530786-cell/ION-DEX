@@ -2,6 +2,8 @@
 
 ## Latest Verified Status
 
+- **官方 ION Identity 语义文档（2026-05-20）**：对照 `ice-blockchain/heimdall`（`users.id` / `identity_key_name` / `master_pubkey` / **`verified` bool**）、`GET /v1/users/…/verified-badge`（200/204 + Nostr badge）、`ion-framework` `ion_identity_client` `User { id, username, orgId }`；明确 **无** heimdall 源码级 `kycPass`/`KYC Pass`；新增 `docs/ion-official-identity-reference.md`、`officialIdentitySemantics.ts`；`profile.ts` provenance 标明 mock。验证：`verify-full` 绿灯。
+
 - **官方 ION 主网销毁对齐（2026-05-20）**：自 `ice-blockchain/ion-address-book` `system.yaml` 确认 **Burn Address** `UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ`；新增 `docs/ion-official-burn-reference.md`、`officialBurnSemantics.ts`；`burn-live` 尝试 `getAddressBalance`；Burn Desk 区分 BSC dead / 主网 Burn Address / 桥 burn / DEX FeeReceiver 草稿。验证：`verify-full` 绿灯。
 
 - **官方质押语义对齐（2026-05-20）**：新增 `docs/ion-official-staking-reference.md`、`frontend/src/lib/officialStakingSemantics.ts`、`useStakeDeskData`；Stake 页区分 **liquid-staking-contract（ION→LION、~20h 轮次解押）** 与 DEX 草稿 `staking-pool.fc`；移除硬编码 25.5% DEX APR；后端 `staking.ts` 标明 `officialRewardAsset: LION`、`apr.officialPct/dexPct: null` 直至索引器接入。验证：`verify-full` 绿灯，Playwright **16 passed**。

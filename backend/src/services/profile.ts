@@ -324,8 +324,8 @@ export function getProfileSession(context: ProfileSessionContext = {}): ProfileS
     provenance: {
       source: "local-seed",
       description: hasLiveAddress
-        ? "Profile session merged with browser-injected wallet metadata (address/chain from client detectors)."
-        : "Reviewed local profile session for UI wiring. Identity and quick actions remain on local seed until profile-service is live.",
+        ? "Profile session merged with browser-injected wallet metadata (address/chain from client detectors). ionIdStatus/kycPass are mock — official ION Identity is ice-blockchain/heimdall (users.verified + verified-badge API), not KYC Pass L2 in heimdall source."
+        : "Reviewed local profile session for UI wiring. Identity and quick actions remain on local seed until Heimdall identity-io API is configured (see docs/ion-official-identity-reference.md).",
     },
     identity: {
       displayName: "ION Trader",

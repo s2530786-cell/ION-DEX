@@ -26,7 +26,7 @@ Unconfirmed values must not be hardcoded into contracts or frontend production b
 | ION total supply source | Pending | Needed for remaining supply calculation. |
 | ION DNS resolver contract/API | Pending | Needed for `.ion` resolution and domain transfer UX. |
 | `dns.ice.io` public API | Pending | The site appears to be SPA-like; hidden APIs must not be used without permission or stability guarantees. |
-| ION Identity / Heimdall API | Pending | Needed for ION ID / KYC Pass verification. |
+| ION Identity / Heimdall API | Pending | Base URL + `appId`/`orgId`/`origin`; official verified state is `users.verified` + `GET …/verified-badge` — not DEX mock `kycPass`. See `docs/ion-official-identity-reference.md`. |
 | CMC API key and plan | Pending | Used by backend market service, not directly by frontend. |
 | Treasury wallet address | Pending | Must be multisig-controlled. |
 | Team fee wallet address | Pending | Must be public and transparent. |

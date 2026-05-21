@@ -98,6 +98,22 @@ Doc: `docs/ion-official-staking-reference.md`. Frontend: `frontend/src/lib/offic
 
 Doc: `docs/ion-official-burn-reference.md`. Frontend: `frontend/src/lib/officialBurnSemantics.ts`.
 
+## Official ION Identity (not in `ion` node monorepo)
+
+| Repo | Role |
+|---|---|
+| `ice-blockchain/heimdall` | ION Identity backend: `users` (`id`, `identity_key_name`, `master_pubkey`, **`verified` bool**) |
+| `cmd/heimdall-identity-io` | Public HTTP API — e.g. `GET /v1/users/{userIdOrMasterKey}/verified-badge` (200 = verified + Nostr badge events, 204 = not verified) |
+| `ice-blockchain/ion-framework` → `packages/ion_identity_client` | Dart SDK: `User { id, username, orgId }`; WebAuthn-style auth; needs `appId`, `orgId`, `origin` |
+
+Product facts:
+
+- Official “verified” is **`users.verified`** + Nostr **BadgeDefinition/Award** (`d=verified`, name *Verified by ION Identity (identity.io)*).
+- **No `kycPass` / KYC tier** in heimdall Go sources — ION DEX `KYC Pass L2` is **mock** until a separate product/API is confirmed.
+- **Not** `.ion` DNS — social `username` in `social_profiles` is separate from `dns-*.fc` domain resolution.
+
+Doc: `docs/ion-official-identity-reference.md`. Frontend: `frontend/src/lib/officialIdentitySemantics.ts`.
+
 ## Wallet injection (not in `ice-blockchain/ion` node monorepo)
 
 Verified companion repositories for dApp wallet integration:

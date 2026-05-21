@@ -19,6 +19,7 @@ Before designing ION-native contracts or integrations, inspect this local reposi
 - Cross-chain bridge: prefer `ice-blockchain/ice-swap` + `bridge-solidity` over DEX-draft shortcuts.
 - Retail staking: prefer `ice-blockchain/liquid-staking-contract` (ION → LION) over `contracts/ion/staking-pool.fc` for user-facing official flows.
 - Burn analytics: BSC `0x…dEaD` + ION mainnet **Burn Address** `UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ` from `ion-address-book` — not placeholders or Bridge burn alone.
+- ION Identity: `ice-blockchain/heimdall` (`users.verified`, `verified-badge` API) + `ion-framework` `ion_identity_client` — not DEX mock `kycPass` / KYC Pass tiers.
 - Confirmed BSC on-chain facts (import from shared constants, do not scatter literals):
   - ION ERC-20: `0xe1ab61f7b093435204df32f5b3a405de55445ea8`
   - Burn sink: `0x000000000000000000000000000000000000dEaD`
