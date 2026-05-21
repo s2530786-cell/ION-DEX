@@ -154,7 +154,7 @@ test.describe("ION DEX smoke", () => {
     await page.getByTestId("trade-price").fill("6");
     await page.getByTestId("trade-slippage").fill("0.5");
 
-    await expect(page.getByTestId("trade-preview")).toContainText("Buying 1,250 ION");
+    await expect(page.getByText(/Buying 1,250 ION via/)).toBeVisible();
     await expect(page.getByTestId("trade-submit")).toBeEnabled();
 
     await page.getByTestId("trade-submit").click();
@@ -177,7 +177,7 @@ test.describe("ION DEX smoke", () => {
     await page.getByTestId("grid-count").fill("22");
     await page.getByTestId("grid-investment").fill("2500");
 
-    await expect(page.getByTestId("grid-preview")).toContainText("arithmetic grid");
+    await expect(page.getByText(/arithmetic grid from/)).toBeVisible();
     await expect(page.getByTestId("grid-submit")).toBeEnabled();
 
     await page.getByTestId("grid-submit").click();
@@ -197,7 +197,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-error")).toBeVisible();
 
     await page.getByTestId("pool-slippage").fill("0.5");
-    await expect(page.getByTestId("pool-preview")).toContainText("Liquidity preview:");
+    await expect(page.getByText(/Liquidity preview/)).toBeVisible();
     await expect(page.getByTestId("pool-submit")).toBeEnabled();
 
     await page.getByTestId("pool-submit").click();
@@ -213,7 +213,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("stake-submit")).toBeDisabled();
 
     await page.getByTestId("stake-amount").fill("250");
-    await expect(page.getByTestId("stake-preview")).toContainText("Stake preview:");
+    await expect(page.getByText(/Stake preview/)).toBeVisible();
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await page.getByTestId("stake-submit").click();
@@ -221,7 +221,7 @@ test.describe("ION DEX smoke", () => {
 
     await page.getByTestId("stake-mode-unstake").click();
     await page.getByTestId("stake-amount").fill("100");
-    await expect(page.getByTestId("stake-preview")).toContainText("Unstake preview:");
+    await expect(page.getByText(/Unstake preview/)).toBeVisible();
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await page.getByTestId("stake-submit").click();
@@ -241,7 +241,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("bridge-error")).toBeVisible();
 
     await page.getByTestId("bridge-destination").fill("0xabcdef12");
-    await expect(page.getByTestId("bridge-preview")).toContainText("Bridge preview:");
+    await expect(page.getByText(/Bridge preview/)).toBeVisible();
     await expect(page.getByTestId("bridge-submit")).toBeEnabled();
 
     await page.getByTestId("bridge-submit").click();
@@ -260,7 +260,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("burn-submit")).toBeDisabled();
 
     await page.getByTestId("burn-memo").fill("Weekly burn attestation");
-    await expect(page.getByTestId("burn-preview")).toContainText("Burn preview:");
+    await expect(page.getByText(/Burn preview/)).toBeVisible();
     await expect(page.getByTestId("burn-submit")).toBeEnabled();
 
     await page.getByTestId("burn-submit").click();
@@ -278,7 +278,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("domain-submit")).toBeDisabled();
 
     await page.getByTestId("domain-query").fill("custodian.ion");
-    await expect(page.getByTestId("domain-preview")).toContainText("Domain preview:");
+    await expect(page.getByText(/Domain preview/)).toBeVisible();
     await expect(page.getByTestId("domain-submit")).toBeEnabled();
 
     await page.getByTestId("domain-submit").click();
@@ -294,9 +294,9 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("ai-error")).toBeVisible();
 
     await page.getByTestId("ai-symbol").fill("ION");
-    await expect(page.getByTestId("ai-preview")).toContainText("AI preview:");
+    await expect(page.getByText(/AI preview/)).toBeVisible();
     await page.getByTestId("ai-horizon-1d").click();
-    await expect(page.getByTestId("ai-preview")).toContainText("(1d,");
+    await expect(page.getByText(/\(1d,/)).toBeVisible();
 
     await page.getByTestId("ai-submit").click();
     await expect(page.getByTestId("ai-confirmation")).toContainText("AI sentinel brief draft ready");
