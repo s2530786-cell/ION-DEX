@@ -1,0 +1,156 @@
+{
+  "account": "wormhole",
+  "fetched": "2026-05-21T11:49:18.203Z",
+  "tweets": [
+    {
+      "id": "2050183384329269645",
+      "text": "$MEGA, natively on @solana Connected by Wormhole.",
+      "created_at": "Fri May 01 11:59:44 +0000 2026",
+      "likes": 168,
+      "retweets": 23,
+      "replies": 17,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2050183384329269645"
+    },
+    {
+      "id": "2048733911535296890",
+      "text": "$AAVE, now natively on @Solana. Connected by Wormhole.",
+      "created_at": "Mon Apr 27 12:00:02 +0000 2026",
+      "likes": 247,
+      "retweets": 21,
+      "replies": 28,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2048733911535296890"
+    },
+    {
+      "id": "2047370102279180557",
+      "text": "$CHIP, natively on @solana Connected by Wormhole.",
+      "created_at": "Thu Apr 23 17:40:45 +0000 2026",
+      "likes": 66,
+      "retweets": 9,
+      "replies": 10,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2047370102279180557"
+    },
+    {
+      "id": "2046620659300905307",
+      "text": "Monad, by the numbers. $337M+ moved to @monad, connected by Wormhole. https://t.co/dg2I10vbU5",
+      "created_at": "Tue Apr 21 16:02:44 +0000 2026",
+      "likes": 511,
+      "retweets": 61,
+      "replies": 82,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2046620659300905307"
+    },
+    {
+      "id": "2046320838845334000",
+      "text": "Wormhole delivers flexibility and simplicity in a decentralized ecosystem, without compromising security. SECURITY IS NOT A CHOICE. The timeline is surfacing longstanding design criticisms that led to the LayerZero exploit: insecure defaults, centralization for operational",
+      "created_at": "Mon Apr 20 20:11:21 +0000 2026",
+      "likes": 285,
+      "retweets": 32,
+      "replies": 69,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2046320838845334000"
+    },
+    {
+      "id": "2046197348519604405",
+      "text": "Wormhole, by the numbers. $4B+ was moved across 256K+ messages in Q1 2026. https://t.co/0eU5LrmosO",
+      "created_at": "Mon Apr 20 12:00:39 +0000 2026",
+      "likes": 178,
+      "retweets": 33,
+      "replies": 31,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2046197348519604405"
+    },
+    {
+      "id": "2045106265622532111",
+      "text": "Wormhole's Executor framework is live, replacing the Standard Relay model. It expands support to non-EVM chains like @solana, @Aptos &amp; @SuiNetwork, lowers gas costs and introduces a quote-based pricing model. https://t.co/n9H5qqimgl",
+      "created_at": "Fri Apr 17 11:45:04 +0000 2026",
+      "likes": 170,
+      "retweets": 66,
+      "replies": 24,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2045106265622532111"
+    },
+    {
+      "id": "2044859689167372506",
+      "text": "$SUI, natively on @solana Connected by Wormhole.",
+      "created_at": "Thu Apr 16 19:25:16 +0000 2026",
+      "likes": 116,
+      "retweets": 12,
+      "replies": 18,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2044859689167372506"
+    },
+    {
+      "id": "2039481017791385746",
+      "text": "Our thoughts are with the Drift team and everyone affected. Wormhole users are not at risk. Bridging remains available, though some transfers may be delayed due to a built-in security feature limiting transfers from Solana. Wormhole core contributors are in contact with @solana",
+      "created_at": "Wed Apr 01 23:12:21 +0000 2026",
+      "likes": 183,
+      "retweets": 16,
+      "replies": 117,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2039481017791385746"
+    },
+    {
+      "id": "2038968853091483869",
+      "text": "Reminder to all Wormhole Builders: Standard Relayer will shut down in 24 hours. Projects still using it should complete migration to the Executor Relayer before then. To migrate �� https://t.co/EVzkARU1A8 https://t.co/qpX3DjCM0d",
+      "created_at": "Tue Mar 31 13:17:11 +0000 2026",
+      "likes": 86,
+      "retweets": 10,
+      "replies": 27,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2038968853091483869"
+    },
+    {
+      "id": "2038616751475503490",
+      "text": "Mayan 2.0 brings 5x faster execution with the same trust layer. Behind every @mayan SWIFT swap is Wormhole's Guardian network �� a decentralized validator set attesting each multichain transaction before funds settle. https://t.co/DNlKjELVZL",
+      "created_at": "Mon Mar 30 13:58:03 +0000 2026",
+      "likes": 139,
+      "retweets": 25,
+      "replies": 24,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2038616751475503490"
+    },
+    {
+      "id": "2037545273959018992",
+      "text": "\"Mento aims to be the leading decentralized FX infrastructure and Wormhole allows us to scale that vision globally\" �� @MarkusMento , CEO of @MentoLabs https://t.co/CdQLlfrNSA",
+      "created_at": "Fri Mar 27 15:00:23 +0000 2026",
+      "likes": 114,
+      "retweets": 19,
+      "replies": 31,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2037545273959018992"
+    },
+    {
+      "id": "2037200758974947364",
+      "text": "The leading stock exchange @NYSE ?? The leading tokenization platform @Securitize",
+      "created_at": "Thu Mar 26 16:11:24 +0000 2026",
+      "likes": 199,
+      "retweets": 32,
+      "replies": 23,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2037200758974947364"
+    },
+    {
+      "id": "2036826291798954114",
+      "text": "130+ assets including $RLUSD, $SOL, $MON move natively across chains with Wormhole NTT. The multichain standard is Wormhole. https://t.co/p3YK9qFMmm",
+      "created_at": "Wed Mar 25 15:23:25 +0000 2026",
+      "likes": 124,
+      "retweets": 17,
+      "replies": 19,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2036826291798954114"
+    },
+    {
+      "id": "2036784683598688328",
+      "text": "Standard Relayer shuts down in one week. Protocols still using it should migrate to Executor Relayer before April 1. Guide below: https://t.co/BUbf4y1cJT https://t.co/D7cqxLVpYz",
+      "created_at": "Wed Mar 25 12:38:04 +0000 2026",
+      "likes": 65,
+      "retweets": 10,
+      "replies": 7,
+      "views": 0,
+      "url": "https://x.com/wormhole/status/2036784683598688328"
+    }
+  ]
+}
