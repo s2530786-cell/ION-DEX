@@ -22,6 +22,7 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 ## Current State
 
+- UI visual self-audit completed 2026-05-21: `docs/ui-visual-self-audit-2026-05-21.md`. Engineering verify can be green while design gate fails (CSS bar charts, hardcoded order book, no visual baselines). Next UI priority: `lightweight-charts` + real market data, ProfileHub glass, retire NeonCard wrappers, establish `tests/visual/baseline/`.
 - Critical correctness automation on 2026-05-20 found and fixed a CI verification gap:
   - PR #2 added `scripts/dev-preflight.mjs` to local `verify-full.*`, but GitHub Actions did not run it.
   - `.github/workflows/ion-dex-verify.yml` now runs `node scripts/dev-preflight.mjs` after Node setup and before encoding/build/audit steps.
