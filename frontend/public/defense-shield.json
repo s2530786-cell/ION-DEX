@@ -1,0 +1,71 @@
+{
+  "updated": "2026-05-21T12:03:56.242Z",
+  "mode": "armed",
+  "totalScanned": 5077,
+  "totalBlocked": 0,
+  "testsPassed": 9,
+  "testsTarget": 1000,
+  "attacks": [
+    {
+      "id": "reentrancy",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "flashloan",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "sandwich",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "oracle",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "access",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "overflow",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "dos",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "faketoken",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "timestamp",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    },
+    {
+      "id": "quantum",
+      "detected": 0,
+      "blocked": 0,
+      "lastBlock": null
+    }
+  ],
+  "recentBlocks": []
+}

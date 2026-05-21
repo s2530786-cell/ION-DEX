@@ -1060,7 +1060,7 @@ function DomainTradingPanel() {
 }
 
 function AIMarketPanel() {
-  const [tab, setTab] = useState<"monitor" | "sentiment" | "twitter" | "signals" | "audit" | "analyzer">("monitor");
+  const [tab, setTab] = useState<"monitor" | "sentiment" | "twitter" | "signals" | "audit" | "shield">("monitor");
 
   return (
     <div className="grid gap-4">
@@ -1073,7 +1073,7 @@ function AIMarketPanel() {
           { label: "Twitter", value: "twitter" },
           { label: "Smart Money", value: "signals" },
           { label: "Token Audit", value: "audit" },
-          { label: "Sentinel", value: "analyzer" },
+          { label: "🛡️ Shield", value: "shield" },
         ]}
         testId="ai-tab"
         value={tab}
@@ -1098,7 +1098,144 @@ function AIMarketPanel() {
       ) : tab === "audit" ? (
         <TokenAuditPanel />
       ) : (
-        <SentinelAnalyzer />
+        <DefenseShield />
+      )}
+    </div>
+  );
+}
+
+const ATTACK_TYPES = [
+  { id: "reentrancy", name: "Reentrancy", icon: "🔄" },
+  { id: "flashloan", name: "Flash Loan", icon: "⚡" },
+  { id: "sandwich", name: "Sandwich", icon: "🥪" },
+  { id: "oracle", name: "Oracle Manipulation", icon: "🔮" },
+  { id: "access", name: "Access Control", icon: "🔑" },
+  { id: "overflow", name: "Integer Overflow", icon: "💥" },
+  { id: "dos", name: "Denial of Service", icon: "🚫" },
+  { id: "faketoken", name: "Fake Token", icon: "🪙" },
+  { id: "timestamp", name: "Timestamp Manip", icon: "⏱️" },
+  { id: "quantum", name: "Quantum Attack", icon: "⚛️" },
+] as const;
+
+type AttackStatus = { id: string; detected: number; blocked: number; lastBlock: string | null };
+type ShieldData = {
+  updated: string;
+  mode: "armed" | "paused";
+  totalScanned: number;
+  totalBlocked: number;
+  testsPassed: number;
+  testsTarget: number;
+  attacks: AttackStatus[];
+  recentBlocks: { id: string; type: string; from: string; value: string; time: string }[];
+} | null;
+
+function DefenseShield() {
+  const [data, setData] = useState<ShieldData>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch("/defense-shield.json");
+        if (!cancelled) { setData(await res.json()); setLoading(false); }
+      } catch { if (!cancelled) setLoading(false); }
+    }
+    load();
+    const interval = setInterval(load, 15000);
+    return () => { cancelled = true; clearInterval(interval); };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="grid gap-3" data-testid="ai-defense">
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="animate-pulse text-sm text-cyan-200">Initializing defense engine...</p>
+        </GlassPanel>
+      </div>
+    );
+  }
+
+  const testPct = data ? Math.round((data.testsPassed / data.testsTarget) * 100) : 0;
+  const testColor = testPct >= 100 ? "emerald" : testPct >= 50 ? "amber" : "rose";
+
+  return (
+    <div className="grid gap-3" data-testid="ai-defense">
+      <div className="flex items-center justify-between">
+        <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">ION Shield — Attack Defense Engine</p>
+        <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${data?.mode === "armed" ? "bg-emerald-400/15 text-emerald-200" : "bg-amber-400/15 text-amber-200"}`}>
+          {data?.mode === "armed" ? "🛡️ Armed" : "⏸️ Paused"}
+        </span>
+      </div>
+
+      {/* Security Test Progress */}
+      <GlassPanel variant="mixed" noAurora padding="sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-cyan-100/45">Security Tests</p>
+            <p className={`mt-1 text-2xl font-black text-${testColor}-200`}>
+              {data?.testsPassed ?? 0} / {data?.testsTarget ?? 1000}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-cyan-100/45">Transactions Scanned</p>
+            <p className="mt-1 text-xl font-black text-cyan-100">{data?.totalScanned?.toLocaleString() ?? 0}</p>
+          </div>
+        </div>
+        {/* Progress bar */}
+        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+          <div
+            className={`h-full rounded-full transition-all duration-700 bg-gradient-to-r ${testPct >= 100 ? "from-emerald-400 to-cyan-400" : "from-amber-400 to-rose-400"}`}
+            style={{ width: `${Math.min(testPct, 100)}%` }}
+          />
+        </div>
+        <div className="mt-2 flex gap-2 text-[10px]">
+          <span className="rounded bg-rose-400/10 px-2 py-0.5 text-rose-200">🚫 {data?.totalBlocked ?? 0} blocked</span>
+          <span className="rounded bg-cyan-400/10 px-2 py-0.5 text-cyan-200">{testPct}% green</span>
+          {testPct < 100 && <span className="ml-auto text-rose-200/60">{data ? data.testsTarget - data.testsPassed : 0} remaining</span>}
+        </div>
+      </GlassPanel>
+
+      {/* 10 Attack Type Grid */}
+      <div className="grid grid-cols-2 gap-2">
+        {ATTACK_TYPES.map((atk) => {
+          const status = data?.attacks?.find((a) => a.id === atk.id);
+          const hasRecent = status && status.lastBlock && (Date.now() - new Date(status.lastBlock).getTime() < 3600000);
+          return (
+            <GlassPanel key={atk.id} variant={hasRecent ? "magenta" : "mixed"} noAurora padding="sm">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">{atk.icon}</span>
+                <span className="text-[10px] font-bold text-white">{atk.name}</span>
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-[10px]">
+                <span className="text-rose-200/60">{status?.detected ?? 0} detected</span>
+                <span className={`ml-auto font-black ${hasRecent ? "text-rose-200" : "text-emerald-200/60"}`}>
+                  {hasRecent ? "⚠️ Active" : "✅ Clear"}
+                </span>
+              </div>
+            </GlassPanel>
+          );
+        })}
+      </div>
+
+      {/* Recent Blocks */}
+      {data?.recentBlocks && data.recentBlocks.length > 0 && (
+        <>
+          <p className="text-xs uppercase tracking-[0.15em] text-rose-200/50">Recent Blocks</p>
+          <div className="grid gap-1.5 max-h-[30vh] overflow-y-auto">
+            {data.recentBlocks.slice(0, 5).map((b, i) => (
+              <GlassPanel key={i} variant="magenta" noAurora padding="sm">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-bold text-rose-200">{b.type} — {b.id.slice(0, 10)}...</p>
+                    <p className="text-[10px] text-cyan-200/40">from {b.from.slice(0, 8)}... · {b.value}</p>
+                  </div>
+                  <span className="shrink-0 text-[10px] text-cyan-200/30">{b.time}</span>
+                </div>
+              </GlassPanel>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

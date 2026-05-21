@@ -1,0 +1,19 @@
+{
+  "testsPassed": 9,
+  "testsTarget": 1000,
+  "totalBlocked": 0,
+  "attacks": {
+    "reentrancy": 0,
+    "flashloan": 0,
+    "sandwich": 0,
+    "oracle": 0,
+    "access": 0,
+    "overflow": 0,
+    "dos": 0,
+    "faketoken": 0,
+    "timestamp": 0,
+    "quantum": 0
+  },
+  "recentBlocks": [],
+  "totalScanned": 5077
+}
