@@ -1231,7 +1231,7 @@ function SmartMoneyPanel() {
     <div className="grid gap-3" data-testid="ai-smart-money">
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">Smart Money Signals (BSC)</p>
-        <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">Binance Web3 API</span>
+        <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">On-Chain Intelligence</span>
       </div>
       {loading ? (
         <GlassPanel variant="cyan" noAurora padding="sm">
@@ -1300,7 +1300,7 @@ function TokenAuditPanel() {
         setError("Audit failed — check the contract address and chain.");
       }
     } catch {
-      setError("Network error accessing Binance Web3 API.");
+      setError("Network error accessing on-chain scanner.");
     } finally {
       setLoading(false);
     }
@@ -1312,7 +1312,7 @@ function TokenAuditPanel() {
     <div className="grid gap-4" data-testid="ai-token-audit">
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">Token Security Audit</p>
-        <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">Binance Web3 API</span>
+        <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">Smart Contract Scanner</span>
       </div>
 
       <form className="grid gap-3" onSubmit={runAudit}>
