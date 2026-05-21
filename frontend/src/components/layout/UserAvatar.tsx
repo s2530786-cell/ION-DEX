@@ -150,6 +150,7 @@ export function UserAvatar() {
         aria-expanded={panelOpen}
         className="flex items-center gap-2.5 px-3 py-1.5"
         data-testid="user-avatar"
+        data-testid-extra="wallet-connect"
         onClick={() => setPanelOpen((o) => !o)}
         type="button"
       >
@@ -180,7 +181,7 @@ export function UserAvatar() {
           <motion.div
             animate={{ opacity: 1, y: 0 }}
             className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[min(24rem,calc(100vw-2rem))] rounded-[1.6rem] border border-cyan-200/20 bg-slate-950/95 p-4 shadow-[0_0_48px_rgba(36,247,255,0.20)] backdrop-blur-2xl"
-            data-testid="avatar-panel"
+            data-testid="wallet-panel"
             exit={{ opacity: 0, y: -8 }}
             initial={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}

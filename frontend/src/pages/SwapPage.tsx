@@ -2,6 +2,8 @@ import { ArrowDownUp } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
+import { GlassInput } from "@/components/ui/GlassInput";
+import { GlassPanel } from "@/components/ui/GlassPanel";
 import { GlassPlaceholderSkeleton } from "@/components/ui/GlassPlaceholderSkeleton";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
@@ -274,57 +276,41 @@ export function SwapPage() {
             testId="swap-to-token"
           />
 
-          <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-            <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-              Pay amount
-            </span>
-            <input
-              className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
-              data-testid="swap-pay-amount"
-              inputMode="decimal"
-              onChange={(event) => {
-                setPayAmount(event.target.value);
-                setConfirmation(null);
-                setSubmitError(null);
-              }}
-              placeholder="0.00"
-              value={payAmount}
-            />
-          </label>
+          <GlassInput
+            label="Pay amount"
+            onChange={(value) => {
+              setPayAmount(value);
+              setConfirmation(null);
+              setSubmitError(null);
+            }}
+            placeholder="0.00"
+            testId="swap-pay-amount"
+            type="number"
+            value={payAmount}
+          />
 
-          <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-            <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-              Slippage %
-            </span>
-            <input
-              className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
-              data-testid="swap-slippage"
-              inputMode="decimal"
-              onChange={(event) => {
-                setSlippage(event.target.value);
-                setConfirmation(null);
-                setSubmitError(null);
-              }}
-              value={slippage}
-            />
-          </label>
+          <GlassInput
+            label="Slippage %"
+            onChange={(value) => {
+              setSlippage(value);
+              setConfirmation(null);
+              setSubmitError(null);
+            }}
+            testId="swap-slippage"
+            type="number"
+            value={slippage}
+          />
 
           {validation.sameToken ? (
-            <p
-              className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
-              data-testid="swap-error"
-            >
-              Pick two different tokens before requesting a quote.
-            </p>
+            <GlassPanel variant="magenta" noAurora padding="sm">
+              <p className="text-sm text-rose-100" data-testid="swap-error">Pick two different tokens before requesting a quote.</p>
+            </GlassPanel>
           ) : null}
 
           {!validation.slippageValid ? (
-            <p
-              className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
-              data-testid="swap-error"
-            >
-              Slippage must stay between 0.1% and 5%.
-            </p>
+            <GlassPanel variant="magenta" noAurora padding="sm">
+              <p className="text-sm text-rose-100" data-testid="swap-error">Slippage must stay between 0.1% and 5%.</p>
+            </GlassPanel>
           ) : null}
 
           {quoteState === "error" || quoteState === "loading" ? (
@@ -337,19 +323,14 @@ export function SwapPage() {
           ) : null}
 
           {submitError ? (
-            <p
-              className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
-              data-testid="swap-error"
-            >
-              {submitError}
-            </p>
+            <GlassPanel variant="magenta" noAurora padding="sm">
+              <p className="text-sm text-rose-100" data-testid="swap-error">{submitError}</p>
+            </GlassPanel>
           ) : null}
 
           {quoteState !== "loading" && quoteState !== "error" ? (
-            <div
-              className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100/75"
-              data-testid="swap-quote"
-            >
+            <GlassPanel variant="cyan" noAurora padding="sm">
+              <div className="text-xs text-cyan-100/75" data-testid="swap-quote">
               {validation.quoteReady && validation.quote !== null ? (
                 <span>
                   Quote: est. ~{validation.quote.estimatedOutput} {toToken} · protocol fee ~
@@ -362,7 +343,8 @@ export function SwapPage() {
               ) : (
                 <span>Enter amount and slippage to preview quote from MOCK_DATA.</span>
               )}
-            </div>
+              </div>
+            </GlassPanel>
           ) : null}
 
           <NeonButton
@@ -375,12 +357,9 @@ export function SwapPage() {
           </NeonButton>
 
           {confirmation ? (
-            <p
-              className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-              data-testid="swap-confirmation"
-            >
-              {confirmation}
-            </p>
+            <GlassPanel variant="cyan" noAurora padding="sm">
+              <p className="text-sm font-bold text-emerald-100" data-testid="swap-confirmation">{confirmation}</p>
+            </GlassPanel>
           ) : null}
         </form>
       </NeonCard>
@@ -400,7 +379,7 @@ function TokenRow({
   testId: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+    <GlassPanel variant="cyan" noAurora padding="sm">
       <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">{label}</p>
       <div className="flex flex-wrap gap-2" data-testid={testId}>
         {tokens.map((token) => (
@@ -418,6 +397,6 @@ function TokenRow({
           </button>
         ))}
       </div>
-    </div>
+    </GlassPanel>
   );
 }

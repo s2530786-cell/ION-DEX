@@ -231,7 +231,7 @@ function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
           >
             <NeonCard variant={card.color} className="min-h-[11rem] transition hover:scale-[1.01]">
               <div className="flex h-full flex-col justify-between">
-                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.07] text-cyan-200 shadow-neonCyan">
+                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.10] text-cyan-200 shadow-neonCyan">
                   <Icon size={28} />
                 </div>
                 <div>

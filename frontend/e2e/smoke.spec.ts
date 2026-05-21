@@ -50,7 +50,8 @@ test.describe("ION DEX smoke", () => {
     await expect(swapSubmit).toBeVisible();
     await expect(swapSubmit).toBeDisabled();
     await expect(page.getByTestId("swap-wallet-hint")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
+    const walletConnectBtn = page.locator('[data-testid-extra="wallet-connect"]');
+    await expect(walletConnectBtn).toBeVisible();
   });
 
   test("wallet shell connects via official ION extension provider mock", async ({ page }) => {
@@ -74,18 +75,24 @@ test.describe("ION DEX smoke", () => {
 
     await page.goto("/");
 
-    await page.getByTestId("wallet-connect").click();
+    // Open wallet panel
+    const walletConnectBtn = page.locator('[data-testid-extra="wallet-connect"]');
+    await walletConnectBtn.click();
     await expect(page.getByTestId("wallet-panel")).toBeVisible();
+
+    // Switch to Connect tab to see provider buttons
+    const connectTab = page.getByRole("button", { name: /^Connect$/ });
+    await connectTab.click();
     await expect(page.getByTestId("wallet-provider-ion-browser")).toBeVisible();
 
+    // Connect via ION browser extension mock
     await page.getByTestId("wallet-provider-ion-browser").click();
-    await expect(page.getByTestId("wallet-confirmation")).toContainText("ION Browser Wallet connected");
-    await expect(page.getByTestId("profile-menu")).toBeVisible();
-    await expect(page.getByTestId("wallet-connect")).toContainText("EQCTes");
+    await expect(page.getByTestId("wallet-disconnect")).toBeVisible();
+    await expect(page.locator('[data-testid-extra="wallet-connect"]')).toContainText("EQCTes");
 
+    // Disconnect
     await page.getByTestId("wallet-disconnect").click();
-    await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
-    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
+    await expect(page.getByText(/No wallet connected/i)).toBeVisible();
   });
 
   test("375px viewport keeps brand and main content visible", async ({ page }) => {

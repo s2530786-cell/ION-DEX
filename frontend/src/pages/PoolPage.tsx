@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
+import { GlassInput } from "@/components/ui/GlassInput";
+import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { usePreviewResource } from "@/hooks/usePreviewResource";
@@ -120,7 +122,7 @@ export function PoolPage() {
         >
           <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10">
           <table className="min-w-full text-left text-sm" data-testid="pool-list">
-            <thead className="bg-white/[0.04] text-cyan-100/55">
+            <thead className="bg-white/[0.08] text-cyan-100/55">
               <tr>
                 <th className="px-4 py-3">Pool</th>
                 <th className="px-4 py-3">TVL</th>
@@ -186,12 +188,12 @@ export function PoolPage() {
           </div>
 
           {!validation.slippageValid ? (
-            <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="pool-error">
-              Slippage must stay between 0.1% and 5%.
-            </p>
+            <GlassPanel variant="magenta" noAurora padding="sm">
+              <p className="text-sm text-rose-100" data-testid="pool-error">Slippage must stay between 0.1% and 5%.</p>
+            </GlassPanel>
           ) : null}
 
-          <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75" data-testid="pool-preview">
+          <GlassPanel variant="cyan" noAurora padding="sm">
             {validation.isValid && pool ? (
               <span>
                 Liquidity preview: {mode === "add" ? "add" : "remove"} on {pool.pair}: {bnbAmount} BNB +{" "}
@@ -201,7 +203,7 @@ export function PoolPage() {
             ) : (
               <span>Select a pool and enter paired amounts to preview LP mint/burn parameters.</span>
             )}
-          </div>
+          </GlassPanel>
 
           <NeonButton
             className="relative z-10 w-full sm:w-fit"
@@ -213,9 +215,9 @@ export function PoolPage() {
           </NeonButton>
 
           {submitted ? (
-            <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="pool-confirmation">
-              Liquidity draft ready for wallet signing.
-            </p>
+            <GlassPanel variant="cyan" noAurora padding="sm">
+              <p className="text-sm font-bold text-emerald-100" data-testid="pool-confirmation">Liquidity draft ready for wallet signing.</p>
+            </GlassPanel>
           ) : null}
         </form>
       </NeonCard>
@@ -232,27 +234,11 @@ export function PoolPage() {
   );
 }
 
-function PoolField({
-  label,
-  testId,
-  value,
-  onChange,
-}: {
+function PoolField(props: {
   label: string;
   testId: string;
   value: string;
   onChange: (value: string) => void;
 }) {
-  return (
-    <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-      <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">{label}</span>
-      <input
-        className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
-        data-testid={testId}
-        inputMode="decimal"
-        onChange={(event) => onChange(event.target.value)}
-        value={value}
-      />
-    </label>
-  );
+  return <GlassInput {...props} type="number" placeholder="" />;
 }

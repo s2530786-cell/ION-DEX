@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
+import { GlassInput } from "@/components/ui/GlassInput";
+import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { usePreviewResource } from "@/hooks/usePreviewResource";
@@ -85,27 +87,19 @@ export function StakePage() {
             </button>
           </div>
 
-          <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-            <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-              Amount ION
-            </span>
-            <input
-              className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
-              data-testid="stake-amount"
-              inputMode="decimal"
-              onChange={(event) => {
-                setAmount(event.target.value);
-                setSubmitted(false);
-              }}
-              placeholder="500"
-              value={amount}
-            />
-          </label>
+          <GlassInput
+            label="Amount ION"
+            onChange={(value) => {
+              setAmount(value);
+              setSubmitted(false);
+            }}
+            placeholder="500"
+            testId="stake-amount"
+            type="number"
+            value={amount}
+          />
 
-          <div
-            className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.06] p-4 text-sm text-amber-100/85"
-            data-testid="stake-preview"
-          >
+          <GlassPanel variant="gold" noAurora padding="sm">
             {validation.isValid ? (
               <span>
                 {mode === "stake" ? "Stake" : "Unstake"} preview: {amount} ION · advertised DEX APR{" "}
@@ -114,7 +108,7 @@ export function StakePage() {
             ) : (
               <span>Enter an amount to preview staking payloads and unlock timing.</span>
             )}
-          </div>
+          </GlassPanel>
 
           <NeonButton
             className="w-full sm:w-fit"
@@ -126,14 +120,13 @@ export function StakePage() {
           </NeonButton>
 
           {submitted ? (
-            <p
-              className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-              data-testid="stake-confirmation"
-            >
-              {mode === "stake"
-                ? "Stake draft ready for wallet signing."
-                : "Unstake draft ready for wallet signing."}
-            </p>
+            <GlassPanel variant="cyan" noAurora padding="sm">
+              <p className="text-sm font-bold text-emerald-100" data-testid="stake-confirmation">
+                {mode === "stake"
+                  ? "Stake draft ready for wallet signing."
+                  : "Unstake draft ready for wallet signing."}
+              </p>
+            </GlassPanel>
           ) : null}
         </form>
       </NeonCard>
@@ -153,9 +146,9 @@ export function StakePage() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+    <GlassPanel noAurora padding="sm" variant="cyan">
       <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">{label}</p>
       <p className="mt-2 text-xl font-black text-white">{value}</p>
-    </div>
+    </GlassPanel>
   );
 }

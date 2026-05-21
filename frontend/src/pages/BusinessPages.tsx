@@ -11,6 +11,8 @@ import {
 import { useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
+import { GlassInput } from "@/components/ui/GlassInput";
+import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useMockData } from "@/context/MockDataContext";
@@ -145,11 +147,18 @@ function MetricsGrid({ metrics, sourceTestId, meta }: { metrics: MetricCard[]; s
 }
 
 function MetricCardView({ metric }: { metric: MetricCard }) {
+  const variantMap: Record<string, "cyan" | "magenta" | "violet" | "gold"> = {
+    cyan: "cyan",
+    magenta: "magenta",
+    gold: "gold",
+  };
   return (
-    <div className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}>
-      <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">{metric.label}</p>
+    <GlassPanel variant={variantMap[metric.tone] ?? "cyan"} noAurora padding="sm">
+      <p className={`text-xs uppercase tracking-[0.22em] text-cyan-100/45 ${toneClass[metric.tone]}`}>
+        {metric.label}
+      </p>
       <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
-    </div>
+    </GlassPanel>
   );
 }
 
@@ -291,14 +300,7 @@ function toPositiveNumber(value: string) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
-function FormField({
-  label,
-  testId,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-}: {
+function FormField(props: {
   label: string;
   testId: string;
   value: string;
@@ -306,22 +308,7 @@ function FormField({
   placeholder: string;
   type?: "number" | "text";
 }) {
-  return (
-    <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-      <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-        {label}
-      </span>
-      <input
-        className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none placeholder:text-cyan-100/25"
-        data-testid={testId}
-        inputMode={type === "number" ? "decimal" : undefined}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        type={type}
-        value={value}
-      />
-    </label>
-  );
+  return <GlassInput {...props} />;
 }
 
 function SegmentedControl<T extends string>({
@@ -338,7 +325,7 @@ function SegmentedControl<T extends string>({
   testId: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-2" data-testid={testId}>
+    <GlassPanel noAurora padding="sm" variant="mixed">
       <p className="px-2 pb-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
         {label}
       </p>
@@ -349,7 +336,7 @@ function SegmentedControl<T extends string>({
             className={`rounded-xl px-3 py-2 text-sm font-black transition ${
               value === option.value
                 ? "bg-cyan-300/20 text-cyan-100 shadow-neonCyan"
-                : "bg-white/[0.04] text-cyan-100/55 hover:bg-white/[0.08]"
+                : "bg-white/[0.06] text-cyan-100/55 hover:bg-white/[0.12]"
             }`}
             data-testid={`${testId}-${option.value}`}
             onClick={() => onChange(option.value)}
@@ -359,7 +346,7 @@ function SegmentedControl<T extends string>({
           </button>
         ))}
       </div>
-    </div>
+    </GlassPanel>
   );
 }
 
@@ -455,12 +442,12 @@ function TradeOrderPanel() {
       </div>
 
       {!validation.slippageValid ? (
-        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="trade-error">
-          Slippage must stay between 0.1% and 5% for wallet-safe execution.
-        </p>
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100" data-testid="trade-error">Slippage must stay between 0.1% and 5% for wallet-safe execution.</p>
+        </GlassPanel>
       ) : null}
 
-      <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75" data-testid="trade-preview">
+      <GlassPanel variant="cyan" noAurora padding="sm">
         {validation.isValid ? (
           <span>
             {side === "buy" ? "Buying" : "Selling"} {validation.parsedAmount?.toLocaleString()} ION via {orderType} order. Estimated notional: ${validation.notional.toLocaleString(undefined, { maximumFractionDigits: 2 })}.
@@ -468,16 +455,16 @@ function TradeOrderPanel() {
         ) : (
           <span>Enter amount, price, and slippage to preview the wallet-safe order payload.</span>
         )}
-      </div>
+      </GlassPanel>
 
       <NeonButton className="w-full sm:w-fit" data-testid="trade-submit" disabled={!validation.isValid} type="submit">
         Create Limit Order
       </NeonButton>
 
       {submitted ? (
-        <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="trade-confirmation">
-          Draft order ready for wallet signing. Final contract call is intentionally gated behind wallet integration.
-        </p>
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm font-bold text-emerald-100" data-testid="trade-confirmation">Draft order ready for wallet signing. Final contract call is intentionally gated behind wallet integration.</p>
+        </GlassPanel>
       ) : null}
     </form>
   );
@@ -579,12 +566,12 @@ function GridStrategyPanel() {
       </div>
 
       {!validation.boundsValid && lowerPrice && upperPrice ? (
-        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="grid-error">
-          Upper price must be greater than lower price before the strategy can be armed.
-        </p>
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100" data-testid="grid-error">Upper price must be greater than lower price before the strategy can be armed.</p>
+        </GlassPanel>
       ) : null}
 
-      <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/[0.05] p-4 text-sm text-fuchsia-100/75" data-testid="grid-preview">
+      <GlassPanel variant="magenta" noAurora padding="sm">
         {validation.isValid ? (
           <span>
             {mode} grid from ${validation.lower?.toLocaleString()} to ${validation.upper?.toLocaleString()} with {gridCount} levels. Approx step: ${validation.step.toLocaleString(undefined, { maximumFractionDigits: 4 })}.
@@ -592,16 +579,16 @@ function GridStrategyPanel() {
         ) : (
           <span>Set bounds, grid count, and investment to preview AI Sentinel guarded strategy parameters.</span>
         )}
-      </div>
+      </GlassPanel>
 
       <NeonButton className="w-full sm:w-fit" data-testid="grid-submit" disabled={!validation.isValid} type="submit">
         Create Grid Strategy
       </NeonButton>
 
       {submitted ? (
-        <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="grid-confirmation">
-          Strategy draft ready. AI Sentinel checks and wallet execution remain gated for contract integration.
-        </p>
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm font-bold text-emerald-100" data-testid="grid-confirmation">Strategy draft ready. AI Sentinel checks and wallet execution remain gated for contract integration.</p>
+        </GlassPanel>
       ) : null}
     </form>
   );
@@ -678,18 +665,12 @@ function PoolLiquidityPanel() {
       </div>
 
       {!validation.slippageValid ? (
-        <p
-          className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
-          data-testid="pool-error"
-        >
-          Slippage must stay between 0.1% and 5% before minting LP shares on-chain.
-        </p>
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100" data-testid="pool-error">Slippage must stay between 0.1% and 5% before minting LP shares on-chain.</p>
+        </GlassPanel>
       ) : null}
 
-      <div
-        className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75"
-        data-testid="pool-preview"
-      >
+      <GlassPanel variant="cyan" noAurora padding="sm">
         {validation.isValid ? (
           <span>
             Liquidity preview: {bnbAmount} BNB + {ionAmount} ION · ratio{" "}
@@ -703,19 +684,16 @@ function PoolLiquidityPanel() {
             Enter paired deposits and slippage to preview wallet-safe mint parameters for BNB / ION.
           </span>
         )}
-      </div>
+      </GlassPanel>
 
       <NeonButton className="w-full sm:w-fit" data-testid="pool-submit" disabled={!validation.isValid} type="submit">
         Add Liquidity
       </NeonButton>
 
       {submitted ? (
-        <p
-          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-          data-testid="pool-confirmation"
-        >
-          Liquidity draft ready for wallet signing. Mint and LP oracle hooks remain gated behind contract integration.
-        </p>
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm font-bold text-emerald-100" data-testid="pool-confirmation">Liquidity draft ready for wallet signing. Mint and LP oracle hooks remain gated behind contract integration.</p>
+        </GlassPanel>
       ) : null}
     </form>
   );
@@ -790,14 +768,13 @@ function StakeHubPanel() {
       </NeonButton>
 
       {submitted ? (
-        <p
-          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-          data-testid="stake-confirmation"
-        >
-          {mode === "stake"
-            ? "Stake draft ready for wallet signing. Reward streams remain gated behind staking contract wiring."
-            : "Unstake draft ready for wallet signing. Cooldown rules remain gated behind staking contract wiring."}
-        </p>
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm font-bold text-emerald-100" data-testid="stake-confirmation">
+            {mode === "stake"
+              ? "Stake draft ready for wallet signing. Reward streams remain gated behind staking contract wiring."
+              : "Unstake draft ready for wallet signing. Cooldown rules remain gated behind staking contract wiring."}
+          </p>
+        </GlassPanel>
       ) : null}
     </form>
   );
@@ -880,15 +857,12 @@ function BridgeTransferPanel() {
       </div>
 
       {!validation.destinationValid && destination.trim().length > 0 ? (
-        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="bridge-error">
-          Destination memo must stay at least 8 characters until wallet resolution maps it to canonical addresses.
-        </p>
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100" data-testid="bridge-error">Destination memo must stay at least 8 characters until wallet resolution maps it to canonical addresses.</p>
+        </GlassPanel>
       ) : null}
 
-      <div
-        className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75"
-        data-testid="bridge-preview"
-      >
+      <GlassPanel variant="cyan" noAurora padding="sm">
         {validation.isValid ? (
           <span>
             Bridge preview: route {direction === "bsc-ion" ? "BSC → ION Chain" : "ION Chain → BSC"} · sweep{" "}
@@ -897,19 +871,16 @@ function BridgeTransferPanel() {
         ) : (
           <span>Set a positive sweep amount and resilient destination memo to simulate vault attestations offline.</span>
         )}
-      </div>
+      </GlassPanel>
 
       <NeonButton className="w-full sm:w-fit" data-testid="bridge-submit" disabled={!validation.isValid} type="submit">
         Stage Bridge Sweep
       </NeonButton>
 
       {submitted ? (
-        <p
-          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-          data-testid="bridge-confirmation"
-        >
-          Bridge transfer draft ready for relayer quorum + wallet proofs. Custody signatures remain intentionally offline.
-        </p>
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm font-bold text-emerald-100" data-testid="bridge-confirmation">Bridge transfer draft ready for relayer quorum + wallet proofs. Custody signatures remain intentionally offline.</p>
+        </GlassPanel>
       ) : null}
     </form>
   );
@@ -981,15 +952,12 @@ function BurnAnalyticsPanel() {
       </div>
 
       {!validation.memoValid ? (
-        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="burn-error">
-          Memo must stay ≤ 120 chars for sentinel-safe logging overlays.
-        </p>
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100" data-testid="burn-error">Memo must stay ≤ 120 chars for sentinel-safe logging overlays.</p>
+        </GlassPanel>
       ) : null}
 
-      <div
-        className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.05] p-4 text-sm text-amber-100/80"
-        data-testid="burn-preview"
-      >
+      <GlassPanel variant="gold" noAurora padding="sm">
         {validation.isValid ? (
           <span>
             Burn preview: {validation.parsedAmount?.toLocaleString()} ION on {chain.toUpperCase()} · dual-chain indexer will reconcile treasury splits once workers land.
@@ -997,19 +965,16 @@ function BurnAnalyticsPanel() {
         ) : (
           <span>Provide a tracked burn magnitude plus optional memo hooks for treasury transparency rails.</span>
         )}
-      </div>
+      </GlassPanel>
 
       <NeonButton className="w-full sm:w-fit" data-testid="burn-submit" disabled={!validation.isValid} type="submit">
         Draft Burn Narrative
       </NeonButton>
 
       {submitted ? (
-        <p
-          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-          data-testid="burn-confirmation"
-        >
-          Burn analytics draft ready for dual-chain sentinel playback. Still no on-chain transaction from this sandbox.
-        </p>
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm font-bold text-emerald-100" data-testid="burn-confirmation">Burn analytics draft ready for dual-chain sentinel playback. Still no on-chain transaction from this sandbox.</p>
+        </GlassPanel>
       ) : null}
     </form>
   );
@@ -1064,15 +1029,12 @@ function DomainTradingPanel() {
       />
 
       {query.trim().length > 0 && !validation.labelValid ? (
-        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="domain-error">
-          Enter a lowercase label with dotted segments (dns.ice.io compatible) before_FUN wiring.
-        </p>
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100" data-testid="domain-error">Enter a lowercase label with dotted segments (dns.ice.io compatible) before_FUN wiring.</p>
+        </GlassPanel>
       ) : null}
 
-      <div
-        className="rounded-2xl border border-indigo-300/25 bg-indigo-400/[0.07] p-4 text-sm text-indigo-100/80"
-        data-testid="domain-preview"
-      >
+      <GlassPanel variant="violet" noAurora padding="sm">
         {validation.isValid ? (
           <span>
             Domain preview: {mode === "search" ? "Lookup" : "Bind"}{" "}
@@ -1082,19 +1044,16 @@ function DomainTradingPanel() {
         ) : (
           <span>Use dns.ice.io compatible labels to rehearsal wallet proofs without touching validators.</span>
         )}
-      </div>
+      </GlassPanel>
 
       <NeonButton className="w-full sm:w-fit" data-testid="domain-submit" disabled={!validation.isValid} type="submit">
         Compose DNS Payload
       </NeonButton>
 
       {submitted ? (
-        <p
-          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-          data-testid="domain-confirmation"
-        >
-          Domain handshake draft staged. Resolver transactions remain blocked until dns contracts are reachable from this wallet.
-        </p>
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm font-bold text-emerald-100" data-testid="domain-confirmation">Domain handshake draft staged. Resolver transactions remain blocked until dns contracts are reachable from this wallet.</p>
+        </GlassPanel>
       ) : null}
     </form>
   );
@@ -1171,15 +1130,12 @@ function AIMarketPanel() {
       </div>
 
       {symbol.trim().length > 0 && !validation.tickerValid ? (
-        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="ai-error">
-          Symbol must be 2–12 alphanumeric characters before AI Sentinel merges on-chain tapes.
-        </p>
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100" data-testid="ai-error">Symbol must be 2–12 alphanumeric characters before AI Sentinel merges on-chain tapes.</p>
+        </GlassPanel>
       ) : null}
 
-      <div
-        className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.07] p-4 text-sm text-emerald-100/80"
-        data-testid="ai-preview"
-      >
+      <GlassPanel variant="cyan" noAurora padding="sm">
         {validation.isValid ? (
           <span>
             AI preview: model confidence {validation.confidence}% on {validation.ticker} ({horizon}, {depth} scan). Uses offline heuristics only—streaming inference lands with ai-market-service.
@@ -1187,19 +1143,16 @@ function AIMarketPanel() {
         ) : (
           <span>Set a ticker to preview offline AI Sentinel overlays for risk desks and treasury alerts.</span>
         )}
-      </div>
+      </GlassPanel>
 
       <NeonButton className="w-full sm:w-fit" data-testid="ai-submit" disabled={!validation.isValid} type="submit">
         Stage AI Brief
       </NeonButton>
 
       {submitted ? (
-        <p
-          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-          data-testid="ai-confirmation"
-        >
-          AI sentinel brief draft ready for human review—no outbound model calls fired from this page yet.
-        </p>
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm font-bold text-emerald-100" data-testid="ai-confirmation">AI sentinel brief draft ready for human review—no outbound model calls fired from this page yet.</p>
+        </GlassPanel>
       ) : null}
     </form>
   );
@@ -1223,7 +1176,7 @@ export function BusinessPage({ page }: { page: BusinessPageKey }) {
                   {config.title}
                 </h1>
               </div>
-              <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl border border-white/10 bg-white/[0.07] text-cyan-200 shadow-neonCyan">
+              <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl border border-white/10 bg-white/[0.10] text-cyan-200 shadow-neonCyan">
                 <Icon size={34} />
               </div>
             </div>
@@ -1262,13 +1215,10 @@ export function BusinessPage({ page }: { page: BusinessPageKey }) {
         <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Build Checklist</p>
         <div className="mt-5 grid gap-3">
           {config.checklist.map((item, index) => (
-            <div
-              key={item}
-              className="rounded-2xl border border-white/10 bg-white/[0.05] p-4"
-            >
+            <GlassPanel key={item} noAurora padding="sm" variant="cyan">
               <p className="text-xs font-black text-cyan-200">0{index + 1}</p>
               <p className="mt-1 font-bold text-white">{item}</p>
-            </div>
+            </GlassPanel>
           ))}
         </div>
       </NeonCard>
