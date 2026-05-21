@@ -239,7 +239,10 @@ Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official s
 
 ## Next Action
 
-1. If needed, open/import the automation manually in Cursor Automations using `.cursor/automations/ion-dex-autonomous-build.yml` as the source of truth.
+1. **UI P1 续**：`BusinessPages.tsx` 批量 `NeonCard` → `NeonGlassCard`/`GlassPanel`；WalletConnectPanel 玻璃壳；补 `docs/ui-audit-screenshots/ref-*.png` 后像素对比。
+2. **UI P0 续**：Burn/Bridge/AI Desk 真实 API，去 CSS 假图表（见 `ui-deliverable-self-audit-2026-05-22-p0.md`）。
+3. 每轮 UI 结束：`bash scripts/ui-round-verify.sh` + 新 `docs/ui-deliverable-self-audit-*.md`。
+4. If needed, open/import the automation manually in Cursor Automations using `.cursor/automations/ion-dex-autonomous-build.yml` as the source of truth.
 2. Use `cd frontend && npm run dev:local` for frontend runtime verification on `http://localhost:3001/`.
 3. Use `D:/openclaw-tools/ion` as the official ION reference source for FunC style, DNS, wallet, multisig, tonlib, lite-client, and API schemes.
 4. Use the relevant project skill before each domain task: official source, UI, contract audit, or data backend.

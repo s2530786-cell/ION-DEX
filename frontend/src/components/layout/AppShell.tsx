@@ -129,10 +129,10 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
       <IonConnectModalBridge />
       <AuroraGalaxyBackground />
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/40 shadow-[0_0_70px_rgba(36,247,255,0.16)] backdrop-blur-xl lg:flex">
+      <div className="glass-surface mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] shadow-[0_0_70px_rgba(36,247,255,0.16)] lg:flex">
         <aside
           aria-label="Sidebar"
-          className="hidden w-56 shrink-0 flex-col border-r border-white/10 bg-slate-950/55 p-4 lg:flex"
+          className="glass-hud-panel hidden w-56 shrink-0 flex-col border-r border-white/10 p-4 lg:flex"
           data-testid="app-sidebar"
         >
           <SidebarBrand />
@@ -154,7 +154,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               <motion.aside
                 animate={{ x: 0 }}
                 aria-label="Mobile navigation"
-                className="fixed inset-y-0 left-0 z-50 flex w-[min(18rem,86vw)] flex-col border-r border-white/10 bg-slate-950/95 p-4 shadow-[0_0_40px_rgba(36,247,255,0.2)] backdrop-blur-xl lg:hidden"
+                className="glass-hud-panel fixed inset-y-0 left-0 z-50 flex w-[min(18rem,86vw)] flex-col border-r border-white/10 p-4 shadow-[0_0_40px_rgba(36,247,255,0.2)] lg:hidden"
                 data-testid="app-mobile-nav"
                 exit={{ x: "-100%" }}
                 initial={{ x: "-100%" }}
@@ -179,7 +179,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
         </AnimatePresence>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex items-center justify-between gap-3 border-b border-white/10 bg-slate-950/55 px-4 py-3 sm:px-6">
+          <header className="glass-hud-panel flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 aria-expanded={mobileNavOpen}
@@ -219,7 +219,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 
             <nav
               aria-label="Primary"
-              className="hidden min-w-0 flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full border border-white/10 bg-white/[0.04] p-1 md:flex lg:hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+              className="glass-hud-strip hidden min-w-0 flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full border border-cyan-200/15 p-1 md:flex lg:hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
               {navItems.map((item) => (
                 <button
@@ -590,7 +590,7 @@ function TickerStrip() {
 
   return (
     <div
-      className="flex gap-4 overflow-hidden border-b border-white/10 bg-black/25 px-4 py-2 text-xs sm:px-6"
+      className="glass-hud-strip flex gap-4 overflow-hidden border-b border-white/10 px-4 py-2 text-xs sm:px-6"
       data-testid="ticker-strip"
     >
       <span className="sr-only" data-testid="ticker-source">

@@ -9,6 +9,7 @@
  *   node scripts/agent-workflow.mjs --tier memory
  *   node scripts/agent-workflow.mjs --tier verify --execute
  *   node scripts/agent-workflow.mjs --tier strict --execute
+ *   node scripts/agent-workflow.mjs --tier ui --execute
  *   ION_UI_STRICT=1 node scripts/agent-workflow.mjs --tier strict --execute
  */
 
@@ -47,8 +48,8 @@ function parseArgs(argv) {
       tier = arg.slice("--tier=".length);
     }
   }
-  if (!["memory", "verify", "strict"].includes(tier)) {
-    throw new Error(`Unknown tier "${tier}". Use memory | verify | strict.`);
+  if (!["memory", "verify", "strict", "ui"].includes(tier)) {
+    throw new Error(`Unknown tier "${tier}". Use memory | verify | strict | ui.`);
   }
   return { tier, execute };
 }
@@ -137,15 +138,13 @@ if (!execute) {
 }
 
 console.log("=== Executing tier:", tier, "===");
+if (tier === "ui" || tier === "strict") {
+  process.env.ION_UI_STRICT = process.env.ION_UI_STRICT ?? "1";
+}
 runNodeScript("scripts/dev-preflight.mjs");
 runNodeScript("scripts/security-preflight.mjs");
 
-if (tier === "strict") {
-  process.env.ION_UI_STRICT = "1";
-  runNodeScript("scripts/dev-preflight.mjs");
-}
-
-if (tier === "verify" || tier === "strict") {
+if (tier === "verify" || tier === "strict" || tier === "ui") {
   runShell("scripts/verify-full.sh");
 }
 

@@ -13,7 +13,6 @@ import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
-import { NeonCard } from "@/components/ui/NeonCard";
 import { NeonGlassCard } from "@/components/ui/NeonGlassCard";
 import type { PageKey } from "@/components/layout/AppShell";
 import { useApiResource } from "@/hooks/useApiResource";
@@ -277,9 +276,26 @@ function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
             onClick={() => onNavigate(card.target)}
             type="button"
           >
-            <NeonCard variant={card.color} className="min-h-[11rem] transition hover:scale-[1.01]">
+            <NeonGlassCard
+              className={`min-h-[11rem] transition hover:scale-[1.01] ${
+                card.color === "magenta"
+                  ? "drop-shadow-[0_0_32px_rgba(255,59,212,0.22)]"
+                  : card.color === "gold"
+                    ? "drop-shadow-[0_0_28px_rgba(255,209,102,0.2)]"
+                    : ""
+              }`}
+              testId={`dashboard-feature-card-${card.target}`}
+            >
               <div className="flex h-full flex-col justify-between">
-                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.07] text-cyan-200 shadow-neonCyan">
+                <div
+                  className={`grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.07] shadow-neonCyan ${
+                    card.color === "magenta"
+                      ? "text-fuchsia-200"
+                      : card.color === "gold"
+                        ? "text-amber-200"
+                        : "text-cyan-200"
+                  }`}
+                >
                   <Icon size={28} />
                 </div>
                 <div>
@@ -287,7 +303,7 @@ function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
                   <p className="text-sm text-cyan-100/55">{card.label}</p>
                 </div>
               </div>
-            </NeonCard>
+            </NeonGlassCard>
           </button>
         );
       })}

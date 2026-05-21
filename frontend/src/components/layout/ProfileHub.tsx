@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { NeonButton } from "@/components/ui/NeonButton";
+import { NeonGlassCard } from "@/components/ui/NeonGlassCard";
 import { fetchProfileSession, type ProfileSession } from "@/lib/ionApi";
 import {
   connectWalletProvider,
@@ -188,10 +189,11 @@ export function ProfileHub({
   }
 
   return (
-    <div
-      className="absolute right-0 top-[calc(100%+0.75rem)] z-30 max-h-[min(80vh,44rem)] w-[min(26rem,calc(100vw-2rem))] overflow-y-auto rounded-[1.6rem] border border-cyan-200/20 bg-slate-950/95 p-4 shadow-[0_0_42px_rgba(36,247,255,0.28)] backdrop-blur-xl"
-      data-testid="profile-hub"
+    <NeonGlassCard
+      className="absolute right-0 top-[calc(100%+0.75rem)] z-30 max-h-[min(80vh,44rem)] w-[min(26rem,calc(100vw-2rem))] overflow-hidden shadow-[0_0_48px_rgba(36,247,255,0.32)]"
+      testId="profile-hub"
     >
+      <div className="max-h-[min(80vh,44rem)] overflow-y-auto">
       <span className="sr-only" data-testid="profile-hub-source">
         Profile source: {sourceLabel || "pending"}
       </span>
@@ -458,7 +460,8 @@ export function ProfileHub({
           <p className="text-[10px] leading-relaxed text-cyan-100/40">{session.provenance.description}</p>
         </div>
       ) : null}
-    </div>
+      </div>
+    </NeonGlassCard>
   );
 }
 

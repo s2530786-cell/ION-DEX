@@ -2,6 +2,8 @@
 
 ## Latest Verified Status
 
+- **P1 玻璃 HUD 轮次（2026-05-20）**：`global.css` 新增 `glass-hud-panel` / `glass-hud-strip`；`AppShell` 侧栏/顶栏/导航条/ticker 去 `bg-slate-950/55` 灰条感；`ProfileHub` 外壳换 `NeonGlassCard`；`DashboardPage` FeatureGrid `NeonCard` → `NeonGlassCard`。计划：`docs/ui-development-plan-2026-05-20.md`；自检：`docs/ui-deliverable-self-audit-2026-05-20-p1-glass.md`（**视觉门禁未通过**，工程绿灯）。自动验证：`bash scripts/ui-round-verify.sh` 或 `node scripts/agent-workflow.mjs --tier ui --execute`。Playwright **16 passed**。
+
 - **官方 ION Identity 语义文档（2026-05-20）**：对照 `ice-blockchain/heimdall`（`users.id` / `identity_key_name` / `master_pubkey` / **`verified` bool**）、`GET /v1/users/…/verified-badge`（200/204 + Nostr badge）、`ion-framework` `ion_identity_client` `User { id, username, orgId }`；明确 **无** heimdall 源码级 `kycPass`/`KYC Pass`；新增 `docs/ion-official-identity-reference.md`、`officialIdentitySemantics.ts`；`profile.ts` provenance 标明 mock。验证：`verify-full` 绿灯。
 
 - **官方 ION 主网销毁对齐（2026-05-20）**：自 `ice-blockchain/ion-address-book` `system.yaml` 确认 **Burn Address** `UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ`；新增 `docs/ion-official-burn-reference.md`、`officialBurnSemantics.ts`；`burn-live` 尝试 `getAddressBalance`；Burn Desk 区分 BSC dead / 主网 Burn Address / 桥 burn / DEX FeeReceiver 草稿。验证：`verify-full` 绿灯。
