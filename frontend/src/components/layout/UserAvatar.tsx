@@ -67,74 +67,178 @@ const walletProviders: WalletProvider[] = [
 
 // ── Domain Tab ──────────────────────────────────────────────────
 function DomainTab({ connected, walletAddress, isIon }: {
-  connected: boolean | string | null; walletAddress: string | null; isIon: boolean;
+  connected: boolean; walletAddress: string | null; isIon: boolean;
 }) {
+  const [mode, setMode] = useState<"mine" | "market">("mine");
   const [domainName, setDomainName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [transferAddr, setTransferAddr] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResult, setSearchResult] = useState<{ found: boolean; wallet?: string; registered?: boolean } | null>(null);
+  const [searching, setSearching] = useState(false);
 
+  // Reverse resolve — show owned domain
   useEffect(() => {
     if (walletAddress && isIon) {
       setLoading(true);
       reverseResolve(walletAddress)
         .then(setDomainName)
         .finally(() => setLoading(false));
+    } else {
+      setDomainName(null);
     }
   }, [walletAddress, isIon]);
 
+  // Forward resolve — check domain availability
+  const searchDomain = useCallback(async (q: string) => {
+    const domain = q.replace(/\.ion$/i, "").trim();
+    if (!domain) { setSearchResult(null); return; }
+    setSearching(true);
+    try {
+      const res = await fetch(`https://api.mainnet.ice.io/indexer/v3/dns/records?domain=${encodeURIComponent(domain + ".ion")}`);
+      const json = await res.json();
+      const records = json.records || json.data || [];
+      const rec = records[0];
+      setSearchResult(rec ? { found: true, wallet: rec.wallet, registered: true } : { found: true, registered: false });
+    } catch {
+      setSearchResult(null);
+    } finally {
+      setSearching(false);
+    }
+  }, []);
+
+  // Debounce search
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const handleSearch = useCallback((val: string) => {
+    setSearchQuery(val);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => searchDomain(val), 400);
+  }, [searchDomain]);
+
   return (
     <div className="grid gap-3">
-      {/* Owned Domain */}
-      <div className="rounded-2xl border border-violet-300/20 bg-violet-300/[0.05] p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Globe2 size={18} className="text-violet-300" />
-          <p className="text-sm font-black text-violet-100">ION Domain</p>
-        </div>
-        {!connected ? (
-          <p className="text-xs text-amber-100/60">Connect an ION wallet to view your domains.</p>
-        ) : loading ? (
-          <p className="animate-pulse text-xs text-violet-100/60">Looking up domains...</p>
-        ) : domainName ? (
-          <div className="flex items-center justify-between rounded-xl bg-white/[0.06] px-3 py-2">
-            <span className="font-mono text-sm font-bold text-emerald-200">{domainName}</span>
-            <span className="text-[10px] text-emerald-200/50">Owned</span>
-          </div>
-        ) : (
-          <p className="text-xs text-violet-100/50">No .ion domain found for this wallet.</p>
-        )}
-        <NeonButton
-          className="mt-3 w-full text-xs"
-          onClick={() => window.open("https://dns.ice.io", "_blank")}
-          type="button"
-        >
-          <ExternalLink size={12} className="mr-1.5 inline" />
-          Register at dns.ice.io
-        </NeonButton>
-      </div>
-
-      {/* Transfer */}
-      {connected && domainName && (
-        <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.04] p-3">
-          <p className="mb-2 text-xs font-bold text-amber-100">Transfer Domain</p>
-          <input
-            className="mb-2 w-full rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 font-mono text-xs text-cyan-100 placeholder:text-cyan-100/30"
-            onChange={(e) => setTransferAddr(e.target.value)}
-            placeholder="Recipient ION address (UQ...)"
-            type="text"
-            value={transferAddr}
-          />
+      {/* Mode toggle */}
+      <div className="flex gap-1 rounded-xl border border-white/10 bg-white/[0.04] p-1">
+        {(["mine", "market"] as const).map((m) => (
           <button
-            className="w-full rounded-xl bg-amber-400/10 px-3 py-2 text-xs font-bold text-amber-200 transition hover:bg-amber-400/20"
-            disabled={!transferAddr}
-            onClick={() => window.open(
-              `https://dns.ice.io/transfer?domain=${encodeURIComponent(domainName)}&to=${encodeURIComponent(transferAddr)}`,
-              "_blank"
-            )}
+            className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-black transition ${
+              mode === m ? "bg-violet-300/[0.12] text-violet-100" : "text-violet-100/40"
+            }`}
+            key={m}
+            onClick={() => setMode(m)}
             type="button"
           >
-            <ExternalLink size={12} className="mr-1 inline" />
-            Open Transfer on dns.ice.io
+            {m === "mine" ? "My Domains" : "Market"}
           </button>
+        ))}
+      </div>
+
+      {mode === "mine" ? (
+        <>
+          {/* Owned Domain */}
+          <div className="rounded-2xl border border-violet-300/20 bg-violet-300/[0.05] p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Globe2 size={18} className="text-violet-300" />
+              <p className="text-sm font-black text-violet-100">Owned Domain</p>
+            </div>
+            {!connected ? (
+              <p className="text-xs text-amber-100/60">Connect an ION wallet to view your domains.</p>
+            ) : loading ? (
+              <p className="animate-pulse text-xs text-violet-100/60">Looking up domains...</p>
+            ) : domainName ? (
+              <div className="flex items-center justify-between rounded-xl bg-white/[0.06] px-3 py-2">
+                <span className="font-mono text-sm font-bold text-emerald-200">{domainName}</span>
+                <span className="text-[10px] text-emerald-200/50">Owned</span>
+              </div>
+            ) : (
+              <p className="text-xs text-violet-100/50">No .ion domain found for this wallet.</p>
+            )}
+            <NeonButton
+              className="mt-3 w-full text-xs"
+              onClick={() => window.open("https://dns.ice.io", "_blank")}
+              type="button"
+            >
+              <ExternalLink size={12} className="mr-1.5 inline" />
+              Register at dns.ice.io
+            </NeonButton>
+          </div>
+
+          {/* Transfer */}
+          {connected && domainName && (
+            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.04] p-4">
+              <p className="mb-2 text-xs font-bold text-amber-100">Transfer Domain</p>
+              <input
+                className="mb-2 w-full rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 font-mono text-xs text-cyan-100 placeholder:text-cyan-100/30"
+                onChange={(e) => setTransferAddr(e.target.value)}
+                placeholder="Recipient ION address (UQ...)"
+                type="text"
+                value={transferAddr}
+              />
+              <button
+                className="w-full rounded-xl bg-amber-400/10 px-3 py-2 text-xs font-bold text-amber-200 transition hover:bg-amber-400/20 disabled:opacity-30"
+                disabled={!transferAddr}
+                onClick={() => window.open(
+                  `https://dns.ice.io/transfer?domain=${encodeURIComponent(domainName)}&to=${encodeURIComponent(transferAddr)}`,
+                  "_blank"
+                )}
+                type="button"
+              >
+                <ExternalLink size={12} className="mr-1 inline" />
+                Open Transfer on dns.ice.io
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        /* Market — Domain Search & Buy */
+        <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Globe2 size={18} className="text-cyan-300" />
+            <p className="text-sm font-black text-cyan-100">Domain Market</p>
+          </div>
+          <input
+            className="mb-2 w-full rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 font-mono text-xs text-cyan-100 placeholder:text-cyan-100/30"
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="Search .ion domain..."
+            type="text"
+            value={searchQuery}
+          />
+          {searching ? (
+            <p className="animate-pulse text-xs text-cyan-100/50">Searching...</p>
+          ) : searchResult ? (
+            searchResult.registered ? (
+              <div className="mt-2 rounded-xl bg-white/[0.04] p-3">
+                <p className="font-mono text-xs text-emerald-200">{searchQuery}.ion</p>
+                <p className="mt-1 text-[10px] text-amber-100/70">Registered · Owner: {searchResult.wallet?.slice(0, 12)}...</p>
+                <p className="mt-2 text-xs text-cyan-100/50">
+                  Trading via dns.ice.io marketplace. Bid or make offer.
+                </p>
+                <NeonButton
+                  className="mt-2 w-full text-xs"
+                  onClick={() => window.open(`https://dns.ice.io`, "_blank")}
+                  type="button"
+                >
+                  <ExternalLink size={12} className="mr-1.5 inline" />
+                  Open dns.ice.io Market
+                </NeonButton>
+              </div>
+            ) : (
+              <div className="mt-2 rounded-xl bg-emerald-400/[0.06] border border-emerald-300/10 p-3">
+                <p className="font-mono text-xs text-emerald-200">{searchQuery}.ion</p>
+                <p className="mt-1 text-xs text-emerald-100/70">Available — register now</p>
+                <NeonButton
+                  className="mt-2 w-full text-xs"
+                  onClick={() => window.open(`https://dns.ice.io`, "_blank")}
+                  type="button"
+                >
+                  <ExternalLink size={12} className="mr-1.5 inline" />
+                  Register on dns.ice.io
+                </NeonButton>
+              </div>
+            )
+          ) : searchQuery ? (
+            <p className="text-xs text-cyan-100/40">Enter a domain to search.</p>
+          ) : null}
         </div>
       )}
     </div>
@@ -302,9 +406,9 @@ export function UserAvatar() {
                   />
                   <div className="text-xs text-cyan-100/60">
                     {uploading ? (
-                      <span className="animate-pulse">Uploading to IPFS...</span>
+                      <span className="animate-pulse">Loading avatar...</span>
                     ) : avatarCid ? (
-                      <span>Avatar on IPFS. Tap to change.</span>
+                      <span>Tap to change avatar.</span>
                     ) : (
                       <span>Tap to set profile avatar.</span>
                     )}
