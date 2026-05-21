@@ -51,3 +51,22 @@ export const DEX_MOCK_IDENTITY_NOTE =
 
 export const IDENTITY_VS_DNS_NOTE =
   "Heimdall accounts are not .ion DNS; resolve domains via ion node DNS contracts and indexer.";
+
+/**
+ * Official ION App env keys (ice-blockchain/flutter-app-secrets + ion-framework AppEnv).
+ * ION_ORIGIN is the Heimdall API base URL in production, not only a web CORS origin.
+ */
+export const OFFICIAL_IDENTITY_ENV_KEYS = {
+  baseUrl: "ION_ORIGIN",
+  androidClientId: "ION_ANDROID_APP_ID",
+  iosClientId: "ION_IOS_APP_ID",
+  clientIdHeader: "X-Client-ID",
+  secretsRepo: "https://github.com/ice-blockchain/flutter-app-secrets",
+  configureScript: "./scripts/configure_env.sh",
+} as const;
+
+/** Local heimdall dev defaults from application.yaml (not production). */
+export const OFFICIAL_IDENTITY_DEV_DEFAULTS = {
+  host: "localhost:8001",
+  scheme: "https",
+} as const;

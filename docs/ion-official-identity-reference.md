@@ -84,12 +84,49 @@ class User {
 
 - `IONIdentityConfig(appId: 'ap-…', orgId: 'or-…', origin: 'https://…')`
 
+## Live API 配置从哪里来（2026-05-20 调研）
+
+公开 GitHub **不会**提交生产 `ION_ORIGIN` / `appId` 明文；官方 ION App 从私有仓库拉取。
+
+| 配置项 | 官方来源 | 说明 |
+|--------|----------|------|
+| **API Base URL** | `ION_ORIGIN` | 在 `ion-framework` 里 **不是**仅 CORS origin，而是 `ion_identity_client` 的 Dio **`baseUrl`**（`network_service_locator.dart` → `BaseOptions(baseUrl: config.origin)`） |
+| **App / Client ID** | `ION_ANDROID_APP_ID` / `ION_IOS_APP_ID` | 写入请求头 **`X-Client-ID`**（`RequestHeaders.ionIdentityClientId`）；Android/iOS 各一套 |
+| **`orgId`** | SDK README 示例仍有 | **当前主 App 的 `IONIdentityConfig` 仅要求 `appId` + `origin`**（`lib/app/services/ion_identity/ion_identity_provider.r.dart`）；登录后 API 返回的 `User` JSON 仍含 `orgId` 字段 |
+| **环境文件** | [ice-blockchain/flutter-app-secrets](https://github.com/ice-blockchain/flutter-app-secrets) | **私有仓库**；与 `ion-framework` 同级目录，按 `production` / `staging` / `testnet` 复制到 `.app.env`，再跑 `./scripts/configure_env.sh <env>` |
+| **本地开发** | `heimdall/application.yaml` | `cmd/heimdall-identity-io` → `host: localhost:8001`，HTTPS 自签证书在 `.testdata/` |
+
+### 与 `api.mainnet.ice.io` 的关系
+
+- 本仓已用的 **`https://api.mainnet.ice.io/http/v2/`** 是 **ION 节点 HTTP API**（`ion-http-api`），用于链上查询（如 burn `getAddressBalance`）。
+- **Heimdall Identity API 是另一套服务**；生产 URL 在 `flutter-app-secrets` 的 `ION_ORIGIN` 中，**不能**在未确认前假设为 `api.mainnet.ice.io` 的子路径（公开探测无稳定文档）。
+
+### SDK 调用的路径前缀（相对 `ION_ORIGIN`）
+
+与 Heimdall Swagger 一致，例如：
+
+- `POST /auth/registration/delegated`、`POST /auth/registration/enduser`
+- `GET /auth/users/{userIdOrMasterKey}`
+- `GET /v1/users/{userIdOrMasterKey}/verified-badge`（需 **`Authorization: Bearer`** + **`X-Client-ID`**）
+
+### `verified-badge` 鉴权
+
+`GetVerifiedBadge` 会先 `VerifyToken(Authorization)`，**不能**用匿名公开读；DEX 若展示 verified 状态，需要用户登录态 token，或由官方发放的 **服务端 API key**（`application.yaml` 里 `api-key` 列表，属部署密钥，不在公开仓库）。
+
+### ION DEX 接入步骤（无 secrets 时）
+
+1. 向团队申请 **`flutter-app-secrets` 只读** 或单独发放：`ION_ORIGIN`、`ION_ANDROID_APP_ID`（若 DEX 走 Web 可再要 Web 用 client id，若存在）。
+2. 在 `backend/.env` 配置（见 `backend/.env.example` 注释占位）：`ION_IDENTITY_BASE_URL`、`ION_IDENTITY_CLIENT_ID`；**勿提交 `.env`**。
+3. 先用 **staging / testnet** 环境验证 `verified-badge` 与 `204/200` 语义，再切 production。
+4. 禁止从 APK 反编译或猜测生产 URL 写入仓库。
+
 ## ION DEX 当前状态
 
 | 项 | 状态 |
 |----|------|
-| Heimdall 生产 base URL | **Pending**（须运维/官方文档确认，禁止硬编码猜测） |
-| `appId` / `orgId` / `origin` | **Pending**（来自 ION Identity 控制台） |
+| Heimdall 生产 base URL | **Pending** — 在 `flutter-app-secrets` → `ION_ORIGIN`（私有，未公开） |
+| Client ID (`X-Client-ID`) | **Pending** — `ION_ANDROID_APP_ID` / `ION_IOS_APP_ID`（同上） |
+| `orgId` | **非 SDK 初始化必填**；以 API 响应为准 |
 | 本仓 `profile.ts` `kycPass` | **local-seed mock** |
 | 本仓 `ionIdStatus: verified` | **mock**，未调用 `verified-badge` API |
 
