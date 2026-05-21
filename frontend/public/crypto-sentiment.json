@@ -1,0 +1,672 @@
+{
+  "updated": "2026-05-21T11:23:39.235Z",
+  "totalSignals": 130,
+  "marketSentiment": {
+    "netScore": "-6.5",
+    "mood": "⚪ Neutral",
+    "color": "#94a3b8",
+    "totalSignals": 130,
+    "bullCount": 57,
+    "bearCount": 79
+  },
+  "trending": [
+    {
+      "name": "Hyperliquid",
+      "symbol": "HYPE",
+      "marketCapRank": 11,
+      "score": 0,
+      "priceChange24h": 15.22684744037992,
+      "sparkline": "https://www.coingecko.com/coins/50882/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "Manifesting",
+      "symbol": "MANIFEST",
+      "marketCapRank": 928,
+      "score": 1,
+      "priceChange24h": 1.933987677912056,
+      "sparkline": "https://www.coingecko.com/coins/102173340/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "Pudgy Penguins",
+      "symbol": "PENGU",
+      "marketCapRank": 94,
+      "score": 2,
+      "priceChange24h": 3.2382620824114423,
+      "sparkline": "https://www.coingecko.com/coins/52622/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "Nexus",
+      "symbol": "NEX",
+      "marketCapRank": 131,
+      "score": 3,
+      "priceChange24h": 39.405614729213085,
+      "sparkline": "https://www.coingecko.com/coins/102173233/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "Zcash",
+      "symbol": "ZEC",
+      "marketCapRank": 13,
+      "score": 4,
+      "priceChange24h": 12.679240369742592,
+      "sparkline": "https://www.coingecko.com/coins/486/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "Lighter",
+      "symbol": "LIT",
+      "marketCapRank": 137,
+      "score": 5,
+      "priceChange24h": 13.73706474400299,
+      "sparkline": "https://www.coingecko.com/coins/71121/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "Aster",
+      "symbol": "ASTER",
+      "marketCapRank": 49,
+      "score": 6,
+      "priceChange24h": 5.703991764415938,
+      "sparkline": "https://www.coingecko.com/coins/69040/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "Bitcoin",
+      "symbol": "BTC",
+      "marketCapRank": 1,
+      "score": 7,
+      "priceChange24h": -0.2413034245805961,
+      "sparkline": "https://www.coingecko.com/coins/1/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "peaq",
+      "symbol": "PEAQ",
+      "marketCapRank": 380,
+      "score": 8,
+      "priceChange24h": 32.94201169122187,
+      "sparkline": "https://www.coingecko.com/coins/51415/sparkline.svg",
+      "source": "coingecko"
+    },
+    {
+      "name": "Kinetiq",
+      "symbol": "KNTQ",
+      "marketCapRank": 435,
+      "score": 9,
+      "priceChange24h": 20.776798891259922,
+      "sparkline": "https://www.coingecko.com/coins/70252/sparkline.svg",
+      "source": "coingecko"
+    }
+  ],
+  "signals": {
+    "bullish": [
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "Live markets: SpaceX files for massive IPO as Nvidia earnings beat Street expectations - CoinDesk",
+        "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPSU9zZDd2WjF5VTd6Q0sxNE5ldlNEbFllZENvNHN2R2hpbmQ1TEhCUU1iczhjQ1BTUUgxNjVrdGJqeGh5Q0k0Wm1TMzU4YklFOGhoMndqVWZFZGlBcHZGQlVJUEd0SVI5dVFqa3NSRUlwZFY4d0NpUTl4c3kzMUtiYVNKaEIwX29zNDliOEc1RkNRSVZrS2lmeFl2LTlZbTBpcXRleUt1dEV4SmNiNVdybF9HZ1ZnR2VyOWt4MQ?oc=5",
+        "date": "Wed, 20 May 2026 23:45:04 GMT",
+        "outlet": "CoinDesk",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "Weekly Crypto News (May 2026): SUI Breakout, CLARITY Act &amp; Hyperliquid ETF Buzz - CoinDCX",
+        "link": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBFNnFUZUZHTTlDQjBzQjdDb3R3amhGWDZwZjdvX2VwQnNrUVpHUHFIVHh5SkcyVW1XQzV6LWZMRzRXR3ZHSW9IREo4XzJXWmFGb3VDUnNrNmZEdmpwSjlqazBDckYzamF3djdj?oc=5",
+        "date": "Mon, 18 May 2026 05:40:00 GMT",
+        "outlet": "CoinDCX",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "2026 Digital Asset Outlook: Dawn of the Institutional Era - Grayscale",
+        "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNZkp0S21GR0JmWFhZU1R6eXVfcjJWLU5Yd3hCeUM1LXpvY044eDVhU21UWWJvaFZfaHIwRklIeC11VjRnMDB4MjhJZ2lwODdTTC1aeTBwX0VnRnh2U2lPaHVtQVZndS1uNnBQT24tbDJfNVk3aml3WmFHcWVza2ZIbzJWRzFaNXFoMWVhd3dQaXBUY3M1TEJ6QWRBQQ?oc=5",
+        "date": "Mon, 15 Dec 2025 08:00:00 GMT",
+        "outlet": "Grayscale",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "defi",
+        "weight": 2,
+        "title": "Introducing Permissioned DEX on the XRP Ledger: Unlocking Institutional Access to DeFi - ripple.com",
+        "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOeVo3UzVET3JweW90SGoxMVhOSUlQV25yZVpwcjNxMDlFZ3FTdk1KMEQ5NmI0Wmp0clB2WDIza09sR0RteTFSOFREUFFOUVF6SG1ObjBYM01KbEVLZVZHTG1ycG1qU1VtbHdzZVpiTWpaT0lCMHpUZ3Y2MEtIblJmcnh0U2pxVVpwSmszekln?oc=5",
+        "date": "Wed, 25 Jun 2025 07:00:00 GMT",
+        "outlet": "ripple.com",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "ion",
+        "weight": 3,
+        "title": "Ice Open Network Begins Mainnet Rollout with Genesis Block Creation - TMX Newsfile",
+        "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPenZWWnRsWUd2ZHVmVkhSNmJVOGFIbE9BRm1OcnJSVVFhLU5ULVdacDVuaXRWWG0wMjM2TnNjalZmTE8wYklBalZKczE0QVhiXzhEUk5YbllkdGRGOW9oWnk3OUpxWTIwT1NqZnAzZEVpZDNyV052NUpmZEYzdEpwSUM4azlvWkZFSG1zVm5XMmQ3YnlpRDRfczA5S0hONmxCZXRBX1ROWTVkWU4zck1IZl9rcFhLS05HOVJz?oc=5",
+        "date": "Fri, 24 Apr 2026 22:11:16 GMT",
+        "outlet": "TMX Newsfile",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Crypto ETF issuers bet on active management — but institutions are sticking to the basics - Pensions &amp; Investments",
+        "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxNU3hNRGZldHRNU0xsNlJqTjY0Z2p5dnZZVFRXeU1QaFFTT29GR3JTQWpaZGVGV3lKOXFsczRJc0VpSDdzQURvSHBvY29SVV9iUC0xR3hLb3hYdHFaVHczS3pVMFF3c1hsdXIwRTBuMDBXakxuS0hNTlktT1RiYmh1b2h0RzM3N19UWnVfb1AwZVIyeU0xYVlLNUhxSWU4QU1Uc2pCYVE2ZnhsR0ozZmQyelhaQy1HM2xzVzFWdWQ5b2g5Ulk?oc=5",
+        "date": "Mon, 18 May 2026 19:38:00 GMT",
+        "outlet": "Pensions &amp; Investments",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Bitcoin Hits $81,000: Institutional Demand for Bitcoin and Crypto ETFs Surges in 2026 - News and Statistics - IndexBox",
+        "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPMXlwV0NqUDA0X3huMGRwcm5jWVhJODAtbjhKX3dSNUg3QVVsVmY2VGRXVGlkN1E4bzVOa0FzNF9iaXRJRm5kX2hMaEQxVlJscWdxbnJBRVBUNHNUZVBTN0p5REZaZnlITlF4OWs4WG8xRUhIUTdrRHpZcUVfUFJBXzJnYmhLU1l0OGlZMTdkVEZvMUhxOWRZelNVeTZJYTB3?oc=5",
+        "date": "Wed, 20 May 2026 02:10:00 GMT",
+        "outlet": "IndexBox",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 74,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Bitcoin (BTC) ETFs Pulled in $2B in April: Can the Flows Continue in May? - 24/7 Wall St.",
+        "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPYlpzX0dzczJCNlF2WWhpNkRRZUdmcG9IVnlyd3p3Nlk4UHh3Ynl3QnBVODVfODJfd2xwTWdmVmxXUUhwNEgwRWZQdzItZzVwdGpWeHg2SlpobDliT1lrY0Z5U0lPOTVadE94c01OdlJmWTcxcUZnMUdHXzhlLWxhU09WLXczQlBRZGQxLXFoSHhHdXp3YjdOVTZBeFhqY3VYSGY3OENTVU51Nm5CTDhKc2d3?oc=5",
+        "date": "Wed, 20 May 2026 12:34:41 GMT",
+        "outlet": "24/7 Wall St.",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Blackrock Drives $331M Bitcoin ETF Outflow as XRP and Solana Funds Attract Inflows - Bitcoin News",
+        "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQWTU0RHozRTRoX3VSSFcySWFyM1k3WkdBbHpFZVhBOV92LU1oVDFnbnZIaHRFbHVmV3JtWUMtRTZZdnUzbUZUVGlKNTlUYUtma3piN3AxVU56aGJpdlJSTGk5OUNSNUtBa0NUcl9XMVFtcWtvWjRIOXR4ZEFGVWFYR3lCb0NxemVvMnVtdG1ZLWlZMnBodjh3d2FIUEx0S1dHOUkwMTZPZHBITWs?oc=5",
+        "date": "Wed, 20 May 2026 17:49:22 GMT",
+        "outlet": "Bitcoin News",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Best Crypto ETFs to Buy in 2026 - The Motley Fool",
+        "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9aTkhvNmotNmJLMU05XzBBcE9xZlhXX21VOGpTYTRYakNGRU9MX3U4dk5DS3lpUDN2OFNmeEVBS0NxQ25iNnpKZWhXNUozbVFmeURfM05qTkMzazk1VklMN2R6czVuUkdOWl9YdW4wRThpTHppdFpUUzJQS25idDg?oc=5",
+        "date": "Tue, 19 May 2026 02:16:00 GMT",
+        "outlet": "The Motley Fool",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 66,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Spot Bitcoin ETFs Bleed Nearly $1 Billion This Week as Seven-Day Outflows Approach $2 Billion - unchainedcrypto.com",
+        "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNdFdkQVIxYWdJX012RU94SnpHQzVpMVV0RjY0Q2pxWUxQX3h1ZEpVdnp3WE1mWnQ4Nm02emZiaW1KWUk5MVJqdndLYmhsQmUzTW9ROEZpVDJEa0FvaHhUd29KcGYyd1FEUmdCbVlEYUxNbXp6enE3RWFHUHVHeW5VUThROGF3dFVybldWZHk4TmhkdjVkNE9pUjREeUFpdVh5bEl0d0pXR0RFYnQ4OTJoQlN2Ym9RT1JOSzNDTg?oc=5",
+        "date": "Wed, 20 May 2026 11:14:00 GMT",
+        "outlet": "unchainedcrypto.com",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 58,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Japan’s Crypto Revolution: 20% Tax Rate and Institutional ETF Gateway - Yahoo Finance",
+        "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPMVN6eTBXWXFXTGEyandlTUQxQTFsU0lDUnhoaWkyME5lSVh4WGlaNFk1MnNFMHZGVzV2SDg2NWFGb2Z3ZUU5SG93S1VIR0wwNVkwWWZfTWdZbzQ0RmdCUHhaZjdlTjN1dmYxSFBROTFPaDJzN2h0MmZZdlFubnVjMHJfRHNZSUY4UVhtOEVnWkg5VURFcWR0NVJhSQ?oc=5",
+        "date": "Wed, 20 May 2026 14:22:41 GMT",
+        "outlet": "Yahoo Finance",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 66,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Best Crypto ETFs to Buy in 2026 - The Globe and Mail",
+        "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNM2p0TExFU0tLVjRuRmtpUDluY3QydjZzUmVSQl94Y0E5NEpZc3lvaDhKV2JXcEo5eGx0NWMyRXJtYk55RmxBR2o3ZG03Zk8wd21Zak1QTHhXb25XeUREWWNyNzVuMV9pbVFhYzBuQ3ljZ29ZWElkVTRPRElncWFuT1E2YXdCTzE2R1M4U3VDRzFxcy1KYUppT3J5aFBuZ1hONDdnUE9Ec01hMHJ6ZlJneTVDbWI?oc=5",
+        "date": "Tue, 19 May 2026 01:44:29 GMT",
+        "outlet": "The Globe and Mail",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 66,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "​​​Bitcoin Outlook: ETF Inflows, Institutional Demand and Regulatory Clarity Drive BTC Recovery - ig.com",
+        "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOZjM1dFJfRFFUTklKRmxQZ3lteUdUN0FhUV9SRDMwblZFTTRzMWt4d1gxaW1QeHMybEV0dHotUFdtZ0RsRmNiUVN4S1FTVXZaVjFfNlJNRFZpTUNJRHlFYncxbjJZRkF5ekd2VTBPX1d5UF9rRnByUGo5ZkRsNDd1LXpQeXoxY0kwbkJkakdWbVZFTUwySDNDbWFPNTRxOWxHbnkyOE1MQ2REall6Y1VzeV9Vd2Y?oc=5",
+        "date": "Mon, 11 May 2026 12:12:16 GMT",
+        "outlet": "ig.com",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 66,
+          "reason": "Bullish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "institutional",
+        "weight": 2,
+        "title": "Bitcoin ETF Inflows Hit $2.44Bn in April as Institutional Demand Returns - Investing.com",
+        "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNQWs5UGd5aldTdnJsY2g4X3gyVmRBakF5TUdlSlFYQ1A0d0JzWXdGS05qM0JOdEo3ckx2NnhRT1JMT1pXdzBZVldicnZQZ2tEcEljNFBUd0tHQkJyd2VWUlhWTFlNNkprTEFaUVYxLWJfS0xWeThCQ1NHaDBsYXZ4b2gwM1FnWGFMUGhIbmpjd3BVbDg0S3F5TndQbkVfdElPYmRZa2VYejc1eGl3cVR1eVlDaHVxdw?oc=5",
+        "date": "Thu, 30 Apr 2026 07:00:00 GMT",
+        "outlet": "Investing.com",
+        "ai": {
+          "sentiment": "bullish",
+          "confidence": 66,
+          "reason": "Bullish ratio 100%"
+        }
+      }
+    ],
+    "bearish": [
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "HYPE leads crypto rebound as traders position for volatility breakout - CoinDesk",
+        "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxObWc2OWpUOUpNd1FOR2x6ZTFGMk5OYkdyOHhVejFkT1Z4aHNjX01iMXFIODhqZ1VuY1dlOHJNYXR0aEJmTlRwRTJzUENoSEo2aUZIVm9kWTd4TUdjRURuUWJsSnlTalNSN0FtTl8wS3R4cEdPWUdtUVd5aTdZeWJUN3FVdm9nNE1WeEVpM1lCUVFxVHM2d2lzNUV5VXRvdmpleTFNUTFTUEdoZWxWNFBYLU1rYw?oc=5",
+        "date": "Thu, 21 May 2026 10:54:53 GMT",
+        "outlet": "CoinDesk",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "Minnesota is banning crypto ATMs and prediction markets - Yahoo Finance",
+        "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNVFAzTjdPSGJfbEoyVzVsd1VlV256cjU0bkdVcVh6NW9DR0Rpd0JlMUgwM01PV1RiUVRaVXYteXljbWJmOTNSSFVxRVFUS3E4SHNlRFljWGN4XzRrZjBjczJ2TlVRM243Z3N5RDQ5cjNlMXlpNnZpLXJWU1dOdlFYZmpRanhiYWhzUm9iV2J1aFphUGJOM3pDWHppUjJGYjN1UmVpZg?oc=5",
+        "date": "Wed, 20 May 2026 17:34:36 GMT",
+        "outlet": "Yahoo Finance",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "CryptoQuant says bitcoin mirrors 2022 bear market pattern as sentiment turns 'extremely bearish' - The Block",
+        "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQeTViZ3lRUnM5c1NEb1ZmdDBDMGhQSEljMG1TeGw5blhlNUxITU8zTzJGRXJSMGVfX1FXMmpVR005SW5NZ1dadkZWUUdaYTlIY1U1bzg0ZGU1WXdOTXk3TW5LU1pfYkVwVWNoSEFWUjMxTUhZV0VTcUhjc1RnY2hTb2Jydkt3UmZiTXpVMW1iOWptVjJoTEswZHNIRGtaeHVDaW9zX293?oc=5",
+        "date": "Wed, 20 May 2026 19:35:26 GMT",
+        "outlet": "The Block",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 66,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "Bank of America discloses exposure to Bitcoin, XRP, Ether, Solana - thestreet.com",
+        "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQVBkamxaRXQtT0tPRXU4bHNGM0VfZm5GV1daTEFlbzVfbnJhTU9SUnlBRjA3dFVKZ003dzJFVkFaclBzbGFBYjdXNVdVOWZteGtYQkhpWUJOTE0wRDJ0NzVTMS00RC1GRHJpSzB5NEZzY0NVWG9FX2VfREljWkdRT2FlbUNqWURPX1djV0tvREdOcTBEel9oQnJMUmtrcWVtRlhtQjdB?oc=5",
+        "date": "Wed, 20 May 2026 13:26:06 GMT",
+        "outlet": "thestreet.com",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "US Senate examines crypto regulation bill; Ethereum falls - equiti.com",
+        "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNZ29Wc3J0ZUxfZkhMU3dJcEJnbmd2U2ZWNmRhbnQ4UHR3OTJvejlGV0ZyeGhzTUEyTEpXeDVTenZlYlZXTF9MTkxsQ011RmNtdmlvZkJwcFRaU0ZId0Z1MDNVT1dZT2NnZms2bnhwcnNMTGstcVZJUm15TUdJS2VUc2lEREVQOVFaMVJfcHhSS3F3WWhEMzZIVWJkMTdqOC15SkxYMQ?oc=5",
+        "date": "Mon, 18 May 2026 23:26:37 GMT",
+        "outlet": "equiti.com",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 66,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "Crypto Regulation: Minnesota Gov. Signs Bill To Allow Digital Asset Custody - CoinGape",
+        "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxOR3lvSGNxamJzZzBHMmlraWZqbDI3cHVaZHQ1WU1YM3FvMmI5d05Ha2RPWmRsbTZVWHNJOWhZQU9oRTVGT2tWQ2tDNkNsZElPa1NYY0t3S0JRMWZyMWVXcHM4XzdHQXFscmZmNUlob1g4TUo5Njg5djlwcTZBZnpaaVJURjQ2bmFZQ2tiV01mNkMzVGZqOXNHdWdWTQ?oc=5",
+        "date": "Tue, 19 May 2026 00:32:43 GMT",
+        "outlet": "CoinGape",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "defi",
+        "weight": 2,
+        "title": "Solana DEX Volume Drops to Near Parity With Ethereum as DeFi Momentum Shifts - CryptoRank",
+        "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNaWxlSGV2aFZCM1ZEckdMTDBGbFJ2V3BxaVlQdWhoRzVnQUxESlc4Vklwck5vd3A5U1p2ejFsSHNRblNud3BpdnBxV0JCMExnVTBwNjU0WW45TmZsbTZYQ1UwRnktdTd1ZjVJSTI3ai1zUFJTVkVMRTZDOWJ0UWUxWnh3?oc=5",
+        "date": "Wed, 13 May 2026 14:32:50 GMT",
+        "outlet": "CryptoRank",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "ion",
+        "weight": 3,
+        "title": "Ice Open Network Updates ION as $ION Drops - Coinpedia",
+        "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNUjlHUjFiRXkzd0lPZUUydGxod1U5MlN0MFpreHFLUmFOSUt4X3JYb244Z2pDc1JYRjFxUTBWMWJtWG1SLVd2VnRsNGI3bGh1YVFPNnpsTER0cUowUV95Vmt5dkNZaUxEbVNFel9XNTBVQUtBM2ZLNUdwbHZQN1J2S3BGTy1uazFh0gGOAUFVX3lxTFBNVnlfaVhpSG1uX0hFNmVHN1pvSVN0UTBOQTBEaDlpaFFPUTVrNlljdFdTaUpxSnJBbmFZLW5vM1JNaTl0a0FCNG42YzM4cGlnX0ZhcVAxLV9KbHJmbFFzOXZIcVFFTFZPZG1ldTEtbjkyVzlxWDU2QkhiTnU5NXZ3NVhQaHVuaHl3WVBTSXc?oc=5",
+        "date": "Sat, 11 Apr 2026 07:00:00 GMT",
+        "outlet": "Coinpedia",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "security",
+        "weight": 3,
+        "title": "Major Crypto Hack Hits Monad as $76M Exploit Raises Security Concerns - MEXC",
+        "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9MVGZIcVRMWUpDWW5nUTRkZ0s4ZTFPbU1TV2xfSEFzSFZ4WnM4T3hBWkhVbzB2UXFOeVBzMjdTWGo1UlRnV1hQTlRLNjBOSEE?oc=5",
+        "date": "Tue, 19 May 2026 06:56:18 GMT",
+        "outlet": "MEXC",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 74,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "security",
+        "weight": 3,
+        "title": "Echo Protocol Joins THORChain, Verus as May Hack Count Reaches 14 - BeInCrypto",
+        "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5LRVF1ZmJ2ckZSN1BTQmctZnVhd0RjdG9wX29OM1BuLS1TX1NRdWk5UWlxOGVvUjJIT2o5ek5lSUJXb1lSTlh1UGlSUTZvNnY3cE1BR2o1TXRrcVdWaGlfRVI1blgzVTdoNGpFRjR3?oc=5",
+        "date": "Tue, 19 May 2026 02:42:00 GMT",
+        "outlet": "BeInCrypto",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "security",
+        "weight": 3,
+        "title": "Biggest DeFi Hacks and Exploits of 2026: $1 Billion+ Lost and Counting - CCN.com",
+        "link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxQbk9wTmRMdzhqUW04T1dyM1dwbEVYNnU0U21uenoyN0J2U1VoOC1pRC1zQU1uanA1N0xzb1UySWQzSUZDYkhGenRmM1NWc1ZQZDR3aVluX1h2aU9zZElybVVHV3hiQmYxTE1oV19WcE1iZExIQlJnYXFRSlNXanNSVDNBNER4VklVMHo0?oc=5",
+        "date": "Tue, 19 May 2026 14:41:27 GMT",
+        "outlet": "CCN.com",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 66,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "security",
+        "weight": 3,
+        "title": "Ethereum news (ETH): The $293 million KelpDAO hack shows why DeFi is finally being forced to grow up - CoinDesk",
+        "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNeE03V1pXQXFHTC1zcFpXdVN1UmZ6TEkyV19jbTh3bHc3dTBmX0F2aFF5b1dRWWNVWlI1SlVQQ1h2c2Z1SnV4dnJsWEw5WDlKSW1vdVo1czBzZDZhQUVBdndEYU5oQzJQcEpjdWRibnQyTDFMeXZCVEJIeTU1Z21EdVRDVW8tTFNfWmw4V1hhSlhIa29Ed29iaFlsUHpnOGlUMkJCTTVlSHBaOWN3VmRfY2hFLUhDQk1YQmExRVNyMA?oc=5",
+        "date": "Sat, 16 May 2026 13:01:46 GMT",
+        "outlet": "CoinDesk",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "security",
+        "weight": 3,
+        "title": "North Korea Stole 76% of All Crypto Hack Value in 2026 — With Just Two Attacks - TRM Labs",
+        "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOTWZvbU9IZmtmMGlacGdlaTBtdW9NRDZTU1Zqb05kYUVncGxOOXhmQkZLQ1RtblRWeDR6V1Nlb0JMVU9DVWdnZTBxZFNZZl9wRlBUOUN6LVV0SDQ1SktZeGF1OFRjTU54Z0FLbDh2QU1XaHRoSnZYeEVUX2l4NFRaQXJ2YUhMZ08yN0p6cG0zaUhkM0VwRUVfcTYybTdlSlphcGpZOW9UeUlZM1dxN1FONW9SMUE?oc=5",
+        "date": "Thu, 30 Apr 2026 07:00:00 GMT",
+        "outlet": "TRM Labs",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 58,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "security",
+        "weight": 3,
+        "title": "Crypto Hack News: Echo Protocol Exploit Drained $77M - The Coin Republic",
+        "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOdzZSSS14cFVRLXJsMkdNSjJmcmFzTXNqaGNJZGJ0M3RRaGtsXy1TZ2lpSWFRN0NLVGszanczbl9WX3RvVHpxdlhkSnR4OHZJNmg2TVFadDlZcE1LZWxJNGl5aHZ5aG12ak05SWFjQXkwTDBjVlRVQXBkRHFjS2stbTF4X1F0ZDhBbkFVdmVGOHpMVi1iY2cxTEZR0gGfAUFVX3lxTE9NanF5eDQtak5OSHdYNExWTElrUmZPQWpkbEl4MlNZRjlJVXZpQm02bFV5N0dKZmNKM3UycHJwYjB5REttYzlnOXRzMW5WdHdBbmtPQ1B3SC1qX1dhYnJmaE94cnVRS3A1VHpDbjl6X0VhVlZJS3BnckIybElZSEotck8xNFNCNWkybzNONG4wRkZEYmh6ZUo0Mks1V1hIZw?oc=5",
+        "date": "Wed, 20 May 2026 10:10:00 GMT",
+        "outlet": "The Coin Republic",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 66,
+          "reason": "Bearish ratio 100%"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "security",
+        "weight": 3,
+        "title": "Bridge hacks back in vogue as Verus exploit brings 2026 total to $329M - Protos | Informed crypto news",
+        "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPakVwLWlTT1JleGZxTUtUMHNGUHZpR2tnTmlrOUp3X2xGUllDSzJXMmJCcXdTY2hKVlpxTlBnekk1ZzFpU1RYeXRMMFJqX2JTSkx2RE4yV3FxNEpTeTBTQS01bFRSQTNBdXdxV2pTZGY0bXpNRGtIQUFCLXRldE1jaVQyak5Cd0pOa2FERHBxMnh4ejA?oc=5",
+        "date": "Mon, 18 May 2026 13:06:07 GMT",
+        "outlet": "Protos | Informed crypto news",
+        "ai": {
+          "sentiment": "bearish",
+          "confidence": 66,
+          "reason": "Bearish ratio 100%"
+        }
+      }
+    ],
+    "neutral": [
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "Investors are flocking to an offshore crypto platform for an early shot at trading the SpaceX IPO - MarketWatch",
+        "link": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxPR0hsaTY3RG9DYXRISDFWTF9oaUR5WEpKU1BQT0N5VVp0WHFZUk1EbmJwV2V5enkyQW9veWhWSHp0T3MySnhMY0h6S0w3aDNiVXNiclhWWVp0R0VJUlVDRWptd2FXdGVtWkoxa1hEQzJvYW4waEUtelBtNU0yV3FHeWEtWl9EVFg5YmhWQ3hzTzRiTkxhbTBCMEFqU1FoenphZmExNkZKU2ozV1BVVVFzMzB3NkxJNmNudGFma3ViMGJVYWQ5dVFTTTFfT25tSmdlVjc2YlFqRQ?oc=5",
+        "date": "Wed, 20 May 2026 21:50:00 GMT",
+        "outlet": "MarketWatch",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "Here’s How High The Ethereum Price Would Be if It Matches The Market Cap Of Gold - TradingView",
+        "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxOVjRicGxKYXVpRmUyeU84TEVtNjJXLW5QNUIzd2dJNU5oTWFDT1BJR2lRanM5dDExblBrQ1Y5OGtaU3Zlck5RTnBSWTk4Q05xQ0RqVkcxcGtjRVdIYkh5azlxN05OSG5XV3RFWW8yOWtqQWVuRUlwcDJvdUtDNWlnYjgtd1BYdXpaUndYX0kxa3hTUEZGQVE4SVZINk5WbnotbTZtNngxZWFpM0dUUkpwQ3FEdnl0UzBjY3VQeUtidUQ3eDNfYTBwX0VuaDhMYVdwMU1QRQ?oc=5",
+        "date": "Wed, 20 May 2026 22:30:49 GMT",
+        "outlet": "TradingView",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "Market Brief: Bitcoin's Last Dip? What The Money Is Telling Us (BTC-USD) - Seeking Alpha",
+        "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNZHVjMG5vWGJhblFqZERiUzJDdWRNZUk2X2xSQ1VEOS05aEMwUURSZU9pa0V3Vnc3SWhzRUYwejZhVFNPZVJMWHJ2RUVZQ1Jtak1OVXBGcXZPOUNYVUt3dm94UjlBb3hMaUh2S211N0RmQkVWUmI5R1MzYVpBazVtbDRjWUE2NkFGUDB2eFZpeHNXZEp0TWN6VG9Raw?oc=5",
+        "date": "Thu, 21 May 2026 07:05:00 GMT",
+        "outlet": "Seeking Alpha",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "The Crypto Market Is Creeping Upwards Across the Board - Investing.com",
+        "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPS3dnUTd5aVl3VzhrejdIX3REVGsyb3FLNUx3a010U1o3TnhEdU9vOElWLU5xakFuc3JudFR6elgwZnFHUlVLVkNVaU9qMzZvSjNjVGZ1UWRkWTFBdVNOVENGTDJUTDhpWFNBSTNDU29TNEV2bmFJZ3N4M1V0LVNuSEtfVlNyMXI2RFVSZlN2cy1kcGxVRTF5YV81YVNaVjgw?oc=5",
+        "date": "Thu, 21 May 2026 10:43:27 GMT",
+        "outlet": "Investing.com",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "market",
+        "weight": 3,
+        "title": "FBI’s NexFundAI sting reveals widespread crypto market manipulation - Crypto Briefing",
+        "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9Vb2hjR1dZcm92Q2JwUV92by1lVFQzMHpzbHRKZzJIZWNCdW1tNFV0T3BzRVZkVnRjV1VBcG9CODhKRnRuaWRzYk9MaHhBdElyQUZSSW1lTzlnc0sxZ2VlVmJ5OURMbERLR2JtNWRYZ1NmYlE2bmc?oc=5",
+        "date": "Thu, 21 May 2026 07:43:55 GMT",
+        "outlet": "Crypto Briefing",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "US Senate committee advances crypto bill in milestone for digital assets - Reuters",
+        "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOck5sSTR3MEhWMC1ydmZQSG1vMEdBdmpxT2lLUkY1Q0hoeDZTLVA5ajQyVUkzUDRJb0lUZ3JOYWhRV2oxWHNtb1dUaVlMYllTX2N6OTZSLVUwOGxfTlFsWUppS0hxMVRwNUxpR2x5MTg0dllRS0dQT2VMb1NvVGRzM1ZIZ3h2QlVjQUs2VGtyQW1wM3A0RjVEUjZ2RTY3NVZlSm56RFBIbmlzVUVIX1ZSNWN0SU83Y013Qnc?oc=5",
+        "date": "Thu, 14 May 2026 17:13:37 GMT",
+        "outlet": "Reuters",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "Ethereum Takes Centre Stage in CLARITY Act Debate as ETH Bulls Eye $7K - CCN.com",
+        "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNTzRYNE1pb29fWE11aUlfaDhJYkRtMVNHQkV6dnkzV1RWM1BBc01OTU0xeU9kYlZXLVVRSjN4bTBVZ0tKdEF0TjFSZGRoM1ctbnpoZWt3NmNnVDJiLWxsdnI4dm9ja3VFTEkxUlY0Q0JxZGd5dnFCdElmQ2ItV0piT2JXbm1wdEJLa2dJS3V3Yw?oc=5",
+        "date": "Mon, 18 May 2026 14:29:37 GMT",
+        "outlet": "CCN.com",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "Analyst Reveals What CLARITY Act Passing Today Means for Bitcoin, Ethereum and XRP Prices - TradingView",
+        "link": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxOZkZRTWFkalVSLXlBOWU0R2UyRFhwZ3BKWUxMcXBQcVJrdjJrWml5ZWstNHYwYXYwd2hVOWk1ZlFnY210SERzckx3VmtDRnA5Ym1GM1U0TUZQckdYMEVlVm0xMHlUTnZhVndFTFY2SmVaOGxQcnZjYmV4SnZqNEluSUNjWVFyYW9xbXAtRXVNQm9ZcVRDMFNIZTVOUHI2NmlzWkpESTdaY3M0QVR2bnN2akJtQ0QxdEgwY0ROQ3JnVnJXUUhNSGVzdE0xQjlmcG5Xc013MEpobFNnX0dWZHZvT2lFT3dQQQ?oc=5",
+        "date": "Fri, 15 May 2026 01:18:15 GMT",
+        "outlet": "TradingView",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "IRS Rule Changes In 2026 Bitcoin, Ethereum, XRP Traders Need To Know About - Yahoo Finance",
+        "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPLTdjeVloNE9VaFExVGxUWHRuV2xhMVR6NjA4LVVrSHpRQ0pab2hITXFTbWtrOVlEZE9tTXNZMHZFMGhfTWl2QjQ2MVVpVVB1dEEyclBOZEx3bEFRb2tHM2JXc1MxYVY2N1dNWi1ycmNVRjhXYVF4OUpvVXBva3BaQw?oc=5",
+        "date": "Mon, 08 Dec 2025 08:00:00 GMT",
+        "outlet": "Yahoo Finance",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      },
+      {
+        "source": "google-news",
+        "category": "regulation",
+        "weight": 3,
+        "title": "Morgan Stanley May Have Reset the Crypto Trading Fee Baseline - PaymentsJournal",
+        "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQX0ZrSGRfTmNtaWczOHNXV09LaWszam1oWTRpNHlvUVRFaV9SNVBULU90TENQSllHdnNJUDlGbUhORG5CVHFxbXQxM05ON0VfMS1vS2VNTFc5bTI3YzhYa1QzM0REOFdRVDVSMm15VlRONGtUWGVIX2pWNm1lRGc1SkR0Vll5OGstY3NCaW9hOC1wSnI4SF9nT2t30gGfAUFVX3lxTE5tbTJPTDY2d0k1TmMySVZjX09KOEtfM1J1eDZjQXJpSi1WTFlfUE5SVHdaUTF6SVJNX1RYYXlFWkJrUnNFUENYRGJ4V1kwNExBUENCVkxaNHhyVzFEZFYxcTkwUFlhN2YwTUpQdDBERFNzNkxlNXBQQ2FLUm1ZYzJTN1p1b2xPWkhXZ2NzMjBvMWNzdkRaZkZTZXJsZHRhQQ?oc=5",
+        "date": "Thu, 07 May 2026 18:30:00 GMT",
+        "outlet": "PaymentsJournal",
+        "ai": {
+          "sentiment": "neutral",
+          "confidence": 50,
+          "reason": "No signal words"
+        }
+      }
+    ]
+  }
+}
