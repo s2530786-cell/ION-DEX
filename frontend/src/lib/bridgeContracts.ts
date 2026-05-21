@@ -1,10 +1,11 @@
 import { type Address, parseAbi } from "viem";
+import { OFFICIAL_BSC_ION_TOKEN_ADDRESS } from "@/lib/officialIonAddresses";
 
 export const BSC_CHAIN_ID = 56;
 
 export const ION_BSC_TOKEN =
   (import.meta.env.VITE_ION_BSC_TOKEN as Address | undefined) ??
-  ("0xe1ab61f7b093435204df32f5b3a405de55445ea8" as Address);
+  (OFFICIAL_BSC_ION_TOKEN_ADDRESS as Address);
 
 export const USDT_BSC_TOKEN =
   (import.meta.env.VITE_USDT_BSC_TOKEN as Address | undefined) ??

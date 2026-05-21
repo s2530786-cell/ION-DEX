@@ -1,3 +1,5 @@
+import { OFFICIAL_BSC_ION_TOKEN_ADDRESS } from "../constants/official-ion-addresses.js";
+
 export type DataMode = "live" | "auto" | "test-mock";
 
 export type ServerConfig = {
@@ -34,9 +36,9 @@ function parseChainId(raw: string | undefined): number {
 }
 
 export function loadServerConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
-  const bscIon = env.BSC_ION_TOKEN_ADDRESS?.trim() || null;
+  const bscIon = env.BSC_ION_TOKEN_ADDRESS?.trim() || OFFICIAL_BSC_ION_TOKEN_ADDRESS;
   const normalizedIonToken =
-    bscIon && /^0x[a-fA-F0-9]{40}$/.test(bscIon) ? bscIon.toLowerCase() : null;
+    bscIon && /^0x[a-fA-F0-9]{40}$/.test(bscIon) ? bscIon.toLowerCase() : OFFICIAL_BSC_ION_TOKEN_ADDRESS;
 
   return {
     dataMode: parseDataMode(env.ION_DATA_MODE),

@@ -58,6 +58,17 @@ Product facts for ION DEX UI copy:
 
 Frontend reference: `frontend/src/lib/officialBridgeSemantics.ts`.
 
+## Canonical BSC addresses (confirmed — not guessed)
+
+| Field | Address |
+|-------|---------|
+| ION ERC-20 on BSC | `0xe1ab61f7b093435204df32f5b3a405de55445ea8` |
+| BSC burn / dead sink | `0x000000000000000000000000000000000000dEaD` |
+
+Doc: `docs/ion-official-canonical-addresses.md`. Code: `frontend/src/lib/officialIonAddresses.ts`, `backend/src/constants/official-ion-addresses.ts`.
+
+**Iron law:** official `ice-blockchain/*` repos are the standard; consult before coding; do not invent wION or wrapper burn flows.
+
 ## Wallet injection (not in `ice-blockchain/ion` node monorepo)
 
 Verified companion repositories for dApp wallet integration:

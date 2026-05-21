@@ -1,3 +1,5 @@
+import { OFFICIAL_BSC_ION_BURN_ADDRESS, OFFICIAL_BSC_ION_TOKEN_ADDRESS } from "@/lib/officialIonAddresses";
+
 /**
  * Bridge token decimals and chain-specific mapping
  * 
@@ -21,7 +23,7 @@ export const BSC_TOKENS: Record<string, ChainToken> = {
   ION: {
     symbol: 'ION',
     decimals: 18,
-    address: '0xe1ab61f7b093435204df32f5b3a405de55445ea8',
+    address: OFFICIAL_BSC_ION_TOKEN_ADDRESS,
     minBridge: '1000',
     maxBridge: '100000000',
     bridgeFee: 0.1,

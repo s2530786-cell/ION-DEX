@@ -105,7 +105,7 @@ const pageConfigs: Record<BusinessPageKey, BusinessPageConfig> = {
     icon: Flame,
     primaryAction: "View Burn Chart",
     metrics: [
-      { label: "BSC Burn", value: "0x...dEaD", tone: "magenta" },
+      { label: "BSC Burn", value: "dead sink", tone: "magenta" },
       { label: "ION Burn", value: "Official source", tone: "cyan" },
       { label: "Trend", value: "Hourly / Daily", tone: "gold" },
     ],
@@ -176,7 +176,7 @@ const fallbackBurnSummary: BurnSummary = {
   bscBurnedIon: "8245000",
   ionMainnetBurnedIon: "4600000",
   remainingSupplyIon: "987155000",
-  bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
+  bscBurnAddress: "",
   ionBurnSource: "ion-mainnet-burn-source-placeholder",
 };
 

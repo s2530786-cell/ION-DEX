@@ -2,7 +2,9 @@
 
 ## Latest Verified Status
 
-- **Bridge 语义对齐官方 ice-swap（2026-05-20）**：移除错误的 `VITE_ION_WRAPPER_ADDRESS` / `wrapper.burn` ION→BSC 路径（非官方 wION 销毁）；ION→BSC 仅 ION 钱包链上确认 + UI 说明官方 Bridge `mint` 领取步骤；新增 `frontend/src/lib/officialBridgeSemantics.ts`；`bridgeDecimals` 去掉 wION 命名。依据 `ice-blockchain/ice-swap`（`Bridge` = bridge-solidity fork，`IONBridgeRouter` mint/burn）。验证：待 `verify-full`。
+- **官方铁律 + BSC 常量固化（2026-05-20）**：新增 `docs/ion-official-canonical-addresses.md`、前后端 `officialIonAddresses` / `official-ion-addresses`、`.cursor/rules/ion-official-authority.mdc`；`AGENTS.md` / 工程标准 §0.1 / `ion-official-source` Skill 写明「官方库即标准、禁止臆造」。BSC ION `0xe1ab61f7…`、销毁 `0x000…dead` 全仓引用；后端默认 `BSC_ION_TOKEN_ADDRESS`。验证：`verify-full` 绿灯，Playwright **16 passed**。
+
+- **Bridge 语义对齐官方 ice-swap（2026-05-20）**：移除错误的 `VITE_ION_WRAPPER_ADDRESS` / `wrapper.burn` ION→BSC 路径（非官方 wION 销毁）；ION→BSC 仅 ION 钱包链上确认 + UI 说明官方 Bridge `mint` 领取步骤；新增 `frontend/src/lib/officialBridgeSemantics.ts`；`bridgeDecimals` 去掉 wION 命名。依据 `ice-blockchain/ice-swap`（`Bridge` = bridge-solidity fork，`IONBridgeRouter` mint/burn）。验证：`verify-full` 绿灯，Playwright **16 passed**。
 
 - **Bridge Desk 链上表单嵌入（2026-05-20）**：抽取 `components/bridge/BridgeTransferPanel.tsx`（USDT/BNB/ION、BSC vault / ION wallet 提交）；`BridgeDeskPage` 传入 gateway `routesPayload`；无钱包时保留离线 staging 确认（E2E 兼容）。`BridgePage` 改为 `BusinessPage page=bridge` 薄封装。验证：frontend **16 passed**。
 - **Domain showcase + Bridge 路由统一（2026-05-20）**：新增 `GET /api/domain/showcase`（由 resolver 目录批量解析）；`DomainDeskPage` 接 `useDomainDeskData`，移除 `domainListings` 静态种子；`#bridge` 导航统一走 `BusinessPage` → `BridgeDeskPage`（与 Burn/AI 一致）。`BridgePage.tsx` 保留链上 vault 实现供后续嵌入 Desk。验证：`verify-full` 绿灯，Playwright **16 passed**。

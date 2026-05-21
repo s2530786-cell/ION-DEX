@@ -5,6 +5,18 @@
 
 ---
 
+## 0.1 官方源码铁律 (Official Source Authority)
+
+| 规则 | 强制等级 |
+|------|----------|
+| 写桥/销毁/钱包/代币逻辑前，必须先查阅 `ice-blockchain/*` 官方仓库或 `docs/ion-official-canonical-addresses.md` | 阻断 |
+| 官方已有实现或已确认链上地址时，禁止臆造（如 wION、假 wrapper、假 burn 路径） | 阻断 |
+| BSC ION / BSC 销毁地址必须使用共享常量文件，禁止散落魔法字符串 | 警告 |
+
+已确认 BSC 常量见 `docs/ion-official-canonical-addresses.md`。
+
+---
+
 ## 0. 编码规范 (Encoding Discipline)
 
 | 规则 | 强制等级 |

@@ -13,6 +13,14 @@ description: Uses the local official ION source repository as the authority for 
 
 Before designing ION-native contracts or integrations, inspect this local repository instead of guessing.
 
+## Iron law (user-mandated)
+
+- **Official existing codebases are the standard.** Read and cite them before every implementation. If official repos, address book, or `docs/ion-official-canonical-addresses.md` already define behavior, **use that** — do not fabricate wrappers (wION), burn paths, or contract APIs.
+- Cross-chain bridge: prefer `ice-blockchain/ice-swap` + `bridge-solidity` over DEX-draft shortcuts.
+- Confirmed BSC on-chain facts (import from shared constants, do not scatter literals):
+  - ION ERC-20: `0xe1ab61f7b093435204df32f5b3a405de55445ea8`
+  - Burn sink: `0x000000000000000000000000000000000000dEaD`
+
 ## Required Reads
 
 For relevant work, read the smallest needed subset:

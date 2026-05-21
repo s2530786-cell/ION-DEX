@@ -5,7 +5,8 @@
  * - https://github.com/ice-blockchain/ice-swap — Bridge-Swap; `Bridge` forks TON-community bridge-solidity
  *   (ICE v2 BSC ↔ ICE v2 ION); `IONBridgeRouter` exposes mint/burn over IONSwap + Bridge.
  * - https://github.com/ice-blockchain/ice-swap/blob/master/documentation/IONBridgeRouter.md
- * - BSC ION ERC-20 (same asset, bridged representation): 0xe1ab61f7b093435204df32f5b3a405de55445ea8
+ * - BSC ION ERC-20: see officialIonAddresses.ts (same asset, not wION)
+ * - BSC burn sink: 0x000…dEaD — see officialIonAddresses.ts
  *
  * There is no separate "wION" token brand. Supply is fixed at 21.1B ION (never inflationary mint outside bridge rules).
  *
@@ -20,7 +21,9 @@
  * ION DEX draft `BSCVault` / `BridgeInbox` relayer paths are experimental and must not be labeled as wION burn.
  */
 
-export const ION_TOTAL_SUPPLY_CAP = "21.1B";
+import { OFFICIAL_ION_MAX_SUPPLY_LABEL } from "@/lib/officialIonAddresses";
+
+export const ION_TOTAL_SUPPLY_CAP = OFFICIAL_ION_MAX_SUPPLY_LABEL;
 
 export const OFFICIAL_BRIDGE_REPOS = {
   iceSwap: "https://github.com/ice-blockchain/ice-swap",
@@ -28,8 +31,10 @@ export const OFFICIAL_BRIDGE_REPOS = {
   ionNode: "https://github.com/ice-blockchain/ion",
 } as const;
 
-export const ION_BSC_ION_TOKEN_ADDRESS =
-  "0xe1ab61f7b093435204df32f5b3a405de55445ea8" as const;
+export {
+  OFFICIAL_BSC_ION_BURN_ADDRESS,
+  OFFICIAL_BSC_ION_TOKEN_ADDRESS as ION_BSC_ION_TOKEN_ADDRESS,
+} from "@/lib/officialIonAddresses";
 
 /** User-facing steps for ION → BSC aligned with bridge.ice.io style flow. */
 export const ION_TO_BSC_STEPS = [

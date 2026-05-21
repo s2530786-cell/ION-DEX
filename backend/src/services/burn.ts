@@ -1,3 +1,8 @@
+import {
+  OFFICIAL_BSC_ION_BURN_ADDRESS,
+  OFFICIAL_ION_MAX_SUPPLY_ION,
+} from "../constants/official-ion-addresses.js";
+
 export type BurnSummary = {
   totalBurnedIon: string;
   bscBurnedIon: string;
@@ -22,8 +27,8 @@ export function getBurnSummary(): BurnSummary {
     totalBurnedIon: "12845000.000",
     bscBurnedIon: "8245000.000",
     ionMainnetBurnedIon: "4600000.000",
-    remainingSupplyIon: "987155000.000",
-    bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
+    remainingSupplyIon: `${(Number(OFFICIAL_ION_MAX_SUPPLY_ION) - 12_845_000).toFixed(3)}`,
+    bscBurnAddress: OFFICIAL_BSC_ION_BURN_ADDRESS,
     ionBurnSource: "ion-mainnet-burn-source-placeholder",
     windows: [
       { label: "24h", burnedIon: "12500.000", trendPct: 8.4 },

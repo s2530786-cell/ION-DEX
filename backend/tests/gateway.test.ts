@@ -250,7 +250,10 @@ describe("ION DEX API gateway", () => {
     assert.equal(response.body.meta.source, "local");
     assert.equal(response.body.meta.adapter, "burn");
     assert.ok(Number(data.totalBurnedIon) > 0);
-    assert.equal(data.bscBurnAddress, "0x000000000000000000000000000000000000dEaD");
+    assert.equal(
+      data.bscBurnAddress.toLowerCase(),
+      "0x000000000000000000000000000000000000dead",
+    );
     assert.ok(data.provenance.some((entry) => entry.source === "mock" && entry.status === "mocked"));
   });
 

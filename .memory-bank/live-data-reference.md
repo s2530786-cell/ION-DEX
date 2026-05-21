@@ -75,12 +75,14 @@ ION_DATA_MODE=auto
 BSC_RPC_URL=https://bsc-dataseed.binance.org/
 BSC_CHAIN_ID=56
 BSC_ION_TOKEN_ADDRESS=0xe1ab61f7b093435204df32f5b3a405de55445ea8
+BSC_ION_BURN_ADDRESS=0x000000000000000000000000000000000000dead
 ION_API_BASE_URL=https://api.mainnet.ice.io/http/v2/
 ION_HTTP_TIMEOUT_MS=12000
 CMC_API_BASE_URL=https://pro-api.coinmarketcap.com
 CMC_API_KEY=
-
 ```
+
+Canonical doc: `docs/ion-official-canonical-addresses.md`. **Iron law:** official repos + confirmed addresses only; no invented wION/wrapper flows.
 前端 → GET /api/price/ion → 后端 → 检查缓存(TTL 15s)
                                       ├─ 命中 → 返回
                                       └─ 未命中 → PancakeSwap(getReserves) + Binance(BNB/USDT)

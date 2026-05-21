@@ -1,4 +1,7 @@
 import type { ServerConfig } from "../config/server-config.js";
+import {
+  OFFICIAL_BSC_ION_BURN_ADDRESS,
+} from "../constants/official-ion-addresses.js";
 import { fetchJson } from "../lib/http.js";
 
 type JsonRpcResponse<T> = {
@@ -8,7 +11,7 @@ type JsonRpcResponse<T> = {
   error?: { code: number; message: string };
 };
 
-const DEAD_ADDRESS = "0x000000000000000000000000000000000000dead";
+const DEAD_ADDRESS = OFFICIAL_BSC_ION_BURN_ADDRESS;
 
 function encodeBalanceOfCall(holder: string): string {
   const normalized = holder.toLowerCase().replace("0x", "");

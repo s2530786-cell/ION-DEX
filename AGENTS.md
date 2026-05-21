@@ -26,6 +26,7 @@ Before working on this project, load and follow:
 
 ## Core Requirements
 
+- **Official source iron law:** `ice-blockchain/*` official codebases and `docs/ion-official-canonical-addresses.md` are the standard. Before writing bridge/burn/wallet/token logic, read the official repo or shared constants; **do not invent** flows or addresses when official material exists. Confirmed BSC: ION `0xe1ab61f7b093435204df32f5b3a405de55445ea8`, burn `0x000000000000000000000000000000000000dEaD`.
 - Source encoding: UTF-8 without BOM only.
 - Communicate with the user in Simplified Chinese by default.
 - Before any development work, read `docs/00-engineering-standards.md` as the development iron law.

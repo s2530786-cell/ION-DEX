@@ -1,0 +1,19 @@
+---
+description: Official ION/ecosystem repos and confirmed on-chain facts are the only authority before coding bridge, burn, wallet, or token logic.
+alwaysApply: true
+---
+
+# Official source iron law
+
+Before writing or changing bridge, burn, wallet, token list, or contract integration code:
+
+1. Read `docs/ion-official-canonical-addresses.md` and `.memory-bank/ion-dex-nuke/official-source-index.md`.
+2. Load `.cursor/skills/ion-official-source/SKILL.md` and inspect the smallest relevant official repo (`ice-blockchain/ion`, `ice-swap`, `bridge-solidity`, `ion-gateway`, `ion-address-book`).
+3. If official code or confirmed addresses exist, **use them** — do not invent wrappers (e.g. wION), fake burn paths, or guessed contract APIs.
+
+Confirmed BSC facts (do not re-guess):
+
+- ION token: `0xe1ab61f7b093435204df32f5b3a405de55445ea8`
+- BSC burn address: `0x000000000000000000000000000000000000dEaD`
+
+Import shared constants from `frontend/src/lib/officialIonAddresses.ts` or `backend/src/constants/official-ion-addresses.ts` instead of scattering literals.
