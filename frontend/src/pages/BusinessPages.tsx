@@ -18,6 +18,7 @@ import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
+import { BridgeTransferPanel } from "@/components/bridge/BridgeTransferPanel";
 import { ChartFrame, GlassPanel, MetricTile, PageHero, RiskNotice, StatusPill } from "@/components/ui/glass";
 import { useAiDeskData } from "@/hooks/useAiDeskData";
 import { useBridgeDeskData } from "@/hooks/useBridgeDeskData";
@@ -917,107 +918,6 @@ function isDomainLikeLabel(value: string) {
   return /^[a-z0-9.-]+$/.test(trimmed);
 }
 
-function BridgeTransferPanel() {
-  const [direction, setDirection] = useState<"bsc-ion" | "ion-bsc">("bsc-ion");
-  const [amount, setAmount] = useState("");
-  const [destination, setDestination] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const validation = useMemo(() => {
-    const parsedAmount = toPositiveNumber(amount);
-    const dest = destination.trim();
-    const destinationValid = dest.length >= 8;
-    return {
-      destinationValid,
-      isValid: parsedAmount !== null && destinationValid,
-      parsedAmount,
-    };
-  }, [amount, destination]);
-
-  function submitBridge(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (validation.isValid) {
-      setSubmitted(true);
-    }
-  }
-
-  return (
-    <form className="grid gap-4" data-testid="bridge-form" onSubmit={submitBridge}>
-      <SegmentedControl
-        label="Route"
-        onChange={(next) => {
-          setDirection(next);
-          setSubmitted(false);
-        }}
-        options={[
-          { label: "BSC → ION", value: "bsc-ion" },
-          { label: "ION → BSC", value: "ion-bsc" },
-        ]}
-        testId="bridge-direction"
-        value={direction}
-      />
-
-      <div className="grid gap-3 md:grid-cols-2">
-        <FormField
-          label="Amount ION"
-          onChange={(value) => {
-            setAmount(value);
-            setSubmitted(false);
-          }}
-          hint="Bridge amount reference 950"
-          testId="bridge-amount"
-          type="number"
-          value={amount}
-        />
-        <FormField
-          label="Destination address / memo"
-          onChange={(value) => {
-            setDestination(value);
-            setSubmitted(false);
-          }}
-          hint="ION or EVM destination"
-          testId="bridge-destination"
-          type="text"
-          value={destination}
-        />
-      </div>
-
-      {!validation.destinationValid && destination.trim().length > 0 ? (
-        <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="bridge-error">
-          Destination memo must stay at least 8 characters until wallet resolution maps it to canonical addresses.
-        </p>
-      ) : null}
-
-      <div
-        className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75"
-        data-testid="bridge-preview"
-      >
-        {validation.isValid ? (
-          <span>
-            Bridge preview: route {direction === "bsc-ion" ? "BSC → ION Chain" : "ION Chain → BSC"} · sweep{" "}
-            {validation.parsedAmount?.toLocaleString()} ION · relayer quorum and replay guards remain contract gated.
-          </span>
-        ) : (
-          <span>Set a positive sweep amount and resilient destination memo to simulate vault attestations offline.</span>
-        )}
-      </div>
-
-      <NeonButton className="w-full sm:w-fit" data-testid="bridge-submit" disabled={!validation.isValid} type="submit">
-        Stage Bridge Sweep
-      </NeonButton>
-
-      {submitted ? (
-        <p
-          className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
-          data-testid="bridge-confirmation"
-        >
-          Bridge transfer review ready for relayer quorum and wallet proofs. Custody signatures stay offline until final approval.
-        </p>
-      ) : null}
-    </form>
-  );
-}
-
 function BurnAnalyticsPanel() {
   const [chain, setChain] = useState<"bsc" | "ion">("bsc");
   const [amount, setAmount] = useState("");
@@ -1749,7 +1649,9 @@ function BridgeDeskPage() {
           </p>
         </ChartFrame>
         <NeonCard variant="cyan">
-          <BridgeTransferPanel />
+          <BridgeTransferPanel
+            routesPayload={desk.routes.state === "ready" ? desk.routes.data : null}
+          />
         </NeonCard>
       </div>
     </div>

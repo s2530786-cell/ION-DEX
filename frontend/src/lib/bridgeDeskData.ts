@@ -1,3 +1,4 @@
+import type { BridgeDirection } from "@/lib/bridgeContracts";
 import type { BridgeRoute, BridgeRoutesPayload } from "@/lib/ionApi";
 
 export type BridgeStepRow = {
@@ -41,4 +42,15 @@ export function bridgeStepsFromPayload(payload: BridgeRoutesPayload): BridgeStep
 
 export function primaryBridgeRoute(payload: BridgeRoutesPayload): BridgeRoute | undefined {
   return payload.routes[0];
+}
+
+export function activeRouteForDirection(
+  payload: BridgeRoutesPayload,
+  direction: BridgeDirection,
+): BridgeRoute | undefined {
+  return payload.routes.find(
+    (route) =>
+      route.fromChain === (direction === "bsc-ion" ? "BSC" : "ION") &&
+      route.toChain === (direction === "bsc-ion" ? "ION" : "BSC"),
+  );
 }
