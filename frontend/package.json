@@ -13,6 +13,7 @@
     "test:e2e": "playwright test",
     "verify:e2e": "playwright test",
     "verify": "VITE_ION_API_BASE_URL=http://127.0.0.1:8787 npm run build && node scripts/verify-e2e.mjs",
+    "capture-ui": "node scripts/capture-ui-screenshots.mjs",
     "audit:high": "node scripts/audit-high.mjs"
   },
   "dependencies": {

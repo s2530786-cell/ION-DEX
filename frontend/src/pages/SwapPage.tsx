@@ -1,4 +1,5 @@
 import { ArrowDownUp } from "lucide-react";
+import ionLogo from "@/assets/ion-logo.jpg";
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
@@ -167,7 +168,7 @@ export function SwapPage() {
   }
 
   return (
-    <div className="mx-auto max-w-lg" data-testid="page-swap">
+    <div className="mx-auto max-w-2xl" data-testid="page-swap">
       <NeonCard className="min-h-[28rem]" variant="magenta">
         <form className="grid gap-4" onSubmit={(event) => void submitSwap(event)}>
           <div className="mb-1 flex items-center justify-between">
@@ -210,14 +211,19 @@ export function SwapPage() {
             testId="swap-from-token"
           />
 
-          <div className="flex justify-center">
+          <div className="relative flex items-center justify-center py-3" data-testid="swap-ion-center">
+            <img
+              alt="ION"
+              className="pointer-events-none absolute h-20 w-20 rounded-2xl object-cover opacity-90 shadow-[0_0_32px_rgba(36,247,255,0.45)] ring-2 ring-cyan-200/35"
+              src={ionLogo}
+            />
             <button
-              className="rounded-full border border-cyan-300/25 bg-cyan-300/[0.08] p-2 text-cyan-100"
+              className="relative z-10 rounded-full border border-cyan-300/35 bg-cyan-300/[0.12] p-3 text-cyan-100 shadow-[0_0_22px_rgba(36,247,255,0.35)] backdrop-blur-md transition hover:scale-105"
               data-testid="swap-flip"
               onClick={flipPair}
               type="button"
             >
-              <ArrowDownUp size={18} />
+              <ArrowDownUp size={20} />
             </button>
           </div>
 

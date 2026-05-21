@@ -97,10 +97,10 @@ export function AuroraGalaxyBackground() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-[#03050f]"
     >
-      <canvas ref={canvasRef} className="absolute inset-0 opacity-80" />
+      <canvas ref={canvasRef} className="absolute inset-0 opacity-95" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(37,99,255,0.22),transparent_32%),radial-gradient(circle_at_20%_85%,rgba(255,59,212,0.18),transparent_28%),linear-gradient(180deg,#03050f_0%,rgba(3,5,15,0.94)_52%,#03050f_100%)]" />
       {backgroundMode === "aurora" ? <AuroraLayer /> : <GalaxyLayer />}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,5,15,0.08),rgba(3,5,15,0.74))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,5,15,0.04),rgba(3,5,15,0.52))]" />
       <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle,rgba(255,255,255,0.85)_1px,transparent_1.2px)] [background-size:38px_38px]" />
     </div>
   );

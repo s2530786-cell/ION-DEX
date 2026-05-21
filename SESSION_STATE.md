@@ -51,6 +51,7 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 ## Current State
 
+- **P1 玻璃 HUD（2026-05-20）**：`glass-hud-panel`/`glass-hud-strip`；AppShell/ProfileHub/Dashboard FeatureGrid 玻璃化。计划 `docs/ui-development-plan-2026-05-20.md`；自检 `docs/ui-deliverable-self-audit-2026-05-20-p1-glass.md`（视觉未过、工程绿灯）。UI 验证：`bash scripts/ui-round-verify.sh` 或 `--tier ui`。Playwright **16 passed**。
 - **Bridge 链上 + Domain（2026-05-20）**：`BridgeTransferPanel` 组件嵌入 Desk（vault/wrapper + 离线 staging）；`/api/domain/showcase`。`verify-full` 绿灯。
 - **Stress + 100-pass GREEN（2026-05-20）**：`stress.mjs` health/config p95 250ms。`bash scripts/verify-100.sh 100` → PASSED=100、RESULT=GREEN。分支 `cursor/ui-design-workflow-44c9`。
 - **Desk API + Dashboard stat glass（2026-05-20）**：Burn/Bridge/AI Desk 指标与图表接 gateway；Dashboard 右侧三张 stat 卡为 NeonGlassCard。POSIX `scripts/verify-100.sh`；Playwright **16 passed**。

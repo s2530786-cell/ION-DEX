@@ -129,7 +129,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
       <IonConnectModalBridge />
       <AuroraGalaxyBackground />
-      <div className="glass-surface mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] shadow-[0_0_70px_rgba(36,247,255,0.16)] lg:flex">
+      <div className="glass-shell-frame mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] lg:flex">
         <aside
           aria-label="Sidebar"
           className="glass-hud-panel hidden w-56 shrink-0 flex-col border-r border-white/10 p-4 lg:flex"
@@ -227,7 +227,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                   type="button"
                   className={`rounded-full px-3 py-2 text-xs font-bold transition hover:bg-white/10 hover:text-white ${
                     activePage === item.key
-                      ? "bg-white/15 text-white shadow-[0_0_18px_rgba(36,247,255,0.25)]"
+                      ? "bg-gradient-to-r from-cyan-400/20 to-fuchsia-500/20 text-white shadow-[0_0_20px_rgba(36,247,255,0.35)] ring-1 ring-cyan-200/30"
                       : "text-slate-200/75"
                   }`}
                   data-testid={`nav-${item.key}`}
@@ -336,7 +336,7 @@ function NavList({
             type="button"
             className={`flex items-center gap-2 rounded-2xl px-3 py-2.5 text-left text-sm font-bold transition ${
               active
-                ? "bg-white/15 text-white shadow-[0_0_18px_rgba(36,247,255,0.2)]"
+                ? "flow-border bg-white/10 text-white shadow-[0_0_22px_rgba(36,247,255,0.35)]"
                 : "text-slate-200/75 hover:bg-white/10 hover:text-white"
             }`}
             data-testid={`nav-${item.key}`}
@@ -421,7 +421,7 @@ function WalletConnectPanel({
 
   return (
     <div
-      className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[min(22rem,calc(100vw-2rem))] rounded-[1.6rem] border border-cyan-200/20 bg-slate-950/95 p-4 shadow-[0_0_36px_rgba(36,247,255,0.24)] backdrop-blur-xl"
+      className="glass-hud-panel flow-border absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[min(22rem,calc(100vw-2rem))] rounded-[1.6rem] p-4 shadow-[0_0_42px_rgba(36,247,255,0.32)]"
       data-testid="wallet-panel"
     >
       <div className="mb-4 flex items-start gap-3">
