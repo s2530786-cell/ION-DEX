@@ -68,6 +68,8 @@ bash scripts/agent-verify.sh
 
 ### 1. Shared UI Foundation
 
+- Visual tokens: `frontend/src/styles/theme.css` (`--neon-primary`, `--neon-secondary`, `--glass-background`, `--border-gradient`) and `tailwind.config.js` (`neon.primary`, `neon.secondary`, `bg-glass`, `bg-neon-border`).
+- Reusable rim card: `frontend/src/components/ui/NeonGlassCard.tsx` (frosted `backdrop-blur-lg` inner layer, cyan→purple `::before` gradient rim). Presentational only — no fabricated metrics inside the primitive.
 - Add a reusable glass panel primitive for inner blocks.
 - Add trading surface primitives: chart frame, order book table, status pill, metric tile, timeline step, risk notice.
 - Move repeated user-facing copy into page-local constants that can later feed i18n.

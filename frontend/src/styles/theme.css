@@ -1,0 +1,60 @@
+/**
+ * ION DEX neon glass visual tokens (cyberpunk / space glassmorphism).
+ * Imported before global.css utilities; consumed by Tailwind theme.extend and NeonGlassCard.
+ */
+
+:root {
+  --neon-primary: #00ffff;
+  --neon-secondary: #ff00ff;
+  --glass-background: rgba(255, 255, 255, 0.05);
+  --border-gradient: linear-gradient(135deg, var(--neon-primary), var(--neon-secondary));
+  --neon-glow-cyan: 0 0 24px rgba(0, 255, 255, 0.45);
+  --neon-glow-purple: 0 0 32px rgba(255, 0, 255, 0.38);
+}
+
+@layer components {
+  /**
+   * Gradient neon rim via ::before; inner .neon-glass-card__inner stays sharp (z-10, no blur on text).
+   */
+  .neon-glass-card {
+    position: relative;
+    isolation: isolate;
+    border-radius: 2rem;
+  }
+
+  .neon-glass-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    border-radius: inherit;
+    background: var(--border-gradient);
+    background-size: 200% 200%;
+    opacity: 0.92;
+    filter: blur(0.35px);
+    box-shadow: var(--neon-glow-cyan), var(--neon-glow-purple);
+    animation: neonGlassBorderPulse 8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .neon-glass-card__inner {
+    position: relative;
+    z-index: 10;
+    margin: 1px;
+    border-radius: calc(2rem - 1px);
+    background-color: var(--glass-background);
+    background-image: linear-gradient(145deg, rgba(0, 255, 255, 0.06), rgba(255, 0, 255, 0.05));
+  }
+}
+
+@keyframes neonGlassBorderPulse {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.88;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}

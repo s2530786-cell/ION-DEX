@@ -4,6 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
+        neon: {
+          primary: "#00ffff",
+          secondary: "#ff00ff",
+        },
+        glass: {
+          DEFAULT: "rgba(255, 255, 255, 0.05)",
+        },
         ion: {
           cyan: "#24f7ff",
           blue: "#2563ff",
@@ -12,6 +19,9 @@ export default {
           gold: "#ffd166",
           ink: "#061024",
         },
+      },
+      backgroundImage: {
+        "neon-border": "linear-gradient(135deg, #00ffff, #ff00ff)",
       },
       boxShadow: {
         neonCyan: "0 0 28px rgba(36, 247, 255, 0.45)",
