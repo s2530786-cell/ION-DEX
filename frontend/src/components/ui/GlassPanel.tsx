@@ -22,6 +22,7 @@ interface GlassPanelProps {
   variant?: "cyan" | "magenta" | "violet" | "gold" | "mixed";
   noAurora?: boolean;
   padding?: "sm" | "md" | "lg";
+  "data-testid"?: string;
 }
 
 const VARIANT_COLORS = {
@@ -65,12 +66,14 @@ export const GlassPanel: React.FC<GlassPanelProps> = ({
   variant = "mixed",
   noAurora = false,
   padding = "md",
+  "data-testid": testId,
 }) => {
   const c = VARIANT_COLORS[variant];
 
   return (
     <div
       className={`relative rounded-[1.25rem] ${PADDING_MAP[padding]} ${className}`}
+      data-testid={testId}
       style={{ isolation: "isolate" }}
     >
       {/* L1: Outer glow — WIDER ring, HIGHER opacity */}
