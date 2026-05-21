@@ -8,7 +8,7 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, useEffect, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { GlassInput } from "@/components/ui/GlassInput";
@@ -1060,16 +1060,18 @@ function DomainTradingPanel() {
 }
 
 function AIMarketPanel() {
-  const [tab, setTab] = useState<"monitor" | "analyzer">("monitor");
+  const [tab, setTab] = useState<"monitor" | "signals" | "audit" | "analyzer">("monitor");
 
   return (
     <div className="grid gap-4">
       <SegmentedControl
         label="AI Mode"
-        onChange={setTab}
+        onChange={(v) => setTab(v as typeof tab)}
         options={[
           { label: "World Monitor", value: "monitor" },
-          { label: "Sentinel Analyzer", value: "analyzer" },
+          { label: "Smart Money", value: "signals" },
+          { label: "Token Audit", value: "audit" },
+          { label: "Sentinel", value: "analyzer" },
         ]}
         testId="ai-tab"
         value={tab}
@@ -1085,6 +1087,10 @@ function AIMarketPanel() {
             loading="lazy"
           />
         </div>
+      ) : tab === "signals" ? (
+        <SmartMoneyPanel />
+      ) : tab === "audit" ? (
+        <TokenAuditPanel />
       ) : (
         <SentinelAnalyzer />
       )}
@@ -1188,6 +1194,197 @@ function SentinelAnalyzer() {
         </GlassPanel>
       ) : null}
     </form>
+  );
+}
+
+function SmartMoneyPanel() {
+  const [signals, setSignals] = useState<Array<{ symbol: string; signalType: string; triggerPrice: number; currentPrice: number; maxGain: number; exitRate: number; address: string; tags: string[] }>>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      setError("");
+      try {
+        const { fetchSmartMoneySignals } = await import("@/services/binanceAi");
+        const data = await fetchSmartMoneySignals("56");
+        if (!cancelled) setSignals(data);
+      } catch {
+        if (!cancelled) setError("Failed to fetch signals");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  return (
+    <div className="grid gap-3" data-testid="ai-smart-money">
+      <div className="flex items-center justify-between">
+        <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">Smart Money Signals (BSC)</p>
+        <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">Binance Web3 API</span>
+      </div>
+      {loading ? (
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="animate-pulse text-sm text-cyan-200">Fetching smart money signals...</p>
+        </GlassPanel>
+      ) : error ? (
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100">{error}</p>
+        </GlassPanel>
+      ) : signals.length === 0 ? (
+        <GlassPanel variant="cyan" noAurora padding="sm">
+          <p className="text-sm text-cyan-200">No signals available right now.</p>
+        </GlassPanel>
+      ) : (
+        <div className="grid gap-2 max-h-[60vh] overflow-y-auto">
+          {signals.map((s, i) => (
+            <GlassPanel key={`${s.address}-${i}`} variant={s.signalType === "BUY" ? "cyan" : "magenta"} noAurora padding="sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className={`mr-2 rounded px-1.5 py-0.5 text-[10px] font-black ${s.signalType === "BUY" ? "bg-emerald-400/20 text-emerald-200" : "bg-rose-400/20 text-rose-200"}`}>
+                    {s.signalType}
+                  </span>
+                  <span className="text-sm font-bold text-white">{s.symbol || s.address.slice(0, 8) + "..."}</span>
+                </div>
+                <div className="text-right text-xs">
+                  <span className="text-cyan-200/60">PnL </span>
+                  <span className={s.maxGain >= 0 ? "font-black text-emerald-200" : "font-black text-rose-200"}>
+                    {s.maxGain >= 0 ? "+" : ""}{s.maxGain.toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+              <div className="mt-1 flex gap-3 text-[10px] text-cyan-200/50">
+                <span>Exit: {s.exitRate.toFixed(0)}%</span>
+                <span>Price: {s.currentPrice.toFixed(4)}</span>
+                {s.tags?.slice(0, 2).map((t) => (
+                  <span key={t} className="rounded bg-amber-400/10 px-1 text-amber-200">{t}</span>
+                ))}
+              </div>
+            </GlassPanel>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TokenAuditPanel() {
+  const [address, setAddress] = useState("");
+  const [chainId, setChainId] = useState<"56" | "1" | "8453">("56");
+  const [result, setResult] = useState<{ isHoneypot: boolean; isRugPull: boolean; hasMintFunction: boolean; hasProxy: boolean; buyTax: number; sellTax: number; riskScore: number; details: string[] } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function runAudit(e: FormEvent) {
+    e.preventDefault();
+    if (!address.trim()) return;
+    setLoading(true);
+    setError("");
+    setResult(null);
+    try {
+      const { fetchTokenAudit } = await import("@/services/binanceAi");
+      const data = await fetchTokenAudit(address.trim(), chainId);
+      if (data) {
+        setResult(data);
+      } else {
+        setError("Audit failed — check the contract address and chain.");
+      }
+    } catch {
+      setError("Network error accessing Binance Web3 API.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const riskColor = result ? (result.riskScore < 30 ? "text-emerald-200" : result.riskScore < 60 ? "text-amber-200" : "text-rose-200") : "";
+
+  return (
+    <div className="grid gap-4" data-testid="ai-token-audit">
+      <div className="flex items-center justify-between">
+        <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">Token Security Audit</p>
+        <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">Binance Web3 API</span>
+      </div>
+
+      <form className="grid gap-3" onSubmit={runAudit}>
+        <GlassInput
+          label="Contract Address"
+          onChange={setAddress}
+          placeholder="0x..."
+          testId="audit-address"
+          type="text"
+          value={address}
+        />
+        <SegmentedControl
+          label="Chain"
+          onChange={(v) => setChainId(v as typeof chainId)}
+          options={[
+            { label: "BSC", value: "56" },
+            { label: "Ethereum", value: "1" },
+            { label: "Base", value: "8453" },
+          ]}
+          testId="audit-chain"
+          value={chainId}
+        />
+        <NeonButton className="w-full" data-testid="audit-submit" disabled={!address.trim() || loading} type="submit">
+          {loading ? "Scanning..." : "Run Security Audit"}
+        </NeonButton>
+      </form>
+
+      {error ? (
+        <GlassPanel variant="magenta" noAurora padding="sm">
+          <p className="text-sm text-rose-100">{error}</p>
+        </GlassPanel>
+      ) : null}
+
+      {result ? (
+        <div className="grid gap-3">
+          <GlassPanel variant={result.riskScore < 30 ? "cyan" : result.riskScore < 60 ? "mixed" : "magenta"} noAurora padding="sm">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-bold text-white">Risk Score</p>
+              <p className={`text-3xl font-black ${riskColor}`}>{result.riskScore}/100</p>
+            </div>
+          </GlassPanel>
+          <div className="grid grid-cols-2 gap-2">
+            <RiskBadge label="Honeypot" dangerous={result.isHoneypot} />
+            <RiskBadge label="Rug Pull" dangerous={result.isRugPull} />
+            <RiskBadge label="Mintable" dangerous={result.hasMintFunction} />
+            <RiskBadge label="Proxy" dangerous={result.hasProxy} />
+          </div>
+          <GlassPanel variant="cyan" noAurora padding="sm">
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <span className="text-cyan-200/60">Buy Tax: <span className="font-bold text-white">{result.buyTax}%</span></span>
+              <span className="text-cyan-200/60">Sell Tax: <span className="font-bold text-white">{result.sellTax}%</span></span>
+            </div>
+          </GlassPanel>
+          {result.details.length > 0 ? (
+            <GlassPanel variant="mixed" noAurora padding="sm">
+              <p className="mb-2 text-xs font-bold text-amber-200">Warnings</p>
+              {result.details.map((d, i) => (
+                <p key={i} className="text-xs text-amber-100/70">• {d}</p>
+              ))}
+            </GlassPanel>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function RiskBadge({ label, dangerous }: { label: string; dangerous: boolean }) {
+  return (
+    <GlassPanel variant={dangerous ? "magenta" : "cyan"} noAurora padding="sm">
+      <div className="flex items-center gap-2">
+        <span className={`inline-block h-2 w-2 rounded-full ${dangerous ? "bg-rose-400 shadow-neonMagenta" : "bg-emerald-400 shadow-neonCyan"}`} />
+        <span className="text-xs font-bold text-white">{label}</span>
+        <span className={`ml-auto text-[10px] font-black ${dangerous ? "text-rose-200" : "text-emerald-200"}`}>
+          {dangerous ? "⚠️ RISK" : "✅ SAFE"}
+        </span>
+      </div>
+    </GlassPanel>
   );
 }
 
