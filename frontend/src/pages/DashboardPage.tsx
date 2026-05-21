@@ -11,8 +11,17 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import type { PageKey } from "@/components/layout/AppShell";
 import { fetchTradeQuote, type TradeQuote } from "@/lib/ionApi";
+import { IonCandleChart } from "@/components/charts/IonCandleChart";
 import { NeonButton } from "@/components/ui/NeonButton";
+import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
 import { ChartFrame, GlassPanel, MetricTile } from "@/components/ui/glass";
+import {
+  depthToneClass,
+  useMarketCandles,
+  useMarketDepth,
+  useMarketOrderBook,
+  useSwapMarketStats,
+} from "@/hooks/useMarketSurface";
 
 type FeatureCard = {
   title: string;
@@ -34,20 +43,6 @@ const featureCards: FeatureCard[] = [
   { title: "ION ID", label: "Identity risk", page: "domain", icon: ShieldCheck, color: "gold" },
   { title: "AI Market", label: "Signals & risk", page: "ai", icon: Bot, color: "cyan" },
 ];
-
-const depthRows = [
-  { label: "ION/USDT", price: "6.024", change: "+8.42%", tone: "text-emerald-300" },
-  { label: "BNB/ION", price: "106.68", change: "+1.18%", tone: "text-cyan-200" },
-  { label: "ION/BTC", price: "0.0000582", change: "-0.38%", tone: "text-rose-300" },
-];
-
-const orderBook = [
-  ["6.041", "18,220", "72%"],
-  ["6.035", "14,980", "56%"],
-  ["6.028", "10,440", "38%"],
-  ["6.019", "12,860", "44%"],
-  ["6.012", "16,410", "61%"],
-] as const;
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
   return (
@@ -171,15 +166,29 @@ function SwapPanel() {
 }
 
 function MarketStage() {
+  const { rows, loadState: depthState, provenanceLabel: depthProv } = useMarketDepth();
+  const { candles, loadState: candleState, provenanceLabel: candleProv } = useMarketCandles("BNB/ION", "15m");
+  const { stats, loadState: statsState } = useSwapMarketStats("BNB/ION");
+
+  const routeLabel =
+    statsState === "ready" && stats
+      ? `Route health: ${stats.routeHealth}`
+      : statsState === "loading"
+        ? "Route health: syncing"
+        : "Route health: unavailable";
+
   return (
     <ChartFrame
       badge={
-        <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-2 text-xs font-bold text-emerald-100">
-          Route health: liquid
-        </span>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-2 text-xs font-bold text-emerald-100">
+            {routeLabel}
+          </span>
+          {candleProv ? <DataProvenanceBadge label={candleProv} testId="swap-chart-provenance" /> : null}
+        </div>
       }
       minHeightClass="min-h-[31rem]"
-      subtitle="Galaxy market surface"
+      subtitle="Galaxy market surface · lightweight-charts"
       testId="swap-market-stage"
       title="swap.ion"
     >
@@ -187,32 +196,26 @@ function MarketStage() {
         <div className="absolute inset-0 aurora-noise opacity-80" />
         <div className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_20deg,rgba(36,247,255,0.1),rgba(255,59,212,0.28),rgba(141,77,255,0.18),rgba(36,247,255,0.1))] blur-2xl [animation:ionSpinSlow_160s_linear_infinite]" />
         <div className="absolute inset-x-4 top-4 grid grid-cols-1 gap-3 sm:inset-x-8 sm:top-8 sm:grid-cols-3">
-          {depthRows.map((row) => (
-            <div key={row.label} className="glass-surface rounded-2xl px-4 py-3">
-              <p className="text-xs text-cyan-100/55">{row.label}</p>
-              <p className="mt-1 text-xl font-black">{row.price}</p>
-              <p className={`text-xs font-bold ${row.tone}`}>{row.change}</p>
-            </div>
-          ))}
-        </div>
-        <div className="float-3d absolute bottom-8 left-5 right-5 h-48 rounded-[2rem] border border-fuchsia-300/20 bg-slate-950/55 p-5 shadow-[0_28px_80px_rgba(255,59,212,0.18)] backdrop-blur-2xl sm:left-8 sm:right-8">
-          <div className="absolute inset-x-8 top-1/2 h-px bg-cyan-200/20" />
-          <div className="relative flex h-full items-end gap-2">
-            {Array.from({ length: 42 }).map((_, index) => {
-              const height = 34 + ((index * 29) % 128);
-              const magenta = index % 5 === 0;
-              return (
-                <div key={index} className="flex flex-1 items-end justify-center">
-                  <div
-                    className={`w-full max-w-[0.65rem] rounded-full ${
-                      magenta ? "bg-fuchsia-400" : "bg-cyan-300"
-                    } shadow-[0_0_16px_currentColor]`}
-                    style={{ height }}
-                  />
+          {depthState === "loading" ? (
+            <p className="col-span-full text-center text-xs text-cyan-100/55">Loading depth pairs…</p>
+          ) : null}
+          {depthState === "ready"
+            ? rows.map((row) => (
+                <div key={row.label} className="glass-surface rounded-2xl px-4 py-3">
+                  <p className="text-xs text-cyan-100/55">{row.label}</p>
+                  <p className="mt-1 text-xl font-black">{row.price}</p>
+                  <p className={`text-xs font-bold ${depthToneClass(row.tone)}`}>{row.change}</p>
                 </div>
-              );
-            })}
-          </div>
+              ))
+            : null}
+          {depthProv ? (
+            <div className="col-span-full flex justify-end">
+              <DataProvenanceBadge label={depthProv} testId="swap-depth-provenance" />
+            </div>
+          ) : null}
+        </div>
+        <div className="float-3d absolute bottom-8 left-5 right-5 h-48 rounded-[2rem] border border-fuchsia-300/20 bg-slate-950/55 p-4 shadow-[0_28px_80px_rgba(255,59,212,0.18)] backdrop-blur-2xl sm:left-8 sm:right-8">
+          <IonCandleChart candles={candles} loadState={candleState} testId="swap-candle-chart" className="h-full min-h-[10rem]" />
         </div>
         <p className="absolute bottom-6 left-6 rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-2 text-xs font-bold text-emerald-100">
           Slippage guard active
@@ -223,31 +226,59 @@ function MarketStage() {
 }
 
 function RightStats() {
+  const { stats, loadState: statsState, provenanceLabel: statsProv } = useSwapMarketStats("BNB/ION");
+  const { book, loadState: bookState, provenanceLabel: bookProv } = useMarketOrderBook("BNB/ION");
+
   return (
     <div className="grid gap-5">
       <GlassPanel testId="swap-stat-liquidity" title="Native liquidity">
-        <MetricTile label="TVL" tone="cyan" value="$1,234,567" />
-        <p className="mt-2 text-xs text-emerald-300">+12.8% weekly depth</p>
+        <MetricTile
+          label="TVL"
+          tone="cyan"
+          value={statsState === "ready" && stats ? stats.tvlUsd : "—"}
+        />
+        <p className="mt-2 text-xs text-emerald-300">
+          {statsState === "ready" && stats ? stats.tvlChangePct : "Syncing liquidity…"}
+        </p>
+        {statsProv ? <DataProvenanceBadge className="mt-2" label={statsProv} testId="swap-stats-provenance" /> : null}
       </GlassPanel>
       <GlassPanel testId="swap-stat-protection" title="Swap protection">
-        <MetricTile label="Price impact" tone="magenta" value="0.24%" />
+        <MetricTile
+          label="Price impact"
+          tone="magenta"
+          value={statsState === "ready" && stats ? stats.priceImpactLabel : "—"}
+        />
         <p className="mt-2 text-xs text-cyan-200">current route impact</p>
       </GlassPanel>
       <GlassPanel eyebrow="Depth" testId="swap-orderbook" title="Order book">
+        {bookState === "loading" ? (
+          <p className="text-xs text-cyan-100/55">Loading order book…</p>
+        ) : null}
+        {bookState === "error" ? (
+          <p className="text-xs text-rose-200">Order book unavailable</p>
+        ) : null}
         <div className="grid gap-2 text-xs">
-          {orderBook.map(([price, size, depth]) => (
-            <div key={price} className="relative overflow-hidden rounded-xl bg-white/[0.04] px-3 py-2">
-              <span
-                className="absolute inset-y-0 right-0 bg-cyan-300/[0.08]"
-                style={{ width: depth }}
-              />
-              <span className="relative flex justify-between gap-3">
-                <strong className="text-cyan-100">{price}</strong>
-                <span className="text-cyan-100/60">{size}</span>
-              </span>
-            </div>
-          ))}
+          {bookState === "ready" && book
+            ? book.levels.map((row) => (
+                <div
+                  key={`${row.side}-${row.price}`}
+                  className="relative overflow-hidden rounded-xl bg-white/[0.04] px-3 py-2"
+                >
+                  <span
+                    className={`absolute inset-y-0 right-0 ${row.side === "ask" ? "bg-rose-300/[0.08]" : "bg-emerald-300/[0.08]"}`}
+                    style={{ width: row.depth }}
+                  />
+                  <span className="relative flex justify-between gap-3">
+                    <strong className={row.side === "ask" ? "text-rose-200" : "text-emerald-200"}>
+                      {row.price}
+                    </strong>
+                    <span className="text-cyan-100/60">{row.amount}</span>
+                  </span>
+                </div>
+              ))
+            : null}
         </div>
+        {bookProv ? <DataProvenanceBadge className="mt-2" label={bookProv} testId="swap-orderbook-provenance" /> : null}
       </GlassPanel>
     </div>
   );

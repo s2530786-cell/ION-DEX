@@ -191,6 +191,35 @@ describe("ION DEX API gateway", () => {
     assert.ok(data.some((ticker) => ticker.symbol === "ION" && ticker.displayChange.startsWith("+")));
   });
 
+  it("serves typed market surface feeds with provenance", async () => {
+    const depth = await requestJson("/api/markets/depth");
+    const depthData = depth.body.data as { rows: Array<{ label: string }>; provenance: { source: string } };
+    assert.equal(depth.status, 200);
+    assert.ok(depthData.rows.length >= 3);
+    assert.equal(depthData.provenance.source, "local-seed");
+
+    const candles = await requestJson("/api/markets/candles?symbol=BNB/ION&interval=15m&limit=48");
+    const candleData = candles.body.data as {
+      candles: Array<{ time: number; open: number; high: number; low: number; close: number }>;
+      provenance: { model: string };
+    };
+    assert.equal(candles.status, 200);
+    assert.ok(candleData.candles.length >= 24);
+    assert.ok(candleData.candles.every((bar) => bar.high >= bar.low));
+
+    const book = await requestJson("/api/markets/orderbook?symbol=BNB/ION");
+    const bookData = book.body.data as { levels: Array<{ side: string }>; midPrice: string };
+    assert.equal(book.status, 200);
+    assert.ok(bookData.levels.some((level) => level.side === "ask"));
+    assert.ok(bookData.levels.some((level) => level.side === "bid"));
+
+    const stats = await requestJson("/api/markets/swap-stats?pair=BNB/ION");
+    const statsData = stats.body.data as { stats: { lastPrice: string; tvlUsd: string } };
+    assert.equal(stats.status, 200);
+    assert.ok(statsData.stats.lastPrice.length > 0);
+    assert.ok(statsData.stats.tvlUsd.startsWith("$"));
+  });
+
   it("serves bigint quote with slippage and fee precision", async () => {
     const response = await requestJson("/api/trade/quote?inputToken=BNB&outputToken=ION&amountIn=2.5&slippageBps=50");
     const data = response.body.data as {

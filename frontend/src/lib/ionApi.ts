@@ -44,6 +44,72 @@ export type TradeQuote = {
 
 const apiBaseUrl = import.meta.env.VITE_ION_API_BASE_URL ?? "http://127.0.0.1:8787";
 
+export type MarketCandle = {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+};
+
+export type MarketProvenance = {
+  source: "local-seed";
+  model: string;
+  symbol: string;
+  note: string;
+};
+
+export type MarketCandlesPayload = {
+  symbol: string;
+  interval: string;
+  candles: MarketCandle[];
+  provenance: MarketProvenance;
+};
+
+export type MarketDepthRow = {
+  label: string;
+  price: string;
+  change: string;
+  tone: "positive" | "negative" | "neutral";
+};
+
+export type MarketDepthPayload = {
+  rows: MarketDepthRow[];
+  provenance: MarketProvenance;
+};
+
+export type OrderBookLevel = {
+  price: string;
+  amount: string;
+  depth: string;
+  side: "ask" | "bid";
+};
+
+export type MarketOrderBookPayload = {
+  symbol: string;
+  midPrice: string;
+  levels: OrderBookLevel[];
+  provenance: MarketProvenance;
+};
+
+export type SwapMarketStats = {
+  tvlUsd: string;
+  tvlChangePct: string;
+  priceImpactBps: number;
+  priceImpactLabel: string;
+  routeHealth: "liquid" | "thin" | "stressed";
+  lastPrice: string;
+  volume24h: string;
+  spreadPct: string;
+  ionFeePct: string;
+};
+
+export type SwapMarketStatsPayload = {
+  pair: string;
+  stats: SwapMarketStats;
+  provenance: MarketProvenance;
+};
+
 export async function fetchMarketTickers(signal?: AbortSignal): Promise<ApiResponse<MarketTicker[]>> {
   const response = await fetch(`${apiBaseUrl}/api/markets/tickers`, {
     headers: {
@@ -55,6 +121,66 @@ export async function fetchMarketTickers(signal?: AbortSignal): Promise<ApiRespo
     throw new Error(`Ticker request failed with HTTP ${response.status}`);
   }
   return (await response.json()) as ApiResponse<MarketTicker[]>;
+}
+
+export async function fetchMarketCandles(
+  input: { symbol: string; interval?: string; limit?: number },
+  signal?: AbortSignal,
+): Promise<ApiResponse<MarketCandlesPayload>> {
+  const params = new URLSearchParams({
+    symbol: input.symbol,
+    interval: input.interval ?? "15m",
+    limit: String(input.limit ?? 120),
+  });
+  const response = await fetch(`${apiBaseUrl}/api/markets/candles?${params.toString()}`, {
+    headers: { accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`Candles request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as ApiResponse<MarketCandlesPayload>;
+}
+
+export async function fetchMarketDepth(signal?: AbortSignal): Promise<ApiResponse<MarketDepthPayload>> {
+  const response = await fetch(`${apiBaseUrl}/api/markets/depth`, {
+    headers: { accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`Depth request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as ApiResponse<MarketDepthPayload>;
+}
+
+export async function fetchMarketOrderBook(
+  symbol: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<MarketOrderBookPayload>> {
+  const params = new URLSearchParams({ symbol });
+  const response = await fetch(`${apiBaseUrl}/api/markets/orderbook?${params.toString()}`, {
+    headers: { accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`Order book request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as ApiResponse<MarketOrderBookPayload>;
+}
+
+export async function fetchSwapMarketStats(
+  pair: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<SwapMarketStatsPayload>> {
+  const params = new URLSearchParams({ pair });
+  const response = await fetch(`${apiBaseUrl}/api/markets/swap-stats?${params.toString()}`, {
+    headers: { accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`Swap stats request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as ApiResponse<SwapMarketStatsPayload>;
 }
 
 export async function fetchTradeQuote(

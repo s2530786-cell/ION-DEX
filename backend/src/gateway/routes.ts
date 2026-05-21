@@ -4,6 +4,12 @@ import { systemClock, toIsoTimestamp, type Clock } from "../lib/clock.js";
 import { getRequestId } from "../lib/request-id.js";
 import { getPublicConfig } from "../services/config.js";
 import { getMarketTickers } from "../services/markets.js";
+import {
+  getMarketCandles,
+  getMarketDepthRows,
+  getMarketOrderBook,
+  getSwapMarketStats,
+} from "../services/market-surface.js";
 import { createQuote, QuoteInputError } from "../services/quotes.js";
 import { getProfileSession } from "../services/profile.js";
 import { getTokens } from "../services/tokens.js";
@@ -74,6 +80,26 @@ export function routeRequest(
     case "/api/markets/tickers":
       writeJson(response, 200, apiResponse(getMarketTickers(), meta));
       return;
+    case "/api/markets/depth":
+      writeJson(response, 200, apiResponse(getMarketDepthRows(), meta));
+      return;
+    case "/api/markets/orderbook": {
+      const symbol = url.searchParams.get("symbol") ?? "BNB/ION";
+      writeJson(response, 200, apiResponse(getMarketOrderBook(symbol), meta));
+      return;
+    }
+    case "/api/markets/candles": {
+      const symbol = url.searchParams.get("symbol") ?? "BNB/ION";
+      const interval = url.searchParams.get("interval") ?? "15m";
+      const limit = Number(url.searchParams.get("limit") ?? "120");
+      writeJson(response, 200, apiResponse(getMarketCandles(symbol, interval, limit), meta));
+      return;
+    }
+    case "/api/markets/swap-stats": {
+      const pair = url.searchParams.get("pair") ?? "BNB/ION";
+      writeJson(response, 200, apiResponse(getSwapMarketStats(pair), meta));
+      return;
+    }
     case "/api/profile/session": {
       const provider = url.searchParams.get("provider");
       const address = url.searchParams.get("address") ?? undefined;

@@ -11,6 +11,10 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
     await expect(page.getByTestId("swap-market-stage")).toBeVisible();
+    await expect(page.getByTestId("swap-chart-provenance")).toContainText(/local-seed/i, { timeout: 15_000 });
+    await expect(page.locator('[data-testid="swap-candle-chart"][data-chart-ready="true"]')).toBeVisible({
+      timeout: 15_000,
+    });
     await expect(page.getByTestId("swap-panel")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeVisible();
     await expect(page.getByTestId("swap-submit")).toBeEnabled();
@@ -102,6 +106,10 @@ test.describe("ION DEX smoke", () => {
     await page.getByTestId("nav-trade").click();
 
     await expect(page.getByTestId("trade-chart")).toBeVisible();
+    await expect(page.getByTestId("trade-chart-provenance")).toContainText(/local-seed/i, { timeout: 15_000 });
+    await expect(page.locator('[data-testid="trade-candle-chart"][data-chart-ready="true"]')).toBeVisible({
+      timeout: 15_000,
+    });
     await page.getByTestId("trade-orderbook").scrollIntoViewIfNeeded();
     await expect(page.getByTestId("trade-orderbook")).toBeVisible();
     await page.getByTestId("trade-market-trades").scrollIntoViewIfNeeded();
