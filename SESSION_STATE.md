@@ -51,6 +51,7 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 ## Current State
 
+- **Desk API + Dashboard stat glass（2026-05-20）**：Burn/Bridge/AI Desk 指标与图表接 gateway；Dashboard 右侧三张 stat 卡为 NeonGlassCard。`bash scripts/verify-full.sh` 绿灯；POSIX `scripts/verify-100.sh` 已加入（100 轮长跑可在后台执行）。
 - **NeonGlassCard phase 2（2026-05-20）**：`PageHero` + Dashboard 首屏 `NeonGlassCard`；Pool/Grid/Trade desk Hero 指标接 API；`useApiResource` 稳定性修复；frontend `npm run verify` **16 passed**。分支 `cursor/ui-design-workflow-44c9` 待 push 本批提交。
 - P0 market surface shipped 2026-05-22: `market-surface` API + `IonCandleChart` on Trade; provenance badges; merged `origin/main` (sidebar shell, wallet providers, gateway adapters). Self-audit: `docs/ui-deliverable-self-audit-2026-05-22-p0.md`. Next: P0 burn/bridge/ai feeds alignment, P1 glass/ProfileHub. Iron law: `docs/11-ui-visual-self-audit-gate.md`.
 - **Contracts batch（2026-05-21）**：补全 10 个 FunC + 4 个 Solidity + `scripts/verify-contracts.mjs`；`node scripts/verify-contracts.mjs` exit `0`（本机无 `forge` 时 Solidity SKIP）。路径见 `contracts/README.md`。

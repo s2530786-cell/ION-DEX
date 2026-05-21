@@ -206,7 +206,7 @@ function RightStats({
 }) {
   return (
     <div className="grid gap-5">
-      <NeonCard variant="cyan">
+      <NeonGlassCard testId="dashboard-stat-tvl">
         <DataSourceBadge meta={staking.meta} testId="dashboard-tvl-source" />
         <AsyncState
           error={staking.error}
@@ -222,9 +222,9 @@ function RightStats({
             LP mining APR {staking.data.apr.lpMiningPct}%
           </p>
         </AsyncState>
-      </NeonCard>
+      </NeonGlassCard>
 
-      <NeonCard variant="magenta">
+      <NeonGlassCard testId="dashboard-stat-apr">
         <DataSourceBadge meta={staking.meta} testId="dashboard-apr-source" />
         <AsyncState
           error={staking.error}
@@ -238,9 +238,9 @@ function RightStats({
           </p>
           <p className="mt-1 text-xs text-cyan-200">Dynamic DEX staking rate</p>
         </AsyncState>
-      </NeonCard>
+      </NeonGlassCard>
 
-      <NeonCard variant="gold">
+      <NeonGlassCard testId="dashboard-stat-burn">
         <DataSourceBadge meta={burn.meta} testId="dashboard-burn-source" />
         <AsyncState
           error={burn.error}
@@ -259,7 +259,7 @@ function RightStats({
             />
           </div>
         </AsyncState>
-      </NeonCard>
+      </NeonGlassCard>
     </div>
   );
 }

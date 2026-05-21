@@ -87,6 +87,12 @@ export type SwapMarketStatsPayload = {
   provenance: MarketProvenance;
 };
 
+export type BurnWindow = {
+  label: "24h" | "7d" | "30d";
+  burnedIon: string;
+  trendPct: number;
+};
+
 export type BurnSummary = {
   totalBurnedIon: string;
   bscBurnedIon: string;
@@ -94,6 +100,8 @@ export type BurnSummary = {
   remainingSupplyIon: string;
   bscBurnAddress: string;
   ionBurnSource: string;
+  /** Present when gateway returns burn window trends (test-mock / live). */
+  windows?: BurnWindow[];
 };
 
 export type StakingSummary = {

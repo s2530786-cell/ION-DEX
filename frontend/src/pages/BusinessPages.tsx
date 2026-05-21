@@ -19,6 +19,9 @@ import { NeonCard } from "@/components/ui/NeonCard";
 import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { ChartFrame, GlassPanel, MetricTile, PageHero, RiskNotice, StatusPill } from "@/components/ui/glass";
+import { useAiDeskData } from "@/hooks/useAiDeskData";
+import { useBridgeDeskData } from "@/hooks/useBridgeDeskData";
+import { useBurnDeskData } from "@/hooks/useBurnDeskData";
 import { usePoolDeskData } from "@/hooks/usePoolDeskData";
 import { useApiResource, type ApiLoadState } from "@/hooks/useApiResource";
 import { useMarketCandles, useMarketOrderBook, useSwapMarketStats } from "@/hooks/useMarketSurface";
@@ -1472,30 +1475,10 @@ const orderHistory = [
   ["Stop · BNB/ION", "0.9 BNB", "Cancelled"],
 ] as const;
 
-const poolRows = [
-  { pair: "BNB / ION", tvl: "$1.23M", volume: "$412K", apr: "24.8%" },
-  { pair: "ION / USDT", tvl: "$640K", volume: "$188K", apr: "19.2%" },
-] as const;
-
-const bridgeSteps = [
-  { step: "Vault deposit", state: "Confirmed", chain: "BSC" },
-  { step: "Relayer quorum", state: "2 / 3 signed", chain: "Multisig" },
-  { step: "ION release", state: "Pending finality", chain: "ION" },
-] as const;
-
-const burnBars = [42, 68, 55, 88, 72, 95, 61, 80, 74, 90] as const;
-
 const domainListings = [
   { name: "trader.ion", status: "Owned", price: "—" },
   { name: "swap.ion", status: "Primary", price: "—" },
   { name: "vault.ion", status: "Listed", price: "420 ION" },
-] as const;
-
-const aiSignals = [
-  { label: "Trend probability", value: "63% bullish" },
-  { label: "Support", value: "5.82 ION" },
-  { label: "Resistance", value: "6.48 ION" },
-  { label: "Whale flow", value: "+2.1M ION inflow" },
 ] as const;
 
 function GridDeskPage() {
@@ -1715,33 +1698,59 @@ function PoolDeskPage() {
 
 function BridgeDeskPage() {
   const config = pageConfigs.bridge;
+  const desk = useBridgeDeskData();
+  const riskTone =
+    desk.routes.state === "ready" && desk.routes.data.relayerStatus === "online"
+      ? "emerald"
+      : "amber";
+
   return (
     <div className="grid gap-5" data-testid="page-bridge">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={config.metrics}
+        metrics={desk.heroMetrics}
+        metricsMeta={desk.routes.meta}
+        metricsState={desk.routes.state}
         title={config.title}
       />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <ChartFrame
-          badge={<StatusPill label="Route risk: low" testId="bridge-risk" tone="amber" />}
-          subtitle="Est. 8–14 min"
+          badge={
+            <StatusPill
+              label={`Relayer ${desk.routes.state === "ready" ? desk.routes.data.relayerStatus : "…"}`}
+              testId="bridge-risk"
+              tone={riskTone}
+            />
+          }
+          subtitle={desk.etaSubtitle}
           testId="bridge-status-tracker"
           title="Cross-chain status"
         >
-          <div className="grid gap-3" data-testid="bridge-steps">
-            {bridgeSteps.map((s) => (
-              <div key={s.step} className="flex items-center justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
-                <span className="font-black text-white">{s.step}</span>
-                <span className="text-cyan-100/65">{s.chain}</span>
-                <span className="text-emerald-200">{s.state}</span>
-              </div>
-            ))}
-          </div>
+          <DataSourceBadge meta={desk.routes.meta} testId="bridge-metrics-source" />
+          <AsyncState
+            emptyMessage="No bridge routes configured."
+            error={desk.routes.error}
+            onRetry={desk.routes.reload}
+            state={desk.routes.state}
+            testId="bridge-desk-routes"
+          >
+            <div className="mt-3 grid gap-3" data-testid="bridge-steps">
+              {desk.steps.map((s) => (
+                <div
+                  key={s.step}
+                  className="flex items-center justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm"
+                >
+                  <span className="font-black text-white">{s.step}</span>
+                  <span className="text-cyan-100/65">{s.chain}</span>
+                  <span className="text-emerald-200">{s.state}</span>
+                </div>
+              ))}
+            </div>
+          </AsyncState>
           <p className="mt-4 text-xs text-cyan-100/50">
-            Source tx · BSC vault · Target release · Proof links from bridge-status-service (wired next)
+            Routes and verifier threshold from GET /api/bridge/routes — no static demo steps.
           </p>
         </ChartFrame>
         <NeonCard variant="cyan">
@@ -1754,38 +1763,61 @@ function BridgeDeskPage() {
 
 function BurnDeskPage() {
   const config = pageConfigs.burn;
+  const desk = useBurnDeskData();
+
   return (
     <div className="grid gap-5" data-testid="page-burn">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={[
-          { label: "BSC burn", value: "0x…dEaD", tone: "magenta" },
-          { label: "ION burn", value: "Indexer v3", tone: "cyan" },
-          { label: "Combined", value: "2.41M ION", tone: "gold" },
-        ]}
+        metrics={desk.heroMetrics}
+        metricsMeta={desk.burn.meta}
+        metricsState={desk.burn.state}
         title={config.title}
       />
       <div className="grid gap-5 lg:grid-cols-2">
-        <ChartFrame subtitle="Dual-chain trend" testId="burn-trend-chart" title="Burn analytics">
-          <div className="flex h-44 items-end gap-2">
-            {burnBars.map((h, i) => (
-              <span
-                key={i}
-                className="flex-1 rounded-t-lg bg-gradient-to-t from-rose-500/40 to-amber-300/90"
-                style={{ height: `${h}%` }}
-              />
-            ))}
-          </div>
+        <ChartFrame subtitle="Burn window trends" testId="burn-trend-chart" title="Burn analytics">
+          <DataSourceBadge meta={desk.burn.meta} testId="burn-metrics-source" />
+          <AsyncState
+            emptyMessage="Burn trend windows unavailable from API."
+            error={desk.burn.error}
+            onRetry={desk.burn.reload}
+            state={
+              desk.burn.state === "loading"
+                ? "loading"
+                : desk.burn.state === "error"
+                  ? "error"
+                  : desk.trendBars.length === 0
+                    ? "empty"
+                    : "ready"
+            }
+            testId="burn-trend"
+          >
+            <div className="flex h-44 items-end gap-2">
+              {desk.trendBars.map((h, i) => (
+                <span
+                  key={i}
+                  className="flex-1 rounded-t-lg bg-gradient-to-t from-rose-500/40 to-amber-300/90"
+                  style={{ height: `${h}%` }}
+                />
+              ))}
+            </div>
+          </AsyncState>
           <p className="mt-3 text-xs text-cyan-100/55" data-testid="burn-chain-split">
-            Chain split · BSC 58% · ION 42% · remaining supply 97.59M ION · local-seed
+            {desk.chainSplitLine}
           </p>
         </ChartFrame>
         <div className="grid gap-5">
           <GlassPanel testId="burn-proof-links" title="Proof links">
-            <p className="font-mono text-xs text-cyan-100/70">BSC: 0x000000000000000000000000000000000000dEaD</p>
-            <p className="mt-2 font-mono text-xs text-cyan-100/70">ION: api.mainnet.ice.io/indexer/v3/</p>
+            {desk.burn.state === "ready" ? (
+              <>
+                <p className="font-mono text-xs text-cyan-100/70">BSC: {desk.burn.data.bscBurnAddress}</p>
+                <p className="mt-2 font-mono text-xs text-cyan-100/70">ION: {desk.burn.data.ionBurnSource}</p>
+              </>
+            ) : (
+              <p className="text-sm text-cyan-100/55">Loading burn proof endpoints…</p>
+            )}
           </GlassPanel>
           <NeonCard variant="magenta">
             <BurnAnalyticsPanel />
@@ -1840,37 +1872,56 @@ function DomainDeskPage() {
 
 function AIDeskPage() {
   const config = pageConfigs.ai;
+  const desk = useAiDeskData();
+  const riskTone =
+    desk.statsState === "ready" && desk.stats?.routeHealth === "stressed" ? "amber" : "emerald";
+
   return (
     <div className="grid gap-5" data-testid="page-ai">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={config.metrics}
+        metrics={desk.heroMetrics}
+        metricsState={desk.metricsState}
         title={config.title}
       />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <ChartFrame
-          badge={<StatusPill label="Risk: medium" testId="ai-risk-score" tone="amber" />}
-          subtitle="ION · 4h horizon"
+          badge={
+            <StatusPill
+              label={
+                desk.statsState === "ready" && desk.stats
+                  ? `Route: ${desk.stats.routeHealth}`
+                  : "Route: …"
+              }
+              testId="ai-risk-score"
+              tone={riskTone}
+            />
+          }
+          subtitle={desk.statsProv || "BNB / ION · market surface"}
           testId="ai-market-summary"
           title="Market summary"
         >
+          {desk.statsProv ? (
+            <DataProvenanceBadge className="mb-3" label={desk.statsProv} testId="ai-stats-provenance" />
+          ) : null}
           <div className="grid gap-3 sm:grid-cols-2" data-testid="ai-signals">
-            {aiSignals.map((s) => (
-              <MetricTile key={s.label} label={s.label} tone="cyan" value={s.value} />
+            {desk.signals.map((s) => (
+              <MetricTile key={s.label} label={s.label} tone={s.tone ?? "cyan"} value={s.value} />
             ))}
           </div>
           <p className="mt-4 text-[11px] text-cyan-100/45" data-testid="ai-disclaimer">
-            Not investment advice · offline heuristics until ai-market-service streams live inference.
+            Not investment advice · signals from markets/tickers and swap-stats API until dedicated
+            ai-market-service ships.
           </p>
         </ChartFrame>
         <div className="grid gap-5">
           <GlassPanel testId="ai-grid-suggestion" title="Grid suggestion">
-            <p className="text-sm text-cyan-100/75">Suggested neutral grid 5.6–6.5 ION · 18 levels · Sentinel confidence 71%</p>
+            <p className="text-sm text-cyan-100/75">{desk.gridSuggestion}</p>
           </GlassPanel>
           <GlassPanel testId="ai-prediction-history" title="Prediction history">
-            <p className="text-sm text-cyan-100/75">Last 7 calls · 5 aligned · 2 drift · accuracy 71% (local-seed)</p>
+            <p className="text-sm text-cyan-100/75">{desk.predictionHistory}</p>
           </GlassPanel>
           <NeonCard variant="mixed" className="!shadow-neonCyan">
             <AIMarketPanel />
