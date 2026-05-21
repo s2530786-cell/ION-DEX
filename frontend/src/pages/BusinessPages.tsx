@@ -1130,6 +1130,13 @@ type ShieldData = {
 } | null;
 
 function DefenseShield() {
+  const [subTab, setSubTab] = useState<"analysis" | "defense">("defense");
+  const [symbol, setSymbol] = useState("ION");
+  const [horizon, setHorizon] = useState<"1h" | "4h" | "1d">("4h");
+  const [scanType, setScanType] = useState<"quick" | "deep">("quick");
+  const [analysisRan, setAnalysisRan] = useState(false);
+
+  // Defense data
   const [data, setData] = useState<ShieldData>(null);
   const [loading, setLoading] = useState(true);
 
@@ -1146,95 +1153,163 @@ function DefenseShield() {
     return () => { cancelled = true; clearInterval(interval); };
   }, []);
 
-  if (loading) {
-    return (
-      <div className="grid gap-3" data-testid="ai-defense">
-        <GlassPanel variant="cyan" noAurora padding="sm">
-          <p className="animate-pulse text-sm text-cyan-200">Initializing defense engine...</p>
-        </GlassPanel>
-      </div>
-    );
-  }
+  // AI analysis heuristics
+  const ticker = symbol.trim().toUpperCase();
+  const valid = ticker.length >= 2 && ticker.length <= 12 && /^[A-Z0-9]+$/.test(ticker);
+  const confidence = horizon === "1h" ? 58 : horizon === "4h" ? 63 : 71;
+  const sentiment = confidence > 65 ? ("🟢 Bullish") : confidence > 60 ? ("⚪ Neutral") : ("🔴 Bearish");
 
+  // Defense calculations
   const testPct = data ? Math.round((data.testsPassed / data.testsTarget) * 100) : 0;
   const testColor = testPct >= 100 ? "emerald" : testPct >= 50 ? "amber" : "rose";
+
+  const btnClass = (v: string) =>
+    `rounded px-3 py-1 text-[11px] font-bold transition ${subTab === v ? "bg-cyan-400/20 text-cyan-200" : "text-cyan-200/30 hover:text-cyan-200/60"}`;
 
   return (
     <div className="grid gap-3" data-testid="ai-defense">
       <div className="flex items-center justify-between">
-        <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">ION Shield — Attack Defense Engine</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">ION Shield — Analysis &amp; Defense</p>
         <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${data?.mode === "armed" ? "bg-emerald-400/15 text-emerald-200" : "bg-amber-400/15 text-amber-200"}`}>
           {data?.mode === "armed" ? "🛡️ Armed" : "⏸️ Paused"}
         </span>
       </div>
 
-      {/* Security Test Progress */}
-      <GlassPanel variant="mixed" noAurora padding="sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-cyan-100/45">Security Tests</p>
-            <p className={`mt-1 text-2xl font-black text-${testColor}-200`}>
-              {data?.testsPassed ?? 0} / {data?.testsTarget ?? 1000}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-cyan-100/45">Transactions Scanned</p>
-            <p className="mt-1 text-xl font-black text-cyan-100">{data?.totalScanned?.toLocaleString() ?? 0}</p>
-          </div>
-        </div>
-        {/* Progress bar */}
-        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-          <div
-            className={`h-full rounded-full transition-all duration-700 bg-gradient-to-r ${testPct >= 100 ? "from-emerald-400 to-cyan-400" : "from-amber-400 to-rose-400"}`}
-            style={{ width: `${Math.min(testPct, 100)}%` }}
-          />
-        </div>
-        <div className="mt-2 flex gap-2 text-[10px]">
-          <span className="rounded bg-rose-400/10 px-2 py-0.5 text-rose-200">🚫 {data?.totalBlocked ?? 0} blocked</span>
-          <span className="rounded bg-cyan-400/10 px-2 py-0.5 text-cyan-200">{testPct}% green</span>
-          {testPct < 100 && <span className="ml-auto text-rose-200/60">{data ? data.testsTarget - data.testsPassed : 0} remaining</span>}
-        </div>
-      </GlassPanel>
-
-      {/* 10 Attack Type Grid */}
-      <div className="grid grid-cols-2 gap-2">
-        {ATTACK_TYPES.map((atk) => {
-          const status = data?.attacks?.find((a) => a.id === atk.id);
-          const hasRecent = status && status.lastBlock && (Date.now() - new Date(status.lastBlock).getTime() < 3600000);
-          return (
-            <GlassPanel key={atk.id} variant={hasRecent ? "magenta" : "mixed"} noAurora padding="sm">
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm">{atk.icon}</span>
-                <span className="text-[10px] font-bold text-white">{atk.name}</span>
-              </div>
-              <div className="mt-1 flex items-center gap-2 text-[10px]">
-                <span className="text-rose-200/60">{status?.detected ?? 0} detected</span>
-                <span className={`ml-auto font-black ${hasRecent ? "text-rose-200" : "text-emerald-200/60"}`}>
-                  {hasRecent ? "⚠️ Active" : "✅ Clear"}
-                </span>
-              </div>
-            </GlassPanel>
-          );
-        })}
+      {/* Sub-tabs: Analysis / Defense */}
+      <div className="flex gap-1">
+        <button onClick={() => setSubTab("analysis")} className={btnClass("analysis")}>📊 AI Analysis</button>
+        <button onClick={() => setSubTab("defense")} className={btnClass("defense")}>🛡️ Defense</button>
       </div>
 
-      {/* Recent Blocks */}
-      {data?.recentBlocks && data.recentBlocks.length > 0 && (
+      {subTab === "analysis" ? (
         <>
-          <p className="text-xs uppercase tracking-[0.15em] text-rose-200/50">Recent Blocks</p>
-          <div className="grid gap-1.5 max-h-[30vh] overflow-y-auto">
-            {data.recentBlocks.slice(0, 5).map((b, i) => (
-              <GlassPanel key={i} variant="magenta" noAurora padding="sm">
+          {/* AI Analysis Form */}
+          <div className="grid gap-3">
+            <FormField label="Symbol" value={symbol} placeholder="ION" testId="shield-symbol" type="text"
+              onChange={(v) => { setSymbol(v); setAnalysisRan(false); }} />
+            <div className="grid grid-cols-2 gap-3">
+              <SegmentedControl label="Horizon" value={horizon} testId="shield-horizon"
+                onChange={(v) => setHorizon(v)}
+                options={[{ label: "1h Pulse", value: "1h" }, { label: "4h Core", value: "4h" }, { label: "1d Macro", value: "1d" }]} />
+              <SegmentedControl label="Scan" value={scanType} testId="shield-scan"
+                onChange={(v) => setScanType(v)}
+                options={[{ label: "Quick", value: "quick" }, { label: "Deep", value: "deep" }]} />
+            </div>
+            <NeonButton className="w-full" disabled={!valid} onClick={() => setAnalysisRan(true)}>
+              Run Analysis
+            </NeonButton>
+          </div>
+
+          {/* Results */}
+          {analysisRan && valid && (
+            <>
+              <GlassPanel variant="cyan" noAurora padding="sm">
                 <div className="flex items-center justify-between">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-bold text-rose-200">{b.type} — {b.id.slice(0, 10)}...</p>
-                    <p className="text-[10px] text-cyan-200/40">from {b.from.slice(0, 8)}... · {b.value}</p>
+                  <div>
+                    <p className="text-xs text-cyan-100/45">{ticker} Market Sentiment</p>
+                    <p className="mt-1 text-xl font-black text-white">{sentiment}</p>
                   </div>
-                  <span className="shrink-0 text-[10px] text-cyan-200/30">{b.time}</span>
+                  <div className="text-right">
+                    <p className="text-xs text-cyan-100/45">Model Confidence</p>
+                    <p className="mt-1 text-2xl font-black text-cyan-200">{confidence}%</p>
+                  </div>
+                </div>
+                <div className="mt-2 flex gap-2 text-[10px]">
+                  <span className="rounded bg-cyan-400/10 px-2 py-0.5 text-cyan-200">{horizon} window</span>
+                  <span className="rounded bg-cyan-400/10 px-2 py-0.5 text-cyan-200">{scanType} scan</span>
+                  <span className="ml-auto text-cyan-200/40">Defense: {data?.mode ?? "armed"}</span>
                 </div>
               </GlassPanel>
-            ))}
-          </div>
+
+              <GlassPanel variant="mixed" noAurora padding="sm">
+                <p className="text-xs text-cyan-100/45">Risk Factors</p>
+                <div className="mt-2 grid gap-2">
+                  <RiskBadge label="Reentrancy Risk" dangerous={confidence < 60} />
+                  <RiskBadge label="Oracle Deviation" dangerous={confidence < 65} />
+                  <RiskBadge label="MEV Exposure" dangerous={horizon === "1h"} />
+                  <RiskBadge label="Liquidity Depth" dangerous={scanType === "quick"} />
+                </div>
+              </GlassPanel>
+            </>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Defense Engine */}
+          {loading ? (
+            <GlassPanel variant="cyan" noAurora padding="sm">
+              <p className="animate-pulse text-sm text-cyan-200">Initializing defense engine...</p>
+            </GlassPanel>
+          ) : (
+            <>
+              {/* Security Test Progress */}
+              <GlassPanel variant="mixed" noAurora padding="sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-cyan-100/45">Security Tests</p>
+                    <p className={`mt-1 text-2xl font-black text-${testColor}-200`}>
+                      {data?.testsPassed ?? 0} / {data?.testsTarget ?? 1000}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-cyan-100/45">TX Scanned</p>
+                    <p className="mt-1 text-xl font-black text-cyan-100">{data?.totalScanned?.toLocaleString() ?? 0}</p>
+                  </div>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className={`h-full rounded-full transition-all duration-700 bg-gradient-to-r ${testPct >= 100 ? "from-emerald-400 to-cyan-400" : "from-amber-400 to-rose-400"}`}
+                    style={{ width: `${Math.min(testPct, 100)}%` }} />
+                </div>
+                <div className="mt-2 flex gap-2 text-[10px]">
+                  <span className="rounded bg-rose-400/10 px-2 py-0.5 text-rose-200">🚫 {data?.totalBlocked ?? 0} blocked</span>
+                  <span className="rounded bg-cyan-400/10 px-2 py-0.5 text-cyan-200">{testPct}% green</span>
+                  {testPct < 100 && <span className="ml-auto text-rose-200/60">{data ? data.testsTarget - data.testsPassed : 0} left</span>}
+                </div>
+              </GlassPanel>
+
+              {/* 10 Attack Types */}
+              <div className="grid grid-cols-2 gap-2">
+                {ATTACK_TYPES.map((atk) => {
+                  const status = data?.attacks?.find((a) => a.id === atk.id);
+                  const hasRecent = status && status.lastBlock && (Date.now() - new Date(status.lastBlock).getTime() < 3600000);
+                  return (
+                    <GlassPanel key={atk.id} variant={hasRecent ? "magenta" : "mixed"} noAurora padding="sm">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">{atk.icon}</span>
+                        <span className="text-[10px] font-bold text-white">{atk.name}</span>
+                      </div>
+                      <div className="mt-1 flex items-center gap-2 text-[10px]">
+                        <span className="text-rose-200/60">{status?.detected ?? 0} detected</span>
+                        <span className={`ml-auto font-black ${hasRecent ? "text-rose-200" : "text-emerald-200/60"}`}>
+                          {hasRecent ? "⚠️ Active" : "✅ Clear"}
+                        </span>
+                      </div>
+                    </GlassPanel>
+                  );
+                })}
+              </div>
+
+              {/* Recent Blocks */}
+              {data?.recentBlocks && data.recentBlocks.length > 0 && (
+                <>
+                  <p className="text-xs uppercase tracking-[0.15em] text-rose-200/50">Recent Blocks</p>
+                  <div className="grid gap-1.5 max-h-[25vh] overflow-y-auto">
+                    {data.recentBlocks.slice(0, 5).map((b, i) => (
+                      <GlassPanel key={i} variant="magenta" noAurora padding="sm">
+                        <div className="flex items-center justify-between">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-bold text-rose-200">{b.type} — {b.id.slice(0, 10)}...</p>
+                            <p className="text-[10px] text-cyan-200/40">from {b.from.slice(0, 8)}... · {b.value}</p>
+                          </div>
+                          <span className="shrink-0 text-[10px] text-cyan-200/30">{b.time}</span>
+                        </div>
+                      </GlassPanel>
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          )}
         </>
       )}
     </div>
