@@ -7,7 +7,8 @@
 | 用途 | 地址 |
 |------|------|
 | **ION ERC-20 合约** | `0xe1ab61f7b093435204df32f5b3a405de55445ea8` |
-| **ION 销毁地址（dead）** | `0x000000000000000000000000000000000000dEaD` |
+| **ION 销毁地址（BSC dead）** | `0x000000000000000000000000000000000000dEaD` |
+| **ION 主网销毁地址（Burn Address）** | `UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ` |
 
 说明：
 
@@ -21,6 +22,7 @@
 - 后端：`backend/src/constants/official-ion-addresses.ts`
 - 跨链语义：`frontend/src/lib/officialBridgeSemantics.ts`
 - 质押语义：`frontend/src/lib/officialStakingSemantics.ts`（见 `docs/ion-official-staking-reference.md`）
+- 销毁语义：`frontend/src/lib/officialBurnSemantics.ts`（见 `docs/ion-official-burn-reference.md`）
 - 官方仓库索引：`.memory-bank/ion-dex-nuke/official-source-index.md`
 
 ## 官方仓库（写桥/销毁/钱包前必读）
@@ -37,5 +39,6 @@
 
 ## 仍须从官方源确认（勿猜）
 
-- ION 主网销毁来源地址（主网 burn ledger）
+- 官方 Pool / LION minter 部署地址（从 address-book 或部署记录读取）
+- 主网销毁 **24h/7d/30d 窗口** 趋势（需 indexer 历史，非单次 `getAddressBalance`）
 - 主网 RPC / indexer 生产端点细节

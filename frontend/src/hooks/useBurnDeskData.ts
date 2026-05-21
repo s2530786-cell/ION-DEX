@@ -2,6 +2,11 @@ import { useCallback, useMemo } from "react";
 import type { PageHeroMetric } from "@/components/ui/glass/PageHero";
 import { useApiResource } from "@/hooks/useApiResource";
 import { burnTrendBarsFromWindows, formatBurnChainSplit } from "@/lib/burnDeskData";
+import {
+  OFFICIAL_BURN_PROOF_STEPS,
+  OFFICIAL_ION_MAINNET_BURN_ADDRESS,
+  OFFICIAL_ION_MAINNET_BURN_NAME,
+} from "@/lib/officialBurnSemantics";
 import { fetchBurnSummary, formatIonAmount, type BurnSummary } from "@/lib/ionApi";
 
 const emptyBurn: BurnSummary = {
@@ -34,7 +39,7 @@ export function useBurnDeskData() {
         testId: "burn-metric-total",
       },
       {
-        label: "BSC burn",
+        label: "BSC dead",
         value: summary.bscBurnAddress
           ? `${summary.bscBurnAddress.slice(0, 6)}…${summary.bscBurnAddress.slice(-4)}`
           : "—",
@@ -42,7 +47,7 @@ export function useBurnDeskData() {
         testId: "burn-metric-bsc",
       },
       {
-        label: "ION burn",
+        label: OFFICIAL_ION_MAINNET_BURN_NAME,
         value: `${formatIonAmount(summary.ionMainnetBurnedIon)} ION`,
         tone: "cyan",
         testId: "burn-metric-ion",
@@ -60,10 +65,23 @@ export function useBurnDeskData() {
     [burn.data, burn.state],
   );
 
+  const proofLines = useMemo(() => {
+    if (burn.state !== "ready") {
+      return OFFICIAL_BURN_PROOF_STEPS;
+    }
+    const s = burn.data;
+    return [
+      `BSC dead: ${s.bscBurnAddress || "—"}`,
+      `ION ${OFFICIAL_ION_MAINNET_BURN_NAME}: ${s.ionBurnSource || OFFICIAL_ION_MAINNET_BURN_ADDRESS}`,
+      OFFICIAL_BURN_PROOF_STEPS[2],
+    ];
+  }, [burn.data, burn.state]);
+
   return {
     burn,
     heroMetrics,
     trendBars,
     chainSplitLine,
+    proofLines,
   };
 }

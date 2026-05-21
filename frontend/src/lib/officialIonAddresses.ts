@@ -11,6 +11,13 @@ export const OFFICIAL_BSC_ION_TOKEN_ADDRESS =
 export const OFFICIAL_BSC_ION_BURN_ADDRESS =
   "0x000000000000000000000000000000000000dEaD" as const;
 
+/**
+ * ION mainnet burn sink ("Burn Address" in ice-blockchain/ion-address-book system.yaml).
+ * Native ION sent here is treated as destroyed for supply analytics.
+ */
+export const OFFICIAL_ION_MAINNET_BURN_ADDRESS =
+  "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ" as const;
+
 /** Fixed maximum supply narrative (never inflationary beyond bridge rules). */
 export const OFFICIAL_ION_MAX_SUPPLY_HUMAN = "21100000000";
 

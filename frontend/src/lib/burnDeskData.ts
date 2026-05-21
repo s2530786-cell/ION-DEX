@@ -24,5 +24,8 @@ export function formatBurnChainSplit(summary: BurnSummary): string {
   const remainingLabel = Number.isFinite(remaining)
     ? `${remaining.toLocaleString(undefined, { maximumFractionDigits: 0 })} ION remaining`
     : "remaining supply —";
-  return `Chain split · BSC ${bscPct}% · ION ${ionPct}% · ${remainingLabel}`;
+  const ionLabel = summary.ionBurnSource
+    ? `${summary.ionBurnSource.slice(0, 6)}…${summary.ionBurnSource.slice(-4)}`
+    : "official Burn Address";
+  return `Chain split · BSC ${bscPct}% · ION ${ionPct}% (${ionLabel}) · ${remainingLabel}`;
 }

@@ -7,8 +7,8 @@ alwaysApply: true
 
 Before writing or changing bridge, burn, **staking**, wallet, token list, or contract integration code:
 
-1. Read `docs/ion-official-canonical-addresses.md`, `docs/ion-official-staking-reference.md`, and `.memory-bank/ion-dex-nuke/official-source-index.md`.
-2. Load `.cursor/skills/ion-official-source/SKILL.md` and inspect the smallest relevant official repo (`ice-blockchain/ion`, `liquid-staking-contract`, `ice-swap`, `bridge-solidity`, `ion-gateway`, `ion-address-book`).
+1. Read `docs/ion-official-canonical-addresses.md`, `docs/ion-official-burn-reference.md`, `docs/ion-official-staking-reference.md`, and `.memory-bank/ion-dex-nuke/official-source-index.md`.
+2. Load `.cursor/skills/ion-official-source/SKILL.md` and inspect the smallest relevant official repo (`ice-blockchain/ion`, `ion-address-book`, `liquid-staking-contract`, `ice-swap`, `bridge-solidity`, `ion-gateway`).
 3. If official code or confirmed addresses exist, **use them** — do not invent wrappers (e.g. wION), fake burn paths, **LION/liquid-staking shortcuts**, or guessed contract APIs.
 
 Confirmed BSC facts (do not re-guess):

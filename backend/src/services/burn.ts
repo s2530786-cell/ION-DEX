@@ -1,5 +1,6 @@
 import {
   OFFICIAL_BSC_ION_BURN_ADDRESS,
+  OFFICIAL_ION_MAINNET_BURN_ADDRESS,
   OFFICIAL_ION_MAX_SUPPLY_ION,
 } from "../constants/official-ion-addresses.js";
 
@@ -29,7 +30,7 @@ export function getBurnSummary(): BurnSummary {
     ionMainnetBurnedIon: "4600000.000",
     remainingSupplyIon: `${(Number(OFFICIAL_ION_MAX_SUPPLY_ION) - 12_845_000).toFixed(3)}`,
     bscBurnAddress: OFFICIAL_BSC_ION_BURN_ADDRESS,
-    ionBurnSource: "ion-mainnet-burn-source-placeholder",
+    ionBurnSource: OFFICIAL_ION_MAINNET_BURN_ADDRESS,
     windows: [
       { label: "24h", burnedIon: "12500.000", trendPct: 8.4 },
       { label: "7d", burnedIon: "74200.000", trendPct: 12.1 },
@@ -49,7 +50,7 @@ export function getBurnSummary(): BurnSummary {
       {
         source: "ion-indexer",
         status: "planned",
-        note: "Later reads official ION mainnet burn source.",
+        note: `Later reads official Burn Address (${OFFICIAL_ION_MAINNET_BURN_ADDRESS}) via ION HTTP API / indexer.`,
       },
     ],
   };

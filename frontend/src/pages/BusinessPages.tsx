@@ -27,6 +27,11 @@ import { useBurnDeskData } from "@/hooks/useBurnDeskData";
 import { usePoolDeskData } from "@/hooks/usePoolDeskData";
 import { useStakeDeskData } from "@/hooks/useStakeDeskData";
 import {
+  DEX_DRAFT_BURN_NOTE,
+  OFFICIAL_BURN_PROOF_STEPS,
+  OFFICIAL_ION_MAINNET_BURN_ADDRESS,
+} from "@/lib/officialBurnSemantics";
+import {
   DEX_DRAFT_STAKE_NOTE,
   formatStakingAprLabel,
   OFFICIAL_LIQUID_STAKE_RECEIPT,
@@ -185,7 +190,7 @@ const fallbackBurnSummary: BurnSummary = {
   ionMainnetBurnedIon: "4600000",
   remainingSupplyIon: "987155000",
   bscBurnAddress: "",
-  ionBurnSource: "ion-mainnet-burn-source-placeholder",
+  ionBurnSource: OFFICIAL_ION_MAINNET_BURN_ADDRESS,
 };
 
 const fallbackStakingSummary: StakingSummary = {
@@ -1013,10 +1018,14 @@ function BurnAnalyticsPanel() {
       >
         {validation.isValid ? (
           <span>
-            Burn preview: {validation.parsedAmount?.toLocaleString()} ION on {chain.toUpperCase()} · dual-chain indexer will reconcile treasury splits once workers land.
+            Attribution preview: {validation.parsedAmount?.toLocaleString()} ION on{" "}
+            {chain === "bsc" ? "BSC dead ledger" : "ION Burn Address"} — analytics only, not an on-chain burn tx.
           </span>
         ) : (
-          <span>Provide a tracked burn magnitude plus optional memo hooks for treasury transparency rails.</span>
+          <span>
+            Log observed burn for desk review. Official sinks: BSC dead + {OFFICIAL_ION_MAINNET_BURN_ADDRESS.slice(0, 6)}
+            …{OFFICIAL_ION_MAINNET_BURN_ADDRESS.slice(-4)} (ion-address-book).
+          </span>
         )}
       </div>
 
@@ -1724,15 +1733,23 @@ function BurnDeskPage() {
           </p>
         </ChartFrame>
         <div className="grid gap-5">
-          <GlassPanel testId="burn-proof-links" title="Proof links">
+          <GlassPanel testId="burn-proof-links" title="Official burn sinks">
             {desk.burn.state === "ready" ? (
-              <>
-                <p className="font-mono text-xs text-cyan-100/70">BSC: {desk.burn.data.bscBurnAddress}</p>
-                <p className="mt-2 font-mono text-xs text-cyan-100/70">ION: {desk.burn.data.ionBurnSource}</p>
-              </>
+              <ul className="list-disc space-y-2 pl-5 text-sm text-cyan-100/75">
+                {desk.proofLines.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
             ) : (
-              <p className="text-sm text-cyan-100/55">Loading burn proof endpoints…</p>
+              <ul className="list-disc space-y-2 pl-5 text-sm text-cyan-100/55">
+                {OFFICIAL_BURN_PROOF_STEPS.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
             )}
+            <p className="mt-4 text-xs text-amber-100/75" data-testid="burn-dex-draft-note">
+              {DEX_DRAFT_BURN_NOTE}
+            </p>
           </GlassPanel>
           <NeonCard variant="magenta">
             <BurnAnalyticsPanel />

@@ -307,7 +307,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("burn-submit")).toBeDisabled();
 
     await page.getByTestId("burn-memo").fill("Weekly burn attestation");
-    await expect(page.getByTestId("burn-preview")).toContainText("Burn preview:");
+    await expect(page.getByTestId("burn-preview")).toContainText("Attribution preview:");
     await expect(page.getByTestId("burn-submit")).toBeEnabled();
 
     await page.getByTestId("burn-submit").click();

@@ -255,6 +255,10 @@ describe("ION DEX API gateway", () => {
       "0x000000000000000000000000000000000000dead",
     );
     assert.ok(data.provenance.some((entry) => entry.source === "mock" && entry.status === "mocked"));
+    assert.equal(
+      (data as { ionBurnSource?: string }).ionBurnSource,
+      "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ",
+    );
   });
 
   it("serves staking summary with reward and APR data", async () => {

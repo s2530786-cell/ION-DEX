@@ -86,6 +86,18 @@ Product facts:
 
 Doc: `docs/ion-official-staking-reference.md`. Frontend: `frontend/src/lib/officialStakingSemantics.ts`.
 
+## Official burn (dual-chain)
+
+| Chain | Source | Sink |
+|---|---|---|
+| BSC | Product-confirmed + ERC-20 `balanceOf` | `0x000000000000000000000000000000000000dEaD` |
+| ION mainnet | `ice-blockchain/ion-address-book` → `source/system.yaml` **Burn Address** | `UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ` |
+
+- ION cumulative burn metric: official HTTP API `getAddressBalance` on Burn Address (`api.mainnet.ice.io/http/v2/`).
+- **Not** the same as Bridge contract `burn` on BSC (ice-swap) or DEX draft `FeeReceiver` splits.
+
+Doc: `docs/ion-official-burn-reference.md`. Frontend: `frontend/src/lib/officialBurnSemantics.ts`.
+
 ## Wallet injection (not in `ice-blockchain/ion` node monorepo)
 
 Verified companion repositories for dApp wallet integration:
