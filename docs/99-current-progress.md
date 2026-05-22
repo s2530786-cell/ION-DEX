@@ -2,6 +2,8 @@
 
 ## Latest Verified Status
 
+- **Dashboard 渲染崩溃修复 + 自动验收（2026-05-22）**：修复 lightweight-charts 与 React 争抢 DOM 导致的 `removeChild` 整页错误（`bf1408b`）；Dashboard 行情区改用 `IonCandleChart`；`bash scripts/ui-round-verify.sh` → Playwright **16/16**；preview `4173` 首页 smoke 通过；截图 `current-*.png` 已更新。差异报告：`docs/ui-gap-report-2026-05-22.md`；修复自检：`docs/ui-deliverable-self-audit-2026-05-22-chart-fix.md`。用户 Windows 本机：`git pull` 至 `bf1408b` 后重启 backend + `npm run dev:local`。
+
 - **连续 UI 轮次 B/C + 100-pass GREEN（2026-05-20）**：`NeonCard` 全站统一 `neon-glass-card` 厚霓虹 rim；`glass-shell-frame` 透光壳；Swap 中央 ION logo；`capture-ui-screenshots.mjs` + `current-*.png` 浏览器对比；`bash scripts/verify-100.sh 100` → **PASSED=100**、**RESULT=GREEN**（`/tmp/ion-verify-100-summary-20260521-144652.txt`）。视觉门禁仍**未通过**「与 ref 一模一样」。自检：`docs/ui-deliverable-self-audit-2026-05-20-round-bc.md`。
 
 - **P1 玻璃 HUD 轮次（2026-05-20）**：`global.css` 新增 `glass-hud-panel` / `glass-hud-strip`；`AppShell` 侧栏/顶栏/导航条/ticker 去 `bg-slate-950/55` 灰条感；`ProfileHub` 外壳换 `NeonGlassCard`；`DashboardPage` FeatureGrid `NeonCard` → `NeonGlassCard`。计划：`docs/ui-development-plan-2026-05-20.md`；自检：`docs/ui-deliverable-self-audit-2026-05-20-p1-glass.md`（**视觉门禁未通过**，工程绿灯）。自动验证：`bash scripts/ui-round-verify.sh` 或 `node scripts/agent-workflow.mjs --tier ui --execute`。Playwright **16 passed**。

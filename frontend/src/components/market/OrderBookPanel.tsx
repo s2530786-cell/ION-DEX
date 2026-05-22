@@ -23,9 +23,9 @@ export function OrderBookPanel({
       {loadState === "error" ? <p className="text-xs text-rose-200">Order book unavailable</p> : null}
       <div className="grid gap-2" data-testid={listTestId}>
         {loadState === "ready" && book
-          ? book.levels.map((row) => (
+          ? book.levels.map((row, index) => (
               <div
-                key={`${row.side}-${row.price}`}
+                key={`${row.side}-${row.price}-${index}`}
                 className="relative overflow-hidden rounded-2xl bg-white/[0.04] px-4 py-3"
               >
                 <span
