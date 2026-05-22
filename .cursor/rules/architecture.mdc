@@ -1,27 +1,54 @@
 ---
-description: ION DEX architecture audit — checks security/vulnerabilities on every Cursor action
+description: ION DEX full architecture audit — references ion-dex-commander workflows
 alwaysApply: true
 ---
 
-# Architecture & Security Audit
+# ION DEX Architecture & Feature Spec
 
-On every file change, Cursor must check:
+## TASK 0 — Always read first
+On every Cursor session start:
+1. Read `CURSOR_TODO.md` — prioritized feature checklist
+2. Read `.cursor/rules/ion-glass-3d-mandate.mdc` — exact visual CSS values
+3. Read `docs/05-product-prd.md` — full V1/V2/V3 scope
+4. Run `node skills/ion-dex-commander/scripts/audit-local-code.mjs` — security check
+5. Check `git log --oneline -5` — recent changes
 
-## Security Checklist
-- No reentrancy vectors (.call{value:})
-- No tx.origin usage
-- No unchecked external calls
-- No timestamp manipulation (block.timestamp for <= comparisons)
-- Proper access control on all state-changing functions
-- No selfdestruct or delegatecall without audit
+## V1 Pages (Must Exist)
+- `/` → Dashboard (done, needs polish)
+- `/swap` → Full swap page (stub exists, needs full implementation per PRD)
+- `/trade` → Trade page (stub exists, needs orderbook + limit form)
+- `/pool` → LP pool page (link exists, page is stub)
+- `/stake` → Staking page (link exists, page is stub)
+- `/burn` → Burn tracker (link exists, page is stub)
+- `/bridge` → Bridge page (link exists, page is stub)
+- `/domain` → ION DNS page (link exists, page is stub)
+- `/ai` → AI market page (link exists, page is stub)
+- `/transparency` → Treasury page (NOT YET CREATED)
 
-## Code Quality
-- No mock/placeholder data in production files
-- Every API call uses real backend endpoints
-- Every contract call uses verified ABI + address
-- No hardcoded addresses or keys
-- UTF-8 encoding, no garbled Chinese characters
-- Files ≤ 300 lines (split if larger)
+## Visual Standards (non-negotiable)
+- All cards: border-radius 1.5rem+, border 1px rgba(36,247,255,0.25)
+- Glass: bg rgba(6,16,36,0.3), blur(16px) saturate(1.35)
+- Text: headers #e0f0ff, body #8ab4d8, data #24f7ff
+- No sharp corners, no dark bg >0.45 alpha, no blur >20px
 
-## Reference
-Full audit: run `node skills/ion-dex-commander/scripts/audit-local-code.mjs`
+## Development Loop
+1. Read TASK 0 (this file)
+2. Pick highest priority item from CURSOR_TODO.md
+3. Implement feature
+4. Run `node skills/ion-dex-commander/scripts/audit-local-code.mjs`
+5. Fix all FAIL issues
+6. Commit with descriptive message
+7. Auto-deploy: `node skills/ion-dex-commander/scripts/git-auto-deploy.mjs`
+
+## File Limits
+- Components: ≤ 300 lines
+- Utility functions: ≤ 200 lines
+- Split if exceeding
+
+## Data Sources (No Mocks)
+- CMC API: `CMC_API_KEY=342475df9fa5451aafbb3346be049f03`
+- ION Indexer: `https://api.mainnet.ice.io/indexer/v3/`
+- GeckoTerminal: `https://api.geckoterminal.com/api/v2`
+- DexScreener: `https://api.dexscreener.com`
+- Backend: `http://127.0.0.1:8788`
+- Use `ION_DATA_MODE=live` in production

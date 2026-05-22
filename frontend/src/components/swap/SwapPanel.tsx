@@ -182,17 +182,17 @@ export function SwapPanel({
   }
 
   return (
-    <NeonCard className={`min-h-[28rem] ${className}`} floating={false} variant={variant}>
-      <form className="grid gap-4" onSubmit={(event) => void submitSwap(event)}>
+    <NeonCard className={`${compact ? "min-h-[16rem]" : "min-h-[28rem]"} ${className}`} floating={false} variant={variant}>
+      <form className={compact ? "grid gap-2" : "grid gap-4"} onSubmit={(event) => void submitSwap(event)}>
         <div className="mb-1 flex items-center justify-between">
           <div>
-            <p className={compact ? "text-xl font-black" : "text-2xl font-black"}>Swap</p>
-            <p className="text-sm text-cyan-100/55">BNB / ION market buy and pair routes</p>
+            <p className={compact ? "text-lg font-black" : "text-2xl font-black"}>Swap</p>
+            {!compact ? <p className="text-sm text-cyan-100/55">BNB / ION market buy and pair routes</p> : null}
           </div>
           <ArrowDownUp className="text-cyan-200" />
         </div>
 
-        <DataSourceBadge meta={tickers.meta} testId={`${testIdPrefix}-quote-source`} />
+        {!compact ? <DataSourceBadge meta={tickers.meta} testId={`${testIdPrefix}-quote-source`} /> : null}
 
         <AsyncState
           emptyMessage="Market prices unavailable."
@@ -267,11 +267,12 @@ export function SwapPanel({
           />
         </label>
 
-        <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-          <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-            Slippage %
-          </span>
-          <input
+        {!compact ? (
+          <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
+              Slippage %
+            </span>
+            <input
             className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
             data-testid={tid("slippage")}
             inputMode="decimal"
@@ -283,6 +284,7 @@ export function SwapPanel({
             value={slippage}
           />
         </label>
+        ) : null}
 
         {validation.sameToken ? (
           <p
