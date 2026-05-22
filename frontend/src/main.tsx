@@ -5,8 +5,8 @@ import { App } from "./App";
 import { IonConnectUiProvider } from "@/components/wallet/IonConnectUiProvider";
 import { EvmWalletProvider } from "@/wallet/EvmWalletProvider";
 import { IonWalletProvider } from "@/wallet/IonWalletProvider";
-import "./styles/theme.css";
 import "./styles/global.css";
+import "./styles/theme.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
