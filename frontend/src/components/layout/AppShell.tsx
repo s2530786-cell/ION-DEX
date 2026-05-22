@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
-import { DevBuildRibbon } from "@/components/dev/DevBuildRibbon";
 import { NeonButton } from "@/components/ui/NeonButton";
 import ionLogo from "@/assets/ion-logo.jpg";
 import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
