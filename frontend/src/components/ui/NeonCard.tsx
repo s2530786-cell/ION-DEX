@@ -20,7 +20,7 @@ export function NeonCard({ children, className = "", variant = "mixed" }: NeonCa
   return (
     <section
       className={[
-        "neon-glass-card rounded-[1.75rem]",
+        "neon-glass-card neon-rim-hero rounded-[1.75rem]",
         "float-3d",
         variantGlow[variant],
         className,

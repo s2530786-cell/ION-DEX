@@ -1,0 +1,62 @@
+# 玻璃拟态与3D效果铁律 (Glass & 3D Mandate)
+
+**最后更新：** 2026-05-22
+**触发条件：** 任何修改 theme.css / global.css / NeonGlassCard / NeonCard 的操作
+
+## 铁律 1：玻璃背景透明度必须 ≤ 40%
+
+```css
+/* ✅ 正确：极光穿透可见 */
+background-color: rgba(3, 8, 22, 0.35);
+
+/* ❌ 错误：暗色遮挡极光，玻璃效果不可见 */
+background-color: rgba(6, 12, 32, 0.72);
+```
+
+**原因：** backdrop-filter 需要背景内容（极光粒子）穿透才能显示玻璃效果。
+超过 40% 不透明度 = 极光被挡 = blur 看不见 = 扁平卡片。
+
+## 铁律 2：禁止使用 background-blend-mode: overlay
+
+overlay 混合会进一步加深暗色玻璃，抵消透明度设置。
+移除所有 `.neon-glass-card__inner` 上的 `background-blend-mode`。
+
+## 铁律 3：3D 旋转角度必须 ≥ 12°
+
+```css
+/* ✅ 正确：肉眼可见的立体感 */
+.float-3d { transform: rotateX(15deg) rotateY(-18deg); }
+@keyframes ionFloat3d {
+  0%, 100% { transform: rotateX(15deg) rotateY(-18deg) translate3d(0, 0, 0); }
+  50% { transform: rotateX(8deg) rotateY(12deg) translate3d(0, -12px, 32px); }
+}
+
+/* ❌ 错误：角度太小 (6°)，暗色主题下完全看不出 */
+.float-3d { transform: rotateX(6deg) rotateY(-7deg); }
+```
+
+## 铁律 4：霓虹色号统一为 ION 品牌色
+
+所有 `neon-glass-card` 相关颜色必须使用：
+- Cyan: `#24f7ff`（不是 #00ffff）
+- Magenta: `#ff3bd4`（不是 #ff00ff）
+- Violet: `#8d4dff`
+- Gold: `#ffd166`
+
+## 铁律 5：blur 强度 ≥ 20px + saturate ≥ 1.2
+
+```css
+/* ✅ 正确 */
+backdrop-filter: blur(24px) saturate(1.3);
+
+/* ❌ 错误 */
+backdrop-filter: blur(18px); /* 太弱 + 无饱和度增强 */
+```
+
+## 验证步骤
+
+每次修改后必须验证：
+1. `agent-browser eval` 检查 `backdropFilter !== 'none'`
+2. `agent-browser eval` 检查 `backgroundColor 透明度 < 0.4`
+3. `agent-browser eval` 检查 `transform !== 'none'` 且包含 matrix3d
+4. 截图比对：极光粒子必须在卡片玻璃层可见

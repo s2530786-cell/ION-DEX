@@ -2,6 +2,8 @@ import type { PropsWithChildren } from "react";
 
 export type NeonGlassCardProps = PropsWithChildren<{
   className?: string;
+  /** Thicker cyan/magenta rim for hero panels (Swap, market stage). */
+  rim?: "default" | "hero";
   /** Optional stable hook for tests; no fabricated product data inside the card. */
   testId?: string;
 }>;
@@ -10,14 +12,20 @@ export type NeonGlassCardProps = PropsWithChildren<{
  * Cyberpunk liquid-glass surface: frosted inner panel + cyan→purple gradient rim (::before).
  * Presentational only — children must come from real page data / API boundaries.
  */
-export function NeonGlassCard({ children, className = "", testId }: NeonGlassCardProps) {
+export function NeonGlassCard({
+  children,
+  className = "",
+  rim = "default",
+  testId,
+}: NeonGlassCardProps) {
   return (
     <section
       className={[
         "neon-glass-card",
+        rim === "hero" ? "neon-rim-hero" : "",
         "float-3d",
-        "drop-shadow-[0_0_28px_rgba(0,255,255,0.28)]",
-        "drop-shadow-[0_0_40px_rgba(255,0,255,0.18)]",
+        "drop-shadow-[0_0_32px_rgba(36,247,255,0.35)]",
+        "drop-shadow-[0_0_48px_rgba(255,59,212,0.22)]",
         className,
       ]
         .filter(Boolean)

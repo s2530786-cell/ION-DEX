@@ -97,11 +97,11 @@ export function AuroraGalaxyBackground() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-[#03050f]"
     >
-      <canvas ref={canvasRef} className="absolute inset-0 opacity-95" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(37,99,255,0.22),transparent_32%),radial-gradient(circle_at_20%_85%,rgba(255,59,212,0.18),transparent_28%),linear-gradient(180deg,#03050f_0%,rgba(3,5,15,0.94)_52%,#03050f_100%)]" />
+      <canvas ref={canvasRef} className="absolute inset-0 opacity-100" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(37,99,255,0.34),transparent_36%),radial-gradient(circle_at_18%_82%,rgba(255,59,212,0.28),transparent_32%),radial-gradient(circle_at_82%_72%,rgba(141,77,255,0.22),transparent_38%),linear-gradient(180deg,#03050f_0%,rgba(3,5,15,0.82)_55%,#03050f_100%)]" />
       {backgroundMode === "aurora" ? <AuroraLayer /> : <GalaxyLayer />}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,5,15,0.04),rgba(3,5,15,0.52))]" />
-      <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle,rgba(255,255,255,0.85)_1px,transparent_1.2px)] [background-size:38px_38px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,5,15,0.02),rgba(3,5,15,0.28))]" />
+      <div className="absolute inset-0 opacity-[0.22] [background-image:radial-gradient(circle,rgba(255,255,255,0.85)_1px,transparent_1.2px)] [background-size:38px_38px]" />
     </div>
   );
 }
@@ -109,8 +109,8 @@ export function AuroraGalaxyBackground() {
 function AuroraLayer() {
   return (
     <>
-      <div className="absolute left-[-12%] top-[16%] h-[42rem] w-[92rem] rounded-[50%] bg-[linear-gradient(90deg,transparent,rgba(36,247,255,0.34),rgba(141,77,255,0.22),rgba(255,59,212,0.34),transparent)] blur-3xl [animation:ionAuroraFlow_18s_ease-in-out_infinite]" />
-      <div className="absolute right-[-22%] top-[-14%] h-[46rem] w-[70rem] rounded-[50%] bg-[radial-gradient(circle,rgba(36,247,255,0.32),rgba(141,77,255,0.18)_42%,transparent_70%)] blur-3xl" />
+      <div className="absolute left-[-12%] top-[16%] h-[42rem] w-[92rem] rounded-[50%] bg-[linear-gradient(90deg,transparent,rgba(36,247,255,0.48),rgba(141,77,255,0.32),rgba(255,59,212,0.44),transparent)] blur-3xl [animation:ionAuroraFlow_18s_ease-in-out_infinite]" />
+      <div className="absolute right-[-22%] top-[-14%] h-[46rem] w-[70rem] rounded-[50%] bg-[radial-gradient(circle,rgba(36,247,255,0.42),rgba(141,77,255,0.26)_42%,transparent_70%)] blur-3xl" />
     </>
   );
 }

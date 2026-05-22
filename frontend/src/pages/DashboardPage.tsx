@@ -134,7 +134,7 @@ function MarketStage({
           : "ready";
 
   return (
-    <NeonGlassCard className="min-h-[24rem]" testId="dashboard-market-stage">
+    <NeonGlassCard className="min-h-[24rem]" rim="hero" testId="dashboard-market-stage">
       <div className="flex h-full flex-col">
         <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div>

@@ -52,6 +52,8 @@ export function MarketChart({
       },
       rightPriceScale: { borderColor: "rgba(255,255,255,0.12)" },
       timeScale: { borderColor: "rgba(255,255,255,0.12)" },
+      autoSize: false,
+      width: host.clientWidth,
       height: 280,
     });
 
@@ -69,7 +71,10 @@ export function MarketChart({
       if (!entry) {
         return;
       }
-      chart.applyOptions({ width: entry.contentRect.width });
+      chart.applyOptions({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
     });
     resizeObserver.observe(host);
 

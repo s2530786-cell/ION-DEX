@@ -1,3 +1,8 @@
+import { ProxyAgent } from "undici";
+
+const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY || process.env.https_proxy || process.env.http_proxy;
+const proxyAgent = proxyUrl ? new ProxyAgent(proxyUrl) : undefined;
+
 export type FetchJsonOptions = {
   method?: "GET" | "POST";
   headers?: Record<string, string>;
@@ -27,6 +32,7 @@ export async function fetchJson<T>(url: string, options: FetchJsonOptions): Prom
       headers: options.headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
       signal: controller.signal,
+      ...(proxyAgent ? { dispatcher: proxyAgent } : {}),
     });
 
     if (!response.ok) {

@@ -37,7 +37,7 @@ export function PageHero({
     metricsMeta && metricsState === "ready" ? formatDataSourceLabel(metricsMeta) : null;
 
   return (
-    <NeonGlassCard testId={testId}>
+    <NeonGlassCard rim="hero" testId={testId}>
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex gap-4">
           <div className="float-3d grid h-20 w-20 shrink-0 place-items-center rounded-[1.6rem] border border-cyan-200/25 bg-[linear-gradient(135deg,rgba(0,255,255,0.22),rgba(255,0,255,0.28))] text-cyan-100 shadow-neonCyan">

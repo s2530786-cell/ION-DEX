@@ -57,7 +57,9 @@ export function IonCandleChart({
         vertLine: { color: "rgba(255, 59, 212, 0.45)" },
         horzLine: { color: "rgba(36, 247, 255, 0.45)" },
       },
-      autoSize: true,
+      autoSize: false,
+      width: host.clientWidth,
+      height: host.clientHeight,
     });
 
     const series = chart.addSeries(CandlestickSeries, {

@@ -1,5 +1,15 @@
 /// <reference types="vite/client" />
 
+interface ImportMetaEnv {
+  readonly VITE_ION_API_BASE_URL?: string;
+  readonly VITE_ION_BUILD_STAMP?: string;
+  readonly VITE_ION_DEV_PORT?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 type IonEip1193Provider = {
   request: (args: { method: string; params?: unknown[] | Record<string, unknown> }) => Promise<unknown>;
   send?: (method: string, params?: unknown[]) => Promise<unknown>;

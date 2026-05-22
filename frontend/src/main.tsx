@@ -7,6 +7,7 @@ import { EvmWalletProvider } from "@/wallet/EvmWalletProvider";
 import { IonWalletProvider } from "@/wallet/IonWalletProvider";
 import "./styles/global.css";
 import "./styles/theme.css";
+import "./styles/cyber-animations.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
