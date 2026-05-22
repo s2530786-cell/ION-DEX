@@ -39,7 +39,8 @@ import {
   OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX,
 } from "@/lib/officialStakingSemantics";
 import { useApiResource, type ApiLoadState } from "@/hooks/useApiResource";
-import { useMarketCandles, useMarketOrderBook, useSwapMarketStats } from "@/hooks/useMarketSurface";
+import { OrderBookPanel } from "@/components/market/OrderBookPanel";
+import { useMarketCandles, useSwapMarketStats } from "@/hooks/useMarketSurface";
 import { formatUsdCompact } from "@/lib/poolDeskData";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import {
@@ -1309,39 +1310,14 @@ function TradeDeskPage() {
           <GlassPanel eyebrow="Order entry" flowBorder testId="trade-limit-order" title="Limit order">
             <TradeOrderPanel />
           </GlassPanel>
-          <OrderBookPanel />
+          <OrderBookPanel
+            listTestId="trade-orderbook"
+            provenanceTestId="trade-orderbook-provenance"
+            testId="trade-orderbook-panel"
+          />
         </div>
       </div>
     </div>
-  );
-}
-
-function OrderBookPanel() {
-  const { book, loadState, provenanceLabel } = useMarketOrderBook("BNB/ION");
-
-  return (
-    <GlassPanel eyebrow="Depth" testId="trade-orderbook-panel" title="Order book">
-      {loadState === "loading" ? <p className="text-xs text-cyan-100/55">Loading order book…</p> : null}
-      {loadState === "error" ? <p className="text-xs text-rose-200">Order book unavailable</p> : null}
-      <div className="grid gap-2" data-testid="trade-orderbook">
-        {loadState === "ready" && book
-          ? book.levels.map((row) => (
-              <div key={`${row.side}-${row.price}`} className="relative overflow-hidden rounded-2xl bg-white/[0.04] px-4 py-3">
-                <span
-                  className={`absolute inset-y-0 right-0 ${row.side === "ask" ? "bg-rose-300/[0.08]" : "bg-emerald-300/[0.08]"}`}
-                  style={{ width: row.depth }}
-                />
-                <span className="relative grid grid-cols-3 gap-2 text-sm">
-                  <strong className={row.side === "ask" ? "text-rose-200" : "text-emerald-200"}>{row.price}</strong>
-                  <span className="text-cyan-100/70">{row.amount}</span>
-                  <span className="text-right text-cyan-100/45">{row.depth}</span>
-                </span>
-              </div>
-            ))
-          : null}
-      </div>
-      {provenanceLabel ? <DataProvenanceBadge className="mt-2" label={provenanceLabel} testId="trade-orderbook-provenance" /> : null}
-    </GlassPanel>
   );
 }
 

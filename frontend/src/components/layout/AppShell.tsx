@@ -136,6 +136,10 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
           data-testid="app-sidebar"
         >
           <SidebarBrand />
+          <SidebarWalletChip
+            label={walletButtonLabel}
+            onOpen={() => setWalletPanelOpen(true)}
+          />
           <NavList activePage={activePage} className="mt-6" onSelect={selectPage} />
         </aside>
 
@@ -191,13 +195,12 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               >
                 <Menu size={18} />
               </button>
-              <div className="hidden items-center gap-3 lg:flex">
+              <div className="hidden shrink-0 items-center gap-3 lg:flex">
                 <img
                   src={ionLogo}
                   alt="ION DEX"
                   className="h-8 w-8 rounded-xl object-cover shadow-[0_0_12px_rgba(36,247,255,0.3)]"
                 />
-                <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/55">Navigation</p>
                 <p className="text-sm font-bold text-white">
                   {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
                 </p>
@@ -219,7 +222,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 
             <nav
               aria-label="Primary"
-              className="glass-hud-strip hidden min-w-0 flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full border border-cyan-200/15 p-1 md:flex lg:hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+              className="glass-hud-strip hidden min-w-0 flex-1 flex-nowrap items-center justify-center gap-1 overflow-x-auto whitespace-nowrap rounded-full border border-cyan-200/15 p-1 md:flex [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
               {navItems.map((item) => (
                 <button
@@ -296,6 +299,25 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
         </div>
       </div>
     </div>
+  );
+}
+
+function SidebarWalletChip({ label, onOpen }: { label: string; onOpen: () => void }) {
+  const connected = label !== "Wallet Connect";
+  return (
+    <button
+      className={`mt-4 flex w-full items-center gap-2 rounded-2xl border px-3 py-2.5 text-left text-sm font-bold transition ${
+        connected
+          ? "border-emerald-300/25 bg-emerald-300/[0.08] text-emerald-100"
+          : "border-cyan-200/20 bg-cyan-300/[0.06] text-cyan-100 hover:border-cyan-200/35"
+      }`}
+      data-testid="sidebar-wallet-chip"
+      onClick={onOpen}
+      type="button"
+    >
+      <Wallet size={16} />
+      <span className="min-w-0 truncate">{connected ? label : "Online+ · Connect"}</span>
+    </button>
   );
 }
 

@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import { MarketChart } from "@/components/charts/MarketChart";
+import { OrderBookPanel } from "@/components/market/OrderBookPanel";
+import { SwapPanel } from "@/components/swap/SwapPanel";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
@@ -93,12 +95,24 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
   }, [staking.data.lpStakedUsd, staking.state]);
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[1fr_18rem]" data-testid="page-dashboard">
-      <MarketStage market={market} onNavigate={onNavigate} />
-      <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
-      <div className="xl:col-span-2">
-        <FeatureGrid onNavigate={onNavigate} />
+    <div className="grid gap-5" data-testid="page-dashboard">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="min-w-0" data-testid="dashboard-swap-stage">
+          <SwapPanel compact testIdPrefix="dashboard-swap" variant="cyan" />
+        </div>
+        <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
       </div>
+
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <MarketStage market={market} onNavigate={onNavigate} />
+        <OrderBookPanel
+          listTestId="dashboard-orderbook"
+          provenanceTestId="dashboard-orderbook-provenance"
+          testId="dashboard-orderbook-panel"
+        />
+      </div>
+
+      <FeatureGrid onNavigate={onNavigate} />
     </div>
   );
 }
@@ -120,26 +134,26 @@ function MarketStage({
           : "ready";
 
   return (
-    <NeonGlassCard className="min-h-[28rem]" testId="dashboard-market-stage">
+    <NeonGlassCard className="min-h-[24rem]" testId="dashboard-market-stage">
       <div className="flex h-full flex-col">
         <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
               Professional Trading Surface
             </p>
-            <h1 className="mt-2 text-3xl font-black text-white sm:text-5xl">
-              swap.ion <span className="text-glow-magenta text-fuchsia-300">Galaxy</span>
-            </h1>
+            <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+              Market <span className="text-glow-magenta text-fuchsia-300">BNB / ION</span>
+            </h2>
           </div>
           <div className="flex flex-col items-end gap-2">
             <Sparkles className="text-cyan-200" />
             <NeonButton
               className="px-4 py-2 text-xs"
-              data-testid="dashboard-open-swap"
-              onClick={() => onNavigate("swap")}
+              data-testid="dashboard-open-trade"
+              onClick={() => onNavigate("trade")}
               type="button"
             >
-              Open Swap
+              Open Trade
             </NeonButton>
           </div>
         </div>
