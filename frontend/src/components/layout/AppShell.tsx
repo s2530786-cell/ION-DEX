@@ -3,6 +3,7 @@ import {
   Bell,
   CheckCircle2,
   Globe2,
+  Home,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -237,8 +238,18 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
             <div className="relative flex items-center gap-2">
               <button
                 type="button"
-                className="hidden rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 sm:block"
+                className="rounded-full border border-cyan-200/20 bg-white/[0.06] p-2 text-cyan-100/80 hover:bg-white/[0.12] hover:text-white transition"
+                aria-label="Back to dashboard"
+                onClick={() => selectPage("dashboard")}
+                data-testid="nav-home"
+              >
+                <Home size={18} />
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 hover:bg-white/[0.08] hover:text-white transition"
                 aria-label="Language"
+                onClick={() => {/* TODO: lang modal */}}
               >
                 <Globe2 size={18} />
               </button>
