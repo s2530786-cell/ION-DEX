@@ -126,10 +126,15 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
   }
 
   return (
-    <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
+    <div className="relative min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
       {/* <DevBuildRibbon /> */}
       <IonConnectModalBridge />
-      <AuroraGalaxyBackground />
+      <img
+        src={ionLogo}
+        alt="ION DEX"
+        className="pointer-events-none absolute left-14 top-7 z-30 h-10 w-10 rotate-[1deg] rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)] lg:hidden"
+        data-testid="mobile-brand-logo"
+      />
       <div className="glass-shell-frame mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] lg:flex">
         <aside
           aria-label="Sidebar"
@@ -199,12 +204,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               <p className="hidden text-sm font-bold text-white lg:block">
                 {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
               </p>
-              <div className="flex items-center gap-3 lg:hidden">
-                <img
-                  src={ionLogo}
-                  alt="ION DEX"
-                  className="h-10 w-10 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)]"
-                />
+              <div className="flex items-center gap-3 pl-12 lg:hidden">
                 <div>
                   <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
                     ION DEX
@@ -292,6 +292,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
           </main>
         </div>
       </div>
+      <AuroraGalaxyBackground />
     </div>
   );
 }
