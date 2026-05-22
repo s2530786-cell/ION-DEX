@@ -52,7 +52,8 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 ## Current State
 
 - **100-pass GREEN（2026-05-20）**：`bash scripts/verify-100.sh 100` → PASSED=100、FAILED=0、RESULT=GREEN。摘要 `/tmp/ion-verify-100-summary-20260521-144652.txt`。
-- **Dashboard ref 布局（2026-05-20）**：首行内嵌 `SwapPanel`+统计卡、次行 Market+盘口、底栏功能格；桌面顶栏 pill 常驻；侧栏 `sidebar-wallet-chip`。提交 `962f971`。`ui-round-verify` 16/16 绿；视觉仍≠ ref 像素级。
+- **Dashboard 图表崩溃修复（2026-05-22）**：`removeChild` 根因为 `MarketChart` DOM 冲突；`bf1408b` 修复 + Dashboard 改 `IonCandleChart`。`ui-round-verify` 16/16；preview 首页 smoke 通过。用户本机需 `git pull` 至 `bf1408b` 并重启 dev。
+- **Dashboard ref 布局（2026-05-20）**：首行内嵌 `SwapPanel`+统计卡、次行 Market+盘口、底栏功能格；桌面顶栏 pill 常驻；侧栏 `sidebar-wallet-chip`。提交 `962f971`。视觉仍≠ ref 像素级。
 - **UI 轮次 B/C（2026-05-20）**：NeonCard 玻璃统一、壳层透光、Swap 中央 logo、UI 截图对比脚本。提交 `22fce76`。视觉仍≠参考图一模一样。
 - **P1 玻璃 HUD（2026-05-20）**：`glass-hud-panel`/`glass-hud-strip`；AppShell/ProfileHub/Dashboard FeatureGrid 玻璃化。计划 `docs/ui-development-plan-2026-05-20.md`；自检 `docs/ui-deliverable-self-audit-2026-05-20-p1-glass.md`（视觉未过、工程绿灯）。UI 验证：`bash scripts/ui-round-verify.sh` 或 `--tier ui`。Playwright **16 passed**。
 - **Bridge 链上 + Domain（2026-05-20）**：`BridgeTransferPanel` 组件嵌入 Desk（vault/wrapper + 离线 staging）；`/api/domain/showcase`。`verify-full` 绿灯。
