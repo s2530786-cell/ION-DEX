@@ -13,7 +13,9 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
+import { ProfileHub } from "@/components/layout/ProfileHub";
 import { NeonButton } from "@/components/ui/NeonButton";
+import type { LiveWalletConnection } from "@/lib/wallet";
 import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
@@ -71,7 +73,12 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
   const ionWallet = useIonWallet();
   const [walletPanelOpen, setWalletPanelOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [locale, setLocale] = useState<"zh" | "en">("zh");
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [connectedProvider, setConnectedProvider] = useState<WalletProviderKey | null>(null);
+  const [liveConnection, setLiveConnection] = useState<LiveWalletConnection | null>(null);
+  const [selectedAvatarId, setSelectedAvatarId] = useState("neon");
+  const [privacyMode, setPrivacyMode] = useState(false);
   const selectedProvider = useMemo(
     () => walletProviders.find((provider) => provider.key === connectedProvider) ?? null,
     [connectedProvider],
@@ -123,6 +130,28 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
   function selectPage(page: PageKey) {
     onPageChange(page);
     setMobileNavOpen(false);
+  }
+
+  function handleProfileConnect(providerKey: string, live: LiveWalletConnection | null) {
+    const key = providerKey as WalletProviderKey;
+    setConnectedProvider(key);
+    setLiveConnection(live);
+    if (EVM_WALLET_KINDS.includes(key as EvmWalletKind)) {
+      if (evmWallet.status !== "connected") {
+        void evmWallet.connectWallet(key as EvmWalletKind);
+      }
+      return;
+    }
+    if (ION_PROVIDER_KEYS.includes(key as IonWalletKind)) {
+      void ionWallet.connect(key as IonWalletKind);
+    }
+  }
+
+  function handleProfileDisconnect() {
+    setConnectedProvider(null);
+    setLiveConnection(null);
+    evmWallet.disconnect();
+    ionWallet.disconnect();
   }
 
   return (
@@ -245,14 +274,45 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               >
                 <Home size={18} />
               </button>
-              <button
-                type="button"
-                className="rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 hover:bg-white/[0.08] hover:text-white transition"
-                aria-label="Language"
-                onClick={() => {/* TODO: lang modal */}}
-              >
-                <Globe2 size={18} />
-              </button>
+              <div className="relative">
+                <button
+                  type="button"
+                  className="rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 transition hover:bg-white/[0.08] hover:text-white"
+                  aria-expanded={langMenuOpen}
+                  aria-label="Language"
+                  data-testid="lang-toggle"
+                  onClick={() => setLangMenuOpen((open) => !open)}
+                >
+                  <Globe2 size={18} />
+                </button>
+                {langMenuOpen ? (
+                  <div
+                    className="glass-hud-panel absolute right-0 top-[calc(100%+0.5rem)] z-30 min-w-[8rem] rounded-2xl border border-cyan-200/20 p-1 shadow-[0_0_24px_rgba(141,77,255,0.25)]"
+                    data-testid="lang-menu"
+                    role="menu"
+                  >
+                    {(["zh", "en"] as const).map((code) => (
+                      <button
+                        key={code}
+                        type="button"
+                        role="menuitem"
+                        className={`w-full rounded-xl px-3 py-2 text-left text-xs font-black uppercase tracking-wide transition ${
+                          locale === code
+                            ? "bg-cyan-300/[0.14] text-white"
+                            : "text-cyan-100/70 hover:bg-white/[0.06] hover:text-white"
+                        }`}
+                        data-testid={`lang-option-${code}`}
+                        onClick={() => {
+                          setLocale(code);
+                          setLangMenuOpen(false);
+                        }}
+                      >
+                        {code === "zh" ? "中文" : "English"}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
               <button
                 type="button"
                 className="hidden rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 sm:block"
@@ -269,9 +329,16 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               </button>
               <NeonButton
                 aria-expanded={walletPanelOpen}
-                className="flex items-center gap-2 px-4 py-2"
+                className={`flex items-center gap-2 px-4 py-2 ${
+                  walletButtonLabel !== "Wallet Connect"
+                    ? "shadow-[0_0_28px_rgba(255,59,212,0.35),0_0_18px_rgba(141,77,255,0.28)] ring-1 ring-fuchsia-300/35"
+                    : ""
+                }`}
                 data-testid="wallet-connect"
-                onClick={() => setWalletPanelOpen((open) => !open)}
+                onClick={() => {
+                  setLangMenuOpen(false);
+                  setWalletPanelOpen((open) => !open);
+                }}
                 type="button"
               >
                 <Wallet size={16} />
@@ -279,23 +346,23 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               </NeonButton>
 
               {walletPanelOpen ? (
-                <WalletConnectPanel
-                  connectedProvider={selectedProvider}
-                  evmWallet={evmWallet}
-                  ionWallet={ionWallet}
-                  ionSessionActive={ionSessionActive}
-                  onConnect={(provider) => setConnectedProvider(provider)}
-                  onDisconnect={() => {
-                    setConnectedProvider(null);
-                    evmWallet.disconnect();
-                    ionWallet.disconnect();
-                  }}
+                <ProfileHub
+                  connectedProviderKey={connectedProvider}
+                  liveConnection={liveConnection}
+                  onAvatarChange={setSelectedAvatarId}
+                  onClose={() => setWalletPanelOpen(false)}
+                  onConnect={handleProfileConnect}
+                  onDisconnect={handleProfileDisconnect}
+                  onPrivacyModeChange={setPrivacyMode}
+                  open={walletPanelOpen}
+                  privacyMode={privacyMode}
+                  selectedAvatarId={selectedAvatarId}
                 />
               ) : null}
             </div>
           </header>
 
-          <TickerStrip />
+          <TickerStrip privacyMode={privacyMode} />
 
           <main className="flex-1 p-4 sm:p-6" data-testid="main-content">
             {children}
@@ -589,8 +656,7 @@ function WalletConnectPanel({
   );
 }
 
-function TickerStrip() {
-  const [privacyMode, setPrivacyMode] = useState(false);
+function TickerStrip({ privacyMode }: { privacyMode: boolean }) {
   const [tickers, setTickers] = useState<MarketTicker[]>(fallbackTickers);
   const [sourceLabel, setSourceLabel] = useState("offline fallback");
 

@@ -1,5 +1,6 @@
 import { ArrowDownUp } from "lucide-react";
 import { useCallback, useMemo, useState, type FormEvent } from "react";
+import { IonDexBrandEmblem } from "@/components/brand/IonDexBrandEmblem";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -224,7 +225,7 @@ export function SwapPanel({
           testId={tid("from-token")}
         />
 
-        {/* Brand emblem removed per Master — too large on mobile */}
+        <IonDexBrandEmblem compact={compact} showWordmark={!compact} testId={tid("ion-center")} />
 
         <div className="ion-swap-flip-row">
           <button

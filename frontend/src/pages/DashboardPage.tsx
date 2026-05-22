@@ -7,7 +7,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { IonCandleChart } from "@/components/charts/IonCandleChart";
 import { OrderBookPanel } from "@/components/market/OrderBookPanel";
 import { SwapPanel } from "@/components/swap/SwapPanel";
@@ -36,6 +36,15 @@ type FeatureCard = {
   color: "cyan" | "magenta" | "gold";
 };
 
+type DashboardMobileTab = "swap" | "market" | "stats" | "book";
+
+const mobileTabs: Array<{ id: DashboardMobileTab; label: string }> = [
+  { id: "swap", label: "Swap" },
+  { id: "market", label: "Market" },
+  { id: "stats", label: "Stats" },
+  { id: "book", label: "Book" },
+];
+
 const featureCards: FeatureCard[] = [
   { title: "Pool", label: "Liquidity", target: "pool", icon: Layers3, color: "cyan" },
   { title: "Grid", label: "Spot strategies", target: "grid", icon: LayoutGrid, color: "magenta" },
@@ -63,6 +72,7 @@ const emptyStaking: StakingSummary = {
 };
 
 export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
+  const [mobileTab, setMobileTab] = useState<DashboardMobileTab>("swap");
   const market = useDashboardMarket();
 
   const fetchBurn = useCallback((signal: AbortSignal) => fetchBurnSummary(signal), []);
@@ -96,23 +106,85 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
 
   return (
     <div className="grid gap-5" data-testid="page-dashboard">
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="min-w-0" data-testid="dashboard-swap-stage">
-          <SwapPanel compact testIdPrefix="dashboard-swap" variant="cyan" />
+      <DashboardMobileTabBar active={mobileTab} onChange={setMobileTab} />
+
+      <div className="hidden gap-5 xl:grid">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_18rem]">
+          <div className="min-w-0" data-testid="dashboard-swap-stage">
+            <SwapPanel compact testIdPrefix="dashboard-swap" variant="cyan" />
+          </div>
+          <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
         </div>
-        <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
+
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <MarketStage market={market} onNavigate={onNavigate} />
+          <OrderBookPanel
+            listTestId="dashboard-orderbook"
+            provenanceTestId="dashboard-orderbook-provenance"
+            testId="dashboard-orderbook-panel"
+          />
+        </div>
+
+        <FeatureGrid onNavigate={onNavigate} />
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <MarketStage market={market} onNavigate={onNavigate} />
-        <OrderBookPanel
-          listTestId="dashboard-orderbook"
-          provenanceTestId="dashboard-orderbook-provenance"
-          testId="dashboard-orderbook-panel"
-        />
+      <div className="grid gap-5 xl:hidden" data-testid="dashboard-mobile-panels">
+        {mobileTab === "swap" ? (
+          <div data-testid="dashboard-swap-stage-mobile">
+            <SwapPanel compact testIdPrefix="dashboard-swap" variant="cyan" />
+          </div>
+        ) : null}
+        {mobileTab === "stats" ? (
+          <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
+        ) : null}
+        {mobileTab === "market" ? <MarketStage market={market} onNavigate={onNavigate} /> : null}
+        {mobileTab === "book" ? (
+          <OrderBookPanel
+            listTestId="dashboard-orderbook"
+            provenanceTestId="dashboard-orderbook-provenance"
+            testId="dashboard-orderbook-panel"
+          />
+        ) : null}
+        {mobileTab !== "swap" ? (
+          <div className="xl:hidden">
+            <FeatureGrid onNavigate={onNavigate} />
+          </div>
+        ) : null}
       </div>
+    </div>
+  );
+}
 
-      <FeatureGrid onNavigate={onNavigate} />
+function DashboardMobileTabBar({
+  active,
+  onChange,
+}: {
+  active: DashboardMobileTab;
+  onChange: (tab: DashboardMobileTab) => void;
+}) {
+  return (
+    <div
+      className="glass-hud-strip flex gap-1 overflow-x-auto rounded-2xl border border-cyan-200/15 p-1 xl:hidden [&::-webkit-scrollbar]:hidden"
+      data-testid="dashboard-mobile-tabs"
+      role="tablist"
+    >
+      {mobileTabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          role="tab"
+          aria-selected={active === tab.id}
+          className={`shrink-0 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wide transition ${
+            active === tab.id
+              ? "bg-gradient-to-r from-cyan-400/25 to-fuchsia-500/20 text-white shadow-[0_0_16px_rgba(255,59,212,0.25)] ring-1 ring-fuchsia-300/30"
+              : "text-cyan-100/65 hover:bg-white/[0.06] hover:text-white"
+          }`}
+          data-testid={`dashboard-tab-${tab.id}`}
+          onClick={() => onChange(tab.id)}
+        >
+          {tab.label}
+        </button>
+      ))}
     </div>
   );
 }
@@ -236,9 +308,6 @@ function RightStats({
           <p className="mt-1 text-3xl font-black" data-testid="dashboard-tvl-value">
             {tvlLabel}
           </p>
-          <p className="mt-1 text-xs text-emerald-300">
-            LP mining APR {staking.data.apr.lpMiningPct}%
-          </p>
         </AsyncState>
       </NeonGlassCard>
 
@@ -250,29 +319,25 @@ function RightStats({
           state={staking.state}
           testId="dashboard-apr"
         >
-          <p className="text-sm text-cyan-100/55">APR</p>
-          <p className="mt-1 text-3xl font-black" data-testid="dashboard-apr-value">
-            {staking.data.apr.lpMiningPct}%
+          <p className="text-sm text-cyan-100/55">Staking APR</p>
+          <p className="mt-1 text-3xl font-black text-fuchsia-200" data-testid="dashboard-apr-value">
+            {staking.state === "ready" && staking.data.apr.officialPct != null
+              ? `${staking.data.apr.officialPct}%`
+              : "—"}
           </p>
-          <p className="mt-1 text-xs text-cyan-200">Staking rewards — LP mining + fee sharing</p>
         </AsyncState>
       </NeonGlassCard>
 
       <NeonGlassCard testId="dashboard-stat-burn">
         <DataSourceBadge meta={burn.meta} testId="dashboard-burn-source" />
-        <AsyncState
-          error={burn.error}
-          onRetry={burn.reload}
-          state={burn.state}
-          testId="dashboard-burn"
-        >
-          <p className="text-sm text-cyan-100/55">Burn</p>
-          <p className="mt-1 text-3xl font-black" data-testid="dashboard-burn-value">
-            {formatIonAmount(burn.data.totalBurnedIon)}
+        <AsyncState error={burn.error} onRetry={burn.reload} state={burn.state} testId="dashboard-burn">
+          <p className="text-sm text-cyan-100/55">Total burned</p>
+          <p className="mt-1 text-2xl font-black text-rose-200" data-testid="dashboard-burn-value">
+            {burn.state === "ready" ? `${formatIonAmount(burn.data.totalBurnedIon)} ION` : "—"}
           </p>
-          <div className="mt-4 h-2 rounded-full bg-white/10">
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
             <div
-              className="h-2 rounded-full bg-[linear-gradient(90deg,#00ffff,#ff00ff,#ffd166)]"
+              className="h-full rounded-full bg-gradient-to-r from-rose-400 to-fuchsia-500"
               style={{ width: `${burnProgress}%` }}
             />
           </div>
@@ -284,42 +349,25 @@ function RightStats({
 
 function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="dashboard-feature-grid">
       {featureCards.map((card) => {
         const Icon = card.icon;
         return (
           <button
-            className="text-left"
-            data-testid={`dashboard-feature-${card.target}`}
-            key={card.title}
-            onClick={() => onNavigate(card.target)}
+            key={card.target}
             type="button"
+            className="text-left transition hover:scale-[1.01]"
+            data-testid={`dashboard-feature-${card.target}`}
+            onClick={() => onNavigate(card.target)}
           >
-            <NeonGlassCard
-              className={`min-h-[11rem] transition hover:scale-[1.01] ${
-                card.color === "magenta"
-                  ? "drop-shadow-[0_0_32px_rgba(255,59,212,0.22)]"
-                  : card.color === "gold"
-                    ? "drop-shadow-[0_0_28px_rgba(255,209,102,0.2)]"
-                    : ""
-              }`}
-              testId={`dashboard-feature-card-${card.target}`}
-            >
-              <div className="flex h-full flex-col justify-between">
-                <div
-                  className={`grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.07] shadow-neonCyan ${
-                    card.color === "magenta"
-                      ? "text-fuchsia-200"
-                      : card.color === "gold"
-                        ? "text-amber-200"
-                        : "text-cyan-200"
-                  }`}
-                >
-                  <Icon size={28} />
+            <NeonGlassCard className="h-full">
+              <div className="flex items-start gap-3">
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-cyan-200/20 bg-cyan-300/[0.08] text-cyan-200 shadow-[0_0_18px_rgba(36,247,255,0.22)]">
+                  <Icon size={22} />
                 </div>
                 <div>
-                  <p className="text-2xl font-black">{card.title}</p>
-                  <p className="text-sm text-cyan-100/55">{card.label}</p>
+                  <p className="text-lg font-black text-white">{card.title}</p>
+                  <p className="mt-1 text-sm text-cyan-100/55">{card.label}</p>
                 </div>
               </div>
             </NeonGlassCard>

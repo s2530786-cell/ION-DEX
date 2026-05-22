@@ -26,6 +26,49 @@ import {
   type WalletProviderKey,
 } from "@/lib/wallet";
 
+const PROFILE_HUB_WALLET_FALLBACK: ProfileSession["wallets"]["entries"] = [
+  {
+    key: "ion-browser",
+    name: "ION Browser Wallet",
+    category: "ion-native",
+    status: "ready",
+    detector: "window.tonwallet.tonconnect",
+    label: "Official ION extension",
+  },
+  {
+    key: "online",
+    name: "Online+ Wallet",
+    category: "ion-native",
+    status: "ready",
+    detector: "wallet.ice.io",
+    label: "Official hosted wallet",
+  },
+  {
+    key: "walletconnect",
+    name: "WalletConnect",
+    category: "ion-native",
+    status: "ready",
+    detector: "TonConnect",
+    label: "Mobile / remote signing",
+  },
+  {
+    key: "metamask",
+    name: "MetaMask",
+    category: "evm",
+    status: "ready",
+    detector: "window.ethereum",
+    label: "EVM extension",
+  },
+  {
+    key: "injected",
+    name: "Injected",
+    category: "evm",
+    status: "ready",
+    detector: "window.ethereum",
+    label: "Browser injected EVM",
+  },
+];
+
 type ProfileHubProps = {
   open: boolean;
   connectedProviderKey: string | null;
@@ -114,13 +157,20 @@ export function ProfileHub({
     [session, selectedAvatarId],
   );
 
+  const walletEntries = session?.wallets.entries ?? PROFILE_HUB_WALLET_FALLBACK;
+
   const ionWallets = useMemo(
-    () => session?.wallets.entries.filter((wallet) => wallet.category === "ion-native") ?? [],
-    [session],
+    () => walletEntries.filter((wallet) => wallet.category === "ion-native"),
+    [walletEntries],
   );
   const evmWallets = useMemo(
-    () => session?.wallets.entries.filter((wallet) => wallet.category === "evm") ?? [],
-    [session],
+    () => walletEntries.filter((wallet) => wallet.category === "evm"),
+    [walletEntries],
+  );
+
+  const connectedWalletName = useMemo(
+    () => walletEntries.find((wallet) => wallet.key === connectedProviderKey)?.name ?? null,
+    [connectedProviderKey, walletEntries],
   );
 
   const handleWalletConnect = useCallback(
@@ -189,64 +239,116 @@ export function ProfileHub({
   }
 
   return (
-    <NeonGlassCard
-      className="absolute right-0 top-[calc(100%+0.75rem)] z-30 max-h-[min(80vh,44rem)] w-[min(26rem,calc(100vw-2rem))] overflow-hidden shadow-[0_0_48px_rgba(36,247,255,0.32)]"
-      testId="profile-hub"
+    <div
+      className="absolute right-0 top-[calc(100%+0.75rem)] z-30 max-h-[min(80vh,44rem)] w-[min(26rem,calc(100vw-2rem))]"
+      data-testid="wallet-panel"
     >
-      <div className="max-h-[min(80vh,44rem)] overflow-y-auto">
-      <span className="sr-only" data-testid="profile-hub-source">
-        Profile source: {sourceLabel || "pending"}
-      </span>
+      <NeonGlassCard
+        className="max-h-[min(80vh,44rem)] overflow-hidden shadow-[0_0_48px_rgba(36,247,255,0.32)]"
+        testId="profile-hub"
+      >
+        <div className="max-h-[min(80vh,44rem)] overflow-y-auto">
+          <span className="sr-only" data-testid="profile-hub-source">
+            Profile source: {sourceLabel || "pending"}
+          </span>
 
-      {loadState === "loading" ? (
-        <p className="py-8 text-center text-sm text-cyan-100/70" data-testid="profile-hub-loading">
-          Loading profile hub…
-        </p>
-      ) : null}
-
-      {loadState === "error" ? (
-        <p className="py-8 text-center text-sm text-rose-200" data-testid="profile-hub-error">
-          Profile hub unavailable. Check API gateway.
-        </p>
-      ) : null}
-
-      {session && loadState === "ready" ? (
-        <div className="grid gap-4" data-testid="profile-menu">
-          <header className="flex items-start gap-3">
-            <div
-              className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-cyan-200/30 shadow-neonCyan"
-              data-testid="profile-hub-avatar"
-              style={{ background: selectedAvatar?.preview ?? session.avatar.options[0]?.preview }}
-            >
-              <UserRound className="text-white/90" size={28} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-100/50">Profile Hub</p>
-              <p className="mt-1 truncate text-lg font-black text-white" data-testid="profile-display-name">
-                {session.identity.displayName}
-              </p>
-              <p className="mt-1 text-sm text-cyan-200" data-testid="profile-ion-name">
-                {session.identity.primaryIonName}
-              </p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span
-                  className="inline-flex items-center gap-1 rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-2 py-1 text-[10px] font-black uppercase tracking-wide text-emerald-100"
-                  data-testid="profile-ion-id"
-                >
-                  <ShieldCheck size={12} />
-                  {session.identity.ionIdStatus === "verified" ? "ION ID verified" : session.identity.ionIdStatus}
-                </span>
-                <span
-                  className="inline-flex items-center gap-1 rounded-full border border-violet-300/25 bg-violet-300/[0.08] px-2 py-1 text-[10px] font-black uppercase tracking-wide text-violet-100"
-                  data-testid="profile-kyc-pass"
-                >
-                  <BadgeCheck size={12} />
-                  {session.identity.kycPass.badge} {session.identity.kycPass.level}
-                </span>
+          <div className="grid gap-4" data-testid="profile-menu">
+            <header className="flex items-start gap-3">
+              <div
+                className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-cyan-200/30 shadow-neonCyan"
+                data-testid="profile-hub-avatar"
+                style={{
+                  background:
+                    selectedAvatar?.preview ?? session?.avatar.options[0]?.preview ?? "#1a2a4a",
+                }}
+              >
+                <UserRound className="text-white/90" size={28} />
               </div>
-            </div>
-          </header>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-100/50">
+                  Profile Hub
+                </p>
+                <p className="mt-1 truncate text-lg font-black text-white" data-testid="profile-display-name">
+                  {session?.identity.displayName ?? "ION DEX Trader"}
+                </p>
+                <p className="mt-1 text-sm text-cyan-200" data-testid="profile-ion-name">
+                  {session?.identity.primaryIonName ?? "trader.ion"}
+                </p>
+                {session && loadState === "ready" ? (
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <span
+                      className="inline-flex items-center gap-1 rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-2 py-1 text-[10px] font-black uppercase tracking-wide text-emerald-100"
+                      data-testid="profile-ion-id"
+                    >
+                      <ShieldCheck size={12} />
+                      {session.identity.ionIdStatus === "verified"
+                        ? "ION ID verified"
+                        : session.identity.ionIdStatus}
+                    </span>
+                    <span
+                      className="inline-flex items-center gap-1 rounded-full border border-violet-300/25 bg-violet-300/[0.08] px-2 py-1 text-[10px] font-black uppercase tracking-wide text-violet-100"
+                      data-testid="profile-kyc-pass"
+                    >
+                      <BadgeCheck size={12} />
+                      {session.identity.kycPass.badge} {session.identity.kycPass.level}
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            </header>
 
+            {connectedProviderKey && connectedWalletName ? (
+              <p
+                className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] px-3 py-2 text-sm font-black text-emerald-100"
+                data-testid="wallet-confirmation"
+              >
+                {connectedWalletName} connected
+                {liveConnection?.networkLabel ? ` · ${liveConnection.networkLabel}` : ""}
+              </p>
+            ) : null}
+
+            {connectError ? (
+              <p className="rounded-2xl border border-rose-300/25 bg-rose-300/[0.08] px-3 py-2 text-xs text-rose-100">
+                {connectError}
+              </p>
+            ) : null}
+
+            <section data-testid="profile-wallets">
+              <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-cyan-100/45">
+                Wallets
+              </p>
+              <WalletGroup
+                connectedKey={connectedProviderKey}
+                connectingKey={connectingKey}
+                detection={detection}
+                label="ION native"
+                onConnect={handleWalletConnect}
+                wallets={ionWallets}
+              />
+              <WalletGroup
+                connectedKey={connectedProviderKey}
+                connectingKey={connectingKey}
+                detection={detection}
+                label="EVM detectors"
+                onConnect={handleWalletConnect}
+                wallets={evmWallets}
+              />
+            </section>
+
+            {loadState === "loading" ? (
+              <p className="text-center text-sm text-cyan-100/70" data-testid="profile-hub-loading">
+                Loading profile hub…
+              </p>
+            ) : null}
+
+            {loadState === "error" ? (
+              <p className="text-center text-sm text-rose-200" data-testid="profile-hub-error">
+                Profile hub unavailable. Check API gateway.
+              </p>
+            ) : null}
+
+            {session && loadState === "ready" ? (
+              <div className="grid gap-4">
           <section
             className="rounded-2xl border border-cyan-200/20 bg-cyan-300/[0.06] p-3"
             data-testid="wallet-detect-scan"
@@ -260,12 +362,6 @@ export function ProfileHub({
               extension before connect.
             </p>
           </section>
-
-          {connectError ? (
-            <p className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-3 py-2 text-xs text-amber-100" data-testid="wallet-connect-error">
-              {connectError}
-            </p>
-          ) : null}
 
           <section>
             <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-cyan-100/45">Avatar picker</p>
@@ -326,9 +422,6 @@ export function ProfileHub({
                   <dd data-testid="profile-detect-identity">{session.sessionDetection.identityStatus}</dd>
                 </div>
               </dl>
-              <p className="mt-2 text-[11px] font-bold text-emerald-100" data-testid="wallet-confirmation">
-                {session.sessionDetection.walletProvider} secure session ready
-              </p>
             </section>
           ) : null}
 
@@ -357,26 +450,6 @@ export function ProfileHub({
               ) : null}
             </section>
           ) : null}
-
-          <section data-testid="profile-wallets">
-            <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-cyan-100/45">Wallets</p>
-            <WalletGroup
-              connectedKey={connectedProviderKey}
-              connectingKey={connectingKey}
-              detection={detection}
-              label="ION native"
-              onConnect={handleWalletConnect}
-              wallets={ionWallets}
-            />
-            <WalletGroup
-              connectedKey={connectedProviderKey}
-              connectingKey={connectingKey}
-              detection={detection}
-              label="EVM detectors"
-              onConnect={handleWalletConnect}
-              wallets={evmWallets}
-            />
-          </section>
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-3" data-testid="profile-domains">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100/45">.ion domains</p>
@@ -445,23 +518,25 @@ export function ProfileHub({
             Open full Profile
           </NeonButton>
 
-          {connectedProviderKey ? (
-            <button
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
-              data-testid="wallet-disconnect"
-              onClick={onDisconnect}
-              type="button"
-            >
-              <LogOut size={16} />
-              Disconnect wallet
-            </button>
-          ) : null}
-
           <p className="text-[10px] leading-relaxed text-cyan-100/40">{session.provenance.description}</p>
+              </div>
+            ) : null}
+
+            {connectedProviderKey ? (
+              <button
+                className="flex w-full items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
+                data-testid="wallet-disconnect"
+                onClick={onDisconnect}
+                type="button"
+              >
+                <LogOut size={16} />
+                Disconnect wallet
+              </button>
+            ) : null}
+          </div>
         </div>
-      ) : null}
-      </div>
-    </NeonGlassCard>
+      </NeonGlassCard>
+    </div>
   );
 }
 

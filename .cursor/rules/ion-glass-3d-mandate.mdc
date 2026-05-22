@@ -1,44 +1,83 @@
 ---
-description: ION DEX visual quality mandate — exact CSS values required, no deviation
+description: Master 钦定的最终视觉质量标准 — Cursor 必须逐条执行，一条不漏
 alwaysApply: true
 ---
 
-# ION DEX Visual Quality Standards — Mandatory
+# ION DEX 最终视觉质量标准
 
-Reference quality: crisp, bright glass cards with clearly visible rounded corners, neon rim, and readable text. NO muddy/dark/blurry glass.
+Master 反馈：当前页面上半空、卡片边框锐角、玻璃模糊、对比度暗、Logo 过大、缺主页按钮、缺语言切换、布局不合理。
 
-## Border & Corner Rules
-- ALL cards: `border-radius: 1.5rem` minimum (24px)
-- Outer frame: `border-radius: 2rem`
-- Neon rim: `inset: -2px`, `border-radius: inherit`, ALWAYS paired with visible `box-shadow`
-- Inner card: `border-radius: calc(2rem - 1px)`
+## 🚨 优先级 P0 — 立即修复
 
-## Glass Specifications (exact values — DO NOT CHANGE)
+### 1. 卡片圆角（边框不再是锐角）
+- 所有卡片 `border-radius: 24px` (1.5rem) 起
+- 主框架 `glass-shell-frame`: `border-radius: 32px` (2rem)
+- 卡片内层 `__inner`: `border-radius: calc(2rem - 1px)`
+- `::before` 伪元素（霓虹边框）: `border-radius: inherit`
+- 查找并替换所有 `border-radius: 8px|12px|16px|rounded-lg|rounded-xl` → `rounded-2xl` 或 `rounded-[1.5rem]`
+
+### 2. 玻璃卡片对比度提升（不再暗沉）
+- 卡片背景: `rgba(6, 16, 36, 0.28)` — 比现在的 0.22 稍亮，仍能透极光
+- 外层框: `rgba(4, 8, 22, 0.14)` — 极光清晰可见
+- `backdrop-filter: blur(14px) saturate(1.3)` — 不超 16px，Master 说"模糊不清"就是因为 blur 太大
+- 边框霓虹: 必须肉眼可见 — `box-shadow: 0 0 56px rgba(36,247,255,0.22), 0 0 42px rgba(255,59,212,0.14)`
+- 顶部高光: `inset 0 1px 0 rgba(255,255,255,0.2)` — 让玻璃边缘有反光
+
+### 3. 文本颜色（不再灰暗）
+- 标题: `color: #e8f4ff` 或 `text-white`，`font-weight: 800+`
+- 副标题: `color: #8ab4d8` 或 `text-cyan-200/70`
+- 数据数字: `color: #24f7ff`，带 `text-shadow: 0 0 12px rgba(36,247,255,0.45)`
+- 禁止: `text-gray-400`, `#6b7280`, `text-slate-500` 等灰色
+
+### 4. 布局修复（不要再空上半屏幕）
+- **顶上空白**: main content top offset 必须在 120px 以内（现在是 153px）
+- **header 高度**: max 56px（现在是 69px），减少 header padding: `py-2`（现在是 py-3）
+- **nav strip**: 只在 lg+ 显示，移动端用 sidebar 导航
+- **Dashboard 布局（移动优先）**:
+  - 单列: Swap → Market Stats → OrderBook → Cards
+  - 桌面: Swap + Stats 并排 → Market + OrderBook 并排 → Cards 网格
+- **SwapPanel compact 高度**: max 400px（现在是 680px+），移除不必要的提示框
+
+### 5. 导航与功能
+- **返回主页**: header 左边有 Home 图标按钮 → 点击跳转 Dashboard
+- **语言切换**: Globe 图标按钮 → 点击弹出 EN/中文/日本語 下拉
+- **移动端**: logo + 页面标题在 header 可见
+
+### 6. Icon / Logo 尺寸（不再占两大部分）
+- 侧栏 Logo: 36x36px
+- 移动端 header Logo: 32x32px  
+- Swap 中间的 IonDexBrandEmblem: `compact` 模式时只显示降箭图标，不显示 logo
+- 所有 Logo 不在页面中央占据大块空间
+
+## 📏 具体 CSS 数值（写死，不可变）
+
 ```css
-background-color: rgba(6, 16, 36, 0.3);
-backdrop-filter: blur(16px) saturate(1.35);
-box-shadow:
-  inset 0 1px 0 rgba(255,255,255,0.22),   /* top highlight */
-  0 0 56px rgba(36,247,255,0.18),           /* cyan outer glow */
-  0 0 42px rgba(255,59,212,0.12);           /* magenta outer glow */
+/* Dashboard 卡片玻璃 */
+.neon-glass-card__inner {
+  background-color: rgba(6, 16, 36, 0.28);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border-radius: calc(1.5rem - 1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    0 8px 40px rgba(0,0,0,0.2),
+    0 0 56px rgba(36,247,255,0.22),
+    0 0 42px rgba(255,59,212,0.14);
+}
+
+/* 外层框架 */
+.glass-shell-frame {
+  border: 1.5px solid rgba(36, 247, 255, 0.35);
+  background: rgba(4, 8, 22, 0.12);
+  border-radius: 2rem;
+  backdrop-filter: blur(10px) saturate(1.2);
+}
 ```
 
-## Color Palette (EXACT hex, no deviation)
-| Token | Value | Usage |
-|-------|-------|-------|
-| cyan-neon | #24f7ff | Borders, glows, highlighted data |
-| magenta | #ff3bd4 | Secondary glow, accents |
-| glass-bg | rgba(6,16,36,0.3) | Card backgrounds |
-| text-primary | #e0f0ff | Headers and key labels |
-| text-secondary | #8ab4d8 | Body text |
-| text-dim | #5a7a9a | Subdued labels |
-
-## Anti-Patterns (NEVER)
-- `background-blend-mode: overlay` on glass cards
-- `background-color alpha > 0.45` — blocks aurora
-- `backdrop-filter: none` — kills glass effect
-- `blur < 12px` — too noisy
-- `blur > 20px` — too muddy (Master says "模糊不清")
-- Text color `#6b7280` or similar gray — use `#8ab4d8` min
-- Sharp corners (`border-radius < 1rem`) on any card surface
-- Dark backgrounds (`rgba(r,g,b, >0.5)`) on cards
+## 🚫 绝对禁止
+- 3D 旋转动画 (`rotateX/Y > 2°`, `float-3d` animation)
+- 暗色背景 alpha > 0.40（挡住极光）
+- `background-blend-mode: overlay`
+- `backdrop-filter: none` 或无 blur
+- 文本用灰色（`#6b7280` 等）
+- 卡片用锐角（`border-radius < 1rem`）
+- 内容起始位置 > 120px from top
