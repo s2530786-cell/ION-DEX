@@ -82,6 +82,7 @@ export function useDashboardMarket() {
     tickers,
     quote,
     ionTicker,
+    candles,
     chartPoints,
     candleState,
     candleProv,

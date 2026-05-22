@@ -13,6 +13,17 @@ export type MarketChartPoint = {
   value: number;
 };
 
+function safeRemoveChart(chart: IChartApi | null) {
+  if (!chart) {
+    return;
+  }
+  try {
+    chart.remove();
+  } catch {
+    // React Strict Mode + library teardown can race; ignore duplicate removeChild.
+  }
+}
+
 export function MarketChart({
   points,
   testId = "market-chart",
@@ -25,11 +36,12 @@ export function MarketChart({
   const seriesRef = useRef<ISeriesApi<"Area", Time> | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) {
+    const host = containerRef.current;
+    if (!host) {
       return;
     }
 
-    const chart = createChart(containerRef.current, {
+    const chart = createChart(host, {
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "rgba(198, 244, 255, 0.72)",
@@ -59,11 +71,11 @@ export function MarketChart({
       }
       chart.applyOptions({ width: entry.contentRect.width });
     });
-    resizeObserver.observe(containerRef.current);
+    resizeObserver.observe(host);
 
     return () => {
       resizeObserver.disconnect();
-      chart.remove();
+      safeRemoveChart(chart);
       chartRef.current = null;
       seriesRef.current = null;
     };
@@ -86,8 +98,9 @@ export function MarketChart({
     <div
       className="relative h-[17.5rem] w-full overflow-hidden rounded-[1.25rem] border border-white/10 bg-black/30"
       data-testid={testId}
-      ref={containerRef}
-    />
+    >
+      <div ref={containerRef} className="h-full min-h-[17.5rem] w-full" />
+    </div>
   );
 }
 

@@ -1,6 +1,17 @@
 import { CandlestickSeries, createChart, type IChartApi, type ISeriesApi, type UTCTimestamp } from "lightweight-charts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { MarketCandle } from "@/lib/ionApi";
+
+function safeRemoveChart(chart: IChartApi | null) {
+  if (!chart) {
+    return;
+  }
+  try {
+    chart.remove();
+  } catch {
+    // React Strict Mode teardown can race with chart DOM cleanup.
+  }
+}
 
 type IonCandleChartProps = {
   candles: MarketCandle[];
@@ -18,21 +29,14 @@ export function IonCandleChart({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const [containerReady, setContainerReady] = useState(false);
 
   useEffect(() => {
-    if (!containerRef.current) {
-      return;
-    }
-    setContainerReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!containerReady || !containerRef.current) {
+    const host = containerRef.current;
+    if (!host) {
       return;
     }
 
-    const chart = createChart(containerRef.current, {
+    const chart = createChart(host, {
       layout: {
         background: { color: "transparent" },
         textColor: "rgba(200, 240, 255, 0.72)",
@@ -76,15 +80,15 @@ export function IonCandleChart({
       const { width, height } = entry.contentRect;
       chart.applyOptions({ width, height });
     });
-    resizeObserver.observe(containerRef.current);
+    resizeObserver.observe(host);
 
     return () => {
       resizeObserver.disconnect();
-      chart.remove();
+      safeRemoveChart(chart);
       chartRef.current = null;
       seriesRef.current = null;
     };
-  }, [containerReady]);
+  }, []);
 
   useEffect(() => {
     if (!seriesRef.current || loadState !== "ready" || candles.length === 0) {

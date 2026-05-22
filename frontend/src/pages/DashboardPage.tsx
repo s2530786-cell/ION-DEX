@@ -8,7 +8,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useCallback, useMemo } from "react";
-import { MarketChart } from "@/components/charts/MarketChart";
+import { IonCandleChart } from "@/components/charts/IonCandleChart";
 import { OrderBookPanel } from "@/components/market/OrderBookPanel";
 import { SwapPanel } from "@/components/swap/SwapPanel";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
@@ -129,7 +129,7 @@ function MarketStage({
       ? "loading"
       : market.candleState === "error"
         ? "error"
-        : market.chartPoints.length === 0
+        : market.candles.length === 0
           ? "empty"
           : "ready";
 
@@ -178,8 +178,13 @@ function MarketStage({
           state={chartState}
           testId="dashboard-chart"
         >
-          {market.chartPoints.length > 0 ? (
-            <MarketChart points={market.chartPoints} testId="dashboard-market-chart" />
+          {market.candles.length > 0 ? (
+            <IonCandleChart
+              candles={market.candles}
+              className="h-[17.5rem]"
+              loadState="ready"
+              testId="dashboard-market-chart"
+            />
           ) : (
             <ChartPlaceholder />
           )}

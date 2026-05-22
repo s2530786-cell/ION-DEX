@@ -61,7 +61,7 @@ export function App() {
 
   return (
     <AppShell activePage={activePage} onPageChange={navigate}>
-      <AnimatePresence mode="wait">
+      <AnimatePresence initial={false} mode="wait">
         <motion.div
           key={activePage}
           animate={{ opacity: 1, y: 0 }}
