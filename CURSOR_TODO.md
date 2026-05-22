@@ -1,7 +1,7 @@
-# CURSOR TODO — Auto-generated 2026-05-22T04:16:36.530Z
+# CURSOR TODO — Auto-generated 2026-05-22T04:19:33.059Z
 
 **Branch:** cursor/ui-design-workflow-44c9  
-**Last commit:** 7c8bde66 pipeline: cursor-sync + audit + deploy (2026-05-22 12:13)  
+**Last commit:** 19ebdc86 chore: auto-deploy via ion-dex-commander  
 **Changed files:** none
 
 ## Priority Tasks
@@ -23,6 +23,7 @@
 
 ## Recent Commits
 ```
+19ebdc86 chore: auto-deploy via ion-dex-commander
 7c8bde66 pipeline: cursor-sync + audit + deploy (2026-05-22 12:13)
 c8cbe89a fix: remove all 3D transforms + wobbling — flat glass only
 e0bd7ed3 fix: remove stray floating logo + brand emblem from Swap + float-3d toggle
@@ -32,7 +33,6 @@ d28acb05 fix(ui): disable 3D float animation — static glass only
 52ae6b61 pipeline: cursor-sync + audit + deploy (2026-05-22 11:53)
 f77852b0 feat(ui): hero rim + brighter aurora + iON brand neon colors
 adbbf66a fix: transparent glass + dramatic 3D float — aurora visible through cards
-aadbbda3 chore: CSS import order + NUL gitignore + backend test-mock start script
 ```
 
 ## Auto-Deploy
