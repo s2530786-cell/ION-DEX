@@ -67,12 +67,30 @@ select {
   .glass-shell-frame {
     position: relative;
     isolation: isolate;
-    border: 1px solid rgba(36, 247, 255, 0.1);
-    background: rgba(3, 5, 15, 0.38);
-    backdrop-filter: blur(18px);
+    border: 1px solid rgba(36, 247, 255, 0.22);
+    background: rgba(3, 5, 15, 0.26);
+    backdrop-filter: blur(16px);
     box-shadow:
-      0 0 70px rgba(36, 247, 255, 0.14),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      0 0 90px rgba(36, 247, 255, 0.22),
+      0 0 48px rgba(255, 59, 212, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .glass-shell-frame::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      rgba(36, 247, 255, 0.35),
+      rgba(141, 77, 255, 0.2),
+      rgba(255, 59, 212, 0.32)
+    );
+    opacity: 0.55;
+    filter: blur(12px);
   }
 
   /** App shell sidebar/header — liquid HUD, not flat grey strips */
@@ -135,8 +153,8 @@ select {
   }
 
   .float-3d {
-    transform: rotateX(6deg) rotateY(-7deg) translateZ(0);
-    animation: ionFloat3d 9s ease-in-out infinite;
+    transform: rotateX(15deg) rotateY(-18deg) translateZ(0);
+    animation: ionFloat3d 11s ease-in-out infinite;
   }
 
   .text-glow-cyan {
@@ -212,9 +230,9 @@ select {
 @keyframes ionFloat3d {
   0%,
   100% {
-    transform: rotateX(6deg) rotateY(-7deg) translate3d(0, 0, 0);
+    transform: rotateX(15deg) rotateY(-18deg) translate3d(0, 0, 0);
   }
   50% {
-    transform: rotateX(3deg) rotateY(6deg) translate3d(0, -10px, 24px);
+    transform: rotateX(8deg) rotateY(12deg) translate3d(0, -12px, 32px);
   }
 }
