@@ -153,8 +153,8 @@ select {
   }
 
   .float-3d {
-    transform: rotateX(15deg) rotateY(-18deg) translateZ(0);
-    animation: ionFloat3d 11s ease-in-out infinite;
+    /* 3D rotation disabled — keep static per Master preference */
+    transform: none;
   }
 
   .text-glow-cyan {

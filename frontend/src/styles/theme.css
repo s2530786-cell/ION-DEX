@@ -31,8 +31,6 @@
     position: relative;
     isolation: isolate;
     border-radius: 2rem;
-    perspective: 1400px;
-    transform-style: preserve-3d;
   }
 
   .neon-glass-card::before {
