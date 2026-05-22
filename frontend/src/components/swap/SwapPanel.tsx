@@ -1,5 +1,4 @@
 import { ArrowDownUp } from "lucide-react";
-import ionLogo from "@/assets/ion-logo.jpg";
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
@@ -183,7 +182,7 @@ export function SwapPanel({
   }
 
   return (
-    <NeonCard className={`min-h-[28rem] ${className}`} variant={variant}>
+    <NeonCard className={`min-h-[28rem] ${className}`} floating={false} variant={variant}>
       <form className="grid gap-4" onSubmit={(event) => void submitSwap(event)}>
         <div className="mb-1 flex items-center justify-between">
           <div>
@@ -225,19 +224,17 @@ export function SwapPanel({
           testId={tid("from-token")}
         />
 
-        <div className="relative flex items-center justify-center py-3" data-testid={tid("ion-center")}>
-          <img
-            alt="ION"
-            className="pointer-events-none absolute h-20 w-20 rounded-2xl object-cover opacity-90 shadow-[0_0_32px_rgba(36,247,255,0.45)] ring-2 ring-cyan-200/35"
-            src={ionLogo}
-          />
+        {/* Brand emblem removed per Master — too large on mobile */}
+
+        <div className="ion-swap-flip-row">
           <button
-            className="relative z-10 rounded-full border border-cyan-300/35 bg-cyan-300/[0.12] p-3 text-cyan-100 shadow-[0_0_22px_rgba(36,247,255,0.35)] backdrop-blur-md transition hover:scale-105"
+            className="inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/[0.1] px-4 py-2 text-sm font-bold text-cyan-100 shadow-[0_0_18px_rgba(36,247,255,0.28)] backdrop-blur-md transition hover:border-cyan-200/45 hover:bg-cyan-300/[0.16]"
             data-testid={tid("flip")}
             onClick={flipPair}
             type="button"
           >
-            <ArrowDownUp size={20} />
+            <ArrowDownUp size={18} />
+            Switch pair
           </button>
         </div>
 
