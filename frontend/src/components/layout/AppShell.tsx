@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
+import { DevBuildRibbon } from "@/components/dev/DevBuildRibbon";
 import { NeonButton } from "@/components/ui/NeonButton";
 import ionLogo from "@/assets/ion-logo.jpg";
 import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
@@ -127,6 +128,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 
   return (
     <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
+      {/* <DevBuildRibbon /> */}
       <IonConnectModalBridge />
       <AuroraGalaxyBackground />
       <div className="glass-shell-frame mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] lg:flex">
@@ -195,16 +197,9 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               >
                 <Menu size={18} />
               </button>
-              <div className="hidden shrink-0 items-center gap-3 lg:flex">
-                <img
-                  src={ionLogo}
-                  alt="ION DEX"
-                  className="h-8 w-8 rounded-xl object-cover shadow-[0_0_12px_rgba(36,247,255,0.3)]"
-                />
-                <p className="text-sm font-bold text-white">
-                  {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
-                </p>
-              </div>
+              <p className="hidden text-sm font-bold text-white lg:block">
+                {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
+              </p>
               <div className="flex items-center gap-3 lg:hidden">
                 <img
                   src={ionLogo}

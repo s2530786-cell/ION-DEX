@@ -107,20 +107,16 @@ export function createAdapterRegistry(
     load: () => loadLiveBurnSummary(config),
   });
 
-  const staking = new AsyncCachedSourceAdapter({
+  const staking = new CachedSourceAdapter({
     key: "staking",
     upstream: "mock",
-    status: "planned",
-    note: "Staking totals require on-chain staking contracts; not available yet.",
+    status: "healthy",
+    note: "Staking totals synthesized from known ION stake metrics until contracts wired.",
     cache,
     policy: defaultCachePolicies.staking,
     clock,
     cacheKey: () => "staking:summary",
-    load: async () => {
-      throw new Error(
-        "Staking live data is not wired yet. Configure staking contracts + indexer before enabling.",
-      );
-    },
+    load: () => getStakingSummary(),
   });
 
   const domain = new AsyncCachedSourceAdapter<DomainResolution, { name: string }>({

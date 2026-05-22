@@ -26,7 +26,7 @@ export function useApiResource<T>(
 
   useEffect(() => {
     const controller = new AbortController();
-    const timeoutMs = optionsRef.current?.timeoutMs ?? 1200;
+    const timeoutMs = optionsRef.current?.timeoutMs ?? 15_000;
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
     let cancelled = false;
 

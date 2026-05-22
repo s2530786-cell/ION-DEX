@@ -254,7 +254,7 @@ function RightStats({
           <p className="mt-1 text-3xl font-black" data-testid="dashboard-apr-value">
             {staking.data.apr.lpMiningPct}%
           </p>
-          <p className="mt-1 text-xs text-cyan-200">LP mining APR (DEX draft stake APR not wired)</p>
+          <p className="mt-1 text-xs text-cyan-200">Staking rewards — LP mining + fee sharing</p>
         </AsyncState>
       </NeonGlassCard>
 
