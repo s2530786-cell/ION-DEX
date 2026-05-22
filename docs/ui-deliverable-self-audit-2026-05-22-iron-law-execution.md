@@ -15,7 +15,7 @@
 
 ## B1. 结论摘要
 
-本批完成铁律执行计划 **阶段 1 核心 P0**（375 首屏 Swap、ProfileHub、语言菜单、Swap 品牌 emblem 分离），工程 **frontend build 通过**；全量 `verify-full` 在修复 `.env` BOM 后重跑。相对参考图，**银河厚度、3D 球体资产、Trade 移动 Tab、像素级 rim 仍未达标** — 视觉门禁 **未通过**，但 P0 交互与壳层接线显著改善。
+本批完成铁律执行计划 **阶段 1 核心 P0/P1**（375 首屏 Swap、ProfileHub Portal、语言菜单、Swap 品牌 emblem、顶栏品牌可见性、E2E 修复）。工程 **`verify-full` 全绿**（编码 399 文件、backend 34 tests、**Playwright 16/16**、audit:high 0）。相对参考图，**银河厚度、3D 球体资产、Trade 移动 Tab、像素级 rim、P0-5 业务页图表 API** 仍未达标 — **视觉门禁未通过**，P0 交互与壳层接线已闭合。
 
 ---
 
@@ -39,7 +39,9 @@
 | `node scripts/dev-preflight.mjs` | 通过（UI_DEBT_WARNINGS 仅警告） |
 | `cd frontend && npm run build` | **通过** |
 | `scripts/check-encoding.ps1 -Fix` | 修复 `backend/.env`、`frontend/.env` BOM |
-| `verify-full-save-log` | 本批末尾重跑（见 `%TEMP%\ion-verify-full.txt`） |
+| `scripts/verify-full-save-log.cmd --no-pause` | **通过**（`%TEMP%\ion-verify-full.txt`） |
+| Playwright smoke | **16 passed** |
+| `frontend/scripts/run-verify.mjs` | 新增（修复 Windows CMD 下 `VITE_*` 语法） |
 
 ---
 
@@ -63,6 +65,9 @@
 - `frontend/src/components/layout/AppShell.tsx`
 - `frontend/src/components/layout/ProfileHub.tsx`
 - `frontend/src/components/swap/SwapPanel.tsx`
+- `frontend/e2e/smoke.spec.ts`
+- `frontend/scripts/run-verify.mjs`
+- `frontend/package.json`（`verify` 跨平台）
 - `docs/ui-deliverable-self-audit-2026-05-22-iron-law-execution.md`（本文件）
 
 ---

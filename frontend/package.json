@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node scripts/ensure-tailwind-v3.mjs",
+    "predev:local": "node scripts/ensure-tailwind-v3.mjs",
+    "prebuild": "node scripts/ensure-tailwind-v3.mjs",
+    "repair:css": "node scripts/ensure-tailwind-v3.mjs && npm install --legacy-peer-deps",
+    "repair:css:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/repair-tailwind-postcss.ps1",
     "dev": "vite",
     "dev:local": "vite --host=127.0.0.1 --port=3010 --strictPort",
     "build": "tsc && vite build",
@@ -12,7 +17,7 @@
     "preview:test": "vite preview --host=127.0.0.1 --strictPort",
     "test:e2e": "playwright test",
     "verify:e2e": "playwright test",
-    "verify": "VITE_ION_API_BASE_URL=http://127.0.0.1:8787 npm run build && node scripts/verify-e2e.mjs",
+    "verify": "node scripts/run-verify.mjs",
     "capture-ui": "node scripts/capture-ui-screenshots.mjs",
     "audit:high": "node scripts/audit-high.mjs"
   },
@@ -29,9 +34,11 @@
     "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "tailwindcss": "^3.4.19",
     "viem": "^2.50.4",
     "wagmi": "^3.6.15"
+  },
+  "overrides": {
+    "tailwindcss": "3.4.19"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
@@ -41,6 +48,7 @@
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.15",
     "start-server-and-test": "^2.1.2",
+    "tailwindcss": "3.4.19",
     "typescript": "latest",
     "vite": "latest"
   }

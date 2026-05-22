@@ -1,0 +1,31 @@
+## P0-BLOCKING: Dashboard Avatar Header Area Missing
+
+Master confirmed this on 2026-05-21 but it was never built. On 2026-05-22 Master asked: "we agreed on the avatar area, why is it still the same?"
+
+### Instructions: Read specs/avatar-header-card.md → 3 steps
+
+**Step 1: Create DashboardHeader component**
+File: `frontend/src/components/dashboard/DashboardHeader.tsx`
+- Avatar: 48x48px circle, border-radius: 24px, glow: 0 0 20px rgba(36,247,255,0.35)
+- Click to upload avatar (file input → localStorage base64, use existing ProfileAvatar logic)
+- Not connected: default bot icon + "Connect wallet to begin"
+- Connected: show address + balance
+- Card container: background rgba(6,16,36,0.55), backdrop-filter blur(12px), border-radius: 24px, border: 1px solid rgba(36,247,255,0.12)
+
+**Step 2: Add expandedPanel to DashboardPage.tsx**
+- Add `const [expandedPanel, setExpandedPanel] = useState<PageKey | null>(null)`
+- Insert DashboardHeader ABOVE the mobile tabs bar
+- FeatureGrid: click a card → expand inline (NOT navigate away)
+- Use AnimatePresence + motion.div with height: auto, 300ms cubic-bezier(0.4,0,0.2,1)
+- Only ONE panel expanded at a time
+
+**Step 3: Inline panel mapping**
+Pool → PoolPage compact, Grid → GridPage compact, Bridge → BridgePage compact, Burn → BurnPage compact, Domain → DomainPage compact, AI → AIMarketPage compact
+
+### Verification
+Open http://127.0.0.1:3001/
+1. Avatar area is visible at top of Dashboard ✓
+2. Avatar is clickable/uploadable ✓
+3. Clicking a feature card expands it in-place (does NOT navigate) ✓
+4. Clicking again collapses it ✓
+5. Glass/border style matches specs/avatar-header-card.md ✓

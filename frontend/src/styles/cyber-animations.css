@@ -60,3 +60,36 @@
 .animate-glitch-after {
   animation: glitchAfter 3s infinite linear alternate-reverse;
 }
+
+@keyframes orbCorePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.04);
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes orbGlowDrift {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.08) translate(2%, -2%);
+    opacity: 1;
+  }
+}
+
+@keyframes orbRingSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

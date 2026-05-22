@@ -11,7 +11,15 @@ import { useCallback, useMemo, useState } from "react";
 import { IonCandleChart } from "@/components/charts/IonCandleChart";
 import { OrderBookPanel } from "@/components/market/OrderBookPanel";
 import { SwapPanel } from "@/components/swap/SwapPanel";
+import {
+  DepthLayerBack,
+  DepthLayerFront,
+  DepthLayerMid,
+  DepthScene,
+} from "@/components/visual/DepthScene";
+import { NeonOrbHero } from "@/components/visual/NeonOrbHero";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
+import { DataBlockerBanner } from "@/components/ui/DataBlockerBanner";
 import { DataProvenanceBadge } from "@/components/ui/DataProvenanceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -107,22 +115,40 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
   return (
     <div className="grid gap-5" data-testid="page-dashboard">
       <DashboardMobileTabBar active={mobileTab} onChange={setMobileTab} />
+      <DashboardAiPulse market={market} onNavigate={onNavigate} />
 
       <div className="hidden gap-5 xl:grid">
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_18rem]">
-          <div className="min-w-0" data-testid="dashboard-swap-stage">
-            <SwapPanel compact testIdPrefix="dashboard-swap" variant="cyan" />
-          </div>
-          <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
-        </div>
+        <DepthScene
+          className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_18rem]"
+          testId="dashboard-swap-depth"
+        >
+          <DepthLayerBack className="flex items-center justify-start pl-2 pt-6">
+            <NeonOrbHero className="opacity-80" size="md" testId="dashboard-swap-orb" />
+          </DepthLayerBack>
+          <DepthLayerMid className="min-w-0 xl:col-span-1">
+            <div className="dashboard-float-panel min-w-0 rounded-[1.5rem]" data-testid="dashboard-swap-stage">
+              <SwapPanel compact testIdPrefix="dashboard-swap" variant="cyan" />
+            </div>
+          </DepthLayerMid>
+          <DepthLayerFront className="xl:col-start-2 xl:row-start-1">
+            <RightStats
+              burn={burn}
+              burnProgress={burnProgress}
+              staking={staking}
+              tvlLabel={tvlLabel}
+            />
+          </DepthLayerFront>
+        </DepthScene>
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
           <MarketStage market={market} onNavigate={onNavigate} />
-          <OrderBookPanel
-            listTestId="dashboard-orderbook"
-            provenanceTestId="dashboard-orderbook-provenance"
-            testId="dashboard-orderbook-panel"
-          />
+          <div className="dashboard-stat-float">
+            <OrderBookPanel
+              listTestId="dashboard-orderbook"
+              provenanceTestId="dashboard-orderbook-provenance"
+              testId="dashboard-orderbook-panel"
+            />
+          </div>
         </div>
 
         <FeatureGrid onNavigate={onNavigate} />
@@ -130,9 +156,16 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
 
       <div className="grid gap-5 xl:hidden" data-testid="dashboard-mobile-panels">
         {mobileTab === "swap" ? (
-          <div data-testid="dashboard-swap-stage-mobile">
-            <SwapPanel compact testIdPrefix="dashboard-swap" variant="cyan" />
-          </div>
+          <DepthScene testId="dashboard-swap-depth-mobile">
+            <DepthLayerBack className="flex justify-center pt-4">
+              <NeonOrbHero size="sm" testId="dashboard-swap-orb-mobile" />
+            </DepthLayerBack>
+            <DepthLayerFront>
+              <div className="dashboard-float-panel" data-testid="dashboard-swap-stage-mobile">
+                <SwapPanel compact testIdPrefix="dashboard-swap" variant="cyan" />
+              </div>
+            </DepthLayerFront>
+          </DepthScene>
         ) : null}
         {mobileTab === "stats" ? (
           <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
@@ -189,6 +222,56 @@ function DashboardMobileTabBar({
   );
 }
 
+function DashboardAiPulse({
+  market,
+  onNavigate,
+}: {
+  market: ReturnType<typeof useDashboardMarket>;
+  onNavigate: (page: PageKey) => void;
+}) {
+  const line =
+    market.quoteLine?.ticker ??
+    (market.tickers.state === "loading" ? "Loading ION ticker…" : "ION ticker unavailable");
+  const route =
+    market.quoteLine?.swap ??
+    (market.quote.state === "error" ? "Quote API error — see badges" : "Quote route pending");
+
+  return (
+    <NeonGlassCard className="dashboard-float-panel" testId="dashboard-ai-pulse">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-cyan-200/25 bg-cyan-300/[0.08] text-cyan-200">
+            <Bot size={20} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/50">
+              AI market pulse
+            </p>
+            <p className="truncate text-sm font-bold text-white" data-testid="dashboard-ai-pulse-line">
+              {line}
+            </p>
+            <p className="truncate text-xs text-cyan-100/60">{route}</p>
+          </div>
+        </div>
+        <NeonButton
+          className="px-4 py-2 text-xs"
+          data-testid="dashboard-open-ai"
+          onClick={() => onNavigate("ai")}
+          type="button"
+        >
+          AI desk
+        </NeonButton>
+      </div>
+      <DataBlockerBanner
+        className="mt-3"
+        detail="Streaming LLM inference and dedicated /api/ai routes are not deployed. Dashboard and AI desk use live tickers, swap-stats, and candles only."
+        testId="dashboard-ai-blocker"
+        title="Blocker: ai-market-service"
+      />
+    </NeonGlassCard>
+  );
+}
+
 function MarketStage({
   market,
   onNavigate,
@@ -206,71 +289,83 @@ function MarketStage({
           : "ready";
 
   return (
-    <NeonGlassCard className="min-h-[24rem]" rim="hero" testId="dashboard-market-stage">
-      <div className="flex h-full flex-col">
-        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
-              Professional Trading Surface
-            </p>
-            <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-              Market <span className="text-glow-magenta text-fuchsia-300">BNB / ION</span>
-            </h2>
+    <NeonGlassCard className="min-h-[26rem] overflow-hidden" rim="hero" testId="dashboard-market-stage">
+      <DepthScene className="min-h-[26rem]" testId="dashboard-market-depth">
+        <DepthLayerBack className="flex items-start justify-center pt-4">
+          <NeonOrbHero size="lg" testId="dashboard-hero-orb" />
+        </DepthLayerBack>
+        <DepthLayerMid className="flex h-full flex-col p-1">
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
+                Professional Trading Surface
+              </p>
+              <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+                Market <span className="text-glow-magenta text-fuchsia-300">BNB / ION</span>
+              </h2>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <Sparkles className="text-cyan-200" />
+              <NeonButton
+                className="px-4 py-2 text-xs"
+                data-testid="dashboard-open-trade"
+                onClick={() => onNavigate("trade")}
+                type="button"
+              >
+                Open Trade
+              </NeonButton>
+            </div>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <Sparkles className="text-cyan-200" />
-            <NeonButton
-              className="px-4 py-2 text-xs"
-              data-testid="dashboard-open-trade"
-              onClick={() => onNavigate("trade")}
-              type="button"
+
+          <div className="mb-3 flex flex-wrap gap-2">
+            <DataSourceBadge meta={market.tickers.meta} testId="dashboard-chart-source" />
+            {market.quote.meta ? (
+              <DataSourceBadge meta={market.quote.meta} testId="dashboard-quote-source" />
+            ) : null}
+            {market.candleProv ? (
+              <DataProvenanceBadge label={market.candleProv} testId="dashboard-candles-provenance" />
+            ) : null}
+          </div>
+        </DepthLayerMid>
+
+        <DepthLayerFront className="mt-auto px-1 pb-1">
+          <div className="dashboard-float-panel rounded-[1.35rem] border border-white/10 bg-black/35 p-3 backdrop-blur-md">
+            <AsyncState
+              emptyMessage="Market candles are not available."
+              error={
+                market.tickers.error ??
+                (market.candleState === "error" ? "Candles unavailable" : null)
+              }
+              onRetry={() => {
+                market.tickers.reload();
+                market.quote.reload();
+              }}
+              state={chartState}
+              testId="dashboard-chart"
             >
-              Open Trade
-            </NeonButton>
+              {market.candles.length > 0 ? (
+                <IonCandleChart
+                  candles={market.candles}
+                  className="h-[17.5rem]"
+                  loadState="ready"
+                  testId="dashboard-market-chart"
+                />
+              ) : (
+                <ChartPlaceholder />
+              )}
+              {market.quoteLine ? (
+                <p className="mt-3 text-sm text-cyan-100/75" data-testid="dashboard-ion-quote">
+                  {market.quoteLine.ticker}
+                  <br />
+                  <span className="text-cyan-100/60">{market.quoteLine.swap}</span>
+                </p>
+              ) : market.tickers.state === "loading" || market.quote.state === "loading" ? (
+                <p className="mt-3 text-sm text-cyan-100/55">Loading market quote…</p>
+              ) : null}
+            </AsyncState>
           </div>
-        </div>
-
-        <div className="mb-3 flex flex-wrap gap-2">
-          <DataSourceBadge meta={market.tickers.meta} testId="dashboard-chart-source" />
-          {market.quote.meta ? (
-            <DataSourceBadge meta={market.quote.meta} testId="dashboard-quote-source" />
-          ) : null}
-          {market.candleProv ? (
-            <DataProvenanceBadge label={market.candleProv} testId="dashboard-candles-provenance" />
-          ) : null}
-        </div>
-
-        <AsyncState
-          emptyMessage="Market candles are not available."
-          error={market.tickers.error ?? (market.candleState === "error" ? "Candles unavailable" : null)}
-          onRetry={() => {
-            market.tickers.reload();
-            market.quote.reload();
-          }}
-          state={chartState}
-          testId="dashboard-chart"
-        >
-          {market.candles.length > 0 ? (
-            <IonCandleChart
-              candles={market.candles}
-              className="h-[17.5rem]"
-              loadState="ready"
-              testId="dashboard-market-chart"
-            />
-          ) : (
-            <ChartPlaceholder />
-          )}
-          {market.quoteLine ? (
-            <p className="mt-3 text-sm text-cyan-100/75" data-testid="dashboard-ion-quote">
-              {market.quoteLine.ticker}
-              <br />
-              <span className="text-cyan-100/60">{market.quoteLine.swap}</span>
-            </p>
-          ) : market.tickers.state === "loading" || market.quote.state === "loading" ? (
-            <p className="mt-3 text-sm text-cyan-100/55">Loading market quote…</p>
-          ) : null}
-        </AsyncState>
-      </div>
+        </DepthLayerFront>
+      </DepthScene>
     </NeonGlassCard>
   );
 }
@@ -296,7 +391,7 @@ function RightStats({
 }) {
   return (
     <div className="grid gap-5">
-      <NeonGlassCard testId="dashboard-stat-tvl">
+      <NeonGlassCard className="dashboard-stat-float" testId="dashboard-stat-tvl">
         <DataSourceBadge meta={staking.meta} testId="dashboard-tvl-source" />
         <AsyncState
           error={staking.error}
@@ -311,7 +406,7 @@ function RightStats({
         </AsyncState>
       </NeonGlassCard>
 
-      <NeonGlassCard testId="dashboard-stat-apr">
+      <NeonGlassCard className="dashboard-stat-float" testId="dashboard-stat-apr">
         <DataSourceBadge meta={staking.meta} testId="dashboard-apr-source" />
         <AsyncState
           error={staking.error}
@@ -328,7 +423,7 @@ function RightStats({
         </AsyncState>
       </NeonGlassCard>
 
-      <NeonGlassCard testId="dashboard-stat-burn">
+      <NeonGlassCard className="dashboard-stat-float" testId="dashboard-stat-burn">
         <DataSourceBadge meta={burn.meta} testId="dashboard-burn-source" />
         <AsyncState error={burn.error} onRetry={burn.reload} state={burn.state} testId="dashboard-burn">
           <p className="text-sm text-cyan-100/55">Total burned</p>

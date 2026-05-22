@@ -2,6 +2,8 @@ import { spawn, spawnSync } from "node:child_process";
 import net from "node:net";
 import { fileURLToPath } from "node:url";
 
+process.env.VITE_ION_API_BASE_URL ??= "http://127.0.0.1:8787";
+
 const host = "127.0.0.1";
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";

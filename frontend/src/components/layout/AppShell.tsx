@@ -14,8 +14,9 @@ import {
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { AiChatWidget } from "@/components/ai/AiChatWidget";
+import { HeaderProfileChip } from "@/components/layout/HeaderProfileChip";
 import { ProfileHub } from "@/components/layout/ProfileHub";
-import { NeonButton } from "@/components/ui/NeonButton";
+import { SidebarIdentityRow } from "@/components/layout/SidebarIdentityRow";
 import type { LiveWalletConnection } from "@/lib/wallet";
 import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
 import { useEvmWallet } from "@/context/EvmWalletContext";
@@ -166,7 +167,9 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
           data-testid="app-sidebar"
         >
           <SidebarBrand />
-          <SidebarWalletChip
+          <SidebarIdentityRow
+            avatarId={selectedAvatarId}
+            connected={walletButtonLabel !== "Wallet Connect"}
             label={walletButtonLabel}
             onOpen={() => setWalletPanelOpen(true)}
           />
@@ -225,10 +228,14 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               >
                 <Menu size={18} />
               </button>
-              <div className="flex min-w-0 items-center gap-2 lg:hidden">
+              <div
+                className="relative z-20 flex shrink-0 items-center gap-2 lg:hidden"
+                data-testid="mobile-brand-strip"
+              >
                 <img
-                  alt="ION DEX"
-                  className="h-9 w-9 shrink-0 rounded-xl object-cover shadow-[0_0_16px_rgba(36,247,255,0.35)] ring-1 ring-cyan-200/30"
+                  alt=""
+                  aria-hidden
+                  className="block h-9 w-9 shrink-0 rounded-xl object-cover shadow-[0_0_16px_rgba(36,247,255,0.35)] ring-1 ring-cyan-200/30"
                   data-testid="mobile-brand-logo"
                   src="/logo-circular.png"
                 />
@@ -331,23 +338,16 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 <ShieldCheck size={16} />
                 ION ID
               </button>
-              <NeonButton
-                aria-expanded={walletPanelOpen}
-                className={`flex items-center gap-2 px-4 py-2 ${
-                  walletButtonLabel !== "Wallet Connect"
-                    ? "shadow-[0_0_28px_rgba(255,59,212,0.35),0_0_18px_rgba(141,77,255,0.28)] ring-1 ring-fuchsia-300/35"
-                    : ""
-                }`}
-                data-testid="wallet-connect"
-                onClick={() => {
+              <HeaderProfileChip
+                avatarId={selectedAvatarId}
+                connected={walletButtonLabel !== "Wallet Connect"}
+                expanded={walletPanelOpen}
+                label={walletButtonLabel}
+                onToggle={() => {
                   setLangMenuOpen(false);
                   setWalletPanelOpen((open) => !open);
                 }}
-                type="button"
-              >
-                <Wallet size={16} />
-                {walletButtonLabel}
-              </NeonButton>
+              />
             </div>
           </header>
 
@@ -378,25 +378,6 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
   );
 }
 
-function SidebarWalletChip({ label, onOpen }: { label: string; onOpen: () => void }) {
-  const connected = label !== "Wallet Connect";
-  return (
-    <button
-      className={`mt-4 flex w-full items-center gap-2 rounded-2xl border px-3 py-2.5 text-left text-sm font-bold transition ${
-        connected
-          ? "border-emerald-300/25 bg-emerald-300/[0.08] text-emerald-100"
-          : "border-cyan-200/20 bg-cyan-300/[0.06] text-cyan-100 hover:border-cyan-200/35"
-      }`}
-      data-testid="sidebar-wallet-chip"
-      onClick={onOpen}
-      type="button"
-    >
-      <Wallet size={16} />
-      <span className="min-w-0 truncate">{connected ? label : "Online+ · Connect"}</span>
-    </button>
-  );
-}
-
 function SidebarBrand() {
   return (
     <div className="flex items-center gap-3">
@@ -406,7 +387,7 @@ function SidebarBrand() {
         src="/logo-circular.png"
       />
       <div>
-        <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
+        <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title-sidebar">
           ION DEX
         </p>
         <p className="text-xs text-cyan-100/55">Trade the future of ION</p>

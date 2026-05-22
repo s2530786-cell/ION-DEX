@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
+import { DataBlockerBanner } from "@/components/ui/DataBlockerBanner";
 import type { PageKey } from "@/components/layout/AppShell";
 import { IonCandleChart } from "@/components/charts/IonCandleChart";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -1132,6 +1133,7 @@ function DomainTradingPanel() {
 }
 
 function AIMarketPanel() {
+  const desk = useAiDeskData();
   const [symbol, setSymbol] = useState("ION");
   const [horizon, setHorizon] = useState<"1h" | "4h" | "1d">("4h");
   const [depth, setDepth] = useState<"quick" | "standard" | "deep">("standard");
@@ -1141,13 +1143,19 @@ function AIMarketPanel() {
     const ticker = symbol.trim().toUpperCase();
     const len = ticker.length;
     const tickerValid = len >= 2 && len <= 12 && /^[A-Z0-9]+$/.test(ticker);
+    const routeScore =
+      desk.statsState === "ready" && desk.stats
+        ? desk.stats.routeHealth === "liquid"
+          ? "low"
+          : "elevated"
+        : null;
     return {
-      confidence: horizon === "1h" ? 58 : horizon === "4h" ? 63 : 71,
       isValid: tickerValid,
+      routeScore,
       ticker,
       tickerValid,
     };
-  }, [horizon, symbol]);
+  }, [desk.stats, desk.statsState, symbol]);
 
   function submitAi(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1207,20 +1215,42 @@ function AIMarketPanel() {
         </p>
       ) : null}
 
+      {desk.statsProv ? (
+        <DataProvenanceBadge className="mb-1" label={desk.statsProv} testId="ai-form-stats-provenance" />
+      ) : null}
+
       <div
-        className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.07] p-4 text-sm text-emerald-100/80"
+        className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.06] p-4 text-sm text-cyan-100/85"
         data-testid="ai-preview"
       >
-        {validation.isValid ? (
+        {validation.isValid && desk.statsState === "ready" && desk.stats ? (
           <span>
-            AI preview: model confidence {validation.confidence}% on {validation.ticker} ({horizon}, {depth} scan). Uses offline heuristics only—streaming inference lands with ai-market-service.
+            AI preview: live surface for {validation.ticker} ({horizon}, {depth} scan) — last{" "}
+            {desk.stats.lastPrice}, spread {desk.stats.spreadPct}, route {desk.stats.routeHealth}
+            {validation.routeScore === "elevated" ? " — elevated stress" : ""}. No LLM inference until
+            ai-market-service is online.
+          </span>
+        ) : validation.isValid ? (
+          <span>
+            Ticker {validation.ticker} valid — waiting for swap-stats API before staging a brief.
           </span>
         ) : (
-          <span>Set a ticker to preview offline AI Sentinel overlays for risk desks and treasury alerts.</span>
+          <span>Set a 2–12 character ticker to stage a desk brief from live market APIs.</span>
         )}
       </div>
 
-      <NeonButton className="w-full sm:w-fit" data-testid="ai-submit" disabled={!validation.isValid} type="submit">
+      <DataBlockerBanner
+        detail="POST /api/ai/analyze and streaming Sentinel inference are not implemented. This form records intent only and surfaces tickers + swap-stats."
+        testId="ai-inference-blocker"
+        title="Blocker: dedicated AI inference API"
+      />
+
+      <NeonButton
+        className="w-full sm:w-fit"
+        data-testid="ai-submit"
+        disabled={!validation.isValid || desk.statsState !== "ready"}
+        type="submit"
+      >
         Stage AI Brief
       </NeonButton>
 
@@ -1229,7 +1259,8 @@ function AIMarketPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="ai-confirmation"
         >
-          AI Sentinel brief ready for human review. No outbound model calls are fired from this page.
+          AI Sentinel brief ready for human review — staged from live swap-stats (
+          {desk.stats?.routeHealth ?? "—"} route). Inference API not called.
         </p>
       ) : null}
     </form>

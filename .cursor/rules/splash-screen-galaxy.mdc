@@ -1,0 +1,34 @@
+# P0: SplashScreen 3D 赛博朋克银河背景
+
+Master 指令 (2026-05-22 14:40):
+- "页面是平的" = 抱怨！要 3D 立体深度效果
+- 参照视频: 深空星系 + 3D 深度分层 + 霓虹发光
+
+## 执行: 读 specs/splash-screen-galaxy.md → 改 SplashScreen.tsx
+
+### ① 3D 深空星系 Canvas 背景
+- 2000+ 星星，3 层深度（近/中/远，不同 alpha+speed+radius）
+- 中心 300 粒子螺旋星云 3D 旋转
+- 颜色: #24f7ff 50% / #8b5cf6 30% / #ec4899 20%
+- 底色: radial-gradient(#0a0a2e, #020617 50%, #000)
+
+### ② 3D Logo 翻转浮现
+- scale 0.3→1 + rotateY 180deg→0 (3D 翻转)
+- 3 层光环 rotate3d 不同轴向旋转
+- glow: drop-shadow 36px + 72px
+
+### ③ 3D 标题透视
+- perspective(800px) rotateX(5deg)
+- 多层 text-shadow 霓虹发光
+- translateZ 出入场
+
+## 不改
+- ❌ 结构: Logo→标题→副标题→进度条
+- ❌ 时间: 2400ms
+- ❌ 逻辑: useState + setTimeout
+
+## 验收
+- [x] 2000+ 粒子 3 层深度旋转
+- [x] Logo rotateY 3D 翻转 + 3 层光环
+- [x] 标题 perspective 3D 透视
+- [x] 2400ms 渐隐不卡死

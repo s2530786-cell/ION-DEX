@@ -1,54 +1,106 @@
+﻿# ION DEX Architecture Constraints (auto-generated 2026-05-22 20:29)
+# DO NOT: mock data, skip audit, use placeholder contracts
+
+## Hard Rules
+1. ALL backend routes MUST connect to real data sources (CMC, GeckoTerminal, ION Indexer v3)
+2. NO mock/placeholder/todo code 鈥?if can't implement, leave file empty with comment
+3. ALL contracts MUST pass 1000x security test before commit
+4. Frontend components 鈮?00 lines, utility functions 鈮?00 lines
+5. Use react-bits patterns: https://github.com/DavidHDev/react-bits
+6. Tailwind v3 syntax only (NOT v4 @import "tailwindcss")
+7. Colors: ION brand (#24f7ff cyan, #ff3bd4 magenta, #8d4dff violet, #ffd166 gold)
+
+## Build Order
+1. Backend adapters (CMC/Gecko/ION indexer) 鈫?test 鈫?commit
+2. Frontend data hooks 鈫?verify live data 鈫?commit
+3. Smart contracts (BSC Solidity) 鈫?slither/forge test 鈫?1000x green 鈫?commit
+4. Integration test 鈫?deploy script 鈫?final commit
+
+## Context
+# ION DEX 寮€鍙戣褰?
+**鍒涘缓鏃ユ湡锛?* 2026-05-18
+**GitHub锛?* https://github.com/s2530786-cell/ION-DEX
+**鍒涘缓鏃堕棿锛?* 2026-05-15
+**鏈€鍚庢洿鏂帮細** 2026-05-17
+
 ---
-description: ION DEX full architecture audit — references ion-dex-commander workflows
-alwaysApply: true
+
+## 椤圭洰姒傝堪
+
+ION DEX 鏄竴涓叏鏍?Web3 浜ゆ槗鍜岀敓鎬佺郴缁熼棬鎴凤紝涓撲负 Ice Open Network 鏋勫缓銆?
+### 鏍稿績鍔熻兘瑙勫垝
+
+- **浜ゆ槗鍔熻兘**
+  - Swap 鍜屼笓涓氱幇璐т氦鏄?  - 闄愪环鍗曞拰閾句笂鐜拌揣缃戞牸绛栫暐
+  - 娴佸姩鎬ф睜鍜?LP 璐ㄦ娂
+
+- **璐ㄦ娂涓庡垎鏋?*
+  - 瀹樻柟銆丏EX 鍜岀敓鎬佺郴缁熻川鎶煎垎鏋?  - BSC ION 鍜?ION 涓荤綉 ION 鍙岄摼閿€姣佸垎鏋?  - ION Chain 鍜?BSC 妗ユ帴娴佺▼
+
+- **鐢熸€侀泦鎴?*
+  - ION DNS 鍩熷悕瑙ｆ瀽銆佽浆绉诲拰甯傚満
+  - ION ID / KYC Pass 闆嗘垚
+  - AI 甯傚満鍒嗘瀽銆侀闄╄瘎鍒嗗拰 AI 鍝ㄥ叺鐩戞帶
+
+- **杩愯惀涓庢不鐞?*
+  - 鍥藉簱銆佽垂鐢ㄥ垎閰嶃€侀€忔槑搴﹀拰绠＄悊鎿嶄綔
+  - 楂樼骇 5D 鏈潵鎰熼湏铏?UI锛堟瀬鍏夊拰閾舵渤鑳屾櫙锛?
 ---
 
-# ION DEX Architecture & Feature Spec
+## 褰撳墠闃舵
 
-## TASK 0 — Always read first
-On every Cursor session start:
-1. Read `CURSOR_TODO.md` — prioritized feature checklist
-2. Read `.cursor/rules/ion-glass-3d-mandate.mdc` — exact visual CSS values
-3. Read `docs/05-product-prd.md` — full V1/V2/V3 scope
-4. Run `node skills/ion-dex-commander/scripts/audit-local-code.mjs` — security check
-5. Check `git log --oneline -5` — recent changes
+**钃濆浘鍜屾灦鏋勬惌寤洪樁娈?*
 
-## V1 Pages (Must Exist)
-- `/` → Dashboard (done, needs polish)
-- `/swap` → Full swap page (stub exists, needs full implementation per PRD)
-- `/trade` → Trade page (stub exists, needs orderbook + limit form)
-- `/pool` → LP pool page (link exists, page is stub)
-- `/stake` → Staking page (link exists, page is stub)
-- `/burn` → Burn tracker (link exists, page is stub)
-- `/bridge` → Bridge page (link exists, page is stub)
-- `/domain` → ION DNS page (link exists, page is stub)
-- `/ai` → AI market page (link exists, page is stub)
-- `/transparency` → Treasury page (NOT YET CREATED)
+---
 
-## Visual Standards (non-negotiable)
-- All cards: border-radius 1.5rem+, border 1px rgba(36,247,255,0.25)
-- Glass: bg rgba(6,16,36,0.3), blur(16px) saturate(1.35)
-- Text: headers #e0f0ff, body #8ab4d8, data #24f7ff
-- No sharp corners, no dark bg >0.45 alpha, no blur >20px
+## 浠撳簱缁撴瀯
 
-## Development Loop
-1. Read TASK 0 (this file)
-2. Pick highest priority item from CURSOR_TODO.md
-3. Implement feature
-4. Run `node skills/ion-dex-commander/scripts/audit-local-code.mjs`
-5. Fix all FAIL issues
-6. Commit with descriptive message
-7. Auto-deploy: `node skills/ion-dex-commander/scripts/git-auto-deploy.mjs`
+```
+ion-dex-nuke/
+鈹溾攢鈹€ ion/                    # 涓婃父 ION 鍙傝€?鑺傜偣婧愮爜锛堜笉鎻愪氦锛?鈹溾攢鈹€ contracts/
+鈹?  鈹溾攢鈹€ ion/               # ION 閾惧悎绾?鈹?  鈹斺攢鈹€ bsc/               # BSC 閾惧悎绾?鈹溾攢鈹€ frontend/              # 鍓嶇搴旂敤
+鈹溾攢鈹€ backend/               # 鍚庣鏈嶅姟
+鈹溾攢鈹€ indexer/               # 绱㈠紩鍣?鈹溾攢鈹€ relayer/               # 涓户鍣?鈹溾攢鈹€ sentinel/              # AI 鍝ㄥ叺鐩戞帶
+鈹溾攢鈹€ scripts/               # 鑴氭湰宸ュ叿
+鈹溾攢鈹€ infra/                 # 鍩虹璁炬柦閰嶇疆
+鈹溾攢鈹€ docs/                  # 鏂囨。
+鈹斺攢鈹€ audits/                # 瀹¤鎶ュ憡
+```
 
-## File Limits
-- Components: ≤ 300 lines
-- Utility functions: ≤ 200 lines
-- Split if exceeding
+---
 
-## Data Sources (No Mocks)
-- CMC API: `CMC_API_KEY=342475df9fa5451aafbb3346be049f03`
-- ION Indexer: `https://api.mainnet.ice.io/indexer/v3/`
-- GeckoTerminal: `https://api.geckoterminal.com/api/v2`
-- DexScreener: `https://api.dexscreener.com`
-- Backend: `http://127.0.0.1:8788`
-- Use `ION_DATA_MODE=live` in production
+## 鏂囨。绱㈠紩
+
+- `docs/00-project-overview.md` - 椤圭洰姒傝堪
+- `docs/01-official-addresses-and-assumptions.md` - 瀹樻柟鍦板潃鍜屽亣璁?- `docs/02-tokenomics-and-fees.md` - 浠ｅ竵缁忔祹瀛﹀拰璐圭敤
+- `docs/03-technical-architecture.md` - 鎶€鏈灦鏋?- `docs/04-development-roadmap.md` - 寮€鍙戣矾绾垮浘
+- `docs/05-product-prd.md` - 浜у搧 PRD
+- `docs/06-page-flow-and-user-journeys.md` - 椤甸潰娴佺▼鍜岀敤鎴锋梾绋?
+---
+
+## 鏋勫缓椤哄簭
+
+1. 鍐荤粨鍋囪鍜屽畼鏂瑰湴鍧€
+2. 鏋勫缓 UI 璁捐绯荤粺
+3. 瀹炵幇鍚堢害鍩虹
+4. 鏋勫缓鍚庣鍩虹
+5. 鏋勫缓绱㈠紩鍣?6. 娣诲姞棰勮█鏈恒€並eeper 鍜屾ˉ鎺ユ湇鍔?7. 鏋勫缓鍓嶇浜у搧椤甸潰
+8. 娣诲姞鍩熷悕鍜?ION ID 妯″潡
+9. 娣诲姞 AI 甯傚満鍜屽摠鍏垫ā鍧?10. 娣诲姞绠＄悊銆侀€忔槑搴︺€佹祴璇曘€佸璁″拰鍚姩宸ヤ綔娴?
+---
+
+## 鎶€鏈爤
+
+- **璇█锛?* TypeScript
+- **涓诲垎鏀細** main
+- **Stars锛?* 1
+- **Forks锛?* 0
+
+---
+
+## 澶囨敞
+
+- `ion/` 鐩綍涓嶆彁浜ゅ埌浠撳簱锛堟槸瀹屾暣鐨勪笂娓?Git 浠撳簱锛?- 闇€瑕佸崟鐙厠闅嗭細`git clone https://github.com/ice-blockchain/ion ion`
+- GitHub Actions 浠呴獙璇?`frontend/` 鍜岃剼鏈紝涓嶆瀯寤?`ion/`
+
+--

@@ -19,8 +19,13 @@ async function clickNav(page: Page, key: string) {
 }
 
 async function expectIonBrand(page: Page) {
+  const mobileStrip = page.getByTestId("mobile-brand-strip");
+  if ((await mobileStrip.count()) > 0 && (await mobileStrip.isVisible())) {
+    return;
+  }
   const brandLocators = [
     page.getByTestId("brand-title"),
+    page.getByTestId("brand-title-sidebar"),
     page.getByTestId("brand-title-tablet"),
     page.getByTestId("ion-brand-emblem"),
   ];
@@ -33,7 +38,9 @@ async function expectIonBrand(page: Page) {
       }
     }
   }
-  await expect(page.getByTestId("mobile-brand-logo")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole("banner").getByText("ION DEX", { exact: true }).first()).toBeVisible({
+    timeout: 15_000,
+  });
 }
 
 test.describe("ION DEX smoke", () => {
@@ -104,12 +111,22 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
   });
 
-  test("375px viewport keeps brand and main content visible", async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 844 });
-    await page.goto("/");
+  test("375px viewport keeps brand and main content visible", async ({ browser, baseURL }) => {
+    const context = await browser.newContext({
+      viewport: { width: 375, height: 844 },
+      isMobile: true,
+      hasTouch: true,
+      baseURL,
+    });
+    const page = await context.newPage();
+    try {
+      await page.goto("/");
 
-    await expectIonBrand(page);
-    await expect(page.getByTestId("main-content")).toBeVisible();
+      await expect(page.getByTestId("mobile-brand-strip")).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByTestId("main-content")).toBeVisible();
+    } finally {
+      await context.close();
+    }
   });
 
   test("768px and 1440px viewports keep brand visible", async ({ page }) => {
