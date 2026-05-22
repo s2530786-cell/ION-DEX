@@ -1,39 +1,46 @@
-# CURSOR TODO — Auto-generated 2026-05-22T04:19:33.059Z
+# CURSOR TODO — Auto-generated 2026-05-22T04:20:00.000Z
 
-**Branch:** cursor/ui-design-workflow-44c9  
-**Last commit:** 19ebdc86 chore: auto-deploy via ion-dex-commander  
-**Changed files:** none
+**Branch:** cursor/ui-design-workflow-44c9
+**Last commit:** 346b186c
+**Changed files:** glass-shell-frame, neon-glass-card__inner, glass-hud-panel, AppShell header
 
-## Priority Tasks
+## Priority Tasks (P0 → P2)
 
-### 🔴 P0 — Blocking
-- [ ] Run audit: `node skills/ion-dex-commander/scripts/audit-local-code.mjs`
-- [ ] Fix all FAIL-level issues from audit
-- [ ] Verify glass/3D standards in ion-glass-3d-mandate.mdc
+### 🔴 P0 — Visual Quality: Match Reference Screenshot
 
-### 🟡 P1 — Important
-- [ ] Ensure all API calls use live data (no mocks)
-- [ ] Check UTF-8 encoding on all modified files
-- [ ] Verify no files exceed 300 lines
+Master says current state: borders sharp, contrast too dark, glass blurry. Reference image shows bright, crisp glass with clearly rounded corners.
+
+**Exact Fix Values:**
+- [ ] All card `border-radius` ≥ 24px (1.5rem). Check: glass-shell-frame, neon-glass-card, all section cards. NO 8px or 12px corners.
+- [ ] `box-shadow` outer glow: cyan `0 0 32px rgba(36,247,255,0.25)` on every glass card
+- [ ] `box-shadow` inner highlight: `inset 0 1px 0 rgba(255,255,255,0.2)` on card tops
+- [ ] `border` on cards: `1px solid rgba(36,247,255,0.25)` visible rim
+- [ ] Text headers: `#e0f0ff` (not dull gray), `font-weight: 800`, `font-size: 1.1rem+`
+- [ ] Data numbers (TVL, APR, Price): `#24f7ff` cyan glow, `text-shadow: 0 0 12px rgba(36,247,255,0.5)`
+- [ ] Chart backgrounds: `rgba(3,8,22,0.25)` not black/dark
+- [ ] Grid gaps between cards: 1rem (not crammed)
+
+### 🔴 P0 — Missing Features
+
+- [ ] **Language selector**: Wire up the Globe2 button to toggle EN/CN/ZH. Create a simple `LanguageSwitcher` component with a dropdown. Store choice in localStorage. Apply to all UI text.
+- [ ] **Back-to-home**: Home button added to header (done). Wire it to actually navigate.
+- [ ] **Mobile header**: Current page name visible on mobile (not just hidden)
+
+### 🟡 P1 — Layout Fixes
+
+- [ ] Dashboard cards should be `grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4` (max 11 cards)
+- [ ] Kline/OrderBook charts must fill their containers (no 200px empty space)
+- [ ] Token search input in Swap panel: auto-focus on open
+- [ ] Wallet connect button: show connected state (green dot + truncated address)
 
 ### 🟢 P2 — Polish
-- [ ] Review neon rim colors match brand standard (#24f7ff/#ff3bd4)
-- [ ] Check mobile responsiveness on all changed components
-- [ ] Run build and fix any type errors
 
-## Recent Commits
-```
-19ebdc86 chore: auto-deploy via ion-dex-commander
-7c8bde66 pipeline: cursor-sync + audit + deploy (2026-05-22 12:13)
-c8cbe89a fix: remove all 3D transforms + wobbling — flat glass only
-e0bd7ed3 fix: remove stray floating logo + brand emblem from Swap + float-3d toggle
-fee722b3 fix: disable float-3d animation + remove giant brand emblem from SwapPanel
-ca076491 docs: update glass mandate — add rule 0: no 3D float animation
-d28acb05 fix(ui): disable 3D float animation — static glass only
-52ae6b61 pipeline: cursor-sync + audit + deploy (2026-05-22 11:53)
-f77852b0 feat(ui): hero rim + brighter aurora + iON brand neon colors
-adbbf66a fix: transparent glass + dramatic 3D float — aurora visible through cards
-```
+- [ ] Add `transition-all duration-300` to all glass cards for hover effect
+- [ ] Hover: `scale(1.01)` + `brightness(1.1)` on glass cards
+- [ ] Loading skeletons: use `animate-pulse bg-gradient-to-r from-cyan-500/10 via-fuchsia-500/10 to-cyan-500/10`
+- [ ] Error states: show retry button + icon (not plain text)
 
 ## Auto-Deploy
-Run: `node skills/ion-dex-commander/scripts/git-auto-deploy.mjs`
+```bash
+node skills/ion-dex-commander/scripts/git-auto-deploy.mjs D:\openclaw-tools\ion-dex-nuke
+```
