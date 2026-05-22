@@ -78,6 +78,111 @@
       var(--neon-glow-purple),
       0 0 24px rgba(255, 209, 102, 0.2);
   }
+
+  /** Swap brand cube — isometric neon + reflection (no controls stacked on logo) */
+  .ion-brand-emblem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 2.5rem;
+    padding: 0.25rem 0;
+  }
+
+  .ion-brand-emblem--sm {
+    min-height: 2rem;
+    gap: 0.25rem;
+  }
+
+  .ion-brand-emblem__halo {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    filter: blur(28px);
+  }
+
+  .ion-brand-emblem__halo--cyan {
+    left: 18%;
+    top: 8%;
+    height: 5.5rem;
+    width: 5.5rem;
+    background: rgba(36, 247, 255, 0.42);
+  }
+
+  .ion-brand-emblem__halo--magenta {
+    right: 14%;
+    bottom: 18%;
+    height: 4.5rem;
+    width: 4.5rem;
+    background: rgba(255, 59, 212, 0.34);
+  }
+
+  .ion-brand-emblem__stack {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+  }
+
+  .ion-brand-emblem__logo {
+    position: relative;
+    z-index: 2;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 0.75rem;
+    object-fit: cover;
+    box-shadow:
+      0 0 18px rgba(36, 247, 255, 0.35),
+      0 0 28px rgba(255, 59, 212, 0.15);
+    outline: 1px solid rgba(36, 247, 255, 0.25);
+  }
+
+  .ion-brand-emblem--sm .ion-brand-emblem__logo {
+    height: 2rem;
+    width: 2rem;
+  }
+
+  .ion-brand-emblem__reflect {
+    display: none;
+  }
+
+  .ion-brand-emblem--sm .ion-brand-emblem__reflect {
+    display: none;
+  }
+
+  .ion-brand-emblem__logo--reflect {
+    display: none;
+  }
+
+  .ion-brand-emblem__wordmark {
+    position: relative;
+    z-index: 3;
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: 0.28em;
+    text-indent: 0.28em;
+    text-transform: uppercase;
+    background: linear-gradient(92deg, #7eeeff 0%, #c4b5fd 42%, #ff7ae8 78%, #ffd166 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 28px rgba(36, 247, 255, 0.35);
+  }
+
+  .ion-brand-emblem--sm .ion-brand-emblem__wordmark {
+    font-size: 0.82rem;
+    letter-spacing: 0.22em;
+    text-indent: 0.22em;
+  }
+
+  .ion-swap-flip-row {
+    display: flex;
+    justify-content: center;
+    padding: 0.15rem 0 0.35rem;
+  }
 }
 
 @keyframes neonGlassBorderPulse {

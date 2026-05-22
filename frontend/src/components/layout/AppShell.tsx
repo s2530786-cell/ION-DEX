@@ -13,7 +13,6 @@ import {
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
 import { NeonButton } from "@/components/ui/NeonButton";
-import ionLogo from "@/assets/ion-logo.jpg";
 import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
@@ -129,12 +128,6 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     <div className="relative min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
       {/* <DevBuildRibbon /> */}
       <IonConnectModalBridge />
-      <img
-        src={ionLogo}
-        alt="ION DEX"
-        className="pointer-events-none absolute left-14 top-7 z-30 h-10 w-10 rotate-[1deg] rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)] lg:hidden"
-        data-testid="mobile-brand-logo"
-      />
       <div className="glass-shell-frame mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] lg:flex">
         <aside
           aria-label="Sidebar"
@@ -204,8 +197,14 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               <p className="hidden text-sm font-bold text-white lg:block">
                 {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
               </p>
-              <div className="flex items-center gap-3 pl-12 lg:hidden">
-                <div>
+              <div className="flex items-center gap-3 lg:hidden">
+                <img
+                  alt="ION DEX"
+                  className="h-10 w-10 shrink-0 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)] ring-1 ring-cyan-200/30"
+                  data-testid="mobile-brand-logo"
+                  src="/logo-circular.png"
+                />
+                <div className="min-w-0">
                   <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
                     ION DEX
                   </p>
@@ -320,9 +319,9 @@ function SidebarBrand() {
   return (
     <div className="flex items-center gap-3">
       <img
-        src={ionLogo}
         alt="ION DEX"
-        className="h-10 w-10 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)]"
+        className="h-10 w-10 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)] ring-1 ring-cyan-200/25"
+        src="/logo-circular.png"
       />
       <div>
         <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">

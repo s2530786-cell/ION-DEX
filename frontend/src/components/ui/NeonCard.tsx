@@ -3,6 +3,8 @@ import type { PropsWithChildren } from "react";
 type NeonCardProps = PropsWithChildren<{
   className?: string;
   variant?: "cyan" | "magenta" | "gold" | "mixed";
+  /** Disable card tilt animation (Swap forms read clearer without 3D skew). */
+  floating?: boolean;
 }>;
 
 const variantGlow: Record<NonNullable<NeonCardProps["variant"]>, string> = {
@@ -16,15 +18,22 @@ const variantGlow: Record<NonNullable<NeonCardProps["variant"]>, string> = {
  * Legacy name kept for call sites; renders the same liquid-glass stack as NeonGlassCard
  * with variant-tinted outer glow (docs/10-ui-design-route thick neon rim).
  */
-export function NeonCard({ children, className = "", variant = "mixed" }: NeonCardProps) {
+export function NeonCard({
+  children,
+  className = "",
+  variant = "mixed",
+  floating = true,
+}: NeonCardProps) {
   return (
     <section
       className={[
         "neon-glass-card neon-rim-hero rounded-[1.75rem]",
-        "float-3d",
+        floating ? "float-3d" : "",
         variantGlow[variant],
         className,
-      ].join(" ")}
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <div className="neon-glass-card__inner overflow-hidden rounded-[calc(1.75rem-1px)]">
         <div className="h-full rounded-[calc(1.75rem-2px)] p-5 sm:p-6">{children}</div>
