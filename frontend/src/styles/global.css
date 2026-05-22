@@ -68,8 +68,8 @@ select {
     position: relative;
     isolation: isolate;
     border: 1.5px solid rgba(36, 247, 255, 0.35);
-    background: rgba(4, 8, 22, 0.16);
-    backdrop-filter: blur(12px) saturate(1.2);
+    background: rgba(4, 8, 22, 0.12);
+    backdrop-filter: blur(8px) saturate(1.15);
     box-shadow:
       0 0 90px rgba(36, 247, 255, 0.32),
       0 0 48px rgba(255, 59, 212, 0.16),
@@ -93,15 +93,15 @@ select {
     filter: blur(8px);
   }
 
-  /** App shell sidebar/header — liquid HUD, not flat grey strips */
+  /** App shell sidebar/header — crisp HUD, not muddy */
   .glass-hud-panel {
     position: relative;
     isolation: isolate;
     border-color: rgba(36, 247, 255, 0.18);
     background:
-      linear-gradient(160deg, rgba(10, 22, 48, 0.72), rgba(5, 10, 28, 0.55)),
-      rgba(4, 8, 22, 0.4);
-    backdrop-filter: blur(16px) saturate(1.1);
+      linear-gradient(160deg, rgba(10, 22, 48, 0.45), rgba(5, 10, 28, 0.3)),
+      rgba(4, 8, 22, 0.25);
+    backdrop-filter: blur(8px) saturate(1.1);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.14),
       0 0 36px rgba(36, 247, 255, 0.1);

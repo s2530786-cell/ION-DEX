@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
+import { AiChatWidget } from "@/components/ai/AiChatWidget";
 import { ProfileHub } from "@/components/layout/ProfileHub";
 import { NeonButton } from "@/components/ui/NeonButton";
 import type { LiveWalletConnection } from "@/lib/wallet";
@@ -212,7 +213,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
         </AnimatePresence>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="glass-hud-panel flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-6">
+          <header className="glass-hud-panel flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2.5 sm:px-5">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 aria-expanded={mobileNavOpen}
@@ -224,23 +225,26 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               >
                 <Menu size={18} />
               </button>
-              <p className="hidden text-sm font-bold text-white lg:block">
-                {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
-              </p>
-              <div className="flex items-center gap-3 lg:hidden">
+              <div className="flex min-w-0 items-center gap-2 lg:hidden">
                 <img
                   alt="ION DEX"
-                  className="h-10 w-10 shrink-0 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)] ring-1 ring-cyan-200/30"
+                  className="h-9 w-9 shrink-0 rounded-xl object-cover shadow-[0_0_16px_rgba(36,247,255,0.35)] ring-1 ring-cyan-200/30"
                   data-testid="mobile-brand-logo"
                   src="/logo-circular.png"
                 />
-                <div className="min-w-0">
-                  <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
-                    ION DEX
-                  </p>
-                  <p className="text-xs text-cyan-100/55">Trade the future of ION</p>
-                </div>
+                <p className="truncate text-base font-black tracking-wide text-glow-cyan" data-testid="brand-title">
+                  ION DEX
+                </p>
               </div>
+              <p
+                className="hidden text-sm font-bold text-white md:block lg:text-base"
+                data-testid="brand-title-tablet"
+              >
+                ION DEX
+              </p>
+              <p className="hidden text-sm font-bold text-white/80 lg:block">
+                {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
+              </p>
             </div>
 
             <nav
@@ -364,12 +368,13 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 
           <TickerStrip privacyMode={privacyMode} />
 
-          <main className="flex-1 p-4 sm:p-6" data-testid="main-content">
+          <main className="flex-1 p-3 sm:p-4" data-testid="main-content">
             {children}
           </main>
         </div>
       </div>
       <AuroraGalaxyBackground />
+      <AiChatWidget />
     </div>
   );
 }

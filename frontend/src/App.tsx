@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
+import { SplashScreen } from "@/components/layout/SplashScreen";
 import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
 import { BusinessPage, type BusinessPageKey } from "@/pages/BusinessPages";
 import { DashboardPage } from "@/pages/DashboardPage";
@@ -60,7 +61,9 @@ export function App() {
   }, []);
 
   return (
-    <AppShell activePage={activePage} onPageChange={navigate}>
+    <>
+      <SplashScreen />
+      <AppShell activePage={activePage} onPageChange={navigate}>
       <AnimatePresence initial={false} mode="wait">
         <motion.div
           key={activePage}
@@ -73,5 +76,6 @@ export function App() {
         </motion.div>
       </AnimatePresence>
     </AppShell>
+    </>
   );
 }

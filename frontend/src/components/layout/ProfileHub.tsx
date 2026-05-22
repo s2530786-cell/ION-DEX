@@ -240,7 +240,7 @@ export function ProfileHub({
 
   return (
     <div
-      className="absolute right-0 top-[calc(100%+0.75rem)] z-30 max-h-[min(80vh,44rem)] w-[min(26rem,calc(100vw-2rem))]"
+      className="fixed right-4 top-[4.25rem] z-[100] max-h-[min(80vh,44rem)] w-[min(26rem,calc(100vw-2rem))] sm:right-6"
       data-testid="wallet-panel"
     >
       <NeonGlassCard
@@ -523,15 +523,17 @@ export function ProfileHub({
             ) : null}
 
             {connectedProviderKey ? (
-              <button
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
-                data-testid="wallet-disconnect"
-                onClick={onDisconnect}
-                type="button"
-              >
-                <LogOut size={16} />
-                Disconnect wallet
-              </button>
+              <div className="sticky bottom-0 z-10 border-t border-white/10 bg-[#070d1c]/95 pt-3 backdrop-blur-md">
+                <button
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
+                  data-testid="wallet-disconnect"
+                  onClick={onDisconnect}
+                  type="button"
+                >
+                  <LogOut size={16} />
+                  Disconnect wallet
+                </button>
+              </div>
             ) : null}
           </div>
         </div>

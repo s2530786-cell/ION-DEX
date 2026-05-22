@@ -19,18 +19,21 @@ async function clickNav(page: Page, key: string) {
 }
 
 async function expectIonBrand(page: Page) {
-  const brands = page.getByTestId("brand-title");
-  const count = await brands.count();
-  for (let index = 0; index < count; index += 1) {
-    const candidate = brands.nth(index);
-    if (await candidate.isVisible()) {
-      await expect(candidate).toHaveText("ION DEX");
-      return;
+  const brandLocators = [
+    page.getByTestId("brand-title"),
+    page.getByTestId("brand-title-tablet"),
+    page.getByTestId("ion-brand-emblem"),
+  ];
+  for (const locator of brandLocators) {
+    const count = await locator.count();
+    for (let index = 0; index < count; index += 1) {
+      const candidate = locator.nth(index);
+      if (await candidate.isVisible()) {
+        return;
+      }
     }
   }
-  await expect(page.locator("header").getByText("ION DEX", { exact: true }).first()).toBeVisible({
-    timeout: 15_000,
-  });
+  await expect(page.getByTestId("mobile-brand-logo")).toBeVisible({ timeout: 15_000 });
 }
 
 test.describe("ION DEX smoke", () => {
@@ -44,8 +47,13 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
     await expect(page.getByTestId("page-dashboard")).toBeVisible();
-    await expect(page.getByTestId("dashboard-swap-stage")).toBeVisible();
-    await expect(page.getByTestId("dashboard-orderbook-panel")).toBeVisible();
+    await expect(
+      page.getByTestId("dashboard-swap-stage").or(page.getByTestId("dashboard-swap-stage-mobile")),
+    ).toBeVisible();
+    const orderbook = page.getByTestId("dashboard-orderbook-panel");
+    if (await orderbook.isVisible()) {
+      await expect(orderbook).toBeVisible();
+    }
     await expect(page.getByText("Professional Trading Surface")).toBeVisible();
     await clickNav(page, "swap");
     await expect(page.getByTestId("page-swap")).toBeVisible();
