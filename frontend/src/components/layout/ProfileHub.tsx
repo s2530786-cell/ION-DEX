@@ -13,6 +13,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonGlassCard } from "@/components/ui/NeonGlassCard";
 import { fetchProfileSession, type ProfileSession } from "@/lib/ionApi";
@@ -238,11 +239,19 @@ export function ProfileHub({
     return null;
   }
 
-  return (
-    <div
-      className="fixed right-4 top-[4.25rem] z-[100] max-h-[min(80vh,44rem)] w-[min(26rem,calc(100vw-2rem))] sm:right-6"
-      data-testid="wallet-panel"
-    >
+  const panel = (
+    <>
+      <button
+        aria-label="Close profile hub"
+        className="fixed inset-0 z-[190] bg-[#03050f]/55 backdrop-blur-[2px]"
+        data-testid="wallet-panel-backdrop"
+        onClick={onClose}
+        type="button"
+      />
+      <div
+        className="fixed right-4 top-[4.25rem] z-[200] max-h-[min(80vh,44rem)] w-[min(26rem,calc(100vw-2rem))] sm:right-6"
+        data-testid="wallet-panel"
+      >
       <NeonGlassCard
         className="max-h-[min(80vh,44rem)] overflow-hidden shadow-[0_0_48px_rgba(36,247,255,0.32)]"
         testId="profile-hub"
@@ -305,6 +314,18 @@ export function ProfileHub({
                 {connectedWalletName} connected
                 {liveConnection?.networkLabel ? ` · ${liveConnection.networkLabel}` : ""}
               </p>
+            ) : null}
+
+            {connectedProviderKey ? (
+              <button
+                className="flex w-full items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
+                data-testid="wallet-disconnect"
+                onClick={onDisconnect}
+                type="button"
+              >
+                <LogOut size={16} />
+                Disconnect wallet
+              </button>
             ) : null}
 
             {connectError ? (
@@ -521,25 +542,14 @@ export function ProfileHub({
           <p className="text-[10px] leading-relaxed text-cyan-100/40">{session.provenance.description}</p>
               </div>
             ) : null}
-
-            {connectedProviderKey ? (
-              <div className="sticky bottom-0 z-10 border-t border-white/10 bg-[#070d1c]/95 pt-3 backdrop-blur-md">
-                <button
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
-                  data-testid="wallet-disconnect"
-                  onClick={onDisconnect}
-                  type="button"
-                >
-                  <LogOut size={16} />
-                  Disconnect wallet
-                </button>
-              </div>
-            ) : null}
           </div>
         </div>
       </NeonGlassCard>
-    </div>
+      </div>
+    </>
   );
+
+  return createPortal(panel, document.body);
 }
 
 function WalletGroup({

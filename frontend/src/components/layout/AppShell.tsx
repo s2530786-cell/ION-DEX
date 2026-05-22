@@ -348,21 +348,6 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 <Wallet size={16} />
                 {walletButtonLabel}
               </NeonButton>
-
-              {walletPanelOpen ? (
-                <ProfileHub
-                  connectedProviderKey={connectedProvider}
-                  liveConnection={liveConnection}
-                  onAvatarChange={setSelectedAvatarId}
-                  onClose={() => setWalletPanelOpen(false)}
-                  onConnect={handleProfileConnect}
-                  onDisconnect={handleProfileDisconnect}
-                  onPrivacyModeChange={setPrivacyMode}
-                  open={walletPanelOpen}
-                  privacyMode={privacyMode}
-                  selectedAvatarId={selectedAvatarId}
-                />
-              ) : null}
             </div>
           </header>
 
@@ -373,6 +358,20 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
           </main>
         </div>
       </div>
+      {walletPanelOpen ? (
+        <ProfileHub
+          connectedProviderKey={connectedProvider}
+          liveConnection={liveConnection}
+          onAvatarChange={setSelectedAvatarId}
+          onClose={() => setWalletPanelOpen(false)}
+          onConnect={handleProfileConnect}
+          onDisconnect={handleProfileDisconnect}
+          onPrivacyModeChange={setPrivacyMode}
+          open={walletPanelOpen}
+          privacyMode={privacyMode}
+          selectedAvatarId={selectedAvatarId}
+        />
+      ) : null}
       <AuroraGalaxyBackground />
       <AiChatWidget />
     </div>

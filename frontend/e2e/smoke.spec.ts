@@ -47,9 +47,13 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
     await expect(page.getByTestId("page-dashboard")).toBeVisible();
-    await expect(
-      page.getByTestId("dashboard-swap-stage").or(page.getByTestId("dashboard-swap-stage-mobile")),
-    ).toBeVisible();
+    const mobileSwap = page.getByTestId("dashboard-swap-stage-mobile");
+    const desktopSwap = page.getByTestId("dashboard-swap-stage");
+    if (await mobileSwap.isVisible()) {
+      await expect(mobileSwap).toBeVisible();
+    } else {
+      await expect(desktopSwap).toBeVisible();
+    }
     const orderbook = page.getByTestId("dashboard-orderbook-panel");
     if (await orderbook.isVisible()) {
       await expect(orderbook).toBeVisible();
