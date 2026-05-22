@@ -19,7 +19,12 @@ const variantGlow: Record<NonNullable<NeonCardProps["variant"]>, string> = {
 export function NeonCard({ children, className = "", variant = "mixed" }: NeonCardProps) {
   return (
     <section
-      className={["neon-glass-card rounded-[1.75rem]", variantGlow[variant], className].filter(Boolean).join(" ")}
+      className={[
+        "neon-glass-card rounded-[1.75rem]",
+        "float-3d",
+        variantGlow[variant],
+        className,
+      ].join(" ")}
     >
       <div className="neon-glass-card__inner overflow-hidden rounded-[calc(1.75rem-1px)]">
         <div className="h-full rounded-[calc(1.75rem-2px)] p-5 sm:p-6">{children}</div>

@@ -15,6 +15,7 @@ export function NeonGlassCard({ children, className = "", testId }: NeonGlassCar
     <section
       className={[
         "neon-glass-card",
+        "float-3d",
         "drop-shadow-[0_0_28px_rgba(0,255,255,0.28)]",
         "drop-shadow-[0_0_40px_rgba(255,0,255,0.18)]",
         className,
@@ -23,7 +24,7 @@ export function NeonGlassCard({ children, className = "", testId }: NeonGlassCar
         .join(" ")}
       data-testid={testId}
     >
-      <div className="neon-glass-card__inner overflow-hidden rounded-[calc(2rem-1px)] bg-black/20 backdrop-blur-lg">
+      <div className="neon-glass-card__inner overflow-hidden rounded-[calc(2rem-1px)]">
         <div className="rounded-[calc(2rem-2px)] p-5 sm:p-6">{children}</div>
       </div>
     </section>
