@@ -47,10 +47,16 @@ foreach (`$contract in @('pool.fc','router.fc','FeeDistributor.fc','lp_account.f
 }
 "
 
+## Live deploy (operator, post-audit)
+# Preflight:  node scripts/deploy-fift-live.mjs        (ION_DEPLOY_ALLOW_LIVE=1)
+# Plan BoC:    node scripts/deploy-fift-live-send.mjs  (ION_DEPLOY_BROADCAST=1, SEND_MODE=plan)
+# Wallet BoC:  node scripts/deploy-fift-live-send.mjs  (SEND_MODE=send + ION_DEPLOY_WALLET_*)
+# See: contracts/ion/deploy/LIVE-DEPLOY.md
+
 ## Deploy FeeDistributor
 # State: owner, lp_recipient, treasury_recipient, insurance_recipient, lp_bps, treasury_bps, insurance_bps
-# Send to FeeDistributor contract:
-fift -s deploy/deploy.fif
+# Checklist only (no cells):
+fift -s deploy/deploy-checklist.fif
 
 ## Deploy Pool (for each token pair)
 # State: owner, token0, token1, fee_numer, fee_denom, reserve0=0, reserve1=0,

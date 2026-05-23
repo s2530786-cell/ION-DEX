@@ -72,7 +72,7 @@ int dns::hash_name(slice name) inline {
         int expires_at = body~load_uint(32);
         int key = dns::hash_name(name);
 
-        (slice _, int exists) = storage::domain_dict.udict_get?(256, key);
+        (slice _val, int exists) = storage::domain_dict.udict_get?(256, key);
         throw_unless(error::domain_unavailable, exists == 0);
 
         storage::domain_dict~udict_set(

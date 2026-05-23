@@ -16,6 +16,11 @@ on:
         required: true
         default: true
         type: boolean
+      confirm_phrase:
+        description: For live preflight only — type DEPLOY-testnet or DEPLOY-mainnet (must match network)
+        required: false
+        default: ""
+        type: string
 
 concurrency:
   group: ion-dex-deploy-${{ github.ref }}
@@ -68,22 +73,35 @@ jobs:
           ION_DEPLOY_NETWORK: ${{ inputs.network }}
         run: node scripts/deploy-fift-dry-run.mjs
 
-      - name: Live deploy gate (manual only, secrets required)
+      - name: Live deploy preflight (manual confirm, no broadcast)
         if: inputs.dry_run == false
         env:
+          ION_DEPLOY_ALLOW_LIVE: "1"
           ION_DEPLOY_DRY_RUN: "0"
           ION_DEPLOY_NETWORK: ${{ inputs.network }}
+          ION_DEPLOY_CONFIRM: "YES I deploy to ${{ inputs.network }}"
           ION_DEPLOY_OWNER_ADDRESS: ${{ secrets.ION_DEPLOY_OWNER_ADDRESS }}
           ION_DEPLOY_LP_RECIPIENT: ${{ secrets.ION_DEPLOY_LP_RECIPIENT }}
           ION_DEPLOY_TREASURY_RECIPIENT: ${{ secrets.ION_DEPLOY_TREASURY_RECIPIENT }}
           ION_DEPLOY_INSURANCE_RECIPIENT: ${{ secrets.ION_DEPLOY_INSURANCE_RECIPIENT }}
+          ION_DEPLOY_TOKEN0_ADDRESS: ${{ secrets.ION_DEPLOY_TOKEN0_ADDRESS }}
+          ION_DEPLOY_TOKEN1_ADDRESS: ${{ secrets.ION_DEPLOY_TOKEN1_ADDRESS }}
+          ION_DEPLOY_FEE_DISTRIBUTOR_ADDRESS: ${{ secrets.ION_DEPLOY_FEE_DISTRIBUTOR_ADDRESS }}
+          ION_DEPLOY_ROUTER_ADDRESS: ${{ secrets.ION_DEPLOY_ROUTER_ADDRESS }}
+          ION_DEPLOY_VAULT_ADDRESS: ${{ secrets.ION_DEPLOY_VAULT_ADDRESS }}
+          ION_DEPLOY_STAKING_POOL_ADDRESS: ${{ secrets.ION_DEPLOY_STAKING_POOL_ADDRESS }}
+          ION_DEPLOY_RPC_URL: ${{ secrets.ION_DEPLOY_RPC_URL }}
           ION_DEPLOY_KEY: ${{ secrets.ION_DEPLOY_KEY }}
         run: |
-          if [ -z "${ION_DEPLOY_KEY:-}" ]; then
-            echo "ERROR: ION_DEPLOY_KEY secret is required for live deploy."
+          expected="DEPLOY-${{ inputs.network }}"
+          if [ "${{ inputs.confirm_phrase }}" != "$expected" ]; then
+            echo "ERROR: confirm_phrase must be exactly: $expected"
             exit 1
           fi
-          echo "Live deploy is not automated in-repo yet."
-          echo "Run fift with operator wallet on a trusted runner after review."
-          echo "Network=${ION_DEPLOY_NETWORK} Owner=${ION_DEPLOY_OWNER_ADDRESS:-unset}"
-          exit 1
+          for key in ION_DEPLOY_OWNER_ADDRESS ION_DEPLOY_LP_RECIPIENT ION_DEPLOY_TREASURY_RECIPIENT ION_DEPLOY_INSURANCE_RECIPIENT ION_DEPLOY_TOKEN0_ADDRESS ION_DEPLOY_TOKEN1_ADDRESS; do
+            if [ -z "${!key:-}" ]; then
+              echo "ERROR: GitHub secret $key is required for live preflight."
+              exit 1
+            fi
+          done
+          node scripts/deploy-fift-live.mjs

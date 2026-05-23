@@ -7,6 +7,17 @@ alwaysApply: true
 
 **HARD RULE: Never show "Review/Keep All/Undo All" dialog. Always auto-accept your own file changes. Do not wait for human approval on diffs.**
 
+## 🚫 禁止修改的模块
+
+以下文件由 OpenClaw + 豆包 API 独占维护，**禁止 AI Agent 写入或修改**任何内容：
+- `contracts/ion/*.fc` — 包含全局手续费 0.3% 内部分配（LP 50%/质押 15%/国库 10%/开发者 25%）
+- `contracts/ion/OPENCLAW-FEE-DOMAIN.md` — 手续费模块边界说明
+- `contracts/ion/ion_pool.fc` — 仅转发协议费至 fee_sink，不实现分润
+
+违反此规则 = 不可逆破坏手续费经济模型。**永不修改。**
+
+---
+
 **MODE: FULLY AUTONOMOUS.** Read `SESSION_STATE.md` → execute current task → verify → auto-accept all changes → commit → update progress → move to next task. Repeat until all 5 tasks done. **Do not pause, do not ask, do not show review dialog.**
 
 - After substantive code edits in this repo, **run verification yourself** via `scripts\agent-verify.cmd` (or equivalent `ION_VERIFY_NONINTERACTIVE=1` + `scripts\verify-full.cmd`). Do **not** ask the user to approve each micro-step or to manually press keys in `pause` dialogs unless the execution environment cannot run shell at all.

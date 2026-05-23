@@ -96,7 +96,8 @@ global int storage::deploy_seq;
 
 () handle_set_pool_code() impure {
     throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
-    storage::pool_code = ctx::body()~load_ref();
+    slice body_cs = ctx::body();
+    storage::pool_code = body_cs~load_ref();
     storage::save();
 }
 

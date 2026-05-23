@@ -119,6 +119,7 @@ slice router::pool_key(slice token0, slice token1) inline {
     slice recipient = body~load_msg_addr();
 
     throw_unless(error::invalid_amount, amount > 0);
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::fee_distributor_address));
 
     msgs::send_simple(
         0,

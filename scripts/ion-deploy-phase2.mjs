@@ -12,6 +12,8 @@ const requiredDocs = [
   "contracts/ion/deploy/compile-and-deploy.md",
   "contracts/ion/deploy/deploy.fif",
   "contracts/ion/deploy/deploy-checklist.fif",
+  "contracts/ion/deploy/deploy-live-send.fif",
+  "contracts/ion/deploy/LIVE-DEPLOY.md",
   "contracts/README.md",
 ];
 

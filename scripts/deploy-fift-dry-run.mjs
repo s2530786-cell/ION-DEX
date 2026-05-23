@@ -12,6 +12,7 @@ const root = process.cwd();
 const ionRoot = join(root, "contracts", "ion");
 const deployScript = join(ionRoot, "deploy", "deploy.fif");
 const deployChecklist = join(ionRoot, "deploy", "deploy-checklist.fif");
+const deployLiveSend = join(ionRoot, "deploy", "deploy-live-send.fif");
 
 const requiredPlaceholders = [
   "<owner_address>",
@@ -62,6 +63,17 @@ for (const marker of requiredIncludes) {
 }
 console.log("OK deploy.fif checklist markers");
 
+if (!existsSync(deployLiveSend)) {
+  throw new Error(`Missing live send script: ${deployLiveSend}`);
+}
+const liveSendSource = readFileSync(deployLiveSend, "utf8");
+for (const marker of ["broadcast_enabled", "fee_distributor_state_init", "Asm.fif"]) {
+  if (!liveSendSource.includes(marker)) {
+    throw new Error(`deploy-live-send.fif missing marker ${marker}`);
+  }
+}
+console.log("OK deploy-live-send.fif broadcast skeleton markers");
+
 for (const key of envPlaceholders) {
   const value = process.env[key];
   if (value && value.trim().length > 0) {
@@ -85,9 +97,16 @@ const fiftCandidates = [
 
 function pickFift() {
   for (const candidate of fiftCandidates) {
-    if (candidate === "fift" || existsSync(candidate)) {
+    if (candidate !== "fift" && existsSync(candidate)) {
       return candidate;
     }
+  }
+  const probe = spawnSync(process.platform === "win32" ? "where" : "which", ["fift"], {
+    encoding: "utf8",
+    shell: true,
+  });
+  if (probe.status === 0 && probe.stdout?.trim()) {
+    return "fift";
   }
   return null;
 }

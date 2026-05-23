@@ -6,7 +6,8 @@
 param(
     [ValidateSet("testnet", "mainnet")]
     [string]$Network = "testnet",
-    [switch]$DryRun = $true
+    [switch]$DryRun = $true,
+    [switch]$LivePreflight
 )
 
 $ErrorActionPreference = "Stop"
@@ -31,11 +32,16 @@ if (-not $fiftLib) {
     }
 }
 
+if ($LivePreflight) {
+    & (Join-Path $PSScriptRoot "deploy-fift-live.ps1") -Network $Network
+    exit $LASTEXITCODE
+}
+
 if ($DryRun) {
     $env:ION_DEPLOY_DRY_RUN = "1"
 } else {
     $env:ION_DEPLOY_DRY_RUN = "0"
-    Write-Warning "Live deploy mode: ensure ION_DEPLOY_* secrets and wallet are configured."
+    Write-Warning "Live deploy mode: use -LivePreflight or scripts/deploy-fift-live.ps1"
 }
 
 $env:ION_DEPLOY_NETWORK = $Network

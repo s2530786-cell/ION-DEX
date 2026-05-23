@@ -50,7 +50,7 @@ global int storage::max_blocks;
         throw_unless(error::commit_too_early, reveal_block >= now_block + storage::min_blocks);
         throw_unless(error::commit_expired, reveal_block <= now_block + storage::max_blocks);
 
-        (slice _, int found) = storage::commit_dict.udict_get?(256, commit_id);
+        (slice _val, int found) = storage::commit_dict.udict_get?(256, commit_id);
         throw_unless(error::duplicate_nonce, found == 0);
 
         storage::commit_dict~udict_set(
@@ -96,7 +96,7 @@ global int storage::max_blocks;
             storage::router_address,
             begin_cell()
                 .store_uint(op::route_swap, 32)
-                .store_uint(stored_qid)
+                .store_uint(stored_qid, 64)
                 .store_slice(pool)
                 .store_uint(zero_for_one, 1)
                 .store_coins(amount_in)

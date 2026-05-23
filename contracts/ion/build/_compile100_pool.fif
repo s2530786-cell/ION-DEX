@@ -1,0 +1,618 @@
+"Asm.fif" include
+// automatically generated from `D:/openclaw-data/workspace/ion-official/ion/crypto/smartcont/stdlib.fc` `common/gas.fc` `common/common.fc` `pool.fc` 
+PROGRAM{
+  DECLPROC ctx::init
+  DECLPROC ctx::body
+  DECLPROC ctx::sender
+  DECLPROC ctx::opcode
+  DECLPROC ctx::isBounced
+  DECLPROC ctx::balance
+  DECLPROC ctx::fwdFee
+  DECLPROC ctx::value
+  DECLPROC address::check_workchain
+  DECLPROC reserves::max_balance
+  DECLPROC equal_slices
+  DECLPROC sqrt
+  DECLPROC math::mul_div
+  DECLPROC amm::get_amount_out
+  DECLPROC msgs::send_simple
+  DECLPROC storage::load
+  DECLPROC storage::save
+  DECLPROC pool::mint_lp
+  DECLPROC handle_cb_add_liquidity
+  DECLPROC handle_swap
+  DECLPROC handle_remove_liquidity
+  DECLPROC handle_collect_fees
+  DECLPROC recv_internal
+  81689 DECLMETHOD get_pool_data
+  89420 DECLMETHOD get_amount_out
+  DECLGLOBVAR ctx::body_slice
+  DECLGLOBVAR ctx::sender_slice
+  DECLGLOBVAR ctx::opcode_val
+  DECLGLOBVAR ctx::is_bounced
+  DECLGLOBVAR ctx::balance_val
+  DECLGLOBVAR ctx::fwd_fee_val
+  DECLGLOBVAR ctx::msg_value_val
+  DECLGLOBVAR storage::router_address
+  DECLGLOBVAR storage::token0_address
+  DECLGLOBVAR storage::token1_address
+  DECLGLOBVAR storage::reserve0
+  DECLGLOBVAR storage::reserve1
+  DECLGLOBVAR storage::lp_total_supply
+  DECLGLOBVAR storage::fee_numerator
+  DECLGLOBVAR storage::fee_denominator
+  DECLGLOBVAR storage::status
+  DECLGLOBVAR storage::fee_distributor_address
+  ctx::init PROCINLINE:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    //  my_balance _4 in_msg_full in_msg_body
+    s0 s2 XCHG	//  my_balance in_msg_body in_msg_full _4
+    ctx::msg_value_val SETGLOB	//  _5 in_msg_body in_msg_full
+    s0 s2 XCHG	//  in_msg_full in_msg_body _5
+    ctx::balance_val SETGLOB
+    DUP	//  in_msg_full in_msg_body _6
+    ctx::body_slice SETGLOB
+    32 PLDU	//  in_msg_full _9
+    ctx::opcode_val SETGLOB
+    CTOS	//  cs
+    4 LDU	//  flags cs
+    SWAP
+    1 PUSHINT	//  cs flags _16=1
+    AND	//  cs _18
+    ctx::is_bounced SETGLOB
+    LDMSGADDR	//  _21 cs
+    SWAP	//  cs _21
+    ctx::sender_slice SETGLOB
+    LDMSGADDR	//  _39 _38
+    NIP	//  cs
+    LDGRAMS	//  _41 _40
+    NIP	//  cs
+    1 LDU	//  _43 _42
+    NIP	//  cs
+    LDGRAMS	//  _45 _44
+    NIP	//  cs
+    LDGRAMS	//  _47 _46
+    DROP	//  _33
+    ctx::fwd_fee_val SETGLOB
+  }>
+  ctx::body PROCINLINE:<{
+    // 
+    ctx::body_slice GETGLOB	//  _0
+  }>
+  ctx::sender PROCINLINE:<{
+    // 
+    ctx::sender_slice GETGLOB	//  _0
+  }>
+  ctx::opcode PROCINLINE:<{
+    // 
+    ctx::opcode_val GETGLOB	//  _0
+  }>
+  ctx::isBounced PROCINLINE:<{
+    // 
+    ctx::is_bounced GETGLOB	//  _0
+  }>
+  ctx::balance PROCINLINE:<{
+    // 
+    ctx::balance_val GETGLOB	//  _0
+  }>
+  ctx::fwdFee PROCINLINE:<{
+    // 
+    ctx::fwd_fee_val GETGLOB	//  _0
+  }>
+  ctx::value PROCINLINE:<{
+    // 
+    ctx::msg_value_val GETGLOB	//  _0
+  }>
+  address::check_workchain PROCINLINE:<{
+    //  addr expected_workchain
+    SWAP	//  expected_workchain addr
+    8 PLDI	//  expected_workchain wc
+    SWAP	//  wc expected_workchain
+    EQUAL	//  _5
+    IF:<{	// 
+      -1 PUSHINT	//  _6=-1
+    }>ELSE<{	// 
+      0 PUSHINT	//  _6=0
+    }>
+  }>
+  reserves::max_balance PROCINLINE:<{
+    //  amount
+    2 PUSHINT	//  amount _1=2
+    RAWRESERVE
+  }>
+  equal_slices PROCINLINE:<{
+    //  a b
+    SDEQ	//  _2
+  }>
+  sqrt PROCINLINE:<{
+    //  x
+    DUP	//  x x
+    1 LESSINT	//  x _2
+    IF:<{	//  x
+      DROP	// 
+      0 PUSHINT	//  _3=0
+    }>ELSE<{	//  x
+      DUP	//  x z
+      0 PUSHINT	//  x z i=0
+      WHILE:<{
+        DUP	//  x z i i
+        32 LESSINT	//  x z i _8
+      }>DO<{	//  x z i
+        INC	//  x z i
+        s2 s1 PUSH2	//  x z i x z
+        DIV	//  x z i _11
+        s1 s2 XCHG	//  x i z _11
+        ADD	//  x i _12
+        1 RSHIFT#	//  x i z
+        SWAP	//  x z i
+      }>	//  x z i
+      DROP
+      NIP	//  z
+    }>
+  }>
+  math::mul_div PROCINLINE:<{
+    //  a b denom
+    DUP	//  a b denom denom
+    0 GTINT	//  a b denom _5
+    101 THROWIFNOT
+    MULDIV	//  _7
+  }>
+  amm::get_amount_out PROCINLINE:<{
+    //  amount_in reserve_in reserve_out fee_num fee_denom
+    s4 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom amount_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _7
+    101 THROWIFNOT
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom reserve_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom _11 reserve_out
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11 _13
+    AND	//  amount_in reserve_in reserve_out fee_num fee_denom _14
+    113 THROWIFNOT
+    s2 s4 XCHG	//  reserve_out reserve_in amount_in fee_num fee_denom
+    math::mul_div INLINECALLDICT	//  reserve_out reserve_in amount_in_with_fee
+    s0 s2 PUXC	//  amount_in_with_fee reserve_in amount_in_with_fee reserve_out
+    MUL	//  amount_in_with_fee reserve_in numerator
+    s0 s2 XCHG	//  numerator reserve_in amount_in_with_fee
+    ADD	//  numerator denominator
+    DUP	//  numerator denominator denominator
+    0 GTINT	//  numerator denominator _24
+    106 THROWIFNOT
+    DIV	//  _26
+  }>
+  msgs::send_simple PROCINLINE:<{
+    //  mode to body send_mode
+    0 PUSHINT	//  mode to body send_mode _4=0
+    1 PUSHINT	//  mode to body send_mode _4=0 _5=1
+    s0 s2 XCHG
+    NEWC	//  mode to body _5=1 _4=0 send_mode _6
+    8 STU	//  mode to body _5=1 _4=0 _8
+    s0 s4 XCHG2	//  mode _4=0 body _5=1 _8 to
+    STSLICER	//  mode _4=0 body _5=1 _9
+    s0 s4 XCHG2	//  _5=1 _4=0 body _9 mode
+    STGRAMS	//  _5=1 _4=0 body _10
+    s1 s3 XCHG	//  body _4=0 _5=1 _10
+    1 STU	//  body _4=0 _12
+    1 STU	//  body _14
+    STREF	//  _15
+    ENDC	//  _16
+    2 PUSHINT	//  _16 _17=2
+    SENDRAWMSG
+  }>
+  storage::load PROCINLINE:<{
+    // 
+    c4 PUSH	//  _1
+    CTOS	//  ds
+    LDMSGADDR	//  _5 ds
+    SWAP	//  ds _5
+    storage::router_address SETGLOB
+    LDMSGADDR	//  _8 ds
+    SWAP	//  ds _8
+    storage::token0_address SETGLOB
+    LDMSGADDR	//  _11 ds
+    SWAP	//  ds _11
+    storage::token1_address SETGLOB
+    LDGRAMS	//  _14 ds
+    SWAP	//  ds _14
+    storage::reserve0 SETGLOB
+    LDGRAMS	//  _17 ds
+    SWAP	//  ds _17
+    storage::reserve1 SETGLOB
+    LDGRAMS	//  _20 ds
+    SWAP	//  ds _20
+    storage::lp_total_supply SETGLOB
+    16 LDU	//  _24 ds
+    SWAP	//  ds _24
+    storage::fee_numerator SETGLOB
+    16 LDU	//  _28 ds
+    SWAP	//  ds _28
+    storage::fee_denominator SETGLOB
+    8 LDU	//  _32 ds
+    SWAP	//  ds _32
+    storage::status SETGLOB
+    LDMSGADDR	//  _35 ds
+    SWAP	//  ds _35
+    storage::fee_distributor_address SETGLOB
+    ENDS
+  }>
+  storage::save PROCREF:<{
+    // 
+    storage::status GETGLOB	//  _0
+    storage::fee_denominator GETGLOB	//  _0 _1
+    storage::fee_numerator GETGLOB	//  _0 _1 _2
+    NEWC	//  _0 _1 _2 _3
+    storage::router_address GETGLOB	//  _0 _1 _2 _3 _4
+    STSLICER	//  _0 _1 _2 _5
+    storage::token0_address GETGLOB	//  _0 _1 _2 _5 _6
+    STSLICER	//  _0 _1 _2 _7
+    storage::token1_address GETGLOB	//  _0 _1 _2 _7 _8
+    STSLICER	//  _0 _1 _2 _9
+    storage::reserve0 GETGLOB	//  _0 _1 _2 _9 _10
+    STGRAMS	//  _0 _1 _2 _11
+    storage::reserve1 GETGLOB	//  _0 _1 _2 _11 _12
+    STGRAMS	//  _0 _1 _2 _13
+    storage::lp_total_supply GETGLOB	//  _0 _1 _2 _13 _14
+    STGRAMS	//  _0 _1 _2 _15
+    16 STU	//  _0 _1 _17
+    16 STU	//  _0 _19
+    8 STU	//  _21
+    storage::fee_distributor_address GETGLOB	//  _21 _22
+    STSLICER	//  _23
+    ENDC	//  _24
+    c4 POP
+  }>
+  pool::mint_lp PROCINLINE:<{
+    //  amount0 amount1
+    storage::lp_total_supply GETGLOB	//  amount0 amount1 _2
+    0 EQINT	//  amount0 amount1 _4
+    IF:<{	//  amount0 amount1
+      MUL	//  _5
+      sqrt INLINECALLDICT	//  _6
+    }>ELSE<{	//  amount0 amount1
+      storage::lp_total_supply GETGLOB	//  amount0 amount1 _8
+      storage::reserve0 GETGLOB	//  amount0 amount1 _8 _9
+      s2 s3 XCHG	//  amount1 amount0 _8 _9
+      math::mul_div INLINECALLDICT	//  amount1 lp0
+      storage::lp_total_supply GETGLOB	//  amount1 lp0 _12
+      storage::reserve1 GETGLOB	//  amount1 lp0 _12 _13
+      s2 s3 XCHG	//  lp0 amount1 _12 _13
+      math::mul_div INLINECALLDICT	//  lp0 lp1
+      MIN	//  _15
+    }>
+  }>
+  handle_cb_add_liquidity PROC:<{
+    // 
+    ctx::body INLINECALLDICT	//  body
+    64 LDU	//  query_id body
+    LDGRAMS	//  query_id amount0 body
+    LDGRAMS	//  query_id amount0 amount1 body
+    LDMSGADDR	//  query_id amount0 amount1 user body
+    LDGRAMS	//  query_id amount0 amount1 user min_lp_out body
+    LDGRAMS	//  query_id amount0 amount1 user min_lp_out _89 _88
+    NIP	//  query_id amount0 amount1 user min_lp_out body
+    1 LDU	//  query_id amount0 amount1 user min_lp_out _91 _90
+    NIP	//  query_id amount0 amount1 user min_lp_out body
+    LDREF	//  query_id amount0 amount1 user min_lp_out _93 _92
+    DROP	//  query_id amount0 amount1 user min_lp_out _24
+    CTOS	//  query_id amount0 amount1 user min_lp_out extras
+    LDMSGADDR	//  query_id amount0 amount1 user min_lp_out to_user extras
+    LDMSGADDR	//  query_id amount0 amount1 user min_lp_out to_user _97 _96
+    NIP	//  query_id amount0 amount1 user min_lp_out to_user extras
+    LDMSGADDR	//  query_id amount0 amount1 user min_lp_out to_user _99 _98
+    NIP	//  query_id amount0 amount1 user min_lp_out to_user extras
+    ENDS
+    storage::status GETGLOB	//  query_id amount0 amount1 user min_lp_out to_user _36
+    1 EQINT	//  query_id amount0 amount1 user min_lp_out to_user _38
+    109 THROWIFNOT
+    s4 PUSH	//  query_id amount0 amount1 user min_lp_out to_user amount0
+    0 GTINT	//  query_id amount0 amount1 user min_lp_out to_user _42
+    s4 PUSH	//  query_id amount0 amount1 user min_lp_out to_user _42 amount1
+    0 GTINT	//  query_id amount0 amount1 user min_lp_out to_user _42 _44
+    AND	//  query_id amount0 amount1 user min_lp_out to_user _45
+    101 THROWIFNOT
+    s4 s3 PUSH2	//  query_id amount0 amount1 user min_lp_out to_user amount0 amount1
+    pool::mint_lp INLINECALLDICT	//  query_id amount0 amount1 user min_lp_out to_user lp_out
+    s0 s2 PUXC	//  query_id amount0 amount1 user lp_out to_user lp_out min_lp_out
+    GEQ	//  query_id amount0 amount1 user lp_out to_user _50
+    110 THROWIFNOT
+    storage::reserve0 GETGLOB	//  query_id amount0 amount1 user lp_out to_user _52
+    s5 PUSH	//  query_id amount0 amount1 user lp_out to_user _52 amount0
+    ADD	//  query_id amount0 amount1 user lp_out to_user _54
+    storage::reserve0 SETGLOB
+    storage::reserve1 GETGLOB	//  query_id amount0 amount1 user lp_out to_user _55
+    s4 PUSH	//  query_id amount0 amount1 user lp_out to_user _55 amount1
+    ADD	//  query_id amount0 amount1 user lp_out to_user _57
+    storage::reserve1 SETGLOB
+    storage::lp_total_supply GETGLOB	//  query_id amount0 amount1 user lp_out to_user _58
+    s2 PUSH	//  query_id amount0 amount1 user lp_out to_user _58 lp_out
+    ADD	//  query_id amount0 amount1 user lp_out to_user _60
+    storage::lp_total_supply SETGLOB
+    storage::save INLINECALLDICT
+    10000000 PUSHINT	//  query_id amount0 amount1 user lp_out to_user _62=10000000
+    reserves::max_balance INLINECALLDICT
+    0 PUSHINT	//  query_id amount0 amount1 user lp_out to_user _64=0
+    1886847298 PUSHINT	//  query_id amount0 amount1 user lp_out to_user _64=0 _65=1886847298
+    NEWC	//  query_id amount0 amount1 user lp_out to_user _64=0 _65=1886847298 _66
+    32 STU	//  query_id amount0 amount1 user lp_out to_user _64=0 _68
+    s1 s7 XCHG	//  _64=0 amount0 amount1 user lp_out to_user query_id _68
+    64 STU	//  _64=0 amount0 amount1 user lp_out to_user _70
+    ROT	//  _64=0 amount0 amount1 user to_user _70 lp_out
+    STGRAMS	//  _64=0 amount0 amount1 user to_user _71
+    s0 s4 XCHG2	//  _64=0 to_user amount1 user _71 amount0
+    STGRAMS	//  _64=0 to_user amount1 user _72
+    ROT	//  _64=0 to_user user _72 amount1
+    STGRAMS	//  _64=0 to_user user _73
+    SWAP	//  _64=0 to_user _73 user
+    STSLICER	//  _64=0 to_user _74
+    ENDC	//  _64=0 to_user _75
+    7 PUSHPOW2	//  _64=0 to_user _75 _76=128
+    msgs::send_simple INLINECALLDICT
+  }>
+  handle_swap PROC:<{
+    // 
+    ctx::body INLINECALLDICT	//  body
+    64 LDU	//  query_id body
+    1 LDU	//  query_id zero_for_one body
+    LDGRAMS	//  query_id zero_for_one amount_in body
+    LDGRAMS	//  query_id zero_for_one amount_in min_out body
+    LDMSGADDR	//  query_id zero_for_one amount_in min_out _84 _83
+    DROP	//  query_id zero_for_one amount_in min_out recipient
+    storage::status GETGLOB	//  query_id zero_for_one amount_in min_out recipient _20
+    1 EQINT	//  query_id zero_for_one amount_in min_out recipient _22
+    109 THROWIFNOT
+    s2 PUSH	//  query_id zero_for_one amount_in min_out recipient amount_in
+    0 GTINT	//  query_id zero_for_one amount_in min_out recipient _26
+    101 THROWIFNOT
+    s3 PUSH	//  query_id zero_for_one amount_in min_out recipient zero_for_one
+    IF:<{	//  query_id zero_for_one amount_in min_out recipient
+      storage::reserve0 GETGLOB	//  query_id zero_for_one amount_in min_out recipient _30
+      storage::reserve1 GETGLOB	//  query_id zero_for_one amount_in min_out recipient _30 _31
+      storage::fee_numerator GETGLOB	//  query_id zero_for_one amount_in min_out recipient _30 _31 _32
+      storage::fee_denominator GETGLOB	//  query_id zero_for_one amount_in min_out recipient _30 _31 _32 _33
+      s6 PUSH
+      4 -ROLL	//  query_id zero_for_one amount_in min_out recipient amount_in _30 _31 _32 _33
+      amm::get_amount_out INLINECALLDICT	//  query_id zero_for_one amount_in min_out recipient amount_out
+      s0 s2 PUXC	//  query_id zero_for_one amount_in amount_out recipient amount_out min_out
+      GEQ	//  query_id zero_for_one amount_in amount_out recipient _36
+      110 THROWIFNOT
+      storage::reserve0 GETGLOB	//  query_id zero_for_one amount_in amount_out recipient _38
+      s3 PUSH	//  query_id zero_for_one amount_in amount_out recipient _38 amount_in
+      ADD	//  query_id zero_for_one amount_in amount_out recipient _40
+      storage::reserve0 SETGLOB
+      storage::reserve1 GETGLOB	//  query_id zero_for_one amount_in amount_out recipient _41
+      s2 PUSH	//  query_id zero_for_one amount_in amount_out recipient _41 amount_out
+      SUB	//  query_id zero_for_one amount_in amount_out recipient _43
+      storage::reserve1 SETGLOB
+    }>ELSE<{	//  query_id zero_for_one amount_in min_out recipient
+      storage::reserve1 GETGLOB	//  query_id zero_for_one amount_in min_out recipient _44
+      storage::reserve0 GETGLOB	//  query_id zero_for_one amount_in min_out recipient _44 _45
+      storage::fee_numerator GETGLOB	//  query_id zero_for_one amount_in min_out recipient _44 _45 _46
+      storage::fee_denominator GETGLOB	//  query_id zero_for_one amount_in min_out recipient _44 _45 _46 _47
+      s6 PUSH
+      4 -ROLL	//  query_id zero_for_one amount_in min_out recipient amount_in _44 _45 _46 _47
+      amm::get_amount_out INLINECALLDICT	//  query_id zero_for_one amount_in min_out recipient amount_out
+      s0 s2 PUXC	//  query_id zero_for_one amount_in amount_out recipient amount_out min_out
+      GEQ	//  query_id zero_for_one amount_in amount_out recipient _50
+      110 THROWIFNOT
+      storage::reserve1 GETGLOB	//  query_id zero_for_one amount_in amount_out recipient _52
+      s3 PUSH	//  query_id zero_for_one amount_in amount_out recipient _52 amount_in
+      ADD	//  query_id zero_for_one amount_in amount_out recipient _54
+      storage::reserve1 SETGLOB
+      storage::reserve0 GETGLOB	//  query_id zero_for_one amount_in amount_out recipient _55
+      s2 PUSH	//  query_id zero_for_one amount_in amount_out recipient _55 amount_out
+      SUB	//  query_id zero_for_one amount_in amount_out recipient _57
+      storage::reserve0 SETGLOB
+    }>
+    storage::save INLINECALLDICT
+    10000000 PUSHINT	//  query_id zero_for_one amount_in amount_out recipient _59=10000000
+    reserves::max_balance INLINECALLDICT
+    0 PUSHINT	//  query_id zero_for_one amount_in amount_out recipient _61=0
+    630424929 PUSHINT	//  query_id zero_for_one amount_in amount_out recipient _61=0 _62=630424929
+    NEWC	//  query_id zero_for_one amount_in amount_out recipient _61=0 _62=630424929 _63
+    32 STU	//  query_id zero_for_one amount_in amount_out recipient _61=0 _65
+    s1 s6 XCHG	//  _61=0 zero_for_one amount_in amount_out recipient query_id _65
+    64 STU	//  _61=0 zero_for_one amount_in amount_out recipient _67
+    ROT	//  _61=0 zero_for_one amount_in recipient _67 amount_out
+    STGRAMS	//  _61=0 zero_for_one amount_in recipient _68
+    s1 s3 XCHG	//  _61=0 recipient amount_in zero_for_one _68
+    1 STU	//  _61=0 recipient amount_in _70
+    SWAP	//  _61=0 recipient _70 amount_in
+    STGRAMS	//  _61=0 recipient _71
+    ENDC	//  _61=0 recipient _72
+    7 PUSHPOW2	//  _61=0 recipient _72 _73=128
+    msgs::send_simple INLINECALLDICT
+  }>
+  handle_remove_liquidity PROC:<{
+    // 
+    ctx::body INLINECALLDICT	//  body
+    64 LDU	//  query_id body
+    LDGRAMS	//  query_id lp_amount body
+    LDGRAMS	//  query_id lp_amount min0 body
+    LDGRAMS	//  query_id lp_amount min0 min1 body
+    LDMSGADDR	//  query_id lp_amount min0 min1 _74 _73
+    DROP	//  query_id lp_amount min0 min1 recipient
+    storage::status GETGLOB	//  query_id lp_amount min0 min1 recipient _19
+    1 EQINT	//  query_id lp_amount min0 min1 recipient _21
+    109 THROWIFNOT
+    s3 PUSH	//  query_id lp_amount min0 min1 recipient lp_amount
+    0 GTINT	//  query_id lp_amount min0 min1 recipient _25
+    storage::lp_total_supply GETGLOB	//  query_id lp_amount min0 min1 recipient _25 _26
+    s5 s(-1) PUXC	//  query_id lp_amount min0 min1 recipient _25 lp_amount _26
+    LEQ	//  query_id lp_amount min0 min1 recipient _25 _27
+    AND	//  query_id lp_amount min0 min1 recipient _28
+    101 THROWIFNOT
+    storage::reserve0 GETGLOB	//  query_id lp_amount min0 min1 recipient _31
+    storage::lp_total_supply GETGLOB	//  query_id lp_amount min0 min1 recipient _31 _32
+    s5 PUSH
+    -ROT	//  query_id lp_amount min0 min1 recipient lp_amount _31 _32
+    math::mul_div INLINECALLDICT	//  query_id lp_amount min0 min1 recipient out0
+    storage::reserve1 GETGLOB	//  query_id lp_amount min0 min1 recipient out0 _35
+    storage::lp_total_supply GETGLOB	//  query_id lp_amount min0 min1 recipient out0 _35 _36
+    s6 PUSH
+    -ROT	//  query_id lp_amount min0 min1 recipient out0 lp_amount _35 _36
+    math::mul_div INLINECALLDICT	//  query_id lp_amount min0 min1 recipient out0 out1
+    s1 s4 PUXC	//  query_id lp_amount out1 min1 recipient out0 out0 min0
+    GEQ	//  query_id lp_amount out1 min1 recipient out0 _39
+    s4 s3 PUXC	//  query_id lp_amount out1 _39 recipient out0 out1 min1
+    GEQ	//  query_id lp_amount out1 _39 recipient out0 _40
+    s1 s3 XCHG	//  query_id lp_amount out1 out0 recipient _39 _40
+    AND	//  query_id lp_amount out1 out0 recipient _41
+    110 THROWIFNOT
+    storage::reserve0 GETGLOB	//  query_id lp_amount out1 out0 recipient _43
+    s2 PUSH	//  query_id lp_amount out1 out0 recipient _43 out0
+    SUB	//  query_id lp_amount out1 out0 recipient _45
+    storage::reserve0 SETGLOB
+    storage::reserve1 GETGLOB	//  query_id lp_amount out1 out0 recipient _46
+    s3 PUSH	//  query_id lp_amount out1 out0 recipient _46 out1
+    SUB	//  query_id lp_amount out1 out0 recipient _48
+    storage::reserve1 SETGLOB
+    storage::lp_total_supply GETGLOB	//  query_id lp_amount out1 out0 recipient _49
+    s0 s4 XCHG2	//  query_id recipient out1 out0 _49 lp_amount
+    SUB	//  query_id recipient out1 out0 _51
+    storage::lp_total_supply SETGLOB
+    storage::save INLINECALLDICT
+    0 PUSHINT	//  query_id recipient out1 out0 _53=0
+    1499406272 PUSHINT	//  query_id recipient out1 out0 _53=0 _54=1499406272
+    NEWC	//  query_id recipient out1 out0 _53=0 _54=1499406272 _55
+    32 STU	//  query_id recipient out1 out0 _53=0 _57
+    s1 s5 XCHG	//  _53=0 recipient out1 out0 query_id _57
+    64 STU	//  _53=0 recipient out1 out0 _59
+    SWAP	//  _53=0 recipient out1 _59 out0
+    STGRAMS	//  _53=0 recipient out1 _60
+    SWAP	//  _53=0 recipient _60 out1
+    STGRAMS	//  _53=0 recipient _61
+    ENDC	//  _53=0 recipient _62
+    7 PUSHPOW2	//  _53=0 recipient _62 _63=128
+    msgs::send_simple INLINECALLDICT
+  }>
+  handle_collect_fees PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::router_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    107 THROWIFNOT
+    storage::fee_distributor_address GETGLOB	//  _6
+    SEMPTY	//  _7
+    0 EQINT	//  _9
+    107 THROWIFNOT
+    storage::reserve0 GETGLOB	//  _12
+    storage::reserve1 GETGLOB	//  _12 _13
+    ADD	//  _14
+    5 PUSHINT	//  _14 _15=5
+    10000 PUSHINT	//  _14 _15=5 _16=10000
+    math::mul_div INLINECALLDICT	//  protocol_fee
+    DUP	//  protocol_fee protocol_fee
+    0 GTINT	//  protocol_fee _19
+    IF:<{	//  protocol_fee
+      0 PUSHINT	//  protocol_fee _20=0
+      storage::fee_distributor_address GETGLOB	//  protocol_fee _20=0 _21
+      OVER	//  protocol_fee _20=0 _21 _22=0
+      4444444444 PUSHINT	//  protocol_fee _20=0 _21 _22=0 _23=4444444444
+      NEWC	//  protocol_fee _20=0 _21 _22=0 _23=4444444444 _24
+      32 STU	//  protocol_fee _20=0 _21 _22=0 _26
+      64 STU	//  protocol_fee _20=0 _21 _28
+      s0 s3 XCHG2	//  _21 _20=0 _28 protocol_fee
+      STGRAMS	//  _21 _20=0 _29
+      ENDC	//  _21 _20=0 _30
+      s1 s2 XCHG
+      7 PUSHPOW2	//  _20=0 _21 _30 _31=128
+      msgs::send_simple INLINECALLDICT
+    }>ELSE<{
+      DROP	// 
+    }>
+  }>
+  recv_internal PROC:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    DUP	//  my_balance msg_value in_msg_full in_msg_body in_msg_body
+    SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
+    103 THROWIF
+    ctx::init INLINECALLDICT
+    ctx::isBounced INLINECALLDICT	//  _8
+    IFJMP:<{	// 
+    }>	// 
+    ctx::sender INLINECALLDICT	//  _10
+    0 PUSHINT	//  _10 _11=0
+    address::check_workchain INLINECALLDICT	//  _12
+    104 THROWIFNOT
+    storage::load INLINECALLDICT
+    ctx::opcode INLINECALLDICT	//  _15
+    3265247766 PUSHINT	//  _15 _16=3265247766
+    EQUAL	//  _17
+    IFJMP:<{	// 
+      handle_cb_add_liquidity CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _19
+    630424929 PUSHINT	//  _19 _20=630424929
+    EQUAL	//  _21
+    IFJMP:<{	// 
+      ctx::sender INLINECALLDICT	//  _23
+      storage::router_address GETGLOB	//  _23 _24
+      equal_slices INLINECALLDICT	//  _25
+      107 THROWIFNOT
+      handle_swap CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _28
+    1499406272 PUSHINT	//  _28 _29=1499406272
+    EQUAL	//  _30
+    IFJMP:<{	// 
+      ctx::sender INLINECALLDICT	//  _32
+      storage::router_address GETGLOB	//  _32 _33
+      equal_slices INLINECALLDICT	//  _34
+      107 THROWIFNOT
+      handle_remove_liquidity CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _37
+    1380698740 PUSHINT	//  _37 _38=1380698740
+    EQUAL	//  _39
+    IFJMP:<{	// 
+      handle_collect_fees CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _41
+    2071195602 PUSHINT	//  _41 _42=2071195602
+    EQUAL	//  _43
+    IFJMP:<{	// 
+      ctx::sender INLINECALLDICT	//  _45
+      storage::router_address GETGLOB	//  _45 _46
+      equal_slices INLINECALLDICT	//  _47
+      107 THROWIFNOT
+      ctx::body INLINECALLDICT	//  body_cs
+      8 LDU	//  _59 _58
+      DROP	//  _54
+      storage::status SETGLOB
+      storage::save INLINECALLDICT
+    }>	// 
+    105 THROW
+  }>
+  get_pool_data PROC:<{
+    // 
+    storage::load INLINECALLDICT
+    storage::router_address GETGLOB	//  _1
+    storage::token0_address GETGLOB	//  _1 _2
+    storage::token1_address GETGLOB	//  _1 _2 _3
+    storage::reserve0 GETGLOB	//  _1 _2 _3 _4
+    storage::reserve1 GETGLOB	//  _1 _2 _3 _4 _5
+    storage::lp_total_supply GETGLOB	//  _1 _2 _3 _4 _5 _6
+    storage::fee_numerator GETGLOB	//  _1 _2 _3 _4 _5 _6 _7
+    storage::fee_denominator GETGLOB	//  _1 _2 _3 _4 _5 _6 _7 _8
+    storage::status GETGLOB	//  _1 _2 _3 _4 _5 _6 _7 _8 _9
+  }>
+  get_amount_out PROC:<{
+    //  zero_for_one amount_in
+    storage::load INLINECALLDICT
+    DUP	//  zero_for_one amount_in amount_in
+    0 GTINT	//  zero_for_one amount_in _5
+    101 THROWIFNOT
+    SWAP	//  amount_in zero_for_one
+    IFJMP:<{	//  amount_in
+      storage::reserve0 GETGLOB	//  amount_in _7
+      storage::reserve1 GETGLOB	//  amount_in _7 _8
+      storage::fee_numerator GETGLOB	//  amount_in _7 _8 _9
+      storage::fee_denominator GETGLOB	//  amount_in _7 _8 _9 _10
+      amm::get_amount_out INLINECALLDICT	//  _11
+    }>	//  amount_in
+    storage::reserve1 GETGLOB	//  amount_in _12
+    storage::reserve0 GETGLOB	//  amount_in _12 _13
+    storage::fee_numerator GETGLOB	//  amount_in _12 _13 _14
+    storage::fee_denominator GETGLOB	//  amount_in _12 _13 _14 _15
+    amm::get_amount_out INLINECALLDICT	//  _16
+  }>
+}END>c

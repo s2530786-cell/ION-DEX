@@ -18,6 +18,12 @@ node_modules/
 # Local Cursor maintenance backups (large / machine-specific)
 .maintenance/
 
+# Live deploy generated fift (contains resolved addresses from secrets)
+contracts/ion/deploy/deploy-live.generated.fif
+contracts/ion/deploy/deploy-live-params.generated.fif
+contracts/ion/deploy/out/
+
 # OS / editor
 Thumbs.db
 .DS_Store
+NUL  

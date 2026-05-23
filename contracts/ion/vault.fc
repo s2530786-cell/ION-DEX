@@ -48,21 +48,26 @@ global int storage::deposited_amount;
         + storage_fee::router + storage_fee::est_jetton_wallet
         + gas::jetton_wallet::est_transfer);
 
+    int amount_to_withdraw = storage::deposited_amount;
+    slice router_addr = storage::router_address;
+    slice token_addr = storage::token_address;
+
+    ;; Reset state BEFORE external call to prevent reentrancy
+    storage::deposited_amount = 0;
+    storage::save();
+
     ;; Send all deposited tokens back to owner via router
     msgs::send_simple(
         0,
-        storage::router_address,
+        router_addr,
         begin_cell()
             .store_uint(op::vault_pay_to, 32)
             .store_uint(0, 64)  ;; query_id
-            .store_coins(storage::deposited_amount)
-            .store_slice(storage::token_address)
+            .store_coins(amount_to_withdraw)
+            .store_slice(token_addr)
             .store_slice(storage::owner_address)
         .end_cell(),
         QCARRY_ALL_BALANCE | DESTROY_IF_ZERO);
-
-    storage::deposited_amount = 0;
-    storage::save();
 }
 
 ;; ── Main entry ─────────────────────────────────────────────────

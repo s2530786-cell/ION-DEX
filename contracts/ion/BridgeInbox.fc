@@ -29,7 +29,7 @@ global int storage::quorum;
 }
 
 int bridge::is_relayer(slice relayer) impure inline {
-    (slice _, int found) = storage::relayer_dict.udict_get?(256, relayer.slice_hash());
+    (slice _val, int found) = storage::relayer_dict.udict_get?(256, relayer.slice_hash());
     return found;
 }
 
@@ -44,7 +44,7 @@ int bridge::is_relayer(slice relayer) impure inline {
     slice token = body~load_msg_addr();
 
     throw_unless(error::invalid_amount, amount > 0);
-    (slice _, int dup) = storage::nonce_dict.udict_get?(256, nonce);
+    (slice _val, int dup) = storage::nonce_dict.udict_get?(256, nonce);
     throw_unless(error::duplicate_nonce, dup == 0);
 
     storage::nonce_dict~udict_set(256, nonce, begin_cell().store_uint(1, 8).end_cell().begin_parse());
@@ -54,7 +54,7 @@ int bridge::is_relayer(slice relayer) impure inline {
         0,
         storage::router_address,
         begin_cell()
-            .store_uint(op::vault_pay_to, 32)
+            .store_uint(op::bridge_message, 32)
             .store_uint(query_id, 64)
             .store_coins(amount)
             .store_slice(token)
@@ -65,14 +65,16 @@ int bridge::is_relayer(slice relayer) impure inline {
 
 () handle_set_relayer() impure {
     throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
-    slice relayer = ctx::body()~load_msg_addr();
+    slice body_cs = ctx::body();
+    slice relayer = body_cs~load_msg_addr();
     storage::relayer_dict~udict_set(256, relayer.slice_hash(), begin_cell().store_slice(relayer).end_cell().begin_parse());
     storage::save();
 }
 
 () handle_revoke_relayer() impure {
     throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
-    slice relayer = ctx::body()~load_msg_addr();
+    slice body_cs = ctx::body();
+    slice relayer = body_cs~load_msg_addr();
     storage::relayer_dict~udict_delete?(256, relayer.slice_hash());
     storage::save();
 }
