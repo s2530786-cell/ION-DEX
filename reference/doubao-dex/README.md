@@ -9,10 +9,11 @@ This folder keeps the imported Doubao DEX reference assets inside the main repos
 - `reference/doubao-dex/doubao-vue-prototype/` — original Vue prototype snapshot
 
 ## Live integration paths
-The current live repo code is being merged into:
+The current live repo code is merged into:
 - `contracts/bsc/`
-- `backend/openclaw/`
-- `backend/api/`
-- `frontend/src/`
+- `backend/src/` (Node.js / TypeScript API)
+- `frontend/src/` (React + Vite)
+
+Python reference modules live under `reference/doubao-dex/backend-python/` only — not production runtime.
 
 Use this folder as reference source, not as production runtime code.
