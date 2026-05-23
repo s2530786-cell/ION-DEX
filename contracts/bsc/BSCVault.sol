@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {IonProtocolFeeLib} from "./IonProtocolFeeLib.sol";
+
 interface IERC20Vault {
     function transfer(address to, uint256 value) external returns (bool);
     function transferFrom(address from, address to, uint256 value) external returns (bool);
@@ -26,6 +28,7 @@ contract BSCVault {
 
     address public owner;
     address public bridgeRelay;
+    address public feeReceiver;
 
     mapping(address => bool) public relayers;
     mapping(address => mapping(address => uint256)) public lockedBalance;
@@ -63,17 +66,24 @@ contract BSCVault {
         owner = newOwner;
     }
 
+    function setFeeReceiver(address feeReceiver_) external onlyOwner {
+        if (feeReceiver_ == address(0)) revert IonDexZeroAddress();
+        feeReceiver = feeReceiver_;
+    }
+
     /**
      * @notice Lock tokens on BSC pending ION-side credit (via bridge).
      */
     function lock(
         address token,
         uint256 amount,
-        bytes32 ionRecipient
+        bytes32 ionRecipient,
+        uint256 ionProtocolFee
     ) external {
         if (token == address(0)) revert IonDexZeroAddress();
         if (amount == 0) revert IonDexZeroAmount();
         if (ionRecipient == bytes32(0)) revert IonDexZeroAddress();
+        IonProtocolFeeLib.collectIonFee(feeReceiver, address(this), msg.sender, ionProtocolFee);
         if (!_transferFrom(token, msg.sender, address(this), amount)) revert IonDexTokenTransferFailed();
         lockedBalance[token][msg.sender] += amount;
         emit Locked(msg.sender, token, amount, ionRecipient);

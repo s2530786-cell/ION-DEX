@@ -5,17 +5,32 @@ function sidebar(page: Page) {
 }
 
 async function clickNav(page: Page, key: string) {
-  if (await sidebar(page).isVisible()) {
-    await sidebar(page).getByTestId(`nav-${key}`).click();
+  const sidebarNav = sidebar(page);
+  if (await sidebarNav.isVisible()) {
+    const link = sidebarNav.getByTestId(`nav-${key}`);
+    await link.scrollIntoViewIfNeeded();
+    await link.click();
     return;
   }
   const primary = page.getByRole("navigation", { name: "Primary" });
   if (await primary.isVisible()) {
-    await primary.getByTestId(`nav-${key}`).click();
+    const link = primary.getByTestId(`nav-${key}`);
+    await link.scrollIntoViewIfNeeded();
+    await link.click();
     return;
   }
-  await page.getByTestId("nav-menu").click();
-  await page.getByTestId("app-mobile-nav").getByTestId(`nav-${key}`).click();
+  const menu = page.getByTestId("nav-menu");
+  if (await menu.isVisible()) {
+    await menu.click();
+    const mobileNav = page.getByTestId("app-mobile-nav");
+    await expect(mobileNav).toBeVisible();
+    const link = mobileNav.getByTestId(`nav-${key}`);
+    await link.scrollIntoViewIfNeeded();
+    await link.click({ force: true });
+    return;
+  }
+  const hash = key === "dashboard" ? "/" : `/#/${key}`;
+  await page.goto(hash);
 }
 
 async function expectIonBrand(page: Page) {

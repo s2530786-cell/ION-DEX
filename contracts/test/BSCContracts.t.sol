@@ -38,7 +38,7 @@ contract BSCContractsTest is Test {
         bytes32 ionRecipient = bytes32(uint256(0x1234));
         vm.startPrank(user);
         token.approve(address(vault), 100 ether);
-        vault.lock(address(token), 100 ether, ionRecipient);
+        vault.lock(address(token), 100 ether, ionRecipient, 0);
         vm.stopPrank();
 
         bytes32 nonce = keccak256("msg-1");
@@ -73,11 +73,23 @@ contract BSCContractsTest is Test {
         vm.stopPrank();
     }
 
+    function test_vault_lock_collects_ion_protocol_fee() public {
+        vm.prank(owner);
+        vault.setFeeReceiver(address(feeReceiver));
+        bytes32 ionRecipient = bytes32(uint256(0x5678));
+        uint256 ionFee = 1 ether;
+        vm.startPrank(user);
+        token.approve(address(vault), 100 ether + ionFee);
+        vault.lock(address(token), 100 ether, ionRecipient, ionFee);
+        vm.stopPrank();
+        assertEq(token.balanceOf(address(0x000000000000000000000000000000000000dEaD)), (ionFee * 3500) / 10_000);
+    }
+
     function test_revert_duplicate_nonce() public {
         bytes32 nonce = keccak256("dup");
         vm.startPrank(user);
         token.approve(address(vault), 50 ether);
-        vault.lock(address(token), 50 ether, bytes32(uint256(1)));
+        vault.lock(address(token), 50 ether, bytes32(uint256(1)), 0);
         vm.stopPrank();
         relay.attestInbound(nonce, address(token), user, 50 ether);
         vm.expectRevert(BridgeRelay.IonDexDuplicateNonce.selector);

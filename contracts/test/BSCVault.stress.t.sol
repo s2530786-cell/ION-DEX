@@ -39,7 +39,7 @@ contract BSCVaultStressTest is Test {
             bytes32 nonce = keccak256(abi.encodePacked("stress", i));
 
             vm.startPrank(user);
-            vault.lock(address(token), amount, ionRecipient);
+            vault.lock(address(token), amount, ionRecipient, 0);
             vm.stopPrank();
 
             relay.attestInbound(nonce, address(token), user, amount);
@@ -65,7 +65,7 @@ contract BSCVaultStressTest is Test {
     function testGasSnapshot_LockRelease() public {
         vm.startPrank(user);
         token.approve(address(vault), type(uint256).max);
-        vault.lock(address(token), 100 ether, bytes32(uint256(1)));
+        vault.lock(address(token), 100 ether, bytes32(uint256(1)), 0);
         vm.stopPrank();
 
         uint256 gasBefore = gasleft();

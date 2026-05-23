@@ -1557,7 +1557,12 @@ function CopyTradePanel() {
 function OrderHistoryPanel() {
   return (
     <NeonCard variant="gold">
-      <p className="text-sm uppercase tracking-[0.28em] text-amber-200/70">Orders and risk</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm uppercase tracking-[0.28em] text-amber-200/70">Orders and risk</p>
+        <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-3 py-1 text-xs font-black text-emerald-100">
+          TWAP guard active
+        </span>
+      </div>
       <div className="mt-4 grid gap-3" data-testid="trade-history">
         {orderHistory.map(([kind, amount, status]) => (
           <div key={`${kind}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {IonProtocolFeeLib} from "./IonProtocolFeeLib.sol";
+
 /**
  * @title IonSwapRouter
  * @notice Minimal BSC swap router enforcing amountOutMinimum (slippage floor) on every exact-input swap.
@@ -20,6 +22,9 @@ contract IonSwapRouter {
     error IonDexZeroAddress();
     error IonDexZeroAmount();
 
+    address public owner;
+    address public feeReceiver;
+
     event SwapExactIn(
         address indexed caller,
         address indexed pool,
@@ -27,6 +32,16 @@ contract IonSwapRouter {
         uint256 amountOut,
         uint256 amountOutMinimum
     );
+
+    constructor(address owner_) {
+        if (owner_ == address(0)) revert IonDexZeroAddress();
+        owner = owner_;
+    }
+
+    function setFeeReceiver(address feeReceiver_) external {
+        if (msg.sender != owner) revert IonDexZeroAddress();
+        feeReceiver = feeReceiver_;
+    }
 
     /**
      * @param pool           Reviewed AMM/pool executor (must return actual output).
@@ -38,7 +53,8 @@ contract IonSwapRouter {
         ISwapPool pool,
         uint256 amountIn,
         uint256 amountOutMinimum,
-        address recipient
+        address recipient,
+        uint256 ionProtocolFee
     ) external returns (uint256 amountOut) {
         if (address(pool) == address(0) || recipient == address(0)) {
             revert IonDexZeroAddress();
@@ -46,6 +62,8 @@ contract IonSwapRouter {
         if (amountIn == 0) {
             revert IonDexZeroAmount();
         }
+
+        IonProtocolFeeLib.collectIonFee(feeReceiver, address(this), msg.sender, ionProtocolFee);
 
         amountOut = pool.swapExactIn(amountIn, amountOutMinimum);
         if (amountOut < amountOutMinimum) {

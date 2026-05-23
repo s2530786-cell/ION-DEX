@@ -1,0 +1,29 @@
+# ION DEX — 当前任务队列
+
+## P0: 必须完成 — 上线前死线
+
+### P0-1: ION 主链合约部署与 E2E 联调
+- FunC 13 合约编译全绿 + FIF 构建 → 13/13 `.fc` 编译成功
+- 测试网 ION 链部署 router/pool/vault/FeeDistributor/deployer → testnet.ice.io 合约地址有效
+- BSC ↔ ION 跨链桥 E2E 测试
+
+### P0-2: FeeReceiver — ION 统一手续费强制执行
+- FeeReceiver 合约：交易/提现/质押/销毁/铸币全部强制 ION 收款
+- 集成到 DexSwap / LiquidityPool / IonSwapRouter / Burn / StakeReward
+- 合约层写死 ION 地址 `0xE1Ab61F7b093435204Df32f5b3A405de55445ea8`
+
+### P0-3: 1000 次安全测试全绿
+- 10 类攻击 × 100 次 = 1000 次底线
+- 重入 / 闪电贷 / 三明治 / 预言机操控 / 权限绕过 / 整数溢出 / DoS / 假币 / 时间戳 / 抗量子
+- 不通过不走下一步
+
+## P1: 高优先
+- 真实数据替换（GeckoTerminal / DexScreener / CMC / BSC RPC）
+- Swap/Pool UI 打磨（滑点 / 路径 / ION费率 / 响应式 320~2560px）
+- Wallet 集成（MetaMask / OKX / Bitget / ION原生）
+
+## 全局铁律
+- 所有费用只收 ION — 合约层写死，不可改
+- 每步 commit + push
+- 1000 次安全测试全绿才走下一步
+- 所有 UI 参考 https://github.com/DavidHDev/react-bits

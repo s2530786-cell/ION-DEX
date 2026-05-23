@@ -4,11 +4,13 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./AdminManager.sol";
+import "./IonProtocolFeeLib.sol";
 
 /// @notice DEX 恒定乘积 AMM 兑换合约
 contract DexSwap is ReentrancyGuard {
     AdminManager public admin;
     address public lpPool;
+    address public feeReceiver;
     uint256 public swapFee = 30; // 0.3% (basis points, 10000 = 100%)
 
     event Swap(
@@ -28,12 +30,15 @@ contract DexSwap is ReentrancyGuard {
     function swap(
         address tokenIn,
         address tokenOut,
-        uint256 amountIn
+        uint256 amountIn,
+        uint256 ionProtocolFee
     ) external nonReentrant returns (uint256 amountOut) {
         require(!admin.paused(), "Paused");
         require(amountIn > 0, "Amount zero");
         require(tokenIn != tokenOut, "Same token");
         require(tokenIn != address(0) && tokenOut != address(0), "Zero address");
+
+        IonProtocolFeeLib.collectIonFee(feeReceiver, address(this), msg.sender, ionProtocolFee);
 
         // 用户转入代币到池子
         require(IERC20(tokenIn).transferFrom(msg.sender, lpPool, amountIn), "TF fail");
@@ -57,6 +62,10 @@ contract DexSwap is ReentrancyGuard {
     /// @notice 设置池子地址
     function setLpPool(address _lpPool) external onlyOwner {
         lpPool = _lpPool;
+    }
+
+    function setFeeReceiver(address _feeReceiver) external onlyOwner {
+        feeReceiver = _feeReceiver;
     }
 
     /// @notice 修改手续费（管理员，最高1%）

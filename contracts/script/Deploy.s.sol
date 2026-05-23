@@ -33,10 +33,12 @@ contract Deploy is Script {
             deployer
         );
         IonWrapper wrapper = new IonWrapper(address(ion));
-        IonSwapRouter router = new IonSwapRouter();
+        IonSwapRouter router = new IonSwapRouter(deployer);
 
         vault.setBridgeRelay(address(relay));
         vault.setRelayer(address(relay), true);
+        vault.setFeeReceiver(address(feeReceiver));
+        router.setFeeReceiver(address(feeReceiver));
 
         vm.stopBroadcast();
 

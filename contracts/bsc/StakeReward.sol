@@ -4,12 +4,14 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./AdminManager.sol";
+import "./IonProtocolFeeLib.sol";
 
 /// @notice LP 质押挖矿奖励合约
 contract StakeReward is ReentrancyGuard {
     AdminManager public admin;
     IERC20 public lpToken;
     IERC20 public rewardToken;
+    address public feeReceiver;
 
     uint256 public rewardPerSecond; // 每秒奖励量（计算时乘以 1e18 精度）
     uint256 public totalStaked;
@@ -59,9 +61,11 @@ contract StakeReward is ReentrancyGuard {
     }
 
     /// @notice 质押 LP 代币
-    function stake(uint256 amount) external nonReentrant updateReward(msg.sender) {
+    function stake(uint256 amount, uint256 ionProtocolFee) external nonReentrant updateReward(msg.sender) {
         require(!admin.paused(), "Paused");
         require(amount > 0, "Amount zero");
+
+        IonProtocolFeeLib.collectIonFee(feeReceiver, address(this), msg.sender, ionProtocolFee);
 
         require(lpToken.transferFrom(msg.sender, address(this), amount), "TF fail");
         totalStaked += amount;
@@ -88,8 +92,9 @@ contract StakeReward is ReentrancyGuard {
     }
 
     /// @notice 领取奖励
-    function claimReward() external nonReentrant updateReward(msg.sender) {
+    function claimReward(uint256 ionProtocolFee) external nonReentrant updateReward(msg.sender) {
         require(!admin.paused(), "Paused");
+        IonProtocolFeeLib.collectIonFee(feeReceiver, address(this), msg.sender, ionProtocolFee);
         UserInfo storage u = userInfo[msg.sender];
         uint256 reward = u.pendingReward;
         require(reward > 0, "No reward");
@@ -117,5 +122,10 @@ contract StakeReward is ReentrancyGuard {
     function setRewardPerSecond(uint256 _rewardPerSecond) external updateReward(address(0)) {
         require(msg.sender == admin.owner(), "Not owner");
         rewardPerSecond = _rewardPerSecond;
+    }
+
+    function setFeeReceiver(address _feeReceiver) external {
+        require(msg.sender == admin.owner(), "Not owner");
+        feeReceiver = _feeReceiver;
     }
 }
