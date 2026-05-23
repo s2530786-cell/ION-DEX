@@ -1305,9 +1305,11 @@ function AIMarketPanel() {
 }
 
 /** Static demo spot reference for Trade desk — not live ticker feed. */
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const TRADE_DESK_DEMO_PRICE = "6.024";
 const TRADE_DESK_DEMO_MARKET_REF = 6.02;
 
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const tradeCandles = [
   { height: "42%", offset: "0%", tone: "bg-emerald-300" },
   { height: "58%", offset: "4%", tone: "bg-emerald-300" },
@@ -1319,6 +1321,7 @@ const tradeCandles = [
   { height: "55%", offset: "3%", tone: "bg-emerald-300" },
 ] as const;
 
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const tradeOrderBook = [
   { side: "ask" as const, price: "6.038", amount: "1,240", depth: "72%" },
   { side: "ask" as const, price: "6.031", amount: "860", depth: "58%" },
@@ -1326,12 +1329,14 @@ const tradeOrderBook = [
   { side: "bid" as const, price: "6.018", amount: "1,480", depth: "80%" },
 ] as const;
 
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const marketTrades = [
   ["6.024", "420 ION", "Buy"],
   ["6.022", "180 ION", "Sell"],
   ["6.026", "96 ION", "Buy"],
 ] as const;
 
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const orderHistory = [
   ["Limit buy", "420 ION", "Open"],
   ["TWAP sell", "1,200 ION", "Partial"],
@@ -1344,7 +1349,7 @@ function TradeDeskPage() {
   return (
     <div className="grid gap-5" data-testid="page-trade">
       <ScaffoldNotice
-        detail="Trade 页 K 线、盘口与成交流为静态演示数据，价格非后端 ticker。Swap 或 Dashboard 可查看 live 行情。"
+        detail="Trade 页 K 线、盘口与成交流为静态演示数据，价格非后端 ticker。Swap 在后端在线时可走 GeckoTerminal 报价。"
         testId="trade-desk-scaffold-notice"
       />
       <NeonCard variant="mixed">

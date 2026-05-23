@@ -39,6 +39,7 @@ export function useWalletAggregator() {
     if (ionWallet.status === "connected" && ionWallet.snapshot) {
       return {
         address: ionWallet.snapshot.address,
+        // [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
         chainId: ION_CHAIN_ID_SCAFFOLD,
         walletType: "ion",
       };

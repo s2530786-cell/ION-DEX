@@ -12,6 +12,7 @@ type ApprovalItem = {
 };
 
 /** Demo allowance rows — not on-chain allowance scan. */
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const DEMO_APPROVALS: ApprovalItem[] = DEMO_APPROVAL_CONTRACTS.map((row) => ({ ...row }));
 
 function shortenAddress(address: string) {

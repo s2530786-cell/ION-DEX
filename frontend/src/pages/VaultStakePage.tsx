@@ -11,6 +11,7 @@ const configuredVaultAddress = resolveVaultContractAddress() ?? "";
 export function VaultStakePage() {
   const { signer, walletType, address } = useWalletAggregator();
   const [depositAmt, setDepositAmt] = useState("0");
+  // [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
   const demoApy = 46.8;
   const [status, setStatus] = useState<string | null>(null);
 

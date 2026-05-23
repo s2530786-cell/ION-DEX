@@ -12,6 +12,7 @@ type OrderType = "market" | "limit" | "stop";
 type Side = "buy" | "sell";
 
 /** Static demo depth — not live order book or MM API data. */
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const DEMO_DEPTH_BOOK: DepthBook = {
   sell: [
     [0.0001412, 8200],
@@ -33,6 +34,7 @@ export function TradeProPage() {
   const [orderType, setOrderType] = useState<OrderType>("limit");
   const [price, setPrice] = useState("0.0001400");
   const [amount, setAmount] = useState("0");
+  // [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
   const demoBalance = 10000;
   const [loading, setLoading] = useState(false);
   const depth = DEMO_DEPTH_BOOK;

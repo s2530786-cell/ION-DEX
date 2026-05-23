@@ -629,4 +629,5 @@ function TickerStrip() {
   );
 }
 
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK;
