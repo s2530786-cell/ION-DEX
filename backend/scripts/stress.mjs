@@ -27,7 +27,7 @@ const endpoints = [
     expect: (data) =>
       Array.isArray(data) &&
       data.some((token) => token.symbol === "ION") &&
-      data.every((token) => token.status === "mock" && token.provenance?.source === "mock"),
+      data.some((token) => token.symbol === "USDT" && token.status === "online"),
   },
   {
     path: "/api/markets/tickers",
@@ -91,7 +91,10 @@ async function runEndpoint(baseUrl, endpoint) {
       try {
         const response = await fetch(`${baseUrl}${endpoint.path}`);
         const body = await response.json();
-        const validSource = body.meta?.source === "mock" || body.meta?.source === "cache";
+        const validSource =
+          body.meta?.source === "mock" ||
+          body.meta?.source === "cache" ||
+          body.meta?.source === "local";
         if (response.ok && validSource && body.meta?.requestId && endpoint.expect(body.data)) {
           ok += 1;
         } else {

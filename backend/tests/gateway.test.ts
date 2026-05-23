@@ -122,12 +122,22 @@ describe("ION DEX API gateway", () => {
 
   it("serves token metadata", async () => {
     const response = await requestJson("/api/tokens");
-    const data = response.body.data as Array<{ symbol: string; decimals: number; status: string; provenance: { source: string } }>;
+    const data = response.body.data as Array<{
+      symbol: string;
+      decimals: number;
+      status: string;
+      address: string;
+      provenance: { source: string };
+    }>;
 
     assert.equal(response.status, 200);
     assert.ok(data.some((token) => token.symbol === "ION" && token.decimals === 9));
     assert.ok(data.some((token) => token.symbol === "BNB"));
-    assert.ok(data.every((token) => token.status === "mock" && token.provenance.source === "mock"));
+    const usdt = data.find((token) => token.symbol === "USDT");
+    assert.ok(usdt);
+    assert.equal(usdt!.status, "online");
+    assert.equal(usdt!.provenance.source, "upstream");
+    assert.match(usdt!.address, /^0x[a-fA-F0-9]{40}$/);
   });
 
   it("serves market tickers for the frontend ticker strip", async () => {

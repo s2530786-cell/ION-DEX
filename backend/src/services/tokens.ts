@@ -1,3 +1,5 @@
+import { BSC_USDT_TOKEN } from "../constants/official-ion-addresses.js";
+
 export type TokenMetadata = {
   symbol: string;
   name: string;
@@ -45,12 +47,12 @@ export function getTokens(): TokenMetadata[] {
       name: "Tether USD",
       chain: "BSC",
       decimals: 18,
-      address: "0x0000000000000000000000000000000000000000",
+      address: BSC_USDT_TOKEN,
       iconHint: "usdt",
-      status: "mock",
+      status: "online",
       provenance: {
-        source: "mock",
-        note: "USDT address is a placeholder and must not be used for real transfers.",
+        source: "upstream",
+        note: "BSC USDT (BEP-20) canonical contract address.",
       },
     },
   ];

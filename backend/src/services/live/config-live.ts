@@ -1,4 +1,5 @@
 import type { ServerConfig } from "../../config/server-config.js";
+import { CONTRACTS } from "../../config/contracts.js";
 import { fetchBscChainSnapshot } from "../../upstream/bsc-rpc.js";
 import { probeIonApi } from "../../upstream/ion-api.js";
 import type { PublicConfig } from "../config.js";
@@ -12,6 +13,17 @@ export async function loadLivePublicConfig(config: ServerConfig): Promise<Public
     chainIds: {
       ion: ion.reachable ? "ion-mainnet" : "ion-unreachable",
       bsc: bsc.chainId,
+    },
+    fees: {
+      currency: CONTRACTS.fees.currency,
+      swapFee: CONTRACTS.fees.swapFee,
+      poolFee: CONTRACTS.fees.poolFee,
+      withdrawalFee: CONTRACTS.fees.withdrawalFee,
+    },
+    contracts: {
+      ionToken: CONTRACTS.ion.tokenAddress,
+      lpPool: CONTRACTS.dex.lpPool,
+      burnSink: CONTRACTS.ion.burnSink,
     },
     featureFlags: {
       backendGateway: true,

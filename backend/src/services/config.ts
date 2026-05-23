@@ -1,9 +1,22 @@
+import { CONTRACTS } from "../config/contracts.js";
+
 export type PublicConfig = {
   appName: string;
   environment: "local" | "test" | "preview";
   chainIds: {
     ion: string;
     bsc: number;
+  };
+  fees: {
+    currency: "ION";
+    swapFee: number;
+    poolFee: number;
+    withdrawalFee: number;
+  };
+  contracts: {
+    ionToken: string;
+    lpPool: string;
+    burnSink: string;
   };
   featureFlags: {
     backendGateway: boolean;
@@ -34,6 +47,17 @@ export function getPublicConfig(): PublicConfig {
     chainIds: {
       ion: "ion-mainnet",
       bsc: 56,
+    },
+    fees: {
+      currency: CONTRACTS.fees.currency,
+      swapFee: CONTRACTS.fees.swapFee,
+      poolFee: CONTRACTS.fees.poolFee,
+      withdrawalFee: CONTRACTS.fees.withdrawalFee,
+    },
+    contracts: {
+      ionToken: CONTRACTS.ion.tokenAddress,
+      lpPool: CONTRACTS.dex.lpPool,
+      burnSink: CONTRACTS.ion.burnSink,
     },
     featureFlags: {
       backendGateway: true,
