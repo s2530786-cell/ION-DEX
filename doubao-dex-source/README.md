@@ -1,4 +1,4 @@
-﻿# Doubao DEX Source Bundle
+# Doubao DEX Source Bundle
 
 Canonical in-repo location for the imported Doubao DEX architecture sources.
 

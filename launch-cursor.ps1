@@ -4,6 +4,6 @@ if ($p) {
     exit 0
 }
 Write-Host "No desktop window found. Launching Cursor..."
-Start-Process -FilePath "C:\Users\admin\AppData\Local\Programs\cursor\Cursor.exe" -ArgumentList "D:\openclaw-tools\ion-dex-nuke"
+Start-Process -FilePath "C:\Users\admin\AppData\Local\Programs\Cursor\_\Cursor.exe" -ArgumentList "D:\openclaw-tools\ion-dex-nuke"
 Write-Host "Done."
 exit 0
