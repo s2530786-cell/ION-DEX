@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// forge-lint: disable-file(erc20-unchecked-transfer,block-timestamp)
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";

@@ -103,8 +103,10 @@ contract BSCVault {
     function adjustLpShares(address user, int256 deltaShares) external onlyRelayerOrOwner {
         if (user == address(0)) revert IonDexZeroAddress();
         if (deltaShares > 0) {
+            // forge-lint: disable-next-line(unsafe-typecast)
             lpShares[user] += uint256(deltaShares);
         } else if (deltaShares < 0) {
+            // forge-lint: disable-next-line(unsafe-typecast)
             uint256 dec = uint256(-deltaShares);
             if (lpShares[user] < dec) revert IonDexInsufficientLocked();
             lpShares[user] -= dec;

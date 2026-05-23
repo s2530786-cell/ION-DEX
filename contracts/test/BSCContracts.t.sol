@@ -23,7 +23,7 @@ contract BSCContractsTest is Test {
     function setUp() public {
         token = new MockERC20("ION", "ION", 18);
         vault = new BSCVault(owner);
-        feeReceiver = new FeeReceiver(owner, treasury, team, staking, keeper);
+        feeReceiver = new FeeReceiver(owner, address(token), treasury, team, staking, keeper);
         relay = new BridgeRelay(owner, address(vault), 1);
         vm.prank(owner);
         vault.setBridgeRelay(address(relay));
@@ -61,6 +61,16 @@ contract BSCContractsTest is Test {
         assertEq(token.balanceOf(staking), (amount * 2000) / 10_000);
         assertEq(token.balanceOf(treasury), (amount * 1500) / 10_000);
         assertEq(token.balanceOf(keeper), amount - (amount * 3500) / 10_000 - (amount * 2500) / 10_000 - (amount * 2000) / 10_000 - (amount * 1500) / 10_000);
+    }
+
+    function test_fee_receiver_rejects_non_ion() public {
+        MockERC20 other = new MockERC20("USDT", "USDT", 18);
+        other.mint(user, 100 ether);
+        vm.startPrank(user);
+        other.approve(address(feeReceiver), 100 ether);
+        vm.expectRevert(FeeReceiver.IonDexOnlyIon.selector);
+        feeReceiver.distributeFees(address(other), 100 ether);
+        vm.stopPrank();
     }
 
     function test_revert_duplicate_nonce() public {

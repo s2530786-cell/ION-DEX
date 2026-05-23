@@ -17,6 +17,7 @@ contract FeeReceiver {
     error IonDexUnauthorized();
     error IonDexTokenTransferFailed();
     error IonDexBpsInvalid();
+    error IonDexOnlyIon();
 
     uint256 public constant FEE_DENOMINATOR = 10_000;
     uint256 public constant BPS_BURN = 3500;
@@ -28,6 +29,7 @@ contract FeeReceiver {
     /// @notice Product burn address on BSC (docs/02-tokenomics-and-fees.md).
     address public constant BSC_BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
 
+    address public immutable ionToken;
     address public owner;
     address public treasury;
     address public team;
@@ -50,8 +52,8 @@ contract FeeReceiver {
         _;
     }
 
-    constructor(address owner_, address treasury_, address team_, address stakingRewards_, address keeper_) {
-        if (owner_ == address(0)) revert IonDexZeroAddress();
+    constructor(address owner_, address ionToken_, address treasury_, address team_, address stakingRewards_, address keeper_) {
+        if (owner_ == address(0) || ionToken_ == address(0)) revert IonDexZeroAddress();
         if (treasury_ == address(0) || team_ == address(0) || stakingRewards_ == address(0) || keeper_ == address(0)) {
             revert IonDexZeroAddress();
         }
@@ -59,6 +61,7 @@ contract FeeReceiver {
             revert IonDexBpsInvalid();
         }
         owner = owner_;
+        ionToken = ionToken_;
         treasury = treasury_;
         team = team_;
         stakingRewards = stakingRewards_;
@@ -86,6 +89,7 @@ contract FeeReceiver {
      */
     function distributeFees(address token, uint256 amount) external {
         if (token == address(0)) revert IonDexZeroAddress();
+        if (token != ionToken) revert IonDexOnlyIon();
         if (amount == 0) revert IonDexZeroAmount();
         if (!_transferFrom(token, msg.sender, address(this), amount)) revert IonDexTokenTransferFailed();
 

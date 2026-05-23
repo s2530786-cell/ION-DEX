@@ -16,6 +16,7 @@ const required = [
   "contracts/bsc/MockERC20.sol",
   "contracts/bsc/FeeReceiver.sol",
   "contracts/bsc/BridgeRelay.sol",
+  "contracts/bsc/IonWrapper.sol",
   "contracts/bsc/Burn.sol",
   "contracts/bsc/VaultLock.sol",
   "contracts/test/MinimumOutput.t.sol",
