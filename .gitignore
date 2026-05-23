@@ -35,3 +35,11 @@ NUL
 
 # FunC probe outputs
 contracts/ion/build/_probe_*
+
+# Build artifacts
+contracts/out/
+contracts/cache/
+contracts/ion/build-func/
+contracts/ion/imports/
+contracts/gas-snapshot.txt
+contracts/script/Deploy.s.sol/
