@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
+import { FooterLegal } from "@/components/layout/FooterLegal";
 import { NeonButton } from "@/components/ui/NeonButton";
 import ionLogo from "@/assets/ion-logo.jpg";
 import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
@@ -299,6 +300,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
           <main className="flex-1 p-4 sm:p-6" data-testid="main-content">
             {children}
           </main>
+          <FooterLegal />
         </div>
       </div>
     </div>

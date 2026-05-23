@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
+import { RiskModal } from "@/components/compliance/RiskModal";
 import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
 import { BusinessPage, type BusinessPageKey } from "@/pages/BusinessPages";
 import { DashboardPage } from "@/pages/DashboardPage";
@@ -72,7 +73,9 @@ export function App() {
   }, []);
 
   return (
-    <AppShell activePage={activePage} onPageChange={navigate}>
+    <>
+      <RiskModal />
+      <AppShell activePage={activePage} onPageChange={navigate}>
       <AnimatePresence mode="wait">
         <motion.div
           key={activePage}
@@ -84,6 +87,7 @@ export function App() {
           <PageRouter onNavigate={navigate} page={activePage} />
         </motion.div>
       </AnimatePresence>
-    </AppShell>
+      </AppShell>
+    </>
   );
 }

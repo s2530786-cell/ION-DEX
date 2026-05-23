@@ -1,5 +1,6 @@
 import { Activity, TrendingDown, TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
+import { TradeConfirm } from "@/components/compliance/TradeConfirm";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
@@ -36,6 +37,7 @@ export function TradeProPage() {
   const [loading, setLoading] = useState(false);
   const depth = DEMO_DEPTH_BOOK;
   const [message, setMessage] = useState<string | null>(null);
+  const [showTradeConfirm, setShowTradeConfirm] = useState(false);
 
   const preview = useMemo(() => {
     const p = Number(price);
@@ -50,15 +52,34 @@ export function TradeProPage() {
     };
   }, [amount, orderType, price]);
 
-  async function submitOrder() {
+  const confirmSymbols = useMemo(() => {
+    if (tab === "buy") {
+      return { pay: "BNB", receive: "ION" };
+    }
+    return { pay: "ION", receive: "BNB" };
+  }, [tab]);
+
+  const receiveAmountPreview = useMemo(() => {
+    if (!preview) {
+      return "—";
+    }
+    return preview.notional.toFixed(6);
+  }, [preview]);
+
+  function requestSubmit() {
     if (!signer || !address) {
       setMessage("请先连接钱包。");
       return;
     }
+    setShowTradeConfirm(true);
+  }
+
+  async function submitOrderPreview() {
+    setShowTradeConfirm(false);
     setLoading(true);
     setMessage(null);
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 600));
+      await new Promise((resolve) => window.setTimeout(resolve, 400));
       setMessage(
         `[预览] ${tab === "buy" ? "买入" : "卖出"} ${orderType} 单仅本地表单校验，未调用 /api/market/mm/order 或链上合约。`,
       );
@@ -160,7 +181,7 @@ export function TradeProPage() {
           )}
         </div>
 
-        <NeonButton className="mt-5 w-full" disabled={loading} onClick={() => void submitOrder()} type="button">
+        <NeonButton className="mt-5 w-full" disabled={loading || !preview} onClick={requestSubmit} type="button">
           {loading ? "校验中..." : tab === "buy" ? "预览买入（未提交）" : "预览卖出（未提交）"}
         </NeonButton>
 
@@ -195,6 +216,16 @@ export function TradeProPage() {
           </div>
         </div>
       </NeonCard>
+      <TradeConfirm
+        open={showTradeConfirm}
+        payAmount={amount}
+        paySymbol={confirmSymbols.pay}
+        previewOnly
+        receiveAmount={receiveAmountPreview}
+        receiveSymbol={confirmSymbols.receive}
+        onCancel={() => setShowTradeConfirm(false)}
+        onConfirm={() => void submitOrderPreview()}
+      />
     </div>
   );
 }
