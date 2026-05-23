@@ -259,6 +259,7 @@ describe("ION DEX API gateway", () => {
       slippageBps: number;
       protocolFeeBps: number;
       precision: { inputDecimals: number; outputDecimals: number; math: string };
+      provenance: { source: string; priceModel: string; priceImpactModel?: string };
     };
 
     assert.equal(response.status, 200);
@@ -268,6 +269,9 @@ describe("ION DEX API gateway", () => {
     assert.equal(data.precision.inputDecimals, 18);
     assert.equal(data.precision.outputDecimals, 9);
     assert.equal(data.precision.math, "bigint-floor");
+    assert.equal(data.provenance.source, "test-mock");
+    assert.match(data.provenance.priceModel, /test-mock/i);
+    assert.match(data.provenance.priceImpactModel ?? "", /size-tier estimate/i);
     assert.ok(BigInt(data.estimatedOutputUnits) > BigInt(data.minimumReceivedUnits));
     assert.ok(BigInt(data.protocolFeeUnits) > 0n);
   });
