@@ -9,10 +9,9 @@ import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useApiResource } from "@/hooks/useApiResource";
 import {
   DEMO_TICKER_FALLBACK,
-  ION_MAINNET_BURN_SOURCE_PENDING,
-  OFFICIAL_BSC_BURN_ADDRESS,
   demoSwapUsdRates,
 } from "@/lib/integrationConfig";
+import { CONTRACTS } from "@/config/contracts";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import { computeSwapQuoteBreakdown } from "@/lib/swapQuote";
 
@@ -165,7 +164,7 @@ export function SwapPage() {
   }
 
   return (
-    <div className="mx-auto max-w-lg" data-testid="page-swap">
+    <div className="mx-auto w-full max-w-lg px-3 sm:px-4 lg:max-w-xl lg:px-0" data-testid="page-swap">
       <NeonCard className="min-h-[28rem]" variant="magenta">
         <form className="grid gap-4" onSubmit={(event) => void submitSwap(event)}>
           <div className="mb-1 flex items-center justify-between">
@@ -299,16 +298,19 @@ export function SwapPage() {
             {validation.isValid && validation.quote !== null ? (
               <span>
                 Quote: gross ~{validation.quote.grossOut.toFixed(4)} {toToken} · protocol fee ~
-                {validation.quote.protocolFee.toFixed(6)} {toToken} · min received ~
+                {(validation.quote.protocolFee * rates[toToken] / rates.ION).toFixed(6)} ION (
+                {(CONTRACTS.fee.swapFee * 100).toFixed(2)}% {CONTRACTS.fee.currency}) · min received ~
                 <span data-testid="swap-min-received">
                   {validation.quote.minReceived.toFixed(6)}
                 </span>{" "}
                 {toToken} (after {slippage}% slip) · impact ~{validation.quote.priceImpactPct.toFixed(2)}
-                % · ION pairs use <code className="text-cyan-50">ton_sendTransaction</code> intent ·
-                source {tickers.meta?.source ?? "offline"}
+                % · source {tickers.meta?.source ?? "offline"}
               </span>
             ) : (
-              <span>Enter amount and slippage to preview minimum received, impact, and ION fee.</span>
+              <span>
+                Enter amount and slippage to preview minimum received, impact, and protocol fee (
+                {CONTRACTS.fee.currency}).
+              </span>
             )}
           </div>
 

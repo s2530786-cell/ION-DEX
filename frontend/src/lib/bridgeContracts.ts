@@ -1,20 +1,16 @@
 import { type Address, parseAbi } from "viem";
-import { BSC_CHAIN_ID, OFFICIAL_BSC_ION_TOKEN } from "@/lib/integrationConfig";
+import { CONTRACTS, isDeployed } from "@/config/contracts";
 
-export { BSC_CHAIN_ID };
+export { BSC_CHAIN_ID } from "@/lib/integrationConfig";
 
-export const ION_BSC_TOKEN =
-  (import.meta.env.VITE_ION_BSC_TOKEN as Address | undefined) ??
-  (OFFICIAL_BSC_ION_TOKEN as Address);
+export const ION_BSC_TOKEN = CONTRACTS.ion.token.address as Address;
+export const USDT_BSC_TOKEN = "0x55d398326f99059fF775485246099027B3197955" as Address;
+export const PANCAKE_ROUTER_BSC = CONTRACTS.dex.router.address as Address;
+export const ION_LP_POOL_BSC = CONTRACTS.dex.pool.address as Address;
 
-export const USDT_BSC_TOKEN =
-  (import.meta.env.VITE_USDT_BSC_TOKEN as Address | undefined) ??
-  ("0x55d398326f99059fF775485246099027B3197955" as Address);
-
-export const PANCAKE_ROUTER_BSC =
-  "0x10ED43C718714eb63d5aA57B78B54704E256024E" as Address;
-
-export const BSC_VAULT_ADDRESS = import.meta.env.VITE_BSC_VAULT_ADDRESS as Address | undefined;
+export const BSC_VAULT_ADDRESS = isDeployed(CONTRACTS.vault.lock.address)
+  ? (CONTRACTS.vault.lock.address as Address)
+  : (import.meta.env.VITE_BSC_VAULT_ADDRESS as Address | undefined);
 
 export const ION_WRAPPER_ADDRESS = import.meta.env.VITE_ION_WRAPPER_ADDRESS as Address | undefined;
 
