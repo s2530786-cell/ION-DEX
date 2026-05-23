@@ -91,4 +91,18 @@ if (phase2.status !== 0) {
   throw new Error("deploy phase-2 readiness check failed");
 }
 
+const fiftDryRun = spawnSync(process.execPath, [join(root, "scripts", "deploy-fift-dry-run.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+  env: {
+    ...process.env,
+    ION_DEPLOY_DRY_RUN: process.env.ION_DEPLOY_DRY_RUN ?? "1",
+    ION_DEPLOY_NETWORK: process.env.ION_DEPLOY_NETWORK ?? "testnet",
+  },
+});
+
+if (fiftDryRun.status !== 0) {
+  throw new Error("fift deploy dry-run failed");
+}
+
 console.log("OK - contract verification completed.");

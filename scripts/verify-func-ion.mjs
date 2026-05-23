@@ -39,14 +39,18 @@ const passes = Math.max(
   Number.parseInt(process.env.ION_FUNC_COMPILE_PASSES ?? String(defaultPasses), 10) || defaultPasses,
 );
 
+const toolchainRoot = process.env.ION_TOOLCHAIN_ROOT;
+
 const funcCandidates = [
   process.env.ION_FUNC_EXE,
+  toolchainRoot ? join(toolchainRoot, "bin", "func") : null,
   process.platform === "win32" ? "D:\\openclaw-data\\workspace\\func.exe" : null,
   "func",
 ].filter(Boolean);
 
 const stdlibCandidates = [
   process.env.ION_STDLIB_FC,
+  toolchainRoot ? join(toolchainRoot, "smartcont", "stdlib.fc") : null,
   process.platform === "win32"
     ? "D:/openclaw-data/workspace/ion-official/ion/crypto/smartcont/stdlib.fc"
     : null,

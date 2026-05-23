@@ -37,10 +37,32 @@ jobs:
         shell: pwsh
         run: ./scripts/check-encoding.ps1
 
-      - name: Contract verify (TS math + deploy docs; FunC SKIP on CI unless toolchain present)
+      - name: Cache ION toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ion-dex-toolchain
+          key: ion-toolchain-${{ runner.os }}-${{ hashFiles('scripts/setup-ion-toolchain.sh') }}
+
+      - name: Setup ION toolchain (func + fift + ION stdlib)
+        run: bash scripts/setup-ion-toolchain.sh
+
+      - name: Load toolchain env
+        run: |
+          source ~/.cache/ion-dex-toolchain/.ready
+          echo "ION_TOOLCHAIN_ROOT=$ION_TOOLCHAIN_ROOT" >> "$GITHUB_ENV"
+          echo "ION_FUNC_EXE=$ION_FUNC_EXE" >> "$GITHUB_ENV"
+          echo "ION_STDLIB_FC=$ION_STDLIB_FC" >> "$GITHUB_ENV"
+          echo "ION_FIFT_EXE=$ION_TOOLCHAIN_ROOT/bin/fift" >> "$GITHUB_ENV"
+          echo "FIFTPATH=$FIFTPATH" >> "$GITHUB_ENV"
+          echo "$ION_TOOLCHAIN_ROOT/bin" >> "$GITHUB_PATH"
+
+      - name: Contract verify (FunC 5x + fift dry-run + TS math)
         env:
           CI: "true"
           ION_FUNC_COMPILE_PASSES: "5"
+          ION_FUNC_P0_STRICT: "1"
+          ION_DEPLOY_DRY_RUN: "1"
+          ION_DEPLOY_NETWORK: "testnet"
         run: node scripts/verify-contracts.mjs
 
       - name: Install backend deps

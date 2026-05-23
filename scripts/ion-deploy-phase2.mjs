@@ -11,6 +11,7 @@ const root = process.cwd();
 const requiredDocs = [
   "contracts/ion/deploy/compile-and-deploy.md",
   "contracts/ion/deploy/deploy.fif",
+  "contracts/ion/deploy/deploy-checklist.fif",
   "contracts/README.md",
 ];
 

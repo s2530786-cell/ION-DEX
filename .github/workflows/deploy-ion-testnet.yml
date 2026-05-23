@@ -1,0 +1,89 @@
+name: ION DEX deploy (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      network:
+        description: Target network label (testnet or mainnet)
+        required: true
+        default: testnet
+        type: choice
+        options:
+          - testnet
+          - mainnet
+      dry_run:
+        description: Dry-run only (recommended). No chain transactions.
+        required: true
+        default: true
+        type: boolean
+
+concurrency:
+  group: ion-dex-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: ${{ inputs.network == 'mainnet' && 'ion-mainnet-deploy' || 'ion-testnet-deploy' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Cache ION toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ion-dex-toolchain
+          key: ion-toolchain-${{ runner.os }}-${{ hashFiles('scripts/setup-ion-toolchain.sh') }}
+
+      - name: Setup ION toolchain (func + fift + stdlib)
+        run: bash scripts/setup-ion-toolchain.sh
+
+      - name: Load toolchain env
+        run: |
+          source ~/.cache/ion-dex-toolchain/.ready
+          echo "ION_TOOLCHAIN_ROOT=$ION_TOOLCHAIN_ROOT" >> "$GITHUB_ENV"
+          echo "ION_FUNC_EXE=$ION_FUNC_EXE" >> "$GITHUB_ENV"
+          echo "ION_STDLIB_FC=$ION_STDLIB_FC" >> "$GITHUB_ENV"
+          echo "FIFTPATH=$FIFTPATH" >> "$GITHUB_ENV"
+          echo "$ION_TOOLCHAIN_ROOT/bin" >> "$GITHUB_PATH"
+
+      - name: Contract compile smoke (5x per contract)
+        env:
+          CI: "true"
+          ION_FUNC_COMPILE_PASSES: "5"
+          ION_FUNC_P0_STRICT: "1"
+        run: node scripts/verify-func-ion.mjs
+
+      - name: Fift deploy dry-run
+        if: inputs.dry_run == true
+        env:
+          ION_DEPLOY_DRY_RUN: "1"
+          ION_DEPLOY_NETWORK: ${{ inputs.network }}
+        run: node scripts/deploy-fift-dry-run.mjs
+
+      - name: Live deploy gate (manual only, secrets required)
+        if: inputs.dry_run == false
+        env:
+          ION_DEPLOY_DRY_RUN: "0"
+          ION_DEPLOY_NETWORK: ${{ inputs.network }}
+          ION_DEPLOY_OWNER_ADDRESS: ${{ secrets.ION_DEPLOY_OWNER_ADDRESS }}
+          ION_DEPLOY_LP_RECIPIENT: ${{ secrets.ION_DEPLOY_LP_RECIPIENT }}
+          ION_DEPLOY_TREASURY_RECIPIENT: ${{ secrets.ION_DEPLOY_TREASURY_RECIPIENT }}
+          ION_DEPLOY_INSURANCE_RECIPIENT: ${{ secrets.ION_DEPLOY_INSURANCE_RECIPIENT }}
+          ION_DEPLOY_KEY: ${{ secrets.ION_DEPLOY_KEY }}
+        run: |
+          if [ -z "${ION_DEPLOY_KEY:-}" ]; then
+            echo "ERROR: ION_DEPLOY_KEY secret is required for live deploy."
+            exit 1
+          fi
+          echo "Live deploy is not automated in-repo yet."
+          echo "Run fift with operator wallet on a trusted runner after review."
+          echo "Network=${ION_DEPLOY_NETWORK} Owner=${ION_DEPLOY_OWNER_ADDRESS:-unset}"
+          exit 1

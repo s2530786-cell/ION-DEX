@@ -1,0 +1,20 @@
+#!/usr/bin/env fift -s
+// CI / operator dry-run checklist (no on-chain cells, no keys).
+
+"Fift.fif" include
+
+."=== ION DEX v2 Deployment Script ===" cr
+."Replace the following addresses before deploying:" cr
+."   <owner_address>              - Contract owner wallet" cr
+."   <lp_recipient>               - LP fee recipient" cr
+."   <treasury_recipient>         - Treasury fee recipient" cr
+."   <insurance_recipient>        - Insurance/Staking+Dev fee recipient" cr
+."   <token0_addr>                - First token address" cr
+."   <token1_addr>                - Second token address" cr
+."   <fee_distributor_addr>       - FeeDistributor contract address" cr
+."   <router_addr>                - Router contract address" cr
+."   <vault_addr>                 - Vault contract address" cr
+."   <staking_pool_addr>          - Staking pool contract address" cr
+"" cr
+."=== Fee Split ===" cr
+."LP: 50% | Staking: 15% | Treasury: 10% | Developer: 25%" cr
