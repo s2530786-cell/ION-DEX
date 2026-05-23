@@ -1,14 +1,15 @@
 import { type Address, parseAbi } from "viem";
+import { BSC_CHAIN_ID, OFFICIAL_BSC_ION_TOKEN } from "@/lib/integrationConfig";
 
-export const BSC_CHAIN_ID = 56;
+export { BSC_CHAIN_ID };
 
 export const ION_BSC_TOKEN =
   (import.meta.env.VITE_ION_BSC_TOKEN as Address | undefined) ??
-  ("0xe1ab61f7b093435204df32f5b3a405de55445ea8" as Address);
+  (OFFICIAL_BSC_ION_TOKEN as Address);
 
 export const USDT_BSC_TOKEN =
   (import.meta.env.VITE_USDT_BSC_TOKEN as Address | undefined) ??
-  ("0x55d398326f99059fF775485246999027B3197955" as Address);
+  ("0x55d398326f99059fF775485246099027B3197955" as Address);
 
 export const PANCAKE_ROUTER_BSC =
   "0x10ED43C718714eb63d5aA57B78B54704E256024E" as Address;

@@ -32,6 +32,7 @@ import {
   type DomainResolution,
   type StakingSummary,
 } from "@/lib/ionApi";
+import { ION_MAINNET_BURN_SOURCE_PENDING, OFFICIAL_BSC_BURN_ADDRESS } from "@/lib/integrationConfig";
 
 type BusinessPageConfig = {
   eyebrow: string;
@@ -170,8 +171,8 @@ const fallbackBurnSummary: BurnSummary = {
   bscBurnedIon: "8245000",
   ionMainnetBurnedIon: "4600000",
   remainingSupplyIon: "987155000",
-  bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
-  ionBurnSource: "ion-mainnet-burn-source-placeholder",
+  bscBurnAddress: OFFICIAL_BSC_BURN_ADDRESS,
+  ionBurnSource: ION_MAINNET_BURN_SOURCE_PENDING,
 };
 
 const fallbackStakingSummary: StakingSummary = {

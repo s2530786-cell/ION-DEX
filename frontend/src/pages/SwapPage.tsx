@@ -7,6 +7,12 @@ import { NeonCard } from "@/components/ui/NeonCard";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useApiResource } from "@/hooks/useApiResource";
+import {
+  DEMO_TICKER_FALLBACK,
+  ION_MAINNET_BURN_SOURCE_PENDING,
+  OFFICIAL_BSC_BURN_ADDRESS,
+  demoSwapUsdRates,
+} from "@/lib/integrationConfig";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import { computeSwapQuoteBreakdown } from "@/lib/swapQuote";
 
@@ -14,17 +20,9 @@ type SwapToken = "BNB" | "ION" | "USDT";
 
 const tokens: SwapToken[] = ["BNB", "ION", "USDT"];
 
-const fallbackRates: Record<SwapToken, number> = {
-  BNB: 642.2,
-  ION: 6.02,
-  USDT: 1,
-};
+const fallbackRates = demoSwapUsdRates();
 
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-  { symbol: "USDT", priceUsd: 1, displayPrice: "$1.00", change24hPct: 0.01, displayChange: "+0.01%" },
-];
+const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK;
 
 function ratesFromTickers(tickers: MarketTicker[]): Record<SwapToken, number> {
   const rates = { ...fallbackRates };

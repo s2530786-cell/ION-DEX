@@ -3,6 +3,7 @@
  * EVM signer/publicClient are live when connected; ION branch uses scaffold chainId until official wiring.
  */
 import { useMemo } from "react";
+import { ION_CHAIN_ID_SCAFFOLD } from "@/lib/integrationConfig";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
 import type { EvmWalletKind } from "@/wallet/evmConnectors";
@@ -38,8 +39,7 @@ export function useWalletAggregator() {
     if (ionWallet.status === "connected" && ionWallet.snapshot) {
       return {
         address: ionWallet.snapshot.address,
-        // Scaffold: official ION chain id not wired here yet — do not treat as live EVM network.
-        chainId: 2026,
+        chainId: ION_CHAIN_ID_SCAFFOLD,
         walletType: "ion",
       };
     }

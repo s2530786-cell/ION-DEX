@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
+import { DEMO_APPROVAL_CONTRACTS } from "@/lib/integrationConfig";
 
 type ApprovalItem = {
   contract: string;
@@ -11,23 +12,7 @@ type ApprovalItem = {
 };
 
 /** Demo allowance rows — not on-chain allowance scan. */
-const DEMO_APPROVALS: ApprovalItem[] = [
-  {
-    contract: "0x1111111111111111111111111111111111111111",
-    allowance: "无限",
-    flaggedUnlimited: true,
-  },
-  {
-    contract: "0x2222222222222222222222222222222222222222",
-    allowance: "2500 ION",
-    flaggedUnlimited: false,
-  },
-  {
-    contract: "0x3333333333333333333333333333333333333333",
-    allowance: "无限",
-    flaggedUnlimited: true,
-  },
-];
+const DEMO_APPROVALS: ApprovalItem[] = DEMO_APPROVAL_CONTRACTS.map((row) => ({ ...row }));
 
 function shortenAddress(address: string) {
   return `${address.slice(0, 6)}…${address.slice(-4)}`;

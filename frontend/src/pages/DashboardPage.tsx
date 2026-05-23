@@ -16,6 +16,11 @@ import { NeonCard } from "@/components/ui/NeonCard";
 import type { PageKey } from "@/components/layout/AppShell";
 import { useApiResource } from "@/hooks/useApiResource";
 import {
+  DEMO_TICKER_FALLBACK,
+  ION_MAINNET_BURN_SOURCE_PENDING,
+  OFFICIAL_BSC_BURN_ADDRESS,
+} from "@/lib/integrationConfig";
+import {
   fetchBurnSummary,
   fetchMarketTickers,
   fetchStakingSummary,
@@ -46,17 +51,15 @@ const featureCards: FeatureCard[] = [
   { title: "AI Market", label: "Signals & risk", target: "ai", icon: Bot, color: "cyan" },
 ];
 
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-];
+const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK.filter((row) => row.symbol === "ION");
 
 const fallbackBurn: BurnSummary = {
   totalBurnedIon: "12845000",
   bscBurnedIon: "8245000",
   ionMainnetBurnedIon: "4600000",
   remainingSupplyIon: "987155000",
-  bscBurnAddress: "0x000000000000000000000000000000000000dEaD",
-  ionBurnSource: "ion-mainnet-burn-source-placeholder",
+  bscBurnAddress: OFFICIAL_BSC_BURN_ADDRESS,
+  ionBurnSource: ION_MAINNET_BURN_SOURCE_PENDING,
 };
 
 const fallbackStaking: StakingSummary = {

@@ -19,6 +19,7 @@ import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
+import { DEMO_TICKER_FALLBACK } from "@/lib/integrationConfig";
 import { shortenAddress } from "@/wallet/injectedEvm";
 import {
   EVM_WALLET_LABELS,
@@ -463,7 +464,7 @@ function WalletConnectPanel({
               BNB balance:{" "}
               {evmWallet.snapshot!.balanceBnb
                 ? `${evmWallet.snapshot!.balanceBnb} BNB`
-                : "unavailable (start backend on :8787 or check RPC)"}{" "}
+                : "unavailable (start backend on :8788 or check RPC)"}{" "}
               · source: {evmWallet.snapshot!.balanceSource}
             </p>
           </motion.div>
@@ -628,11 +629,4 @@ function TickerStrip() {
   );
 }
 
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
-  { symbol: "BTC", priceUsd: 103420, displayPrice: "$103,420", change24hPct: 0.74, displayChange: "+0.74%" },
-  { symbol: "ETH", priceUsd: 4906, displayPrice: "$4,906", change24hPct: -0.38, displayChange: "-0.38%" },
-  { symbol: "SOL", priceUsd: 218.3, displayPrice: "$218.30", change24hPct: 3.12, displayChange: "+3.12%" },
-  { symbol: "USDT", priceUsd: 1, displayPrice: "$1.00", change24hPct: 0.01, displayChange: "+0.01%" },
-];
+const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK;

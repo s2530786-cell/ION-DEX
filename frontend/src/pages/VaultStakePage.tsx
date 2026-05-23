@@ -3,9 +3,10 @@ import { useMemo, useState } from "react";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
+import { resolveVaultContractAddress } from "@/lib/integrationConfig";
 import { useWalletAggregator } from "@/hooks/useWalletAggregator";
 
-const configuredVaultAddress = import.meta.env.VITE_VAULT_CONTRACT_ADDRESS?.trim() ?? "";
+const configuredVaultAddress = resolveVaultContractAddress() ?? "";
 
 export function VaultStakePage() {
   const { signer, walletType, address } = useWalletAggregator();

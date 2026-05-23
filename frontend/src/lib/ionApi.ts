@@ -1,3 +1,7 @@
+import { resolveIonApiBaseUrl } from "@/lib/integrationConfig";
+
+const apiBaseUrl = resolveIonApiBaseUrl();
+
 export type ApiMeta = {
   source: "mock" | "cache" | "upstream" | "indexer";
   updatedAt: string;
@@ -112,8 +116,6 @@ export type TradeQuote = {
     priceModel: string;
   };
 };
-
-const apiBaseUrl = import.meta.env.VITE_ION_API_BASE_URL ?? "http://127.0.0.1:8787";
 
 async function fetchApi<T>(path: string, signal?: AbortSignal): Promise<ApiResponse<T>> {
   const response = await fetch(`${apiBaseUrl}${path}`, {

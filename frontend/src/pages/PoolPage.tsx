@@ -4,6 +4,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useApiResource } from "@/hooks/useApiResource";
+import { DEMO_TICKER_FALLBACK, demoTickerPrice } from "@/lib/integrationConfig";
 import {
   fetchMarketTickers,
   fetchStakingSummary,
@@ -24,16 +25,15 @@ const fallbackPools: PoolRow[] = [
   { id: "ion-usdt", pair: "ION / USDT", tvlUsd: 640_000, volume24hUsd: 96_500, aprPct: 22.4 },
 ];
 
-const fallbackTickers: MarketTicker[] = [
-  { symbol: "BNB", priceUsd: 642.2, displayPrice: "$642.20", change24hPct: 1.18, displayChange: "+1.18%" },
-  { symbol: "ION", priceUsd: 6.02, displayPrice: "$6.02", change24hPct: 8.42, displayChange: "+8.42%" },
-];
+const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK.filter(
+  (row) => row.symbol === "BNB" || row.symbol === "ION",
+);
 
 function buildPoolRows(staking: StakingSummary, tickers: MarketTicker[]): PoolRow[] {
   const lpUsd = Number(staking.lpStakedUsd);
   const primaryTvl = Number.isFinite(lpUsd) && lpUsd > 0 ? lpUsd : fallbackPools[0]?.tvlUsd ?? 1_240_000;
-  const bnbPrice = tickers.find((row) => row.symbol === "BNB")?.priceUsd ?? 642.2;
-  const ionPrice = tickers.find((row) => row.symbol === "ION")?.priceUsd ?? 6.02;
+  const bnbPrice = tickers.find((row) => row.symbol === "BNB")?.priceUsd ?? demoTickerPrice("BNB", 642.2);
+  const ionPrice = tickers.find((row) => row.symbol === "ION")?.priceUsd ?? demoTickerPrice("ION", 6.02);
   const volPrimary = Math.round(primaryTvl * 0.15);
   const volSecondary = Math.round(primaryTvl * 0.08);
   return [
@@ -87,8 +87,8 @@ export function PoolPage() {
   }, [pools, selectedPool]);
 
   const pool = pools.find((row) => row.id === selectedPool) ?? pools[0];
-  const bnbUsd = tickers.data.find((row) => row.symbol === "BNB")?.priceUsd ?? 642.2;
-  const ionUsd = tickers.data.find((row) => row.symbol === "ION")?.priceUsd ?? 6.02;
+  const bnbUsd = tickers.data.find((row) => row.symbol === "BNB")?.priceUsd ?? demoTickerPrice("BNB", 642.2);
+  const ionUsd = tickers.data.find((row) => row.symbol === "ION")?.priceUsd ?? demoTickerPrice("ION", 6.02);
 
   const validation = useMemo(() => {
     const parsedBnb = Number(bnbAmount);
