@@ -1,21 +1,32 @@
-# ION DEX Code Owners
-# Each line: path pattern @user-or-team
+# ION DEX CODEOWNERS
+# 每个文件/目录的审核责任人
+# 只有 s2530786-cell 有合并权限
 
-# Global owners (maintainers)
+# 根级别 — 只有仓库所有者
 * @s2530786-cell
 
-# Smart contracts
+# 智能合约 — 必须经过安全审核
 contracts/ @s2530786-cell
 
-# Backend services
-backend/ @s2530786-cell
-
-# Frontend
+# 前端代码
 frontend/ @s2530786-cell
 
-# CI/CD and infrastructure
+# 后端/API
+backend/ @s2530786-cell
+
+# 测试代码
+test/ @s2530786-cell
+
+# 配置和文档
+*.md @s2530786-cell
+*.json @s2530786-cell
+*.yaml @s2530786-cell
+*.yml @s2530786-cell
+
+# CI/CD
 .github/ @s2530786-cell
 scripts/ @s2530786-cell
 
-# Documentation
-*.md @s2530786-cell
+# 根配置文件
+LICENSE @s2530786-cell
+CONTRIBUTING.md @s2530786-cell
