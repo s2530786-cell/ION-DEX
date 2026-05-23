@@ -1,4 +1,4 @@
-﻿# ION DEX 豆包代码合并任务
+# ION DEX 豆包代码合并任务
 
 ## 任务概述
 将豆包生成的完整代码合并进 ion-dex-nuke 项目。源文件在 `over---deduped.txt`（46,878行）。
