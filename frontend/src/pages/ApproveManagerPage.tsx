@@ -2,6 +2,7 @@ import { ShieldAlert, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
 
 type ApprovalItem = {
   contract: string;
@@ -9,7 +10,8 @@ type ApprovalItem = {
   flaggedUnlimited: boolean;
 };
 
-const mockApprovals: ApprovalItem[] = [
+/** Demo allowance rows — not on-chain allowance scan. */
+const DEMO_APPROVALS: ApprovalItem[] = [
   {
     contract: "0x1111111111111111111111111111111111111111",
     allowance: "无限",
@@ -32,7 +34,7 @@ function shortenAddress(address: string) {
 }
 
 export function ApproveManagerPage() {
-  const [approveList, setApproveList] = useState<ApprovalItem[]>(mockApprovals);
+  const [approveList, setApproveList] = useState<ApprovalItem[]>(DEMO_APPROVALS);
   const [message, setMessage] = useState<string | null>(null);
 
   const unlimitedCount = useMemo(
@@ -48,7 +50,7 @@ export function ApproveManagerPage() {
           : item,
       ),
     );
-    setMessage(`已将 ${shortenAddress(contract)} 授权额度模拟重置为 0。`);
+    setMessage(`[演示] 已将 ${shortenAddress(contract)} 在本地列表中标记为 0，未发送链上 revoke 交易。`);
   }
 
   function revokeAll() {
@@ -57,18 +59,24 @@ export function ApproveManagerPage() {
         item.flaggedUnlimited ? { ...item, allowance: "0", flaggedUnlimited: false } : item,
       ),
     );
-    setMessage("已批量清理所有“无限授权”风险项（当前为前端安全演示流）。");
+    setMessage("[演示] 已批量清理本地列表中的“无限授权”标记，未发送链上交易。");
   }
 
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_20rem]" data-testid="page-approve-manager">
+      <div className="xl:col-span-2">
+        <ScaffoldNotice
+          detail="下方合约为演示数据；撤销操作仅更新本地 state，未查询 BSC allowance 或发起 revoke 签名。"
+          testId="approve-manager-scaffold-notice"
+        />
+      </div>
       <NeonCard variant="magenta">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/60">Approval Safety</p>
             <h1 className="mt-2 text-3xl font-black text-white">授权安全管理</h1>
             <p className="mt-2 text-sm text-cyan-100/65">
-              一键查看、撤销合约授权，优先处理无限授权风险。当前页面先接入前端安全流，后续再挂真实链上 allowance 查询。
+              授权安全 UX 骨架。真实 allowance 扫描与 revoke 签名尚未接入。
             </p>
           </div>
           {unlimitedCount > 0 ? (

@@ -12,6 +12,7 @@ import { TradeProPage } from "@/pages/TradeProPage";
 import { ApproveManagerPage } from "@/pages/ApproveManagerPage";
 import { VaultStakePage } from "@/pages/VaultStakePage";
 
+/** Doubao-derived pages (trade-pro / approve-manager / vault-stake) are scaffold previews — see each page banner. */
 const businessPages = new Set<BusinessPageKey>([
   "trade",
   "grid",

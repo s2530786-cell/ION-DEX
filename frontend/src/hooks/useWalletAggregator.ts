@@ -1,3 +1,7 @@
+/**
+ * Aggregates EVM (wagmi/viem) and ION wallet context for Doubao-derived trade/vault pages.
+ * EVM signer/publicClient are live when connected; ION branch uses scaffold chainId until official wiring.
+ */
 import { useMemo } from "react";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
@@ -34,6 +38,7 @@ export function useWalletAggregator() {
     if (ionWallet.status === "connected" && ionWallet.snapshot) {
       return {
         address: ionWallet.snapshot.address,
+        // Scaffold: official ION chain id not wired here yet — do not treat as live EVM network.
         chainId: 2026,
         walletType: "ion",
       };

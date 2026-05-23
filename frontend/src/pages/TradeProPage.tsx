@@ -1,7 +1,8 @@
 import { Activity, TrendingDown, TrendingUp } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
 import { useWalletAggregator } from "@/hooks/useWalletAggregator";
 
 type DepthBook = { buy: number[][]; sell: number[][] };
@@ -9,7 +10,8 @@ type DepthBook = { buy: number[][]; sell: number[][] };
 type OrderType = "market" | "limit" | "stop";
 type Side = "buy" | "sell";
 
-const fallbackDepth: DepthBook = {
+/** Static demo depth — not live order book or MM API data. */
+const DEMO_DEPTH_BOOK: DepthBook = {
   sell: [
     [0.0001412, 8200],
     [0.0001416, 5100],
@@ -30,20 +32,10 @@ export function TradeProPage() {
   const [orderType, setOrderType] = useState<OrderType>("limit");
   const [price, setPrice] = useState("0.0001400");
   const [amount, setAmount] = useState("0");
-  const [balance] = useState(10000);
+  const demoBalance = 10000;
   const [loading, setLoading] = useState(false);
-  const [depth, setDepth] = useState<DepthBook>(fallbackDepth);
+  const depth = DEMO_DEPTH_BOOK;
   const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setDepth((current) => ({
-        buy: current.buy.map(([p, a], idx) => [Number((p + (idx % 2 === 0 ? 0.0000001 : -0.0000001)).toFixed(7)), a]),
-        sell: current.sell.map(([p, a], idx) => [Number((p + (idx % 2 === 0 ? -0.0000001 : 0.0000001)).toFixed(7)), a]),
-      }));
-    }, 1200);
-    return () => window.clearInterval(timer);
-  }, []);
 
   const preview = useMemo(() => {
     const p = Number(price);
@@ -68,7 +60,7 @@ export function TradeProPage() {
     try {
       await new Promise((resolve) => window.setTimeout(resolve, 600));
       setMessage(
-        `${tab === "buy" ? "买入" : "卖出"} ${orderType} 单已生成预览：user=${address} price=${price} amount=${amount}。待接 /api/market/mm/order 后即可实单提交。`,
+        `[预览] ${tab === "buy" ? "买入" : "卖出"} ${orderType} 单仅本地表单校验，未调用 /api/market/mm/order 或链上合约。`,
       );
     } finally {
       setLoading(false);
@@ -77,12 +69,18 @@ export function TradeProPage() {
 
   return (
     <div className="grid gap-5 xl:grid-cols-[1.2fr_0.9fr_0.8fr]" data-testid="page-trade-pro">
+      <div className="xl:col-span-3">
+        <ScaffoldNotice
+          detail="深度、余额与下单均为演示数据；未接做市 API 或链上撮合。Swap 页可走后端 GeckoTerminal 报价。"
+          testId="trade-pro-scaffold-notice"
+        />
+      </div>
       <NeonCard variant="cyan">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm uppercase tracking-[0.28em] text-cyan-100/60">Professional Trade</p>
             <h1 className="mt-2 text-3xl font-black text-white">Trade Pro</h1>
-            <p className="mt-2 text-sm text-cyan-100/65">市价 / 限价 / 止盈止损 + 深度预览。TradingView 图表位置先留空位。</p>
+            <p className="mt-2 text-sm text-cyan-100/65">市价 / 限价 / 止盈止损 UI 骨架；图表与深度为静态演示。</p>
           </div>
           <Activity className="text-cyan-200" />
         </div>
@@ -146,9 +144,9 @@ export function TradeProPage() {
         </label>
 
         <div className="mt-4 flex gap-2">
-          <button className="rounded-full bg-white/10 px-3 py-2 text-xs font-bold text-white" onClick={() => setAmount(String(balance * 0.25))} type="button">25%</button>
-          <button className="rounded-full bg-white/10 px-3 py-2 text-xs font-bold text-white" onClick={() => setAmount(String(balance * 0.5))} type="button">50%</button>
-          <button className="rounded-full bg-white/10 px-3 py-2 text-xs font-bold text-white" onClick={() => setAmount(String(balance))} type="button">100%</button>
+          <button className="rounded-full bg-white/10 px-3 py-2 text-xs font-bold text-white" onClick={() => setAmount(String(demoBalance * 0.25))} type="button">25%</button>
+          <button className="rounded-full bg-white/10 px-3 py-2 text-xs font-bold text-white" onClick={() => setAmount(String(demoBalance * 0.5))} type="button">50%</button>
+          <button className="rounded-full bg-white/10 px-3 py-2 text-xs font-bold text-white" onClick={() => setAmount(String(demoBalance))} type="button">100%</button>
         </div>
 
         <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.06] p-4 text-sm text-cyan-100">
@@ -163,14 +161,14 @@ export function TradeProPage() {
         </div>
 
         <NeonButton className="mt-5 w-full" disabled={loading} onClick={() => void submitOrder()} type="button">
-          {loading ? "提交中..." : tab === "buy" ? "买入" : "卖出"}
+          {loading ? "校验中..." : tab === "buy" ? "预览买入（未提交）" : "预览卖出（未提交）"}
         </NeonButton>
 
         {message ? <p className="mt-4 text-sm text-emerald-200">{message}</p> : null}
       </NeonCard>
 
       <NeonCard variant="gold">
-        <p className="text-sm uppercase tracking-[0.18em] text-cyan-100/45">Depth</p>
+        <p className="text-sm uppercase tracking-[0.18em] text-cyan-100/45">Depth (demo)</p>
         <div className="mt-4 grid gap-4">
           <div>
             <div className="mb-2 flex items-center gap-2 text-rose-200"><TrendingDown size={16} /> Sell</div>

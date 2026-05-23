@@ -13,6 +13,7 @@ import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
 import { ChartFrame } from "@/components/ui/glass/ChartFrame";
 import { GlassPanel } from "@/components/ui/glass/GlassPanel";
 import { MetricTile } from "@/components/ui/glass/MetricTile";
@@ -470,7 +471,7 @@ function TradeOrderPanel() {
 
   const validation = useMemo(() => {
     const parsedAmount = toPositiveNumber(amount);
-    const parsedPrice = orderType === "market" ? 6.02 : toPositiveNumber(price);
+    const parsedPrice = orderType === "market" ? TRADE_DESK_DEMO_MARKET_REF : toPositiveNumber(price);
     const parsedSlippage = toPositiveNumber(slippage);
     const slippageValid = parsedSlippage !== null && parsedSlippage >= 0.1 && parsedSlippage <= 5;
 
@@ -533,7 +534,7 @@ function TradeOrderPanel() {
             setPrice(value);
             setSubmitted(false);
           }}
-          hint={orderType === "market" ? "Market reference 6.02" : "Limit reference 6.00"}
+          hint={orderType === "market" ? `Demo market ref ${TRADE_DESK_DEMO_MARKET_REF}` : "Limit reference 6.00"}
           testId="trade-price"
           type="number"
           value={orderType === "market" ? "" : price}
@@ -568,12 +569,12 @@ function TradeOrderPanel() {
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="trade-submit" disabled={!validation.isValid} type="submit">
-        Create Limit Order
+        Preview order (no chain submit)
       </NeonButton>
 
       {submitted ? (
-        <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="trade-confirmation">
-          Order review ready for wallet signing. Final contract call is gated behind wallet integration.
+        <p className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-4 py-3 text-sm font-bold text-amber-100" data-testid="trade-confirmation">
+          [演示] 表单校验通过。未创建链上或后端订单；钱包签名与 MM API 尚未接入。
         </p>
       ) : null}
     </form>
@@ -1302,6 +1303,10 @@ function AIMarketPanel() {
   );
 }
 
+/** Static demo spot reference for Trade desk — not live ticker feed. */
+const TRADE_DESK_DEMO_PRICE = "6.024";
+const TRADE_DESK_DEMO_MARKET_REF = 6.02;
+
 const tradeCandles = [
   { height: "42%", offset: "0%", tone: "bg-emerald-300" },
   { height: "58%", offset: "4%", tone: "bg-emerald-300" },
@@ -1337,6 +1342,10 @@ function TradeDeskPage() {
 
   return (
     <div className="grid gap-5" data-testid="page-trade">
+      <ScaffoldNotice
+        detail="Trade 页 K 线、盘口与成交流为静态演示数据，价格非后端 ticker。Swap 或 Dashboard 可查看 live 行情。"
+        testId="trade-desk-scaffold-notice"
+      />
       <NeonCard variant="mixed">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -1362,11 +1371,11 @@ function TradeDeskPage() {
               <div className="absolute left-1/2 top-1/2 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_220deg,rgba(36,247,255,0.24),transparent_28%,rgba(255,59,212,0.3),transparent_58%,rgba(255,209,102,0.16),transparent_82%)] blur-3xl" />
               <div className="relative z-10 flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">BNB / ION</p>
-                  <p className="mt-1 text-3xl font-black text-white">6.024</p>
+                  <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">BNB / ION (demo)</p>
+                  <p className="mt-1 text-3xl font-black text-white">{TRADE_DESK_DEMO_PRICE}</p>
                 </div>
-                <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-2 text-xs font-black text-emerald-100">
-                  TWAP guard active
+                <span className="rounded-full border border-amber-300/25 bg-amber-300/[0.08] px-4 py-2 text-xs font-black text-amber-100">
+                  Static demo desk
                 </span>
               </div>
               <div className="float-3d relative z-10 mt-8 h-72 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-5 shadow-[0_35px_90px_rgba(36,247,255,0.13)]">

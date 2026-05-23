@@ -44,6 +44,7 @@ export type EvmWalletContextValue = {
   disconnect: () => void;
   refreshBalance: () => Promise<void>;
   publicClient: ReturnType<typeof usePublicClient> | undefined;
+  /** Live viem WalletClient when EVM wallet is connected (used by scaffold trade/vault pages). */
   walletClient: WalletClient | undefined;
 };
 

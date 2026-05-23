@@ -1,61 +1,81 @@
 import { TrendingUp, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
 import { useWalletAggregator } from "@/hooks/useWalletAggregator";
 
-const vaultAbi = [
-  "function deposit(uint256 amount) external",
-  "function compound() external",
-  "function withdraw(uint256 share) external",
-];
-
-const vaultAddr = import.meta.env.VITE_VAULT_CONTRACT_ADDRESS?.trim() || "0x你的机枪池合约";
+const configuredVaultAddress = import.meta.env.VITE_VAULT_CONTRACT_ADDRESS?.trim() ?? "";
 
 export function VaultStakePage() {
   const { signer, walletType, address } = useWalletAggregator();
   const [depositAmt, setDepositAmt] = useState("0");
-  const [apy] = useState(46.8);
+  const demoApy = 46.8;
   const [status, setStatus] = useState<string | null>(null);
+
+  const vaultConfigured = configuredVaultAddress.length > 0;
+
+  const vaultLabel = useMemo(
+    () => (vaultConfigured ? configuredVaultAddress : "未配置（设置 VITE_VAULT_CONTRACT_ADDRESS）"),
+    [vaultConfigured],
+  );
 
   async function deposit() {
     if (!signer) {
-      setStatus("请先连接钱包后再存入 LP。");
+      setStatus("请先连接 EVM 钱包后再操作。");
       return;
     }
-    setStatus(`已准备存入 ${depositAmt} LP 到 ${vaultAddr}（待接真实合约写入流）。`);
+    if (!vaultConfigured) {
+      setStatus("Vault 合约地址未配置，无法发起存入。");
+      return;
+    }
+    setStatus(`[预览] 已校验表单，未向 ${configuredVaultAddress} 发送 deposit 交易。`);
   }
 
   async function compound() {
     if (!signer) {
-      setStatus("请先连接钱包后再执行复利。");
+      setStatus("请先连接 EVM 钱包后再操作。");
       return;
     }
-    setStatus("已准备发送 compound 交易（待接真实 vault 合约）。");
+    if (!vaultConfigured) {
+      setStatus("Vault 合约地址未配置，无法发起 compound。");
+      return;
+    }
+    setStatus("[预览] 未发送 compound 链上交易。");
   }
 
   async function withdraw() {
     if (!signer) {
-      setStatus("请先连接钱包后再提取。");
+      setStatus("请先连接 EVM 钱包后再操作。");
       return;
     }
-    setStatus(`已准备提取 ${depositAmt} 份额（待接真实 vault 合约）。`);
+    if (!vaultConfigured) {
+      setStatus("Vault 合约地址未配置，无法发起提取。");
+      return;
+    }
+    setStatus(`[预览] 未向 vault 发送 withdraw(${depositAmt}) 交易。`);
   }
 
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_20rem]" data-testid="page-vault-stake">
+      <div className="xl:col-span-2">
+        <ScaffoldNotice
+          detail="机枪池 UI 为 scaffold：APY 为演示值，deposit/compound/withdraw 未接 vault 合约写入。"
+          testId="vault-stake-scaffold-notice"
+        />
+      </div>
       <NeonCard variant="gold">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/60">Vault Auto-Compound</p>
             <h1 className="mt-2 text-3xl font-black text-white">机枪池 · 自动复利质押</h1>
             <p className="mt-2 text-sm text-cyan-100/65">
-              自动复投挖矿奖励，提升复利效率。当前已经把页面骨架接入 React，下一步只差真实 vault 合约地址和写链逻辑。
+              页面骨架已接入 React；需配置 vault 合约地址并接 writeContract 后才可上链。
             </p>
           </div>
           <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] p-3 text-emerald-100">
             <TrendingUp className="mb-2" size={20} />
-            <p className="text-sm font-bold">预估 APY {apy}%</p>
+            <p className="text-sm font-bold">演示 APY {demoApy}%</p>
           </div>
         </div>
 
@@ -72,12 +92,24 @@ export function VaultStakePage() {
           </label>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <NeonButton onClick={() => void deposit()} type="button">存入</NeonButton>
-            <NeonButton className="bg-[linear-gradient(110deg,#ffd166,#ff9f1c_48%,#ff3bd4)]" onClick={() => void compound()} type="button">
-              一键复利
+            <NeonButton disabled={!vaultConfigured} onClick={() => void deposit()} type="button">
+              预览存入
             </NeonButton>
-            <NeonButton className="bg-[linear-gradient(110deg,#8d4dff,#ff3bd4_48%,#ff6b6b)]" onClick={() => void withdraw()} type="button">
-              提取
+            <NeonButton
+              className="bg-[linear-gradient(110deg,#ffd166,#ff9f1c_48%,#ff3bd4)]"
+              disabled={!vaultConfigured}
+              onClick={() => void compound()}
+              type="button"
+            >
+              预览复利
+            </NeonButton>
+            <NeonButton
+              className="bg-[linear-gradient(110deg,#8d4dff,#ff3bd4_48%,#ff6b6b)]"
+              disabled={!vaultConfigured}
+              onClick={() => void withdraw()}
+              type="button"
+            >
+              预览提取
             </NeonButton>
           </div>
         </div>
@@ -97,8 +129,10 @@ export function VaultStakePage() {
             <span>当前钱包：{walletType ?? "未连接"}</span>
           </div>
           <div>地址：{address || "未连接"}</div>
-          <div>Vault：{vaultAddr}</div>
-          <div className="text-cyan-100/55">ABI 已准备：{vaultAbi.length} 个方法</div>
+          <div>Vault：{vaultLabel}</div>
+          <div className="text-cyan-100/55">
+            {vaultConfigured ? "合约地址已配置，链上写入尚未接入。" : "缺少 VITE_VAULT_CONTRACT_ADDRESS。"}
+          </div>
         </div>
       </NeonCard>
     </div>
