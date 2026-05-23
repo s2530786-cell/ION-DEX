@@ -58,6 +58,8 @@ export function ProfileHub({
   const [connectError, setConnectError] = useState<string | null>(null);
   const [walletConnectLink, setWalletConnectLink] = useState<string | null>(null);
   const [walletConnectName, setWalletConnectName] = useState<string | null>(null);
+  const [language, setLanguage] = useState("zh-CN");
+  const [theme, setTheme] = useState("aurora-dark");
 
   useEffect(() => {
     if (connectedProviderKey === "walletconnect" && liveConnection) {
@@ -93,6 +95,8 @@ export function ProfileHub({
     )
       .then((response) => {
         setSession(response.data);
+        setLanguage(response.data.preferences.language);
+        setTheme(response.data.preferences.theme);
         setSourceLabel(response.meta.source);
         setLoadState("ready");
         if (!connectedProviderKey) {
@@ -390,9 +394,44 @@ export function ProfileHub({
 
           <section className="grid gap-2" data-testid="profile-preferences">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100/45">Preferences</p>
-            <PreferenceRow icon={<Globe2 size={16} />} label="Language" value={session.preferences.language} />
-            <PreferenceRow icon={<Palette size={16} />} label="Theme" value={session.preferences.theme} />
             <PreferenceRow icon={<Sparkles size={16} />} label="Animation" value={session.preferences.animation} />
+          </section>
+
+          <section className="grid gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3" data-testid="profile-settings">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100/45">Settings</p>
+            <label className="grid gap-1 text-sm">
+              <span className="flex items-center gap-2 font-bold text-white">
+                <Globe2 size={14} className="text-cyan-200" />
+                Language
+              </span>
+              <select
+                className="rounded-xl border border-white/10 bg-slate-950/80 px-3 py-2 text-cyan-50"
+                data-testid="profile-settings-language"
+                onChange={(event) => setLanguage(event.target.value)}
+                value={language}
+              >
+                <option value="zh-CN">简体中文</option>
+                <option value="en-US">English</option>
+              </select>
+            </label>
+            <label className="grid gap-1 text-sm">
+              <span className="flex items-center gap-2 font-bold text-white">
+                <Palette size={14} className="text-fuchsia-200" />
+                Theme
+              </span>
+              <select
+                className="rounded-xl border border-white/10 bg-slate-950/80 px-3 py-2 text-cyan-50"
+                data-testid="profile-settings-theme"
+                onChange={(event) => setTheme(event.target.value)}
+                value={theme}
+              >
+                <option value="aurora-dark">Aurora Dark</option>
+                <option value="neon-cyber">Neon Cyber</option>
+              </select>
+            </label>
+            <p className="text-[11px] text-cyan-100/50" data-testid="profile-settings-saved">
+              Saved locally for this session · {language} · {theme}
+            </p>
             <button
               type="button"
               className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.05] px-3 py-2 text-left transition hover:border-cyan-200/30"

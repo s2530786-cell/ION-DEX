@@ -1,5 +1,3 @@
-import { listWalletEntries } from "./profile.js";
-
 export type PublicConfig = {
   appName: string;
   environment: "local" | "test" | "preview";
@@ -45,9 +43,62 @@ export function getPublicConfig(): PublicConfig {
       bridgeTransfers: false,
     },
     supportedWallets: [
-      { key: "online", name: "Online+ Wallet", status: "enabled" },
-      { key: "ion-browser", name: "ION Browser Wallet", status: "enabled" },
-      { key: "walletconnect", name: "TonConnect (ION)", status: "enabled" },
+      {
+        key: "online",
+        name: "Online+ Wallet",
+        label: "Online+",
+        category: "ion-native",
+        status: "enabled",
+        detector: "window.ion / ionmask",
+      },
+      {
+        key: "ion-browser",
+        name: "ION Browser Wallet",
+        label: "ION Browser",
+        category: "ion-native",
+        status: "enabled",
+        detector: "window.ton",
+      },
+      {
+        key: "walletconnect",
+        name: "TonConnect (ION)",
+        label: "WalletConnect",
+        category: "ion-native",
+        status: "enabled",
+        detector: "@ion-gateway/sdk",
+      },
+      {
+        key: "metamask",
+        name: "MetaMask",
+        label: "MetaMask",
+        category: "evm",
+        status: "enabled",
+        detector: "window.ethereum",
+      },
+      {
+        key: "okx",
+        name: "OKX Web3",
+        label: "OKX",
+        category: "evm",
+        status: "enabled",
+        detector: "window.okxwallet",
+      },
+      {
+        key: "bitget",
+        name: "Bitget Web3",
+        label: "Bitget",
+        category: "evm",
+        status: "enabled",
+        detector: "window.bitkeep",
+      },
+      {
+        key: "trust",
+        name: "Trust Wallet",
+        label: "Trust",
+        category: "evm",
+        status: "enabled",
+        detector: "window.trustwallet",
+      },
     ],
     provenance: {
       source: "mock",

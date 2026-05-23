@@ -69,4 +69,26 @@ if (forge.status === 0) {
   throw new Error("forge test failed");
 }
 
+const funcIon = spawnSync(process.execPath, [join(root, "scripts", "verify-func-ion.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+  env: {
+    ...process.env,
+    ION_FUNC_COMPILE_PASSES: process.env.ION_FUNC_COMPILE_PASSES ?? (process.env.CI ? "5" : "100"),
+  },
+});
+
+if (funcIon.status !== 0) {
+  throw new Error("FunC ion compile verification failed");
+}
+
+const phase2 = spawnSync(process.execPath, [join(root, "scripts", "ion-deploy-phase2.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+
+if (phase2.status !== 0) {
+  throw new Error("deploy phase-2 readiness check failed");
+}
+
 console.log("OK - contract verification completed.");

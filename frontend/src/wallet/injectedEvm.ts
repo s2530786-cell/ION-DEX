@@ -8,7 +8,7 @@ export function getInjectedProvider(): InjectedEthereum | null {
   if (!candidate || typeof candidate.request !== "function") {
     return null;
   }
-  return candidate;
+  return candidate as InjectedEthereum;
 }
 
 function parseChainIdHex(value: unknown): number {

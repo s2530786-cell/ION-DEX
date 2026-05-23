@@ -238,7 +238,7 @@ export function PoolPage() {
 
           {submitted ? (
             <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="pool-confirmation">
-              Liquidity draft ready for wallet signing.
+              Liquidity review ready for wallet signing.
             </p>
           ) : null}
         </form>

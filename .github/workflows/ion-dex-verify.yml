@@ -37,6 +37,12 @@ jobs:
         shell: pwsh
         run: ./scripts/check-encoding.ps1
 
+      - name: Contract verify (TS math + deploy docs; FunC SKIP on CI unless toolchain present)
+        env:
+          CI: "true"
+          ION_FUNC_COMPILE_PASSES: "5"
+        run: node scripts/verify-contracts.mjs
+
       - name: Install backend deps
         working-directory: backend
         run: npm ci

@@ -146,8 +146,8 @@ export function StakePage() {
               data-testid="stake-confirmation"
             >
               {mode === "stake"
-                ? "Stake draft ready for wallet signing."
-                : "Unstake draft ready for wallet signing."}
+                ? "Stake review ready for wallet signing."
+                : "Unstake review ready for wallet signing."}
             </p>
           ) : null}
         </form>

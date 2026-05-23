@@ -4,7 +4,7 @@ export type TonProviderLike = {
   isTonWallet?: boolean;
   isOpenMask?: boolean;
   isTonProvider?: boolean;
-  send: (method: string, params?: unknown[]) => Promise<unknown>;
+  send?: (method: string, params?: unknown[]) => Promise<unknown>;
   on?: (event: string, handler: (...args: unknown[]) => void) => void;
   off?: (event: string, handler: (...args: unknown[]) => void) => void;
   removeListener?: (event: string, handler: (...args: unknown[]) => void) => void;
@@ -26,14 +26,3 @@ export type IonWalletSnapshot = {
   network: string;
 };
 
-declare global {
-  interface Window {
-    ton?: TonProviderLike;
-    tonwallet?: {
-      provider?: TonProviderLike;
-      tonconnect?: TonConnectBridgeLike;
-    };
-    tonProtocolVersion?: number;
-    okxwallet?: { request?: (args: { method: string; params?: unknown[] }) => Promise<unknown> };
-  }
-}

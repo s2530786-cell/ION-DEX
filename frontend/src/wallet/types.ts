@@ -8,12 +8,6 @@ export type InjectedEthereum = Eip1193Provider & {
   isMetaMask?: boolean;
 };
 
-declare global {
-  interface Window {
-    ethereum?: InjectedEthereum;
-  }
-}
-
 import type { EvmWalletKind } from "@/wallet/evmConnectors";
 
 export type EvmWalletSnapshot = {

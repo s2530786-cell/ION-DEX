@@ -42,7 +42,16 @@ if errorlevel 1 (
 )
 
 echo.
-echo === 2) Backend verify (build + API tests) ===
+echo === 2) Contract verify (FunC + Solidity + deploy readiness) ===
+node "%CD%\scripts\verify-contracts.mjs"
+if errorlevel 1 (
+  echo ERROR: contract verification failed with exit code !ERRORLEVEL!
+  if not defined _ION_VNP pause
+  exit /b 1
+)
+
+echo.
+echo === 3) Backend verify (build + API tests) ===
 if not exist "%CD%\backend\package.json" (
   echo ERROR: backend\package.json not found under %CD%\backend
   if not defined _ION_VNP pause
@@ -82,7 +91,7 @@ if not "!BACKEND_STRESS_ERR!"=="0" (
 )
 
 echo.
-echo === 3) Frontend verify (build + Playwright) ===
+echo === 4) Frontend verify (build + Playwright) ===
 if not exist "%CD%\frontend\package.json" (
   echo ERROR: frontend\package.json not found under %CD%\frontend
   if not defined _ION_VNP pause
@@ -100,7 +109,7 @@ if not "!VERIFY_ERR!"=="0" (
 )
 
 echo.
-echo === 4) Frontend npm audit (high) ===
+echo === 5) Frontend npm audit (high) ===
 pushd "%CD%\frontend"
 call npm run audit:high
 set FRONTEND_AUDIT_ERR=!ERRORLEVEL!

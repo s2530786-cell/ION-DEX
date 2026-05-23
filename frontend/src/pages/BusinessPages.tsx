@@ -13,6 +13,12 @@ import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { ChartFrame } from "@/components/ui/glass/ChartFrame";
+import { GlassPanel } from "@/components/ui/glass/GlassPanel";
+import { MetricTile } from "@/components/ui/glass/MetricTile";
+import { PageHero } from "@/components/ui/glass/PageHero";
+import { RiskNotice } from "@/components/ui/glass/RiskNotice";
+import { StatusPill } from "@/components/ui/glass/StatusPill";
 import {
   fetchBridgeRoutes,
   fetchBurnSummary,
@@ -1293,49 +1299,55 @@ function AIMarketPanel() {
   );
 }
 
-export function BusinessPage({ page }: { page: BusinessPageKey }) {
-  const config = pageConfigs[page];
-  const Icon = config.icon;
+const tradeCandles = [
+  { height: "42%", offset: "0%", tone: "bg-emerald-300" },
+  { height: "58%", offset: "4%", tone: "bg-emerald-300" },
+  { height: "36%", offset: "0%", tone: "bg-rose-300" },
+  { height: "64%", offset: "6%", tone: "bg-emerald-300" },
+  { height: "48%", offset: "2%", tone: "bg-cyan-300" },
+  { height: "72%", offset: "8%", tone: "bg-emerald-300" },
+  { height: "40%", offset: "0%", tone: "bg-rose-300" },
+  { height: "55%", offset: "3%", tone: "bg-emerald-300" },
+] as const;
+
+const tradeOrderBook = [
+  { side: "ask" as const, price: "6.038", amount: "1,240", depth: "72%" },
+  { side: "ask" as const, price: "6.031", amount: "860", depth: "58%" },
+  { side: "bid" as const, price: "6.024", amount: "920", depth: "61%" },
+  { side: "bid" as const, price: "6.018", amount: "1,480", depth: "80%" },
+] as const;
+
+const marketTrades = [
+  ["6.024", "420 ION", "Buy"],
+  ["6.022", "180 ION", "Sell"],
+  ["6.026", "96 ION", "Buy"],
+] as const;
+
+const orderHistory = [
+  ["Limit buy", "420 ION", "Open"],
+  ["TWAP sell", "1,200 ION", "Partial"],
+  ["Stop guard", "—", "Armed"],
+] as const;
+
+function TradeDeskPage() {
+  const config = pageConfigs.trade;
 
   return (
     <div className="grid gap-5" data-testid="page-trade">
       <NeonCard variant="mixed">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
-              Professional Trading
-            </p>
+            <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">{config.eyebrow}</p>
             <h1 className="mt-3 text-4xl font-black text-white sm:text-6xl" data-testid="page-title">
-              ION spot order desk
+              {config.title}
             </h1>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-cyan-100/68">
-              BNB / ION professional trading surface with depth, live tape, limit controls, wallet review, and ION fee visibility.
-            </p>
+            <p className="mt-3 max-w-3xl text-base leading-7 text-cyan-100/68">{config.description}</p>
           </div>
-
-          {page === "burn" ? (
-            <BurnMetricsRow />
-          ) : page === "bridge" ? (
-            <BridgeMetricsRow />
-          ) : page === "domain" ? (
-            <DomainMetricsRow />
-          ) : (
           <div className="grid gap-4 md:grid-cols-3">
             {config.metrics.map((metric) => (
-              <MetricCardView
-                key={metric.label}
-                metric={metric}
-              />
+              <MetricCardView key={metric.label} metric={metric} />
             ))}
           </div>
-          )}
-
-          {page === "trade" ? <TradeOrderPanel /> : null}
-          {page === "grid" ? <GridStrategyPanel /> : null}
-          {page === "bridge" ? <BridgeTransferPanel /> : null}
-          {page === "burn" ? <BurnAnalyticsPanel /> : null}
-          {page === "domain" ? <DomainTradingPanel /> : null}
-          {page === "ai" ? <AIMarketPanel /> : null}
         </div>
       </NeonCard>
 
@@ -1373,16 +1385,16 @@ export function BusinessPage({ page }: { page: BusinessPageKey }) {
           </div>
 
           <div className="grid gap-5 lg:grid-cols-2">
+            <OpenOrdersPanel />
             <MarketTape />
-            <OrderHistoryPanel />
           </div>
+          <OrderHistoryPanel />
+          <CopyTradePanel />
         </div>
 
         <div className="grid gap-5">
           <NeonCard variant="magenta">
-            <p className="mb-4 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">
-              Limit order
-            </p>
+            <p className="mb-4 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">Limit order</p>
             <TradeOrderPanel />
           </NeonCard>
           <OrderBookPanel />
@@ -1429,6 +1441,98 @@ function MarketTape() {
         ))}
       </div>
     </NeonCard>
+  );
+}
+
+const openOrders = [
+  { id: "ord-1042", side: "Buy", price: "5.98", amount: "800 ION", status: "Open" },
+  { id: "ord-1038", side: "Sell", price: "6.12", amount: "420 ION", status: "Partial" },
+] as const;
+
+function OpenOrdersPanel() {
+  return (
+    <NeonCard variant="magenta">
+      <p className="text-sm uppercase tracking-[0.28em] text-violet-200/70">Open orders</p>
+      <div className="mt-4 grid gap-2" data-testid="trade-open-orders">
+        {openOrders.map((row) => (
+          <div key={row.id} className="glass-surface grid grid-cols-4 gap-2 rounded-2xl px-4 py-3 text-sm">
+            <span className="font-black text-white">{row.side}</span>
+            <span className="text-cyan-100/70">{row.price}</span>
+            <span className="text-cyan-100/70">{row.amount}</span>
+            <span className="text-right text-violet-200">{row.status}</span>
+          </div>
+        ))}
+      </div>
+    </NeonCard>
+  );
+}
+
+function CopyTradePanel() {
+  const [leader, setLeader] = useState("");
+  const [ratio, setRatio] = useState("25");
+  const [maxSlippage, setMaxSlippage] = useState("0.8");
+  const [armed, setArmed] = useState(false);
+
+  const valid =
+    leader.trim().length >= 6 &&
+    toPositiveNumber(ratio) !== null &&
+    toPositiveNumber(maxSlippage) !== null;
+
+  return (
+    <GlassPanel eyebrow="Social trading" testId="trade-copy-trade" title="Copy trading desk">
+      <form
+        className="grid gap-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (valid) {
+            setArmed(true);
+          }
+        }}
+      >
+        <FormField
+          label="Leader wallet / .ion"
+          onChange={(value) => {
+            setLeader(value);
+            setArmed(false);
+          }}
+          hint="Example trader.ion"
+          testId="copy-leader"
+          value={leader}
+        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <FormField
+            label="Copy ratio %"
+            onChange={(value) => {
+              setRatio(value);
+              setArmed(false);
+            }}
+            hint="5 — 100"
+            testId="copy-ratio"
+            type="number"
+            value={ratio}
+          />
+          <FormField
+            label="Max slippage %"
+            onChange={(value) => {
+              setMaxSlippage(value);
+              setArmed(false);
+            }}
+            hint="0.1 — 2"
+            testId="copy-slippage"
+            type="number"
+            value={maxSlippage}
+          />
+        </div>
+        <NeonButton className="w-full sm:w-fit" data-testid="copy-arm" disabled={!valid} type="submit">
+          Arm copy strategy
+        </NeonButton>
+        {armed ? (
+          <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="copy-confirmation">
+            Copy-trading review ready. Execution routes through ION limit-order keeper when wallet signs.
+          </p>
+        ) : null}
+      </form>
+    </GlassPanel>
   );
 }
 
@@ -1560,48 +1664,6 @@ function GridDeskPage() {
   );
 }
 
-function PoolDeskPage() {
-  const config = pageConfigs.pool;
-  return (
-    <div className="grid gap-5" data-testid="page-pool">
-      <PageHero
-        description={config.description}
-        eyebrow={config.eyebrow}
-        icon={config.icon}
-        metrics={config.metrics}
-        title={config.title}
-      />
-      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
-        <GlassPanel eyebrow="Pool list" testId="pool-list" title="ION liquidity pools · local-seed">
-          <div className="grid gap-2">
-            {poolRows.map((row) => (
-              <div key={row.pair} className="grid grid-cols-4 gap-2 rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
-                <span className="font-black text-white">{row.pair}</span>
-                <span className="text-cyan-100/70">{row.tvl}</span>
-                <span className="text-cyan-100/70">{row.volume}</span>
-                <span className="text-right text-amber-200">{row.apr}</span>
-              </div>
-            ))}
-          </div>
-        </GlassPanel>
-        <div className="grid gap-5">
-          <ChartFrame subtitle="LP fee accrual" testId="pool-fee-chart" title="Fee growth">
-            <div className="h-40 rounded-[1.2rem] border border-amber-200/15 bg-[#03050f]/50 p-4 text-sm text-amber-100/80">
-              Impermanent-loss hint: −0.42% vs HODL · reviewed seed model
-            </div>
-          </ChartFrame>
-          <NeonCard variant="gold">
-            <PoolLiquidityPanel />
-          </NeonCard>
-          <GlassPanel testId="pool-lp-position" title="LP position">
-            <p className="text-sm text-cyan-100/75">0 active positions · connect wallet to load indexer-backed LP cards.</p>
-          </GlassPanel>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function BridgeDeskPage() {
   const config = pageConfigs.bridge;
   return (
@@ -1649,13 +1711,10 @@ function BurnDeskPage() {
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={[
-          { label: "BSC burn", value: "0x…dEaD", tone: "magenta" },
-          { label: "ION burn", value: "Indexer v3", tone: "cyan" },
-          { label: "Combined", value: "2.41M ION", tone: "gold" },
-        ]}
+        metrics={config.metrics}
         title={config.title}
       />
+      <BurnMetricsRow />
       <div className="grid gap-5 lg:grid-cols-2">
         <ChartFrame subtitle="Dual-chain trend" testId="burn-trend-chart" title="Burn analytics">
           <div className="flex h-44 items-end gap-2">
@@ -1696,6 +1755,7 @@ function DomainDeskPage() {
         metrics={config.metrics}
         title={config.title}
       />
+      <DomainMetricsRow />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <GlassPanel eyebrow="My domains" testId="domain-marketplace" title="Marketplace · dns.ice.io seed">
           <div className="grid gap-2">
@@ -1770,41 +1830,12 @@ function AIDeskPage() {
   );
 }
 
-function StakeDeskPage() {
-  const config = pageConfigs.stake;
-  return (
-    <div className="grid gap-5" data-testid="page-stake">
-      <PageHero
-        description={config.description}
-        eyebrow={config.eyebrow}
-        icon={config.icon}
-        metrics={config.metrics}
-        title={config.title}
-      />
-      <div className="grid gap-5 lg:grid-cols-2">
-        <GlassPanel testId="stake-overview" title="Staking overview · indexer seed">
-          <p className="text-sm text-cyan-100/75">Official + DEX staking totals merge through staking-service. Claimable rewards and unstake queue shown after wallet connect.</p>
-        </GlassPanel>
-        <NeonCard variant="gold">
-          <StakeHubPanel />
-        </NeonCard>
-      </div>
-    </div>
-  );
-}
-
-export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
+export function BusinessPage({ page }: { page: BusinessPageKey }) {
   if (page === "trade") {
     return <TradeDeskPage />;
   }
   if (page === "grid") {
     return <GridDeskPage />;
-  }
-  if (page === "pool") {
-    return <PoolDeskPage />;
-  }
-  if (page === "stake") {
-    return <StakeDeskPage />;
   }
   if (page === "bridge") {
     return <BridgeDeskPage />;
