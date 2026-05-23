@@ -31,6 +31,9 @@ export type PageKey =
   | "dashboard"
   | "swap"
   | "trade"
+  | "trade-pro"
+  | "approve-manager"
+  | "vault-stake"
   | "grid"
   | "pool"
   | "stake"
@@ -43,6 +46,9 @@ export const navItems: Array<{ key: PageKey; label: string }> = [
   { key: "dashboard", label: "Dashboard" },
   { key: "swap", label: "Swap" },
   { key: "trade", label: "Trade" },
+  { key: "trade-pro", label: "Trade Pro" },
+  { key: "approve-manager", label: "Approve" },
+  { key: "vault-stake", label: "Vault" },
   { key: "grid", label: "Grid" },
   { key: "pool", label: "Pool" },
   { key: "stake", label: "Stake" },

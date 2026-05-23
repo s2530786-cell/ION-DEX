@@ -42,7 +42,10 @@ type BusinessPageConfig = {
   checklist: string[];
 };
 
-export type BusinessPageKey = Exclude<PageKey, "swap" | "dashboard" | "pool" | "stake">;
+export type BusinessPageKey = Exclude<
+  PageKey,
+  "swap" | "dashboard" | "pool" | "stake" | "trade-pro" | "approve-manager" | "vault-stake"
+>;
 
 const pageConfigs: Record<BusinessPageKey, BusinessPageConfig> = {
   trade: {

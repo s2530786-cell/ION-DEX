@@ -16,8 +16,10 @@ import {
   useConnect,
   useDisconnect,
   usePublicClient,
+  useWalletClient,
 } from "wagmi";
 import { bsc } from "wagmi/chains";
+import type { WalletClient } from "viem";
 import { fetchBscWalletBalance } from "@/lib/ionApi";
 import {
   EVM_WALLET_LABELS,
@@ -42,6 +44,7 @@ export type EvmWalletContextValue = {
   disconnect: () => void;
   refreshBalance: () => Promise<void>;
   publicClient: ReturnType<typeof usePublicClient> | undefined;
+  walletClient: WalletClient | undefined;
 };
 
 const wagmiConfig = createConfig({
@@ -73,6 +76,7 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
   const { connectAsync, isPending, error: connectError } = useConnect();
   const { disconnectAsync } = useDisconnect();
   const publicClient = usePublicClient({ chainId: bsc.id });
+  const { data: walletClient } = useWalletClient();
 
   const [snapshot, setSnapshot] = useState<EvmWalletSnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -216,6 +220,7 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
         await refreshBalance(snapshot.address);
       },
       publicClient,
+      walletClient,
     }),
     [
       activeWallet,
@@ -228,6 +233,7 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
       refreshBalance,
       snapshot,
       status,
+      walletClient,
     ],
   );
 

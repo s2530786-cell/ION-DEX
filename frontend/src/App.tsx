@@ -8,6 +8,9 @@ import { PoolPage } from "@/pages/PoolPage";
 import { StakePage } from "@/pages/StakePage";
 import { BridgePage } from "@/pages/BridgePage";
 import { SwapPage } from "@/pages/SwapPage";
+import { TradeProPage } from "@/pages/TradeProPage";
+import { ApproveManagerPage } from "@/pages/ApproveManagerPage";
+import { VaultStakePage } from "@/pages/VaultStakePage";
 
 const businessPages = new Set<BusinessPageKey>([
   "trade",
@@ -33,6 +36,12 @@ function PageRouter({
       return <DashboardPage onNavigate={onNavigate} />;
     case "swap":
       return <SwapPage />;
+    case "trade-pro":
+      return <TradeProPage />;
+    case "approve-manager":
+      return <ApproveManagerPage />;
+    case "vault-stake":
+      return <VaultStakePage />;
     case "pool":
       return <PoolPage />;
     case "stake":
