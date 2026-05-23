@@ -18,6 +18,12 @@ These modules were extracted from the Doubao DEX bundle for architecture referen
 
 - `openclaw/` — OpenClaw ops sketch (alert, emergency pause watch, price oracle, chain settle)
 - `api/stats_api.py` — FastAPI stats routes (IL calculator, LP APY, treasury) requiring DB tables not present here
+- `config.py` — Doubao monolith config dump (placeholder wallets/contracts; not used by Node backend)
+- `utils/scheduler_task.py` — Doubao scheduler sketch (reference only)
+
+## CI note
+
+Large reference Python under this tree is **not** part of Node `backend/src/` runtime. Encoding checks may scan these files; do not run `py_compile` on the monolith during frontend/backend verify unless explicitly auditing reference code.
 
 ## Smallest validation performed
 

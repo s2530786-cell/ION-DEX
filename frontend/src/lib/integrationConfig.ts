@@ -9,6 +9,12 @@ export const ION_CHAIN_ID_SCAFFOLD = 2026;
 export const OFFICIAL_BSC_ION_TOKEN = "0xe1ab61f7b093435204df32f5b3a405de55445ea8";
 export const OFFICIAL_BSC_BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
+/** Env placeholder until IonBurn is deployed — not the canonical BSC burn sink address. */
+export const BURN_CONTRACT_ENV_PLACEHOLDER = "0x0000000000000000000000000000000000000000";
+
+/** Env placeholder until VaultLock is deployed on BSC. */
+export const VAULT_CONTRACT_ENV_PLACEHOLDER = "0x0000000000000000000000000000000000000000";
+
 export const ION_MAINNET_BURN_SOURCE_PENDING = "ion-mainnet-burn-source-pending";
 
 /** Explicit demo contracts for Approve manager scaffold — not real spenders. */
@@ -96,6 +102,21 @@ export function resolveBscRpcUrl(): string {
 export function resolveVaultContractAddress(): string | null {
   const value = import.meta.env.VITE_VAULT_CONTRACT_ADDRESS?.trim();
   return value ? value : null;
+}
+
+export function resolveBurnContractAddress(): string | null {
+  const value = import.meta.env.VITE_BURN_CONTRACT_ADDRESS?.trim();
+  return value ? value : null;
+}
+
+export function resolveBurnIndexerUrl(): string | null {
+  const value = import.meta.env.VITE_BURN_INDEXER_URL?.trim();
+  return value ? value : null;
+}
+
+/** True when deploy-only secret is present locally — never log the key value. */
+export function isVaultDeployerKeyConfigured(): boolean {
+  return Boolean(import.meta.env.VITE_VAULT_DEPLOYER_KEY?.trim());
 }
 
 /** Demo USD rates for swap math when live tickers are unavailable — labeled demo in UI. */

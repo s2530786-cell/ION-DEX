@@ -13,6 +13,9 @@ export type ServerConfig = {
   bscIonTokenAddress: string | null;
   bscChainId: number;
   httpTimeoutMs: number;
+  bscBurnContractAddress: string | null;
+  burnIndexerUrl: string | null;
+  bscVaultLockAddress: string | null;
 };
 
 const DEFAULT_BSC_RPC = "https://bsc-dataseed.binance.org/";
@@ -37,6 +40,14 @@ function parseChainId(raw: string | undefined): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 56;
 }
 
+function parseOptionalAddress(raw: string | undefined): string | null {
+  const trimmed = raw?.trim();
+  if (!trimmed) {
+    return null;
+  }
+  return /^0x[a-fA-F0-9]{40}$/.test(trimmed) ? trimmed.toLowerCase() : null;
+}
+
 export function loadServerConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
   const bscIon = env.BSC_ION_TOKEN_ADDRESS?.trim() || null;
   const normalizedIonToken =
@@ -51,6 +62,9 @@ export function loadServerConfig(env: NodeJS.ProcessEnv = process.env): ServerCo
     bscIonTokenAddress: normalizedIonToken,
     bscChainId: parseChainId(env.BSC_CHAIN_ID),
     httpTimeoutMs: Number.parseInt(env.ION_HTTP_TIMEOUT_MS ?? "12000", 10) || 12000,
+    bscBurnContractAddress: parseOptionalAddress(env.BSC_BURN_CONTRACT_ADDRESS),
+    burnIndexerUrl: env.BURN_INDEXER_URL?.trim() || null,
+    bscVaultLockAddress: parseOptionalAddress(env.BSC_VAULT_LOCK_ADDRESS),
   };
 }
 
