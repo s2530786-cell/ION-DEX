@@ -37,7 +37,7 @@ global int storage::deploy_seq;
     int fee_num = body~load_uint(16);
     int fee_denom = body~load_uint(16);
 
-    throw_unless(error::fee_bps_invalid, fee_denom > 0 & fee_num > 0 & fee_num <= fee_denom);
+    throw_unless(error::fee_bps_invalid, (fee_denom > 0) & (fee_num > 0) & (fee_num <= fee_denom));
     if fee_num == 0 {
         fee_num = params::swap_fee_numerator;
         fee_denom = params::fee_denominator;
@@ -124,7 +124,7 @@ global int storage::deploy_seq;
     throw(error::wrong_op);
 }
 
-() get_deployer_data() method_id {
+_ get_deployer_data() method_id {
     storage::load();
     return (storage::owner_address, storage::router_address, storage::deploy_seq);
 }

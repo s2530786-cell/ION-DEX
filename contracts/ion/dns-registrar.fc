@@ -68,7 +68,7 @@ global int storage::duration_sec;
         slice body = ctx::body();
         storage::base_price = body~load_coins();
         storage::duration_sec = body~load_uint(32);
-        throw_unless(error::invalid_amount, storage::base_price > 0 & storage::duration_sec > 0);
+        throw_unless(error::invalid_amount, (storage::base_price > 0) & (storage::duration_sec > 0));
         storage::save();
         return ();
     }
@@ -76,7 +76,7 @@ global int storage::duration_sec;
     throw(error::wrong_op);
 }
 
-() get_registrar_data() method_id {
+_ get_registrar_data() method_id {
     storage::load();
     return (storage::owner_address, storage::resolver_address, storage::base_price, storage::duration_sec);
 }

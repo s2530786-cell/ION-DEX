@@ -106,7 +106,7 @@ int bridge::is_relayer(slice relayer) impure inline {
     throw(error::wrong_op);
 }
 
-() get_bridge_inbox_data() method_id {
+_ get_bridge_inbox_data() method_id {
     storage::load();
     return (storage::owner_address, storage::router_address, storage::quorum);
 }

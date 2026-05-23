@@ -115,7 +115,7 @@ global int storage::max_blocks;
     throw(error::wrong_op);
 }
 
-() get_sandwich_data() method_id {
+_ get_sandwich_data() method_id {
     storage::load();
     return (storage::owner_address, storage::router_address, storage::min_blocks, storage::max_blocks);
 }

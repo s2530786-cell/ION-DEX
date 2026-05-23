@@ -127,7 +127,7 @@ global cell storage::jetton_wallet_code;
 
 ;; ── Getters ────────────────────────────────────────────────────
 
-() get_wallet_data() method_id {
+_ get_wallet_data() method_id {
     storage::load();
     return (
         storage::total_supply,
@@ -137,7 +137,7 @@ global cell storage::jetton_wallet_code;
     );
 }
 
-() get_jetton_balance() method_id {
+_ get_jetton_balance() method_id {
     storage::load();
     return storage::total_supply;
 }

@@ -173,6 +173,26 @@ int address::check_workchain(slice addr, int expected_workchain) inline {
     raw_reserve(amount, 2);  ;; reserve_exactly mode
 }
 
+;; ── ION Chain Standard Library Compatibility Shim ──────────────────
+;; These functions are provided by full stdlib.fc / @ston-fi/funcbox
+;; on TON mainnet, but may not be present in ION chain's stdlib.
+
+int equal_slices(slice a, slice b) inline {
+    return equal_slice_bits(a, b);
+}
+
+;; Simple integer sqrt via Newton's method
+int sqrt(int x) inline {
+    if x <= 0 { return 0; }
+    int z = x;
+    int i = 0;
+    while i < 32 {
+        i += 1;
+        z = (z + x / z) >> 1;
+    }
+    return z;
+}
+
 ;; ── Simple Message Sending ───────────────────────────────────────
 
 int math::mul_div(int a, int b, int denom) inline {
@@ -182,7 +202,7 @@ int math::mul_div(int a, int b, int denom) inline {
 
 int amm::get_amount_out(int amount_in, int reserve_in, int reserve_out, int fee_num, int fee_denom) inline {
     throw_unless(error::invalid_amount, amount_in > 0);
-    throw_unless(error::insufficient_liquidity, reserve_in > 0 & reserve_out > 0);
+    throw_unless(error::insufficient_liquidity, (reserve_in > 0) & (reserve_out > 0));
     int amount_in_with_fee = math::mul_div(amount_in, fee_num, fee_denom);
     int numerator = amount_in_with_fee * reserve_out;
     int denominator = reserve_in + amount_in_with_fee;

@@ -112,7 +112,7 @@ global cell storage::auction_dict;
     throw(error::wrong_op);
 }
 
-() get_auction_data() method_id {
+_ get_auction_data() method_id {
     storage::load();
     return (storage::owner_address, storage::resolver_address);
 }

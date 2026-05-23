@@ -70,7 +70,7 @@ slice router::pool_key(slice token0, slice token1) inline {
     slice user = body~load_msg_addr();
     int min_lp = body~load_coins();
 
-    throw_unless(error::invalid_amount, amount0 > 0 & amount1 > 0);
+    throw_unless(error::invalid_amount, (amount0 > 0) & (amount1 > 0));
 
     msgs::send_simple(
         0,
@@ -189,7 +189,7 @@ slice router::pool_key(slice token0, slice token1) inline {
     throw(error::wrong_op);
 }
 
-() get_router_data() method_id {
+_ get_router_data() method_id {
     storage::load();
     return (
         storage::owner_address,

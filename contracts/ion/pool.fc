@@ -71,7 +71,7 @@ int pool::mint_lp(int amount0, int amount1) inline {
     extras.end_parse();
 
     throw_unless(error::paused, storage::status == pool_status::active);
-    throw_unless(error::invalid_amount, amount0 > 0 & amount1 > 0);
+    throw_unless(error::invalid_amount, (amount0 > 0) & (amount1 > 0));
 
     int lp_out = pool::mint_lp(amount0, amount1);
     throw_unless(error::slippage, lp_out >= min_lp_out);
@@ -155,11 +155,11 @@ int pool::mint_lp(int amount0, int amount1) inline {
     slice recipient = body~load_msg_addr();
 
     throw_unless(error::paused, storage::status == pool_status::active);
-    throw_unless(error::invalid_amount, lp_amount > 0 & lp_amount <= storage::lp_total_supply);
+    throw_unless(error::invalid_amount, (lp_amount > 0) & (lp_amount <= storage::lp_total_supply));
 
     int out0 = math::mul_div(lp_amount, storage::reserve0, storage::lp_total_supply);
     int out1 = math::mul_div(lp_amount, storage::reserve1, storage::lp_total_supply);
-    throw_unless(error::slippage, out0 >= min0 & out1 >= min1);
+    throw_unless(error::slippage, (out0 >= min0) & (out1 >= min1));
 
     storage::reserve0 -= out0;
     storage::reserve1 -= out1;
@@ -231,7 +231,8 @@ int pool::mint_lp(int amount0, int amount1) inline {
 
     if ctx::opcode() == op::update_pool_status {
         throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::router_address));
-        storage::status = ctx::body()~load_uint(8);
+        slice body_cs = ctx::body();
+        storage::status = body_cs~load_uint(8);
         storage::save();
         return ();
     }
@@ -239,7 +240,7 @@ int pool::mint_lp(int amount0, int amount1) inline {
     throw(error::wrong_op);
 }
 
-() get_pool_data() method_id {
+_ get_pool_data() method_id {
     storage::load();
     return (
         storage::router_address,
@@ -254,7 +255,7 @@ int pool::mint_lp(int amount0, int amount1) inline {
     );
 }
 
-() get_amount_out(int zero_for_one, int amount_in) method_id {
+_ get_amount_out(int zero_for_one, int amount_in) method_id {
     storage::load();
     throw_unless(error::invalid_amount, amount_in > 0);
     if zero_for_one {

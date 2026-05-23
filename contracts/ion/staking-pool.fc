@@ -155,7 +155,7 @@ global cell storage::stake_dict;
     if ctx::opcode() == op::stake_fund_rewards {
         throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
         int fund_amount = ctx::value();
-        throw_unless(error::invalid_amount, fund_amount > 0 & storage::total_staked > 0);
+        throw_unless(error::invalid_amount, (fund_amount > 0) & (storage::total_staked > 0));
 
         storage::reward_balance += fund_amount;
         storage::reward_per_token += math::mul_div(fund_amount, 1, storage::total_staked);
@@ -166,12 +166,12 @@ global cell storage::stake_dict;
     throw(error::wrong_op);
 }
 
-() get_staking_data() method_id {
+_ get_staking_data() method_id {
     storage::load();
     return (storage::owner_address, storage::total_staked, storage::reward_per_token, storage::reward_balance);
 }
 
-() get_staker_balance(slice staker) method_id {
+_ get_staker_balance(slice staker) method_id {
     storage::load();
     int key = staker.slice_hash();
     (slice entry, int found) = storage::stake_dict.udict_get?(256, key);

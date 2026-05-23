@@ -111,7 +111,7 @@ global int storage::insurance_bps;
     throw(error::wrong_op);
 }
 
-() get_fee_distributor_data() method_id {
+_ get_fee_distributor_data() method_id {
     storage::load();
     return (
         storage::owner_address,
