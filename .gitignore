@@ -27,3 +27,6 @@ contracts/ion/deploy/out/
 Thumbs.db
 .DS_Store
 NUL  
+
+# FunC probe outputs
+contracts/ion/build/_probe_*
