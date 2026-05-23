@@ -1,3 +1,7 @@
+import { loadBackendDotEnv } from "./load-env.js";
+
+loadBackendDotEnv();
+
 export type DataMode = "live" | "auto" | "test-mock";
 
 export type ServerConfig = {

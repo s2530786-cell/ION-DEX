@@ -5,9 +5,9 @@ export type TokenMetadata = {
   decimals: number;
   address: string;
   iconHint: string;
-  status: "mock" | "planned";
+  status: "mock" | "planned" | "online";
   provenance: {
-    source: "mock";
+    source: "mock" | "upstream";
     note: string;
   };
 };

@@ -6,6 +6,7 @@ import { getBurnSummary, type BurnSummary } from "../services/burn.js";
 import { resolveDomain, type DomainResolution } from "../services/domain.js";
 import { loadLiveBurnSummary } from "../services/live/burn-live.js";
 import { loadLiveMarketTickers } from "../services/live/markets-live.js";
+import { loadLiveStakingSummary } from "../services/live/staking-live.js";
 import { getMarketTickers, type MarketTicker } from "../services/markets.js";
 import { getStakingSummary, type StakingSummary } from "../services/staking.js";
 import { AsyncCachedSourceAdapter } from "./async-cached-adapter.js";
@@ -109,18 +110,14 @@ export function createAdapterRegistry(
 
   const staking = new AsyncCachedSourceAdapter({
     key: "staking",
-    upstream: "mock",
-    status: "planned",
-    note: "Staking totals require on-chain staking contracts; not available yet.",
+    upstream: "ion-indexer",
+    status: "healthy",
+    note: "GeckoTerminal LP TVL + volume; official PoS totals via indexer when available.",
     cache,
     policy: defaultCachePolicies.staking,
     clock,
     cacheKey: () => "staking:summary",
-    load: async () => {
-      throw new Error(
-        "Staking live data is not wired yet. Configure staking contracts + indexer before enabling.",
-      );
-    },
+    load: () => loadLiveStakingSummary(config),
   });
 
   const domain = new AsyncCachedSourceAdapter<DomainResolution, { name: string }>({

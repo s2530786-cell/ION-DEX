@@ -11,9 +11,9 @@ import {
   listAdapterHealth,
 } from "../data/gateway-data.js";
 import { fetchBscWalletBalance, fetchPublicConfig } from "../services/config-gateway.js";
-import { getBridgeRoutes } from "../services/bridge.js";
+import { fetchBridgeRoutes, fetchTokens } from "../services/tokens-gateway.js";
 import { getDemoProfile } from "../services/profile.js";
-import { getTokens } from "../services/tokens.js";
+import { createQuote, QuoteInputError } from "../services/quotes.js";
 import { getDatabaseHealth } from "../db/index.js";
 import { loadServerConfig } from "../config/server-config.js";
 
@@ -93,7 +93,7 @@ export async function routeRequest(
               dataSources: listAdapterHealth(),
               database: getDatabaseHealth(),
             },
-            meta,
+            buildMeta(clock, requestId, "local"),
           ),
         );
         return;
@@ -102,13 +102,15 @@ export async function routeRequest(
         writeJson(response, 200, apiResponse(config, meta));
         return;
       }
-      case "/api/tokens":
+      case "/api/tokens": {
+        const tokens = await fetchTokens();
         writeJson(
           response,
           200,
-          apiResponse(getTokens(), buildMeta(clock, requestId, "mock")),
+          apiResponse(tokens, buildMeta(clock, requestId, loadServerConfig().dataMode === "test-mock" ? "mock" : "upstream")),
         );
         return;
+      }
       case "/api/markets/tickers": {
         const payload = await fetchMarketTickers(requestId);
         writeJson(response, 200, payload);
@@ -138,9 +140,15 @@ export async function routeRequest(
         writeJson(response, 200, apiResponse(balance, meta));
         return;
       }
-      case "/api/bridge/routes":
-        writeJson(response, 200, apiResponse(getBridgeRoutes(), buildMeta(clock, requestId, "mock")));
+      case "/api/bridge/routes": {
+        const bridge = await fetchBridgeRoutes();
+        writeJson(
+          response,
+          200,
+          apiResponse(bridge, buildMeta(clock, requestId, loadServerConfig().dataMode === "test-mock" ? "mock" : "upstream")),
+        );
         return;
+      }
       case "/api/domain/resolve": {
         const validation = validateIonDomainName(url.searchParams.get("name"));
         if (!validation.ok) {
@@ -153,6 +161,38 @@ export async function routeRequest(
         }
         const payload = await fetchDomainResolution(validation.value, requestId);
         writeJson(response, 200, payload);
+        return;
+      }
+      case "/api/trade/quote": {
+        const inputToken = url.searchParams.get("inputToken")?.trim() ?? "";
+        const outputToken = url.searchParams.get("outputToken")?.trim() ?? "";
+        const amountIn = url.searchParams.get("amountIn")?.trim() ?? "";
+        const slippageRaw = url.searchParams.get("slippageBps")?.trim() ?? "";
+        const slippageBps = Number.parseInt(slippageRaw, 10);
+
+        if (!inputToken || !outputToken || !amountIn || !Number.isFinite(slippageBps)) {
+          writeJson(
+            response,
+            400,
+            apiError(ApiErrorCodes.invalidQuoteRequest, "inputToken, outputToken, amountIn, and slippageBps are required.", meta),
+          );
+          return;
+        }
+
+        try {
+          const quote = await createQuote({ inputToken, outputToken, amountIn, slippageBps });
+          writeJson(response, 200, apiResponse(quote, meta));
+        } catch (error) {
+          if (error instanceof QuoteInputError) {
+            writeJson(
+              response,
+              400,
+              apiError(ApiErrorCodes.invalidQuoteRequest, error.message, meta),
+            );
+            return;
+          }
+          throw error;
+        }
         return;
       }
       case "/api/profile/demo":

@@ -13,11 +13,15 @@ export type BridgeRoute = {
 
 export type BridgeRoutesPayload = {
   routes: BridgeRoute[];
-  relayerStatus: "mocked" | "planned" | "online" | "degraded";
+  relayerStatus: "mocked" | "planned" | "online" | "degraded" | "offline";
   verifier: {
     threshold: string;
     replayProtection: boolean;
     proofStatus: "planned" | "mocked" | "online";
+  };
+  provenance?: {
+    source: "mock" | "upstream";
+    note: string;
   };
 };
 
@@ -54,6 +58,10 @@ export function getBridgeRoutes(): BridgeRoutesPayload {
       threshold: "3-of-5 draft",
       replayProtection: true,
       proofStatus: "planned",
+    },
+    provenance: {
+      source: "mock",
+      note: "Phase 3 mock bridge routes; relayer and proof paths are not live.",
     },
   };
 }

@@ -1,3 +1,6 @@
+// Proxy bootstrap for CMC API (Node global fetch doesn't respect HTTP_PROXY)
+import { bootstrap } from "global-agent";
+bootstrap();
 import { createServer, type Server } from "node:http";
 import { pathToFileURL } from "node:url";
 import { bootstrapDatabase, bootstrapDatabaseAsync } from "./db/index.js";

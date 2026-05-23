@@ -17,8 +17,8 @@ contract BSCContractsTest is Test {
     address internal treasury = address(0xBEEF);
     address internal team = address(0xCAFE);
     address internal staking = address(0x570A);
-    address internal keeper = address(0xKEEP);
-    address internal user = address(0xUSER);
+    address internal keeper = address(0x5EE7);
+    address internal user = address(0x75E7);
 
     function setUp() public {
         token = new MockERC20("ION", "ION", 18);

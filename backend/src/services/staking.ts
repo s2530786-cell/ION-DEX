@@ -15,7 +15,7 @@ export type StakingSummary = {
     aprBoostPct: number;
   }>;
   provenance: {
-    source: "mock";
+    source: "mock" | "upstream";
     note: string;
   };
 };

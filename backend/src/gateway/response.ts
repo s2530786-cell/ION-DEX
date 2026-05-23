@@ -31,6 +31,7 @@ export const ApiErrorCodes = {
   invalidDomainName: "ION_DEX_E_DOMAIN_NAME_INVALID",
   dataUnavailable: "ION_DEX_E_DATA_UNAVAILABLE",
   invalidAddress: "ION_DEX_E_INVALID_ADDRESS",
+  invalidQuoteRequest: "invalid_quote_request",
 } as const;
 
 export type ApiErrorCode = (typeof ApiErrorCodes)[keyof typeof ApiErrorCodes];
