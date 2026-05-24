@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Install/cache ION/TON func+fift binaries and ION stdlib + fift libs for Linux CI/local.
 # Always uses ION source compile (fallback-safe), never depends on external zip URLs.
 # Exports: ION_TOOLCHAIN_ROOT, ION_FUNC_EXE, ION_STDLIB_FC, FIFTPATH, PATH
@@ -17,7 +17,7 @@ mkdir -p "${BIN_DIR}" "${SMARTCONT_DIR}" "${FIFT_LIB_DIR}"
 
 if [[ -f "${MARKER}" ]]; then
   source "${MARKER}"
-  echo "OK ion-toolchain cache hit (${CACHE_DIR})${ION_FUNC_FALLBACK:+ �?func fallback}"
+  echo "OK ion-toolchain cache hit (${CACHE_DIR})${ION_FUNC_FALLBACK:+ â€?func fallback}"
   exit 0
 fi
 
@@ -27,7 +27,7 @@ echo "Cache: ${CACHE_DIR}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "${TMP_DIR}"' EXIT
 
-# ── 1. Fetch stdlib.fc + fift lib (always works) ──
+# â”€â”€ 1. Fetch stdlib.fc + fift lib (always works) â”€â”€
 echo "Fetching ION smartcont + fift libs (sparse clone)..."
 git clone --depth 1 --filter=blob:none --sparse "${ION_SOURCE_REPO}" "${TMP_DIR}/ion-src" 2>/dev/null
 (cd "${TMP_DIR}/ion-src" && git sparse-checkout set crypto/smartcont crypto/fift/lib 2>/dev/null || true)
@@ -44,16 +44,16 @@ else
   echo "WARN could not fetch ION fift lib"
 fi
 
-# ── 2. Compile func/fift from ION source (fast, ~30s if cached) ──
+# â”€â”€ 2. Compile func/fift from ION source (fast, ~30s if cached) â”€â”€
 # Purpose: produce func/fift executables for FunC contract verification.
-# ION chain is a fork of TON �?its func compiler is the reference.
+# ION chain is a fork of TON â€?its func compiler is the reference.
 # We NEVER download from ton-blockchain releases because those URLs rot.
-echo "Compiling ION fork of func/fift from source (fast mode, 120s timeout)..."
+echo "Compiling ION fork of func/fift from source (fast mode, 600s timeout)..."
 BUILD_OK=1
 BUILD_DIR="${TMP_DIR}/ion-build"
 
 if ! git clone --depth 1 --recurse-submodules --shallow-submodules "${ION_SOURCE_REPO}" "${BUILD_DIR}" 2>/dev/null; then
-  echo "WARN: git clone of ION source failed �?using fallback mode"
+  echo "WARN: git clone of ION source failed â€?using fallback mode"
   BUILD_OK=0
 fi
 
@@ -78,14 +78,14 @@ if [[ "$BUILD_OK" = "1" ]]; then
 fi
 
 if [[ "$BUILD_OK" = "1" ]]; then
-  timeout 120 cmake --build . --target func --target fift -j"$(nproc)" -- -l$(nproc) 2>&1 || BUILD_OK=0
+  timeout 600 cmake --build . --target func --target fift -j"$(nproc)" -- -l$(nproc) 2>&1 || BUILD_OK=0
 fi
 
 FUNC_BIN="${BUILD_DIR}/build/crypto/func"
 FIFT_BIN="${BUILD_DIR}/build/crypto/fift"
 
 if [[ "$BUILD_OK" = "0" || ! -x "${FUNC_BIN}" || ! -x "${FIFT_BIN}" ]]; then
-  echo "WARN func/fift compilation failed or timed out �?using fallback mode"
+  echo "WARN func/fift compilation failed or timed out â€?using fallback mode"
   ION_FUNC_FALLBACK=1
 else
   cp "${FUNC_BIN}" "${BIN_DIR}/func" && chmod +x "${BIN_DIR}/func"
