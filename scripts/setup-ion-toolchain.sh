@@ -70,11 +70,12 @@ ZIP_PATH="${TMP_DIR}/ton.zip"
 curl -fsSL "${TON_ZIP_URL}" -o "${ZIP_PATH}"
 unzip -q "${ZIP_PATH}" -d "${TMP_DIR}/ton-unzip"
 
-FUNC_BIN="$(find "${TMP_DIR}/ton-unzip" -type f -name func -perm -111 2>/dev/null | head -n 1 || true)"
-FIFT_BIN="$(find "${TMP_DIR}/ton-unzip" -type f -name fift -perm -111 2>/dev/null | head -n 1 || true)"
+FUNC_BIN="$(find "${TMP_DIR}/ton-unzip" -type f -name func 2>/dev/null | head -n 1 || true)"
+FIFT_BIN="$(find "${TMP_DIR}/ton-unzip" -type f -name fift 2>/dev/null | head -n 1 || true)"
 
 if [[ -z "${FUNC_BIN}" || -z "${FIFT_BIN}" ]]; then
   echo "ERROR: func/fift not found inside ${TON_ZIP_URL}"
+  ls -la "${TMP_DIR}/ton-unzip" 2>/dev/null | head -20
   exit 1
 fi
 
