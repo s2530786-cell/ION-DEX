@@ -40,8 +40,19 @@ export function apiResponse<T>(data: T, meta: ApiMeta): ApiResponse<T> {
   return { data, meta };
 }
 
-/** Safe JSON replacer — strips stack and internal keys to pass CodeQL. */
-function safeReplacer(_key: string, value: unknown): unknown {
+/**
+ * Safe JSON replacer — strips `stack`, `cause`, and any internal Error properties
+ * so that CodeQL rule `js/stack-trace-exposure` passes green.
+ *
+ * References:
+ *  - async-cached-adapter.ts#L85 (error.stack)
+ *  - routes.ts#L194, L219, L242, L257 (error → response)
+ */
+function safeReplacer(key: string, value: unknown): unknown {
+  // Hard-block every property named "stack" or "cause" at any nesting depth
+  if (key === "stack" || key === "cause") {
+    return undefined;
+  }
   // Never serialize Error properties beyond what the frontend needs
   if (value instanceof Error) {
     return { name: value.name, message: value.message };
