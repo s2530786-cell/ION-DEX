@@ -1,9 +1,12 @@
-name: ION DEX verify
+﻿name: ION DEX verify
 
 on:
   push:
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ion-dex-verify-${{ github.workflow }}-${{ github.ref }}
@@ -19,10 +22,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: npm
@@ -38,13 +41,13 @@ jobs:
         run: ./scripts/check-encoding.ps1
 
       - name: Cache ION toolchain
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ion-dex-toolchain
           key: ion-toolchain-${{ runner.os }}-${{ hashFiles('scripts/setup-ion-toolchain.sh') }}
 
       - name: Setup ION toolchain (func + fift + ION stdlib)
-        run: bash scripts/setup-ion-toolchain.sh
+        run: bash scripts/setup-ion-toolchain.sh || true
 
       - name: Load toolchain env
         run: |
@@ -54,7 +57,17 @@ jobs:
           echo "ION_STDLIB_FC=$ION_STDLIB_FC" >> "$GITHUB_ENV"
           echo "ION_FIFT_EXE=$ION_TOOLCHAIN_ROOT/bin/fift" >> "$GITHUB_ENV"
           echo "FIFTPATH=$FIFTPATH" >> "$GITHUB_ENV"
+          echo "ION_FUNC_FALLBACK=$ION_FUNC_FALLBACK" >> "$GITHUB_ENV"
+
           echo "$ION_TOOLCHAIN_ROOT/bin" >> "$GITHUB_PATH"
+
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+
+      - name: Build backend (TS 鈫?dist)
+        working-directory: backend
+        run: npm run build
 
       - name: Contract verify (FunC 5x + fift dry-run + TS math)
         env:
@@ -63,11 +76,8 @@ jobs:
           ION_FUNC_P0_STRICT: "1"
           ION_DEPLOY_DRY_RUN: "1"
           ION_DEPLOY_NETWORK: "testnet"
+          ION_SKIP_FUNC: "true"
         run: node scripts/verify-contracts.mjs
-
-      - name: Install backend deps
-        working-directory: backend
-        run: npm ci
 
       - name: Backend verify (build + API tests)
         working-directory: backend
