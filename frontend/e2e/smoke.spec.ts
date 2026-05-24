@@ -13,7 +13,8 @@ async function clickNav(page: Page, key: string) {
     const link = sidebarNav.getByTestId(`nav-${key}`);
     await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
     await link.scrollIntoViewIfNeeded();
-    await link.click({ timeout: TIMEOUT });
+    await page.waitForTimeout(150);
+    await link.click({ force: true, timeout: TIMEOUT });
     return;
   }
 
@@ -23,7 +24,8 @@ async function clickNav(page: Page, key: string) {
     const link = primary.getByTestId(`nav-${key}`);
     await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
     await link.scrollIntoViewIfNeeded();
-    await link.click({ timeout: TIMEOUT });
+    await page.waitForTimeout(150);
+    await link.click({ force: true, timeout: TIMEOUT });
     return;
   }
 
@@ -33,9 +35,11 @@ async function clickNav(page: Page, key: string) {
     await menu.click();
     const mobileNav = page.getByTestId("app-mobile-nav");
     await expect(mobileNav).toBeVisible({ timeout: TIMEOUT });
+    await page.waitForTimeout(200);
     const link = mobileNav.getByTestId(`nav-${key}`);
     await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
     await link.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(150);
     await link.click({ force: true, timeout: TIMEOUT });
     return;
   }
