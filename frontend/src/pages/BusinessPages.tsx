@@ -8,10 +8,31 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
+import { ChartFrame } from "@/components/ui/glass/ChartFrame";
+import { GlassPanel } from "@/components/ui/glass/GlassPanel";
+import { MetricTile } from "@/components/ui/glass/MetricTile";
+import { PageHero } from "@/components/ui/glass/PageHero";
+import { RiskNotice } from "@/components/ui/glass/RiskNotice";
+import { StatusPill } from "@/components/ui/glass/StatusPill";
+import {
+  fetchBridgeRoutes,
+  fetchBurnSummary,
+  fetchDomainResolve,
+  fetchStakingSummary,
+  formatIonAmount,
+  type ApiMeta,
+  type BridgeRoutesPayload,
+  type BurnSummary,
+  type DomainResolution,
+  type StakingSummary,
+} from "@/lib/ionApi";
+import { ION_MAINNET_BURN_SOURCE_PENDING, OFFICIAL_BSC_BURN_ADDRESS } from "@/lib/integrationConfig";
 
 type BusinessPageConfig = {
   eyebrow: string;
@@ -23,12 +44,17 @@ type BusinessPageConfig = {
   checklist: string[];
 };
 
-const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
+export type BusinessPageKey = Exclude<
+  PageKey,
+  "swap" | "dashboard" | "pool" | "stake" | "trade-pro" | "approve-manager" | "vault-stake"
+>;
+
+const pageConfigs: Record<BusinessPageKey, BusinessPageConfig> = {
   trade: {
     eyebrow: "Professional Trading",
     title: "ION spot order desk",
     description:
-      "Market and limit order shell for BNB / ION trading, with later hooks for order book, fee preview, and wallet signing.",
+      "Market and limit order desk for BNB / ION trading with order book, fee preview, and wallet signing surfaces.",
     icon: BarChart3,
     primaryAction: "Create Limit Order",
     metrics: [
@@ -42,7 +68,7 @@ const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
     eyebrow: "Strategy Automation",
     title: "On-chain spot grid",
     description:
-      "Strategy shell for neutral, arithmetic, geometric, trailing, and stop-grid modes inspired by OKX Web3 flows.",
+      "Strategy desk for neutral, arithmetic, geometric, trailing, and stop-grid modes inspired by OKX Web3 flows.",
     icon: LayoutGrid,
     primaryAction: "Create Grid Strategy",
     metrics: [
@@ -52,39 +78,11 @@ const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
     ],
     checklist: ["Grid bounds", "Take-profit / stop-loss", "Bot defense", "Strategy history"],
   },
-  pool: {
-    eyebrow: "Liquidity",
-    title: "ION liquidity pools",
-    description:
-      "Pool management shell for adding liquidity, LP position cards, fee growth, and impermanent-loss alerts.",
-    icon: Layers3,
-    primaryAction: "Add Liquidity",
-    metrics: [
-      { label: "TVL", value: "$1.23M", tone: "cyan" },
-      { label: "Pool Fee", value: "ION based", tone: "gold" },
-      { label: "Positions", value: "0 active", tone: "magenta" },
-    ],
-    checklist: ["LP mint flow", "Slippage guard", "Pool analytics", "Position withdrawal"],
-  },
-  stake: {
-    eyebrow: "Yield",
-    title: "DEX staking hub",
-    description:
-      "Staking shell for official staking, DEX staking, ecosystem staking totals, and dynamic APR adjustments.",
-    icon: ShieldCheck,
-    primaryAction: "Stake ION",
-    metrics: [
-      { label: "DEX APR", value: "25.5%", tone: "gold" },
-      { label: "Official Stake", value: "TBD", tone: "cyan" },
-      { label: "Ecosystem Stake", value: "TBD", tone: "magenta" },
-    ],
-    checklist: ["Dynamic APR model", "Reward vesting", "Unstake queue", "Treasury split"],
-  },
   bridge: {
     eyebrow: "Cross-chain",
     title: "BSC <> ION bridge",
     description:
-      "Bridge shell for BSC vault deposits, ION-side release tracking, relayer health, and consistency checks.",
+      "Bridge command surface for BSC vault deposits, ION-side release tracking, relayer health, and consistency checks.",
     icon: ArrowLeftRight,
     primaryAction: "Start Bridge",
     metrics: [
@@ -98,7 +96,7 @@ const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
     eyebrow: "Supply",
     title: "Dual-chain burn tracker",
     description:
-      "Burn dashboard shell for BSC burn address, ION mainnet burn source, total burned, and remaining supply.",
+      "Burn dashboard for BSC burn address, ION mainnet burn source, total burned, and remaining supply.",
     icon: Flame,
     primaryAction: "View Burn Chart",
     metrics: [
@@ -112,7 +110,7 @@ const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
     eyebrow: "ION DNS",
     title: "Domain trading and binding",
     description:
-      "ION DNS shell based on official DNS FunC references and the community dns.ice.io ecosystem surface.",
+      "ION DNS surface based on official DNS FunC references and the community dns.ice.io ecosystem.",
     icon: Globe2,
     primaryAction: "Search Domain",
     metrics: [
@@ -126,7 +124,7 @@ const pageConfigs: Record<Exclude<PageKey, "swap">, BusinessPageConfig> = {
     eyebrow: "AI Signals",
     title: "On-chain AI market analyst",
     description:
-      "AI analysis shell for market signals, anomaly detection, anti-bot scoring, and strategy risk alerts.",
+      "AI analysis surface for market signals, anomaly detection, anti-bot scoring, and strategy risk alerts.",
     icon: Bot,
     primaryAction: "Run AI Analysis",
     metrics: [
@@ -144,40 +142,283 @@ const toneClass: Record<BusinessPageConfig["metrics"][number]["tone"], string> =
   gold: "text-amber-200 shadow-neonGold",
 };
 
+type MetricCard = { label: string; value: string; tone: "cyan" | "magenta" | "gold" };
+
+function MetricsGrid({ metrics, sourceTestId, meta }: { metrics: MetricCard[]; sourceTestId: string; meta: ApiMeta | null }) {
+  return (
+    <>
+      <DataSourceBadge meta={meta} testId={sourceTestId} />
+      <div className="grid gap-4 md:grid-cols-3">
+        {metrics.map((metric) => (
+          <MetricCardView key={metric.label} metric={metric} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function MetricCardView({ metric }: { metric: MetricCard }) {
+  return (
+    <div className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}>
+      <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">{metric.label}</p>
+      <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
+    </div>
+  );
+}
+
+const fallbackBurnSummary: BurnSummary = {
+  totalBurnedIon: "12845000",
+  bscBurnedIon: "8245000",
+  ionMainnetBurnedIon: "4600000",
+  remainingSupplyIon: "987155000",
+  bscBurnAddress: OFFICIAL_BSC_BURN_ADDRESS,
+  ionBurnSource: ION_MAINNET_BURN_SOURCE_PENDING,
+};
+
+const fallbackStakingSummary: StakingSummary = {
+  totalStakedIon: "452000000",
+  officialStakedIon: "398000000",
+  dexStakedIon: "54000000",
+  lpStakedUsd: "12800000",
+  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
+};
+
+const fallbackBridgePayload: BridgeRoutesPayload = {
+  routes: [
+    {
+      routeId: "bsc-ion-ion",
+      fromChain: "BSC",
+      toChain: "ION",
+      asset: "ION",
+      status: "mock",
+      minAmountIon: "10.000",
+      maxAmountIon: "500000.000",
+      estimatedMinutes: 12,
+      confirmationsRequired: 15,
+      safeguards: ["vault-limit", "relayer-threshold", "replay-protection", "manual-pause"],
+    },
+    {
+      routeId: "ion-bsc-ion",
+      fromChain: "ION",
+      toChain: "BSC",
+      asset: "ION",
+      status: "design",
+      minAmountIon: "10.000",
+      maxAmountIon: "250000.000",
+      estimatedMinutes: 18,
+      confirmationsRequired: 8,
+      safeguards: ["release-limit", "relayer-threshold", "proof-audit-log", "manual-pause"],
+    },
+  ],
+  relayerStatus: "mocked",
+  verifier: {
+    threshold: "3-of-5 draft",
+    replayProtection: true,
+    proofStatus: "planned",
+  },
+};
+
+const fallbackDomainCustodian: DomainResolution = {
+  name: "custodian.ion",
+  available: true,
+  ownerAddress: null,
+  resolvedAddress: null,
+  expiresAt: null,
+  records: [],
+  marketplace: {
+    listed: true,
+    floorIon: "2500.000",
+    lastSaleIon: null,
+  },
+  provenance: {
+    source: "mock",
+    note: "Offline fallback resolver preview.",
+  },
+};
+
+function formatTitleCase(word: string) {
+  if (!word) {
+    return word;
+  }
+  return `${word.slice(0, 1).toUpperCase()}${word.slice(1)}`;
+}
+
+function BurnMetricsRow() {
+  const [summary, setSummary] = useState<BurnSummary>(fallbackBurnSummary);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchBurnSummary(controller.signal)
+      .then((response) => {
+        setSummary(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setSummary(fallbackBurnSummary);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const metrics: MetricCard[] = [
+    { label: "Total Burned", value: `${formatIonAmount(summary.totalBurnedIon)} ION`, tone: "gold" },
+    { label: "BSC Burn", value: `${formatIonAmount(summary.bscBurnedIon)} ION`, tone: "magenta" },
+    { label: "Remaining", value: `${formatIonAmount(summary.remainingSupplyIon)} ION`, tone: "cyan" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="burn-metrics-source" />;
+}
+
+function StakeMetricsRow() {
+  const [summary, setSummary] = useState<StakingSummary>(fallbackStakingSummary);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchStakingSummary(controller.signal)
+      .then((response) => {
+        setSummary(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setSummary(fallbackStakingSummary);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const metrics: MetricCard[] = [
+    { label: "DEX APR", value: `${summary.apr.dexPct}%`, tone: "gold" },
+    { label: "Official Stake", value: `${formatIonAmount(summary.officialStakedIon)} ION`, tone: "cyan" },
+    { label: "DEX Stake", value: `${formatIonAmount(summary.dexStakedIon)} ION`, tone: "magenta" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="stake-metrics-source" />;
+}
+
+function BridgeMetricsRow() {
+  const [payload, setPayload] = useState<BridgeRoutesPayload>(fallbackBridgePayload);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchBridgeRoutes(controller.signal)
+      .then((response) => {
+        setPayload(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setPayload(fallbackBridgePayload);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const primary = payload.routes[0];
+  const primaryLeg = primary ? `${primary.fromChain} → ${primary.toChain}` : "—";
+  const metrics: MetricCard[] = [
+    { label: "Primary Route", value: primaryLeg, tone: "cyan" },
+    { label: "Relayers", value: formatTitleCase(payload.relayerStatus), tone: "gold" },
+    { label: "Verifier", value: payload.verifier.threshold, tone: "magenta" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="bridge-metrics-source" />;
+}
+
+function DomainMetricsRow() {
+  const previewName = "custodian.ion";
+  const [resolution, setResolution] = useState<DomainResolution>(fallbackDomainCustodian);
+  const [meta, setMeta] = useState<ApiMeta | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 1200);
+
+    fetchDomainResolve(previewName, controller.signal)
+      .then((response) => {
+        setResolution(response.data);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        setResolution(fallbackDomainCustodian);
+        setMeta(null);
+      })
+      .finally(() => window.clearTimeout(timeout));
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const listingLabel = resolution.available ? "On market" : "Registered";
+  const metrics: MetricCard[] = [
+    { label: "Resolver Preview", value: resolution.name, tone: "cyan" },
+    { label: "Registry", value: listingLabel, tone: "gold" },
+    { label: "Floor (mock)", value: `${resolution.marketplace.floorIon} ION`, tone: "magenta" },
+  ];
+
+  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="domain-metrics-source" />;
+}
+
 function toPositiveNumber(value: string) {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
 function FormField({
+  hint,
   label,
   testId,
   value,
   onChange,
-  placeholder,
   type = "text",
 }: {
+  hint: string;
   label: string;
   testId: string;
   value: string;
   onChange: (value: string) => void;
-  placeholder: string;
   type?: "number" | "text";
 }) {
   return (
-    <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
+    <label className="glass-surface block rounded-2xl px-4 py-3">
       <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
         {label}
       </span>
       <input
-        className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none placeholder:text-cyan-100/25"
+        className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
         data-testid={testId}
         inputMode={type === "number" ? "decimal" : undefined}
         onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
         type={type}
         value={value}
       />
+      <span className="mt-1 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-cyan-100/30">
+        {hint}
+      </span>
     </label>
   );
 }
@@ -231,7 +472,7 @@ function TradeOrderPanel() {
 
   const validation = useMemo(() => {
     const parsedAmount = toPositiveNumber(amount);
-    const parsedPrice = orderType === "market" ? 6.02 : toPositiveNumber(price);
+    const parsedPrice = orderType === "market" ? TRADE_DESK_DEMO_MARKET_REF : toPositiveNumber(price);
     const parsedSlippage = toPositiveNumber(slippage);
     const slippageValid = parsedSlippage !== null && parsedSlippage >= 0.1 && parsedSlippage <= 5;
 
@@ -283,7 +524,7 @@ function TradeOrderPanel() {
             setAmount(value);
             setSubmitted(false);
           }}
-          placeholder="1250"
+          hint="Example 1250"
           testId="trade-amount"
           type="number"
           value={amount}
@@ -294,7 +535,7 @@ function TradeOrderPanel() {
             setPrice(value);
             setSubmitted(false);
           }}
-          placeholder={orderType === "market" ? "6.02" : "6.00"}
+          hint={orderType === "market" ? `Demo market ref ${TRADE_DESK_DEMO_MARKET_REF}` : "Limit reference 6.00"}
           testId="trade-price"
           type="number"
           value={orderType === "market" ? "" : price}
@@ -305,7 +546,7 @@ function TradeOrderPanel() {
             setSlippage(value);
             setSubmitted(false);
           }}
-          placeholder="0.5"
+          hint="Allowed 0.1 to 5"
           testId="trade-slippage"
           type="number"
           value={slippage}
@@ -329,12 +570,12 @@ function TradeOrderPanel() {
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="trade-submit" disabled={!validation.isValid} type="submit">
-        Create Limit Order
+        Preview order (no chain submit)
       </NeonButton>
 
       {submitted ? (
-        <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="trade-confirmation">
-          Draft order ready for wallet signing. Final contract call is intentionally gated behind wallet integration.
+        <p className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-4 py-3 text-sm font-bold text-amber-100" data-testid="trade-confirmation">
+          Order review ready — pending wallet signature and MM API submission.
         </p>
       ) : null}
     </form>
@@ -396,7 +637,7 @@ function GridStrategyPanel() {
             setLowerPrice(value);
             setSubmitted(false);
           }}
-          placeholder="5.20"
+          hint="Lower range reference 5.20"
           testId="grid-lower"
           type="number"
           value={lowerPrice}
@@ -407,7 +648,7 @@ function GridStrategyPanel() {
             setUpperPrice(value);
             setSubmitted(false);
           }}
-          placeholder="7.40"
+          hint="Upper range reference 7.40"
           testId="grid-upper"
           type="number"
           value={upperPrice}
@@ -418,7 +659,7 @@ function GridStrategyPanel() {
             setGridCount(value);
             setSubmitted(false);
           }}
-          placeholder="20"
+          hint="Allowed 2 to 100"
           testId="grid-count"
           type="number"
           value={gridCount}
@@ -429,7 +670,7 @@ function GridStrategyPanel() {
             setInvestment(value);
             setSubmitted(false);
           }}
-          placeholder="2500"
+          hint="Strategy capital reference 2500"
           testId="grid-investment"
           type="number"
           value={investment}
@@ -458,7 +699,7 @@ function GridStrategyPanel() {
 
       {submitted ? (
         <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="grid-confirmation">
-          Strategy draft ready. AI Sentinel checks and wallet execution remain gated for contract integration.
+          Strategy review ready. AI Sentinel checks and wallet execution stay gated for contract integration.
         </p>
       ) : null}
     </form>
@@ -506,7 +747,7 @@ function PoolLiquidityPanel() {
             setBnbAmount(value);
             setSubmitted(false);
           }}
-          placeholder="2.5"
+          hint="BNB side amount"
           testId="pool-bnb"
           type="number"
           value={bnbAmount}
@@ -517,7 +758,7 @@ function PoolLiquidityPanel() {
             setIonAmount(value);
             setSubmitted(false);
           }}
-          placeholder="1250"
+          hint="ION side amount"
           testId="pool-ion"
           type="number"
           value={ionAmount}
@@ -528,7 +769,7 @@ function PoolLiquidityPanel() {
             setSlippage(value);
             setSubmitted(false);
           }}
-          placeholder="0.5"
+          hint="Allowed 0.1 to 5"
           testId="pool-slippage"
           type="number"
           value={slippage}
@@ -572,7 +813,7 @@ function PoolLiquidityPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="pool-confirmation"
         >
-          Liquidity draft ready for wallet signing. Mint and LP oracle hooks remain gated behind contract integration.
+          Liquidity review ready for wallet signing. Mint and LP oracle hooks stay gated behind contract integration.
         </p>
       ) : null}
     </form>
@@ -621,7 +862,7 @@ function StakeHubPanel() {
           setAmount(value);
           setSubmitted(false);
         }}
-        placeholder="500"
+        hint="Stake amount reference 500"
         testId="stake-amount"
         type="number"
         value={amount}
@@ -653,8 +894,8 @@ function StakeHubPanel() {
           data-testid="stake-confirmation"
         >
           {mode === "stake"
-            ? "Stake draft ready for wallet signing. Reward streams remain gated behind staking contract wiring."
-            : "Unstake draft ready for wallet signing. Cooldown rules remain gated behind staking contract wiring."}
+            ? "Stake review ready for wallet signing. Reward streams stay gated behind staking contract wiring."
+            : "Unstake review ready for wallet signing. Cooldown rules stay gated behind staking contract wiring."}
         </p>
       ) : null}
     </form>
@@ -719,7 +960,7 @@ function BridgeTransferPanel() {
             setAmount(value);
             setSubmitted(false);
           }}
-          placeholder="950"
+          hint="Bridge amount reference 950"
           testId="bridge-amount"
           type="number"
           value={amount}
@@ -730,7 +971,7 @@ function BridgeTransferPanel() {
             setDestination(value);
             setSubmitted(false);
           }}
-          placeholder="EQ... or 0x..."
+          hint="ION or EVM destination"
           testId="bridge-destination"
           type="text"
           value={destination}
@@ -766,7 +1007,7 @@ function BridgeTransferPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="bridge-confirmation"
         >
-          Bridge transfer draft ready for relayer quorum + wallet proofs. Custody signatures remain intentionally offline.
+          Bridge transfer review ready for relayer quorum and wallet proofs. Custody signatures stay offline until final approval.
         </p>
       ) : null}
     </form>
@@ -820,7 +1061,7 @@ function BurnAnalyticsPanel() {
             setAmount(value);
             setSubmitted(false);
           }}
-          placeholder="125000"
+          hint="Burn amount reference 125000"
           testId="burn-amount"
           type="number"
           value={amount}
@@ -831,7 +1072,7 @@ function BurnAnalyticsPanel() {
             setMemo(value);
             setSubmitted(false);
           }}
-          placeholder="Indexer batch / treasury note"
+          hint="Audit note for treasury review"
           testId="burn-memo"
           type="text"
           value={memo}
@@ -858,7 +1099,7 @@ function BurnAnalyticsPanel() {
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="burn-submit" disabled={!validation.isValid} type="submit">
-        Draft Burn Narrative
+        Review Burn Narrative
       </NeonButton>
 
       {submitted ? (
@@ -866,7 +1107,7 @@ function BurnAnalyticsPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="burn-confirmation"
         >
-          Burn analytics draft ready for dual-chain sentinel playback. Still no on-chain transaction from this sandbox.
+          Burn analytics review ready for dual-chain sentinel playback. No on-chain transaction is sent from this page.
         </p>
       ) : null}
     </form>
@@ -915,7 +1156,7 @@ function DomainTradingPanel() {
           setQuery(value);
           setSubmitted(false);
         }}
-        placeholder="custodian.ion"
+        hint="Domain reference custodian.ion"
         testId="domain-query"
         type="text"
         value={query}
@@ -935,7 +1176,7 @@ function DomainTradingPanel() {
           <span>
             Domain preview: {mode === "search" ? "Lookup" : "Bind"}{" "}
             <span className="font-mono text-white">{query.trim().toLowerCase()}</span> using official DNS FunC schemas + wallet-signed
-            payloads (draft only).
+            payloads for wallet review.
           </span>
         ) : (
           <span>Use dns.ice.io compatible labels to rehearsal wallet proofs without touching validators.</span>
@@ -951,7 +1192,7 @@ function DomainTradingPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="domain-confirmation"
         >
-          Domain handshake draft staged. Resolver transactions remain blocked until dns contracts are reachable from this wallet.
+          Domain handshake ready. Resolver transactions stay blocked until DNS contracts are reachable from this wallet.
         </p>
       ) : null}
     </form>
@@ -991,7 +1232,7 @@ function AIMarketPanel() {
           setSymbol(value);
           setSubmitted(false);
         }}
-        placeholder="ION"
+        hint="Ticker reference ION"
         testId="ai-symbol"
         type="text"
         value={symbol}
@@ -1056,79 +1297,581 @@ function AIMarketPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="ai-confirmation"
         >
-          AI sentinel brief draft ready for human review—no outbound model calls fired from this page yet.
+          AI Sentinel brief ready for human review. No outbound model calls are fired from this page.
         </p>
       ) : null}
     </form>
   );
 }
 
-export function BusinessPage({ page }: { page: Exclude<PageKey, "swap"> }) {
-  const config = pageConfigs[page];
-  const Icon = config.icon;
+/** Static demo spot reference for Trade desk — not live ticker feed. */
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
+const TRADE_DESK_DEMO_PRICE = "6.024";
+const TRADE_DESK_DEMO_MARKET_REF = 6.02;
+
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
+const tradeCandles = [
+  { height: "42%", offset: "0%", tone: "bg-emerald-300" },
+  { height: "58%", offset: "4%", tone: "bg-emerald-300" },
+  { height: "36%", offset: "0%", tone: "bg-rose-300" },
+  { height: "64%", offset: "6%", tone: "bg-emerald-300" },
+  { height: "48%", offset: "2%", tone: "bg-cyan-300" },
+  { height: "72%", offset: "8%", tone: "bg-emerald-300" },
+  { height: "40%", offset: "0%", tone: "bg-rose-300" },
+  { height: "55%", offset: "3%", tone: "bg-emerald-300" },
+] as const;
+
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
+const tradeOrderBook = [
+  { side: "ask" as const, price: "6.038", amount: "1,240", depth: "72%" },
+  { side: "ask" as const, price: "6.031", amount: "860", depth: "58%" },
+  { side: "bid" as const, price: "6.024", amount: "920", depth: "61%" },
+  { side: "bid" as const, price: "6.018", amount: "1,480", depth: "80%" },
+] as const;
+
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
+const marketTrades = [
+  ["6.024", "420 ION", "Buy"],
+  ["6.022", "180 ION", "Sell"],
+  ["6.026", "96 ION", "Buy"],
+] as const;
+
+// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
+const orderHistory = [
+  ["Limit buy", "420 ION", "Open"],
+  ["TWAP sell", "1,200 ION", "Partial"],
+  ["Stop guard", "—", "Armed"],
+] as const;
+
+function TradeDeskPage() {
+  const config = pageConfigs.trade;
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[1fr_22rem]" data-testid={`page-${page}`}>
-      <NeonCard className="min-h-[31rem]" variant="mixed">
-        <div className="flex h-full flex-col justify-between gap-8">
+    <div className="grid gap-5" data-testid="page-trade">
+      <ScaffoldNotice
+        detail="Trade 页 K 线、盘口与成交流为静态演示数据，价格非后端 ticker。Swap 在后端在线时可走 GeckoTerminal 报价。"
+        testId="trade-desk-scaffold-notice"
+      />
+      <NeonCard variant="mixed">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
-                  {config.eyebrow}
-                </p>
-                <h1 className="mt-3 max-w-3xl text-4xl font-black text-white sm:text-6xl" data-testid="page-title">
-                  {config.title}
-                </h1>
-              </div>
-              <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl border border-white/10 bg-white/[0.07] text-cyan-200 shadow-neonCyan">
-                <Icon size={34} />
-              </div>
-            </div>
-            <p className="max-w-3xl text-base leading-7 text-cyan-100/68">
-              {config.description}
-            </p>
+            <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">{config.eyebrow}</p>
+            <h1 className="mt-3 text-4xl font-black text-white sm:text-6xl" data-testid="page-title">
+              {config.title}
+            </h1>
+            <p className="mt-3 max-w-3xl text-base leading-7 text-cyan-100/68">{config.description}</p>
           </div>
-
           <div className="grid gap-4 md:grid-cols-3">
             {config.metrics.map((metric) => (
-              <div
-                key={metric.label}
-                className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}
-              >
-                <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">
-                  {metric.label}
-                </p>
-                <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
+              <MetricCardView key={metric.label} metric={metric} />
+            ))}
+          </div>
+        </div>
+      </NeonCard>
+
+      <div className="grid gap-5 xl:grid-cols-[1fr_24rem]">
+        <div className="grid gap-5">
+          <div className="flow-border rounded-[2rem] p-px" data-testid="trade-chart">
+            <div className="glass-surface depth-stage relative min-h-[28rem] overflow-hidden rounded-[2rem] p-5">
+              <div className="absolute inset-0 aurora-noise opacity-70" />
+              <div className="absolute left-1/2 top-1/2 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_220deg,rgba(36,247,255,0.24),transparent_28%,rgba(255,59,212,0.3),transparent_58%,rgba(255,209,102,0.16),transparent_82%)] blur-3xl" />
+              <div className="relative z-10 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">BNB / ION (demo)</p>
+                  <p className="mt-1 text-3xl font-black text-white">{TRADE_DESK_DEMO_PRICE}</p>
+                </div>
+                <span className="rounded-full border border-amber-300/25 bg-amber-300/[0.08] px-4 py-2 text-xs font-black text-amber-100">
+                  Static demo desk
+                </span>
+              </div>
+              <div className="float-3d relative z-10 mt-8 h-72 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-5 shadow-[0_35px_90px_rgba(36,247,255,0.13)]">
+                <div className="absolute inset-x-6 top-1/4 h-px bg-cyan-100/10" />
+                <div className="absolute inset-x-6 top-1/2 h-px bg-cyan-100/10" />
+                <div className="absolute inset-x-6 top-3/4 h-px bg-cyan-100/10" />
+                <div className="relative flex h-full items-end gap-2">
+                  {tradeCandles.map((candle, index) => (
+                    <div key={index} className="flex flex-1 items-end justify-center">
+                      <span
+                        className={`w-full max-w-[0.55rem] rounded-full ${candle.tone} shadow-[0_0_16px_currentColor]`}
+                        style={{ height: candle.height, marginBottom: candle.offset }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            <OpenOrdersPanel />
+            <MarketTape />
+          </div>
+          <OrderHistoryPanel />
+          <CopyTradePanel />
+        </div>
+
+        <div className="grid gap-5">
+          <NeonCard variant="magenta">
+            <p className="mb-4 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">Limit order</p>
+            <TradeOrderPanel />
+          </NeonCard>
+          <OrderBookPanel />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OrderBookPanel() {
+  return (
+    <NeonCard variant="cyan">
+      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Order book</p>
+      <div className="mt-4 grid gap-2" data-testid="trade-orderbook">
+        {tradeOrderBook.map((row) => (
+          <div key={`${row.side}-${row.price}`} className="relative overflow-hidden rounded-2xl bg-white/[0.04] px-4 py-3">
+            <span
+              className={`absolute inset-y-0 right-0 ${row.side === "ask" ? "bg-rose-300/[0.08]" : "bg-emerald-300/[0.08]"}`}
+              style={{ width: row.depth }}
+            />
+            <span className="relative grid grid-cols-3 gap-2 text-sm">
+              <strong className={row.side === "ask" ? "text-rose-200" : "text-emerald-200"}>{row.price}</strong>
+              <span className="text-cyan-100/70">{row.amount}</span>
+              <span className="text-right text-cyan-100/45">{row.depth}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+    </NeonCard>
+  );
+}
+
+function MarketTape() {
+  return (
+    <NeonCard variant="cyan">
+      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Market trades</p>
+      <div className="mt-4 grid gap-3" data-testid="trade-market-trades">
+        {marketTrades.map(([price, amount, side]) => (
+          <div key={`${price}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">
+            <span className={side === "Buy" ? "font-black text-emerald-200" : "font-black text-rose-200"}>{price}</span>
+            <span className="text-cyan-100/70">{amount}</span>
+            <span className="text-right text-cyan-100/50">{side}</span>
+          </div>
+        ))}
+      </div>
+    </NeonCard>
+  );
+}
+
+const openOrders = [
+  { id: "ord-1042", side: "Buy", price: "5.98", amount: "800 ION", status: "Open" },
+  { id: "ord-1038", side: "Sell", price: "6.12", amount: "420 ION", status: "Partial" },
+] as const;
+
+function OpenOrdersPanel() {
+  return (
+    <NeonCard variant="magenta">
+      <p className="text-sm uppercase tracking-[0.28em] text-violet-200/70">Open orders</p>
+      <div className="mt-4 grid gap-2" data-testid="trade-open-orders">
+        {openOrders.map((row) => (
+          <div key={row.id} className="glass-surface grid grid-cols-4 gap-2 rounded-2xl px-4 py-3 text-sm">
+            <span className="font-black text-white">{row.side}</span>
+            <span className="text-cyan-100/70">{row.price}</span>
+            <span className="text-cyan-100/70">{row.amount}</span>
+            <span className="text-right text-violet-200">{row.status}</span>
+          </div>
+        ))}
+      </div>
+    </NeonCard>
+  );
+}
+
+function CopyTradePanel() {
+  const [leader, setLeader] = useState("");
+  const [ratio, setRatio] = useState("25");
+  const [maxSlippage, setMaxSlippage] = useState("0.8");
+  const [armed, setArmed] = useState(false);
+
+  const valid =
+    leader.trim().length >= 6 &&
+    toPositiveNumber(ratio) !== null &&
+    toPositiveNumber(maxSlippage) !== null;
+
+  return (
+    <GlassPanel eyebrow="Social trading" testId="trade-copy-trade" title="Copy trading desk">
+      <form
+        className="grid gap-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (valid) {
+            setArmed(true);
+          }
+        }}
+      >
+        <FormField
+          label="Leader wallet / .ion"
+          onChange={(value) => {
+            setLeader(value);
+            setArmed(false);
+          }}
+          hint="Example trader.ion"
+          testId="copy-leader"
+          value={leader}
+        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <FormField
+            label="Copy ratio %"
+            onChange={(value) => {
+              setRatio(value);
+              setArmed(false);
+            }}
+            hint="5 — 100"
+            testId="copy-ratio"
+            type="number"
+            value={ratio}
+          />
+          <FormField
+            label="Max slippage %"
+            onChange={(value) => {
+              setMaxSlippage(value);
+              setArmed(false);
+            }}
+            hint="0.1 — 2"
+            testId="copy-slippage"
+            type="number"
+            value={maxSlippage}
+          />
+        </div>
+        <NeonButton className="w-full sm:w-fit" data-testid="copy-arm" disabled={!valid} type="submit">
+          Arm copy strategy
+        </NeonButton>
+        {armed ? (
+          <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="copy-confirmation">
+            Copy-trading review ready. Execution routes through ION limit-order keeper when wallet signs.
+          </p>
+        ) : null}
+      </form>
+    </GlassPanel>
+  );
+}
+
+function OrderHistoryPanel() {
+  return (
+    <NeonCard variant="gold">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm uppercase tracking-[0.28em] text-amber-200/70">Orders and risk</p>
+        <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-3 py-1 text-xs font-black text-emerald-100">
+          TWAP guard active
+        </span>
+      </div>
+      <div className="mt-4 grid gap-3" data-testid="trade-history">
+        {orderHistory.map(([kind, amount, status]) => (
+          <div key={`${kind}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">
+            <span className="font-black text-white">{kind}</span>
+            <span className="text-cyan-100/70">{amount}</span>
+            <span className="text-right text-amber-100/80">{status}</span>
+          </div>
+        ))}
+      </div>
+    </NeonCard>
+  );
+}
+
+const gridTemplates = [
+  { name: "Neutral grid", apr: "12.4%", status: "Armed" },
+  { name: "Arithmetic", apr: "18.1%", status: "Preview" },
+  { name: "Trailing grid", apr: "21.6%", status: "AI guarded" },
+] as const;
+
+const gridLogs = [
+  ["Rebalance #42", "Filled · 420 ION", "2m ago"],
+  ["TP guard", "Held · range intact", "14m ago"],
+  ["Sentinel", "No MEV flag", "1h ago"],
+] as const;
+
+const poolRows = [
+  { pair: "BNB / ION", tvl: "$1.23M", volume: "$412K", apr: "24.8%" },
+  { pair: "ION / USDT", tvl: "$640K", volume: "$188K", apr: "19.2%" },
+] as const;
+
+const bridgeSteps = [
+  { step: "Vault deposit", state: "Confirmed", chain: "BSC" },
+  { step: "Relayer quorum", state: "2 / 3 signed", chain: "Multisig" },
+  { step: "ION release", state: "Pending finality", chain: "ION" },
+] as const;
+
+const burnBars = [42, 68, 55, 88, 72, 95, 61, 80, 74, 90] as const;
+
+const domainListings = [
+  { name: "trader.ion", status: "Owned", price: "—" },
+  { name: "swap.ion", status: "Primary", price: "—" },
+  { name: "vault.ion", status: "Listed", price: "420 ION" },
+] as const;
+
+const aiSignals = [
+  { label: "Trend probability", value: "63% bullish" },
+  { label: "Support", value: "5.82 ION" },
+  { label: "Resistance", value: "6.48 ION" },
+  { label: "Whale flow", value: "+2.1M ION inflow" },
+] as const;
+
+function GridDeskPage() {
+  const config = pageConfigs.grid;
+  return (
+    <div className="grid gap-5" data-testid="page-grid">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics.map((m) => ({ ...m, testId: `grid-metric-${m.label}` }))}
+        title={config.title}
+      />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <div className="grid gap-5">
+          <ChartFrame
+            badge={<StatusPill label="AI Sentinel armed" testId="grid-sentinel" tone="emerald" />}
+            subtitle="5.20 — 7.40 ION"
+            testId="grid-range-chart"
+            title="Range visualization"
+          >
+            <div className="float-3d flex h-48 items-end gap-2 rounded-[1.4rem] border border-fuchsia-200/15 bg-[#03050f]/55 p-4">
+              {burnBars.map((h, i) => (
+                <span
+                  key={i}
+                  className="flex-1 rounded-full bg-gradient-to-t from-fuchsia-500/30 to-cyan-300/80"
+                  style={{ height: `${h}%` }}
+                />
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-cyan-100/55" data-testid="grid-backtest">
+              Backtest preview · local-seed replay · 30d neutral grid +0.8% net of ION fees
+            </p>
+          </ChartFrame>
+          <GlassPanel eyebrow="Strategy log" testId="grid-strategy-log" title="Live bot timeline">
+            <div className="grid gap-2">
+              {gridLogs.map(([title, detail, time]) => (
+                <div key={title} className="grid grid-cols-3 gap-2 rounded-2xl bg-white/[0.04] px-3 py-2 text-sm">
+                  <span className="font-black text-white">{title}</span>
+                  <span className="text-cyan-100/70">{detail}</span>
+                  <span className="text-right text-cyan-100/45">{time}</span>
+                </div>
+              ))}
+            </div>
+          </GlassPanel>
+        </div>
+        <div className="grid gap-5">
+          <NeonCard variant="magenta">
+            <p className="mb-3 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">Strategy templates</p>
+            <div className="grid gap-2" data-testid="grid-templates">
+              {gridTemplates.map((t) => (
+                <GlassPanel key={t.name} className="!p-3">
+                  <p className="font-black text-white">{t.name}</p>
+                  <p className="text-xs text-cyan-100/60">
+                    APR {t.apr} · {t.status}
+                  </p>
+                </GlassPanel>
+              ))}
+            </div>
+          </NeonCard>
+          <RiskNotice
+            body="Grid bounds, investment, and slippage must pass Sentinel before wallet signing. Quotes use backend bigint-floor math."
+            testId="grid-ai-suggestion"
+            title="AI suggestion"
+            tone="fuchsia"
+          />
+          <NeonCard variant="cyan">
+            <GridStrategyPanel />
+          </NeonCard>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BridgeDeskPage() {
+  const config = pageConfigs.bridge;
+  return (
+    <div className="grid gap-5" data-testid="page-bridge">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <ChartFrame
+          badge={<StatusPill label="Route risk: low" testId="bridge-risk" tone="amber" />}
+          subtitle="Est. 8–14 min"
+          testId="bridge-status-tracker"
+          title="Cross-chain status"
+        >
+          <div className="grid gap-3" data-testid="bridge-steps">
+            {bridgeSteps.map((s) => (
+              <div key={s.step} className="flex items-center justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
+                <span className="font-black text-white">{s.step}</span>
+                <span className="text-cyan-100/65">{s.chain}</span>
+                <span className="text-emerald-200">{s.state}</span>
               </div>
             ))}
           </div>
-
-          {page === "trade" ? <TradeOrderPanel /> : null}
-          {page === "grid" ? <GridStrategyPanel /> : null}
-          {page === "pool" ? <PoolLiquidityPanel /> : null}
-          {page === "stake" ? <StakeHubPanel /> : null}
-          {page === "bridge" ? <BridgeTransferPanel /> : null}
-          {page === "burn" ? <BurnAnalyticsPanel /> : null}
-          {page === "domain" ? <DomainTradingPanel /> : null}
-          {page === "ai" ? <AIMarketPanel /> : null}
-        </div>
-      </NeonCard>
-
-      <NeonCard variant="cyan">
-        <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Build Checklist</p>
-        <div className="mt-5 grid gap-3">
-          {config.checklist.map((item, index) => (
-            <div
-              key={item}
-              className="rounded-2xl border border-white/10 bg-white/[0.05] p-4"
-            >
-              <p className="text-xs font-black text-cyan-200">0{index + 1}</p>
-              <p className="mt-1 font-bold text-white">{item}</p>
-            </div>
-          ))}
-        </div>
-      </NeonCard>
+          <p className="mt-4 text-xs text-cyan-100/50">
+            Source tx · BSC vault · Target release · Proof links from bridge-status-service (wired next)
+          </p>
+        </ChartFrame>
+        <NeonCard variant="cyan">
+          <BridgeTransferPanel />
+        </NeonCard>
+      </div>
     </div>
   );
+}
+
+function BurnDeskPage() {
+  const config = pageConfigs.burn;
+  return (
+    <div className="grid gap-5" data-testid="page-burn">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <BurnMetricsRow />
+      <div className="grid gap-5 lg:grid-cols-2">
+        <ChartFrame subtitle="Dual-chain trend" testId="burn-trend-chart" title="Burn analytics">
+          <div className="flex h-44 items-end gap-2">
+            {burnBars.map((h, i) => (
+              <span
+                key={i}
+                className="flex-1 rounded-t-lg bg-gradient-to-t from-rose-500/40 to-amber-300/90"
+                style={{ height: `${h}%` }}
+              />
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-cyan-100/55" data-testid="burn-chain-split">
+            Chain split · BSC 58% · ION 42% · remaining supply 97.59M ION · local-seed
+          </p>
+        </ChartFrame>
+        <div className="grid gap-5">
+          <GlassPanel testId="burn-proof-links" title="Proof links">
+            <p className="font-mono text-xs text-cyan-100/70">BSC: 0x000000000000000000000000000000000000dEaD</p>
+            <p className="mt-2 font-mono text-xs text-cyan-100/70">ION: api.mainnet.ice.io/indexer/v3/</p>
+          </GlassPanel>
+          <NeonCard variant="magenta">
+            <BurnAnalyticsPanel />
+          </NeonCard>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DomainDeskPage() {
+  const config = pageConfigs.domain;
+  return (
+    <div className="grid gap-5" data-testid="page-domain">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <DomainMetricsRow />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <GlassPanel eyebrow="My domains" testId="domain-marketplace" title="Marketplace · dns.ice.io seed">
+          <div className="grid gap-2">
+            {domainListings.map((d) => (
+              <div key={d.name} className="flex justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
+                <span className="font-black text-cyan-100">{d.name}</span>
+                <span className="text-cyan-100/60">{d.status}</span>
+                <span className="text-amber-200">{d.price}</span>
+              </div>
+            ))}
+          </div>
+        </GlassPanel>
+        <div className="grid gap-5">
+          <RiskNotice
+            body="Homoglyph and phishing checks run before send-to-domain signing. Resolver must match wallet-bound .ion record."
+            testId="domain-phishing-warn"
+            title="Phishing guard"
+            tone="amber"
+          />
+          <NeonCard variant="cyan">
+            <DomainTradingPanel />
+          </NeonCard>
+          <GlassPanel testId="domain-ion-id" title="ION ID / KYC">
+            <p className="text-sm text-cyan-100/75">KYC Pass L2 · expires 2026-11-30 · profile hub linked</p>
+          </GlassPanel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AIDeskPage() {
+  const config = pageConfigs.ai;
+  return (
+    <div className="grid gap-5" data-testid="page-ai">
+      <PageHero
+        description={config.description}
+        eyebrow={config.eyebrow}
+        icon={config.icon}
+        metrics={config.metrics}
+        title={config.title}
+      />
+      <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+        <ChartFrame
+          badge={<StatusPill label="Risk: medium" testId="ai-risk-score" tone="amber" />}
+          subtitle="ION · 4h horizon"
+          testId="ai-market-summary"
+          title="Market summary"
+        >
+          <div className="grid gap-3 sm:grid-cols-2" data-testid="ai-signals">
+            {aiSignals.map((s) => (
+              <MetricTile key={s.label} label={s.label} tone="cyan" value={s.value} />
+            ))}
+          </div>
+          <p className="mt-4 text-[11px] text-cyan-100/45" data-testid="ai-disclaimer">
+            Not investment advice · offline heuristics until ai-market-service streams live inference.
+          </p>
+        </ChartFrame>
+        <div className="grid gap-5">
+          <GlassPanel testId="ai-grid-suggestion" title="Grid suggestion">
+            <p className="text-sm text-cyan-100/75">Suggested neutral grid 5.6–6.5 ION · 18 levels · Sentinel confidence 71%</p>
+          </GlassPanel>
+          <GlassPanel testId="ai-prediction-history" title="Prediction history">
+            <p className="text-sm text-cyan-100/75">Last 7 calls · 5 aligned · 2 drift · accuracy 71% (local-seed)</p>
+          </GlassPanel>
+          <NeonCard variant="mixed" className="!shadow-neonCyan">
+            <AIMarketPanel />
+          </NeonCard>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function BusinessPage({ page }: { page: BusinessPageKey }) {
+  if (page === "trade") {
+    return <TradeDeskPage />;
+  }
+  if (page === "grid") {
+    return <GridDeskPage />;
+  }
+  if (page === "bridge") {
+    return <BridgeDeskPage />;
+  }
+  if (page === "burn") {
+    return <BurnDeskPage />;
+  }
+  if (page === "domain") {
+    return <DomainDeskPage />;
+  }
+  if (page === "ai") {
+    return <AIDeskPage />;
+  }
+
+  return null;
 }

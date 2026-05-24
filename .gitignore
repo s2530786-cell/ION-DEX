@@ -11,6 +11,11 @@ frontend/test-results/
 # Backend
 backend/node_modules/
 backend/dist/
+backend/.env
+
+# Frontend
+frontend/.env
+frontend/.env.local
 
 # Root tooling dependencies
 node_modules/
@@ -18,6 +23,23 @@ node_modules/
 # Local Cursor maintenance backups (large / machine-specific)
 .maintenance/
 
+# Live deploy generated fift (contains resolved addresses from secrets)
+contracts/ion/deploy/deploy-live.generated.fif
+contracts/ion/deploy/deploy-live-params.generated.fif
+contracts/ion/deploy/out/
+
 # OS / editor
 Thumbs.db
 .DS_Store
+NUL  
+
+# FunC probe outputs
+contracts/ion/build/_probe_*
+
+# Build artifacts
+contracts/out/
+contracts/cache/
+contracts/ion/build-func/
+contracts/ion/imports/
+contracts/gas-snapshot.txt
+contracts/script/Deploy.s.sol/

@@ -13,10 +13,18 @@ Before doing any ION DEX work, read these files in order if they exist:
 2. `AGENTS.md`
 3. `.cursor/skills/chinese-language/SKILL.md`
 4. `docs/00-engineering-standards.md`
-5. `docs/01-product-blueprint.md`
-6. `docs/02-technical-architecture.md`
-7. `docs/03-development-roadmap.md`
-8. `docs/99-current-progress.md`
+5. `.memory-bank/overall-design-framework.md`
+6. `.memory-bank/live-data-reference.md`
+7. `.memory-bank/implementation-playbook.md`
+8. `.memory-bank/architecture-audit.md`
+9. `.memory-bank/security-audit-and-stress-framework.md`
+10. `.memory-bank/ion-dex-nuke/official-source-index.md`
+11. `docs/01-product-blueprint.md`
+12. `docs/02-technical-architecture.md`
+13. `docs/03-development-roadmap.md`
+14. `docs/99-current-progress.md`
+
+If these files do not contain a user-confirmed requirement, search Git history before answering or implementing. Do not rely only on current visible files when the user says a decision was made earlier.
 
 If a file is missing, do not assume its contents. Recreate it only when the user asks or when it is necessary to preserve current project memory.
 

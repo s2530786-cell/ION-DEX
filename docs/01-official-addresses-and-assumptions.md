@@ -18,8 +18,8 @@ Unconfirmed values must not be hardcoded into contracts or frontend production b
 | --- | --- | --- |
 | ION mainnet RPC / HTTP API endpoint | Pending | Required for frontend reads, indexer, and backend services. |
 | ION testnet RPC / HTTP API endpoint | Pending | Required for testnet release. |
-| ION wallet connection SDK/API | Pending | Required for ION Browser Wallet and Online+ integration. |
-| Online+ wallet dApp integration API | Pending | Must verify provider object, signing methods, and mobile deep links. |
+| ION wallet connection SDK/API | Verified (browser injection) | `ice-blockchain/ion-gateway` TonConnect bridge; Online+ `window.ionmask.ionconnect`; ION Browser `window.tonwallet.tonconnect`. |
+| Online+ wallet dApp integration API | Verified (extension) | `ice-blockchain/ion-chrome-wallet` `provider.ts`; mobile deep links still TBD. |
 | ION mainnet burn address | Pending | Must come from official repo/docs/address book, not guessed. |
 | BSC ION token contract address | Pending | Required for BSC burn stats, bridge, and token list. |
 | BSC ION burn address | Confirmed by requirement | `0x000000000000000000000000000000000000dEaD`. |

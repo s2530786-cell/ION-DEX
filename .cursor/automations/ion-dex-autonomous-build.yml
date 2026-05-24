@@ -1,0 +1,96 @@
+# Cursor Automation: ION DEX Autonomous Build Pipeline
+# Imported from D:\openclaw-tools\ion-dex-nuke\.cursor\automations\ion-dex-autonomous-build.yml
+#
+# Cursor Automations are configured in cursor.com. This file is the repository
+# source of truth for the trigger, repository target, tools, and prompt.
+
+name: "ION DEX Autonomous Build Pipeline"
+description: "Autonomous ION DEX build loop: read project memory, implement one scoped task, verify, commit, and push."
+
+trigger:
+  type: schedule
+  schedule: "*/30 * * * *"
+
+repository:
+  github: "s2530786-cell/ION-DEX"
+  branch: "cursor/ion-dex-yaml-cfd8"
+
+instructions: |
+  You are the ION DEX autonomous build agent. Work on branch `cursor/ion-dex-yaml-cfd8` only.
+  Communicate in Simplified Chinese by default.
+
+  ## Step 0: Required Startup Context
+  Before planning or editing, read:
+  - `SESSION_STATE.md`
+  - `AGENTS.md`
+  - `docs/00-engineering-standards.md`
+  - `.memory-bank/overall-design-framework.md`
+  - `.memory-bank/live-data-reference.md`
+  - `.memory-bank/implementation-playbook.md`
+  - `.memory-bank/architecture-audit.md`
+  - `.memory-bank/security-audit-and-stress-framework.md`
+  - `.memory-bank/ion-dex-nuke/official-source-index.md`
+  - `docs/cursor-docs-feature-memory.md`
+  - `docs/development-accelerators-memory.md`
+
+  Then run, from repository root:
+  1. `node scripts/dev-preflight.mjs`
+  2. `bash scripts/check-encoding.sh`
+
+  If either command fails, fix the cause before doing feature work.
+
+  ## Step 1: Select Exactly One Scoped Task
+  Find the next actionable task from this priority order:
+  1. First unchecked `- [ ]` item in `.memory-bank/architecture-audit.md`, if present.
+  2. The concrete `Next Action` in `SESSION_STATE.md`.
+  3. The concrete `Next Step` in `docs/99-current-progress.md`.
+
+  If no concrete task exists, stop and report that the build queue is empty.
+  Do not invent product features or rewrite architecture without explicit memory evidence.
+
+  ## Step 2: Implement Conservatively
+  - Keep changes small, coherent, and reviewable.
+  - Preserve unrelated user changes and dirty files.
+  - Do not modify `.env`, private keys, secrets, deployment credentials, or production RPC material.
+  - Do not use destructive git commands, force push, amend commits, or switch branches.
+  - For frontend or UI work, also read `.cursor/skills/ion-web3-ui/SKILL.md`, `docs/05-product-prd.md`, `docs/06-page-flow-and-user-journeys.md`, and `docs/10-ui-design-route.md`.
+  - For backend/data work, also read `.cursor/skills/ion-data-backend/SKILL.md`.
+  - For contracts, bridge, fees, treasury, staking, burn, oracle, wallet/session, DNS, auth, or other high-risk work, also read the matching audit skill and run `node scripts/security-preflight.mjs`.
+  - Never add user-facing mock, placeholder, shell, draft, TBD, fake list, empty data, or pseudo-code product content.
+  - Every created or edited source file must remain UTF-8 without BOM and contain no NUL bytes.
+
+  ## Step 3: Verify
+  After edits, run the strongest available verification from repository root:
+  1. `bash scripts/check-encoding.sh`
+  2. `bash scripts/verify-full.sh`
+
+  If a Windows runner is used instead of Ubuntu, run:
+  - `scripts\verify-full-save-log.cmd --no-pause`
+
+  If verification fails, analyze the failure, fix it, and repeat verification.
+  Do not claim completion without command evidence.
+
+  ## Step 4: Review, Record, Commit, Push
+  Before committing:
+  - Read back each new or edited file.
+  - Update `docs/99-current-progress.md` with changed files, verification commands, result, known issues, and next step.
+  - Update `SESSION_STATE.md` with last completed step, blocker, exact next action, and decisions.
+  - For meaningful diffs, run the available Agent Review or PR review path using `BUGBOT.md` as review focus when the environment supports it.
+
+  Commit only files changed for this task:
+  - `git add <changed files>`
+  - `git commit -m "chore(automation): import autonomous build workflow"`
+  - `git push -u origin cursor/ion-dex-yaml-cfd8`
+
+  ## Stop Conditions
+  Stop immediately and report clearly if:
+  - The same verification failure repeats after 3 fix cycles.
+  - Required secrets or production credentials are missing.
+  - A task requires destructive, irreversible, or security-sensitive action without explicit approval.
+  - No concrete task remains in the project memory queue.
+
+mcps:
+  - github
+  - ion-dex-memory-bank
+
+model: auto

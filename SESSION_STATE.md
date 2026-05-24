@@ -1,5 +1,51 @@
 # Current Session State
 
+## 🎯 TASK QUEUE 执行进度 — 2026-05-23
+
+| # | Task | 状态 | 证据 |
+|---|------|------|------|
+| 1 | FunC 编译 + Forge build | ✅ | `compile-func.mjs` 13/13；`forge build` exit 0 |
+| 2 | 100 轮压力 + Gas | ✅ | stress tests 4/4；`verify-func-ion` GREEN；`gas-snapshot.txt` |
+| 3 | 合约地址 + 链上对接 | ✅ | 集中 `config/contracts.ts`；USDT 官方地址；前端 build 绿 |
+| 4 | ION-only 手续费 | ✅ | FeeReceiver + Swap ION 费展示 + `fees.currency=ION` |
+| 5 | UI 打磨 + 响应式 | ⚠️ 部分 | AsyncState 已有；Swap 响应式边距；E2E 7 项仍失败 |
+| 6 | 测试网部署 + E2E | ⚠️ 部分 | `Deploy.s.sol` 就绪；需测试网密钥才能广播 |
+
+**verify-full**：编码 ✅ · 后端 ✅ · 前端 build ✅ · Playwright 9/16
+
+---
+
+### 🚀 EXECUTE ALL 6 TASKS IN ORDER. DO NOT SKIP, DO NOT STOP.
+
+**主文件：`CURSOR-TASK-QUEUE.md`** (~28KB) — 包含全部 6 条超长指令的合并版，一次读完。
+
+**备用（每份独立）：`cursor-queue-result/`** — 6 个编号文件，适合按步执行。
+
+| # | Priority | Task | 验收门槛 |
+|---|----------|------|----------|
+| 1 | 🟥 P0 | FunC 全量编译修复 + Forge build 通过 | 14/14 .fc 编译 + forge build exit 0 |
+| 2 | 🟥 P0 | 100 轮压力测试 + Gas 基线 | 100/100 PASS, 0 FAILED |
+| 3 | 🟧 P1 | 真实合约地址替换 + 前端链上对接 | 全部占位地址替换, tsc exit 0 |
+| 4 | 🟧 P1 | 统一 ION 手续费收费逻辑 | 所有费用只收 ION |
+| 5 | 🟨 P2 | UI 打磨 + 响应式适配 | 375px~1440px all pages |
+| 6 | 🟩 P3 | 测试网部署 + E2E 验证 | ION 测试网 + BSC 测试网部署通过 |
+
+### 🛑 硬规则
+- 先读 `CURSOR-TASK-QUEUE.md` 全文再动手
+- 每个 TASK 完成后必须 git commit + push
+- 验收集不过时 **不进入下一步**
+- 同一问题修三次不过 → 搜全网换思路
+- 代码 UTF-8 无 BOM，写后立刻读回验证
+- **24 小时不停机**，修通为止
+| 2 | 🟥 P0 | 100-round stress test + gas baseline | `cursor-queue-result/002-stress-test-100-rounds.md` |
+| 3 | 🟧 P1 | Real contract addresses + frontend on-chain | `cursor-queue-result/003-real-contracts-and-data.md` |
+| 4 | 🟧 P1 | ION-only fee enforcement (Master 2026-05-24) | `cursor-queue-result/004-ion-only-fees.md` |
+| 5 | 🟨 P2 | UI polish + responsive design | `cursor-queue-result/005-ui-polish-responsive.md` |
+| 6 | 🟩 P3 | Testnet deploy + E2E flow | `cursor-queue-result/006-testnet-deploy-e2e.md` |
+
+**After completing each task:** git commit with clear message, then proceed to next file.
+**Failed verification:** fix before moving forward. Zero tolerance.
+
 ## Project
 
 ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
@@ -8,6 +54,8 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 - All source files must be UTF-8 without BOM.
 - Communicate with the user in Simplified Chinese by default.
+- Before any development work, read `docs/00-engineering-standards.md` as the development iron law.
+- Before UI/frontend work, read `docs/10-ui-design-route.md` and run `node scripts/dev-preflight.mjs` when shell access is available.
 - No UTF-16, GBK, ANSI, or NUL bytes in source files.
 - Every file write must be followed by read-back and encoding verification.
 - No implementation step is complete without test evidence.
@@ -49,6 +97,11 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 ## Current State
 
+- **Contracts batch（2026-05-21）**：补全 10 个 FunC（`contracts/ion/`：`pool`, `router`, `deployer`, `sandwich`, `FeeDistributor`, `BridgeInbox`, `dns-resolver`, `dns-registrar`, `dns-auction`, `staking-pool`）+ 扩展 `common.fc`/`gas.fc`；4 个 Solidity（`contracts/bsc/`：`BSCVault`, `MockERC20`, `FeeReceiver`, `BridgeRelay`）+ `contracts/test/BSCContracts.t.sol`；`scripts/verify-contracts.mjs` 已更新；`node scripts/verify-contracts.mjs` exit `0`（本机无 `forge`，Solidity 编译测试 SKIP）。`verify-full` 仍因既有 backend TypeScript 错误失败（非本批合约引入）。路径对照见 `contracts/README.md`。
+- Critical correctness automation on 2026-05-20 found and fixed a CI verification gap:
+  - PR #2 added `scripts/dev-preflight.mjs` to local `verify-full.*`, but GitHub Actions did not run it.
+  - `.github/workflows/ion-dex-verify.yml` now runs `node scripts/dev-preflight.mjs` after Node setup and before encoding/build/audit steps.
+  - Validation: after installing backend/frontend dependencies, `bash scripts/verify-full.sh` passed with preflight OK, encoding 92 files OK, backend 6 tests passed, backend audit 0 vulnerabilities, backend stress passed, frontend build + Playwright 14 passed, and frontend audit 0 vulnerabilities.
 - Frontend scaffold exists under `frontend/`.
 - Current frontend has a Vite/React/Tailwind skeleton and initial dashboard components.
 - There are generated `.js` ghost files under `frontend/src/` from earlier TypeScript emits; these must be cleaned once shell/filesystem execution is reliable.
@@ -166,11 +219,11 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 
 ## Current Blocker
 
-Reliable shell execution is confirmed through Desktop Commander MCP. Memory Bank MCP is loaded. ION official source path is confirmed.
+Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official source path is confirmed. No blocker for the automation YAML import; only the pre-existing `package-lock.json` name change remains outside this task.
 
 ## Next Action
 
-1. Continue development with real shell execution via Desktop Commander.
+1. If needed, open/import the automation manually in Cursor Automations using `.cursor/automations/ion-dex-autonomous-build.yml` as the source of truth.
 2. Use `cd frontend && npm run dev:local` for frontend runtime verification on `http://localhost:3001/`.
 3. Use `D:/openclaw-tools/ion` as the official ION reference source for FunC style, DNS, wallet, multisig, tonlib, lite-client, and API schemes.
 4. Use the relevant project skill before each domain task: official source, UI, contract audit, or data backend.

@@ -102,7 +102,7 @@ Profile popover:
 ## User Journey: Staking
 
 1. User opens Stake.
-2. User sees official staking, DEX staking, LP staking, and ecosystem placeholder totals.
+2. User sees official staking, DEX staking, LP staking, and ecosystem totals from typed staking snapshots.
 3. User chooses staking pool.
 4. App shows APR formula, lock period, rewards, and risks.
 5. User signs stake transaction.

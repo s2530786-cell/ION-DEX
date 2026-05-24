@@ -1,0 +1,14 @@
+#!/usr/bin/env fift -s
+// Reference skeleton for operator-led live deploy (copy addresses from deploy-live.generated.fif).
+// Real broadcast uses Asm/TonUtil includes + wallet — not enabled in repo automation.
+
+"Fift.fif" include
+
+."=== ION DEX live deploy skeleton (reference) ===" cr
+."1) Deploy FeeDistributor -> set recipients (lp/treasury/insurance bps)" cr
+."2) Deploy Router -> set protocol_fee_bps + fee_distributor" cr
+."3) Deploy Pool pairs -> wire router, fee_distributor, sandwich guard" cr
+."4) Register pool in router (op::deploy_pool)" cr
+."5) Deploy Vault, staking, bridge, DNS as needed" cr
+."" cr
+."Automation stops here until audit sign-off and operator wallet session." cr

@@ -1,0 +1,225 @@
+;; ── ION DEX Common Library ──────────────────────────────────────────
+;; ⚠️ ION-Chain-Specific: This library replaces TON stdlib functions
+;; (build_ctx, catch_ctx, etc.) that may not be available on ION chain.
+;; Must be verified with the ION chain FunC compiler before deployment.
+;;
+;; Uses global-variable context model instead of polymorphic ctx.at()
+;; because FunC functions cannot return both int and slice from the
+;; same function signature.
+
+#pragma version >=0.4.4;
+
+#include "gas.fc";
+
+;; ── Operation Codes ──────────────────────────────────────────────
+
+const op::internal_transfer = 432984364;          ;; 0x19C3B6AC
+const op::burn_notification_ext = 3256584228;     ;; 0xC21E65A4
+const op::deposit_ref_fee = 2188830393;           ;; 0x8276BDB9
+const op::withdraw_fee = 3488591206;              ;; 0xCFDE5E66
+const op::vault_pay_to = 2526861840;              ;; 0x969C4810
+const op::direct_add_liquidity = 2318083562;      ;; 0x8A2BAAEA
+const op::cb_add_liquidity = 3265247766;          ;; 0xC2A0C616
+const op::cb_refund_me = 3627831642;              ;; 0xD83A965A
+const op::refund_ok = 2325624112;                 ;; 0x8A9A4D30
+const op::deposit_liq = 596421247;                ;; 0x238C6A7F
+
+;; Pool / router AMM
+const op::swap = 630424929;                      ;; 0x25938561
+const op::remove_liquidity = 1499406272;        ;; 0x595F07C0
+const op::collect_fees = 1380698740;            ;; 0x524F7B74
+const op::provide_wallet_address = 1886847298;  ;; 0x706D7B62
+const op::reset_gas = 368278551;                ;; 0x15F90157
+const op::set_fees = 384383410;                 ;; 0x16E3C3F2
+const op::route_swap = 1935858802;              ;; 0x7362D09A
+const op::route_add_liquidity = 4244235662;     ;; 0xFC4E2D0E
+const op::pay_to = 1952064560;                  ;; 0x74548F30
+const op::reset_pool_gas = 850817475;           ;; 0x32B6DDD3
+const op::update_pool_status = 2071195602;      ;; 0x7B6F1922
+const op::set_params = 892448914;               ;; 0x353B2B52
+const op::update_pool_code = 2118037897;        ;; 0x7E3B1E09
+
+;; Deployer
+const op::deploy_pool = 1263646544;             ;; 0x4B4B4B50
+const op::set_pool_code = 2987654321;           ;; 0xB1C2D3F1
+
+;; Sandwich guard
+const op::commit_swap = 1111111111;             ;; 0x423A35C7
+const op::reveal_swap = 2222222222;             ;; 0x84848486
+const op::report_suspicious = 3333333333;       ;; 0xC6C6C6C5
+
+;; Fee distributor
+const op::distribute_fees = 4444444444;         ;; 0x1092A6AC
+const op::set_recipients = 5555555555;          ;; 0x14FAE6EB
+
+;; Bridge inbox
+const op::bridge_message = 6666666666;          ;; 0x18D0E6EA
+const op::set_relayer = 7777777777;             ;; 0x1D1CFF31
+const op::revoke_relayer = 8888888888;          ;; 0x34F74978
+
+;; DNS
+const op::dns_register = 1010101010;            ;; 0x3C2D0E2A
+const op::dns_resolve = 1212121212;             ;; 0x4848484C
+const op::dns_transfer = 1313131313;            ;; 0x4E4E4E51
+const op::dns_bid = 1414141414;                 ;; 0x54444446
+const op::dns_settle_auction = 1515151515;      ;; 0x5A3A3A3B
+
+;; Staking
+const op::stake_deposit = 1616161616;           ;; 0x60505050
+const op::stake_withdraw = 1717171717;          ;; 0x66606062
+const op::stake_claim = 1818181818;            ;; 0x6C6C6C6A
+const op::stake_fund_rewards = 1919191919;      ;; 0x726C6C7F
+
+;; ── Error Codes ──────────────────────────────────────────────────
+
+const error::invalid_amount = 101;
+const error::insufficient_gas = 102;
+const error::empty_not_allowed = 103;
+const error::wrong_workchain = 104;
+const error::wrong_op = 105;
+const error::zero_output = 106;
+const error::invalid_caller = 107;
+const error::not_owner = 108;
+const error::paused = 109;
+const error::slippage = 110;
+const error::duplicate_nonce = 111;
+const error::unauthorized_relayer = 112;
+const error::insufficient_liquidity = 113;
+const error::commit_not_found = 114;
+const error::commit_expired = 115;
+const error::commit_too_early = 116;
+const error::domain_unavailable = 117;
+const error::auction_not_active = 118;
+const error::insufficient_stake = 119;
+const error::invalid_path = 120;
+const error::fee_bps_invalid = 121;
+
+;; ── Chain Parameters ─────────────────────────────────────────────
+
+const params::workchain = 0;
+const params::fee_denominator = 10000;
+const params::swap_fee_numerator = 9970;  ;; 0.30% LP fee (9970/10000 of input)
+const params::min_commit_blocks = 2;
+const params::max_commit_blocks = 64;
+const params::bridge_quorum = 2;
+
+;; ── Message Mode Flags ───────────────────────────────────────────
+
+const CARRY_ALL_BALANCE = 128;
+const QCARRY_ALL_BALANCE = 128;   ;; alias for quiet mode
+const DESTROY_IF_ZERO = 32;
+
+;; ── Context Globals ──────────────────────────────────────────────
+;; Stored as typed globals because FunC ctx.at() cannot return both
+;; int and slice from the same function.
+
+global slice ctx::body_slice;       ;; BODY  - message body as slice
+global slice ctx::sender_slice;     ;; SENDER - sender address
+global int ctx::opcode_val;         ;; OPCODE - 32-bit operation code
+global int ctx::is_bounced;         ;; IS_BOUNCED - bounce flag
+global int ctx::balance_val;        ;; BALANCE - contract balance
+global int ctx::fwd_fee_val;        ;; FWD_FEE - forward fee
+global int ctx::msg_value_val;      ;; message value
+
+;; Context field index constants (for compatibility with ctx.at convention)
+const BODY = 1;
+const SENDER = 2;
+const OPCODE = 3;
+const IS_BOUNCED = 4;
+const BALANCE = 5;
+const FWD_FEE = 6;
+
+() ctx::init(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure inline {
+    ;; Store raw slices/values into typed globals
+    ctx::msg_value_val = msg_value;
+    ctx::balance_val = my_balance;
+    ctx::body_slice = in_msg_body;
+    ctx::opcode_val = in_msg_body.preload_uint(32);
+
+    ;; Extract sender address
+    slice cs = in_msg_full.begin_parse();
+    int flags = cs~load_uint(4);
+    ctx::is_bounced = flags & 1;
+    ctx::sender_slice = cs~load_msg_addr();
+
+    ;; Parse remaining header fields for fwd_fee
+    cs~load_msg_addr();             ;; dst
+    cs~load_coins();                ;; value
+    cs~load_uint(1);                ;; extracurrency flag
+    cs~load_coins();                ;; ihr_fee
+    ctx::fwd_fee_val = cs~load_coins();  ;; fwd_fee
+}
+
+;; ── Typed context accessors (use these instead of ctx.at) ────────
+
+slice ctx::body() inline { return ctx::body_slice; }
+slice ctx::sender() inline { return ctx::sender_slice; }
+int   ctx::opcode() inline { return ctx::opcode_val; }
+int   ctx::isBounced() inline { return ctx::is_bounced; }
+int   ctx::balance() inline { return ctx::balance_val; }
+int   ctx::fwdFee() inline { return ctx::fwd_fee_val; }
+int   ctx::value() inline { return ctx::msg_value_val; }
+
+;; ── Address Utilities ────────────────────────────────────────────
+
+int address::check_workchain(slice addr, int expected_workchain) inline {
+    int wc = addr.preload_int(8);
+    return wc == expected_workchain ? -1 : 0;
+}
+
+;; ── Reserve Utilities ────────────────────────────────────────────
+
+() reserves::max_balance(int amount) impure inline {
+    raw_reserve(amount, 2);  ;; reserve_exactly mode
+}
+
+;; ── ION Chain Standard Library Compatibility Shim ──────────────────
+;; These functions are provided by full stdlib.fc / @ston-fi/funcbox
+;; on TON mainnet, but may not be present in ION chain's stdlib.
+
+int equal_slices(slice a, slice b) inline {
+    return equal_slice_bits(a, b);
+}
+
+;; Simple integer sqrt via Newton's method
+int sqrt(int x) inline {
+    if x <= 0 { return 0; }
+    int z = x;
+    int i = 0;
+    while i < 32 {
+        i += 1;
+        z = (z + x / z) >> 1;
+    }
+    return z;
+}
+
+;; ── Simple Message Sending ───────────────────────────────────────
+
+int math::mul_div(int a, int b, int denom) inline {
+    throw_unless(error::invalid_amount, denom > 0);
+    return muldiv(a, b, denom);
+}
+
+int amm::get_amount_out(int amount_in, int reserve_in, int reserve_out, int fee_num, int fee_denom) inline {
+    throw_unless(error::invalid_amount, amount_in > 0);
+    throw_unless(error::insufficient_liquidity, (reserve_in > 0) & (reserve_out > 0));
+    int amount_in_with_fee = math::mul_div(amount_in, fee_num, fee_denom);
+    int numerator = amount_in_with_fee * reserve_out;
+    int denominator = reserve_in + amount_in_with_fee;
+    throw_unless(error::zero_output, denominator > 0);
+    return numerator / denominator;
+}
+
+() msgs::send_simple(int mode, slice to, cell body, int send_mode) impure inline {
+    send_raw_message(
+        begin_cell()
+            .store_uint(send_mode, 8)
+            .store_slice(to)
+            .store_coins(mode)
+            .store_uint(1, 1)   ;; bounceable
+            .store_uint(0, 1)   ;; body as ref
+            .store_ref(body)
+        .end_cell(),
+        2  ;; send_message_ignore_errors
+    );
+}

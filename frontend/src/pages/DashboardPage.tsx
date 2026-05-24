@@ -1,5 +1,4 @@
 import {
-  ArrowDownUp,
   ArrowLeftRight,
   Bot,
   Flame,
@@ -8,194 +7,302 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { useCallback, useMemo } from "react";
+import { MarketChart, buildSyntheticSeries } from "@/components/charts/MarketChart";
+import { DataSourceBadge } from "@/components/data/DataSourceBadge";
+import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import type { PageKey } from "@/components/layout/AppShell";
+import { useApiResource } from "@/hooks/useApiResource";
+import {
+  DEMO_TICKER_FALLBACK,
+  ION_MAINNET_BURN_SOURCE_PENDING,
+  OFFICIAL_BSC_BURN_ADDRESS,
+} from "@/lib/integrationConfig";
+import {
+  fetchBurnSummary,
+  fetchMarketTickers,
+  fetchStakingSummary,
+  formatIonAmount,
+  type BurnSummary,
+  type MarketTicker,
+  type StakingSummary,
+} from "@/lib/ionApi";
 
 type FeatureCard = {
   title: string;
   label: string;
+  target: PageKey;
   icon: typeof Layers3;
   color: "cyan" | "magenta" | "gold";
 };
 
+type DashboardPageProps = {
+  onNavigate: (page: PageKey) => void;
+};
+
 const featureCards: FeatureCard[] = [
-  { title: "Pool", label: "Liquidity", icon: Layers3, color: "cyan" },
-  { title: "Grid", label: "Spot strategies", icon: LayoutGrid, color: "magenta" },
-  { title: "Bridge", label: "ION / BSC", icon: ArrowLeftRight, color: "cyan" },
-  { title: "Burn", label: "Dual-chain tracker", icon: Flame, color: "magenta" },
-  { title: "ION ID", label: "KYC Pass", icon: ShieldCheck, color: "gold" },
-  { title: "AI Market", label: "Signals & risk", icon: Bot, color: "cyan" },
+  { title: "Pool", label: "Liquidity", target: "pool", icon: Layers3, color: "cyan" },
+  { title: "Grid", label: "Spot strategies", target: "grid", icon: LayoutGrid, color: "magenta" },
+  { title: "Bridge", label: "ION / BSC", target: "bridge", icon: ArrowLeftRight, color: "cyan" },
+  { title: "Burn", label: "Dual-chain tracker", target: "burn", icon: Flame, color: "magenta" },
+  { title: "ION ID", label: "KYC Pass", target: "domain", icon: ShieldCheck, color: "gold" },
+  { title: "AI Market", label: "Signals & risk", target: "ai", icon: Bot, color: "cyan" },
 ];
 
-export function DashboardPage() {
+const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK.filter((row) => row.symbol === "ION");
+
+const fallbackBurn: BurnSummary = {
+  totalBurnedIon: "12845000",
+  bscBurnedIon: "8245000",
+  ionMainnetBurnedIon: "4600000",
+  remainingSupplyIon: "987155000",
+  bscBurnAddress: OFFICIAL_BSC_BURN_ADDRESS,
+  ionBurnSource: ION_MAINNET_BURN_SOURCE_PENDING,
+};
+
+const fallbackStaking: StakingSummary = {
+  totalStakedIon: "452000000",
+  officialStakedIon: "398000000",
+  dexStakedIon: "54000000",
+  lpStakedUsd: "12800000",
+  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
+};
+
+export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
+  const fetchTickers = useCallback(
+    (signal: AbortSignal) => fetchMarketTickers(signal),
+    [],
+  );
+  const fetchBurn = useCallback((signal: AbortSignal) => fetchBurnSummary(signal), []);
+  const fetchStaking = useCallback(
+    (signal: AbortSignal) => fetchStakingSummary(signal),
+    [],
+  );
+
+  const tickers = useApiResource(fetchTickers, fallbackTickers, {
+    isEmpty: (data) => data.length === 0,
+  });
+  const burn = useApiResource(fetchBurn, fallbackBurn);
+  const staking = useApiResource(fetchStaking, fallbackStaking);
+
+  const ionTicker = useMemo(
+    () => tickers.data.find((ticker) => ticker.symbol === "ION") ?? tickers.data[0],
+    [tickers.data],
+  );
+
+  const chartPoints = useMemo(() => {
+    if (!ionTicker) {
+      return [];
+    }
+    return buildSyntheticSeries(ionTicker.priceUsd, ionTicker.change24hPct);
+  }, [ionTicker]);
+
+  const tvlLabel = useMemo(() => {
+    const lpUsd = Number(staking.data.lpStakedUsd);
+    if (!Number.isFinite(lpUsd)) {
+      return `$${staking.data.lpStakedUsd}`;
+    }
+    return lpUsd >= 1_000_000
+      ? `$${(lpUsd / 1_000_000).toFixed(2)}M`
+      : `$${lpUsd.toLocaleString()}`;
+  }, [staking.data.lpStakedUsd]);
+
+  const burnProgress = useMemo(() => {
+    const burned = Number(burn.data.totalBurnedIon);
+    const remaining = Number(burn.data.remainingSupplyIon);
+    if (!Number.isFinite(burned) || !Number.isFinite(remaining) || burned + remaining <= 0) {
+      return 62;
+    }
+    return Math.min(100, Math.round((burned / (burned + remaining)) * 100));
+  }, [burn.data.remainingSupplyIon, burn.data.totalBurnedIon]);
+
   return (
-    <div className="grid gap-5 xl:grid-cols-[21rem_1fr_18rem]">
-      <SwapPanel />
-      <MarketStage />
-      <RightStats />
-      <div className="xl:col-span-3">
-        <FeatureGrid />
+    <div className="grid gap-5 xl:grid-cols-[1fr_18rem]" data-testid="page-dashboard">
+      <MarketStage
+        chartPoints={chartPoints}
+        ionTicker={ionTicker}
+        onNavigate={onNavigate}
+        tickers={tickers}
+      />
+      <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
+      <div className="xl:col-span-2">
+        <FeatureGrid onNavigate={onNavigate} />
       </div>
     </div>
   );
 }
 
-function SwapPanel() {
-  return (
-    <NeonCard className="min-h-[28rem]" variant="magenta">
-      <div className="mb-5 flex items-center justify-between">
-        <div>
-          <p className="text-2xl font-black">Swap</p>
-          <p className="text-sm text-cyan-100/55">BNB / ION market buy</p>
-        </div>
-        <ArrowDownUp className="text-cyan-200" />
-      </div>
-
-      <div className="mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-        <TokenBadge symbol="BNB" accent="bg-yellow-300 text-black" />
-        <ArrowDownUp className="text-cyan-200/60" size={18} />
-        <TokenBadge
-          symbol="ION"
-          accent="bg-gradient-to-br from-yellow-200 to-amber-500 text-slate-950"
-        />
-      </div>
-
-      <div className="space-y-3">
-        <InputShell label="Pay" value="0.00" />
-        <InputShell label="Receive" value="0.00" />
-        <InputShell label="Limit price" value="Market" />
-        <InputShell label="Slippage" value="0.5%" />
-      </div>
-
-      <div className="mt-5 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-3 text-xs text-cyan-100/75">
-        Fees are planned in ION. Final quote will show protocol fee, execution fee, price
-        impact, and minimum received.
-      </div>
-
-      <NeonButton className="mt-5 w-full" data-testid="swap-submit" type="button">
-        Swap
-      </NeonButton>
-    </NeonCard>
-  );
-}
-
-function MarketStage() {
+function MarketStage({
+  tickers,
+  ionTicker,
+  chartPoints,
+  onNavigate,
+}: {
+  tickers: ReturnType<typeof useApiResource<MarketTicker[]>>;
+  ionTicker: MarketTicker | undefined;
+  chartPoints: ReturnType<typeof buildSyntheticSeries>;
+  onNavigate: (page: PageKey) => void;
+}) {
   return (
     <NeonCard className="min-h-[28rem]" variant="cyan">
       <div className="flex h-full flex-col">
-        <div className="mb-4 flex items-start justify-between">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
-              Professional Chart
+              Professional Trading Surface
             </p>
             <h1 className="mt-2 text-3xl font-black text-white sm:text-5xl">
-              ION Market <span className="text-glow-magenta text-fuchsia-300">Galaxy</span>
+              swap.ion <span className="text-glow-magenta text-fuchsia-300">Galaxy</span>
             </h1>
           </div>
-          <Sparkles className="text-cyan-200" />
+          <div className="flex flex-col items-end gap-2">
+            <Sparkles className="text-cyan-200" />
+            <NeonButton
+              className="px-4 py-2 text-xs"
+              data-testid="dashboard-open-swap"
+              onClick={() => onNavigate("swap")}
+              type="button"
+            >
+              Open Swap
+            </NeonButton>
+          </div>
         </div>
 
-        <div className="relative flex-1 overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/30">
-          <div className="absolute inset-0 aurora-noise opacity-80" />
-          <div className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_20deg,rgba(36,247,255,0.1),rgba(255,59,212,0.28),rgba(141,77,255,0.18),rgba(36,247,255,0.1))] blur-2xl [animation:ionSpinSlow_160s_linear_infinite]" />
-          <div className="absolute inset-x-8 bottom-10 h-36">
-            <div className="h-full w-full rounded-[50%] border-t border-cyan-200/45 shadow-[0_-22px_50px_rgba(36,247,255,0.28)]" />
-          </div>
-          <div className="absolute bottom-8 left-8 right-8 flex h-44 items-end gap-2">
-            {Array.from({ length: 38 }).map((_, index) => {
-              const height = 34 + ((index * 29) % 120);
-              const magenta = index % 5 === 0;
-              return (
-                <div key={index} className="flex flex-1 items-end justify-center">
-                  <div
-                    className={`w-full max-w-[0.7rem] rounded-full ${
-                      magenta ? "bg-fuchsia-400" : "bg-cyan-300"
-                    } shadow-[0_0_16px_currentColor]`}
-                    style={{ height }}
-                  />
-                </div>
-              );
-            })}
-          </div>
-          <p className="absolute left-6 top-5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-cyan-100/75">
-            AI Signal: Bullish 63% / Risk: Medium
-          </p>
-        </div>
+        <DataSourceBadge meta={tickers.meta} testId="dashboard-chart-source" />
+
+        <AsyncState
+          emptyMessage="Market tickers are not available."
+          error={tickers.error}
+          onRetry={tickers.reload}
+          state={tickers.state}
+          testId="dashboard-chart"
+        >
+          {chartPoints.length > 0 ? (
+            <MarketChart points={chartPoints} testId="dashboard-market-chart" />
+          ) : (
+            <ChartPlaceholder />
+          )}
+          {ionTicker ? (
+            <p className="mt-3 text-sm text-cyan-100/75" data-testid="dashboard-ion-quote">
+              ION {ionTicker.displayPrice} · {ionTicker.displayChange} · AI Signal:{" "}
+              {ionTicker.change24hPct >= 0 ? "Bullish" : "Cautious"}{" "}
+              {Math.abs(ionTicker.change24hPct).toFixed(1)}%
+            </p>
+          ) : null}
+        </AsyncState>
       </div>
     </NeonCard>
   );
 }
 
-function RightStats() {
+function ChartPlaceholder() {
+  return (
+    <div className="grid h-[17.5rem] place-items-center rounded-[1.25rem] border border-white/10 bg-black/30 text-sm text-cyan-100/60">
+      Waiting for ticker data
+    </div>
+  );
+}
+
+function RightStats({
+  staking,
+  burn,
+  tvlLabel,
+  burnProgress,
+}: {
+  staking: ReturnType<typeof useApiResource<StakingSummary>>;
+  burn: ReturnType<typeof useApiResource<BurnSummary>>;
+  tvlLabel: string;
+  burnProgress: number;
+}) {
   return (
     <div className="grid gap-5">
       <NeonCard variant="cyan">
-        <p className="text-sm text-cyan-100/55">TVL</p>
-        <p className="mt-1 text-3xl font-black">$1,234,567</p>
-        <p className="mt-1 text-xs text-emerald-300">+12.8% this week</p>
+        <DataSourceBadge meta={staking.meta} testId="dashboard-tvl-source" />
+        <AsyncState
+          error={staking.error}
+          onRetry={staking.reload}
+          state={staking.state}
+          testId="dashboard-tvl"
+        >
+          <p className="text-sm text-cyan-100/55">TVL</p>
+          <p className="mt-1 text-3xl font-black" data-testid="dashboard-tvl-value">
+            {tvlLabel}
+          </p>
+          <p className="mt-1 text-xs text-emerald-300">
+            LP mining APR {staking.data.apr.lpMiningPct}%
+          </p>
+        </AsyncState>
       </NeonCard>
+
       <NeonCard variant="magenta">
-        <p className="text-sm text-cyan-100/55">APR</p>
-        <p className="mt-1 text-3xl font-black">25.5%</p>
-        <p className="mt-1 text-xs text-cyan-200">Dynamic staking rate</p>
+        <DataSourceBadge meta={staking.meta} testId="dashboard-apr-source" />
+        <AsyncState
+          error={staking.error}
+          onRetry={staking.reload}
+          state={staking.state}
+          testId="dashboard-apr"
+        >
+          <p className="text-sm text-cyan-100/55">APR</p>
+          <p className="mt-1 text-3xl font-black" data-testid="dashboard-apr-value">
+            {staking.data.apr.dexPct}%
+          </p>
+          <p className="mt-1 text-xs text-cyan-200">Dynamic DEX staking rate</p>
+        </AsyncState>
       </NeonCard>
+
       <NeonCard variant="gold">
-        <p className="text-sm text-cyan-100/55">Burn</p>
-        <p className="mt-1 text-3xl font-black">87.26M</p>
-        <div className="mt-4 h-2 rounded-full bg-white/10">
-          <div className="h-2 w-[62%] rounded-full bg-[linear-gradient(90deg,#24f7ff,#ff3bd4,#ffd166)]" />
-        </div>
+        <DataSourceBadge meta={burn.meta} testId="dashboard-burn-source" />
+        <AsyncState
+          error={burn.error}
+          onRetry={burn.reload}
+          state={burn.state}
+          testId="dashboard-burn"
+        >
+          <p className="text-sm text-cyan-100/55">Burn</p>
+          <p className="mt-1 text-3xl font-black" data-testid="dashboard-burn-value">
+            {formatIonAmount(burn.data.totalBurnedIon)}
+          </p>
+          <div className="mt-4 h-2 rounded-full bg-white/10">
+            <div
+              className="h-2 rounded-full bg-[linear-gradient(90deg,#24f7ff,#ff3bd4,#ffd166)]"
+              style={{ width: `${burnProgress}%` }}
+            />
+          </div>
+        </AsyncState>
       </NeonCard>
     </div>
   );
 }
 
-function FeatureGrid() {
+function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {featureCards.map((card) => {
         const Icon = card.icon;
         return (
-          <NeonCard key={card.title} variant={card.color} className="min-h-[11rem]">
-            <div className="flex h-full flex-col justify-between">
-              <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.07] text-cyan-200 shadow-neonCyan">
-                <Icon size={28} />
+          <button
+            className="text-left"
+            data-testid={`dashboard-feature-${card.target}`}
+            key={card.title}
+            onClick={() => onNavigate(card.target)}
+            type="button"
+          >
+            <NeonCard variant={card.color} className="min-h-[11rem] transition hover:scale-[1.01]">
+              <div className="flex h-full flex-col justify-between">
+                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.07] text-cyan-200 shadow-neonCyan">
+                  <Icon size={28} />
+                </div>
+                <div>
+                  <p className="text-2xl font-black">{card.title}</p>
+                  <p className="text-sm text-cyan-100/55">{card.label}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-black">{card.title}</p>
-                <p className="text-sm text-cyan-100/55">{card.label}</p>
-              </div>
-            </div>
-          </NeonCard>
+            </NeonCard>
+          </button>
         );
       })}
     </div>
-  );
-}
-
-function TokenBadge({ symbol, accent }: { symbol: string; accent: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span
-        className={`grid h-9 w-9 place-items-center rounded-xl text-xs font-black ${accent}`}
-      >
-        {symbol.slice(0, 2)}
-      </span>
-      <span className="font-black">{symbol}</span>
-    </div>
-  );
-}
-
-function InputShell({ label, value }: { label: string; value: string }) {
-  return (
-    <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-      <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-        {label}
-      </span>
-      <input
-        className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
-        placeholder={value}
-      />
-    </label>
   );
 }

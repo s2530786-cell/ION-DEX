@@ -1,0 +1,201 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::fee_distributor_address;
+global slice storage::sandwich_guard_address;
+global cell storage::pool_dict;
+global int storage::protocol_fee_bps;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::fee_distributor_address = ds~load_msg_addr();
+    storage::sandwich_guard_address = ds~load_msg_addr();
+    storage::pool_dict = ds~load_dict();
+    storage::protocol_fee_bps = ds~load_uint(16);
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::fee_distributor_address)
+        .store_slice(storage::sandwich_guard_address)
+        .store_dict(storage::pool_dict)
+        .store_uint(storage::protocol_fee_bps, 16)
+    .end_cell());
+}
+
+slice router::pool_key(slice token0, slice token1) inline {
+    return begin_cell().store_slice(token0).store_slice(token1).end_cell().begin_parse();
+}
+
+() handle_route_swap() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    slice pool = body~load_msg_addr();
+    int zero_for_one = body~load_uint(1);
+    int amount_in = body~load_coins();
+    int min_out = body~load_coins();
+    slice recipient = body~load_msg_addr();
+
+    throw_unless(error::invalid_amount, amount_in > 0);
+    throw_unless(error::invalid_path, pool.slice_empty?() == 0);
+
+    (slice pool_val, int found) = storage::pool_dict.udict_get?(256, pool.slice_hash());
+    throw_unless(error::invalid_path, found);
+
+    msgs::send_simple(
+        0,
+        pool,
+        begin_cell()
+            .store_uint(op::swap, 32)
+            .store_uint(query_id, 64)
+            .store_uint(zero_for_one, 1)
+            .store_coins(amount_in)
+            .store_coins(min_out)
+            .store_slice(recipient)
+        .end_cell(),
+        CARRY_ALL_BALANCE);
+}
+
+() handle_route_add_liquidity() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    slice pool = body~load_msg_addr();
+    int amount0 = body~load_coins();
+    int amount1 = body~load_coins();
+    slice user = body~load_msg_addr();
+    int min_lp = body~load_coins();
+
+    throw_unless(error::invalid_amount, (amount0 > 0) & (amount1 > 0));
+
+    msgs::send_simple(
+        0,
+        pool,
+        begin_cell()
+            .store_uint(op::cb_add_liquidity, 32)
+            .store_uint(query_id, 64)
+            .store_coins(amount0)
+            .store_coins(amount1)
+            .store_slice(user)
+            .store_coins(min_lp)
+            .store_coins(0)
+            .store_uint(0, 1)
+            .store_ref(begin_cell().store_slice(user).store_slice(user).store_slice(user).end_cell())
+        .end_cell(),
+        CARRY_ALL_BALANCE);
+}
+
+() handle_pay_to() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int amount = body~load_coins();
+    slice token = body~load_msg_addr();
+    slice recipient = body~load_msg_addr();
+
+    throw_unless(error::invalid_amount, amount > 0);
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+
+    msgs::send_simple(
+        0,
+        recipient,
+        begin_cell()
+            .store_uint(op::pay_to, 32)
+            .store_uint(query_id, 64)
+            .store_coins(amount)
+            .store_slice(token)
+        .end_cell(),
+        QCARRY_ALL_BALANCE);
+}
+
+() handle_vault_pay_to() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int amount = body~load_coins();
+    slice token = body~load_msg_addr();
+    slice recipient = body~load_msg_addr();
+
+    throw_unless(error::invalid_amount, amount > 0);
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::fee_distributor_address));
+
+    msgs::send_simple(
+        0,
+        recipient,
+        begin_cell()
+            .store_uint(op::vault_pay_to, 32)
+            .store_uint(query_id, 64)
+            .store_coins(amount)
+            .store_slice(token)
+        .end_cell(),
+        QCARRY_ALL_BALANCE);
+}
+
+() handle_register_pool() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+    slice body = ctx::body();
+    slice pool = body~load_msg_addr();
+    int key = pool.slice_hash();
+    storage::pool_dict~udict_set(256, key, begin_cell().store_slice(pool).end_cell().begin_parse());
+    storage::save();
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::route_swap {
+        handle_route_swap();
+        return ();
+    }
+
+    if ctx::opcode() == op::route_add_liquidity {
+        handle_route_add_liquidity();
+        return ();
+    }
+
+    if ctx::opcode() == op::pay_to {
+        handle_pay_to();
+        return ();
+    }
+
+    if ctx::opcode() == op::vault_pay_to {
+        handle_vault_pay_to();
+        return ();
+    }
+
+    if ctx::opcode() == op::deploy_pool {
+        handle_register_pool();
+        return ();
+    }
+
+    if ctx::opcode() == op::set_params {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+        slice body = ctx::body();
+        storage::protocol_fee_bps = body~load_uint(16);
+        throw_unless(error::fee_bps_invalid, storage::protocol_fee_bps <= params::fee_denominator);
+        storage::save();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+_ get_router_data() method_id {
+    storage::load();
+    return (
+        storage::owner_address,
+        storage::fee_distributor_address,
+        storage::sandwich_guard_address,
+        storage::protocol_fee_bps
+    );
+}

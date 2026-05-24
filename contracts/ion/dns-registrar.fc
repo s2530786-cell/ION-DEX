@@ -1,0 +1,82 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::resolver_address;
+global int storage::base_price;
+global int storage::duration_sec;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::resolver_address = ds~load_msg_addr();
+    storage::base_price = ds~load_coins();
+    storage::duration_sec = ds~load_uint(32);
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::resolver_address)
+        .store_coins(storage::base_price)
+        .store_uint(storage::duration_sec, 32)
+    .end_cell());
+}
+
+() handle_dns_register() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    cell name_cell = body~load_ref();
+    slice buyer = ctx::sender();
+
+    throw_unless(error::invalid_amount, ctx::value() >= storage::base_price);
+    int expires_at = now() + storage::duration_sec;
+
+    msgs::send_simple(
+        0,
+        storage::resolver_address,
+        begin_cell()
+            .store_uint(op::dns_register, 32)
+            .store_uint(query_id, 64)
+            .store_ref(name_cell)
+            .store_slice(buyer)
+            .store_uint(expires_at, 32)
+        .end_cell(),
+        QCARRY_ALL_BALANCE);
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::dns_register {
+        handle_dns_register();
+        return ();
+    }
+
+    if ctx::opcode() == op::set_params {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+        slice body = ctx::body();
+        storage::base_price = body~load_coins();
+        storage::duration_sec = body~load_uint(32);
+        throw_unless(error::invalid_amount, (storage::base_price > 0) & (storage::duration_sec > 0));
+        storage::save();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+_ get_registrar_data() method_id {
+    storage::load();
+    return (storage::owner_address, storage::resolver_address, storage::base_price, storage::duration_sec);
+}

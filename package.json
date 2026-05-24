@@ -1,5 +1,14 @@
 {
   "devDependencies": {
     "claude-flow": "3.7.0-alpha.35"
+  },
+  "overrides": {
+    "protobufjs": "7.5.9",
+    "@opentelemetry/sdk-node": "0.218.0",
+    "@opentelemetry/exporter-prometheus": "0.218.0",
+    "@opentelemetry/auto-instrumentations-node": "0.75.0"
+  },
+  "dependencies": {
+    "@ton-community/func-js": "^0.11.0"
   }
 }

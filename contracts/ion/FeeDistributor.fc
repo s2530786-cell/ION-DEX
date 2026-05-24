@@ -1,0 +1,125 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::lp_recipient;
+global slice storage::treasury_recipient;
+global slice storage::insurance_recipient;
+global int storage::lp_bps;
+global int storage::treasury_bps;
+global int storage::insurance_bps;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::lp_recipient = ds~load_msg_addr();
+    storage::treasury_recipient = ds~load_msg_addr();
+    storage::insurance_recipient = ds~load_msg_addr();
+    storage::lp_bps = ds~load_uint(16);
+    storage::treasury_bps = ds~load_uint(16);
+    storage::insurance_bps = ds~load_uint(16);
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::lp_recipient)
+        .store_slice(storage::treasury_recipient)
+        .store_slice(storage::insurance_recipient)
+        .store_uint(storage::lp_bps, 16)
+        .store_uint(storage::treasury_bps, 16)
+        .store_uint(storage::insurance_bps, 16)
+    .end_cell());
+}
+
+() fee_dist::validate_bps() impure inline {
+    int total = storage::lp_bps + storage::treasury_bps + storage::insurance_bps;
+    throw_unless(error::fee_bps_invalid, total == params::fee_denominator);
+}
+
+() handle_distribute_fees() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int total_amount = body~load_coins();
+
+    throw_unless(error::invalid_amount, total_amount > 0);
+    fee_dist::validate_bps();
+
+    int lp_amt = math::mul_div(total_amount, storage::lp_bps, params::fee_denominator);
+    int treasury_amt = math::mul_div(total_amount, storage::treasury_bps, params::fee_denominator);
+    int insurance_amt = total_amount - lp_amt - treasury_amt;
+
+    if lp_amt > 0 {
+        msgs::send_simple(
+            0,
+            storage::lp_recipient,
+            begin_cell().store_uint(op::pay_to, 32).store_uint(query_id, 64).store_coins(lp_amt).end_cell(),
+            QCARRY_ALL_BALANCE);
+    }
+    if treasury_amt > 0 {
+        msgs::send_simple(
+            0,
+            storage::treasury_recipient,
+            begin_cell().store_uint(op::pay_to, 32).store_uint(query_id, 64).store_coins(treasury_amt).end_cell(),
+            QCARRY_ALL_BALANCE);
+    }
+    if insurance_amt > 0 {
+        msgs::send_simple(
+            0,
+            storage::insurance_recipient,
+            begin_cell().store_uint(op::pay_to, 32).store_uint(query_id, 64).store_coins(insurance_amt).end_cell(),
+            QCARRY_ALL_BALANCE);
+    }
+}
+
+() handle_set_recipients() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+    slice body = ctx::body();
+    storage::lp_recipient = body~load_msg_addr();
+    storage::treasury_recipient = body~load_msg_addr();
+    storage::insurance_recipient = body~load_msg_addr();
+    storage::lp_bps = body~load_uint(16);
+    storage::treasury_bps = body~load_uint(16);
+    storage::insurance_bps = body~load_uint(16);
+    fee_dist::validate_bps();
+    storage::save();
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::distribute_fees {
+        handle_distribute_fees();
+        return ();
+    }
+
+    if ctx::opcode() == op::set_recipients {
+        handle_set_recipients();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+_ get_fee_distributor_data() method_id {
+    storage::load();
+    return (
+        storage::owner_address,
+        storage::lp_recipient,
+        storage::treasury_recipient,
+        storage::insurance_recipient,
+        storage::lp_bps,
+        storage::treasury_bps,
+        storage::insurance_bps
+    );
+}

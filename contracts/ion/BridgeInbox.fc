@@ -1,0 +1,114 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::router_address;
+global cell storage::relayer_dict;
+global cell storage::nonce_dict;
+global int storage::quorum;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::router_address = ds~load_msg_addr();
+    storage::relayer_dict = ds~load_dict();
+    storage::nonce_dict = ds~load_dict();
+    storage::quorum = ds~load_uint(8);
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::router_address)
+        .store_dict(storage::relayer_dict)
+        .store_dict(storage::nonce_dict)
+        .store_uint(storage::quorum, 8)
+    .end_cell());
+}
+
+int bridge::is_relayer(slice relayer) impure inline {
+    (slice _val, int found) = storage::relayer_dict.udict_get?(256, relayer.slice_hash());
+    return found;
+}
+
+() handle_bridge_message() impure {
+    throw_unless(error::unauthorized_relayer, bridge::is_relayer(ctx::sender()));
+
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int nonce = body~load_uint(256);
+    int amount = body~load_coins();
+    slice recipient = body~load_msg_addr();
+    slice token = body~load_msg_addr();
+
+    throw_unless(error::invalid_amount, amount > 0);
+    (slice _val, int dup) = storage::nonce_dict.udict_get?(256, nonce);
+    throw_unless(error::duplicate_nonce, dup == 0);
+
+    storage::nonce_dict~udict_set(256, nonce, begin_cell().store_uint(1, 8).end_cell().begin_parse());
+    storage::save();
+
+    msgs::send_simple(
+        0,
+        storage::router_address,
+        begin_cell()
+            .store_uint(op::bridge_message, 32)
+            .store_uint(query_id, 64)
+            .store_coins(amount)
+            .store_slice(token)
+            .store_slice(recipient)
+        .end_cell(),
+        QCARRY_ALL_BALANCE);
+}
+
+() handle_set_relayer() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+    slice body_cs = ctx::body();
+    slice relayer = body_cs~load_msg_addr();
+    storage::relayer_dict~udict_set(256, relayer.slice_hash(), begin_cell().store_slice(relayer).end_cell().begin_parse());
+    storage::save();
+}
+
+() handle_revoke_relayer() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+    slice body_cs = ctx::body();
+    slice relayer = body_cs~load_msg_addr();
+    storage::relayer_dict~udict_delete?(256, relayer.slice_hash());
+    storage::save();
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::bridge_message {
+        handle_bridge_message();
+        return ();
+    }
+
+    if ctx::opcode() == op::set_relayer {
+        handle_set_relayer();
+        return ();
+    }
+
+    if ctx::opcode() == op::revoke_relayer {
+        handle_revoke_relayer();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+_ get_bridge_inbox_data() method_id {
+    storage::load();
+    return (storage::owner_address, storage::router_address, storage::quorum);
+}
