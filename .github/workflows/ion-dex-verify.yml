@@ -56,6 +56,14 @@ jobs:
           echo "FIFTPATH=$FIFTPATH" >> "$GITHUB_ENV"
           echo "$ION_TOOLCHAIN_ROOT/bin" >> "$GITHUB_PATH"
 
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+
+      - name: Build backend (TS → dist)
+        working-directory: backend
+        run: npm run build
+
       - name: Contract verify (FunC 5x + fift dry-run + TS math)
         env:
           CI: "true"
@@ -64,10 +72,6 @@ jobs:
           ION_DEPLOY_DRY_RUN: "1"
           ION_DEPLOY_NETWORK: "testnet"
         run: node scripts/verify-contracts.mjs
-
-      - name: Install backend deps
-        working-directory: backend
-        run: npm ci
 
       - name: Backend verify (build + API tests)
         working-directory: backend
