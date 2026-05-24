@@ -242,6 +242,46 @@ async function queryBitcoinBalance(address: string): Promise<number> {
 
 // ── 主查询函数 ────────────────────────────────────────
 
+/** 只查 ION 链余额 */
+export async function fetchIonPortfolio(address: string): Promise<{ chain: ChainBalance }> {
+  const now = new Date().toISOString();
+  const assets: AssetBalance[] = [];
+  const rawBal = await queryIonBalance(address);
+  const formatted = rawBal === "0" ? "0" : (BigInt(rawBal) / BigInt(1e9)).toString();
+  assets.push({
+    symbol: "ION",
+    name: "ION",
+    chain: "ion",
+    address: "",
+    decimals: 9,
+    balanceRaw: rawBal,
+    balanceFormatted: formatted,
+    usdPrice: null,
+    usdValue: null,
+  });
+  // 单个价格查询
+  try {
+    const cmcPrices = await fetchCmcUsdPrice(["ION"]);
+    const price = cmcPrices["ION"] ?? null;
+    if (price) {
+      for (const a of assets) {
+        a.usdPrice = price;
+        a.usdValue = price * parseFloat(a.balanceFormatted);
+      }
+    }
+  } catch { /* ignore */ }
+  const totalUsd = assets.reduce((s, a) => s + (a.usdValue ?? 0), 0);
+  return {
+    chain: {
+      chain: "ion",
+      chainName: "ION",
+      nativeCurrency: "ION",
+      assets,
+      totalUsd,
+    },
+  };
+}
+
 export async function fetchPortfolio(address: string): Promise<PortfolioResponse> {
   const now = new Date().toISOString();
   const chainResults: ChainBalance[] = [];
