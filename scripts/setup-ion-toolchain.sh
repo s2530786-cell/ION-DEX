@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Install/cache ION/TON func+fift binaries and ION stdlib + fift libs for Linux CI/local.
 # Always uses ION source compile (fallback-safe), never depends on external zip URLs.
 # Exports: ION_TOOLCHAIN_ROOT, ION_FUNC_EXE, ION_STDLIB_FC, FIFTPATH, PATH
