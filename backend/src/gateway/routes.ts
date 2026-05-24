@@ -13,6 +13,7 @@ import {
 import { fetchBscWalletBalance, fetchPublicConfig } from "../services/config-gateway.js";
 import { fetchBridgeRoutes, fetchTokens } from "../services/tokens-gateway.js";
 import { getDemoProfile } from "../services/profile.js";
+import { fetchPortfolio } from "../services/portfolio.js";
 import { createQuote, QuoteInputError } from "../services/quotes.js";
 import { getDatabaseHealth } from "../db/index.js";
 import { loadServerConfig } from "../config/server-config.js";
@@ -198,6 +199,9 @@ export async function routeRequest(
       case "/api/profile/demo":
         writeJson(response, 200, apiResponse(getDemoProfile(), buildMeta(clock, requestId, "mock")));
         return;
+      case "/api/portfolio":
+        await routePortfolio(url, response, meta);
+        return;
       default:
         writeJson(response, 404, apiError(ApiErrorCodes.notFound, "No route is registered for this path.", meta));
     }
@@ -212,5 +216,20 @@ export async function routeRequest(
         meta,
       ),
     );
+  }
+}
+
+async function routePortfolio(url: URL, response: ServerResponse, meta: ApiMeta): Promise<void> {
+  const address = url.searchParams.get("address")?.trim() ?? "";
+  if (!address) {
+    writeJson(response, 400, apiError(ApiErrorCodes.invalidAddress, "address query param is required.", meta));
+    return;
+  }
+  try {
+    const portfolio = await fetchPortfolio(address);
+    writeJson(response, 200, apiResponse(portfolio, meta));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    writeJson(response, 503, apiError(ApiErrorCodes.dataUnavailable, message, meta));
   }
 }

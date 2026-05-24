@@ -44,6 +44,31 @@ export function assertCmcConfigured(config: ServerConfig): void {
   }
 }
 
+/** 批量查询 symbol → USD 价格 */
+export async function fetchCmcUsdPrice(symbols: string[]): Promise<Record<string, number>> {
+  try {
+    const url = new URL("/v1/cryptocurrency/quotes/latest", "https://pro-api.coinmarketcap.com");
+    url.searchParams.set("symbol", symbols.join(","));
+    const body = await fetchJson<CmcQuotesResponse>(url.toString(), {
+      method: "GET",
+      headers: {
+        "X-CMC_PRO_API_KEY": process.env.CMC_API_KEY ?? "",
+        accept: "application/json",
+      },
+      timeoutMs: 10000,
+    });
+    const prices: Record<string, number> = {};
+    for (const entry of Object.values(body.data)) {
+      if (entry?.quote?.USD) {
+        prices[entry.symbol] = entry.quote.USD.price;
+      }
+    }
+    return prices;
+  } catch {
+    return {};
+  }
+}
+
 export async function fetchCmcMarketTickers(config: ServerConfig): Promise<MarketTicker[]> {
   assertCmcConfigured(config);
 
