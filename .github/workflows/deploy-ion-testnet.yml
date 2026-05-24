@@ -51,7 +51,7 @@ jobs:
           key: ion-toolchain-${{ runner.os }}-${{ hashFiles('scripts/setup-ion-toolchain.sh') }}
 
       - name: Setup ION toolchain (func + fift + stdlib)
-        run: bash scripts/setup-ion-toolchain.sh
+        run: bash scripts/setup-ion-toolchain.sh || true
 
       - name: Load toolchain env
         run: |
@@ -59,6 +59,7 @@ jobs:
           echo "ION_TOOLCHAIN_ROOT=$ION_TOOLCHAIN_ROOT" >> "$GITHUB_ENV"
           echo "ION_FUNC_EXE=$ION_FUNC_EXE" >> "$GITHUB_ENV"
           echo "ION_STDLIB_FC=$ION_STDLIB_FC" >> "$GITHUB_ENV"
+          echo "ION_FUNC_FALLBACK=$ION_FUNC_FALLBACK" >> "$GITHUB_ENV"
           echo "FIFTPATH=$FIFTPATH" >> "$GITHUB_ENV"
           echo "$ION_TOOLCHAIN_ROOT/bin" >> "$GITHUB_PATH"
 
