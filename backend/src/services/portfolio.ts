@@ -154,21 +154,18 @@ async function queryEvmTokenBalance(rpcUrl: string, tokenAddress: string, holder
   return BigInt(res.result ?? "0x0");
 }
 
-/** ION 链: 查询余额（通过 API v2 JSON RPC） */
+/** ION 链: 查询余额（通过 API v2 REST getAddressBalance） */
 async function queryIonBalance(address: string): Promise<string> {
   try {
-    const res = await fetchJson<{ ok: boolean; result: string }>(`${ION_API}/http/v2/jsonRPC`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "getBalance",
-        params: [address],
-      },
+    const url = `${ION_API}/http/v2/getAddressBalance?address=${encodeURIComponent(address)}`;
+    const res = await fetchJson<{ ok: boolean; result: string }>(url, {
+      method: "GET",
       timeoutMs: 12000,
     });
-    return res.result ?? "0";
+    if (res.ok && res.result != null) {
+      return res.result;
+    }
+    return "0";
   } catch {
     return "0";
   }
