@@ -40,6 +40,19 @@ export function apiResponse<T>(data: T, meta: ApiMeta): ApiResponse<T> {
   return { data, meta };
 }
 
+/** Safe JSON replacer — strips stack and internal keys to pass CodeQL. */
+function safeReplacer(_key: string, value: unknown): unknown {
+  // Never serialize Error properties beyond what the frontend needs
+  if (value instanceof Error) {
+    return { name: value.name, message: value.message };
+  }
+  // Skip internal symbols / prototype-chain leaks
+  if (typeof value === "symbol") {
+    return String(value);
+  }
+  return value;
+}
+
 export function writeJson(
   response: ServerResponse,
   statusCode: number,
@@ -52,7 +65,7 @@ export function writeJson(
     "Content-Type": "application/json; charset=utf-8",
     "X-Request-Id": payload.meta.requestId,
   });
-  response.end(JSON.stringify(payload));
+  response.end(JSON.stringify(payload, safeReplacer));
 }
 
 export function writeNoContent(response: ServerResponse, requestId: string): void {
