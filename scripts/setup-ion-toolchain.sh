@@ -49,13 +49,14 @@ echo "Compiling ION fork of func/fift from source..."
 
 # Clone full ion repo for build
 BUILD_DIR="${TMP_DIR}/ion-build"
-git clone --depth 1 "${ION_SOURCE_REPO}" "${BUILD_DIR}" 2>/dev/null
+git clone --depth 1 --recurse-submodules --shallow-submodules "${ION_SOURCE_REPO}" "${BUILD_DIR}" 2>/dev/null
 
 # Install build dependencies on CI (Ubuntu)
-if ! command -v g++ >/dev/null 2>&1 || ! dpkg -l libjemalloc-dev >/dev/null 2>&1; then
+if ! command -v g++ >/dev/null 2>&1; then
   echo "Installing build dependencies..."
+  # libsecp256k1-dev and libsodium-dev satisfy ION's crypto deps
   sudo apt-get update -qq
-  sudo apt-get install -y cmake build-essential libssl-dev zlib1g-dev libjemalloc-dev 2>&1 | tail -3
+  sudo apt-get install -y cmake build-essential libssl-dev zlib1g-dev libsecp256k1-dev libsodium-dev 2>&1 | tail -3
 fi
 
 # Build func/fift from ION fork source
@@ -64,9 +65,12 @@ mkdir -p "${BUILD_DIR}/build"
   cd "${BUILD_DIR}/build"
   cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
+    -DTON_ONLY_TONLIB=ON \
     -DTON_USE_GPERF=OFF \
     -DTON_USE_JEMALLOC=OFF \
-    -DTON_ROCKSDB=OFF \
+    -DTON_USE_ABSEIL=OFF \
+    -DTON_USE_ROCKSDB=OFF \
+    -DTDDB_USE_ROCKSDB=OFF \
     2>&1
   cmake --build . --target func --target fift -j"$(nproc)" 2>&1
 )
