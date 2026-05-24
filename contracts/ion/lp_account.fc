@@ -28,7 +28,7 @@ global int storage::amount1;
 ;; ── Message handler: direct add liquidity ──────────────────────
 
 () handle_direct_add_liquidity() impure {
-    slice body = ctx::body();
+    slice body = ctx.at(BODY);
     int query_id = body~load_uint(64);
     int am0 = body~load_coins();
     int am1 = body~load_coins();
@@ -36,7 +36,7 @@ global int storage::amount1;
     int fwd_amount = body~load_coins();
     slice to_user = body~load_msg_addr();
 
-    throw_unless(error::invalid_amount, (am0 > 0) & (am1 > 0));
+    throw_unless(error::invalid_amount, am0 > 0 & am1 > 0);
 
     storage::amount0 += am0;
     storage::amount1 += am1;
@@ -100,19 +100,19 @@ global int storage::amount1;
     throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
 
     ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
-    if ctx::isBounced() {
+    if ctx.at(IS_BOUNCED) {
         return ();
     }
 
-    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    throw_unless(error::wrong_workchain, ctx.at(SENDER).address::check_workchain(params::workchain));
     storage::load();
 
-    if ctx::opcode() == op::direct_add_liquidity {
+    if ctx.at(OPCODE) == op::direct_add_liquidity {
         handle_direct_add_liquidity();
         return ();
     }
 
-    if ctx::opcode() == op::cb_refund_me {
+    if ctx.at(OPCODE) == op::cb_refund_me {
         handle_refund();
         return ();
     }
@@ -122,7 +122,7 @@ global int storage::amount1;
 
 ;; ── Getters ────────────────────────────────────────────────────
 
-_ get_lp_account_data() method_id {
+() get_lp_account_data() method_id {
     storage::load();
     return (
         storage::user_address,

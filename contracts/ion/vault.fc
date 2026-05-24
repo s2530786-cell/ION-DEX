@@ -28,7 +28,7 @@ global int storage::deposited_amount;
 ;; ── Message handlers ───────────────────────────────────────────
 
 () handle_deposit_ref_fee() impure {
-    slice body = ctx::body();
+    slice body = ctx.at(BODY);
     int jetton_amount = body~load_coins();
     slice excesses_address = body~load_msg_addr();
 
@@ -43,31 +43,26 @@ global int storage::deposited_amount;
     throw_unless(error::zero_output, storage::deposited_amount > 0);
 
     throw_unless(error::insufficient_gas,
-        ctx::balance() > ctx::fwdFee() * 5
+        ctx.at(BALANCE) > ctx.at(FWD_FEE) * 5
         + gas::router::vault_pay_to + gas::vault::withdraw_fee
         + storage_fee::router + storage_fee::est_jetton_wallet
         + gas::jetton_wallet::est_transfer);
 
-    int amount_to_withdraw = storage::deposited_amount;
-    slice router_addr = storage::router_address;
-    slice token_addr = storage::token_address;
-
-    ;; Reset state BEFORE external call to prevent reentrancy
-    storage::deposited_amount = 0;
-    storage::save();
-
     ;; Send all deposited tokens back to owner via router
     msgs::send_simple(
         0,
-        router_addr,
+        storage::router_address,
         begin_cell()
             .store_uint(op::vault_pay_to, 32)
             .store_uint(0, 64)  ;; query_id
-            .store_coins(amount_to_withdraw)
-            .store_slice(token_addr)
+            .store_coins(storage::deposited_amount)
+            .store_slice(storage::token_address)
             .store_slice(storage::owner_address)
         .end_cell(),
         QCARRY_ALL_BALANCE | DESTROY_IF_ZERO);
+
+    storage::deposited_amount = 0;
+    storage::save();
 }
 
 ;; ── Main entry ─────────────────────────────────────────────────
@@ -76,21 +71,20 @@ global int storage::deposited_amount;
     throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
 
     ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
-    if ctx::isBounced() {
+    if ctx.at(IS_BOUNCED) {
         return ();
     }
 
-    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    throw_unless(error::wrong_workchain, ctx.at(SENDER).address::check_workchain(params::workchain));
     storage::load();
 
-    if ctx::opcode() == op::deposit_ref_fee {
-        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::router_address));
+    if ctx.at(OPCODE) == op::deposit_ref_fee {
+        throw_unless(error::invalid_caller, equal_slices(ctx.at(SENDER), storage::router_address));
         handle_deposit_ref_fee();
         return ();
     }
 
-    if ctx::opcode() == op::withdraw_fee {
-        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+    if ctx.at(OPCODE) == op::withdraw_fee {
         handle_withdraw_fee();
         return ();
     }
@@ -100,7 +94,7 @@ global int storage::deposited_amount;
 
 ;; ── Getters ────────────────────────────────────────────────────
 
-_ get_vault_data() method_id {
+() get_vault_data() method_id {
     storage::load();
     return (
         storage::owner_address,
