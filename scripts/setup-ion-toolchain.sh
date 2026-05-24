@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install/cache ION/TON func+fift binaries and ION stdlib + fift libs for Linux CI/local.
 # Exports: ION_TOOLCHAIN_ROOT, ION_FUNC_EXE, ION_STDLIB_FC, FIFTPATH, PATH
-# On failure, writes .ready with USE_FALLBACK=1 so verify steps can skip FunC.
+# On failure, writes .ready with ION_FUNC_FALLBACK=1 so verify steps can skip FunC.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -16,7 +16,7 @@ mkdir -p "${BIN_DIR}" "${SMARTCONT_DIR}" "${FIFT_LIB_DIR}"
 
 if [[ -f "${MARKER}" ]]; then
   source "${MARKER}"
-  echo "OK ion-toolchain cache hit (${CACHE_DIR})${USE_FALLBACK:+ — func fallback}"
+  echo "OK ion-toolchain cache hit (${CACHE_DIR})${ION_FUNC_FALLBACK:+ — func fallback}"
   exit 0
 fi
 
@@ -39,7 +39,7 @@ if [[ -d "${TMP_DIR}/ion-src/crypto/fift/lib" ]]; then
   echo "OK fift lib"
 fi
 
-# ── 2. Try to compile func/fift from ION source ──
+# ── 2. Try to compile func/fift from ION source (with 300s timeout) ──
 echo "Attempting to compile ION fork of func/fift from source..."
 BUILD_OK=1
 BUILD_DIR="${TMP_DIR}/ion-build"
@@ -63,19 +63,20 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
   -DTDDB_USE_ROCKSDB=OFF \
   2>&1 || BUILD_OK=0
 if [[ "$BUILD_OK" = "1" ]]; then
-  cmake --build . --target func --target fift -j"$(nproc)" 2>&1 || BUILD_OK=0
+  # Timeout the build at 300s to avoid hung runners
+  timeout 300 cmake --build . --target func --target fift -j"$(nproc)" 2>&1 || BUILD_OK=0
 fi
 
 FUNC_BIN="${BUILD_DIR}/build/crypto/func"
 FIFT_BIN="${BUILD_DIR}/build/crypto/fift"
 
 if [[ "$BUILD_OK" = "0" || ! -x "${FUNC_BIN}" || ! -x "${FIFT_BIN}" ]]; then
-  echo "WARN func/fift compilation failed — will use fallback mode"
-  USE_FALLBACK=1
+  echo "WARN func/fift compilation failed or timed out — using fallback mode"
+  ION_FUNC_FALLBACK=1
 else
   cp "${FUNC_BIN}" "${BIN_DIR}/func" && chmod +x "${BIN_DIR}/func"
   cp "${FIFT_BIN}" "${BIN_DIR}/fift" && chmod +x "${BIN_DIR}/fift"
-  USE_FALLBACK=0
+  ION_FUNC_FALLBACK=0
 fi
 
 cat >"${MARKER}" <<EOF
@@ -85,10 +86,10 @@ export ION_FIFT_EXE="${BIN_DIR}/fift"
 export ION_STDLIB_FC="${SMARTCONT_DIR}/stdlib.fc"
 export FIFTPATH="${FIFT_LIB_DIR}"
 export PATH="${BIN_DIR}:\${PATH}"
-export ION_FUNC_FALLBACK="${USE_FALLBACK}"
+export ION_FUNC_FALLBACK="${ION_FUNC_FALLBACK}"
 EOF
 
 source "${MARKER}"
-echo "OK ion-toolchain ready${USE_FALLBACK:+ (func fallback)}"
+echo "OK ion-toolchain ready${ION_FUNC_FALLBACK:+ (func fallback)}"
 echo "  stdlib=${ION_STDLIB_FC}"
 echo "  FIFTPATH=${FIFTPATH}"

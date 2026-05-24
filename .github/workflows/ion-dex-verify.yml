@@ -57,6 +57,7 @@ jobs:
           echo "ION_STDLIB_FC=$ION_STDLIB_FC" >> "$GITHUB_ENV"
           echo "ION_FIFT_EXE=$ION_TOOLCHAIN_ROOT/bin/fift" >> "$GITHUB_ENV"
           echo "FIFTPATH=$FIFTPATH" >> "$GITHUB_ENV"
+          echo "ION_FUNC_FALLBACK=$ION_FUNC_FALLBACK" >> "$GITHUB_ENV"
 
           echo "$ION_TOOLCHAIN_ROOT/bin" >> "$GITHUB_PATH"
 
