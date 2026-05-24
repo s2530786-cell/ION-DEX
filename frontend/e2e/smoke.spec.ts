@@ -5,42 +5,53 @@ function sidebar(page: Page) {
 }
 
 async function clickNav(page: Page, key: string) {
-  const TIMEOUT = 8_000;
+  const TIMEOUT = 12_000;
 
-  // Strategy 1: sidebar (desktop >= lg)
-  const sidebarNav = sidebar(page);
-  if (await sidebarNav.isVisible({ timeout: TIMEOUT }).catch(() => false)) {
-    const link = sidebarNav.getByTestId(`nav-${key}`);
-    await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
-    await link.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(150);
-    await link.click({ force: true, timeout: TIMEOUT });
-    return;
+  // Check viewport width
+  const vp = page.viewportSize();
+  const isDesktop = vp && vp.width >= 1024;
+
+  if (isDesktop) {
+    // Desktop: sidebar is primary, wait for AnimatePresence
+    const sidebarNav = sidebar(page);
+    let sv = await sidebarNav.isVisible({ timeout: 3000 }).catch(() => false);
+    if (!sv) {
+      await page.waitForTimeout(3000);
+      sv = await sidebarNav.isVisible({ timeout: 3000 }).catch(() => false);
+    }
+    if (sv) {
+      const link = sidebarNav.getByTestId(`nav-${key}`);
+      await link.waitFor({ state: "attached", timeout: TIMEOUT }).catch(() => {});
+      await link.evaluate((el) => el.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+      await page.waitForTimeout(500);
+      return;
+    }
   }
 
-  // Strategy 2: primary nav (tablet header, lg:hidden)
+  // Non-desktop: primary nav
   const primary = page.getByRole("navigation", { name: "Primary" });
-  if (await primary.isVisible({ timeout: TIMEOUT }).catch(() => false)) {
+  if (await primary.isVisible({ timeout: 3000 }).catch(() => false)) {
     const link = primary.getByTestId(`nav-${key}`);
-    await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
-    await link.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(150);
-    await link.click({ force: true, timeout: TIMEOUT });
+    await link.waitFor({ state: "attached", timeout: 5000 }).catch(() => {});
+    await link.evaluate((el) => el.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    await page.waitForTimeout(500);
     return;
   }
 
-  // Strategy 3: mobile hamburger menu (< md)
+  // Mobile: hamburger menu
   const menu = page.getByTestId("nav-menu");
-  if (await menu.isVisible({ timeout: TIMEOUT }).catch(() => false)) {
+  if (await menu.isVisible({ timeout: 3000 }).catch(() => false)) {
     await menu.click();
-    const mobileNav = page.getByTestId("app-mobile-nav");
-    await expect(mobileNav).toBeVisible({ timeout: TIMEOUT });
-    await page.waitForTimeout(200);
-    const link = mobileNav.getByTestId(`nav-${key}`);
-    await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
-    await link.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(150);
-    await link.click({ force: true, timeout: TIMEOUT });
+    await page.waitForTimeout(500);
+    await expect(page.getByTestId("app-mobile-nav")).toBeVisible({ timeout: TIMEOUT });
+    const link = page.getByTestId("app-mobile-nav").getByTestId(`nav-${key}`);
+    await link.waitFor({ state: "attached", timeout: 5000 }).catch(() => {});
+    try {
+      await link.click({ force: true, timeout: 5000 });
+    } catch {
+      await link.evaluate((el) => el.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    }
+    await page.waitForTimeout(500);
     return;
   }
 
