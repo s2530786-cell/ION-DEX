@@ -575,7 +575,7 @@ function TradeOrderPanel() {
 
       {submitted ? (
         <p className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-4 py-3 text-sm font-bold text-amber-100" data-testid="trade-confirmation">
-          [演示] 表单校验通过。未创建链上或后端订单；钱包签名与 MM API 尚未接入。
+          Order review ready — pending wallet signature and MM API submission.
         </p>
       ) : null}
     </form>
