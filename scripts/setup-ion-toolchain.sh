@@ -65,26 +65,38 @@ else
   echo "WARN could not fetch ION fift lib"
 fi
 
-echo "Downloading TON portable func+fift (${TON_RELEASE_TAG})..."
-ZIP_PATH="${TMP_DIR}/ton.zip"
-curl -fsSL "${TON_ZIP_URL}" -o "${ZIP_PATH}"
-unzip -q "${ZIP_PATH}" -d "${TMP_DIR}/ton-unzip"
+echo "Compiling ION fork of func/fift from source (${ION_SOURCE_REPO})..."
 
-FUNC_BIN="$(find "${TMP_DIR}/ton-unzip" -type f -name func 2>/dev/null | head -n 1 || true)"
-FIFT_BIN="$(find "${TMP_DIR}/ton-unzip" -type f -name fift 2>/dev/null | head -n 1 || true)"
+# Clone full ion repo for build
+BUILD_DIR="${TMP_DIR}/ion-build"
+git clone --depth 1 "${ION_SOURCE_REPO}" "${BUILD_DIR}" 2>/dev/null
 
-if [[ -z "${FUNC_BIN}" || -z "${FIFT_BIN}" ]]; then
-  echo "ERROR: func/fift not found inside ${TON_ZIP_URL}"
-  ls -la "${TMP_DIR}/ton-unzip" 2>/dev/null | head -20
+# Install build dependencies
+if ! command -v cmake >/dev/null 2>&1; then
+  sudo apt-get update -qq
+  sudo apt-get install -y cmake g++ make libssl-dev zlib1g-dev 2>&1 | tail -1
+fi
+
+# Build func/fift from ION fork source
+mkdir -p "${BUILD_DIR}/build"
+(
+  cd "${BUILD_DIR}/build"
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DTON_USE_GPERF=OFF 2>&1 | tail -3
+  cmake --build . --target func --target fift -j"$(nproc)" 2>&1 | tail -5
+)
+
+FUNC_BIN="${BUILD_DIR}/build/crypto/func"
+FIFT_BIN="${BUILD_DIR}/build/crypto/fift"
+
+if [[ ! -x "${FUNC_BIN}" || ! -x "${FIFT_BIN}" ]]; then
+  echo "ERROR: compiled func/fift not found at ${BUILD_DIR}/build/crypto/"
+  ls -la "${BUILD_DIR}/build/crypto/" 2>/dev/null | head -10
   exit 1
 fi
 
 cp "${FUNC_BIN}" "${BIN_DIR}/func"
 cp "${FIFT_BIN}" "${BIN_DIR}/fift"
 chmod +x "${BIN_DIR}/func" "${BIN_DIR}/fift"
-
-"${BIN_DIR}/func" -V | head -n 1 || true
-"${BIN_DIR}/fift" -V | head -n 1 || true
 
 cat >"${MARKER}" <<EOF
 export ION_TOOLCHAIN_ROOT="${CACHE_DIR}"
