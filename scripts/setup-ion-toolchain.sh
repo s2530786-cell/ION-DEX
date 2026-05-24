@@ -52,20 +52,19 @@ fi
 # Try libsecp256k1 + libsodium (ION deps), ignore if unavailable
 sudo apt-get install -y libsecp256k1-dev libsodium-dev 2>/dev/null || true
 
-(
-  cd "${BUILD_DIR}/build" 2>/dev/null || mkdir -p "${BUILD_DIR}/build" && cd "${BUILD_DIR}/build"
-  cmake .. -DCMAKE_BUILD_TYPE=Release \
-    -DTON_ONLY_TONLIB=ON \
-    -DTON_USE_GPERF=OFF \
-    -DTON_USE_JEMALLOC=OFF \
-    -DTON_USE_ABSEIL=OFF \
-    -DTON_USE_ROCKSDB=OFF \
-    -DTDDB_USE_ROCKSDB=OFF \
-    2>&1 || { BUILD_OK=0; }
-  if [[ "$BUILD_OK" = "1" ]]; then
-    cmake --build . --target func --target fift -j"$(nproc)" 2>&1 || BUILD_OK=0
-  fi
-) || BUILD_OK=0
+mkdir -p "${BUILD_DIR}/build"
+cd "${BUILD_DIR}/build"
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+  -DTON_ONLY_TONLIB=ON \
+  -DTON_USE_GPERF=OFF \
+  -DTON_USE_JEMALLOC=OFF \
+  -DTON_USE_ABSEIL=OFF \
+  -DTON_USE_ROCKSDB=OFF \
+  -DTDDB_USE_ROCKSDB=OFF \
+  2>&1 || BUILD_OK=0
+if [[ "$BUILD_OK" = "1" ]]; then
+  cmake --build . --target func --target fift -j"$(nproc)" 2>&1 || BUILD_OK=0
+fi
 
 FUNC_BIN="${BUILD_DIR}/build/crypto/func"
 FIFT_BIN="${BUILD_DIR}/build/crypto/fift"
