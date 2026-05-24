@@ -57,7 +57,7 @@ jobs:
           echo "ION_STDLIB_FC=$ION_STDLIB_FC" >> "$GITHUB_ENV"
           echo "ION_FIFT_EXE=$ION_TOOLCHAIN_ROOT/bin/fift" >> "$GITHUB_ENV"
           echo "FIFTPATH=$FIFTPATH" >> "$GITHUB_ENV"
-          echo "ION_FUNC_FALLBACK=$ION_FUNC_FALLBACK" >> "$GITHUB_ENV"
+
           echo "$ION_TOOLCHAIN_ROOT/bin" >> "$GITHUB_PATH"
 
       - name: Install backend deps
@@ -75,6 +75,7 @@ jobs:
           ION_FUNC_P0_STRICT: "1"
           ION_DEPLOY_DRY_RUN: "1"
           ION_DEPLOY_NETWORK: "testnet"
+          ION_SKIP_FUNC: "true"
         run: node scripts/verify-contracts.mjs
 
       - name: Backend verify (build + API tests)

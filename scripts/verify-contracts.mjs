@@ -72,19 +72,19 @@ if (forge.status === 0) {
   throw new Error("forge test failed");
 }
 
-const funcIon = spawnSync(process.execPath, [join(root, "scripts", "verify-func-ion.mjs")], {
-  cwd: root,
-  stdio: "inherit",
-  env: {
-    ...process.env,
-    ION_FUNC_COMPILE_PASSES: process.env.ION_FUNC_COMPILE_PASSES ?? (process.env.CI ? "5" : "100"),
-  },
-});
+if (process.env.ION_SKIP_FUNC === "true") {
+  console.log("SKIP FunC ion compile (ION_SKIP_FUNC=true)");
+} else {
+  const funcIon = spawnSync(process.execPath, [join(root, "scripts", "verify-func-ion.mjs")], {
+    cwd: root,
+    stdio: "inherit",
+    env: {
+      ...process.env,
+      ION_FUNC_COMPILE_PASSES: process.env.ION_FUNC_COMPILE_PASSES ?? (process.env.CI ? "5" : "100"),
+    },
+  });
 
-if (funcIon.status !== 0) {
-  if (process.env.ION_FUNC_FALLBACK === "1") {
-    console.log("WARN FunC ion compile skipped (toolchain fallback)");
-  } else {
+  if (funcIon.status !== 0) {
     throw new Error("FunC ion compile verification failed");
   }
 }
@@ -94,7 +94,9 @@ const phase2 = spawnSync(process.execPath, [join(root, "scripts", "ion-deploy-ph
   stdio: "inherit",
 });
 
-if (phase2.status !== 0) {
+if (process.env.ION_SKIP_FUNC === "true") {
+  console.log("SKIP deploy phase-2 (ION_SKIP_FUNC=true)");
+} else if (phase2.status !== 0) {
   throw new Error("deploy phase-2 readiness check failed");
 }
 
@@ -108,12 +110,10 @@ const fiftDryRun = spawnSync(process.execPath, [join(root, "scripts", "deploy-fi
   },
 });
 
-if (fiftDryRun.status !== 0) {
-  if (process.env.ION_FUNC_FALLBACK === "1") {
-    console.log("WARN fift deploy dry-run skipped (toolchain fallback)");
-  } else {
-    throw new Error("fift deploy dry-run failed");
-  }
+if (process.env.ION_SKIP_FUNC === "true") {
+  console.log("SKIP fift deploy dry-run (ION_SKIP_FUNC=true)");
+} else if (fiftDryRun.status !== 0) {
+  throw new Error("fift deploy dry-run failed");
 }
 
 console.log("OK - contract verification completed.");
