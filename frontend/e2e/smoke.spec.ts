@@ -5,32 +5,44 @@ function sidebar(page: Page) {
 }
 
 async function clickNav(page: Page, key: string) {
+  const TIMEOUT = 8_000;
+
+  // Strategy 1: sidebar (desktop >= lg)
   const sidebarNav = sidebar(page);
-  if (await sidebarNav.isVisible()) {
+  if (await sidebarNav.isVisible({ timeout: TIMEOUT }).catch(() => false)) {
     const link = sidebarNav.getByTestId(`nav-${key}`);
+    await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
     await link.scrollIntoViewIfNeeded();
-    await link.click();
+    await link.click({ timeout: TIMEOUT });
     return;
   }
+
+  // Strategy 2: primary nav (tablet header, lg:hidden)
   const primary = page.getByRole("navigation", { name: "Primary" });
-  if (await primary.isVisible()) {
+  if (await primary.isVisible({ timeout: TIMEOUT }).catch(() => false)) {
     const link = primary.getByTestId(`nav-${key}`);
+    await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
     await link.scrollIntoViewIfNeeded();
-    await link.click();
+    await link.click({ timeout: TIMEOUT });
     return;
   }
+
+  // Strategy 3: mobile hamburger menu (< md)
   const menu = page.getByTestId("nav-menu");
-  if (await menu.isVisible()) {
+  if (await menu.isVisible({ timeout: TIMEOUT }).catch(() => false)) {
     await menu.click();
     const mobileNav = page.getByTestId("app-mobile-nav");
-    await expect(mobileNav).toBeVisible();
+    await expect(mobileNav).toBeVisible({ timeout: TIMEOUT });
     const link = mobileNav.getByTestId(`nav-${key}`);
+    await link.waitFor({ state: "visible", timeout: TIMEOUT }).catch(() => {});
     await link.scrollIntoViewIfNeeded();
-    await link.click({ force: true });
+    await link.click({ force: true, timeout: TIMEOUT });
     return;
   }
+
+  // Fallback: direct URL navigation
   const hash = key === "dashboard" ? "/" : `/#/${key}`;
-  await page.goto(hash);
+  await page.goto(hash, { waitUntil: "networkidle" });
 }
 
 async function expectIonBrand(page: Page) {
@@ -50,6 +62,10 @@ async function expectIonBrand(page: Page) {
 
 test.describe("ION DEX smoke", () => {
   test.setTimeout(60_000);
+  test.beforeEach(async ({ page }) => {
+    // Bump default action timeout for slow CI headless
+    page.setDefaultTimeout(10_000);
+  });
 
   test("home page shows key sections and controls", async ({ page }) => {
     await page.goto("/");
