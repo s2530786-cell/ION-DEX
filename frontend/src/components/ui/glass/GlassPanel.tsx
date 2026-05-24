@@ -6,10 +6,20 @@ type GlassPanelProps = PropsWithChildren<{
   title?: string;
   eyebrow?: string;
   action?: ReactNode;
+  /** Thick flowing neon rim for hero / feature modules (docs/10-ui-design-route). */
+  flowBorder?: boolean;
 }>;
 
-export function GlassPanel({ children, className = "", testId, title, eyebrow, action }: GlassPanelProps) {
-  return (
+export function GlassPanel({
+  children,
+  className = "",
+  testId,
+  title,
+  eyebrow,
+  action,
+  flowBorder = false,
+}: GlassPanelProps) {
+  const panel = (
     <section className={`glass-surface rounded-[1.4rem] p-4 ${className}`} data-testid={testId}>
       {eyebrow || title || action ? (
         <div className="mb-3 flex items-start justify-between gap-3">
@@ -25,4 +35,10 @@ export function GlassPanel({ children, className = "", testId, title, eyebrow, a
       {children}
     </section>
   );
+
+  if (!flowBorder) {
+    return panel;
+  }
+
+  return <div className="flow-border rounded-[1.5rem] p-px">{panel}</div>;
 }
