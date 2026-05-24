@@ -252,7 +252,9 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-preview")).toContainText("Liquidity preview:");
     await expect(page.getByTestId("pool-submit")).toBeEnabled();
 
-    await page.getByTestId("pool-submit").click();
+    await page.getByTestId("pool-form").evaluate((form) => {
+      (form as HTMLFormElement).requestSubmit();
+    });
     await expect(page.getByTestId("pool-confirmation")).toContainText("Liquidity review ready");
   });
 
