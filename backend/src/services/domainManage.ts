@@ -1,4 +1,5 @@
-import { resolveDomain, type DomainResolution } from "./domain.js";
+import { resolveDomain, resolveDomainWithAdapter, type DomainResolution } from "./domain.js";
+import { serverConfig } from "../config/server-config.js";
 import { validateIonDomainName } from "../lib/validation.js";
 
 export type OwnedDomain = {
@@ -21,7 +22,7 @@ export type DomainManageOverview = {
     transfer: string;
   };
   provenance: {
-    source: "local-session";
+    source: DomainResolution["provenance"]["source"] | "local-session";
     note: string;
   };
 };
@@ -44,8 +45,6 @@ const feeTransferIon = "120.000";
 
 const ownedDomains = new Map<string, OwnedDomain>();
 let lastLookup: DomainResolution | null = null;
-
-console.warn("[domain-manage] ION DNS contracts not wired; portfolio uses local session + mock resolver.");
 
 function seedOwnedIfEmpty() {
   if (ownedDomains.size > 0) {
@@ -86,6 +85,10 @@ function buildOverview(message?: string): DomainManageActionResult {
     status: isExpiringSoon(entry.expiresAt) ? ("expiring" as const) : entry.status,
   }));
   const expiringSoon = owned.filter((entry) => entry.status === "expiring").length;
+  const provenance = lastLookup?.provenance ?? {
+    source: "local-session" as const,
+    note: "Domain portfolio is session-scoped; use lookup for ION DNS adapter resolution.",
+  };
   const base: DomainManageOverview = {
     ownedCount: owned.length,
     expiringSoon,
@@ -96,10 +99,7 @@ function buildOverview(message?: string): DomainManageActionResult {
       renew: feeRenewIon,
       transfer: feeTransferIon,
     },
-    provenance: {
-      source: "local-session",
-      note: "Domain portfolio is session-scoped until official ION DNS adapter ships.",
-    },
+    provenance,
   };
   return {
     ...base,
@@ -112,15 +112,15 @@ export function getDomainManageOverview(): DomainManageOverview {
   return overview;
 }
 
-export function lookupDomainManage(nameRaw: string): DomainManageActionResult {
+export async function lookupDomainManage(nameRaw: string): Promise<DomainManageActionResult> {
   const name = normalizeName(nameRaw);
-  lastLookup = resolveDomain(name);
+  lastLookup = await resolveDomainWithAdapter(serverConfig, name);
   return buildOverview(`Lookup ready for ${name}.`);
 }
 
-export function registerDomainManage(nameRaw: string): DomainManageActionResult {
+export async function registerDomainManage(nameRaw: string): Promise<DomainManageActionResult> {
   const name = normalizeName(nameRaw);
-  const resolution = resolveDomain(name);
+  const resolution = await resolveDomainWithAdapter(serverConfig, name);
   lastLookup = resolution;
   if (!resolution.available) {
     throw new DomainManageValidationError(`Domain ${name} is already registered.`);
@@ -140,7 +140,7 @@ export function registerDomainManage(nameRaw: string): DomainManageActionResult 
   return buildOverview(`Register intent recorded for ${name} (${feeRegisterIon} ION fee). No chain tx sent.`);
 }
 
-export function bindDomainManage(nameRaw: string, walletRaw: string): DomainManageActionResult {
+export async function bindDomainManage(nameRaw: string, walletRaw: string): Promise<DomainManageActionResult> {
   const name = normalizeName(nameRaw);
   const wallet = walletRaw.trim();
   if (wallet.length < 8) {
@@ -153,11 +153,11 @@ export function bindDomainManage(nameRaw: string, walletRaw: string): DomainMana
   entry.bindTarget = wallet;
   entry.resolvedAddress = wallet;
   ownedDomains.set(name, entry);
-  lastLookup = resolveDomain(name);
+  lastLookup = await resolveDomainWithAdapter(serverConfig, name);
   return buildOverview(`Bind payload prepared for ${name} → ${wallet}.`);
 }
 
-export function transferDomainManage(nameRaw: string, toAddressRaw: string): DomainManageActionResult {
+export async function transferDomainManage(nameRaw: string, toAddressRaw: string): Promise<DomainManageActionResult> {
   const name = normalizeName(nameRaw);
   const toAddress = toAddressRaw.trim();
   if (toAddress.length < 8) {
@@ -170,11 +170,11 @@ export function transferDomainManage(nameRaw: string, toAddressRaw: string): Dom
   entry.ownerAddress = toAddress;
   entry.bindTarget = null;
   ownedDomains.set(name, entry);
-  lastLookup = resolveDomain(name);
+  lastLookup = await resolveDomainWithAdapter(serverConfig, name);
   return buildOverview(`Transfer intent recorded for ${name} (${feeTransferIon} ION fee).`);
 }
 
-export function renewDomainManage(nameRaw: string): DomainManageActionResult {
+export async function renewDomainManage(nameRaw: string): Promise<DomainManageActionResult> {
   const name = normalizeName(nameRaw);
   const entry = ownedDomains.get(name);
   if (!entry) {
@@ -184,7 +184,7 @@ export function renewDomainManage(nameRaw: string): DomainManageActionResult {
   entry.expiresAt = renewed.toISOString();
   entry.status = "active";
   ownedDomains.set(name, entry);
-  lastLookup = resolveDomain(name);
+  lastLookup = await resolveDomainWithAdapter(serverConfig, name);
   return buildOverview(`Renewal intent recorded for ${name} (${feeRenewIon} ION fee).`);
 }
 

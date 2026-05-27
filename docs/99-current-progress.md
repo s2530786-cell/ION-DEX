@@ -1,5 +1,15 @@
 # Current Progress
 
+## 2026-05-26 UI 铁律 + Master 设计图模板入库
+
+- **铁律**：`.memory-bank/ui-cyber-glass-iron-law.md`（三色、五区布局、玻璃 CSS、避坑）。
+- **设计图模板**：`.memory-bank/ui-design-master-template.md`（对照流程、差距分析表、100% 验收清单）。
+- **资产库**：`.memory-bank/design-refs/` — 7 张界面图 + Logo + 2 条开机动画母片；Dashboard 主图 `screens/04-dashboard-galaxy-spiral.png`。
+- **Cursor**：`docs/cursor-prompt-ion-ui-1to1.md`；规则 `ion-cyber-glass-iron-law.mdc`。
+- **品牌 Logo 副本**：`frontend/public/brand/ion-dex-logo-master.png`。
+- **代码 token**：`global.css` `:root` 三色 + `.ion-glass-*` / `.flow-border` 90deg。
+- **下一步**：按模板 §4 对照设计图 → 填差距表 → Batch A/B 还原（见 `docs/ui-round2-visual-alignment.md`）。
+
 ## Latest — 2026-05-25 全自动工单 W 系列（执行中）
 
 - **主文档**：[`docs/cursor-autonomous-work-order-2026-05-25.md`](cursor-autonomous-work-order-2026-05-25.md)

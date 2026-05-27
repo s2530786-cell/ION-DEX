@@ -90,3 +90,37 @@ export async function bscEthCall(
 ): Promise<string> {
   return rpcCall<string>(config, "eth_call", [{ to, data }, "latest"]);
 }
+
+export async function fetchBscAccountCode(
+  config: ServerConfig,
+  address: string,
+): Promise<string> {
+  return rpcCall<string>(config, "eth_getCode", [address, "latest"]);
+}
+
+export type EvmLeaderOnChainCheck = {
+  ok: boolean;
+  kind: "eoa" | "contract" | "unknown";
+  note: string;
+};
+
+export async function verifyEvmLeaderOnChain(
+  config: ServerConfig,
+  address: string,
+): Promise<EvmLeaderOnChainCheck> {
+  try {
+    const code = await fetchBscAccountCode(config, address);
+    const normalized = code.trim().toLowerCase();
+    if (normalized === "0x" || normalized === "0x0") {
+      return { ok: true, kind: "eoa", note: "BSC eth_getCode reports EOA (no contract bytecode)." };
+    }
+    return {
+      ok: false,
+      kind: "contract",
+      note: "Leader address has contract bytecode on BSC; copy-trade expects an EOA wallet.",
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { ok: false, kind: "unknown", note: `BSC leader check failed: ${message}` };
+  }
+}

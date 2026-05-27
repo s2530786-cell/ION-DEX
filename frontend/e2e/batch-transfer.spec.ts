@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { domClick, fillControlledInput } from "./helpers";
+import { domClick, fillControlledInput, installE2eSessionFlags } from "./helpers";
 
 const sampleCsv = `0x1111111111111111111111111111111111111111,1.25
 0x2222222222222222222222222222222222222222,2.5`;
@@ -27,6 +27,7 @@ test.describe("Batch Transfer", () => {
 
   test.beforeEach(async ({ page }) => {
     page.setDefaultTimeout(10_000);
+    await installE2eSessionFlags(page);
     await loadBatchTransferPage(page);
   });
 

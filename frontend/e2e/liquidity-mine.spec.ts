@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { domClick, fillControlledInput } from "./helpers";
+import { domClick, fillControlledInput, installE2eSessionFlags } from "./helpers";
 
 test.describe("Liquidity Mine", () => {
   test.setTimeout(60_000);
 
   test.beforeEach(async ({ page }) => {
     page.setDefaultTimeout(10_000);
+    await installE2eSessionFlags(page);
     await page.goto("/#/liquidity-mine");
     await expect(page.getByTestId("page-liquidity-mine")).toBeVisible({ timeout: 15_000 });
   });

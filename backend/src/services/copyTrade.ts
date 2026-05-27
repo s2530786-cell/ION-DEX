@@ -1,3 +1,6 @@
+import { serverConfig, type ServerConfig } from "../config/server-config.js";
+import { verifyEvmLeaderOnChain } from "../upstream/bsc-rpc.js";
+
 export type CopyDirection = "same" | "reverse";
 
 export type CopyTradeStartInput = {
@@ -39,7 +42,7 @@ export type CopyTradeStats = {
   leaders: CopyLeader[];
   history: CopyTradeHistoryRow[];
   provenance: {
-    source: "local-session";
+    source: "local-session" | "bsc-readonly";
     note: string;
   };
 };
@@ -47,6 +50,7 @@ export type CopyTradeStats = {
 type Session = CopyTradeStartInput & {
   isActive: boolean;
   startedAt: string;
+  leaderOnChainNote: string | null;
 };
 
 const evmAddressPattern = /^0x[a-fA-F0-9]{40}$/;
@@ -61,8 +65,7 @@ let session: Session | null = null;
 let totalCopiedWei = 0n;
 let totalPnlIon = 0;
 let myCopyCount = 0;
-
-console.warn("[copy-trade] on-chain leader registry not yet wired; using local session + catalog seed.");
+let lastLeaderCheckNote: string | null = null;
 
 function validateStart(input: CopyTradeStartInput): string | null {
   if (!evmAddressPattern.test(input.leaderAddress)) {
@@ -111,15 +114,47 @@ function buildHistory(): CopyTradeHistoryRow[] {
   ];
 }
 
-export function startCopyTrade(input: CopyTradeStartInput): CopyTradeStats {
+function buildProvenance(): CopyTradeStats["provenance"] {
+  if (serverConfig.dataMode === "test-mock") {
+    return {
+      source: "local-session",
+      note: "Copy-trade session in test-mock; BSC leader eth_getCode check skipped.",
+    };
+  }
+  return {
+    source: "bsc-readonly",
+    note:
+      lastLeaderCheckNote ??
+      "Leader validated via BSC eth_getCode (EOA required). Trades stay pending until wallet signs.",
+  };
+}
+
+export async function startCopyTrade(
+  input: CopyTradeStartInput,
+  config: ServerConfig = serverConfig,
+): Promise<CopyTradeStats> {
   const validationError = validateStart(input);
   if (validationError) {
     throw new CopyTradeValidationError(validationError);
   }
+
+  const leader = input.leaderAddress.toLowerCase();
+  lastLeaderCheckNote = null;
+
+  if (config.dataMode !== "test-mock") {
+    const onChain = await verifyEvmLeaderOnChain(config, leader);
+    lastLeaderCheckNote = onChain.note;
+    if (!onChain.ok) {
+      throw new CopyTradeValidationError(onChain.note);
+    }
+  }
+
   session = {
     ...input,
+    leaderAddress: leader,
     isActive: true,
     startedAt: new Date().toISOString(),
+    leaderOnChainNote: lastLeaderCheckNote,
   };
   myCopyCount += 1;
   totalCopiedWei += BigInt(input.maxCopyAmount);
@@ -147,10 +182,7 @@ export function getCopyTradeStats(): CopyTradeStats {
     myCopyCount,
     leaders: catalogLeaders,
     history: buildHistory(),
-    provenance: {
-      source: "local-session",
-      note: "Copy-trade session is in-memory until on-chain leader registry is wired.",
-    },
+    provenance: buildProvenance(),
   };
 }
 
@@ -166,4 +198,5 @@ export function resetCopyTradeForTests(): void {
   totalCopiedWei = 0n;
   totalPnlIon = 0;
   myCopyCount = 0;
+  lastLeaderCheckNote = null;
 }

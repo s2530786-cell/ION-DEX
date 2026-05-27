@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { CONTRACTS, isDeployed } from "../config/contracts.js";
 
 const evmAddressPattern = /^0x[a-fA-F0-9]{40}$/;
@@ -10,7 +11,7 @@ export type BatchTransferConfig = {
   feeCurrency: "ION";
   contractDeployed: boolean;
   provenance: {
-    source: "local-session";
+    source: "batch-transfer-contract" | "local-session";
     note: string;
   };
 };
@@ -38,6 +39,43 @@ export type BatchCollectValidation = {
   provenance: BatchTransferConfig["provenance"];
 };
 
+export type BatchTransferResult = {
+  batchId: string;
+  txHash: string | null;
+  totalRecipients: number;
+  totalAmount: string;
+  tokenSymbol: string;
+  status: "pending_signature";
+  failedIndices?: number[];
+  message: string;
+};
+
+export type BatchHistoryItem = {
+  id: string;
+  timestamp: string;
+  mode: "transfer" | "collect";
+  recipients: number;
+  totalAmount: string;
+  tokenSymbol: string;
+  txHash: string | null;
+  status: "pending_signature" | "submitted";
+};
+
+export type BatchHistoryPage = {
+  items: BatchHistoryItem[];
+  total: number;
+  page: number;
+  limit: number;
+};
+
+export type BatchStats = {
+  totalSent: string;
+  totalTransactions: number;
+  totalRecipients: number;
+  avgAmount: string;
+  provenance: BatchTransferConfig["provenance"];
+};
+
 export class BatchTransferValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -45,7 +83,21 @@ export class BatchTransferValidationError extends Error {
   }
 }
 
-console.warn("[batch-transfer] on-chain batch contract not yet wired; validation is local until deployment.");
+type RecipientInput = { address: string; amount: string };
+
+const history: BatchHistoryItem[] = [];
+let totalSentWei = 0n;
+let totalRecipientCount = 0;
+
+function configProvenance(): BatchTransferConfig["provenance"] {
+  const deployed = isDeployed(CONTRACTS.batchTransfer.contractAddress);
+  return {
+    source: deployed ? "batch-transfer-contract" : "local-session",
+    note: deployed
+      ? "BatchTransfer.sol address configured; wallet must sign calldata — no server-side txHash."
+      : "Set BATCH_TRANSFER_CONTRACT_ADDRESS after deploy; payloads queue as pending_signature only.",
+  };
+}
 
 export function getBatchTransferConfig(): BatchTransferConfig {
   const contractAddress = CONTRACTS.batchTransfer.contractAddress;
@@ -56,12 +108,7 @@ export function getBatchTransferConfig(): BatchTransferConfig {
     maxRecipients: MAX_BATCH_SIZE,
     feeCurrency: "ION",
     contractDeployed: deployed,
-    provenance: {
-      source: "local-session",
-      note: deployed
-        ? "BatchTransfer contract address configured; execution requires wallet approval."
-        : "BatchTransfer contract address is a placeholder — validate payloads only until deploy.",
-    },
+    provenance: configProvenance(),
   };
 }
 
@@ -80,9 +127,61 @@ function parseAmountIon(amountRaw: string): { amount: string; amountWei: bigint 
   return { amount, amountWei: wei };
 }
 
+function weiToDecimal(wei: bigint): string {
+  if (wei === 0n) {
+    return "0";
+  }
+  const whole = wei / 10n ** 18n;
+  const frac = wei % 10n ** 18n;
+  if (frac === 0n) {
+    return whole.toString();
+  }
+  const fracStr = frac.toString().padStart(18, "0").replace(/0+$/, "");
+  return `${whole}.${fracStr}`;
+}
+
+function validateRecipientInputs(recipients: RecipientInput[]): BatchTransferValidation {
+  const lineErrors: string[] = [];
+  const parsed: BatchTransferRecipient[] = [];
+  if (recipients.length === 0) {
+    lineErrors.push("Add at least one recipient.");
+  }
+  if (recipients.length > MAX_BATCH_SIZE) {
+    lineErrors.push(`Batch size exceeds maximum of ${MAX_BATCH_SIZE} recipients.`);
+  }
+  let totalWei = 0n;
+  for (let index = 0; index < recipients.length; index += 1) {
+    const row = recipients[index]!;
+    const address = row.address.trim();
+    if (!evmAddressPattern.test(address)) {
+      lineErrors.push(`Recipient ${index + 1}: invalid address.`);
+      continue;
+    }
+    const amountParsed = parseAmountIon(row.amount);
+    if (!amountParsed) {
+      lineErrors.push(`Recipient ${index + 1}: amount must be a positive decimal.`);
+      continue;
+    }
+    parsed.push({
+      address: address.toLowerCase(),
+      amount: amountParsed.amount,
+      amountWei: amountParsed.amountWei.toString(),
+    });
+    totalWei += amountParsed.amountWei;
+  }
+  return {
+    recipients: parsed,
+    recipientCount: parsed.length,
+    totalAmount: weiToDecimal(totalWei),
+    totalAmountWei: totalWei.toString(),
+    lineErrors,
+    provenance: configProvenance(),
+  };
+}
+
 function parseTransferLines(text: string): BatchTransferValidation {
   const lineErrors: string[] = [];
-  const recipients: BatchTransferRecipient[] = [];
+  const recipients: RecipientInput[] = [];
   const lines = text
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -95,7 +194,6 @@ function parseTransferLines(text: string): BatchTransferValidation {
     lineErrors.push(`Batch size exceeds maximum of ${MAX_BATCH_SIZE} recipients.`);
   }
 
-  let totalWei = 0n;
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index]!;
     const parts = line.split(",").map((part) => part.trim());
@@ -103,45 +201,13 @@ function parseTransferLines(text: string): BatchTransferValidation {
       lineErrors.push(`Line ${index + 1}: expected address,amount format.`);
       continue;
     }
-    const address = parts[0]!;
-    const amountRaw = parts.slice(1).join(",").trim();
-    if (!evmAddressPattern.test(address)) {
-      lineErrors.push(`Line ${index + 1}: invalid address.`);
-      continue;
-    }
-    const parsed = parseAmountIon(amountRaw);
-    if (!parsed) {
-      lineErrors.push(`Line ${index + 1}: amount must be a positive decimal.`);
-      continue;
-    }
-    recipients.push({
-      address: address.toLowerCase(),
-      amount: parsed.amount,
-      amountWei: parsed.amountWei.toString(),
-    });
-    totalWei += parsed.amountWei;
+    recipients.push({ address: parts[0]!, amount: parts.slice(1).join(",").trim() });
   }
 
-  const totalAmount =
-    totalWei === 0n
-      ? "0"
-      : (() => {
-          const whole = totalWei / 10n ** 18n;
-          const frac = totalWei % 10n ** 18n;
-          if (frac === 0n) {
-            return whole.toString();
-          }
-          const fracStr = frac.toString().padStart(18, "0").replace(/0+$/, "");
-          return `${whole}.${fracStr}`;
-        })();
-
+  const result = validateRecipientInputs(recipients);
   return {
-    recipients,
-    recipientCount: recipients.length,
-    totalAmount,
-    totalAmountWei: totalWei.toString(),
-    lineErrors,
-    provenance: getBatchTransferConfig().provenance,
+    ...result,
+    lineErrors: [...lineErrors, ...result.lineErrors],
   };
 }
 
@@ -183,6 +249,118 @@ export function validateBatchCollect(mainAddress: string, text: string): BatchCo
     fromAddresses,
     fromCount: fromAddresses.length,
     lineErrors,
-    provenance: getBatchTransferConfig().provenance,
+    provenance: configProvenance(),
   };
+}
+
+export function getBatchTransferStats(): BatchStats {
+  const avg =
+    totalRecipientCount === 0
+      ? "0"
+      : weiToDecimal(totalSentWei / BigInt(totalRecipientCount));
+  return {
+    totalSent: weiToDecimal(totalSentWei),
+    totalTransactions: history.length,
+    totalRecipients: totalRecipientCount,
+    avgAmount: avg,
+    provenance: configProvenance(),
+  };
+}
+
+export function getBatchTransferHistory(page: number, limit: number): BatchHistoryPage {
+  const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.min(Math.floor(limit), 100) : 20;
+  const start = (safePage - 1) * safeLimit;
+  const items = [...history].reverse().slice(start, start + safeLimit);
+  return {
+    items,
+    total: history.length,
+    page: safePage,
+    limit: safeLimit,
+  };
+}
+
+function recordBatch(
+  mode: "transfer" | "collect",
+  recipientCount: number,
+  totalAmount: string,
+  totalAmountWei: bigint,
+  message: string,
+): BatchTransferResult {
+  const batchId = randomUUID();
+  const item: BatchHistoryItem = {
+    id: batchId,
+    timestamp: new Date().toISOString(),
+    mode,
+    recipients: recipientCount,
+    totalAmount,
+    tokenSymbol: "ION",
+    txHash: null,
+    status: "pending_signature",
+  };
+  history.push(item);
+  totalRecipientCount += recipientCount;
+  totalSentWei += totalAmountWei;
+  return {
+    batchId,
+    txHash: null,
+    totalRecipients: recipientCount,
+    totalAmount,
+    tokenSymbol: "ION",
+    status: "pending_signature",
+    message,
+  };
+}
+
+export function submitBatchTransferSend(
+  recipients: RecipientInput[],
+  _tokenAddress?: string,
+): BatchTransferResult {
+  const validation = validateRecipientInputs(recipients);
+  if (validation.lineErrors.length > 0) {
+    throw new BatchTransferValidationError(validation.lineErrors.join(" "));
+  }
+  if (validation.recipientCount === 0) {
+    throw new BatchTransferValidationError("No valid recipients.");
+  }
+  const cfg = getBatchTransferConfig();
+  const contractNote = cfg.contractDeployed
+    ? `Sign batch on ${cfg.contractAddress}.`
+    : "Contract address not deployed — configure BATCH_TRANSFER_CONTRACT_ADDRESS before mainnet.";
+  return recordBatch(
+    "transfer",
+    validation.recipientCount,
+    validation.totalAmount,
+    BigInt(validation.totalAmountWei),
+    `${contractNote} Server never fabricates txHash.`,
+  );
+}
+
+export function submitBatchCollect(
+  mainAddress: string,
+  fromAddresses: string[],
+  _tokenAddress?: string,
+): BatchTransferResult {
+  const text = fromAddresses.join("\n");
+  const validation = validateBatchCollect(mainAddress, text);
+  if (validation.lineErrors.length > 0) {
+    throw new BatchTransferValidationError(validation.lineErrors.join(" "));
+  }
+  if (validation.fromCount === 0) {
+    throw new BatchTransferValidationError("No valid source addresses.");
+  }
+  const cfg = getBatchTransferConfig();
+  return recordBatch(
+    "collect",
+    validation.fromCount,
+    "0",
+    0n,
+    `Collect to ${validation.mainAddress} via ${cfg.contractAddress}. Await wallet signature.`,
+  );
+}
+
+export function resetBatchTransferForTests(): void {
+  history.length = 0;
+  totalSentWei = 0n;
+  totalRecipientCount = 0;
 }

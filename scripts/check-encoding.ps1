@@ -24,7 +24,7 @@ $includeExt = @(
   "*.env", "*.env.*"
 )
 
-# Folders to skip (build artifacts and vendored deps)
+# Folders to skip (build artifacts, vendored deps, reference clones)
 $excludeDirs = @(
   "node_modules", "dist", "build", ".next", ".turbo",
   "out", "coverage", ".vite", ".cache",
@@ -34,7 +34,19 @@ $excludeDirs = @(
   "ion",
   ".git",
   # Cursor agent/runtime scratch (may be locked while a session is active).
-  ".cursor"
+  ".cursor",
+  # Large reference / prototype trees outside ION DEX deliverables (encoding scan only).
+  "doubao-dex-source",
+  "doubao-vue-prototype",
+  "gmx-contracts",
+  "hermes-agent",
+  "ion-dex-ai-subscription-release-v1.0.0-final",
+  "reference",
+  "output",
+  "playwright-report",
+  "test-results",
+  ".playwright",
+  "cursor-queue-result"
 )
 
 function Test-IsExcluded {
@@ -43,8 +55,66 @@ function Test-IsExcluded {
     if ($FullPath -match [Regex]::Escape([IO.Path]::DirectorySeparatorChar + $d + [IO.Path]::DirectorySeparatorChar)) {
       return $true
     }
+    if ($FullPath -match [Regex]::Escape([IO.Path]::AltDirectorySeparatorChar + $d + [IO.Path]::AltDirectorySeparatorChar)) {
+      return $true
+    }
   }
   return $false
+}
+
+$includeExtSet = @{
+  ".ts" = $true; ".tsx" = $true; ".js" = $true; ".jsx" = $true; ".mjs" = $true; ".cjs" = $true
+  ".json" = $true; ".jsonc" = $true; ".yml" = $true; ".yaml" = $true; ".toml" = $true
+  ".md" = $true; ".txt" = $true; ".html" = $true; ".css" = $true; ".scss" = $true
+  ".sol" = $true; ".fc" = $true; ".tact" = $true; ".func" = $true
+  ".py" = $true; ".go" = $true; ".rs" = $true
+  ".sh" = $true; ".ps1" = $true
+  ".env" = $true
+}
+
+function Test-ShouldScanFile {
+  param([string]$FilePath)
+  $name = [IO.Path]::GetFileName($FilePath)
+  if ($name -like ".env*") {
+    return $true
+  }
+  $ext = [IO.Path]::GetExtension($FilePath).ToLower()
+  return $includeExtSet.ContainsKey($ext)
+}
+
+function Get-ScanFiles {
+  param([string]$Dir)
+  $list = New-Object System.Collections.Generic.List[System.IO.FileInfo]
+  $stack = New-Object System.Collections.Stack
+  $stack.Push($Dir)
+  while ($stack.Count -gt 0) {
+    $current = [string]$stack.Pop()
+    try {
+      foreach ($entry in [IO.Directory]::EnumerateFileSystemEntries($current)) {
+        if ([IO.Directory]::Exists($entry)) {
+          $dirName = [IO.Path]::GetFileName($entry)
+          if ($excludeDirs -contains $dirName) {
+            continue
+          }
+          if (Test-IsExcluded $entry) {
+            continue
+          }
+          $stack.Push($entry)
+          continue
+        }
+        if (-not (Test-ShouldScanFile $entry)) {
+          continue
+        }
+        if (Test-IsExcluded $entry) {
+          continue
+        }
+        $list.Add([IO.FileInfo]$entry) | Out-Null
+      }
+    } catch {
+      # Skip locked or inaccessible paths during verify-only scans.
+    }
+  }
+  return $list
 }
 
 $root = Resolve-Path $Path
@@ -58,8 +128,7 @@ $violations = @()
 $fixed = @()
 $scanned = 0
 
-$files = Get-ChildItem -Path $root -Recurse -File -Include $includeExt -ErrorAction SilentlyContinue |
-         Where-Object { -not (Test-IsExcluded $_.FullName) }
+$files = Get-ScanFiles -Dir $root.Path
 
 foreach ($f in $files) {
   $scanned++

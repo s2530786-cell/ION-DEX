@@ -8,6 +8,7 @@ import {
   registerDomainManage,
   renewDomainManage,
   transferDomainManage,
+  type DomainManageActionResult,
 } from "../services/domainManage.js";
 
 async function readJsonBody(request: IncomingMessage): Promise<unknown> {
@@ -46,10 +47,10 @@ function parseTransferBody(body: unknown): { name: string; toAddress: string } {
 async function handleMutation(
   response: ServerResponse,
   meta: ApiMeta,
-  action: () => ReturnType<typeof lookupDomainManage>,
+  action: () => Promise<DomainManageActionResult>,
 ): Promise<void> {
   try {
-    const payload = action();
+    const payload = await action();
     writeJson(response, 200, apiResponse(payload, meta));
   } catch (error) {
     if (error instanceof DomainManageValidationError) {

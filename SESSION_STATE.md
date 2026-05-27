@@ -12,13 +12,28 @@
 | **W1** | 六引擎真实数据层 | ✅ |
 | **W2** | 7 wallets + chain switch + sign summary | OK |
 | **W3** | UI Pixel Correction（仅 CSS） | ✅ |
-| **W4** | 链上接线（Copy/Batch/Domain） | ⏳ |
-| **W5** | Indexer 骨架 + burn/staking 读路径 | ⏳ |
+| **W4** | 链上接线（Copy/Batch/Domain） | ✅ verify-full · stress×3 · verify-100 GREEN（2026-05-27 续跑完成） |
+| **W5** | Indexer 骨架 + burn/staking 读路径 | ⏳ 骨架已落地 · CURRENT_PHASE |
 | **W6** | Sandwich + Bridge 双重签功能测 | ⏳ |
 | **W7** | CI/CD + 测试网脚本（无密钥则 W7-SKIP） | ⏳ |
 | **W8** | 全仓收口 verify-100 | ⏳ |
 
-**CURRENT_PHASE=W4**（W3 出口：`verify-full` 绿 · 34/34 E2E · 日志 `%TEMP%\ion-verify-full-run.txt` · 2026-05-27）
+**CURRENT_PHASE=W5**（W4 出口 verify-100：`%TEMP%\ion-verify-100-summary-20260527-234453.txt` · PASSED=100 FAILED=0 RESULT=GREEN）
+
+**W5 进行中（2026-05-27）**：
+- `backend/src/indexer/`：ION/BSC worker 骨架、`IndexerReadCache`、burn/staking enrich
+- `reconcile-burn.ts` + `backend/tests/reconcile-burn.test.ts`
+- `burn.ts` / `staking.ts` / `bridge.ts` / live loaders：provenance 叠加 indexer-cache 元数据
+- 后端 **50/50** tests 绿（含 indexer + reconcile）
+
+**W4 进行中（2026-05-27）**：
+- **CopyTrade**：`startCopyTrade` 非 test-mock 时 BSC `eth_getCode` 只读校验 leader 须为 EOA；`provenance` → `bsc-readonly`
+- **BatchTransfer**：补齐 `/stats` `/history` `/send` `/collect`；`send` 返回 `txHash: null` + `pending_signature`；`BATCH_TRANSFER_CONTRACT_ADDRESS` env
+- **Domain**：`ion-dns-adapter.ts` + `resolveDomainWithAdapter`；lookup/register 走 indexer 探针，无假 resolver 默认注入
+- **E2E 稳定**：`verify-e2e.mjs` + `stress-playwright-100.mjs` 启动 backend 时设 `ION_DATA_MODE=test-mock`（修复 domain-manage 注册后 owned 行不可见）
+- **前端 verify**：**32/32** Playwright 绿（2026-05-27）；`bootVideoCarousel.ts` Navigator.connection 类型修复
+- **出口（2026-05-27）**：`verify-full` ✅ · `stress-e2e` copy-trade/batch-transfer/domain-manage 各 100 ✅ · `verify-100` GREEN（续跑 pass 11→100；摘要 `%TEMP%\ion-verify-100-summary-20260527-234453.txt`）
+- **编码门禁**：`check-encoding.ps1` 改为递归跳过排除目录（4247 文件 ~12s，不再卡死）
 
 **W1 完成摘要（2026-05-25）**：
 - 后端 `/api/price/ion`、`/api/klines/ion` + 前端 Dashboard/Trade K 线已接线；`ION_DATA_MODE=auto` live 冒烟 ✅
@@ -31,6 +46,14 @@
 - **钱包 stress 100/100 ✅**：`e2e/wallet-connect.spec.ts` 100/100 green，日志 `%TEMP%\ion-wallet-stress-100-20260526-064048.log`
 - **verify-100 GREEN** (ion-verify-100-summary-20260527-011731.txt): PASSED=100 FAILED=0 RESULT=GREEN
 - **前台可见（后续阶段默认）**：`scripts\verify-100-until-green-foreground.cmd` / `scripts\verify-100-follow-progress.cmd`（优先显示已 GREEN 的摘要，避免被重跑中的 0/100 误导）
+
+**UI 铁律 + 设计图模板入库（2026-05-26）**：
+- 铁律：`.memory-bank/ui-cyber-glass-iron-law.md` · 规则 `.cursor/rules/ion-cyber-glass-iron-law.mdc` · Prompt `docs/cursor-prompt-ion-ui-1to1.md`
+- **设计图模板**：`.memory-bank/ui-design-master-template.md` · 资产 `.memory-bank/design-refs/`（7 屏 PNG + Logo + 2 开机动画母片）
+- Dashboard 主验收图：`design-refs/screens/04-dashboard-galaxy-spiral.png`
+- Logo：`design-refs/brand/ion-dex-brand-logo.png` → `frontend/public/brand/ion-dex-logo-master.png`
+- 开机动画母片：`boot-master-square-landscape.mp4` / `boot-master-portrait.mp4`（`scripts/process-boot-videos.ps1` 可重编码到 `frontend/public/boot/`）
+- **新功能 UI**：必须延续模板全局一致（铁律 §0 + 设计模板 §0）；禁止另起一套视觉风格
 
 **W3 完成摘要（2026-05-27）**：
 - `.glass-surface` 玻璃/噪点/截光（`frontend/src/styles/global.css`）；E2E 稳定：`VITE_E2E_STABLE=1`、`domClick`/`fillControlledInput`、`verify-e2e` 专用 backend **:8788**

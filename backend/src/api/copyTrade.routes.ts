@@ -47,7 +47,7 @@ export async function handleCopyTradeRoute(
   if (pathname === "/api/copy-trade/start" && request.method === "POST") {
     try {
       const body = await readJsonBody(request);
-      const stats = startCopyTrade(parseStartBody(body));
+      const stats = await startCopyTrade(parseStartBody(body));
       writeJson(response, 200, apiResponse(stats, meta));
     } catch (error) {
       if (error instanceof CopyTradeValidationError) {

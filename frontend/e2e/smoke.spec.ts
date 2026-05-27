@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { installE2eSessionFlags } from "./helpers";
 
 function hashPathForNav(key: string) {
   return key === "dashboard" ? "/#/" : `/#/${key}`;
@@ -36,12 +37,21 @@ async function fillControlledInput(page: Page, testId: string, value: string) {
   }, value);
 }
 
+async function dismissBootSplashIfPresent(page: Page) {
+  const splash = page.getByTestId("boot-splash-screen");
+  if (await splash.isVisible().catch(() => false)) {
+    await splash.click({ position: { x: 24, y: 24 }, force: true });
+    await splash.waitFor({ state: "hidden", timeout: 8_000 }).catch(() => undefined);
+  }
+}
+
 async function ensureAppShell(page: Page) {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     if (await page.getByTestId("main-content").isVisible().catch(() => false)) {
       return;
     }
     await page.goto("/", { waitUntil: "domcontentloaded" });
+    await dismissBootSplashIfPresent(page);
     await page.waitForTimeout(400);
   }
   await expect(page.getByTestId("main-content")).toBeVisible({ timeout: 30_000 });
@@ -77,24 +87,20 @@ test.describe("ION DEX smoke", () => {
   test.setTimeout(90_000);
   test.beforeEach(async ({ page }) => {
     page.setDefaultTimeout(10_000);
-    await page.addInitScript(() => {
-      try {
-        window.localStorage.setItem("ion-dex-risk-ack-v1", "1");
-      } catch {
-        // private mode / quota
-      }
-    });
+    await installE2eSessionFlags(page);
   });
 
   test("home page shows key sections and controls", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
+    await dismissBootSplashIfPresent(page);
 
     await expectIonBrand(page);
     await expect(page.getByTestId("ticker-strip")).toBeVisible();
     await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
     await expect(page.getByTestId("main-content")).toBeVisible();
     await expect(page.getByTestId("page-dashboard")).toBeVisible();
-    await expect(page.getByText("Professional Trading Surface")).toBeVisible();
+    await expect(page.getByTestId("dashboard-main-stage")).toBeVisible();
+    await expect(page.getByTestId("dashboard-feature-grid")).toBeVisible();
     await domClick(page, "dashboard-open-swap");
     await expect(page.getByTestId("page-swap")).toBeVisible({ timeout: 25_000 });
     await page.getByTestId("swap-pay-amount").fill("1");
@@ -139,8 +145,12 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("wallet-connect")).toContainText("EQCTes");
 
     await domClick(page, "wallet-disconnect");
-    await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
     await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
+    await page.getByTestId("wallet-connect").evaluate((el) => {
+      (el as HTMLButtonElement).click();
+    });
+    await expect(page.getByTestId("wallet-panel")).toBeVisible();
+    await expect(page.getByTestId("wallet-provider-online")).toBeVisible();
   });
 
   test("375px viewport keeps brand and main content visible", async ({ page }) => {

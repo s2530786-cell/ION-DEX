@@ -188,7 +188,11 @@ function attachQuietChildStreams(child) {
 function startBackend() {
   const child = spawn(process.execPath, ["dist/src/server.js"], {
     cwd: backend,
-    env: { ...process.env, BACKEND_PORT: String(backendPort) },
+    env: {
+      ...process.env,
+      BACKEND_PORT: String(backendPort),
+      ION_DATA_MODE: "test-mock",
+    },
     stdio: ["ignore", "pipe", "pipe"],
     shell: useShell,
   });

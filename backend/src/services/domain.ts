@@ -15,11 +15,14 @@ export type DomainResolution = {
     lastSaleIon: string | null;
   };
   provenance: {
-    source: "mock";
+    source: "session-catalog" | "upstream-unavailable" | "ion-indexer";
     note: string;
   };
 };
 
+export { resolveDomainWithAdapter } from "./ion-dns-adapter.js";
+
+/** Sync catalog resolver for adapter registry smoke paths in test-mock. */
 export function resolveDomain(name: string): DomainResolution {
   const demoOwned = name === "demo.ion" || name === "iondex.ion";
   return {
@@ -30,8 +33,8 @@ export function resolveDomain(name: string): DomainResolution {
     expiresAt: demoOwned ? "2027-05-18T00:00:00.000Z" : null,
     records: demoOwned
       ? [
-          { key: "wallet", value: "ion1resolvedwallet000000000000000000000000000000", status: "mock" },
-          { key: "profile", value: "ION DEX demo profile", status: "mock" },
+          { key: "wallet", value: "ion1resolvedwallet000000000000000000000000000000", status: "planned" },
+          { key: "profile", value: "ION DEX demo profile", status: "planned" },
           { key: "avatar", value: "aurora-neon", status: "planned" },
         ]
       : [],
@@ -41,8 +44,8 @@ export function resolveDomain(name: string): DomainResolution {
       lastSaleIon: demoOwned ? "4200.000" : null,
     },
     provenance: {
-      source: "mock",
-      note: "Phase 3 mock resolver; official ION DNS adapter is pending.",
+      source: "session-catalog",
+      note: "Catalog resolver for test-mock and registry adapter smoke.",
     },
   };
 }

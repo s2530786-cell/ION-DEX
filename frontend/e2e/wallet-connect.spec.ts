@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { domClick, fillControlledInput } from "./helpers";
+import { domClick, fillControlledInput, installE2eSessionFlags } from "./helpers";
 
 const EVM_PROVIDER_IDS = [
   "wallet-provider-metamask",
@@ -11,12 +11,21 @@ const EVM_PROVIDER_IDS = [
   "wallet-provider-rabby",
 ] as const;
 
-async function ensureAppShell(page: Page) {
+async function dismissBootSplashIfPresent(page: Page) {
+  const splash = page.getByTestId("boot-splash-screen");
+  if (await splash.isVisible().catch(() => false)) {
+    await splash.click({ position: { x: 24, y: 24 }, force: true });
+    await splash.waitFor({ state: "hidden", timeout: 8_000 }).catch(() => undefined);
+  }
+}
+
+async function ensureAppShell(page: Page, path = "/") {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     if (await page.getByTestId("main-content").isVisible().catch(() => false)) {
       return;
     }
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    await dismissBootSplashIfPresent(page);
     await page.waitForTimeout(400);
   }
   await expect(page.getByTestId("main-content")).toBeVisible({ timeout: 30_000 });
@@ -66,6 +75,7 @@ function installEvmMock() {
 
 test.describe("wallet connect (W2) — EVM", () => {
   test.beforeEach(async ({ page }) => {
+    await installE2eSessionFlags(page);
     await page.addInitScript(installEvmMock());
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await ensureAppShell(page);
@@ -101,6 +111,7 @@ test.describe("wallet connect (W2) — EVM", () => {
 
 test.describe("wallet connect (W2) — sign summary", () => {
   test.beforeEach(async ({ page }) => {
+    await installE2eSessionFlags(page);
     await page.addInitScript(() => {
       localStorage.clear();
       const mockAddress = "EQCTestWalletAddressForE2eWalletConnectOnlyxxxxxx";
@@ -120,7 +131,8 @@ test.describe("wallet connect (W2) — sign summary", () => {
       };
     });
     await page.goto("/#/swap", { waitUntil: "domcontentloaded" });
-    await ensureAppShell(page);
+    await ensureAppShell(page, "/#/swap");
+    await expect(page.getByTestId("page-swap")).toBeVisible({ timeout: 15_000 });
   });
 
   test("swap opens sign summary before ION wallet intent", async ({ page }) => {
@@ -130,6 +142,9 @@ test.describe("wallet connect (W2) — sign summary", () => {
     await domClick(page, "wallet-provider-ion-browser");
     await expect(page.getByTestId("wallet-confirmation")).toContainText("ION Browser Wallet connected", {
       timeout: 15_000,
+    });
+    await page.getByTestId("wallet-connect").evaluate((el) => {
+      (el as HTMLButtonElement).click();
     });
 
     await fillControlledInput(page, "swap-pay-amount", "1");

@@ -84,4 +84,31 @@ describe("batch-transfer API", () => {
     assert.equal(response.status, 400);
     assert.match(response.body.error?.message ?? "", /expected address,amount format/i);
   });
+
+  it("returns stats and history", async () => {
+    const stats = await requestJson("/api/batch-transfer/stats");
+    assert.equal(stats.status, 200);
+    assert.ok(stats.body.data?.provenance);
+
+    const history = await requestJson("/api/batch-transfer/history?page=1&limit=10");
+    assert.equal(history.status, 200);
+    assert.equal(history.body.data?.page, 1);
+  });
+
+  it("queues send as pending_signature without txHash", async () => {
+    const response = await requestJson("/api/batch-transfer/send", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        recipients: [
+          { address: "0x1111111111111111111111111111111111111111", amount: "1" },
+          { address: "0x2222222222222222222222222222222222222222", amount: "2" },
+        ],
+      }),
+    });
+    assert.equal(response.status, 200);
+    assert.equal(response.body.data?.status, "pending_signature");
+    assert.equal(response.body.data?.txHash, null);
+    assert.equal(response.body.data?.totalRecipients, 2);
+  });
 });

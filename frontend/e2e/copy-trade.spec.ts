@@ -1,5 +1,5 @@
 import { expect, test, type APIRequestContext } from "@playwright/test";
-import { domClick, fillControlledInput, playwrightAppOrigin } from "./helpers";
+import { domClick, fillControlledInput, installE2eSessionFlags, playwrightAppOrigin } from "./helpers";
 
 async function resetCopySession(request: APIRequestContext) {
   const base = playwrightAppOrigin();
@@ -12,6 +12,7 @@ test.describe("Copy Trade", () => {
 
   test.beforeEach(async ({ page, request }) => {
     page.setDefaultTimeout(10_000);
+    await installE2eSessionFlags(page);
     await resetCopySession(request);
     await page.goto("/#/copy-trade");
     await expect(page.getByTestId("page-copy-trade")).toBeVisible({ timeout: 15_000 });

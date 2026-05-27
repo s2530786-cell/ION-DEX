@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { domClick, fillControlledInput } from "./helpers";
+import { domClick, fillControlledInput, installE2eSessionFlags } from "./helpers";
 
 test.describe("Settings page", () => {
   test.setTimeout(60_000);
 
   test.beforeEach(async ({ page }) => {
     page.setDefaultTimeout(10_000);
+    await installE2eSessionFlags(page);
     await page.addInitScript(() => {
       window.localStorage.removeItem("ion-dex-app-settings");
     });

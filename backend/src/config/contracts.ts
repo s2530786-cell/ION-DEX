@@ -29,7 +29,8 @@ export const CONTRACTS = {
     lockAddress: BSC_VAULT_LOCK_PLACEHOLDER,
   },
   batchTransfer: {
-    contractAddress: PLACEHOLDER_ADDRESS,
+    contractAddress:
+      process.env.BATCH_TRANSFER_CONTRACT_ADDRESS?.trim().toLowerCase() || PLACEHOLDER_ADDRESS,
   },
   rpc: {
     bsc: process.env.BSC_RPC_URL ?? "https://bsc-dataseed.binance.org/",

@@ -205,6 +205,8 @@ const backend = spawn(process.execPath, ["dist/src/server.js"], {
   env: {
     ...process.env,
     BACKEND_PORT: String(backendPort),
+    /** Deterministic catalog DNS + session portfolio for Playwright (matches backend unit tests). */
+    ION_DATA_MODE: "test-mock",
   },
   stdio: "inherit",
   shell: useShell,

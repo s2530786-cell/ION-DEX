@@ -1,5 +1,17 @@
 import type { Page } from "@playwright/test";
 
+/** Skips boot splash + risk modal for automated UI tests. */
+export async function installE2eSessionFlags(page: Page) {
+  await page.addInitScript(() => {
+    try {
+      document.documentElement.dataset.ionE2eStable = "1";
+      window.localStorage.setItem("ion-dex-risk-ack-v1", "1");
+    } catch {
+      // private mode / quota
+    }
+  });
+}
+
 /** Bypasses TonConnect / wallet overlay pointer interception during E2E. */
 export async function domClick(page: Page, testId: string) {
   await page.getByTestId(testId).first().evaluate((el) => {

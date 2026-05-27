@@ -3,6 +3,10 @@ import { ApiErrorCodes, apiError, apiResponse, writeJson, type ApiMeta } from ".
 import {
   BatchTransferValidationError,
   getBatchTransferConfig,
+  getBatchTransferHistory,
+  getBatchTransferStats,
+  submitBatchCollect,
+  submitBatchTransferSend,
   validateBatchCollect,
   validateBatchTransfer,
 } from "../services/batchTransfer.js";
@@ -27,6 +31,38 @@ function parseTextBody(body: unknown): { text: string; mainAddress?: string } {
   };
 }
 
+function parseSendBody(body: unknown): {
+  recipients: Array<{ address: string; amount: string }>;
+  tokenAddress?: string;
+} {
+  const record = body && typeof body === "object" ? (body as Record<string, unknown>) : {};
+  const raw = Array.isArray(record.recipients) ? record.recipients : [];
+  const recipients = raw
+    .filter((row): row is Record<string, unknown> => Boolean(row && typeof row === "object"))
+    .map((row) => ({
+      address: String(row.address ?? ""),
+      amount: String(row.amount ?? ""),
+    }));
+  return {
+    recipients,
+    tokenAddress: record.tokenAddress !== undefined ? String(record.tokenAddress) : undefined,
+  };
+}
+
+function parseCollectBody(body: unknown): {
+  mainAddress: string;
+  fromAddresses: string[];
+  tokenAddress?: string;
+} {
+  const record = body && typeof body === "object" ? (body as Record<string, unknown>) : {};
+  const fromRaw = Array.isArray(record.fromAddresses) ? record.fromAddresses : [];
+  return {
+    mainAddress: String(record.mainAddress ?? ""),
+    fromAddresses: fromRaw.map((value) => String(value)),
+    tokenAddress: record.tokenAddress !== undefined ? String(record.tokenAddress) : undefined,
+  };
+}
+
 export async function handleBatchTransferRoute(
   request: IncomingMessage,
   response: ServerResponse,
@@ -35,6 +71,59 @@ export async function handleBatchTransferRoute(
 ): Promise<boolean> {
   if (pathname === "/api/batch-transfer/config" && request.method === "GET") {
     writeJson(response, 200, apiResponse(getBatchTransferConfig(), meta));
+    return true;
+  }
+
+  if (pathname === "/api/batch-transfer/stats" && request.method === "GET") {
+    writeJson(response, 200, apiResponse(getBatchTransferStats(), meta));
+    return true;
+  }
+
+  if (pathname === "/api/batch-transfer/history" && request.method === "GET") {
+    const url = new URL(request.url ?? "/", "http://127.0.0.1");
+    const page = Number(url.searchParams.get("page") ?? "1");
+    const limit = Number(url.searchParams.get("limit") ?? "20");
+    writeJson(response, 200, apiResponse(getBatchTransferHistory(page, limit), meta));
+    return true;
+  }
+
+  if (pathname === "/api/batch-transfer/send" && request.method === "POST") {
+    try {
+      const body = await readJsonBody(request);
+      const { recipients, tokenAddress } = parseSendBody(body);
+      const result = submitBatchTransferSend(recipients, tokenAddress);
+      writeJson(response, 200, apiResponse(result, meta));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Request body must be valid JSON.", meta));
+        return true;
+      }
+      if (error instanceof BatchTransferValidationError) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, error.message, meta));
+        return true;
+      }
+      throw error;
+    }
+    return true;
+  }
+
+  if (pathname === "/api/batch-transfer/collect" && request.method === "POST") {
+    try {
+      const body = await readJsonBody(request);
+      const { mainAddress, fromAddresses, tokenAddress } = parseCollectBody(body);
+      const result = submitBatchCollect(mainAddress, fromAddresses, tokenAddress);
+      writeJson(response, 200, apiResponse(result, meta));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Request body must be valid JSON.", meta));
+        return true;
+      }
+      if (error instanceof BatchTransferValidationError) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, error.message, meta));
+        return true;
+      }
+      throw error;
+    }
     return true;
   }
 

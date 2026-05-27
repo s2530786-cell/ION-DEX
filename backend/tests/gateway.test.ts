@@ -67,6 +67,23 @@ describe("ION DEX API gateway", () => {
     });
   });
 
+  it("serves profile session and domain showcase", async () => {
+    const session = await requestJson(
+      "/api/profile/session?provider=metamask&address=0x1111111111111111111111111111111111111111&chainId=56",
+    );
+    assert.equal(session.status, 200);
+    assert.ok(session.body.data && typeof session.body.data === "object");
+    const sessionData = session.body.data as { wallets?: { primaryKey?: string } };
+    assert.equal(sessionData.wallets?.primaryKey, "metamask");
+
+    const showcase = await requestJson("/api/domain/showcase");
+    assert.equal(showcase.status, 200);
+    assert.ok(showcase.body.data && typeof showcase.body.data === "object");
+    const showcaseData = showcase.body.data as { listings?: unknown[] };
+    assert.ok(Array.isArray(showcaseData.listings));
+    assert.ok(showcaseData.listings.length > 0);
+  });
+
   it("serves health with request metadata", async () => {
     const response = await requestJson("/api/health", {
       headers: {
