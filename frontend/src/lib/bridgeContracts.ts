@@ -36,6 +36,10 @@ export type BridgeAsset = "usdt" | "bnb" | "ion";
 
 export type BridgeDirection = "bsc-ion" | "ion-bsc";
 
+export function bscVaultBridgeConfigured(): boolean {
+  return Boolean(BSC_VAULT_ADDRESS);
+}
+
 export function bridgeContractsConfigured(): boolean {
   return Boolean(BSC_VAULT_ADDRESS && ION_WRAPPER_ADDRESS);
 }

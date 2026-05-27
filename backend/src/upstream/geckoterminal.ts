@@ -71,3 +71,42 @@ export async function getIonPriceChange24h(timeoutMs = 12000): Promise<number> {
   const pool = await getGeckoIonPool(timeoutMs);
   return Number(pool.attributes.price_change_percentage.h24);
 }
+
+export type GeckoOhlcvCandle = {
+  timestamp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+};
+
+type GeckoOhlcvResponse = {
+  data?: {
+    attributes?: {
+      ohlcv_list?: Array<[number, number, number, number, number, number]>;
+    };
+  };
+};
+
+export async function fetchGeckoIonOhlcv(
+  timeoutMs: number,
+  timeframe: "hour" | "minute" = "hour",
+  limit = 100,
+): Promise<GeckoOhlcvCandle[]> {
+  const url = new URL(`${GECKO_BASE}/networks/${ION_BSC_POOL_PATH}/ohlcv/${timeframe}`);
+  url.searchParams.set("limit", String(Math.min(1000, Math.max(1, limit))));
+  const body = await fetchJson<GeckoOhlcvResponse>(url.toString(), {
+    headers: GECKO_HEADERS,
+    timeoutMs,
+  });
+  const rows = body.data?.attributes?.ohlcv_list ?? [];
+  return rows.map(([ts, open, high, low, close, volume]) => ({
+    timestamp: ts,
+    open,
+    high,
+    low,
+    close,
+    volume,
+  }));
+}

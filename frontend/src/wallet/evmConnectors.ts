@@ -37,6 +37,16 @@ export type EvmWalletKind =
   | "coinbase"
   | "rabby";
 
+export const EVM_WALLET_KIND_ORDER: readonly EvmWalletKind[] = [
+  "okx",
+  "metamask",
+  "binance",
+  "bitget",
+  "rabby",
+  "trust",
+  "coinbase",
+] as const;
+
 export const EVM_WALLET_LABELS: Record<EvmWalletKind, string> = {
   metamask: "MetaMask",
   binance: "Binance Web3",

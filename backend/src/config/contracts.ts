@@ -28,6 +28,9 @@ export const CONTRACTS = {
   vault: {
     lockAddress: BSC_VAULT_LOCK_PLACEHOLDER,
   },
+  batchTransfer: {
+    contractAddress: PLACEHOLDER_ADDRESS,
+  },
   rpc: {
     bsc: process.env.BSC_RPC_URL ?? "https://bsc-dataseed.binance.org/",
     ion: process.env.ION_RPC_URL ?? "https://api.mainnet.ice.io",

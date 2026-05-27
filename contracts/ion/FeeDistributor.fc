@@ -2,88 +2,115 @@
 
 #include "common/common.fc";
 
+;; ION DEX fee distributor — all protocol fees settled in native ION.
+;; Split (bps, sum = 10000): 35% burn / 25% team / 20% staking / 15% treasury / 5% operations
+;;
+;; Burn: ION chain uses addr_none (TVM type 00, 2-bit prefix "00").
+;; When coins sent to addr_none, they are permanently removed from total supply.
+;; This is different from EVM's 0x000...dEaD address.
+
+const fee::bps_burn = 3500;
+const fee::bps_team = 2500;
+const fee::bps_staking = 2000;
+const fee::bps_treasury = 1500;
+const fee::bps_ops = 500;
+
+;; Opcodes derived from hash of operation string & 0x7fffffff (as per TON convention)
+const op::deposit_ion_fee = "deposit_ion_fee query_id:uint64 amount:Coins = InternalMsgBody"c & 0x7fffffff;
+const op::distribute_ion_fee = "distribute_ion_fee query_id:uint64 = InternalMsgBody"c & 0x7fffffff;
+
 global slice storage::owner_address;
-global slice storage::lp_recipient;
-global slice storage::treasury_recipient;
-global slice storage::insurance_recipient;
-global int storage::lp_bps;
-global int storage::treasury_bps;
-global int storage::insurance_bps;
+global slice storage::router_address;
+global slice storage::team_address;
+global slice storage::staking_address;
+global slice storage::treasury_address;
+global slice storage::operations_address;
+global int storage::accrued_fees;
+global int storage::total_distributed;
 
 () storage::load() impure inline {
     slice ds = get_data().begin_parse();
     storage::owner_address = ds~load_msg_addr();
-    storage::lp_recipient = ds~load_msg_addr();
-    storage::treasury_recipient = ds~load_msg_addr();
-    storage::insurance_recipient = ds~load_msg_addr();
-    storage::lp_bps = ds~load_uint(16);
-    storage::treasury_bps = ds~load_uint(16);
-    storage::insurance_bps = ds~load_uint(16);
+    storage::router_address = ds~load_msg_addr();
+    storage::team_address = ds~load_msg_addr();
+    storage::staking_address = ds~load_msg_addr();
+    storage::treasury_address = ds~load_msg_addr();
+    storage::operations_address = ds~load_msg_addr();
+    storage::accrued_fees = ds~load_coins();
+    storage::total_distributed = ds~load_coins();
     ds.end_parse();
 }
 
 () storage::save() impure inline_ref {
     set_data(begin_cell()
         .store_slice(storage::owner_address)
-        .store_slice(storage::lp_recipient)
-        .store_slice(storage::treasury_recipient)
-        .store_slice(storage::insurance_recipient)
-        .store_uint(storage::lp_bps, 16)
-        .store_uint(storage::treasury_bps, 16)
-        .store_uint(storage::insurance_bps, 16)
+        .store_slice(storage::router_address)
+        .store_slice(storage::team_address)
+        .store_slice(storage::staking_address)
+        .store_slice(storage::treasury_address)
+        .store_slice(storage::operations_address)
+        .store_coins(storage::accrued_fees)
+        .store_coins(storage::total_distributed)
     .end_cell());
 }
 
-() fee_dist::validate_bps() impure inline {
-    int total = storage::lp_bps + storage::treasury_bps + storage::insurance_bps;
-    throw_unless(error::fee_bps_invalid, total == params::fee_denominator);
+;; Send native ION coins to dest address
+() fee::send_native(slice dest, int amount, int mode) impure inline {
+    if (amount <= 0) {
+        return ();
+    }
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(dest)
+        .store_coins(amount)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+    .end_cell();
+    send_raw_message(msg, mode);
 }
 
-() handle_distribute_fees() impure {
-    slice body = ctx::body();
-    int query_id = body~load_uint(64);
-    int total_amount = body~load_coins();
-
-    throw_unless(error::invalid_amount, total_amount > 0);
-    fee_dist::validate_bps();
-
-    int lp_amt = math::mul_div(total_amount, storage::lp_bps, params::fee_denominator);
-    int treasury_amt = math::mul_div(total_amount, storage::treasury_bps, params::fee_denominator);
-    int insurance_amt = total_amount - lp_amt - treasury_amt;
-
-    if lp_amt > 0 {
-        msgs::send_simple(
-            0,
-            storage::lp_recipient,
-            begin_cell().store_uint(op::pay_to, 32).store_uint(query_id, 64).store_coins(lp_amt).end_cell(),
-            QCARRY_ALL_BALANCE);
+;; Burn coins by sending to addr_none (TVM address type 00).
+;; On TON/ION, addr_none is the 2-bit prefix "00" — no human-readable address.
+() fee::burn_coins(int amount) impure inline {
+    if (amount <= 0) {
+        return ();
     }
-    if treasury_amt > 0 {
-        msgs::send_simple(
-            0,
-            storage::treasury_recipient,
-            begin_cell().store_uint(op::pay_to, 32).store_uint(query_id, 64).store_coins(treasury_amt).end_cell(),
-            QCARRY_ALL_BALANCE);
-    }
-    if insurance_amt > 0 {
-        msgs::send_simple(
-            0,
-            storage::insurance_recipient,
-            begin_cell().store_uint(op::pay_to, 32).store_uint(query_id, 64).store_coins(insurance_amt).end_cell(),
-            QCARRY_ALL_BALANCE);
-    }
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_uint(0, 2)          ;; addr_none prefix = 00
+        .store_coins(amount)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+    .end_cell();
+    send_raw_message(msg, 1);  ;; mode=1: carry message value only
 }
 
-() handle_set_recipients() impure {
-    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
-    slice body = ctx::body();
-    storage::lp_recipient = body~load_msg_addr();
-    storage::treasury_recipient = body~load_msg_addr();
-    storage::insurance_recipient = body~load_msg_addr();
-    storage::lp_bps = body~load_uint(16);
-    storage::treasury_bps = body~load_uint(16);
-    storage::insurance_bps = body~load_uint(16);
-    fee_dist::validate_bps();
+() handle_deposit_ion_fee(int amount) impure {
+    throw_unless(error::invalid_amount, amount > 0);
+    storage::accrued_fees += amount;
+    storage::save();
+}
+
+() handle_distribute_ion_fee() impure {
+    throw_unless(error::zero_output, storage::accrued_fees > 0);
+
+    int reserve = gas::vault::withdraw_fee + storage_fee::vault * 3;
+    throw_unless(error::insufficient_gas, ctx::balance() > reserve);
+
+    int distributable = storage::accrued_fees;
+    int burn_amt = math::mul_div(distributable, fee::bps_burn, params::fee_denominator);
+    int team_amt = math::mul_div(distributable, fee::bps_team, params::fee_denominator);
+    int staking_amt = math::mul_div(distributable, fee::bps_staking, params::fee_denominator);
+    int treasury_amt = math::mul_div(distributable, fee::bps_treasury, params::fee_denominator);
+    int ops_amt = distributable - burn_amt - team_amt - staking_amt - treasury_amt;
+
+    ;; Distribute: 35% burn / 25% team / 20% staking / 15% treasury / 5% ops
+    fee::burn_coins(burn_amt);
+    fee::send_native(storage::team_address, team_amt, 1);
+    fee::send_native(storage::staking_address, staking_amt, 1);
+    fee::send_native(storage::treasury_address, treasury_amt, 1);
+    fee::send_native(storage::operations_address, ops_amt, 1);
+
+    storage::total_distributed += distributable;
+    storage::accrued_fees = 0;
     storage::save();
 }
 
@@ -98,28 +125,57 @@ global int storage::insurance_bps;
     throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
     storage::load();
 
-    if ctx::opcode() == op::distribute_fees {
-        handle_distribute_fees();
+    if ctx::opcode() == op::deposit_ion_fee {
+        throw_unless(
+            error::invalid_caller,
+            equal_slices(ctx::sender(), storage::router_address)
+            | equal_slices(ctx::sender(), storage::owner_address)
+        );
+        ;; Parse amount from body after op + query_id
+        slice body = ctx::body();
+        body~load_uint(64);  ;; query_id
+        int amount = body~load_coins();
+        handle_deposit_ion_fee(amount);
         return ();
     }
 
-    if ctx::opcode() == op::set_recipients {
-        handle_set_recipients();
+    if ctx::opcode() == op::distribute_ion_fee {
+        throw_unless(
+            error::invalid_caller,
+            equal_slices(ctx::sender(), storage::router_address)
+            | equal_slices(ctx::sender(), storage::owner_address)
+        );
+        handle_distribute_ion_fee();
         return ();
     }
 
     throw(error::wrong_op);
 }
 
-_ get_fee_distributor_data() method_id {
+int get_accrued_fees() method_id {
+    storage::load();
+    return storage::accrued_fees;
+}
+
+int get_total_distributed() method_id {
+    storage::load();
+    return storage::total_distributed;
+}
+
+int get_burn_ratio() method_id {
+    return math::mul_div(fee::bps_burn, 10000, params::fee_denominator);  ;; 3500 / 10000 = 35%
+}
+
+_ get_distributor_data() method_id {
     storage::load();
     return (
         storage::owner_address,
-        storage::lp_recipient,
-        storage::treasury_recipient,
-        storage::insurance_recipient,
-        storage::lp_bps,
-        storage::treasury_bps,
-        storage::insurance_bps
+        storage::router_address,
+        storage::team_address,
+        storage::staking_address,
+        storage::treasury_address,
+        storage::operations_address,
+        storage::accrued_fees,
+        storage::total_distributed
     );
 }

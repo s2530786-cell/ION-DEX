@@ -222,7 +222,7 @@ PROGRAM{
   }>
   handle_direct_add_liquidity PROC:<{
     // 
-    ctx::body INLINECALLDICT	//  body
+    ctx::body_slice GETGLOB	//  body
     64 LDU	//  query_id body
     LDGRAMS	//  query_id am0 body
     LDGRAMS	//  query_id am0 am1 body
@@ -318,21 +318,21 @@ PROGRAM{
     SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
     103 THROWIF
     ctx::init INLINECALLDICT
-    ctx::isBounced INLINECALLDICT	//  _8
+    ctx::is_bounced GETGLOB	//  _8
     IFJMP:<{	// 
     }>	// 
-    ctx::sender INLINECALLDICT	//  _10
+    ctx::sender_slice GETGLOB	//  _10
     0 PUSHINT	//  _10 _11=0
     address::check_workchain INLINECALLDICT	//  _12
     104 THROWIFNOT
     storage::load INLINECALLDICT
-    ctx::opcode INLINECALLDICT	//  _15
+    ctx::opcode_val GETGLOB	//  _15
     2318083562 PUSHINT	//  _15 _16=2318083562
     EQUAL	//  _17
     IFJMP:<{	// 
       handle_direct_add_liquidity CALLDICT
     }>	// 
-    ctx::opcode INLINECALLDICT	//  _19
+    ctx::opcode_val GETGLOB	//  _19
     3627831642 PUSHINT	//  _19 _20=3627831642
     EQUAL	//  _21
     IFJMP:<{	// 

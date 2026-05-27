@@ -19,9 +19,11 @@ import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
-import { DEMO_TICKER_FALLBACK } from "@/lib/integrationConfig";
+import { BSC_CHAIN_ID, DEMO_TICKER_FALLBACK, ION_CHAIN_ID_SCAFFOLD } from "@/lib/integrationConfig";
+import { evmChainLabel } from "@/wallet/evmChains";
 import { shortenAddress } from "@/wallet/injectedEvm";
 import {
+  EVM_WALLET_KIND_ORDER,
   EVM_WALLET_LABELS,
   isEvmWalletAvailable,
   type EvmWalletKind,
@@ -42,7 +44,12 @@ export type PageKey =
   | "bridge"
   | "burn"
   | "domain"
-  | "ai";
+  | "ai"
+  | "ai-trading"
+  | "copy-trade"
+  | "batch-transfer"
+  | "liquidity-mine"
+  | "settings";
 
 export const navItems: Array<{ key: PageKey; label: string }> = [
   { key: "dashboard", label: "Dashboard" },
@@ -57,7 +64,12 @@ export const navItems: Array<{ key: PageKey; label: string }> = [
   { key: "bridge", label: "Bridge" },
   { key: "burn", label: "Burn" },
   { key: "domain", label: "Domain" },
+  { key: "copy-trade", label: "Copy Trade" },
+  { key: "batch-transfer", label: "Batch Transfer" },
+  { key: "liquidity-mine", label: "Liquidity Mine" },
   { key: "ai", label: "AI" },
+  { key: "ai-trading", label: "AI Quant (预览)" },
+  { key: "settings", label: "Settings" },
 ];
 
 type AppShellProps = PropsWithChildren<{
@@ -122,7 +134,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     if (
       evmWallet.status === "disconnected" &&
       connectedProvider &&
-      EVM_WALLET_KINDS.includes(connectedProvider as EvmWalletKind)
+      EVM_WALLET_KIND_ORDER.includes(connectedProvider as EvmWalletKind)
     ) {
       setConnectedProvider(null);
     }
@@ -137,7 +149,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
       <IonConnectModalBridge />
       <AuroraGalaxyBackground />
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/40 shadow-[0_0_70px_rgba(36,247,255,0.16)] backdrop-blur-xl lg:flex">
+      <div className="depth-stage mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/40 shadow-[0_0_70px_rgba(36,247,255,0.16)] backdrop-blur-xl lg:flex">
         <aside
           aria-label="Sidebar"
           className="hidden w-56 shrink-0 flex-col border-r border-white/10 bg-slate-950/55 p-4 lg:flex"
@@ -298,8 +310,10 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
 
           <TickerStrip />
 
-          <main className="flex-1 p-4 sm:p-6" data-testid="main-content">
+          <main className="flex-1 overflow-hidden p-4 sm:p-6" data-testid="main-content">
+            <div className="float-3d aurora-noise h-full w-full">
             {children}
+            </div>
           </main>
           <FooterLegal />
         </div>
@@ -369,39 +383,29 @@ type WalletProvider = {
   family: "evm" | "ion";
 };
 
-const EVM_WALLET_KINDS: EvmWalletKind[] = [
-  "metamask",
-  "binance",
-  "okx",
-  "bitget",
-  "trust",
-  "coinbase",
-  "rabby",
-];
-
 const walletProviders: WalletProvider[] = [
-  ...EVM_WALLET_KINDS.map((kind) => ({
+  ...EVM_WALLET_KIND_ORDER.map((kind) => ({
     key: kind,
     name: EVM_WALLET_LABELS[kind],
-    label: "BSC · EIP-1193 injected · wagmi",
+    label: "BSC / ION scaffold · EIP-1193 · EIP-6963",
     family: "evm" as const,
   })),
   {
     key: "online",
     name: "Online+ Wallet",
-    label: "wallet.ice.io · postMessage ion_connect",
+    label: "wallet.ice.io · postMessage (Phase 2+ — reconnect each session)",
     family: "ion",
   },
   {
     key: "ion-browser",
     name: "ION Browser Wallet",
-    label: "window.ton · ton_requestAccounts",
+    label: "window.ton · official extension",
     family: "ion",
   },
   {
     key: "walletconnect",
     name: "TonConnect (ION)",
-    label: "TonConnect SDK · QR (no extension required)",
+    label: "TonConnect SDK · WalletConnect v2 scaffold (QR when configured)",
     family: "ion",
   },
 ];
@@ -425,7 +429,7 @@ function WalletConnectPanel({
   const showInjectedSession =
     connectedProvider?.family === "evm" &&
     evmConnected &&
-    EVM_WALLET_KINDS.includes(connectedProvider.key as EvmWalletKind);
+    EVM_WALLET_KIND_ORDER.includes(connectedProvider.key as EvmWalletKind);
   const showIonSession = ionSessionActive && ionWallet.snapshot && connectedProvider;
 
   return (
@@ -468,6 +472,30 @@ function WalletConnectPanel({
               · source: {evmWallet.snapshot!.balanceSource}
             </p>
           </motion.div>
+          <div className="flex flex-wrap gap-2" data-testid="evm-chain-switch">
+            <button
+              className={`rounded-full border px-3 py-1.5 text-xs font-black ${
+                evmWallet.targetChainId === BSC_CHAIN_ID
+                  ? "border-cyan-300/40 bg-cyan-300/[0.12] text-cyan-50"
+                  : "border-white/10 bg-white/[0.04] text-cyan-100/60"
+              }`}
+              onClick={() => void evmWallet.switchChain(BSC_CHAIN_ID)}
+              type="button"
+            >
+              {evmChainLabel(BSC_CHAIN_ID)}
+            </button>
+            <button
+              className={`rounded-full border px-3 py-1.5 text-xs font-black ${
+                evmWallet.targetChainId === ION_CHAIN_ID_SCAFFOLD
+                  ? "border-cyan-300/40 bg-cyan-300/[0.12] text-cyan-50"
+                  : "border-white/10 bg-white/[0.04] text-cyan-100/60"
+              }`}
+              onClick={() => void evmWallet.switchChain(ION_CHAIN_ID_SCAFFOLD)}
+              type="button"
+            >
+              {evmChainLabel(ION_CHAIN_ID_SCAFFOLD)}
+            </button>
+          </div>
           <button
             className="rounded-full border border-cyan-300/25 bg-cyan-300/[0.08] px-4 py-2 text-sm font-black text-cyan-100"
             onClick={() => void evmWallet.refreshBalance()}

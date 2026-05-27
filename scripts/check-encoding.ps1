@@ -32,7 +32,9 @@ $excludeDirs = @(
   "__pycache__", ".venv", "venv",
   # Local official ION reference clone; ignored by git and not maintained by this repo.
   "ion",
-  ".git"
+  ".git",
+  # Cursor agent/runtime scratch (may be locked while a session is active).
+  ".cursor"
 )
 
 function Test-IsExcluded {

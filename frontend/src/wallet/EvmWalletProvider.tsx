@@ -16,12 +16,16 @@ import {
   useConnect,
   useDisconnect,
   usePublicClient,
+  useSwitchChain,
   useWalletClient,
 } from "wagmi";
-import { bsc } from "wagmi/chains";
 import type { WalletClient } from "viem";
+import { BSC_CHAIN_ID } from "@/lib/integrationConfig";
 import { fetchBscWalletBalance } from "@/lib/ionApi";
+import { startEip6963Discovery, sortEvmWalletKinds } from "@/wallet/eip6963";
+import { bsc, ionScaffoldChain } from "@/wallet/evmChains";
 import {
+  EVM_WALLET_KIND_ORDER,
   EVM_WALLET_LABELS,
   evmConnectorList,
   evmWalletConnectors,
@@ -43,18 +47,22 @@ export type EvmWalletContextValue = {
   hasInjectedProvider: boolean;
   disconnect: () => void;
   refreshBalance: () => Promise<void>;
+  switchChain: (chainId: number) => Promise<void>;
+  targetChainId: number;
   publicClient: ReturnType<typeof usePublicClient> | undefined;
   /** Live viem WalletClient when EVM wallet is connected (used by scaffold trade/vault pages). */
   walletClient: WalletClient | undefined;
 };
 
 const wagmiConfig = createConfig({
-  chains: [bsc],
+  chains: [bsc, ionScaffoldChain],
   connectors: evmConnectorList,
+  multiInjectedProviderDiscovery: true,
   transports: {
     [bsc.id]: http(
       import.meta.env.VITE_BSC_RPC_URL?.trim() || "https://bsc-dataseed.binance.org/",
     ),
+    [ionScaffoldChain.id]: http(ionScaffoldChain.rpcUrls.default.http[0]),
   },
 });
 
@@ -62,30 +70,44 @@ const queryClient = new QueryClient();
 
 const EvmWalletBridgeContext = createContext<EvmWalletContextValue | null>(null);
 
-const EVM_WALLET_KINDS: EvmWalletKind[] = [
-  "metamask",
-  "binance",
-  "okx",
-  "bitget",
-  "trust",
-  "coinbase",
-  "rabby",
-];
-
 function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
   const { address, chainId, connector, status: accountStatus } = useAccount();
   const { connectAsync, isPending, error: connectError } = useConnect();
   const { disconnectAsync } = useDisconnect();
-  const publicClient = usePublicClient({ chainId: bsc.id });
+  const { switchChainAsync } = useSwitchChain();
+  const [targetChainId, setTargetChainId] = useState<number>(BSC_CHAIN_ID);
+  const publicClient = usePublicClient({ chainId: targetChainId });
   const { data: walletClient } = useWalletClient();
 
   const [snapshot, setSnapshot] = useState<EvmWalletSnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeWallet, setActiveWallet] = useState<EvmWalletKind | null>(null);
 
+  useEffect(() => {
+    startEip6963Discovery();
+  }, []);
+
   const availableWallets = useMemo(
-    () => EVM_WALLET_KINDS.filter((kind) => isEvmWalletAvailable(kind)),
+    () => sortEvmWalletKinds(EVM_WALLET_KIND_ORDER, isEvmWalletAvailable),
     [],
+  );
+
+  const ensureTargetChain = useCallback(
+    async (connectedChainId: number) => {
+      if (connectedChainId === targetChainId) {
+        return;
+      }
+      try {
+        await switchChainAsync({ chainId: targetChainId });
+      } catch (switchError) {
+        const message =
+          switchError instanceof Error
+            ? switchError.message
+            : "Wallet rejected chain switch. Add BSC or ION scaffold network in the wallet.";
+        setError(message);
+      }
+    },
+    [switchChainAsync, targetChainId],
   );
 
   const refreshBalance = useCallback(async (walletAddress: string) => {
@@ -123,18 +145,21 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
       try {
         const result = await connectAsync({
           connector: evmWalletConnectors[kind],
-          chainId: bsc.id,
+          chainId: targetChainId,
         });
+        await ensureTargetChain(result.chainId);
         const next: EvmWalletSnapshot = {
           address: result.accounts[0],
-          chainId: result.chainId,
+          chainId: targetChainId,
           balanceBnb: null,
           balanceSource: "unavailable",
           walletKind: kind,
         };
         setSnapshot(next);
         setActiveWallet(kind);
-        await refreshBalance(next.address);
+        if (targetChainId === BSC_CHAIN_ID) {
+          await refreshBalance(next.address);
+        }
       } catch (walletError) {
         const message =
           walletError instanceof Error ? walletError.message : "EVM wallet connection failed.";
@@ -143,7 +168,31 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
         setActiveWallet(null);
       }
     },
-    [connectAsync, refreshBalance],
+    [connectAsync, ensureTargetChain, refreshBalance, targetChainId],
+  );
+
+  const switchChain = useCallback(
+    async (nextChainId: number) => {
+      setTargetChainId(nextChainId);
+      if (accountStatus !== "connected") {
+        return;
+      }
+      await switchChainAsync({ chainId: nextChainId });
+      if (address) {
+        setSnapshot((current) =>
+          current
+            ? {
+                ...current,
+                chainId: nextChainId,
+              }
+            : current,
+        );
+        if (nextChainId === BSC_CHAIN_ID) {
+          await refreshBalance(address);
+        }
+      }
+    },
+    [accountStatus, address, refreshBalance, switchChainAsync],
   );
 
   const connectInjected = useCallback(async () => {
@@ -162,12 +211,12 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
     if (accountStatus === "connected" && address && chainId) {
       const kind =
         activeWallet ??
-        (connector?.id && EVM_WALLET_KINDS.includes(connector.id as EvmWalletKind)
+        (connector?.id && EVM_WALLET_KIND_ORDER.includes(connector.id as EvmWalletKind)
           ? (connector.id as EvmWalletKind)
           : null);
       setSnapshot((current) => ({
         address,
-        chainId,
+        chainId: chainId ?? targetChainId,
         balanceBnb: current?.balanceBnb ?? null,
         balanceSource: current?.balanceSource ?? "unavailable",
         walletKind: kind,
@@ -175,14 +224,28 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
       if (kind) {
         setActiveWallet(kind);
       }
-      void refreshBalance(address);
+      if (chainId !== targetChainId) {
+        void ensureTargetChain(chainId);
+      }
+      if (targetChainId === BSC_CHAIN_ID) {
+        void refreshBalance(address);
+      }
       return;
     }
     if (accountStatus === "disconnected") {
       setSnapshot(null);
       setActiveWallet(null);
     }
-  }, [accountStatus, activeWallet, address, chainId, connector?.id, refreshBalance]);
+  }, [
+    accountStatus,
+    activeWallet,
+    address,
+    chainId,
+    connector?.id,
+    ensureTargetChain,
+    refreshBalance,
+    targetChainId,
+  ]);
 
   useEffect(() => {
     if (connectError) {
@@ -220,6 +283,8 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
         }
         await refreshBalance(snapshot.address);
       },
+      switchChain,
+      targetChainId,
       publicClient,
       walletClient,
     }),
@@ -234,6 +299,8 @@ function EvmWalletBridgeProvider({ children }: PropsWithChildren) {
       refreshBalance,
       snapshot,
       status,
+      switchChain,
+      targetChainId,
       walletClient,
     ],
   );

@@ -13,7 +13,13 @@ const PAGE_KEYS: readonly PageKey[] = [
   "bridge",
   "burn",
   "domain",
+  "copy-trade",
+  "batch-transfer",
+  "liquidity-mine",
+  "batch-transfer",
   "ai",
+  "ai-trading",
+  "settings",
 ] as const;
 
 export function isPageKey(value: string): value is PageKey {

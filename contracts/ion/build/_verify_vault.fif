@@ -222,7 +222,7 @@ PROGRAM{
   }>
   handle_deposit_ref_fee PROC:<{
     // 
-    ctx::body INLINECALLDICT	//  body
+    ctx::body_slice GETGLOB	//  body
     LDGRAMS	//  jetton_amount body
     LDMSGADDR	//  jetton_amount _21 _20
     DROP	//  jetton_amount excesses_address
@@ -244,8 +244,8 @@ PROGRAM{
     storage::deposited_amount GETGLOB	//  _1
     0 GTINT	//  _3
     106 THROWIFNOT
-    ctx::balance INLINECALLDICT	//  _6
-    ctx::fwdFee INLINECALLDICT	//  _6 _7
+    ctx::balance_val GETGLOB	//  _6
+    ctx::fwd_fee_val GETGLOB	//  _6 _7
     5 MULCONST	//  _6 _9
     22000000 PUSHINT	//  _6 _9 _10=22000000
     ADD	//  _6 _11
@@ -259,27 +259,25 @@ PROGRAM{
     ADD	//  _6 _19
     GREATER	//  _20
     102 THROWIFNOT
-    storage::deposited_amount GETGLOB	//  amount_to_withdraw
-    storage::router_address GETGLOB	//  amount_to_withdraw router_addr
-    storage::token_address GETGLOB	//  amount_to_withdraw router_addr token_addr
-    0 PUSHINT	//  amount_to_withdraw router_addr token_addr _29=0
+    0 PUSHINT	//  _22=0
+    storage::router_address GETGLOB	//  _22=0 _23
+    OVER	//  _22=0 _23 _24=0
+    2526861840 PUSHINT	//  _22=0 _23 _24=0 _25=2526861840
+    NEWC	//  _22=0 _23 _24=0 _25=2526861840 _26
+    32 STU	//  _22=0 _23 _24=0 _28
+    64 STU	//  _22=0 _23 _30
+    storage::deposited_amount GETGLOB	//  _22=0 _23 _30 _31
+    STGRAMS	//  _22=0 _23 _32
+    storage::token_address GETGLOB	//  _22=0 _23 _32 _33
+    STSLICER	//  _22=0 _23 _34
+    storage::owner_address GETGLOB	//  _22=0 _23 _34 _35
+    STSLICER	//  _22=0 _23 _36
+    ENDC	//  _22=0 _23 _37
+    160 PUSHINT	//  _22=0 _23 _37 _40
+    msgs::send_simple INLINECALLDICT
+    0 PUSHINT	//  _43=0
     storage::deposited_amount SETGLOB
     storage::save INLINECALLDICT
-    0 PUSHINT	//  amount_to_withdraw router_addr token_addr _31=0
-    DUP	//  amount_to_withdraw router_addr token_addr _31=0 _32=0
-    2526861840 PUSHINT	//  amount_to_withdraw router_addr token_addr _31=0 _32=0 _33=2526861840
-    NEWC	//  amount_to_withdraw router_addr token_addr _31=0 _32=0 _33=2526861840 _34
-    32 STU	//  amount_to_withdraw router_addr token_addr _31=0 _32=0 _36
-    64 STU	//  amount_to_withdraw router_addr token_addr _31=0 _38
-    s0 s4 XCHG2	//  _31=0 router_addr token_addr _38 amount_to_withdraw
-    STGRAMS	//  _31=0 router_addr token_addr _39
-    SWAP	//  _31=0 router_addr _39 token_addr
-    STSLICER	//  _31=0 router_addr _40
-    storage::owner_address GETGLOB	//  _31=0 router_addr _40 _41
-    STSLICER	//  _31=0 router_addr _42
-    ENDC	//  _31=0 router_addr _43
-    160 PUSHINT	//  _31=0 router_addr _43 _46
-    msgs::send_simple INLINECALLDICT
   }>
   recv_internal PROC:<{
     //  my_balance msg_value in_msg_full in_msg_body
@@ -287,32 +285,28 @@ PROGRAM{
     SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
     103 THROWIF
     ctx::init INLINECALLDICT
-    ctx::isBounced INLINECALLDICT	//  _8
+    ctx::is_bounced GETGLOB	//  _8
     IFJMP:<{	// 
     }>	// 
-    ctx::sender INLINECALLDICT	//  _10
+    ctx::sender_slice GETGLOB	//  _10
     0 PUSHINT	//  _10 _11=0
     address::check_workchain INLINECALLDICT	//  _12
     104 THROWIFNOT
     storage::load INLINECALLDICT
-    ctx::opcode INLINECALLDICT	//  _15
+    ctx::opcode_val GETGLOB	//  _15
     2188830393 PUSHINT	//  _15 _16=2188830393
     EQUAL	//  _17
     IFJMP:<{	// 
-      ctx::sender INLINECALLDICT	//  _19
+      ctx::sender_slice GETGLOB	//  _19
       storage::router_address GETGLOB	//  _19 _20
       equal_slices INLINECALLDICT	//  _21
       107 THROWIFNOT
       handle_deposit_ref_fee CALLDICT
     }>	// 
-    ctx::opcode INLINECALLDICT	//  _24
+    ctx::opcode_val GETGLOB	//  _24
     3488591206 PUSHINT	//  _24 _25=3488591206
     EQUAL	//  _26
     IFJMP:<{	// 
-      ctx::sender INLINECALLDICT	//  _28
-      storage::owner_address GETGLOB	//  _28 _29
-      equal_slices INLINECALLDICT	//  _30
-      107 THROWIFNOT
       handle_withdraw_fee CALLDICT
     }>	// 
     105 THROW

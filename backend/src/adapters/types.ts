@@ -2,7 +2,13 @@ import type { ApiSource } from "../gateway/response.js";
 
 export type AdapterHealth = "mocked" | "planned" | "healthy" | "degraded" | "offline";
 
-export type UpstreamKind = "mock" | "cmc" | "bsc-indexer" | "ion-indexer" | "ion-dns";
+export type UpstreamKind =
+  | "mock"
+  | "cmc"
+  | "aggregated"
+  | "bsc-indexer"
+  | "ion-indexer"
+  | "ion-dns";
 
 export type AdapterProvenance = {
   adapterKey: string;

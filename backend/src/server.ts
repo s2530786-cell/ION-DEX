@@ -28,13 +28,13 @@ export function createApp(): Server {
   });
 }
 
-export function startServer(port = Number(process.env.PORT ?? process.env.BACKEND_PORT ?? 8787)): Server {
+export function startServer(port = Number(process.env.PORT ?? process.env.BACKEND_PORT ?? 8787), host = process.env.BACKEND_HOST ?? "127.0.0.1"): Server {
   void bootstrapDatabaseAsync();
   const server = createApp();
-  server.listen(port, "127.0.0.1", () => {
+  server.listen(port, host, () => {
     const address = server.address();
     const resolvedPort = typeof address === "object" && address ? address.port : port;
-    console.log(`ION DEX API gateway listening on http://127.0.0.1:${resolvedPort}`);
+    console.log(`ION DEX API gateway listening on http://${host}:${resolvedPort}`);
   });
   return server;
 }

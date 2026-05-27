@@ -13,17 +13,6 @@ export type MarketChartPoint = {
   value: number;
 };
 
-function safeRemoveChart(chart: IChartApi | null) {
-  if (!chart) {
-    return;
-  }
-  try {
-    chart.remove();
-  } catch {
-    // React Strict Mode + library teardown can race; ignore duplicate removeChild.
-  }
-}
-
 export function MarketChart({
   points,
   testId = "market-chart",
@@ -36,12 +25,11 @@ export function MarketChart({
   const seriesRef = useRef<ISeriesApi<"Area", Time> | null>(null);
 
   useEffect(() => {
-    const host = containerRef.current;
-    if (!host) {
+    if (!containerRef.current) {
       return;
     }
 
-    const chart = createChart(host, {
+    const chart = createChart(containerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "rgba(198, 244, 255, 0.72)",
@@ -52,8 +40,6 @@ export function MarketChart({
       },
       rightPriceScale: { borderColor: "rgba(255,255,255,0.12)" },
       timeScale: { borderColor: "rgba(255,255,255,0.12)" },
-      autoSize: false,
-      width: host.clientWidth,
       height: 280,
     });
 
@@ -71,16 +57,13 @@ export function MarketChart({
       if (!entry) {
         return;
       }
-      chart.applyOptions({
-        width: entry.contentRect.width,
-        height: entry.contentRect.height,
-      });
+      chart.applyOptions({ width: entry.contentRect.width });
     });
-    resizeObserver.observe(host);
+    resizeObserver.observe(containerRef.current);
 
     return () => {
       resizeObserver.disconnect();
-      safeRemoveChart(chart);
+      chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
     };
@@ -101,12 +84,20 @@ export function MarketChart({
 
   return (
     <div
-      className="relative h-[17.5rem] w-full overflow-hidden rounded-[1.25rem] border border-white/10 bg-black/30"
+      className="pointer-events-none relative h-[17.5rem] w-full overflow-hidden rounded-[1.25rem] border border-white/10 bg-black/30"
       data-testid={testId}
-    >
-      <div ref={containerRef} className="h-full min-h-[17.5rem] w-full" />
-    </div>
+      ref={containerRef}
+    />
   );
+}
+
+export function klinesToChartPoints(
+  candles: Array<{ time: number; close: number }>,
+): MarketChartPoint[] {
+  return candles.map((candle) => ({
+    time: candle.time,
+    value: candle.close,
+  }));
 }
 
 export function buildSyntheticSeries(basePrice: number, changePct: number): MarketChartPoint[] {

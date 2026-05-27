@@ -86,9 +86,9 @@ export function createAdapterRegistry(
 
   const market = new AsyncCachedSourceAdapter({
     key: "market",
-    upstream: "cmc",
+    upstream: "aggregated",
     status: "healthy",
-    note: "CoinMarketCap quotes/latest via backend proxy.",
+    note: "Pancake×Binance ION price with Gecko/DexScreener/CMC fallbacks (15s cache).",
     cache,
     policy: defaultCachePolicies.market,
     clock,

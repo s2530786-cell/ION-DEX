@@ -94,7 +94,7 @@ global int storage::deposited_amount;
 
 ;; 鈹€鈹€ Getters 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
-() get_vault_data() method_id {
+_ get_vault_data() method_id {
     storage::load();
     return (
         storage::owner_address,

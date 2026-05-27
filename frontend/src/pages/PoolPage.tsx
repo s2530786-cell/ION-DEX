@@ -49,7 +49,7 @@ function buildPoolRows(staking: StakingSummary, tickers: MarketTicker[]): PoolRo
       pair: "ION / USDT",
       tvlUsd: Math.round(primaryTvl * (ionPrice / Math.max(bnbPrice, 1))),
       volume24hUsd: volSecondary,
-      aprPct: staking.apr.dexPct,
+      aprPct: staking.apr.dexPct ?? 0,
     },
   ];
 }

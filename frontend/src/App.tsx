@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
+import { SplashScreen } from "@/components/layout/SplashScreen";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
 import { RiskModal } from "@/components/compliance/RiskModal";
 import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
@@ -12,14 +13,18 @@ import { SwapPage } from "@/pages/SwapPage";
 import { TradeProPage } from "@/pages/TradeProPage";
 import { ApproveManagerPage } from "@/pages/ApproveManagerPage";
 import { VaultStakePage } from "@/pages/VaultStakePage";
+import { CopyTradePage } from "@/pages/CopyTradePage";
+import { LiquidityMinePage } from "@/pages/LiquidityMinePage";
+import { DomainManagePage } from "@/pages/DomainManagePage";
+import { AiSubscriptionPage } from "@/pages/AiSubscriptionPage";
+import { SettingPage } from "@/pages/SettingPage";
+import { BatchTransferPage } from "@/pages/BatchTransferPage";
 
 /** Doubao-derived pages (trade-pro / approve-manager / vault-stake) are scaffold previews — see each page banner. */
 const businessPages = new Set<BusinessPageKey>([
   "trade",
   "grid",
   "burn",
-  "domain",
-  "ai",
 ]);
 
 function isBusinessPage(page: PageKey): page is BusinessPageKey {
@@ -50,6 +55,20 @@ function PageRouter({
       return <StakePage />;
     case "bridge":
       return <BridgePage />;
+    case "copy-trade":
+      return <CopyTradePage />;
+    case "batch-transfer":
+      return <BatchTransferPage />;
+    case "liquidity-mine":
+      return <LiquidityMinePage />;
+    case "domain":
+      return <DomainManagePage />;
+    case "ai":
+      return <AiSubscriptionPage />;
+    case "ai-trading":
+      return <AiSubscriptionPage />;
+    case "settings":
+      return <SettingPage />;
     default:
       if (isBusinessPage(page)) {
         return <BusinessPage page={page} />;
@@ -58,7 +77,19 @@ function PageRouter({
   }
 }
 
+const MODAL_STORAGE_KEY = "ion-dex-risk-ack-v1";
+
+function riskAccepted(): boolean {
+  try {
+    return window.localStorage.getItem(MODAL_STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const [showRisk, setShowRisk] = useState(() => !riskAccepted());
   const [activePage, setActivePage] = useState<PageKey>(() => pageKeyFromHash());
 
   const navigate = useCallback((page: PageKey) => {
@@ -74,7 +105,8 @@ export function App() {
 
   return (
     <>
-      <RiskModal />
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+      {showRisk && <RiskModal onClose={() => setShowRisk(false)} />}
       <AppShell activePage={activePage} onPageChange={navigate}>
       <AnimatePresence mode="wait">
         <motion.div

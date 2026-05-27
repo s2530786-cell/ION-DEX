@@ -20,6 +20,11 @@ frontend/.env.local
 # Root tooling dependencies
 node_modules/
 
+# Hermes Agent (cloned upstream; keep venv/node_modules out of git)
+hermes-agent/venv/
+hermes-agent/node_modules/
+hermes-agent/.venv/
+
 # Local Cursor maintenance backups (large / machine-specific)
 .maintenance/
 

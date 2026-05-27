@@ -70,6 +70,13 @@ const op::stake_withdraw = 1717171717;          ;; 0x66606062
 const op::stake_claim = 1818181818;            ;; 0x6C6C6C6A
 const op::stake_fund_rewards = 1919191919;      ;; 0x726C6C7F
 
+;; TEP-74 Jetton (router meta-tx path)
+const op::transfer = 260734629;                 ;; 0x0F8A7EA5
+const op::transfer_notification = 1935857820;   ;; 0x7362D09C
+
+;; Router meta-transaction relay
+const op::relay_meta_tx = 2055894029;            ;; 0x7A8B9C0D
+
 ;; ── Error Codes ──────────────────────────────────────────────────
 
 const error::invalid_amount = 101;
@@ -93,6 +100,11 @@ const error::auction_not_active = 118;
 const error::insufficient_stake = 119;
 const error::invalid_path = 120;
 const error::fee_bps_invalid = 121;
+const error::reentrancy = 122;
+const error::expired = 402;
+const error::invalid_seqno = 403;
+const error::wrong_router = 404;
+const error::invalid_signature = 406;
 
 ;; ── Chain Parameters ─────────────────────────────────────────────
 

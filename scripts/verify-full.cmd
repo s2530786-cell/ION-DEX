@@ -34,7 +34,8 @@ if errorlevel 1 (
 
 echo.
 echo === 1) Encoding check ===
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%CD%\scripts\check-encoding.ps1"
+set "PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+"%PS_EXE%" -NoProfile -ExecutionPolicy Bypass -File "%CD%\scripts\check-encoding.ps1"
 if errorlevel 1 (
   echo ERROR: encoding check failed with exit code !ERRORLEVEL!
   if not defined _ION_VNP pause

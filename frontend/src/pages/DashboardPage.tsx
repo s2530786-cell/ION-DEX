@@ -8,7 +8,11 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useCallback, useMemo } from "react";
-import { MarketChart, buildSyntheticSeries } from "@/components/charts/MarketChart";
+import {
+  MarketChart,
+  buildSyntheticSeries,
+  klinesToChartPoints,
+} from "@/components/charts/MarketChart";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -22,10 +26,12 @@ import {
 } from "@/lib/integrationConfig";
 import {
   fetchBurnSummary,
+  fetchIonKlines,
   fetchMarketTickers,
   fetchStakingSummary,
   formatIonAmount,
   type BurnSummary,
+  type IonKlinesPayload,
   type MarketTicker,
   type StakingSummary,
 } from "@/lib/ionApi";
@@ -80,12 +86,18 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
     (signal: AbortSignal) => fetchStakingSummary(signal),
     [],
   );
+  const fetchKlines = useCallback(
+    (signal: AbortSignal) => fetchIonKlines(48, signal),
+    [],
+  );
 
   const tickers = useApiResource(fetchTickers, fallbackTickers, {
     isEmpty: (data) => data.length === 0,
   });
   const burn = useApiResource(fetchBurn, fallbackBurn);
   const staking = useApiResource(fetchStaking, fallbackStaking);
+  const emptyKlines: IonKlinesPayload = { timeframe: "1h", candles: [], source: "pending" };
+  const klines = useApiResource(fetchKlines, emptyKlines, { isEmpty: () => false });
 
   const ionTicker = useMemo(
     () => tickers.data.find((ticker) => ticker.symbol === "ION") ?? tickers.data[0],
@@ -93,11 +105,14 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
   );
 
   const chartPoints = useMemo(() => {
+    if (klines.data.candles.length > 0) {
+      return klinesToChartPoints(klines.data.candles);
+    }
     if (!ionTicker) {
       return [];
     }
     return buildSyntheticSeries(ionTicker.priceUsd, ionTicker.change24hPct);
-  }, [ionTicker]);
+  }, [ionTicker, klines.data.candles]);
 
   const tvlLabel = useMemo(() => {
     const lpUsd = Number(staking.data.lpStakedUsd);
@@ -123,6 +138,7 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
       <MarketStage
         chartPoints={chartPoints}
         ionTicker={ionTicker}
+        klines={klines}
         onNavigate={onNavigate}
         tickers={tickers}
       />
@@ -138,11 +154,13 @@ function MarketStage({
   tickers,
   ionTicker,
   chartPoints,
+  klines,
   onNavigate,
 }: {
   tickers: ReturnType<typeof useApiResource<MarketTicker[]>>;
   ionTicker: MarketTicker | undefined;
   chartPoints: ReturnType<typeof buildSyntheticSeries>;
+  klines: ReturnType<typeof useApiResource<IonKlinesPayload>>;
   onNavigate: (page: PageKey) => void;
 }) {
   return (
@@ -170,7 +188,7 @@ function MarketStage({
           </div>
         </div>
 
-        <DataSourceBadge meta={tickers.meta} testId="dashboard-chart-source" />
+        <DataSourceBadge meta={klines.meta ?? tickers.meta} testId="dashboard-chart-source" />
 
         <AsyncState
           emptyMessage="Market tickers are not available."

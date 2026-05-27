@@ -1,5 +1,61 @@
 # Current Progress
 
+## Latest — 2026-05-25 全自动工单 W 系列（执行中）
+
+- **主文档**：[`docs/cursor-autonomous-work-order-2026-05-25.md`](cursor-autonomous-work-order-2026-05-25.md)
+- **门禁**：`node scripts/autonomous-phase-gate.mjs --gate verify-full|verify-100`
+- **CURRENT_PHASE**：W0（见根 `SESSION_STATE.md`）
+- **说明**：2026-05-24 产品页派工单（P1A–P3A + AI）已完成；本队列承接记忆库缺口（六引擎、钱包、UI 像素、索引、链上接线、CI）。
+
+## 2026-05-24 派工单 Phase 1 完成
+
+- **P3A BatchTransfer**：✅ 已完成 — verify-full **31/31** E2E 绿；`batch-transfer.spec.ts` 5 tests。
+- **派工单 P1A–P3A**：全部交付完成。
+- **AI 订阅**：主前端 `#/ai` → `AiSubscriptionPage`；E2E `ai-subscription.spec.ts` 2 tests；Python `pytest` **19/19**；Docker 联调 ✅（`:8000/health` + `/api/ai/price` mock）。
+
+## TASK-P3A BatchTransfer — 2026-05-24 ✅
+
+- **后端**：`batchTransfer.ts` + `batchTransfer.routes.ts`；`batch-transfer.test.ts`（3 tests）；gateway `/api/batch-transfer/*`。
+- **前端**：`BatchTransferPage.tsx` + `batchTransferCsv.ts`；Transfer/Collect Tab；ION 协议费；`data-testid` 前缀 `batch-transfer-*`。
+- **E2E**：`batch-transfer.spec.ts`（5 tests）；smoke 导航 batch-transfer 断言已对齐。
+- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **31/31**；backend **42** tests）。
+- **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md) P3A 节。
+
+## TASK-P2B SettingPage — 2026-05-24 ✅
+
+- **前端**：`frontend/src/lib/appSettings.ts` + `SettingPage.tsx`；路由/导航 `settings`；`SwapPage` 默认滑点联动；`global.css` 浅色对比 profile。
+- **E2E**：`settings.spec.ts`（2 tests）；smoke 导航 settings 控件可见。
+- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **26/26**）。
+- **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md) P2B 节。
+
+## TASK-P2A DomainManage — 2026-05-24 ✅
+
+- **后端**：`domainManage.ts` + `domainManage.routes.ts`；`domain-manage.test.ts`（4 tests）。
+- **前端**：`DomainManagePage.tsx` + 路由；`ionApi` DomainManage API；`verify-e2e` 检测 domain-manage overview。
+- **E2E**：`domain-manage.spec.ts`（2 tests）；smoke 导航/域名/AI 断言更新。
+- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **24/24**）。
+- **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md) P2A 节。
+
+## TASK-P1B LiquidityMine — 2026-05-24 ✅
+
+- **合约**：`contracts/bsc/LiquidityMine.sol` + `LiquidityMine.t.sol`（6 tests）；`stress-forge-contract-100.mjs --match-contract LiquidityMine` **100/100**。
+- **后端**：`liquidityMine.ts` + `liquidityMine.routes.ts`（pools / stake / unstake / claim）；backend **35** tests 绿。
+- **前端**：`LiquidityMinePage.tsx` + 路由/导航；`e2e/liquidity-mine.spec.ts`（2 tests）。
+- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **20/20**）。
+- **修复**：`verify-e2e.mjs` Windows 端口释放（PowerShell）；E2E stake 用例改为 UI intent 断言，避免 stale backend 405。
+- **UI 自审**：已并入 [`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md) P1B 节。
+
+## TASK-P1A CopyTrade — 2026-05-24 ✅
+
+- **后端**：`copyTrade.ts` 服务 + `copyTrade.routes.ts`（GET stats / POST start / POST stop）；gateway CORS 支持 POST；**32** backend tests 绿。
+- **前端**：`CopyTradePage.tsx` + 路由/导航；`ionApi` CopyTrade API；默认 API `8787`。
+- **E2E**：`e2e/copy-trade.spec.ts`（2 tests）；`stress-playwright-100.mjs` **100/100** 绿。
+- **全量**：`verify-full-save-log.cmd --no-pause` exit **0**（18 Playwright，含 copy-trade）。
+- **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md)
+- **附带修复**：FunC `lp_account.fc` / `lp_wallet.fc` / `vault.fc` 迁移至 `ctx::` 访问器；bridge smoke 数据源断言兼容 `upstream`。
+
+---
+
 ## Latest Verified Status
 
 - **Phase 2 Task 1 — 合约静态审计（2026-05-18）**：已通读 `contracts/ion/**/*.fc`（22 文件）、`contracts/bsc` 下 `IonWrapper.sol` / `BSCVault.sol` 与 Foundry 测试。结论：FunC 侧存在未校验 LP 回调发送方、router 部署池静态数据与 deployer 不一致、`#include` 路径错误、`gas::pool::swap` 缺失、stableswap 未接入 swap 等 **Critical/High** 级草稿问题；`BSCVault` 存在 `withdrawalId` 不含 nonce 导致的重复 `requestWithdrawal`/日限额会计风险等 **Medium** 级问题。详见 `SESSION_STATE.md`「Current Task → Task 1」。**本轮未改合约代码**；下一步 Task 2 编译与修复。
@@ -155,8 +211,8 @@ OK - All files are UTF-8 without BOM, no NUL bytes.
 - Memory Bank MCP config is written but tools are not yet verified. Cursor needs MCP reload/restart.
 - UI has initial dashboard plus business page shells. `Trade`, `Grid`, `Pool`, `Stake`, `Bridge`, `Burn`, `Domain`, and `AI` now have interactive validated draft flows; wallet/profile is a draft shell with no real wallet SDK yet.
 - After pulling changes, run locally: `cd frontend && npm install && npx playwright install chromium && npm run verify` (agent shell may not update `package-lock.json` in this environment).
-- Visual regression / pixel-diff vs design mockups not yet set up.
-- Smart contracts are not yet implemented. Backend now has a minimal mock API gateway; production data adapters, auth/user endpoints, cache, DB/indexer integration, and chain-facing services remain pending.
+- Visual regression / pixel-diff vs design mockups not yet set up（W3 含 Pixel Correction Protocol）。
+- **数据/索引缺口（W1/W5）**：六引擎 upstream、Indexer 生产读路径仍待接；backend 已有 gateway + 多业务路由（43 tests）与 FunC/Forge 合约树，非「零合约」状态。
 - ION official codebase path confirmed: `D:/openclaw-tools/ion`.
 - Confirmed remote: `https://github.com/ice-blockchain/ion`.
 - Memory Bank file `official-source-index.md` now records official reusable areas and DEX caveat.

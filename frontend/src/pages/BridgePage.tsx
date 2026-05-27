@@ -3,8 +3,11 @@ import { parseUnits, stringToHex } from "viem";
 import { useWalletClient } from "wagmi";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
+import { SignSummaryDialog } from "@/components/wallet/SignSummaryDialog";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { BSC_CHAIN_ID, ION_CHAIN_ID_SCAFFOLD } from "@/lib/integrationConfig";
+import type { AssetSignSummary } from "@/wallet/signSummary";
 import { useEvmWallet } from "@/wallet/EvmWalletProvider";
 import { useIonWallet } from "@/wallet/IonWalletProvider";
 import {
@@ -52,6 +55,8 @@ export function BridgePage() {
   const [amount, setAmount] = useState("");
   const [destination, setDestination] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [pendingSummary, setPendingSummary] = useState<AssetSignSummary | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -96,8 +101,27 @@ export function BridgePage() {
   }, [direction, routesPayload]);
 
   const submitBridge = useCallback(
-    async (event: FormEvent<HTMLFormElement>) => {
+    (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      if (!validation.isValid || validation.parsedAmount === null) {
+        return;
+      }
+
+      setPendingSummary({
+        action: "Bridge transfer",
+        token: asset.toUpperCase(),
+        amount: String(validation.parsedAmount),
+        fee: activeRoute ? `~${activeRoute.estimatedMinutes} min relay` : "relayer fee TBD",
+        chainId: direction === "bsc-ion" ? BSC_CHAIN_ID : ION_CHAIN_ID_SCAFFOLD,
+        destination: destination.trim() || undefined,
+      });
+      setSummaryOpen(true);
+    },
+    [activeRoute, asset, destination, direction, validation.isValid, validation.parsedAmount],
+  );
+
+  const executeBridgeAfterSummary = useCallback(
+    async () => {
       if (!validation.isValid || validation.parsedAmount === null) {
         return;
       }
@@ -217,6 +241,7 @@ export function BridgePage() {
         setFormError(message);
       } finally {
         setSubmitting(false);
+        setSummaryOpen(false);
       }
     },
     [
@@ -236,6 +261,13 @@ export function BridgePage() {
 
   return (
     <div className="grid gap-6" data-testid="page-bridge">
+      <SignSummaryDialog
+        busy={submitting}
+        onCancel={() => setSummaryOpen(false)}
+        onConfirm={() => void executeBridgeAfterSummary()}
+        open={summaryOpen}
+        summary={pendingSummary}
+      />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-200/55">Cross-chain</p>
@@ -272,7 +304,7 @@ export function BridgePage() {
       </AsyncState>
 
       <NeonCard className="p-6">
-        <form className="grid gap-4" data-testid="bridge-form" onSubmit={submitBridge}>
+        <form className="grid gap-4" data-testid="bridge-form" onSubmit={(event) => submitBridge(event)}>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="grid gap-2 text-sm">
               <span className="font-bold text-cyan-100/70">Route</span>

@@ -315,6 +315,6 @@ describe("ION DEX API gateway", () => {
 
     assert.equal(response.status, 204);
     assert.equal(response.headers.get("x-request-id"), "test-options-request");
-    assert.equal(response.headers.get("access-control-allow-methods"), "GET, OPTIONS");
+    assert.equal(response.headers.get("access-control-allow-methods"), "GET, POST, OPTIONS");
   });
 });

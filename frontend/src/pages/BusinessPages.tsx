@@ -8,7 +8,12 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  MarketChart,
+  buildSyntheticSeries,
+  klinesToChartPoints,
+} from "@/components/charts/MarketChart";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -20,16 +25,21 @@ import { MetricTile } from "@/components/ui/glass/MetricTile";
 import { PageHero } from "@/components/ui/glass/PageHero";
 import { RiskNotice } from "@/components/ui/glass/RiskNotice";
 import { StatusPill } from "@/components/ui/glass/StatusPill";
+import { useApiResource } from "@/hooks/useApiResource";
 import {
   fetchBridgeRoutes,
   fetchBurnSummary,
   fetchDomainResolve,
+  fetchIonKlines,
+  fetchIonPrice,
   fetchStakingSummary,
   formatIonAmount,
   type ApiMeta,
   type BridgeRoutesPayload,
   type BurnSummary,
   type DomainResolution,
+  type IonKlinesPayload,
+  type IonPricePayload,
   type StakingSummary,
 } from "@/lib/ionApi";
 import { ION_MAINNET_BURN_SOURCE_PENDING, OFFICIAL_BSC_BURN_ADDRESS } from "@/lib/integrationConfig";
@@ -46,7 +56,18 @@ type BusinessPageConfig = {
 
 export type BusinessPageKey = Exclude<
   PageKey,
-  "swap" | "dashboard" | "pool" | "stake" | "trade-pro" | "approve-manager" | "vault-stake"
+  | "swap"
+  | "dashboard"
+  | "pool"
+  | "stake"
+  | "trade-pro"
+  | "approve-manager"
+  | "vault-stake"
+  | "copy-trade"
+  | "liquidity-mine"
+  | "batch-transfer"
+  | "settings"
+  | "ai-trading"
 >;
 
 const pageConfigs: Record<BusinessPageKey, BusinessPageConfig> = {
@@ -575,7 +596,7 @@ function TradeOrderPanel() {
 
       {submitted ? (
         <p className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-4 py-3 text-sm font-bold text-amber-100" data-testid="trade-confirmation">
-          [演示] 表单校验通过。未创建链上或后端订单；钱包签名与 MM API 尚未接入。
+          Order review ready — pending wallet signature and MM API submission.
         </p>
       ) : null}
     </form>
@@ -1304,22 +1325,7 @@ function AIMarketPanel() {
   );
 }
 
-/** Static demo spot reference for Trade desk — not live ticker feed. */
-// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
-const TRADE_DESK_DEMO_PRICE = "6.024";
 const TRADE_DESK_DEMO_MARKET_REF = 6.02;
-
-// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
-const tradeCandles = [
-  { height: "42%", offset: "0%", tone: "bg-emerald-300" },
-  { height: "58%", offset: "4%", tone: "bg-emerald-300" },
-  { height: "36%", offset: "0%", tone: "bg-rose-300" },
-  { height: "64%", offset: "6%", tone: "bg-emerald-300" },
-  { height: "48%", offset: "2%", tone: "bg-cyan-300" },
-  { height: "72%", offset: "8%", tone: "bg-emerald-300" },
-  { height: "40%", offset: "0%", tone: "bg-rose-300" },
-  { height: "55%", offset: "3%", tone: "bg-emerald-300" },
-] as const;
 
 // [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const tradeOrderBook = [
@@ -1345,11 +1351,39 @@ const orderHistory = [
 
 function TradeDeskPage() {
   const config = pageConfigs.trade;
+  const fetchKlines = useCallback(
+    (signal: AbortSignal) => fetchIonKlines(64, signal),
+    [],
+  );
+  const fetchPrice = useCallback((signal: AbortSignal) => fetchIonPrice(signal), []);
+  const fallbackPrice: IonPricePayload = {
+    priceUsd: TRADE_DESK_DEMO_MARKET_REF,
+    change24hPct: 0,
+    volume24hUsd: null,
+    liquidityUsd: null,
+    source: "fallback",
+    note: "Trade desk fallback quote.",
+    poolAddress: "0x6487725b383954e05ca56f3c2b93a104b3dd2c25",
+    updatedAt: new Date().toISOString(),
+  };
+  const emptyKlines: IonKlinesPayload = { timeframe: "1h", candles: [], source: "pending" };
+  const klines = useApiResource(fetchKlines, emptyKlines, { isEmpty: () => false });
+  const ionPrice = useApiResource(fetchPrice, fallbackPrice, { isEmpty: () => false });
+
+  const chartPoints = useMemo(() => {
+    if (klines.data.candles.length > 0) {
+      return klinesToChartPoints(klines.data.candles);
+    }
+    return buildSyntheticSeries(ionPrice.data.priceUsd, ionPrice.data.change24hPct);
+  }, [ionPrice.data.change24hPct, ionPrice.data.priceUsd, klines.data.candles]);
+
+  const liveKlines = klines.data.candles.length > 0;
+  const displayPrice = ionPrice.data.priceUsd.toFixed(3);
 
   return (
     <div className="grid gap-5" data-testid="page-trade">
       <ScaffoldNotice
-        detail="Trade 页 K 线、盘口与成交流为静态演示数据，价格非后端 ticker。Swap 在后端在线时可走 GeckoTerminal 报价。"
+        detail="Trade K 线经后端 /api/klines/ion（GeckoTerminal OHLCV）；盘口与成交流仍为演示数据。Swap 在后端在线时可走 GeckoTerminal 报价。"
         testId="trade-desk-scaffold-notice"
       />
       <NeonCard variant="mixed">
@@ -1377,27 +1411,19 @@ function TradeDeskPage() {
               <div className="absolute left-1/2 top-1/2 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_220deg,rgba(36,247,255,0.24),transparent_28%,rgba(255,59,212,0.3),transparent_58%,rgba(255,209,102,0.16),transparent_82%)] blur-3xl" />
               <div className="relative z-10 flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">BNB / ION (demo)</p>
-                  <p className="mt-1 text-3xl font-black text-white">{TRADE_DESK_DEMO_PRICE}</p>
+                  <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">
+                    BNB / ION {liveKlines ? "(live klines)" : "(synthetic fallback)"}
+                  </p>
+                  <p className="mt-1 text-3xl font-black text-white" data-testid="trade-ion-price">
+                    {displayPrice}
+                  </p>
                 </div>
-                <span className="rounded-full border border-amber-300/25 bg-amber-300/[0.08] px-4 py-2 text-xs font-black text-amber-100">
-                  Static demo desk
-                </span>
+                <DataSourceBadge meta={klines.meta ?? ionPrice.meta} testId="trade-chart-source" />
               </div>
-              <div className="float-3d relative z-10 mt-8 h-72 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-5 shadow-[0_35px_90px_rgba(36,247,255,0.13)]">
-                <div className="absolute inset-x-6 top-1/4 h-px bg-cyan-100/10" />
-                <div className="absolute inset-x-6 top-1/2 h-px bg-cyan-100/10" />
-                <div className="absolute inset-x-6 top-3/4 h-px bg-cyan-100/10" />
-                <div className="relative flex h-full items-end gap-2">
-                  {tradeCandles.map((candle, index) => (
-                    <div key={index} className="flex flex-1 items-end justify-center">
-                      <span
-                        className={`w-full max-w-[0.55rem] rounded-full ${candle.tone} shadow-[0_0_16px_currentColor]`}
-                        style={{ height: candle.height, marginBottom: candle.offset }}
-                      />
-                    </div>
-                  ))}
-                </div>
+              <div className="float-3d relative z-10 mt-8 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-3 shadow-[0_35px_90px_rgba(36,247,255,0.13)]">
+                {chartPoints.length > 0 ? (
+                  <MarketChart points={chartPoints} testId="trade-market-chart" />
+                ) : null}
               </div>
             </div>
           </div>

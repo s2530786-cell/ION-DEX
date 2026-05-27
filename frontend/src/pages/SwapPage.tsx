@@ -2,18 +2,23 @@ import { ArrowDownUp } from "lucide-react";
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
+import { SignSummaryDialog } from "@/components/wallet/SignSummaryDialog";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useApiResource } from "@/hooks/useApiResource";
 import {
+  BSC_CHAIN_ID,
   DEMO_TICKER_FALLBACK,
+  ION_CHAIN_ID_SCAFFOLD,
   demoSwapUsdRates,
 } from "@/lib/integrationConfig";
+import type { AssetSignSummary } from "@/wallet/signSummary";
 import { CONTRACTS } from "@/config/contracts";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import { computeSwapQuoteBreakdown } from "@/lib/swapQuote";
+import { loadAppSettings } from "@/lib/appSettings";
 
 type SwapToken = "BNB" | "ION" | "USDT";
 
@@ -56,8 +61,10 @@ export function SwapPage() {
   const [fromToken, setFromToken] = useState<SwapToken>("BNB");
   const [toToken, setToToken] = useState<SwapToken>("ION");
   const [payAmount, setPayAmount] = useState("");
-  const [slippage, setSlippage] = useState("0.5");
+  const [slippage, setSlippage] = useState(() => loadAppSettings().defaultSlippagePct);
   const [submitting, setSubmitting] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [pendingSummary, setPendingSummary] = useState<AssetSignSummary | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -132,6 +139,22 @@ export function SwapPage() {
       return;
     }
 
+    setPendingSummary({
+      action: "Swap intent",
+      token: `${fromToken} → ${toToken}`,
+      amount: payAmount,
+      fee: `${(CONTRACTS.fee.swapFee * 100).toFixed(2)}% ${CONTRACTS.fee.currency}`,
+      slippage: `${slippage}%`,
+      chainId: validation.needsIon ? ION_CHAIN_ID_SCAFFOLD : BSC_CHAIN_ID,
+    });
+    setSummaryOpen(true);
+  }
+
+  async function executeSwapAfterSummary() {
+    if (!validation.isValid || validation.quote === null) {
+      return;
+    }
+
     setSubmitting(true);
     setSubmitError(null);
     setConfirmation(null);
@@ -160,11 +183,19 @@ export function SwapPage() {
       setSubmitError(message);
     } finally {
       setSubmitting(false);
+      setSummaryOpen(false);
     }
   }
 
   return (
     <div className="mx-auto w-full max-w-lg px-3 sm:px-4 lg:max-w-xl lg:px-0" data-testid="page-swap">
+      <SignSummaryDialog
+        busy={submitting}
+        onCancel={() => setSummaryOpen(false)}
+        onConfirm={() => void executeSwapAfterSummary()}
+        open={summaryOpen}
+        summary={pendingSummary}
+      />
       <NeonCard className="min-h-[28rem]" variant="magenta">
         <form className="grid gap-4" onSubmit={(event) => void submitSwap(event)}>
           <div className="mb-1 flex items-center justify-between">

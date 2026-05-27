@@ -82,3 +82,11 @@ export async function fetchBscNativeBalance(
   const result = await rpcCall<string>(config, "eth_getBalance", [address, "latest"]);
   return BigInt(result);
 }
+
+export async function bscEthCall(
+  config: ServerConfig,
+  to: string,
+  data: string,
+): Promise<string> {
+  return rpcCall<string>(config, "eth_call", [{ to, data }, "latest"]);
+}

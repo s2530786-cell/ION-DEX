@@ -17,6 +17,12 @@ import { fetchIonPortfolio, fetchPortfolio } from "../services/portfolio.js";
 import { createQuote, QuoteInputError } from "../services/quotes.js";
 import { getDatabaseHealth } from "../db/index.js";
 import { loadServerConfig } from "../config/server-config.js";
+import { handleCopyTradeRoute } from "../api/copyTrade.routes.js";
+import { handleLiquidityMineRoute } from "../api/liquidityMine.routes.js";
+import { handleDomainManageRoute } from "../api/domainManage.routes.js";
+import { handleBatchTransferRoute } from "../api/batchTransfer.routes.js";
+import { handlePriceRoute } from "../api/price.routes.js";
+import { handleAiRoute } from "../api/ai.routes.js";
 
 export type GatewayOptions = {
   clock?: Clock;
@@ -60,11 +66,12 @@ export async function routeRequest(
 ): Promise<void> {
   const clock = options.clock ?? systemClock;
   const startedAt = options.startedAt ?? defaultStartedAt;
+  const config = loadServerConfig();
   const requestId = getRequestId(request);
   const meta = buildMeta(
     clock,
     requestId,
-    loadServerConfig().dataMode === "test-mock" ? "mock" : "upstream",
+    config.dataMode === "test-mock" ? "mock" : "upstream",
   );
 
   if (request.method === "OPTIONS") {
@@ -72,12 +79,60 @@ export async function routeRequest(
     return;
   }
 
+  const url = new URL(request.url ?? "/", "http://localhost");
+
+  if (url.pathname.startsWith("/api/copy-trade/")) {
+    const handled = await handleCopyTradeRoute(request, response, url.pathname, meta);
+    if (handled) {
+      return;
+    }
+  }
+
+  if (url.pathname.startsWith("/api/liquidity-mine/")) {
+    const handled = await handleLiquidityMineRoute(request, response, url.pathname, meta);
+    if (handled) {
+      return;
+    }
+  }
+
+  if (url.pathname.startsWith("/api/domain-manage/")) {
+    const handled = await handleDomainManageRoute(request, response, url.pathname, meta);
+    if (handled) {
+      return;
+    }
+  }
+
+  if (url.pathname.startsWith("/api/batch-transfer/")) {
+    const handled = await handleBatchTransferRoute(request, response, url.pathname, meta);
+    if (handled) {
+      return;
+    }
+  }
+
+  if (url.pathname.startsWith("/api/ai")) {
+    const handled = await handleAiRoute(request, response, url.pathname, meta);
+    if (handled) {
+      return;
+    }
+  }
+
+  if (
+    url.pathname === "/api/price/ion" ||
+    url.pathname === "/api/price/bnb" ||
+    url.pathname === "/api/klines/ion" ||
+    url.pathname === "/api/market/ion" ||
+    url.pathname === "/api/pool/ion"
+  ) {
+    const handled = await handlePriceRoute(config, url.pathname, url, response, meta);
+    if (handled) {
+      return;
+    }
+  }
+
   if (request.method !== "GET") {
     writeJson(response, 405, apiError(ApiErrorCodes.methodNotAllowed, "Only GET requests are supported.", meta));
     return;
   }
-
-  const url = new URL(request.url ?? "/", "http://localhost");
 
   try {
     switch (url.pathname) {
@@ -178,14 +233,6 @@ export async function routeRequest(
             apiError(ApiErrorCodes.invalidQuoteRequest, "inputToken, outputToken, amountIn, and slippageBps are required.", meta),
           );
           return;
-
-
-
-
-
-
-
-          
         }
 
         try {

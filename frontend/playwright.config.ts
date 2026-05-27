@@ -6,12 +6,14 @@ const previewBaseUrl = process.env.PLAYWRIGHT_BASE_URL ?? `http://${previewHost}
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
+  workers: process.env.CI ? 2 : 6,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: [["list"]],
   use: {
     baseURL: previewBaseUrl,
     trace: "on-first-retry",
+    reducedMotion: "reduce",
   },
   projects: [
     {
