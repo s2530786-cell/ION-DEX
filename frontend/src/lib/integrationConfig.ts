@@ -88,11 +88,34 @@ export const DEMO_TICKER_FALLBACK: DemoMarketTicker[] = [
 ];
 
 export function resolveIonApiBaseUrl(): string {
+  const relative = import.meta.env.VITE_ION_API_RELATIVE?.trim();
+  if (relative === "1" || relative === "true") {
+    return "";
+  }
   const configured = import.meta.env.VITE_ION_API_BASE_URL?.trim();
   if (configured) {
     return configured.replace(/\/$/, "");
   }
-  return "http://127.0.0.1:8788";
+  return "http://127.0.0.1:8787";
+}
+
+/** AI 订阅 Python 服务（默认 :8000，与主 Node 网关分离） */
+export function resolveAiSubscriptionApiUrl(): string {
+  const configured = import.meta.env.VITE_AI_SUBSCRIPTION_API_URL?.trim();
+  if (configured) {
+    return configured.replace(/\/$/, "");
+  }
+  return "http://127.0.0.1:8000";
+}
+
+export function resolveAiIonTokenAddress(): string | null {
+  const value = import.meta.env.VITE_AI_ION_TOKEN_ADDR?.trim();
+  return value || OFFICIAL_BSC_ION_TOKEN;
+}
+
+export function resolveAiFeeReceiverAddress(): string | null {
+  const value = import.meta.env.VITE_AI_FEE_RECEIVER?.trim();
+  return value || null;
 }
 
 export function resolveBscRpcUrl(): string {
@@ -111,6 +134,11 @@ export function resolveBurnContractAddress(): string | null {
 
 export function resolveBurnIndexerUrl(): string | null {
   const value = import.meta.env.VITE_BURN_INDEXER_URL?.trim();
+  return value ? value : null;
+}
+
+export function resolveBatchTransferContractAddress(): string | null {
+  const value = import.meta.env.VITE_BATCH_TRANSFER_CONTRACT_ADDRESS?.trim();
   return value ? value : null;
 }
 

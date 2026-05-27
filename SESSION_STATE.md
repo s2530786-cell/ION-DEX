@@ -1,6 +1,122 @@
 # Current Session State
 
-## 🎯 TASK QUEUE 执行进度 — 2026-05-23
+## 🤖 全自动工单 W 系列 — 2026-05-25（当前执行队列）
+
+**主文档**：[`docs/cursor-autonomous-work-order-2026-05-25.md`](docs/cursor-autonomous-work-order-2026-05-25.md)  
+**门禁脚本**：`node scripts/autonomous-phase-gate.mjs --gate verify-full|verify-100|stress-e2e|...`  
+**模式**：零人工确认 · 每阶段出口 **`verify-100` → PASSED=100 FAILED=0 RESULT=GREEN** · 失败自动读 `%TEMP%` 日志修复后重跑
+
+| 阶段 | 目标 | 状态 |
+|------|------|------|
+| **W0** | 文档/记忆库同步 + 基线 verify-full | ✅ |
+| **W1** | 六引擎真实数据层 | ✅ |
+| **W2** | 7 wallets + chain switch + sign summary | OK |
+| **W3** | UI Pixel Correction（仅 CSS） | ✅ |
+| **W4** | 链上接线（Copy/Batch/Domain） | ⏳ |
+| **W5** | Indexer 骨架 + burn/staking 读路径 | ⏳ |
+| **W6** | Sandwich + Bridge 双重签功能测 | ⏳ |
+| **W7** | CI/CD + 测试网脚本（无密钥则 W7-SKIP） | ⏳ |
+| **W8** | 全仓收口 verify-100 | ⏳ |
+
+**CURRENT_PHASE=W4**（W3 出口：`verify-full` 绿 · 34/34 E2E · 日志 `%TEMP%\ion-verify-full-run.txt` · 2026-05-27）
+
+**W1 完成摘要（2026-05-25）**：
+- 后端 `/api/price/ion`、`/api/klines/ion` + 前端 Dashboard/Trade K 线已接线；`ION_DATA_MODE=auto` live 冒烟 ✅
+- E2E：`verify-e2e.mjs` workers=1 + retries=1；`smoke.spec.ts` shell 重试
+- **verify-100 GREEN** (ion-verify-100-summary-20260527-011731.txt): PASSED=100 FAILED=0 RESULT=GREEN
+- **100 轮门禁**：`scripts/verify-100.ps1` 全绿（日志 `%TEMP%\ion-verify-100-20260525-183924.log`）→ W1 ✅ commit + push
+
+**W2 完成摘要（2026-05-26）**：
+- 目标：7 钱包 + 链切换 + 签名摘要（`frontend/e2e/wallet-connect.spec.ts`）
+- **钱包 stress 100/100 ✅**：`e2e/wallet-connect.spec.ts` 100/100 green，日志 `%TEMP%\ion-wallet-stress-100-20260526-064048.log`
+- **verify-100 GREEN** (ion-verify-100-summary-20260527-011731.txt): PASSED=100 FAILED=0 RESULT=GREEN
+- **前台可见（后续阶段默认）**：`scripts\verify-100-until-green-foreground.cmd` / `scripts\verify-100-follow-progress.cmd`（优先显示已 GREEN 的摘要，避免被重跑中的 0/100 误导）
+
+**W3 完成摘要（2026-05-27）**：
+- `.glass-surface` 玻璃/噪点/截光（`frontend/src/styles/global.css`）；E2E 稳定：`VITE_E2E_STABLE=1`、`domClick`/`fillControlledInput`、`verify-e2e` 专用 backend **:8788**
+- **verify-full** ✅（编码 · 合约 · backend verify+audit+stress · **34/34** Playwright · frontend audit:high 0）
+- **verify-100 GREEN** ✅ `%TEMP%\ion-verify-100-summary-20260527-140839.txt` · `PASSED=100` `FAILED=0` `RESULT=GREEN` · 日志 `%TEMP%\ion-verify-100-20260527-140839.log`（2026-05-27 17:10）
+- `scripts/verify-100.ps1` 支持 `-StartAt` / `-InitialPassed` / `-ResumeSummary` / `-ResumeLog` 续跑
+
+---
+
+## 🎯 旺财派工单 Phase 1 — 2026-05-24（已完成）
+
+**主文档**：[`docs/cursor-dispatch-work-order-2026-05-24.md`](docs/cursor-dispatch-work-order-2026-05-24.md)  
+**Branch**：`security-test-fix` · **CI**：31/31 E2E ✅ · Forge ✅ · Stress 120/120 ✅
+
+| Task | 状态 | 100 轮门禁 |
+|------|------|------------|
+| **P1A CopyTrade** | ✅ 已完成 | E2E `copy-trade.spec.ts` **100/100** · verify-full 绿 |
+| **P1B LiquidityMine** | ✅ 已完成 | Forge LiquidityMine **100/100** · verify-full **20/20** E2E 绿 |
+| **P2A DomainManage** | ✅ 已完成 | verify-full **24/24** E2E 绿 · backend domain-manage 4 tests |
+| **P2B SettingPage** | ✅ 已完成 | verify-full **26/26** E2E 绿 · settings.spec 2 tests |
+| **AI 订阅 #/ai** | ✅ 已完成 | `AiSubscriptionPage` · `ai-subscription.spec.ts` 2 · Python pytest **19/19** |
+| P3A BatchTransfer | ✅ 已完成 | E2E `batch-transfer.spec.ts` **100/100** · verify-full **31/31** 绿 · backend batch-transfer 4 tests |
+
+**硬规则**：费用仅 ION · 无 fake 链上数据 · 新模块 **100/100 绿才 commit**（红一次从 0 重计）。
+
+**P0 已完成**：P0-1c 桥 E2E ✅ · P0-2b ION 费 ✅ · P0-3 安全矩阵 1000 ✅ · `verify-full` 绿 ✅
+
+**派工单 Phase 1 全部完成**（P1A–P3A）。AI 订阅 Docker 联调 ✅（2026-05-25：`postgres` healthy · `api` :8000 · `/health` + `/api/ai/price`）。
+
+---
+
+## FunC `router.fc` 编译修复 — 2026-05-24 ✅
+
+- **根因（多轮）**：
+  1. 早期版本：非法 `int const op::...` 语法、与 `common.fc` 冲突 opcode、`udict_get?` 解构错误、`my_balance()` 未定义。
+  2. 重写版本：`if (op == A || op == B)` — FunC 不支持 `||`；`udict_get?` 使用 `(_, int)` 解构错误。
+  3. `FeeDistributor.fc` 曾被误替换为 router 辅助片段 → 已从 HEAD 恢复完整合约。
+- **修复**：
+  - `router.fc`：TEP-74 分支拆成两个 `if`；`udict_get?` 改为 `(slice _pool_entry, int is_pool)`。
+  - `FeeDistributor.fc`：`git checkout HEAD --` 恢复标准 fee 分发合约。
+  - `common.fc` / `gas.fc`：TEP-74、meta-tx opcode 与 gas 常量（前一轮已迁入）。
+- **验证**：`verify-func-ion.mjs` **13/13 × 100 PASS · RESULT=GREEN**。
+- **全量 verify-full**（2026-05-24，`security-test-fix` + cherry-pick `6affce54` pool E2E）：`verify-full-save-log.cmd --no-pause` **exit 0** — 编码 ✅ · FunC **RESULT=GREEN** · backend **43/43** · Playwright **31/31** · audit:high **0**（`%TEMP%\ion-verify-full.txt`，~3.3min）。
+
+---
+
+## P3A BatchTransfer — 2026-05-24 ✅
+
+- **后端**：`batchTransfer.ts` + `batchTransfer.routes.ts`（stats / history / send / collect）；`MAX_RECIPIENTS=100`；`txHash: null` + `pending_signature`（不伪造链上哈希）；启动 warn `BatchTransfer.sol not wired`。
+- **前端**：`BatchTransferPage.tsx`（Transfer/Collect 双 Tab、CSV 解析、收款人表、Token 选择、确认弹窗、历史）；`batchTransferCsv.ts`；`ionApi` BatchTransfer API；路由/导航 `batch-transfer`。
+- **E2E**：`batch-transfer.spec.ts`（5 tests）；smoke 导航断言对齐 `batch-transfer-tabs` / `batch-transfer-csv-input`。
+- **修复**：`AppShell.tsx` 重复 `batch-transfer` PageKey/nav 项删除。
+- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **31/31**；backend **42** tests）。
+- **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](docs/ui-deliverable-self-audit-2026-05-24.md) P3A 节。
+
+---
+
+## AI 订阅模块（阶段 2 前端接入）— 2026-05-24 ✅
+
+- **前端**：`#/ai` → `AiSubscriptionPage`（四档订阅、周期切换、钱包 + API）；`ionApi.ts` / `integrationConfig.ts` AI 订阅端点。
+- **E2E**：`ai-subscription.spec.ts`（2 tests）。
+- **Python 模块**：`ai-subscription-module/` · `pytest tests/test_subscription_full.py` **19/19**。
+- **Docker 联调** ✅（2026-05-25）：`docker compose -f ai-subscription-module/docker/docker-compose.dev.yml up -d --build` — `postgres:16-alpine` healthy（`:55432`）；`api` `:8000` — `GET /health` → `{"status":"ok"}`；`GET /api/ai/price?tier=Basic&period=monthly` → mock USD/ION 报价。修复：`docker-entrypoint.sh` CRLF 导致容器 `exec … no such file or directory`（已改为 LF + Dockerfile `sed` 去 `\r`）。
+
+---
+
+## P2B SettingPage — 2026-05-24 ✅
+
+- **前端**：`appSettings.ts`（localStorage 偏好 + 清缓存前缀）；`SettingPage.tsx`（深色模式 / 滑点 / 通知 / 清缓存）；`App.tsx` + `AppShell` + `pageRouting` 注册 `settings`；`main.tsx` 启动应用设置；`SwapPage` 读取默认滑点。
+- **E2E**：`settings.spec.ts`（2 tests）；smoke 导航含 settings 断言。
+- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **26/26**；backend **39** tests）。
+- **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](docs/ui-deliverable-self-audit-2026-05-24.md) P2B 节。
+
+---
+
+## P2A DomainManage — 2026-05-24 ✅
+
+- **后端**：`domainManage.ts` + `domainManage.routes.ts`（overview / lookup / register / bind / transfer / renew）；gateway 路由已挂。
+- **前端**：`DomainManagePage.tsx`（查询注册 + 已拥有列表 + 绑定/转移/续费）；`App.tsx` 独立 `domain` 路由。
+- **E2E**：`domain-manage.spec.ts`（2 tests）；smoke domain/ai 断言已对齐新页面。
+- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **24/24**；backend **39** tests）。
+- **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](docs/ui-deliverable-self-audit-2026-05-24.md) P2A 节。
+
+---
+
+## 🎯 TASK QUEUE 执行进度 — 2026-05-23（历史）
 
 | # | Task | 状态 | 证据 |
 |---|------|------|------|
@@ -84,7 +200,7 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
 > Agent 必须自主推进开发流程。不等用户喊才干活。检测到任务 → 自动加载对应 Skill → 自动执行 → 自动验证 → 自动汇报。用户不需要手动触发每一步。
 
 **⑦ 根据项目需要主动搜索 GitHub 开源项目，下载安装依赖**
-> 缺工具自己找。GitHub 是第一搜索源。找到合适的开源库 → 下载 → 安装依赖 → 集成到项目 → 验证能跑通。最少 50 ⭐ 才考虑。装全跑通才算完，不下完就跑不算数。
+> 缺工具自己找。GitHub 是第一搜索源。找到合适的开源库 → 下载 → 安装依赖 → 集成到项目 → 验证能跑通。最少 10k以上 ⭐ 才考虑。装全跑通才算完，不下完就跑不算数。
 
 **⑧ 安装任何 Skill 前必须先安全检查**
 > 使用 `.cursor/skills/skill-vetter/SKILL.md` 审计每个新 Skill。检查权限范围、危险模式、外部请求。有红标（red flag）的一律不装，报 Master 决策。

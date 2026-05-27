@@ -3,9 +3,15 @@
 @tailwind utilities;
 
 :root {
+  --ion-cyan: #24f7ff;
+  --ion-violet: #8d4dff;
+  --ion-magenta: #ff3bd4;
+  --ion-gold: #ffd166;
+  --ion-green: #00ff88;
+  --ion-ink: #03050f;
   color-scheme: dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #03050f;
+  background: var(--ion-ink);
   color: #f8fbff;
 }
 
@@ -20,116 +26,66 @@ body {
   overflow-x: hidden;
 }
 
+html[data-ion-dark-mode="0"] body {
+  filter: saturate(0.92) brightness(1.04);
+}
+
 button,
 input,
 select {
   font: inherit;
 }
 
+/* ========== Cyber Neon Glassmorphism Core ========== */
 @layer utilities {
   .glass-surface {
     position: relative;
     isolation: isolate;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.02)) 1;
-    background-color: rgba(255, 255, 255, 0.03);
-    background-image:
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"),
-      linear-gradient(145deg, rgba(12, 24, 52, 0.72), rgba(7, 12, 30, 0.48)),
-      linear-gradient(135deg, rgba(36, 247, 255, 0.1) 0%, rgba(141, 77, 255, 0.06) 42%, rgba(255, 59, 212, 0.08) 100%);
-    background-blend-mode: overlay, normal, normal;
+    overflow: hidden;
+    border: 1px solid transparent;
+    background:
+      linear-gradient(
+          125deg,
+          rgba(36, 247, 255, 0.72),
+          rgba(141, 77, 255, 0.42),
+          rgba(255, 59, 212, 0.68)
+        )
+        border-box,
+      rgba(255, 255, 255, 0.03) padding-box;
+    background-clip: padding-box, border-box;
     backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      inset 0 -1px 0 rgba(141, 77, 255, 0.08),
-      0 22px 70px rgba(0, 0, 0, 0.28),
-      0 0 48px rgba(36, 247, 255, 0.1);
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 22px 70px rgba(0, 0, 0, 0.28);
   }
 
   .glass-surface::before {
     content: "";
     position: absolute;
-    inset: -20%;
-    z-index: -1;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(
-      135deg,
-      rgba(36, 247, 255, 0.14) 0%,
-      rgba(141, 77, 255, 0.09) 40%,
-      rgba(255, 59, 212, 0.11) 100%
-    );
-    filter: blur(60px);
-    opacity: 0.85;
-  }
-
-  /** Main app frame — keep galaxy visible through the shell */
-  .glass-shell-frame {
-    position: relative;
-    isolation: isolate;
-    border: 1.5px solid rgba(36, 247, 255, 0.35);
-    background: rgba(4, 8, 22, 0.12);
-    backdrop-filter: blur(8px) saturate(1.15);
-    box-shadow:
-      0 0 90px rgba(36, 247, 255, 0.32),
-      0 0 48px rgba(255, 59, 212, 0.16),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  }
-
-  .glass-shell-frame::before {
-    content: "";
-    position: absolute;
-    inset: -1.5px;
-    z-index: -1;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(
-      135deg,
-      rgba(36, 247, 255, 0.45),
-      rgba(141, 77, 255, 0.28),
-      rgba(255, 59, 212, 0.4)
-    );
-    opacity: 0.8;
-    filter: blur(8px);
-  }
-
-  /** App shell sidebar/header — crisp HUD, not muddy */
-  .glass-hud-panel {
-    position: relative;
-    isolation: isolate;
-    border-color: rgba(36, 247, 255, 0.18);
-    background:
-      linear-gradient(160deg, rgba(10, 22, 48, 0.45), rgba(5, 10, 28, 0.3)),
-      rgba(4, 8, 22, 0.25);
-    backdrop-filter: blur(8px) saturate(1.1);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      0 0 36px rgba(36, 247, 255, 0.1);
-  }
-
-  .glass-hud-panel::after {
-    content: "";
-    position: absolute;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    opacity: 0.35;
-    background-image:
-      radial-gradient(circle at 12% 8%, rgba(36, 247, 255, 0.12), transparent 42%),
-      radial-gradient(circle at 88% 12%, rgba(255, 59, 212, 0.1), transparent 38%);
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
   }
 
-  /** Ticker strip + compact nav pill track */
-  .glass-hud-strip {
-    position: relative;
-    border-color: rgba(255, 255, 255, 0.08);
-    background:
-      linear-gradient(90deg, rgba(6, 12, 28, 0.75), rgba(10, 6, 24, 0.65)),
-      rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(16px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  .glass-surface::after {
+    content: "";
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 0;
+    height: 42%;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(60px);
+    background: linear-gradient(90deg, rgba(36, 247, 255, 0.48), rgba(255, 59, 212, 0.42));
+    transform: translateZ(0);
   }
 
+  /* Neon flowing border — for highlight elements */
   .flow-border {
     position: relative;
     isolation: isolate;
@@ -147,179 +103,261 @@ select {
     animation: ionBorderFlow 7s ease infinite;
   }
 
+  /* 3D stage — main container */
   .depth-stage {
     perspective: 1400px;
     transform-style: preserve-3d;
   }
 
-  .depth-layer {
-    transform-style: preserve-3d;
+  /* 3D floating animation — for content areas */
+  .float-3d {
+    transform: rotateX(7deg) rotateY(-8deg) translateZ(0);
+    animation: ionFloat3d 9s ease-in-out infinite;
   }
 
-  .depth-layer-back {
-    transform: translateZ(-48px) scale(1.04);
-    opacity: 0.92;
+  /* Enhanced 3D floating with stronger perspective */
+  .float-3d-strong {
+    transform: rotateX(10deg) rotateY(-12deg) translateZ(0);
+    animation: ionFloat3d 12s ease-in-out infinite;
   }
 
-  .depth-layer-mid {
-    transform: translateZ(0);
-  }
-
-  .depth-layer-front {
-    transform: translateZ(36px) translateY(-6px);
-  }
-
-  .dashboard-float-panel {
-    transform: translateZ(24px);
-    box-shadow:
-      0 28px 60px rgba(3, 5, 15, 0.55),
-      0 0 40px rgba(36, 247, 255, 0.12),
-      0 0 28px rgba(255, 59, 212, 0.08);
-  }
-
-  .dashboard-stat-float {
-    transform: translateZ(28px) translateY(-4px);
-    box-shadow:
-      0 18px 42px rgba(3, 5, 15, 0.45),
-      0 0 24px rgba(141, 77, 255, 0.14);
-  }
-
-  .neon-orb-hero {
+  /* Neon ambient glow for content containers */
+  .neon-ambient {
     position: relative;
-    display: grid;
-    place-items: center;
-    filter: drop-shadow(0 0 32px rgba(36, 247, 255, 0.45));
+    isolation: isolate;
   }
 
-  .neon-orb-core {
-    position: absolute;
-    inset: 18%;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 35% 30%,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(36, 247, 255, 0.85) 22%,
-      rgba(141, 77, 255, 0.75) 48%,
-      rgba(255, 59, 212, 0.55) 72%,
-      rgba(3, 5, 15, 0.2) 100%
-    );
-    box-shadow:
-      inset 0 0 24px rgba(255, 255, 255, 0.35),
-      0 0 48px rgba(36, 247, 255, 0.55);
-    animation: orbCorePulse 6s ease-in-out infinite;
-  }
-
-  .neon-orb-glow {
-    position: absolute;
-    inset: -12%;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      rgba(36, 247, 255, 0.35) 0%,
-      rgba(141, 77, 255, 0.2) 40%,
-      transparent 70%
-    );
-    animation: orbGlowDrift 10s ease-in-out infinite;
-  }
-
-  .neon-orb-ring {
+  .neon-ambient::before {
+    content: '';
     position: absolute;
     inset: 0;
-    border-radius: 50%;
-    border: 1px solid rgba(36, 247, 255, 0.35);
-    box-shadow: 0 0 24px rgba(255, 59, 212, 0.25);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(36, 247, 255, 0.08), transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(141, 77, 255, 0.06), transparent 50%);
   }
 
-  .neon-orb-ring-outer {
-    animation: orbRingSpin 18s linear infinite;
+  .neon-ambient > * {
+    position: relative;
+    z-index: 1;
   }
 
-  .neon-orb-ring-inner {
-    inset: 12%;
-    border-color: rgba(255, 59, 212, 0.4);
-    animation: orbRingSpin 12s linear infinite reverse;
+  /* Intense neon edge glow for main panels */
+  .neon-panel-glow {
+    box-shadow:
+      0 0 40px rgba(36, 247, 255, 0.12),
+      0 0 80px rgba(36, 247, 255, 0.06),
+      0 0 120px rgba(141, 77, 255, 0.04);
   }
 
-  .float-3d {
-    transform: translateZ(12px);
-  }
-
+  /* Neon text glow */
   .text-glow-cyan {
-    text-shadow: 0 0 18px rgba(36, 247, 255, 0.65);
+    text-shadow: 0 0 18px rgba(36, 247, 255, 0.65), 0 0 40px rgba(36, 247, 255, 0.25);
   }
 
   .text-glow-magenta {
-    text-shadow: 0 0 18px rgba(255, 59, 212, 0.55);
+    text-shadow: 0 0 18px rgba(255, 59, 212, 0.55), 0 0 40px rgba(255, 59, 212, 0.2);
   }
 
-  .neon-border-mask {
-    position: relative;
+  .text-glow-violet {
+    text-shadow: 0 0 18px rgba(141, 77, 255, 0.55);
   }
 
-  .neon-border-mask::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    z-index: -1;
-    border-radius: inherit;
-    background: linear-gradient(115deg, #24f7ff, #8d4dff 38%, #ff3bd4 70%, #ffd166);
-    filter: blur(0.2px);
-  }
-
+  /* Aurora noise background */
   .aurora-noise {
     background-image:
       radial-gradient(circle at 15% 15%, rgba(36, 247, 255, 0.2), transparent 28%),
       radial-gradient(circle at 78% 18%, rgba(255, 59, 212, 0.18), transparent 32%),
       radial-gradient(circle at 52% 78%, rgba(141, 77, 255, 0.22), transparent 32%);
   }
+
+  /* Cyber scanline effect */
+  .cyber-scanline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(36, 247, 255, 0.02) 2px,
+      rgba(36, 247, 255, 0.02) 4px
+    );
+    border-radius: inherit;
+  }
+
+  /* Neon bottom-edge glow */
+  .neon-edge-glow {
+    box-shadow:
+      0 4px 20px rgba(36, 247, 255, 0.15),
+      0 8px 40px rgba(141, 77, 255, 0.1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-border::before,
+    .float-3d,
+    .float-3d-strong {
+      animation: none;
+    }
+
+    .float-3d,
+    .float-3d-strong {
+      transform: none;
+    }
+
+    .glass-surface {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .glass-surface::after {
+      display: none;
+    }
+
+    [data-testid="ticker-strip"] > div {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    button {
+      transition-duration: 0s !important;
+    }
+
+    button:hover,
+    button:active {
+      transform: none !important;
+    }
+  }
+
+  /* Playwright verify build — freeze motion even if reduced-motion is not applied */
+  html[data-ion-e2e-stable="1"] .flow-border::before,
+  html[data-ion-e2e-stable="1"] .float-3d,
+  html[data-ion-e2e-stable="1"] .float-3d-strong,
+  html[data-ion-e2e-stable="1"] [data-testid="ticker-strip"] > div {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  html[data-ion-e2e-stable="1"] .glass-surface {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  html[data-ion-e2e-stable="1"] .glass-surface::after {
+    display: none;
+  }
+
+  html[data-ion-e2e-stable="1"] button {
+    transition-duration: 0s !important;
+  }
+
+  html[data-ion-e2e-stable="1"] button:hover,
+  html[data-ion-e2e-stable="1"] button:active {
+    transform: none !important;
+  }
 }
 
-@keyframes ionSpinSlow {
-  from {
-    transform: rotate(0deg) scale(1);
-  }
-  to {
-    transform: rotate(360deg) scale(1);
-  }
-}
-
-@keyframes ionAuroraFlow {
+/* ========== Keyframe Animations ========== */
+@keyframes ionFloat3d {
   0%,
   100% {
-    transform: translate3d(-4%, 1%, 0) rotate(-7deg) scale(1.05);
+    transform: rotateX(7deg) rotateY(-8deg) translate3d(0, 0, 0);
   }
-  50% {
-    transform: translate3d(5%, -2%, 0) rotate(7deg) scale(1.14);
+  33% {
+    transform: rotateX(3deg) rotateY(6deg) translate3d(0, -12px, 28px);
+  }
+  66% {
+    transform: rotateX(5deg) rotateY(-3deg) translate3d(4px, -6px, 14px);
   }
 }
 
 @keyframes ionBorderFlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @keyframes ticker {
-  from {
-    transform: translateX(0);
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes ionSpinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ionPulseSlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes ionShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes ionScale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes ionAuroraFlow {
+  0%, 100% {
+    transform: translateX(-5%) rotate(-2deg) scaleX(1);
+    opacity: 0.6;
   }
-  to {
-    transform: translateX(-50%);
+  25% {
+    transform: translateX(8%) rotate(1.5deg) scaleX(1.08);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateX(20%) rotate(4deg) scaleX(1.15);
+    opacity: 0.7;
+  }
+  75% {
+    transform: translateX(5%) rotate(-1deg) scaleX(0.95);
+    opacity: 0.85;
   }
 }
 
-@keyframes ionFloat3d {
-  0%,
-  100% {
-    transform: rotateX(15deg) rotateY(-18deg) translate3d(0, 0, 0);
+/* Neon pulse (key states / buttons) */
+@keyframes ionNeonPulse {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(36, 247, 255, 0.35);
   }
   50% {
-    transform: rotateX(8deg) rotateY(12deg) translate3d(0, -12px, 32px);
+    box-shadow: 0 0 30px rgba(36, 247, 255, 0.6), 0 0 60px rgba(141, 77, 255, 0.3);
   }
+}
+
+@keyframes ionGlowShift {
+  0% { filter: hue-rotate(0deg) brightness(1); }
+  50% { filter: hue-rotate(10deg) brightness(1.1); }
+  100% { filter: hue-rotate(0deg) brightness(1); }
+}
+
+/* ========== Scrollbar Styling ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(36, 247, 255, 0.4), rgba(141, 77, 255, 0.3));
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(36, 247, 255, 0.6), rgba(141, 77, 255, 0.5));
+}
+
+/* ========== Text Selection ========== */
+::selection {
+  background: rgba(36, 247, 255, 0.25);
+  color: #fff;
 }

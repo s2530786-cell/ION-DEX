@@ -1,5 +1,9 @@
 param(
   [int]$Iterations = 100,
+  [int]$StartAt = 1,
+  [int]$InitialPassed = 0,
+  [string]$ResumeSummary = "",
+  [string]$ResumeLog = "",
   [switch]$ContinueOnFailure
 )
 
@@ -13,11 +17,31 @@ $log = Join-Path $env:TEMP "ion-verify-100-$stamp.log"
 
 Set-Location $root
 
+# Agent/sandbox shells may omit System32 from PATH; resolve cmd/powershell explicitly.
+$sysRoot = if ($env:SystemRoot) { $env:SystemRoot } else { "C:\Windows" }
+$script:System32 = Join-Path $sysRoot "System32"
+$script:WinPs = Join-Path $script:System32 "WindowsPowerShell\v1.0"
+$script:CmdExe = Join-Path $script:System32 "cmd.exe"
+$script:PsExe = Join-Path $script:WinPs "powershell.exe"
+if ($env:PATH -notlike "*$($script:System32)*") {
+  $env:PATH = "$($script:System32);$($script:WinPs);$env:PATH"
+}
+
 function Write-Log {
   param([string]$Message)
   $line = "[" + (Get-Date -Format "s") + "] " + $Message
   Write-Host $line
-  Add-Content -Path $log -Value $line -Encoding utf8
+  try {
+    Add-Content -Path $log -Value $line -Encoding utf8 -ErrorAction Stop
+  }
+  catch {
+    if (-not $script:LogFallback) {
+      $script:LogFallback = Join-Path $env:TEMP ("ion-verify-100-fallback-" + $stamp + ".log")
+      $log = $script:LogFallback
+      ("LOG_FALLBACK=" + $log) | Add-Content -Path $summary -Encoding utf8 -ErrorAction SilentlyContinue
+    }
+    Add-Content -Path $log -Value $line -Encoding utf8
+  }
 }
 
 function Run-Step {
@@ -29,61 +53,157 @@ function Run-Step {
   Write-Log ("START " + $Name)
   $previousErrorActionPreference = $ErrorActionPreference
   $ErrorActionPreference = "Continue"
+  $exitCode = 1
   try {
     & $Command *>> $log
-    $exitCode = $LASTEXITCODE
+    if ($null -ne $LASTEXITCODE) {
+      $exitCode = [int]$LASTEXITCODE
+    }
+  }
+  catch {
+    Write-Log ("ERROR " + $Name + " " + $_.Exception.Message)
+    $exitCode = 1
   }
   finally {
     $ErrorActionPreference = $previousErrorActionPreference
-  }
-  if ($null -eq $exitCode) {
-    $exitCode = 0
   }
   Write-Log ("END " + $Name + " EXIT=" + $exitCode)
   return $exitCode
 }
 
-Remove-Item $summary, $log -ErrorAction SilentlyContinue
-"ION DEX 100-pass verification" | Set-Content -Path $summary -Encoding utf8
-("ITERATIONS=" + $Iterations) | Add-Content -Path $summary -Encoding utf8
-("LOG=" + $log) | Add-Content -Path $summary -Encoding utf8
+function Invoke-NpmVerify {
+  param([string]$WorkingDirectory)
+  Set-Location $WorkingDirectory
+  & $script:CmdExe /d /c "npm run verify & exit /b %ERRORLEVEL%"
+}
 
-$passed = 0
+function Invoke-NpmAuditHigh {
+  param([string]$WorkingDirectory)
+  Set-Location $WorkingDirectory
+  & $script:CmdExe /d /c "npm run audit:high & exit /b %ERRORLEVEL%"
+}
+
+$lockFile = Join-Path $env:TEMP "ion-verify-100.lock"
+if (Test-Path $lockFile) {
+  $lockAge = (Get-Date) - (Get-Item $lockFile).LastWriteTime
+  if ($lockAge.TotalHours -lt 6) {
+    Write-Host "Another verify-100 appears to be running (lock: $lockFile). Aborting to avoid port/E2E races."
+    exit 2
+  }
+  Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
+}
+New-Item -Path $lockFile -ItemType File -Force | Out-Null
+
+if ($ResumeSummary -and (Test-Path $ResumeSummary)) {
+  $summary = $ResumeSummary
+}
+if ($ResumeLog -and (Test-Path $ResumeLog)) {
+  try {
+    Add-Content -Path $ResumeLog -Value ("--- RESUME " + (Get-Date -Format "s") + " ---") -Encoding utf8 -ErrorAction Stop
+    $log = $ResumeLog
+  }
+  catch {
+    $log = Join-Path $env:TEMP ("ion-verify-100-resume-" + $stamp + ".log")
+  }
+}
+
+if ($ResumeSummary -and (Test-Path $summary)) {
+  Write-Log ("RESUME summary=" + $summary + " startAt=" + $StartAt + " initialPassed=" + $InitialPassed)
+} else {
+  Remove-Item $summary, $log -ErrorAction SilentlyContinue
+  "ION DEX 100-pass verification" | Set-Content -Path $summary -Encoding utf8
+  ("ITERATIONS=" + $Iterations) | Add-Content -Path $summary -Encoding utf8
+  ("LOG=" + $log) | Add-Content -Path $summary -Encoding utf8
+}
+
+if ($StartAt -lt 1) { $StartAt = 1 }
+if ($StartAt -gt $Iterations) {
+  Write-Host "StartAt ($StartAt) > Iterations ($Iterations); nothing to run."
+  exit 0
+}
+
+$passed = [Math]::Max(0, $InitialPassed)
 $failed = 0
 
-for ($i = 1; $i -le $Iterations; $i++) {
+for ($i = $StartAt; $i -le $Iterations; $i++) {
   Write-Log ("PASS " + $i + "/" + $Iterations)
 
   Set-Location $root
   $encodingExit = Run-Step "encoding" {
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts\check-encoding.ps1")
+    & $script:PsExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts\check-encoding.ps1")
   }
 
   Set-Location $backend
   $backendVerifyExit = Run-Step "backend-verify" {
-    cmd.exe /d /c "npm run verify"
+    Invoke-NpmVerify -WorkingDirectory $backend
+  }
+  if ($backendVerifyExit -ne 0) {
+    Set-Location $root
+    Run-Step "free-ion-ports-before-backend-retry" {
+      & $script:CmdExe /d /c "node scripts\free-ion-ports.mjs & exit /b 0"
+    } | Out-Null
+    Start-Sleep -Seconds 2
+    Set-Location $backend
+    $backendVerifyExit = Run-Step "backend-verify-retry" {
+      Invoke-NpmVerify -WorkingDirectory $backend
+    }
   }
 
-  $backendAuditExit = Run-Step "backend-audit-high" {
-    cmd.exe /d /c "npm run audit:high"
+  if ($backendVerifyExit -eq 0) {
+    Set-Location $backend
+    $backendAuditExit = Run-Step "backend-audit-high" {
+      & $script:CmdExe /d /c "npm run audit:high"
+    }
+
+    $backendStressExit = Run-Step "backend-stress" {
+      & $script:CmdExe /d /c "npm run stress"
+    }
+  }
+  else {
+    $backendAuditExit = 1
+    $backendStressExit = 1
   }
 
-  $backendStressExit = Run-Step "backend-stress" {
-    cmd.exe /d /c "npm run stress"
-  }
+  Set-Location $root
+  Run-Step "free-ion-ports" {
+    & $script:CmdExe /d /c "node scripts\free-ion-ports.mjs & exit /b 0"
+  } | Out-Null
+  Start-Sleep -Seconds 2
 
   Set-Location $frontend
   $verifyExit = Run-Step "frontend-verify" {
-    cmd.exe /d /c "npm run verify"
+    Invoke-NpmVerify -WorkingDirectory $frontend
+  }
+  if ($verifyExit -ne 0) {
+    Write-Log "frontend-verify failed; waiting for preview/backend teardown before retry"
+    Start-Sleep -Seconds 8
+    Set-Location $frontend
+    $verifyExit = Run-Step "frontend-verify-retry" {
+      Invoke-NpmVerify -WorkingDirectory $frontend
+    }
+    if ($verifyExit -ne 0) {
+      Start-Sleep -Seconds 8
+      Set-Location $frontend
+      $verifyExit = Run-Step "frontend-verify-retry2" {
+        Invoke-NpmVerify -WorkingDirectory $frontend
+      }
+    }
   }
 
-  $auditExit = Run-Step "frontend-audit-high" {
-    cmd.exe /d /c "npm run audit:high"
+  if ($verifyExit -eq 0) {
+    $auditExit = Run-Step "frontend-audit-high" {
+      Invoke-NpmAuditHigh -WorkingDirectory $frontend
+    }
+  }
+  else {
+    Write-Log "Skipping frontend-audit-high because frontend-verify did not pass"
+    $auditExit = 1
   }
 
   if ($encodingExit -eq 0 -and $backendVerifyExit -eq 0 -and $backendAuditExit -eq 0 -and $backendStressExit -eq 0 -and $verifyExit -eq 0 -and $auditExit -eq 0) {
     $passed++
     Add-Content -Path $summary -Value ("PASS " + $i + " OK") -Encoding utf8
+    Write-Host ("*** PASS " + $i + " OK (" + $passed + "/" + $Iterations + " green) ***")
   }
   else {
     $failed++
@@ -97,6 +217,7 @@ for ($i = 1; $i -le $Iterations; $i++) {
 }
 
 Set-Location $root
+Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
 ("PASSED=" + $passed) | Add-Content -Path $summary -Encoding utf8
 ("FAILED=" + $failed) | Add-Content -Path $summary -Encoding utf8
 

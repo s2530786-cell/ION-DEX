@@ -1,13 +1,20 @@
-import { spawn, spawnSync } from "node:child_process";
+import { execSync, spawn, spawnSync } from "node:child_process";
 import net from "node:net";
 import { fileURLToPath } from "node:url";
 
 const host = "127.0.0.1";
+const DEFAULT_BACKEND_PORT = 8787;
+/** Prefer 8788+ during verify so a dev/zombie listener on 8787 cannot break the Vite proxy. */
+const VERIFY_BACKEND_PORTS = [8788, 8789, DEFAULT_BACKEND_PORT];
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";
 const useShell = process.platform === "win32";
 const backendDir = fileURLToPath(new URL("../../backend", import.meta.url));
 const frontendDir = fileURLToPath(new URL("..", import.meta.url));
+const systemRoot = process.env.SystemRoot || "C:\\Windows";
+const netstatExe = `${systemRoot}\\System32\\netstat.exe`;
+const taskkillExe = `${systemRoot}\\System32\\taskkill.exe`;
+const findstrExe = `${systemRoot}\\System32\\findstr.exe`;
 
 async function getFreePort() {
   const server = net.createServer();
@@ -44,7 +51,7 @@ async function waitForTcp(port, timeoutMs = 20_000) {
     }
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
-  throw new Error(`Timed out waiting for preview server on ${host}:${port}`);
+  throw new Error(`Timed out waiting for server on ${host}:${port}`);
 }
 
 async function isTcpOpen(port) {
@@ -79,8 +86,109 @@ function run(command, args, options = {}) {
   });
 }
 
-const port = await getFreePort();
-const baseUrl = `http://${host}:${port}`;
+function freeIonDevPorts() {
+  spawnSync(process.execPath, [fileURLToPath(new URL("../../scripts/free-ion-ports.mjs", import.meta.url))], {
+    stdio: "ignore",
+  });
+}
+
+function killListenPort(port) {
+  if (process.platform === "win32") {
+    try {
+      const output = execSync(
+        `"${netstatExe}" -ano -p tcp | "${findstrExe}" ":${port}" | "${findstrExe}" LISTENING`,
+        {
+          encoding: "utf8",
+          shell: true,
+        },
+      );
+      const pids = new Set();
+      for (const line of output.split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          continue;
+        }
+        const parts = trimmed.split(/\s+/);
+        const pid = parts[parts.length - 1];
+        if (/^\d+$/.test(pid)) {
+          pids.add(pid);
+        }
+      }
+      for (const pid of pids) {
+        try {
+          execSync(`"${taskkillExe}" /PID ${pid} /T /F`, { stdio: "ignore", shell: true });
+        } catch {
+          // Process may already be gone or access denied.
+        }
+      }
+    } catch {
+      // No listeners on port.
+    }
+    return;
+  }
+  spawnSync("bash", ["-lc", `lsof -ti :${port} | xargs -r kill -9`], { stdio: "ignore" });
+}
+
+async function tryRecyclePort(port, attempts = 8) {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    if (!(await isTcpOpen(port))) {
+      return true;
+    }
+    killListenPort(port);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+  }
+  return !(await isTcpOpen(port));
+}
+
+async function backendHasRequiredRoutes(backendPort) {
+  const base = `http://${host}:${backendPort}`;
+  try {
+    const [profile, liquidityMine, domainManage, batchTransfer] = await Promise.all([
+      fetch(`${base}/api/profile/demo`),
+      fetch(`${base}/api/liquidity-mine/pools`),
+      fetch(`${base}/api/domain-manage/overview`),
+      fetch(`${base}/api/batch-transfer/config`),
+    ]);
+    return profile.ok && liquidityMine.ok && domainManage.ok && batchTransfer.ok;
+  } catch {
+    return false;
+  }
+}
+
+async function waitForHealthyBackend(backendPort, timeoutMs = 30_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (await backendHasRequiredRoutes(backendPort)) {
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 400));
+  }
+  throw new Error(`Backend on :${backendPort} never exposed required API routes`);
+}
+
+async function resolveBackendPort() {
+  for (const port of VERIFY_BACKEND_PORTS) {
+    await tryRecyclePort(port);
+    if (!(await isTcpOpen(port))) {
+      if (port !== DEFAULT_BACKEND_PORT) {
+        console.warn(`[verify-e2e] dedicated verify backend on :${port} (:${DEFAULT_BACKEND_PORT} left for dev).`);
+      }
+      return port;
+    }
+  }
+
+  throw new Error(
+    `Cannot start backend: verify ports ${VERIFY_BACKEND_PORTS.join(", ")} are all busy.`,
+  );
+}
+
+const backendPort = await resolveBackendPort();
+const verifyBackendUrl = `http://${host}:${backendPort}`;
+
+const previewPort = await getFreePort();
+const baseUrl = `http://${host}:${previewPort}`;
+console.log(`[verify-e2e] preview=${baseUrl} proxy=/api -> ${verifyBackendUrl}`);
+
 const backendBuild = spawnSync(npmCommand, ["run", "build"], {
   cwd: backendDir,
   stdio: "inherit",
@@ -89,46 +197,30 @@ const backendBuild = spawnSync(npmCommand, ["run", "build"], {
 if (backendBuild.status !== 0) {
   throw new Error(`Backend build failed with ${backendBuild.status}`);
 }
-async function backendHasProfileRoute() {
-  try {
-    const response = await fetch("http://127.0.0.1:8787/api/profile/session");
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
 
-const backendPortOpen = await isTcpOpen(8787);
-let backendAlreadyRunning = backendPortOpen && (await backendHasProfileRoute());
-if (backendPortOpen && !backendAlreadyRunning) {
-  console.warn("Stale backend on :8787 missing /api/profile/session — restarting gateway.");
-  if (process.platform === "win32") {
-    spawnSync("cmd.exe", ["/d", "/c", "for /f \"tokens=5\" %a in ('netstat -ano ^| findstr :8787') do taskkill /PID %a /F"], {
-      stdio: "ignore",
-      shell: false,
-    });
-  } else {
-    spawnSync("bash", ["-lc", "lsof -ti :8787 | xargs -r kill"], { stdio: "ignore" });
-  }
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  backendAlreadyRunning = false;
-}
-const backend = backendAlreadyRunning
-  ? null
-  : spawn(process.execPath, ["dist/src/server.js"], {
-      cwd: backendDir,
-      env: {
-        ...process.env,
-        BACKEND_PORT: "8787",
-      },
-      stdio: "inherit",
-      shell: useShell,
-    });
+await tryRecyclePort(backendPort);
+
+const backend = spawn(process.execPath, ["dist/src/server.js"], {
+  cwd: backendDir,
+  env: {
+    ...process.env,
+    BACKEND_PORT: String(backendPort),
+  },
+  stdio: "inherit",
+  shell: useShell,
+});
+
+console.log(`[verify-e2e] backend=${verifyBackendUrl} preview will bind next`);
+
 const preview = spawn(
   process.execPath,
-  ["node_modules/vite/bin/vite.js", "preview", "--host=127.0.0.1", "--strictPort", "--port", String(port)],
+  ["node_modules/vite/bin/vite.js", "preview", "--host=127.0.0.1", "--strictPort", "--port", String(previewPort)],
   {
     cwd: frontendDir,
+    env: {
+      ...process.env,
+      ION_VERIFY_BACKEND_URL: verifyBackendUrl,
+    },
     stdio: "inherit",
     shell: useShell,
   },
@@ -139,7 +231,7 @@ function stopPreview() {
   if (!shuttingDown && !preview.killed) {
     shuttingDown = true;
     if (process.platform === "win32" && preview.pid) {
-      spawnSync("taskkill", ["/pid", String(preview.pid), "/T", "/F"], { stdio: "ignore" });
+      spawnSync(taskkillExe, ["/pid", String(preview.pid), "/T", "/F"], { stdio: "ignore" });
       return;
     }
     preview.kill();
@@ -149,7 +241,7 @@ function stopPreview() {
 function stopBackend() {
   if (backend && !backend.killed) {
     if (process.platform === "win32" && backend.pid) {
-      spawnSync("taskkill", ["/pid", String(backend.pid), "/T", "/F"], { stdio: "ignore" });
+      spawnSync(taskkillExe, ["/pid", String(backend.pid), "/T", "/F"], { stdio: "ignore" });
       return;
     }
     backend.kill();
@@ -157,9 +249,14 @@ function stopBackend() {
 }
 
 try {
-  await waitForTcp(8787);
-  await waitForTcp(port);
-  await run(npxCommand, ["playwright", "test"], {
+  await waitForTcp(backendPort);
+  await waitForHealthyBackend(backendPort);
+  await waitForTcp(previewPort);
+  const playwrightArgs = ["playwright", "test", "--workers=1", "--retries=1"];
+  if (process.env.PLAYWRIGHT_TEST_PATH?.trim()) {
+    playwrightArgs.push(process.env.PLAYWRIGHT_TEST_PATH.trim());
+  }
+  await run(npxCommand, playwrightArgs, {
     env: {
       ...process.env,
       PLAYWRIGHT_BASE_URL: baseUrl,
@@ -168,4 +265,8 @@ try {
 } finally {
   stopPreview();
   stopBackend();
+  if (backendPort !== DEFAULT_BACKEND_PORT) {
+    killListenPort(backendPort);
+  }
+  freeIonDevPorts();
 }

@@ -1,4 +1,4 @@
-﻿name: ION DEX verify
+name: ION DEX verify
 
 on:
   push:
