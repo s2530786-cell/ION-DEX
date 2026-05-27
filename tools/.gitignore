@@ -1,0 +1,3 @@
+# Upstream clones with their own .git — install via scripts/setup-compose-for-agents.ps1
+compose-for-agents/
+compose-for-agents-external/
