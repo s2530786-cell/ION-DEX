@@ -1,14 +1,12 @@
 # Current Progress
 
-## 2026-05-26 UI 铁律 + Master 设计图模板入库
+## 2026-05-26 UI 铁律入库（赛博极光玻璃）
 
-- **铁律**：`.memory-bank/ui-cyber-glass-iron-law.md`（三色、五区布局、玻璃 CSS、避坑）。
-- **设计图模板**：`.memory-bank/ui-design-master-template.md`（对照流程、差距分析表、100% 验收清单）。
-- **资产库**：`.memory-bank/design-refs/` — 7 张界面图 + Logo + 2 条开机动画母片；Dashboard 主图 `screens/04-dashboard-galaxy-spiral.png`。
-- **Cursor**：`docs/cursor-prompt-ion-ui-1to1.md`；规则 `ion-cyber-glass-iron-law.mdc`。
-- **品牌 Logo 副本**：`frontend/public/brand/ion-dex-logo-master.png`。
-- **代码 token**：`global.css` `:root` 三色 + `.ion-glass-*` / `.flow-border` 90deg。
-- **下一步**：按模板 §4 对照设计图 → 填差距表 → Batch A/B 还原（见 `docs/ui-round2-visual-alignment.md`）。
+- **记忆库**：`.memory-bank/ui-cyber-glass-iron-law.md`（Master 锁定三色 `#00FFFF` / `#6020FF` / `#FF00FF`、五区布局、玻璃 CSS、避坑、验收）。
+- **Cursor**：`docs/cursor-prompt-ion-ui-1to1.md`；规则 `.cursor/rules/ion-cyber-glass-iron-law.mdc`（`frontend/**`）。
+- **代码 token**：`frontend/src/styles/global.css` `:root` 与 `.ion-glass-panel` / `.ion-glass-border`；`flow-border` 改为 90deg 三色流光；Tailwind `ion.cyan|purple|magenta` 对齐。
+- **技能/文档**：`ion-web3-ui`、`ion-dex-memory`、`docs/10-ui-design-route.md`、`AGENTS.md` 已指向铁律。
+- **下一步**：按铁律 + `docs/ui-round2-visual-alignment.md` 做 K 线玻璃舞台与五宫格专属渐变（Batch A/B）。
 
 ## Latest — 2026-05-25 全自动工单 W 系列（执行中）
 

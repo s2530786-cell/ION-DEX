@@ -20,6 +20,15 @@
 
 **CURRENT_PHASE=W5**（W4 出口 verify-100：`%TEMP%\ion-verify-100-summary-20260527-234453.txt` · PASSED=100 FAILED=0 RESULT=GREEN）
 
+**GitHub 每日高星发现（2026-05-27）**：
+- 脚本：`scripts/github-daily-discovery.mjs` + `github-daily-install.mjs` + `github-daily-queries.json`（20 品类：AI/Web3/合约/全栈/UI/视频/音频/3D/量化/MCP 等）
+- Skill 路由：`.cursor/skill-routing.manifest.json` 已增 `kw-github-daily`、`kw-video-ai`→HyperFrames、`kw-audio-media`、`kw-3d-webgl` 等
+- **机密落点**：`ion-private-core`（https://github.com/s2530786-cell/ion-private-core）— `.memory-bank/github-daily/`、`github-discovered` Skills；公开仓仅脚本 + 指针 Skill
+- **计划任务**：`ION-GitHub-Daily-Discovery` 每日 08:00 → `scripts\github-daily.cmd`
+- **Token**：`scripts/.github-token.local`（从 `github-daily-token.local.example` 复制）
+- **已克隆**（`d:\vendor-ion-discovery`）：OpenZeppelin、mem0、tonutils-go、langchain、composio
+- **Skill 存根**（仅 private-core）：`.cursor/skills/github-discovered/github-discovered-*`（5 个，已迁出公开仓）
+
 **W5 进行中（2026-05-27）**：
 - `backend/src/indexer/`：ION/BSC worker 骨架、`IndexerReadCache`、burn/staking enrich
 - `reconcile-burn.ts` + `backend/tests/reconcile-burn.test.ts`
@@ -54,6 +63,16 @@
 - Logo：`design-refs/brand/ion-dex-brand-logo.png` → `frontend/public/brand/ion-dex-logo-master.png`
 - 开机动画母片：`boot-master-square-landscape.mp4` / `boot-master-portrait.mp4`（`scripts/process-boot-videos.ps1` 可重编码到 `frontend/public/boot/`）
 - **新功能 UI**：必须延续模板全局一致（铁律 §0 + 设计模板 §0）；禁止另起一套视觉风格
+
+**UI 设计阶段 Batch B（2026-05-28，自动流水线）**：
+- 代码：Dashboard 去 `Modules` 副标题；`FeatureGrid` → `gap-4` + `items-stretch` + `auto-rows-fr`
+- 签收：`docs/ui-gap-analysis-batch-b-2026-05-26.md` · 截图 `docs/screenshots/ui-signoff/batch-b/`
+- 流水线：`scripts/run-ui-design-phase-batch.cmd --batch B --commit-push --auto-next`
+- 门禁：`verify-full` ✅（33/33 E2E，含 `dashboard-visual-signoff`）
+- 进行中：终端 `verify-100.ps1`（勿并行第二路）→ **PASSED=100 GREEN 后看门狗自动 `git commit` + `git push`**
+- **全自动下一阶段**：`git-commit-push-b` 完成 → `ui-design-phase-pipeline --batch C --commit-push --auto-next`（含 D）
+- **自动续跑**：`scripts/run-autonomous-work-watchdog.cmd` · 队列 `activatedAt=2026-05-28T07:40:00Z` · `scripts/autonomous-git-commit-push.mjs --batch B`
+- stress×100 排在 commit 与 Batch C 之后，不阻塞进入 C
 
 **W3 完成摘要（2026-05-27）**：
 - `.glass-surface` 玻璃/噪点/截光（`frontend/src/styles/global.css`）；E2E 稳定：`VITE_E2E_STABLE=1`、`domClick`/`fillControlledInput`、`verify-e2e` 专用 backend **:8788**
