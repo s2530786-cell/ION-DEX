@@ -18,13 +18,14 @@ test.describe("Domain Manage", () => {
   });
 
   test("can lookup and register a domain", async ({ page }) => {
-    await fillControlledInput(page, "domain-query", "alpha.ion");
+    const label = `e2e${Date.now().toString(36).slice(-8)}.ion`;
+    await fillControlledInput(page, "domain-query", label);
     await domClick(page, "domain-submit");
-    await expect(page.getByTestId("domain-preview")).toContainText("alpha.ion");
+    await expect(page.getByTestId("domain-preview")).toContainText(label);
     await domClick(page, "domain-manage-register-btn");
     await expect(page.getByTestId("domain-confirmation")).toContainText("Register intent recorded", {
       timeout: 10_000,
     });
-    await expect(page.getByTestId("domain-manage-owned-row-alpha.ion")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId(`domain-manage-owned-row-${label}`)).toBeVisible({ timeout: 15_000 });
   });
 });

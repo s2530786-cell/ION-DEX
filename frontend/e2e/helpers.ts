@@ -1,4 +1,5 @@
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
+import { dismissBootSplashIfPresent } from "./boot-splash";
 
 /** Skips boot splash + risk modal for automated UI tests. */
 export async function installE2eSessionFlags(page: Page) {
@@ -34,4 +35,17 @@ export async function fillControlledInput(page: Page, testId: string, value: str
 
 export function playwrightAppOrigin(): string {
   return process.env.PLAYWRIGHT_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8787";
+}
+
+/** Waits for main shell after boot splash; retries navigation up to 3 times. */
+export async function ensureAppShell(page: Page, path = "/") {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    if (await page.getByTestId("main-content").isVisible().catch(() => false)) {
+      return;
+    }
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    await dismissBootSplashIfPresent(page);
+    await page.waitForTimeout(400);
+  }
+  await expect(page.getByTestId("main-content")).toBeVisible({ timeout: 30_000 });
 }
