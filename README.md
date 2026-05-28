@@ -1,40 +1,42 @@
-# ION DEX
-
-ION DEX is a planned, crucial first full-stack Web3 DEX trading and ecosystem portal on the ION chain, open to the ICE Open network ION block chain. It is independently developed by community developer Master.
-
-It is designed to include:
-
-- Swap and professional spot trading.
-- Limit orders and on-chain spot grid strategies.
-- Liquidity pools and LP staking.
-- Official, DEX, and ecosystem staking analytics.
-- Dual-chain burn analytics for BSC ION and ION mainnet ION.
-- ION Chain and BSC bridge flows.
-- ION DNS domain resolution, transfers, and marketplace.
-- ION ID / KYC Pass integration.
-- AI market analysis, risk scoring, and AI sentinel monitoring.
-- Treasury, fee distribution, transparency, and admin operations.
-- Premium 5D futuristic neon UI with aurora and galaxy backgrounds.
-
-## Current Stage
-
-The project is currently in blueprint and architecture setup.
-
-## Documentation
-
-- `docs/00-project-overview.md`
-- `docs/01-official-addresses-and-assumptions.md`
-- `docs/02-tokenomics-and-fees.md`
-- `docs/03-technical-architecture.md`
-- `docs/04-development-roadmap.md`
-- `docs/05-product-prd.md`
-- `docs/06-page-flow-and-user-journeys.md`
-
-## Planned Repository Structure
-
-```text
+ION DEX
+ 
+ION DEX is the first full-stack Web3 DEX and ecosystem portal built on the ION Chain, compatible with the ICE Network. It is independently developed by community developer Master.
+ 
+Core Features
+ 
+- Token swap & professional spot trading
+- Limit orders & on-chain spot grid trading strategies
+- Liquidity pools & LP staking
+- Analytics for official, DEX and ecosystem staking
+- Dual-chain burn tracking for ION (BSC & ION Mainnet)
+- Cross-chain flow monitoring between ION Chain and BSC
+- ION DNS resolution, domain transfers & marketplace
+- ION ID / KYC Pass integration
+- AI market analysis, risk scoring & AI sentinel monitoring
+- Treasury management, fee distribution, transparency & admin tools
+- 5D futuristic neon UI with aurora and galaxy backgrounds
+ 
+Current Stage
+ 
+Blueprint & architecture development
+ 
+Documentation
+ 
+plaintext  
+docs/00-project-overview.md
+docs/01-official-addresses-and-assumptions.md
+docs/02-tokenomics-and-fees.md
+docs/03-technical-architecture.md
+docs/04-development-roadmap.md
+docs/05-product-prd.md
+docs/06-page-flow-and-user-journeys.md
+ 
+ 
+Repository Structure
+ 
+plaintext  
 ion-dex-nuke/
-├── ion/                    # upstream ION reference / node sources (Ice Open Network)
+├── ion/                # ICE Open Network upstream & node source
 ├── contracts/
 │   ├── ion/
 │   └── bsc/
@@ -48,25 +50,27 @@ ion-dex-nuke/
 ├── docs/
 ├── audits/
 └── README.md
-```
-
-The `ion/` directory is **not committed** here (it is a full upstream Git repo). Clone it beside this tree for local reference:
-
-```bash
+ 
+ 
+Repository Notes
+ 
+The  ion/  directory is excluded from this repo. Clone upstream source alongside this project:
+ 
+bash  
 git clone https://github.com/ice-blockchain/ion ion
-```
-
-GitHub Actions **ION DEX verify** (`.github/workflows/ion-dex-verify.yml`) validates `frontend/` plus repo scripts only; it does not build `ion/`.
-
-## Build Order
-
-1. Freeze assumptions and official addresses.
-2. Build UI design system.
-3. Implement contract foundations.
-4. Build backend foundation.
-5. Build indexers.
-6. Add oracle, keeper, and bridge services.
-7. Build frontend product pages.
-8. Add Domain and ION ID modules.
-9. Add AI market and sentinel modules.
-10. Add admin, transparency, testing, audits, and launch workflows.
+ 
+ 
+GitHub Actions workflow  .github/workflows/ion-dex-verify.yml  validates frontend and scripts only; no build for  ion/ .
+ 
+Build Sequence
+ 
+1. Finalize assumptions and official addresses
+2. Build UI design system
+3. Implement contract foundations
+4. Develop backend core
+5. Deploy indexers
+6. Integrate oracle, keeper and bridge services
+7. Develop frontend pages
+8. Implement DNS & ION ID modules
+9. Integrate AI analytics & sentinel modules
+10. Complete admin, transparency, testing, audits & launch pipelines
