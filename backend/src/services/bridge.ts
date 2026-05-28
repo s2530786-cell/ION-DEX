@@ -1,3 +1,5 @@
+import { enrichBridgeRoutesWithIndexer } from "../indexer/index.js";
+
 export type BridgeRoute = {
   routeId: string;
   fromChain: "BSC" | "ION";
@@ -26,7 +28,7 @@ export type BridgeRoutesPayload = {
 };
 
 export function getBridgeRoutes(): BridgeRoutesPayload {
-  return {
+  return enrichBridgeRoutesWithIndexer({
     routes: [
       {
         routeId: "bsc-ion-ion",
@@ -63,5 +65,5 @@ export function getBridgeRoutes(): BridgeRoutesPayload {
       source: "mock",
       note: "Phase 3 mock bridge routes; relayer and proof paths are not live.",
     },
-  };
+  });
 }

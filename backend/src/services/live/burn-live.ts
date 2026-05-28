@@ -1,11 +1,13 @@
 import type { ServerConfig } from "../../config/server-config.js";
 import { fetchBscChainSnapshot, fetchBscIonBurnedBalance } from "../../upstream/bsc-rpc.js";
+import { enrichBurnSummaryWithIndexer, refreshIndexerReadCache } from "../../indexer/index.js";
 import type { BurnSummary } from "../burn.js";
 import { formatUnits } from "./format-units.js";
 
 const ION_DECIMALS = 9;
 
 export async function loadLiveBurnSummary(config: ServerConfig): Promise<BurnSummary> {
+  const indexerCache = await refreshIndexerReadCache(config);
   const chain = await fetchBscChainSnapshot(config);
 
   if (!config.bscIonTokenAddress) {
@@ -17,7 +19,7 @@ export async function loadLiveBurnSummary(config: ServerConfig): Promise<BurnSum
   const burned = await fetchBscIonBurnedBalance(config, config.bscIonTokenAddress);
   const bscBurnedIon = formatUnits(burned.burnedWei, ION_DECIMALS);
 
-  return {
+  return enrichBurnSummaryWithIndexer({
     totalBurnedIon: bscBurnedIon,
     bscBurnedIon,
     ionMainnetBurnedIon: "0",
@@ -41,5 +43,5 @@ export async function loadLiveBurnSummary(config: ServerConfig): Promise<BurnSum
         note: "ION mainnet burn totals require official burn address + indexer (not guessed).",
       },
     ],
-  };
+  }, indexerCache);
 }

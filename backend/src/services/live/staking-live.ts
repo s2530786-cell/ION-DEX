@@ -1,8 +1,10 @@
 import type { ServerConfig } from "../../config/server-config.js";
 import { getGeckoIonPool } from "../../upstream/geckoterminal.js";
+import { enrichStakingSummaryWithIndexer, refreshIndexerReadCache } from "../../indexer/index.js";
 import type { StakingSummary } from "../staking.js";
 
 export async function loadLiveStakingSummary(config: ServerConfig): Promise<StakingSummary> {
+  const indexerCache = await refreshIndexerReadCache(config);
   const pool = await getGeckoIonPool(config.httpTimeoutMs);
   const lpStakedUsd = Number(pool.attributes.reserve_in_usd);
   const ionPriceUsd = Number(pool.attributes.base_token_price_usd);
@@ -11,7 +13,7 @@ export async function loadLiveStakingSummary(config: ServerConfig): Promise<Stak
       ? (lpStakedUsd / ionPriceUsd).toFixed(3)
       : "0";
 
-  return {
+  return enrichStakingSummaryWithIndexer({
     totalStakedIon: lpStakedIon,
     officialStakedIon: "0",
     dexStakedIon: lpStakedIon,
@@ -31,5 +33,5 @@ export async function loadLiveStakingSummary(config: ServerConfig): Promise<Stak
       source: "upstream",
       note: `GeckoTerminal ION/BNB LP pool reserve_in_usd=${pool.attributes.reserve_in_usd}; official PoS totals pending indexer.`,
     },
-  };
+  }, indexerCache);
 }

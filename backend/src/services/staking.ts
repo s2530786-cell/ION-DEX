@@ -1,3 +1,5 @@
+import { enrichStakingSummaryWithIndexer } from "../indexer/index.js";
+
 export type StakingSummary = {
   totalStakedIon: string;
   officialStakedIon: string;
@@ -21,7 +23,7 @@ export type StakingSummary = {
 };
 
 export function getStakingSummary(): StakingSummary {
-  return {
+  return enrichStakingSummaryWithIndexer({
     totalStakedIon: "452000000.000",
     officialStakedIon: "398000000.000",
     dexStakedIon: "54000000.000",
@@ -41,5 +43,5 @@ export function getStakingSummary(): StakingSummary {
       source: "mock",
       note: "Phase 3 mock staking totals; official staking and DEX staking adapters are pending.",
     },
-  };
+  });
 }

@@ -1,3 +1,5 @@
+import { enrichBurnSummaryWithIndexer } from "../indexer/index.js";
+
 export type BurnSummary = {
   totalBurnedIon: string;
   bscBurnedIon: string;
@@ -11,14 +13,14 @@ export type BurnSummary = {
     trendPct: number;
   }>;
   provenance: Array<{
-    source: "mock" | "bsc-indexer" | "ion-indexer";
+    source: "mock" | "bsc-indexer" | "ion-indexer" | "indexer-cache";
     status: "mocked" | "planned" | "online";
     note: string;
   }>;
 };
 
 export function getBurnSummary(): BurnSummary {
-  return {
+  return enrichBurnSummaryWithIndexer({
     totalBurnedIon: "12845000.000",
     bscBurnedIon: "8245000.000",
     ionMainnetBurnedIon: "4600000.000",
@@ -47,5 +49,5 @@ export function getBurnSummary(): BurnSummary {
         note: "Later reads official ION mainnet burn source.",
       },
     ],
-  };
+  });
 }
