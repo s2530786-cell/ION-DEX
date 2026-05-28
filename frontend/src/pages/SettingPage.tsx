@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { Bell, Moon, Percent, Trash2 } from "lucide-react";
+import { SentinelAlertTestPanel } from "@/components/sentinel/SentinelAlertTestPanel";
 import { GlassPanel } from "@/components/ui/glass/GlassPanel";
 import { NeonButton } from "@/components/ui/NeonButton";
 import {
@@ -243,6 +244,8 @@ export function SettingPage() {
           </button>
         </SettingRow>
       </GlassPanel>
+
+      <SentinelAlertTestPanel testId="settings-sentinel-alert-test" />
 
       <GlassPanel className="grid gap-3 p-4 sm:grid-cols-3 sm:p-5">
         <motion.div className="flex items-start gap-2 rounded-xl border border-white/10 bg-white/[0.03] p-3">

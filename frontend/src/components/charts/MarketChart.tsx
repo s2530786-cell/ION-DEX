@@ -13,6 +13,24 @@ export type MarketChartPoint = {
   value: number;
 };
 
+/** lightweight-charts requires strictly ascending time; upstream OHLCV may be newest-first. */
+export function normalizeChartPoints(points: MarketChartPoint[]): MarketChartPoint[] {
+  if (points.length <= 1) {
+    return points;
+  }
+  const sorted = [...points].sort((a, b) => a.time - b.time);
+  const normalized: MarketChartPoint[] = [];
+  for (const point of sorted) {
+    const last = normalized[normalized.length - 1];
+    if (last && last.time === point.time) {
+      normalized[normalized.length - 1] = point;
+    } else {
+      normalized.push(point);
+    }
+  }
+  return normalized;
+}
+
 export function MarketChart({
   points,
   testId = "market-chart",
@@ -44,7 +62,7 @@ export function MarketChart({
     });
 
     const series = chart.addSeries(AreaSeries, {
-      lineColor: "#24f7ff",
+      lineColor: "#00ffff",
       topColor: "rgba(36, 247, 255, 0.35)",
       bottomColor: "rgba(36, 247, 255, 0.02)",
     });
@@ -73,8 +91,9 @@ export function MarketChart({
     if (!seriesRef.current || points.length === 0) {
       return;
     }
+    const normalized = normalizeChartPoints(points);
     seriesRef.current.setData(
-      points.map((point) => ({
+      normalized.map((point) => ({
         time: point.time as Time,
         value: point.value,
       })),
@@ -94,10 +113,12 @@ export function MarketChart({
 export function klinesToChartPoints(
   candles: Array<{ time: number; close: number }>,
 ): MarketChartPoint[] {
-  return candles.map((candle) => ({
-    time: candle.time,
-    value: candle.close,
-  }));
+  return normalizeChartPoints(
+    candles.map((candle) => ({
+      time: candle.time,
+      value: candle.close,
+    })),
+  );
 }
 
 export function buildSyntheticSeries(basePrice: number, changePct: number): MarketChartPoint[] {

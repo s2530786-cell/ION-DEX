@@ -1,0 +1,10 @@
+{
+  "comment": "每个 discovery 品类 Top5；profile full 时约 90+ 类 × 5 + DEX curated 全量。仅 ION 栈用 ION_GITHUB_DISCOVERY_PROFILE=ion-dev",
+  "mode": "catalog-top-per-category",
+  "limitPerCategory": 5,
+  "filterNoise": true,
+  "includeAllCategoryIds": ["web3-dex-curated"],
+  "excludeCategoryIds": [],
+  "minStarsPerCategory": 0,
+  "extraRepos": []
+}

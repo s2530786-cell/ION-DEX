@@ -147,6 +147,22 @@ export type IonPricePayload = {
   note: string;
   poolAddress: string;
   updatedAt: string;
+  oracleMethod?: string;
+  oracleSpreadBps?: number;
+  oracleUsedQuotes?: number;
+  oracleUsedFeeds?: Array<{
+    platformId: string;
+    priceUsd: number;
+    weight: number;
+    liquidityUsd: number | null;
+    change24hPct: number | null;
+  }>;
+  oracleRejectedFeeds?: Array<{
+    platformId: string;
+    rejectReason: "outlier" | "feed_error";
+    error?: string;
+    priceUsd?: number;
+  }>;
 };
 
 export type IonKlineCandle = {
@@ -1033,4 +1049,36 @@ export type DomainShowcasePayload = {
 
 export async function fetchDomainShowcase(signal?: AbortSignal): Promise<ApiResponse<DomainShowcasePayload>> {
   return fetchApi<DomainShowcasePayload>("/api/domain/showcase", signal);
+}
+
+export type SentinelAlertSelfTestResult = {
+  ok: boolean;
+  configured: boolean;
+  channel: "webhook" | "slack" | null;
+  endpointHost: string | null;
+  statusCode: number | null;
+  attempts: number;
+  message: string;
+  deliveredAt: string;
+};
+
+export async function runSentinelAlertSelfTest(
+  signal?: AbortSignal,
+): Promise<{ httpStatus: number; result: SentinelAlertSelfTestResult; meta: ApiMeta }> {
+  const response = await fetch(`${apiBaseUrl}/api/sentinel/alert-test`, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+    body: "{}",
+    signal,
+  });
+  const body = (await response.json()) as ApiResponse<SentinelAlertSelfTestResult> & {
+    error?: { message: string };
+  };
+  if (!body.data) {
+    throw new Error(body.error?.message ?? `Alert self-test failed with HTTP ${response.status}`);
+  }
+  return { httpStatus: response.status, result: body.data, meta: body.meta };
 }

@@ -13,6 +13,12 @@ if (import.meta.env.VITE_E2E_STABLE === "1") {
   document.documentElement.dataset.ionE2eStable = "1";
 }
 
+try {
+  sessionStorage.removeItem("ion-dex-skip-boot");
+} catch {
+  /* private mode */
+}
+
 applyAppSettingsToDocument(loadAppSettings());
 startEip6963Discovery();
 

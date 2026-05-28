@@ -13,6 +13,8 @@ import {
 import { fetchBscWalletBalance, fetchPublicConfig } from "../services/config-gateway.js";
 import { fetchBridgeRoutes, fetchTokens } from "../services/tokens-gateway.js";
 import { getDemoProfile } from "../services/profile.js";
+import { buildProfileSession } from "../services/profileSession.js";
+import { getDomainShowcase } from "../services/domainShowcase.js";
 import { fetchIonPortfolio, fetchPortfolio } from "../services/portfolio.js";
 import { createQuote, QuoteInputError } from "../services/quotes.js";
 import { getDatabaseHealth } from "../db/index.js";
@@ -23,6 +25,7 @@ import { handleDomainManageRoute } from "../api/domainManage.routes.js";
 import { handleBatchTransferRoute } from "../api/batchTransfer.routes.js";
 import { handlePriceRoute } from "../api/price.routes.js";
 import { handleAiRoute } from "../api/ai.routes.js";
+import { handleScrapingRoute } from "../api/scraping.routes.js";
 
 export type GatewayOptions = {
   clock?: Clock;
@@ -111,6 +114,13 @@ export async function routeRequest(
 
   if (url.pathname.startsWith("/api/ai")) {
     const handled = await handleAiRoute(request, response, url.pathname, meta);
+    if (handled) {
+      return;
+    }
+  }
+
+  if (url.pathname.startsWith("/api/scraping/") || url.pathname.startsWith("/api/sentinel/")) {
+    const handled = await handleScrapingRoute(request, response, url.pathname, meta);
     if (handled) {
       return;
     }
@@ -254,6 +264,32 @@ export async function routeRequest(
       case "/api/profile/demo":
         writeJson(response, 200, apiResponse(getDemoProfile(), buildMeta(clock, requestId, "mock")));
         return;
+      case "/api/profile/session": {
+        const provider = url.searchParams.get("provider");
+        const address = url.searchParams.get("address");
+        const chainIdRaw = url.searchParams.get("chainId")?.trim() ?? "";
+        const chainIdParsed = Number.parseInt(chainIdRaw, 10);
+        const session = await buildProfileSession({
+          provider,
+          address,
+          chainId: Number.isFinite(chainIdParsed) ? chainIdParsed : null,
+        });
+        writeJson(
+          response,
+          200,
+          apiResponse(session, buildMeta(clock, requestId, config.dataMode === "test-mock" ? "mock" : "upstream")),
+        );
+        return;
+      }
+      case "/api/domain/showcase": {
+        const showcase = getDomainShowcase();
+        writeJson(
+          response,
+          200,
+          apiResponse(showcase, buildMeta(clock, requestId, config.dataMode === "test-mock" ? "mock" : "upstream")),
+        );
+        return;
+      }
       case "/api/portfolio":
         await routePortfolio(url, response, meta);
         return;

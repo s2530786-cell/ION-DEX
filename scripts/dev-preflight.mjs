@@ -1,5 +1,8 @@
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative, sep } from "node:path";
+import { spawnSync } from "node:child_process";
+import { githubDailyDir, getPrivateCoreRoot } from "./ion-private-core-path.mjs";
+import { listDiscoveredSkillIds } from "./github-discovered-route.mjs";
 
 const root = process.cwd();
 
@@ -124,3 +127,53 @@ if (warnings.length > 0) {
 
 console.log("");
 console.log("OK - development preflight completed.");
+
+const catalogPath = join(githubDailyDir(root), "latest.json");
+if (existsSync(catalogPath)) {
+  try {
+    const catalog = JSON.parse(readFileSync(catalogPath, "utf8"));
+    const ageMs = Date.now() - new Date(catalog.generatedAt).getTime();
+    if (ageMs > 24 * 60 * 60 * 1000) {
+      console.log("");
+      console.log(
+        "GITHUB_DAILY_STALE: catalog older than 24h — run: node scripts/github-daily-discovery.mjs (set GITHUB_TOKEN)",
+      );
+    }
+  } catch {
+    console.log("GITHUB_DAILY_WARN: latest.json unreadable — re-run discovery");
+  }
+} else {
+  console.log("");
+  console.log(
+    "GITHUB_DAILY_MISSING: run node scripts/github-daily-discovery.mjs once (GITHUB_TOKEN recommended)",
+  );
+}
+
+const skillsPrivate = join(root, ".cursor", "skills-private");
+try {
+  const item = existsSync(skillsPrivate) ? statSync(skillsPrivate) : null;
+  if (!item) {
+    console.log("");
+    console.log(
+      "SKILLS_PRIVATE_MISSING: run ion-private-core/scripts/link-skills-to-ion-dex.ps1 so github-discovered stubs are callable",
+    );
+  } else {
+    const stubs = listDiscoveredSkillIds(root);
+    if (stubs.length > 0) {
+      console.log(`GITHUB_DISCOVERED_STUBS: ${stubs.length} (skills-private junction OK)`);
+    }
+  }
+} catch {
+  /* ignore */
+}
+
+if (process.env.ION_SKILL_ROUTE !== "0") {
+  console.log("");
+  console.log("--- skill-route hint (set ION_SKILL_ROUTE=0 to skip) ---");
+  const route = spawnSync(process.execPath, ["scripts/skill-route.mjs", "--git"], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  if (route.stdout) process.stdout.write(route.stdout);
+  if (route.status !== 0 && route.stderr) console.log(route.stderr);
+}

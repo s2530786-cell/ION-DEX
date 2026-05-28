@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "description": "ION DEX 自动工单队列 — verify-100 全绿后立即 commit+push，再全自动 Batch C/D",
+  "queues": [
+    {
+      "id": "ui-design-phase-b",
+      "title": "UI Batch B → verify-100 GREEN → commit+push → Batch C/D",
+      "status": "active",
+      "autoAdvance": true,
+      "activatedAt": "2026-05-28T06:40:00.000Z",
+      "steps": [
+        {
+          "id": "verify-full",
+          "title": "功能门禁 verify-full",
+          "status": "completed",
+          "kind": "verify-full"
+        },
+        {
+          "id": "screenshots",
+          "title": "375/768/1440 截图",
+          "status": "completed",
+          "kind": "shell",
+          "command": "node scripts/capture-ui-signoff-screenshots.mjs --batch B"
+        },
+        {
+          "id": "verify-100",
+          "title": "工程门禁 verify-100 ×100",
+          "status": "completed",
+          "kind": "verify-100",
+          "allowExternal": true,
+          "note": "外部 verify 续跑；当前摘要 114641",
+          "resume": {
+            "startAt": 96,
+            "initialPassed": 95,
+            "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260528-114641.txt",
+            "logPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-20260528-114641.log"
+          },
+          "external": false,
+          "completedAt": "2026-05-28T08:05:46.418Z",
+          "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260528-114641.txt"
+        },
+        {
+          "id": "git-commit-push-b",
+          "title": "Batch B 自动 commit + push（verify-100 GREEN 后）",
+          "status": "failed",
+          "kind": "git-commit-push",
+          "batch": "B",
+          "requires": [
+            "verify-100"
+          ],
+          "managedPid": 52556,
+          "startedAt": "2026-05-28T07:34:17.840Z",
+          "error": "git-commit-push exit 1"
+        },
+        {
+          "id": "batch-c-auto",
+          "title": "Batch C 全自动流水线（含 commit+push + auto-next D）",
+          "status": "pending",
+          "kind": "shell",
+          "command": "node scripts/ui-design-phase-pipeline.mjs --batch C --commit-push --auto-next",
+          "requires": [
+            "git-commit-push-b"
+          ]
+        },
+        {
+          "id": "stress-smoke-100",
+          "title": "Batch B smoke stress ×100（不阻塞下一阶段）",
+          "status": "pending",
+          "kind": "shell",
+          "command": "node scripts/stress-playwright-100.mjs --spec e2e/smoke.spec.ts --rounds 100",
+          "requires": [
+            "git-commit-push-b"
+          ],
+          "note": "与 Batch C 串行由看门狗调度；verify-100 已绿"
+        }
+      ]
+    }
+  ]
+}

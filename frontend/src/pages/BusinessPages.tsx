@@ -1381,7 +1381,7 @@ function TradeDeskPage() {
   const displayPrice = ionPrice.data.priceUsd.toFixed(3);
 
   return (
-    <div className="grid gap-5" data-testid="page-trade">
+    <div className="grid min-w-0 gap-5" data-testid="page-trade">
       <ScaffoldNotice
         detail="Trade K 线经后端 /api/klines/ion（GeckoTerminal OHLCV）；盘口与成交流仍为演示数据。Swap 在后端在线时可走 GeckoTerminal 报价。"
         testId="trade-desk-scaffold-notice"
@@ -1390,7 +1390,7 @@ function TradeDeskPage() {
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">{config.eyebrow}</p>
-            <h1 className="mt-3 text-4xl font-black text-white sm:text-6xl" data-testid="page-title">
+            <h1 className="mt-3 text-3xl font-black text-white sm:text-4xl lg:text-5xl" data-testid="page-title">
               {config.title}
             </h1>
             <p className="mt-3 max-w-3xl text-base leading-7 text-cyan-100/68">{config.description}</p>
@@ -1403,10 +1403,10 @@ function TradeDeskPage() {
         </div>
       </NeonCard>
 
-      <div className="grid gap-5 xl:grid-cols-[1fr_24rem]">
-        <div className="grid gap-5">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
+        <div className="grid min-w-0 gap-5">
           <div className="flow-border rounded-[2rem] p-px" data-testid="trade-chart">
-            <div className="glass-surface depth-stage relative min-h-[28rem] overflow-hidden rounded-[2rem] p-5">
+            <div className="glass-surface relative min-h-[20rem] overflow-hidden rounded-[2rem] p-4 sm:min-h-[24rem] sm:p-5 lg:min-h-[28rem]">
               <div className="absolute inset-0 aurora-noise opacity-70" />
               <div className="absolute left-1/2 top-1/2 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_220deg,rgba(36,247,255,0.24),transparent_28%,rgba(255,59,212,0.3),transparent_58%,rgba(255,209,102,0.16),transparent_82%)] blur-3xl" />
               <div className="relative z-10 flex items-center justify-between gap-4">
@@ -1420,7 +1420,7 @@ function TradeDeskPage() {
                 </div>
                 <DataSourceBadge meta={klines.meta ?? ionPrice.meta} testId="trade-chart-source" />
               </div>
-              <div className="float-3d relative z-10 mt-8 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-3 shadow-[0_35px_90px_rgba(36,247,255,0.13)]">
+              <div className="relative z-10 mt-6 rounded-[1.6rem] border border-cyan-200/15 bg-[#03050f]/62 p-3 shadow-[0_24px_60px_rgba(36,247,255,0.1)] sm:mt-8">
                 {chartPoints.length > 0 ? (
                   <MarketChart points={chartPoints} testId="trade-market-chart" />
                 ) : null}

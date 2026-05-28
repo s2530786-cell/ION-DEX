@@ -1,0 +1,33 @@
+{
+  "lastTickAt": "2026-05-28T08:05:46.418Z",
+  "steps": [
+    {
+      "id": "verify-full",
+      "status": "completed"
+    },
+    {
+      "id": "screenshots",
+      "status": "completed"
+    },
+    {
+      "id": "verify-100",
+      "status": "completed",
+      "external": false
+    },
+    {
+      "id": "git-commit-push-b",
+      "status": "failed",
+      "managedPid": 52556,
+      "error": "git-commit-push exit 1"
+    },
+    {
+      "id": "batch-c-auto",
+      "status": "pending"
+    },
+    {
+      "id": "stress-smoke-100",
+      "status": "pending"
+    }
+  ],
+  "activeQueueId": "ui-design-phase-b"
+}

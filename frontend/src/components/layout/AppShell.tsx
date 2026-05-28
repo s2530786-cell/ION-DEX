@@ -3,6 +3,7 @@ import {
   Bell,
   CheckCircle2,
   Globe2,
+  Hexagon,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -11,10 +12,11 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
+import { createPortal } from "react-dom";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
+import { navGroups, navLabelForPage } from "@/components/layout/appNav";
 import { FooterLegal } from "@/components/layout/FooterLegal";
 import { NeonButton } from "@/components/ui/NeonButton";
-import ionLogo from "@/assets/ion-logo.jpg";
 import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
@@ -51,26 +53,7 @@ export type PageKey =
   | "liquidity-mine"
   | "settings";
 
-export const navItems: Array<{ key: PageKey; label: string }> = [
-  { key: "dashboard", label: "Dashboard" },
-  { key: "swap", label: "Swap" },
-  { key: "trade", label: "Trade" },
-  { key: "trade-pro", label: "Trade Pro (预览)" },
-  { key: "approve-manager", label: "Approve (演示)" },
-  { key: "vault-stake", label: "Vault (演示)" },
-  { key: "grid", label: "Grid" },
-  { key: "pool", label: "Pool" },
-  { key: "stake", label: "Stake" },
-  { key: "bridge", label: "Bridge" },
-  { key: "burn", label: "Burn" },
-  { key: "domain", label: "Domain" },
-  { key: "copy-trade", label: "Copy Trade" },
-  { key: "batch-transfer", label: "Batch Transfer" },
-  { key: "liquidity-mine", label: "Liquidity Mine" },
-  { key: "ai", label: "AI" },
-  { key: "ai-trading", label: "AI Quant (预览)" },
-  { key: "settings", label: "Settings" },
-];
+export { navItems } from "@/components/layout/appNav";
 
 type AppShellProps = PropsWithChildren<{
   activePage: PageKey;
@@ -143,20 +126,27 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
   function selectPage(page: PageKey) {
     onPageChange(page);
     setMobileNavOpen(false);
+    setWalletPanelOpen(false);
   }
 
+  useEffect(() => {
+    setWalletPanelOpen(false);
+  }, [activePage]);
+
   return (
-    <div className="min-h-screen px-4 py-4 text-white sm:px-6 lg:px-8">
+    <div className="relative flex min-h-0 w-full flex-1 flex-col text-white">
       <IonConnectModalBridge />
       <AuroraGalaxyBackground />
-      <div className="depth-stage mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/40 shadow-[0_0_70px_rgba(36,247,255,0.16)] backdrop-blur-xl lg:flex">
+      <div className="relative z-0 mx-auto flex min-h-[100dvh] min-h-[100svh] w-full max-w-[1440px] flex-col md:flex-row md:px-4 md:py-4 lg:px-6">
         <aside
           aria-label="Sidebar"
-          className="hidden w-56 shrink-0 flex-col border-r border-white/10 bg-slate-950/55 p-4 lg:flex"
+          className="hidden min-h-0 w-[15.5rem] shrink-0 flex-col border-white/10 bg-slate-950/55 md:flex md:rounded-l-[1.75rem] md:border md:border-r-0"
           data-testid="app-sidebar"
         >
-          <SidebarBrand />
-          <NavList activePage={activePage} className="mt-6" onSelect={selectPage} />
+          <div className="shrink-0 p-4 pb-2">
+            <SidebarBrand />
+          </div>
+          <NavList activePage={activePage} className="min-h-0 flex-1 overflow-y-auto px-3 pb-4" onSelect={selectPage} />
         </aside>
 
         <AnimatePresence>
@@ -165,7 +155,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               <motion.button
                 animate={{ opacity: 1 }}
                 aria-label="Close navigation menu"
-                className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+                className="fixed inset-0 z-40 bg-black/60 md:hidden"
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 onClick={() => setMobileNavOpen(false)}
@@ -174,13 +164,13 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               <motion.aside
                 animate={{ x: 0 }}
                 aria-label="Mobile navigation"
-                className="fixed inset-y-0 left-0 z-50 flex w-[min(18rem,86vw)] flex-col border-r border-white/10 bg-slate-950/95 p-4 shadow-[0_0_40px_rgba(36,247,255,0.2)] backdrop-blur-xl lg:hidden"
+                className="fixed inset-y-0 left-0 z-50 flex w-[min(18rem,86vw)] min-h-0 flex-col border-r border-white/10 bg-slate-950/95 shadow-[0_0_40px_rgba(36,247,255,0.2)] backdrop-blur-xl md:hidden"
                 data-testid="app-mobile-nav"
                 exit={{ x: "-100%" }}
                 initial={{ x: "-100%" }}
                 transition={{ type: "spring", stiffness: 360, damping: 32 }}
               >
-                <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="flex shrink-0 items-center justify-between gap-3 p-4 pb-2">
                   <SidebarBrand />
                   <button
                     aria-label="Close menu"
@@ -192,73 +182,48 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                     <X size={18} />
                   </button>
                 </div>
-                <NavList activePage={activePage} onSelect={selectPage} />
+                <NavList
+                  activePage={activePage}
+                  className="min-h-0 flex-1 overflow-y-auto"
+                  onSelect={selectPage}
+                />
               </motion.aside>
             </>
           ) : null}
         </AnimatePresence>
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex items-center justify-between gap-3 border-b border-white/10 bg-slate-950/55 px-4 py-3 sm:px-6">
-            <div className="flex min-w-0 items-center gap-3">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-none border-0 border-white/10 bg-slate-950/45 shadow-[0_0_70px_rgba(36,247,255,0.14)] backdrop-blur-xl md:rounded-[1.75rem] md:border">
+          <div className="sticky top-0 z-30 shrink-0 border-b border-white/10 bg-slate-950/92 backdrop-blur-md">
+          <header className="flex shrink-0 flex-nowrap items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-5 sm:py-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
               <button
                 aria-expanded={mobileNavOpen}
                 aria-label="Open navigation menu"
-                className="rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 lg:hidden"
+                className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 md:hidden"
                 data-testid="nav-menu"
                 onClick={() => setMobileNavOpen(true)}
                 type="button"
               >
                 <Menu size={18} />
               </button>
-              <div className="hidden items-center gap-3 lg:flex">
-                <img
-                  src={ionLogo}
-                  alt="ION DEX"
-                  className="h-8 w-8 rounded-xl object-cover shadow-[0_0_12px_rgba(36,247,255,0.3)]"
-                />
-                <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/55">Navigation</p>
-                <p className="text-sm font-bold text-white">
-                  {navItems.find((item) => item.key === activePage)?.label ?? "Dashboard"}
-                </p>
-              </div>
-              <div className="flex items-center gap-3 lg:hidden">
-                <img
-                  src={ionLogo}
-                  alt="ION DEX"
-                  className="h-10 w-10 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)]"
-                />
-                <div>
-                  <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3 md:hidden">
+                <BrandMark size="sm" />
+                <div className="min-w-0">
+                  <p className="truncate text-base font-black tracking-wide text-glow-cyan sm:text-lg" data-testid="brand-title">
                     ION DEX
                   </p>
-                  <p className="text-xs text-cyan-100/55">Trade the future of ION</p>
+                  <p className="truncate text-[11px] text-cyan-100/55 sm:text-xs">
+                    {navLabelForPage(activePage)}
+                  </p>
                 </div>
+              </div>
+              <div className="hidden min-w-0 md:block">
+                <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/55">当前页面</p>
+                <p className="truncate text-sm font-bold text-white">{navLabelForPage(activePage)}</p>
               </div>
             </div>
 
-            <nav
-              aria-label="Primary"
-              className="hidden min-w-0 flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full border border-white/10 bg-white/[0.04] p-1 md:flex lg:hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-            >
-              {navItems.map((item) => (
-                <button
-                  key={item.key}
-                  type="button"
-                  className={`rounded-full px-3 py-2 text-xs font-bold transition hover:bg-white/10 hover:text-white ${
-                    activePage === item.key
-                      ? "bg-white/15 text-white shadow-[0_0_18px_rgba(36,247,255,0.25)]"
-                      : "text-slate-200/75"
-                  }`}
-                  data-testid={`nav-${item.key}`}
-                  onClick={() => selectPage(item.key)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </nav>
-
-            <div className="relative flex items-center gap-2">
+            <div className="flex shrink-0 flex-nowrap items-center justify-end gap-1.5 sm:gap-2">
               <button
                 type="button"
                 className="hidden rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 sm:block"
@@ -291,28 +256,33 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 {walletButtonLabel}
               </NeonButton>
 
-              {walletPanelOpen ? (
-                <WalletConnectPanel
-                  connectedProvider={selectedProvider}
-                  evmWallet={evmWallet}
-                  ionWallet={ionWallet}
-                  ionSessionActive={ionSessionActive}
-                  onConnect={(provider) => setConnectedProvider(provider)}
-                  onDisconnect={() => {
-                    setConnectedProvider(null);
-                    evmWallet.disconnect();
-                    ionWallet.disconnect();
-                  }}
-                />
-              ) : null}
             </div>
           </header>
 
           <TickerStrip />
 
-          <main className="flex-1 overflow-hidden p-4 sm:p-6" data-testid="main-content">
-            <div className="float-3d aurora-noise h-full w-full">
-            {children}
+          </div>
+
+          {walletPanelOpen ? (
+            <WalletConnectOverlay
+              connectedProvider={selectedProvider}
+              evmWallet={evmWallet}
+              ionWallet={ionWallet}
+              ionSessionActive={ionSessionActive}
+              onClose={() => setWalletPanelOpen(false)}
+              onConnect={(provider) => setConnectedProvider(provider)}
+              onDisconnect={() => {
+                setConnectedProvider(null);
+                evmWallet.disconnect();
+                ionWallet.disconnect();
+                setWalletPanelOpen(false);
+              }}
+            />
+          ) : null}
+
+          <main className="relative z-0 flex min-h-0 flex-1 flex-col" data-testid="main-content">
+            <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-5 lg:p-6">
+              <div className="mx-auto w-full min-w-0 max-w-[1600px]">{children}</div>
             </div>
           </main>
           <FooterLegal />
@@ -322,19 +292,31 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
   );
 }
 
+function BrandMark({ size = "md" }: { size?: "sm" | "md" }) {
+  const box =
+    size === "sm"
+      ? "h-8 w-8 rounded-lg"
+      : "h-9 w-9 rounded-xl";
+  const iconSize = size === "sm" ? 16 : 18;
+  return (
+    <div
+      aria-hidden
+      className={`grid shrink-0 place-items-center border border-cyan-300/25 bg-[linear-gradient(135deg,rgba(36,247,255,0.18),rgba(141,77,255,0.22))] ${box}`}
+    >
+      <Hexagon className="text-cyan-200" size={iconSize} strokeWidth={1.75} />
+    </div>
+  );
+}
+
 function SidebarBrand() {
   return (
-    <div className="flex items-center gap-3">
-      <img
-        src={ionLogo}
-        alt="ION DEX"
-        className="h-10 w-10 rounded-2xl object-cover shadow-[0_0_18px_rgba(36,247,255,0.35)]"
-      />
-      <div>
-        <p className="text-lg font-black tracking-wide text-glow-cyan" data-testid="brand-title">
+    <div className="flex items-center gap-2.5">
+      <BrandMark />
+      <div className="min-w-0">
+        <p className="text-base font-black tracking-wide text-white" data-testid="brand-title">
           ION DEX
         </p>
-        <p className="text-xs text-cyan-100/55">Trade the future of ION</p>
+        <p className="truncate text-[11px] text-cyan-100/50">Web3 Trading</p>
       </div>
     </div>
   );
@@ -350,26 +332,49 @@ function NavList({
   onSelect: (page: PageKey) => void;
 }) {
   return (
-    <nav aria-label="Sidebar navigation" className={`grid gap-1 ${className}`}>
-      {navItems.map((item) => {
-        const active = activePage === item.key;
-        return (
-          <button
-            key={item.key}
-            type="button"
-            className={`flex items-center gap-2 rounded-2xl px-3 py-2.5 text-left text-sm font-bold transition ${
-              active
-                ? "bg-white/15 text-white shadow-[0_0_18px_rgba(36,247,255,0.2)]"
-                : "text-slate-200/75 hover:bg-white/10 hover:text-white"
-            }`}
-            data-testid={`nav-${item.key}`}
-            onClick={() => onSelect(item.key)}
-          >
-            {item.key === "dashboard" ? <LayoutDashboard size={16} /> : null}
-            {item.label}
-          </button>
-        );
-      })}
+    <nav aria-label="Sidebar navigation" className={`grid gap-4 ${className}`}>
+      {navGroups.map((group) => (
+        <div key={group.id}>
+          <p className="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.32em] text-cyan-200/40">
+            {group.label}
+          </p>
+          <div className="grid gap-0.5">
+            {group.items.map((item) => {
+              const active = activePage === item.key;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  className={`flex min-w-0 items-center gap-2 rounded-xl px-2.5 py-2 text-left text-[13px] font-bold transition ${
+                    active
+                      ? "bg-white/15 text-white shadow-[0_0_14px_rgba(36,247,255,0.18)]"
+                      : item.preview
+                        ? "text-slate-400/90 hover:bg-white/[0.06] hover:text-slate-200"
+                        : "text-slate-200/80 hover:bg-white/10 hover:text-white"
+                  }`}
+                  data-testid={`nav-${item.key}`}
+                  onClick={() => onSelect(item.key)}
+                >
+                  {item.key === "dashboard" ? (
+                    <LayoutDashboard className="shrink-0 text-cyan-200/80" size={15} />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400/40"
+                    />
+                  )}
+                  <span className="truncate">{item.label}</span>
+                  {item.preview ? (
+                    <span className="ml-auto shrink-0 rounded-md border border-amber-300/25 bg-amber-300/[0.08] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-100/90">
+                      预览
+                    </span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </nav>
   );
 }
@@ -410,6 +415,63 @@ const walletProviders: WalletProvider[] = [
   },
 ];
 
+function WalletConnectOverlay({
+  connectedProvider,
+  evmWallet,
+  ionWallet,
+  ionSessionActive,
+  onClose,
+  onConnect,
+  onDisconnect,
+}: {
+  connectedProvider: WalletProvider | null;
+  evmWallet: ReturnType<typeof useEvmWallet>;
+  ionWallet: ReturnType<typeof useIonWallet>;
+  ionSessionActive: boolean;
+  onClose: () => void;
+  onConnect: (provider: WalletProviderKey) => void;
+  onDisconnect: () => void;
+}) {
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <>
+      <button
+        aria-label="关闭钱包面板"
+        className="fixed inset-0 z-[65] bg-[#030818]/80 backdrop-blur-sm"
+        onClick={onClose}
+        type="button"
+      />
+      <div className="pointer-events-none fixed inset-0 z-[66] flex items-start justify-end p-3 pt-[max(4.25rem,env(safe-area-inset-top))] sm:p-4 sm:pt-[4.75rem]">
+        <div className="pointer-events-auto w-full max-w-[22rem]">
+          <WalletConnectPanel
+            connectedProvider={connectedProvider}
+            evmWallet={evmWallet}
+            ionWallet={ionWallet}
+            ionSessionActive={ionSessionActive}
+            onConnect={onConnect}
+            onDisconnect={onDisconnect}
+          />
+        </div>
+      </div>
+    </>,
+    document.body,
+  );
+}
+
 function WalletConnectPanel({
   connectedProvider,
   evmWallet,
@@ -434,7 +496,7 @@ function WalletConnectPanel({
 
   return (
     <div
-      className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[min(22rem,calc(100vw-2rem))] rounded-[1.6rem] border border-cyan-200/20 bg-slate-950/95 p-4 shadow-[0_0_36px_rgba(36,247,255,0.24)] backdrop-blur-xl"
+      className="max-h-[min(32rem,calc(100dvh-6rem))] overflow-y-auto rounded-[1.6rem] border border-cyan-200/25 bg-[#070d1f] p-4 shadow-[0_24px_80px_rgba(0,0,0,0.65),0_0_36px_rgba(36,247,255,0.18)]"
       data-testid="wallet-panel"
     >
       <div className="mb-4 flex items-start gap-3">
@@ -627,7 +689,7 @@ function TickerStrip() {
 
   return (
     <div
-      className="flex gap-4 overflow-hidden border-b border-white/10 bg-black/25 px-4 py-2 text-xs sm:px-6"
+      className="relative shrink-0 overflow-hidden px-4 py-2 text-xs sm:px-6"
       data-testid="ticker-strip"
     >
       <span className="sr-only" data-testid="ticker-source">

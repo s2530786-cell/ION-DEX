@@ -7,6 +7,7 @@ import {
   getIonMarketPayload,
   getIonPoolPayload,
   getIonPriceApiPayload,
+  toOracleDiagnosticsDto,
 } from "../services/price-engine.js";
 import { apiResponse, type ApiMeta } from "../gateway/response.js";
 
@@ -19,6 +20,21 @@ function writeJson(response: ServerResponse, status: number, body: unknown): voi
 function mockIonPriceFromTickers() {
   const ion = getMarketTickers().find((t) => t.symbol === "ION");
   if (!ion) {
+    const diagnostics = toOracleDiagnosticsDto({
+      oracleMethod: "mock-single-source",
+      oracleSpreadBps: 0,
+      oracleUsedQuotes: 1,
+      oracleUsedFeeds: [
+        {
+          platformId: "mock",
+          priceUsd: 6.02,
+          weight: 1,
+          liquidityUsd: null,
+          change24hPct: 8.42,
+        },
+      ],
+      oracleRejectedFeeds: [],
+    });
     return {
       priceUsd: 6.02,
       change24hPct: 8.42,
@@ -28,8 +44,24 @@ function mockIonPriceFromTickers() {
       note: "Phase 3 mock ION price.",
       poolAddress: "0x6487725b383954e05ca56f3c2b93a104b3dd2c25",
       updatedAt: new Date().toISOString(),
+      ...diagnostics,
     };
   }
+  const diagnostics = toOracleDiagnosticsDto({
+    oracleMethod: "mock-single-source",
+    oracleSpreadBps: 0,
+    oracleUsedQuotes: 1,
+    oracleUsedFeeds: [
+      {
+        platformId: "mock",
+        priceUsd: ion.priceUsd,
+        weight: 1,
+        liquidityUsd: null,
+        change24hPct: ion.change24hPct,
+      },
+    ],
+    oracleRejectedFeeds: [],
+  });
   return {
     priceUsd: ion.priceUsd,
     change24hPct: ion.change24hPct,
@@ -39,6 +71,7 @@ function mockIonPriceFromTickers() {
     note: ion.provenance.note,
     poolAddress: "0x6487725b383954e05ca56f3c2b93a104b3dd2c25",
     updatedAt: new Date().toISOString(),
+    ...diagnostics,
   };
 }
 
@@ -92,6 +125,7 @@ export async function handlePriceRoute(
               sources: ["mock"],
               poolAddress: mockIonPriceFromTickers().poolAddress,
               indexerNote: "test-mock mode",
+              ...toOracleDiagnosticsDto(mockIonPriceFromTickers()),
             },
             meta,
           ),

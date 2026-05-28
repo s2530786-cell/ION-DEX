@@ -5,10 +5,11 @@ export default {
     extend: {
       colors: {
         ion: {
-          cyan: "#24f7ff",
+          cyan: "#00ffff",
+          purple: "#6020ff",
           blue: "#2563ff",
-          violet: "#8d4dff",
-          magenta: "#ff3bd4",
+          violet: "#6020ff",
+          magenta: "#ff00ff",
           gold: "#ffd166",
           green: "#00ff88",
           pink: "#ff0088",
@@ -16,10 +17,11 @@ export default {
         },
       },
       boxShadow: {
-        neonCyan: "0 0 28px rgba(36, 247, 255, 0.45)",
-        neonMagenta: "0 0 28px rgba(255, 59, 212, 0.38)",
+        neonCyan: "0 0 28px rgba(0, 255, 255, 0.45)",
+        neonMagenta: "0 0 28px rgba(255, 0, 255, 0.38)",
         neonGold: "0 0 28px rgba(255, 209, 102, 0.35)",
-        neonViolet: "0 0 28px rgba(141, 77, 255, 0.35)",
+        neonViolet: "0 0 28px rgba(96, 32, 255, 0.35)",
+        neonPurple: "0 0 28px rgba(96, 32, 255, 0.35)",
         neonGreen: "0 0 28px rgba(0, 255, 136, 0.35)",
       },
       fontFamily: {

@@ -3,12 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --ion-cyan: #24f7ff;
-  --ion-violet: #8d4dff;
-  --ion-magenta: #ff3bd4;
+  /* Master-locked aurora tricolor — .memory-bank/ui-cyber-glass-iron-law.md */
+  --ion-cyan: #00ffff;
+  --ion-purple: #6020ff;
+  --ion-magenta: #ff00ff;
+  --ion-violet: var(--ion-purple);
   --ion-gold: #ffd166;
   --ion-green: #00ff88;
   --ion-ink: #03050f;
+  --glass-bg: rgba(10, 15, 35, 0.25);
+  --glass-blur: 18px;
+  --panel-radius: 20px;
+  --btn-radius: 12px;
+  --glow-cyan: 0 0 12px 3px rgba(0, 255, 255, 0.6);
+  --glow-purple: 0 0 12px 3px rgba(96, 32, 255, 0.6);
+  --glow-magenta: 0 0 12px 3px rgba(255, 0, 255, 0.6);
+  --ion-gradient-aurora: linear-gradient(
+    90deg,
+    var(--ion-cyan),
+    var(--ion-purple),
+    var(--ion-magenta)
+  );
   color-scheme: dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--ion-ink);
@@ -19,11 +34,24 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 body {
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
   overflow-x: hidden;
+}
+
+#root {
+  display: flex;
+  min-height: 100dvh;
+  min-height: 100svh;
+  flex-direction: column;
 }
 
 html[data-ion-dark-mode="0"] body {
@@ -38,23 +66,33 @@ select {
 
 /* ========== Cyber Neon Glassmorphism Core ========== */
 @layer utilities {
+  .ion-glass-panel,
   .glass-surface {
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: var(--panel-radius);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--glow-cyan), var(--glow-purple);
+  }
+
+  .glass-surface {
     border: 1px solid transparent;
     background:
       linear-gradient(
           125deg,
-          rgba(36, 247, 255, 0.72),
-          rgba(141, 77, 255, 0.42),
-          rgba(255, 59, 212, 0.68)
+          rgba(0, 255, 255, 0.72),
+          rgba(96, 32, 255, 0.42),
+          rgba(255, 0, 255, 0.68)
         )
         border-box,
-      rgba(255, 255, 255, 0.03) padding-box;
+      var(--glass-bg) padding-box;
     background-clip: padding-box, border-box;
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.1),
       0 22px 70px rgba(0, 0, 0, 0.28);
@@ -81,24 +119,31 @@ select {
     z-index: 0;
     pointer-events: none;
     filter: blur(60px);
-    background: linear-gradient(90deg, rgba(36, 247, 255, 0.48), rgba(255, 59, 212, 0.42));
+    background: linear-gradient(90deg, rgba(0, 255, 255, 0.48), rgba(255, 0, 255, 0.42));
     transform: translateZ(0);
   }
 
   /* Neon flowing border — for highlight elements */
   .flow-border {
-    position: relative;
     isolation: isolate;
   }
 
+  .ion-glass-border,
+  .flow-border {
+    position: relative;
+    border-radius: var(--panel-radius);
+  }
+
+  .ion-glass-border::before,
   .flow-border::before {
     content: "";
     position: absolute;
-    inset: -1px;
+    inset: -2px;
     z-index: -1;
     border-radius: inherit;
-    background: linear-gradient(115deg, #24f7ff, #8d4dff, #ff3bd4, #ffd166, #24f7ff);
-    background-size: 260% 260%;
+    background: var(--ion-gradient-aurora);
+    background-size: 260% 100%;
+    filter: blur(4px);
     opacity: 0.9;
     animation: ionBorderFlow 7s ease infinite;
   }
@@ -109,13 +154,11 @@ select {
     transform-style: preserve-3d;
   }
 
-  /* 3D floating animation — for content areas */
   .float-3d {
     transform: rotateX(7deg) rotateY(-8deg) translateZ(0);
     animation: ionFloat3d 9s ease-in-out infinite;
   }
 
-  /* Enhanced 3D floating with stronger perspective */
   .float-3d-strong {
     transform: rotateX(10deg) rotateY(-12deg) translateZ(0);
     animation: ionFloat3d 12s ease-in-out infinite;

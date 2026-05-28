@@ -96,6 +96,10 @@ export function resolveIonApiBaseUrl(): string {
   if (configured) {
     return configured.replace(/\/$/, "");
   }
+  // Dev: same-origin /api via Vite proxy — avoids localhost ↔ 127.0.0.1 CORS.
+  if (import.meta.env.DEV) {
+    return "";
+  }
   return "http://127.0.0.1:8787";
 }
 

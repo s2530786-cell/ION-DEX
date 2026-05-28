@@ -7,8 +7,9 @@ import { fetchCmcMarketTickers } from "../upstream/cmc.js";
 import { fetchDexScreenerIonPair } from "../upstream/dexscreener.js";
 import { fetchGeckoIonOhlcv, getGeckoIonPool } from "../upstream/geckoterminal.js";
 import { fetchIonIndexerSupplyHint, probeIonIndexer } from "../upstream/ion-indexer.js";
-import { fetchPancakeIonPerBnb, fetchPancakeIonPoolReserves } from "../upstream/pancake-pool.js";
+import { fetchPancakeIonPoolReserves, fetchPancakeIonWbnbPrice } from "../upstream/pancake-pool.js";
 import type { MarketTicker } from "./markets.js";
+import { resolveIonOracleFeed } from "./price-oracle.js";
 
 const PRICE_CACHE_KEY = "price:ion:usd";
 const BNB_CACHE_KEY = "price:bnb:usd";
@@ -25,7 +26,57 @@ export type IonPricePayload = {
   note: string;
   poolAddress: string;
   updatedAt: string;
+  oracleMethod?: string;
+  oracleSpreadBps?: number;
+  oracleUsedQuotes?: number;
+  oracleUsedFeeds?: Array<{
+    platformId: string;
+    priceUsd: number;
+    weight: number;
+    liquidityUsd: number | null;
+    change24hPct: number | null;
+  }>;
+  oracleRejectedFeeds?: Array<{
+    platformId: string;
+    rejectReason: "outlier" | "feed_error";
+    error?: string;
+    priceUsd?: number;
+  }>;
 };
+
+export type OracleDiagnosticsDto = {
+  oracleMethod?: string;
+  oracleSpreadBps?: number;
+  oracleUsedQuotes?: number;
+  oracleUsedFeeds: Array<{
+    platformId: string;
+    priceUsd: number;
+    weight: number;
+    liquidityUsd: number | null;
+    change24hPct: number | null;
+  }>;
+  oracleRejectedFeeds: Array<{
+    platformId: string;
+    rejectReason: "outlier" | "feed_error";
+    error?: string;
+    priceUsd?: number;
+  }>;
+};
+
+export function toOracleDiagnosticsDto(
+  payload: Pick<
+    IonPricePayload,
+    "oracleMethod" | "oracleSpreadBps" | "oracleUsedQuotes" | "oracleUsedFeeds" | "oracleRejectedFeeds"
+  >,
+): OracleDiagnosticsDto {
+  return {
+    oracleMethod: payload.oracleMethod,
+    oracleSpreadBps: payload.oracleSpreadBps,
+    oracleUsedQuotes: payload.oracleUsedQuotes,
+    oracleUsedFeeds: payload.oracleUsedFeeds ?? [],
+    oracleRejectedFeeds: payload.oracleRejectedFeeds ?? [],
+  };
+}
 
 export type BnbPricePayload = {
   priceUsd: number;
@@ -82,133 +133,53 @@ async function resolveBnbUsd(config: ServerConfig): Promise<BnbPricePayload> {
   return payload;
 }
 
-async function resolvePancakeIonUsd(config: ServerConfig): Promise<IonPricePayload | null> {
-  try {
-    const [bnb, ionPerBnb] = await Promise.all([
-      resolveBnbUsd(config),
-      fetchPancakeIonPerBnb(config),
-    ]);
-    const priceUsd = ionPerBnb * bnb.priceUsd;
-    if (!Number.isFinite(priceUsd) || priceUsd <= 0) {
-      return null;
-    }
-    let change24hPct = 0;
-    try {
-      const gecko = await getGeckoIonPool(config.httpTimeoutMs);
-      change24hPct = Number(gecko.attributes.price_change_percentage.h24) || 0;
-    } catch {
-      /* optional */
-    }
-    return {
-      priceUsd,
-      change24hPct,
-      volume24hUsd: null,
-      liquidityUsd: null,
-      source: "pancake+binance",
-      note: "ION/WBNB reserves on official LP × Binance BNB/USDT.",
-      poolAddress: ION_BSC_LP_POOL.toLowerCase(),
-      updatedAt: new Date().toISOString(),
-    };
-  } catch {
-    return null;
-  }
-}
-
-async function resolveGeckoIonUsd(config: ServerConfig): Promise<IonPricePayload | null> {
-  try {
-    const pool = await getGeckoIonPool(config.httpTimeoutMs);
-    const priceUsd = Number.parseFloat(pool.attributes.base_token_price_usd);
-    if (!Number.isFinite(priceUsd) || priceUsd <= 0) {
-      return null;
-    }
-    return {
-      priceUsd,
-      change24hPct: Number(pool.attributes.price_change_percentage.h24) || 0,
-      volume24hUsd: Number(pool.attributes.volume_usd.h24) || null,
-      liquidityUsd: Number(pool.attributes.reserve_in_usd) || null,
-      source: "geckoterminal",
-      note: "GeckoTerminal ION/BNB pool USD quote.",
-      poolAddress: ION_BSC_LP_POOL.toLowerCase(),
-      updatedAt: new Date().toISOString(),
-    };
-  } catch {
-    return null;
-  }
-}
-
-async function resolveDexIonUsd(config: ServerConfig): Promise<IonPricePayload | null> {
-  try {
-    const snap = await fetchDexScreenerIonPair(config);
-    return {
-      priceUsd: snap.priceUsd,
-      change24hPct: snap.change24hPct,
-      volume24hUsd: snap.volume24hUsd,
-      liquidityUsd: snap.liquidityUsd,
-      source: "dexscreener",
-      note: "DexScreener ION pair on BSC.",
-      poolAddress: snap.pairAddress,
-      updatedAt: new Date().toISOString(),
-    };
-  } catch {
-    return null;
-  }
-}
-
-async function resolveCmcIonUsd(config: ServerConfig): Promise<IonPricePayload | null> {
-  if (!config.cmcApiKey) {
-    return null;
-  }
-  try {
-    const tickers = await fetchCmcMarketTickers(config);
-    const ion = tickers.find((t) => t.symbol === "ION");
-    if (!ion) {
-      return null;
-    }
-    return {
-      priceUsd: ion.priceUsd,
-      change24hPct: ion.change24hPct,
-      volume24hUsd: null,
-      liquidityUsd: null,
-      source: "coinmarketcap",
-      note: ion.provenance.note,
-      poolAddress: ION_BSC_LP_POOL.toLowerCase(),
-      updatedAt: new Date().toISOString(),
-    };
-  } catch {
-    return null;
-  }
-}
-
 export async function resolveIonUsdPrice(config: ServerConfig): Promise<IonPricePayload> {
   const cached = priceCache.get<IonPricePayload>(PRICE_CACHE_KEY);
   if (cached.hit && cached.entry.value) {
     return cached.entry.value;
   }
-
-  const candidates = await Promise.all([
-    resolvePancakeIonUsd(config),
-    resolveGeckoIonUsd(config),
-    resolveDexIonUsd(config),
-    resolveCmcIonUsd(config),
-  ]);
-
-  const winner =
-    candidates.find((row) => row !== null) ??
-    ({
+  try {
+    const aggregate = await resolveIonOracleFeed(config);
+    const winner: IonPricePayload = {
+      priceUsd: aggregate.priceUsd,
+      change24hPct: aggregate.change24hPct,
+      volume24hUsd: null,
+      liquidityUsd: null,
+      source: "oracle-aggregated",
+      note: `Trimmed-median oracle across ${aggregate.usedQuotes} feeds; rejected ${aggregate.rejected.length} outlier(s).`,
+      poolAddress: aggregate.poolAddress.toLowerCase(),
+      updatedAt: aggregate.updatedAt,
+      oracleMethod: aggregate.method,
+      oracleSpreadBps: aggregate.spreadBps,
+      oracleUsedQuotes: aggregate.usedQuotes,
+      oracleUsedFeeds: aggregate.quotes.map((row) => ({
+        platformId: row.platformId,
+        priceUsd: row.priceUsd,
+        weight: row.weight,
+        liquidityUsd: row.liquidityUsd,
+        change24hPct: row.change24hPct,
+      })),
+      oracleRejectedFeeds: aggregate.rejected.map((row) => ({
+        platformId: row.platformId,
+        rejectReason: row.rejectReason,
+        error: row.error,
+        priceUsd: row.priceUsd > 0 ? row.priceUsd : undefined,
+      })),
+    };
+    priceCache.set(PRICE_CACHE_KEY, winner, pricePolicy, systemClock);
+    return winner;
+  } catch (error) {
+    return {
       priceUsd: 0,
       change24hPct: 0,
       volume24hUsd: null,
       liquidityUsd: null,
       source: "unavailable",
-      note: "All ION price engines failed; check RPC and outbound network.",
+      note: `ION oracle unavailable: ${error instanceof Error ? error.message : String(error)}`,
       poolAddress: ION_BSC_LP_POOL.toLowerCase(),
       updatedAt: new Date().toISOString(),
-    } satisfies IonPricePayload);
-
-  if (winner.priceUsd > 0) {
-    priceCache.set(PRICE_CACHE_KEY, winner, pricePolicy, systemClock);
+    };
   }
-  return winner;
 }
 
 export async function getIonPriceApiPayload(config: ServerConfig): Promise<IonPricePayload> {
@@ -233,14 +204,16 @@ export async function getIonKlinesPayload(
 
   try {
     const rows = await fetchGeckoIonOhlcv(config.httpTimeoutMs, "hour", limit);
-    const candles: IonKlineCandle[] = rows.map((row) => ({
-      time: row.timestamp,
-      open: row.open,
-      high: row.high,
-      low: row.low,
-      close: row.close,
-      volume: row.volume,
-    }));
+    const candles: IonKlineCandle[] = rows
+      .map((row) => ({
+        time: row.timestamp,
+        open: row.open,
+        high: row.high,
+        low: row.low,
+        close: row.close,
+        volume: row.volume,
+      }))
+      .sort((a, b) => a.time - b.time);
     const payload = { timeframe: "1h", candles, source: "geckoterminal" };
     priceCache.set(cacheKey, payload, pricePolicy, systemClock);
     return payload;
@@ -269,6 +242,7 @@ export async function getIonMarketPayload(config: ServerConfig) {
     sources: [...new Set(sources)],
     poolAddress: ion.poolAddress,
     indexerNote: indexer.note,
+    ...toOracleDiagnosticsDto(ion),
   };
 }
 

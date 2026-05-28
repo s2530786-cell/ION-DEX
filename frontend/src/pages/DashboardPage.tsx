@@ -2,10 +2,8 @@ import {
   ArrowLeftRight,
   Bot,
   Flame,
-  LayoutGrid,
   Layers3,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import {
@@ -13,9 +11,10 @@ import {
   buildSyntheticSeries,
   klinesToChartPoints,
 } from "@/components/charts/MarketChart";
+import { DashboardSwapPanel } from "@/components/dashboard/DashboardSwapPanel";
+import { FeatureTile } from "@/components/dashboard/FeatureTile";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
-import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import type { PageKey } from "@/components/layout/AppShell";
 import { useApiResource } from "@/hooks/useApiResource";
@@ -27,11 +26,13 @@ import {
 import {
   fetchBurnSummary,
   fetchIonKlines,
+  fetchIonPrice,
   fetchMarketTickers,
   fetchStakingSummary,
   formatIonAmount,
   type BurnSummary,
   type IonKlinesPayload,
+  type IonPricePayload,
   type MarketTicker,
   type StakingSummary,
 } from "@/lib/ionApi";
@@ -48,13 +49,13 @@ type DashboardPageProps = {
   onNavigate: (page: PageKey) => void;
 };
 
+/** Bottom nav row — aligned with design reference (Pool / Copy Trade / Bridge / Burn / Domain). */
 const featureCards: FeatureCard[] = [
   { title: "Pool", label: "Liquidity", target: "pool", icon: Layers3, color: "cyan" },
-  { title: "Grid", label: "Spot strategies", target: "grid", icon: LayoutGrid, color: "magenta" },
+  { title: "Copy Trade", label: "Social desk", target: "copy-trade", icon: Bot, color: "magenta" },
   { title: "Bridge", label: "ION / BSC", target: "bridge", icon: ArrowLeftRight, color: "cyan" },
-  { title: "Burn", label: "Dual-chain tracker", target: "burn", icon: Flame, color: "magenta" },
-  { title: "ION ID", label: "KYC Pass", target: "domain", icon: ShieldCheck, color: "gold" },
-  { title: "AI Market", label: "Signals & risk", target: "ai", icon: Bot, color: "cyan" },
+  { title: "Burn", label: "Dual-chain", target: "burn", icon: Flame, color: "magenta" },
+  { title: "Domain", label: "ION DNS", target: "domain", icon: ShieldCheck, color: "gold" },
 ];
 
 const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK.filter((row) => row.symbol === "ION");
@@ -76,7 +77,23 @@ const fallbackStaking: StakingSummary = {
   apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
 };
 
-export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
+const fallbackIonPrice: IonPricePayload = {
+  priceUsd: 6.02,
+  change24hPct: 8.42,
+  volume24hUsd: null,
+  liquidityUsd: null,
+  source: "mock",
+  note: "fallback",
+  poolAddress: "0x6487725b383954e05ca56f3c2b93a104b3dd2c25",
+  updatedAt: new Date(0).toISOString(),
+  oracleMethod: "mock-single-source",
+  oracleSpreadBps: 0,
+  oracleUsedQuotes: 1,
+  oracleUsedFeeds: [{ platformId: "mock", priceUsd: 6.02, weight: 1, liquidityUsd: null, change24hPct: 8.42 }],
+  oracleRejectedFeeds: [],
+};
+
+export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const fetchTickers = useCallback(
     (signal: AbortSignal) => fetchMarketTickers(signal),
     [],
@@ -86,6 +103,7 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
     (signal: AbortSignal) => fetchStakingSummary(signal),
     [],
   );
+  const fetchPrice = useCallback((signal: AbortSignal) => fetchIonPrice(signal), []);
   const fetchKlines = useCallback(
     (signal: AbortSignal) => fetchIonKlines(48, signal),
     [],
@@ -96,6 +114,7 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
   });
   const burn = useApiResource(fetchBurn, fallbackBurn);
   const staking = useApiResource(fetchStaking, fallbackStaking);
+  const ionPrice = useApiResource(fetchPrice, fallbackIonPrice);
   const emptyKlines: IonKlinesPayload = { timeframe: "1h", candles: [], source: "pending" };
   const klines = useApiResource(fetchKlines, emptyKlines, { isEmpty: () => false });
 
@@ -134,90 +153,126 @@ export function DashboardPage({ onNavigate }: { onNavigate: (page: PageKey) => v
   }, [burn.data.remainingSupplyIon, burn.data.totalBurnedIon]);
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[1fr_18rem]" data-testid="page-dashboard">
-      <MarketStage
-        chartPoints={chartPoints}
-        ionTicker={ionTicker}
-        klines={klines}
-        onNavigate={onNavigate}
-        tickers={tickers}
-      />
-      <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
-      <div className="xl:col-span-2">
-        <FeatureGrid onNavigate={onNavigate} />
-      </div>
+    <div className="flex w-full min-w-0 flex-col gap-5" data-testid="page-dashboard">
+      <section
+        className="depth-stage grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(17rem,20rem)_minmax(0,1fr)_minmax(13rem,16.5rem)]"
+        data-testid="dashboard-main-stage"
+      >
+        <DashboardSwapPanel onOpenFullSwap={() => onNavigate("swap")} />
+        <MarketStage
+          chartPoints={chartPoints}
+          ionPrice={ionPrice}
+          ionTicker={ionTicker}
+          klines={klines}
+          tickers={tickers}
+        />
+        <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
+      </section>
+
+      <FeatureGrid onNavigate={onNavigate} />
     </div>
   );
 }
 
 function MarketStage({
   tickers,
+  ionPrice,
   ionTicker,
   chartPoints,
   klines,
-  onNavigate,
 }: {
   tickers: ReturnType<typeof useApiResource<MarketTicker[]>>;
+  ionPrice: ReturnType<typeof useApiResource<IonPricePayload>>;
   ionTicker: MarketTicker | undefined;
   chartPoints: ReturnType<typeof buildSyntheticSeries>;
   klines: ReturnType<typeof useApiResource<IonKlinesPayload>>;
-  onNavigate: (page: PageKey) => void;
 }) {
   return (
-    <NeonCard className="min-h-[28rem]" variant="cyan">
-      <div className="flex h-full flex-col">
-        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">
-              Professional Trading Surface
-            </p>
-            <h1 className="mt-2 text-3xl font-black text-white sm:text-5xl">
-              swap.ion <span className="text-glow-magenta text-fuchsia-300">Galaxy</span>
-            </h1>
+    <div className="flow-border min-h-0 rounded-[1.75rem] p-px lg:min-h-[22rem]">
+      <NeonCard className="h-full min-h-[20rem] lg:min-h-[22rem]" variant="mixed">
+        <div className="flex h-full min-h-0 flex-col">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">Market</p>
+              <h2 className="mt-1 text-xl font-black text-white sm:text-2xl">
+                ION <span className="text-fuchsia-300">/ USDT</span>
+              </h2>
+            </div>
+            {ionTicker ? (
+              <p
+                className="text-right text-sm font-bold text-cyan-100"
+                data-testid="dashboard-ion-quote"
+              >
+                {ionTicker.displayPrice}
+                <span className="ml-2 text-cyan-100/60">{ionTicker.displayChange}</span>
+              </p>
+            ) : null}
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <Sparkles className="text-cyan-200" />
-            <NeonButton
-              className="px-4 py-2 text-xs"
-              data-testid="dashboard-open-swap"
-              onClick={() => onNavigate("swap")}
-              type="button"
-            >
-              Open Swap
-            </NeonButton>
+
+          <DataSourceBadge meta={klines.meta ?? tickers.meta} testId="dashboard-chart-source" />
+
+          <AsyncState
+            emptyMessage="Market tickers are not available."
+            error={tickers.error}
+            onRetry={tickers.reload}
+            state={tickers.state}
+            testId="dashboard-chart"
+          >
+            <div className="min-h-[14rem] flex-1 sm:min-h-[16rem]">
+              {chartPoints.length > 0 ? (
+                <MarketChart points={chartPoints} testId="dashboard-market-chart" />
+              ) : (
+                <ChartPlaceholder />
+              )}
+            </div>
+          </AsyncState>
+
+          <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.05] p-3" data-testid="dashboard-oracle-diagnostics">
+            <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-cyan-100/60">
+              <span>Oracle Diagnostics</span>
+              <span>{ionPrice.data.oracleMethod ?? "n/a"}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs text-cyan-100/80">
+              <p>
+                spread: <span className="font-bold text-white">{ionPrice.data.oracleSpreadBps ?? 0} bps</span>
+              </p>
+              <p>
+                used quotes: <span className="font-bold text-white">{ionPrice.data.oracleUsedQuotes ?? 0}</span>
+              </p>
+            </div>
+            <div className="mt-2 text-xs text-cyan-100/75">
+              <p className="mb-1 font-semibold text-cyan-50">used feeds</p>
+              <div className="flex flex-wrap gap-1.5" data-testid="dashboard-oracle-used-feeds">
+                {(ionPrice.data.oracleUsedFeeds ?? []).slice(0, 4).map((feed) => (
+                  <span className="rounded-full border border-emerald-300/35 bg-emerald-300/10 px-2 py-0.5" key={feed.platformId}>
+                    {feed.platformId}:{feed.priceUsd.toFixed(4)}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-cyan-100/75">
+              <p className="mb-1 font-semibold text-cyan-50">rejected feeds</p>
+              <div className="flex flex-wrap gap-1.5" data-testid="dashboard-oracle-rejected-feeds">
+                {(ionPrice.data.oracleRejectedFeeds ?? []).slice(0, 4).map((feed) => (
+                  <span className="rounded-full border border-rose-300/35 bg-rose-300/10 px-2 py-0.5" key={`${feed.platformId}-${feed.rejectReason}`}>
+                    {feed.platformId}:{feed.rejectReason}
+                  </span>
+                ))}
+                {(ionPrice.data.oracleRejectedFeeds ?? []).length === 0 ? (
+                  <span className="rounded-full border border-cyan-300/35 bg-cyan-300/10 px-2 py-0.5">none</span>
+                ) : null}
+              </div>
+            </div>
           </div>
         </div>
-
-        <DataSourceBadge meta={klines.meta ?? tickers.meta} testId="dashboard-chart-source" />
-
-        <AsyncState
-          emptyMessage="Market tickers are not available."
-          error={tickers.error}
-          onRetry={tickers.reload}
-          state={tickers.state}
-          testId="dashboard-chart"
-        >
-          {chartPoints.length > 0 ? (
-            <MarketChart points={chartPoints} testId="dashboard-market-chart" />
-          ) : (
-            <ChartPlaceholder />
-          )}
-          {ionTicker ? (
-            <p className="mt-3 text-sm text-cyan-100/75" data-testid="dashboard-ion-quote">
-              ION {ionTicker.displayPrice} · {ionTicker.displayChange} · AI Signal:{" "}
-              {ionTicker.change24hPct >= 0 ? "Bullish" : "Cautious"}{" "}
-              {Math.abs(ionTicker.change24hPct).toFixed(1)}%
-            </p>
-          ) : null}
-        </AsyncState>
-      </div>
-    </NeonCard>
+      </NeonCard>
+    </div>
   );
 }
 
 function ChartPlaceholder() {
   return (
-    <div className="grid h-[17.5rem] place-items-center rounded-[1.25rem] border border-white/10 bg-black/30 text-sm text-cyan-100/60">
+    <div className="grid h-full min-h-[14rem] place-items-center rounded-[1.25rem] border border-white/10 bg-black/30 text-sm text-cyan-100/60">
       Waiting for ticker data
     </div>
   );
@@ -235,8 +290,8 @@ function RightStats({
   burnProgress: number;
 }) {
   return (
-    <div className="grid gap-5">
-      <NeonCard variant="cyan">
+    <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+      <NeonCard density="compact" variant="cyan">
         <DataSourceBadge meta={staking.meta} testId="dashboard-tvl-source" />
         <AsyncState
           error={staking.error}
@@ -244,17 +299,17 @@ function RightStats({
           state={staking.state}
           testId="dashboard-tvl"
         >
-          <p className="text-sm text-cyan-100/55">TVL</p>
-          <p className="mt-1 text-3xl font-black" data-testid="dashboard-tvl-value">
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/55">TVL</p>
+          <p className="mt-1 text-2xl font-black text-glow-cyan" data-testid="dashboard-tvl-value">
             {tvlLabel}
           </p>
-          <p className="mt-1 text-xs text-emerald-300">
-            LP mining APR {staking.data.apr.lpMiningPct}%
+          <p className="mt-1 text-[0.7rem] text-emerald-300">
+            LP APR {staking.data.apr.lpMiningPct}%
           </p>
         </AsyncState>
       </NeonCard>
 
-      <NeonCard variant="magenta">
+      <NeonCard density="compact" variant="magenta">
         <DataSourceBadge meta={staking.meta} testId="dashboard-apr-source" />
         <AsyncState
           error={staking.error}
@@ -262,15 +317,15 @@ function RightStats({
           state={staking.state}
           testId="dashboard-apr"
         >
-          <p className="text-sm text-cyan-100/55">APR</p>
-          <p className="mt-1 text-3xl font-black" data-testid="dashboard-apr-value">
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/55">APR</p>
+          <p className="mt-1 text-2xl font-black text-glow-magenta" data-testid="dashboard-apr-value">
             {staking.data.apr.dexPct}%
           </p>
-          <p className="mt-1 text-xs text-cyan-200">Dynamic DEX staking rate</p>
+          <p className="mt-1 text-[0.7rem] text-cyan-200/80">DEX staking</p>
         </AsyncState>
       </NeonCard>
 
-      <NeonCard variant="gold">
+      <NeonCard density="compact" variant="gold">
         <DataSourceBadge meta={burn.meta} testId="dashboard-burn-source" />
         <AsyncState
           error={burn.error}
@@ -278,13 +333,13 @@ function RightStats({
           state={burn.state}
           testId="dashboard-burn"
         >
-          <p className="text-sm text-cyan-100/55">Burn</p>
-          <p className="mt-1 text-3xl font-black" data-testid="dashboard-burn-value">
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/55">Burn</p>
+          <p className="mt-1 text-2xl font-black" data-testid="dashboard-burn-value">
             {formatIonAmount(burn.data.totalBurnedIon)}
           </p>
-          <div className="mt-4 h-2 rounded-full bg-white/10">
+          <div className="mt-3 h-1.5 rounded-full bg-white/10">
             <div
-              className="h-2 rounded-full bg-[linear-gradient(90deg,#24f7ff,#ff3bd4,#ffd166)]"
+              className="h-1.5 rounded-full bg-[linear-gradient(90deg,var(--ion-cyan),var(--ion-magenta),var(--ion-gold))]"
               style={{ width: `${burnProgress}%` }}
             />
           </div>
@@ -296,31 +351,21 @@ function RightStats({
 
 function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-      {featureCards.map((card) => {
-        const Icon = card.icon;
-        return (
-          <button
-            className="text-left"
-            data-testid={`dashboard-feature-${card.target}`}
-            key={card.title}
+    <section data-testid="dashboard-feature-grid">
+      <p className="mb-3 text-xs uppercase tracking-[0.28em] text-cyan-100/45">Modules</p>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        {featureCards.map((card) => (
+          <FeatureTile
+            icon={card.icon}
+            key={card.target}
+            label={card.label}
             onClick={() => onNavigate(card.target)}
-            type="button"
-          >
-            <NeonCard variant={card.color} className="min-h-[11rem] transition hover:scale-[1.01]">
-              <div className="flex h-full flex-col justify-between">
-                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/[0.07] text-cyan-200 shadow-neonCyan">
-                  <Icon size={28} />
-                </div>
-                <div>
-                  <p className="text-2xl font-black">{card.title}</p>
-                  <p className="text-sm text-cyan-100/55">{card.label}</p>
-                </div>
-              </div>
-            </NeonCard>
-          </button>
-        );
-      })}
-    </div>
+            testId={`dashboard-feature-${card.target}`}
+            title={card.title}
+            variant={card.color}
+          />
+        ))}
+      </div>
+    </section>
   );
 }

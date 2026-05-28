@@ -1,5 +1,8 @@
 import { useCallback, useMemo } from "react";
-import type { MarketChartPoint } from "@/components/charts/MarketChart";
+import {
+  normalizeChartPoints,
+  type MarketChartPoint,
+} from "@/components/charts/MarketChart";
 import { useApiResource } from "@/hooks/useApiResource";
 import { useMarketCandles } from "@/hooks/useMarketSurface";
 import {
@@ -60,10 +63,12 @@ export function useDashboardMarket() {
     if (candleState !== "ready" || candles.length === 0) {
       return [];
     }
-    return candles.map((candle) => ({
-      time: candle.time,
-      value: candle.close,
-    }));
+    return normalizeChartPoints(
+      candles.map((candle) => ({
+        time: candle.time,
+        value: candle.close,
+      })),
+    );
   }, [candleState, candles]);
 
   const quoteLine = useMemo(() => {

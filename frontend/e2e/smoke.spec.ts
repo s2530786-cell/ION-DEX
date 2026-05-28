@@ -254,6 +254,9 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("page-ai-subscription")).toBeVisible();
     await expect(page.getByTestId("ai-subscription-tier-basic")).toBeVisible();
     await expect(page.getByTestId("ai-subscription-wallet-panel")).toBeVisible();
+    await expect(page.getByTestId("sentinel-alert-test")).toBeVisible();
+    await page.getByTestId("sentinel-alert-test-btn").click();
+    await expect(page.getByTestId("sentinel-alert-test-result")).toBeVisible({ timeout: 15_000 });
 
     await clickNav(page, "settings");
     await expect(page.getByTestId("settings-dark-toggle")).toBeVisible();

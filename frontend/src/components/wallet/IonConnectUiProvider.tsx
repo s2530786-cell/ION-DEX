@@ -15,7 +15,7 @@ export function IonConnectUiProvider({ children }: PropsWithChildren) {
         borderRadius: "m",
         colorsSet: {
           [THEME.DARK]: {
-            accent: "#24f7ff",
+            accent: "#00ffff",
             background: {
               primary: "#03050f",
               secondary: "#0b1224",

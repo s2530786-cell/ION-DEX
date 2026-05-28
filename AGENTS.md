@@ -8,8 +8,10 @@ This repository must be treated as an engineering-grade production project.
 
 Before working on this project, load and follow:
 
+- **`.cursor/skills/ion-skill-autopilot/SKILL.md`** — run `node scripts/skill-route.mjs --git` (and `--task "..."` when useful), then load every Skill the router lists. This replaces manual skill picking per module.
 - `.cursor/skills/chinese-language/SKILL.md`
 - `.cursor/skills/ion-dex-memory/SKILL.md`
+- `.cursor/skills/ion-autonomous-work-resume/SKILL.md` when pipelines stall, work orders stop mid-flight, or UI Batch / verify-100 must resume without human nudging.
 - `.cursor/skills/ion-official-source/SKILL.md` when touching ION-native contracts, DNS, wallets, tonlib, lite-client, or official source references.
 - `.cursor/skills/ion-web3-ui/SKILL.md` when touching frontend UI, React, Tailwind, pages, dashboard, wallet/profile, or Playwright UI tests.
 - `.cursor/skills/ion-contract-audit/SKILL.md` when touching FunC, Solidity, AMM, staking, burn, bridge, vault, treasury, fee, oracle, or sentinel logic.
@@ -23,6 +25,17 @@ Before working on this project, load and follow:
 - `.cursor/skills/luke-agent-browser-clawdbot/SKILL.md` when validating or debugging frontend behavior through browser automation.
 - `.cursor/skills/summarize-pro/SKILL.md` when summarizing long docs, logs, transcripts, diffs, research results, or verification output.
 - `.cursor/skills/claude-flow/SKILL.md` when using Claude-Flow/RuFlo for AI agent orchestration, swarm planning, MCP diagnostics, multi-agent decomposition, or controlled local agent experiments.
+- **Private** `ion-private-core/.cursor/skills/` (or `ion-dex-nuke/.cursor/skills-private/` after `link-skills-to-ion-dex.ps1`) for commercial AI tooling — **never push these to public ion-dex-nuke**.
+- `.cursor/skills/quant-trading-frameworks/SKILL.md` (public stub) when choosing quant/AI stacks; full matrix includes **Kronos** (K-line FM), TradingAgents, QuantDinger, OctoBot, MoneyPrinterTurbo, etc.
+- **Private** `.cursor/skills/kronos/SKILL.md` when forecasting OHLCV paths, batch K-line prediction, or ION DEX AI chart scenarios ([Kronos](https://github.com/shiyu-coder/Kronos)).
+- `.cursor/skills/trading-agents/SKILL.md` or `.cursor/skills/trading-agents-cn/SKILL.md` when implementing multi-agent LLM market research (English vs Chinese/A-share).
+- `.cursor/skills/vibe-trading/SKILL.md` or `.cursor/skills/quantdinger/SKILL.md` when integrating Cursor MCP for NL research, backtests, or self-hosted quant workflows.
+- `.cursor/skills/machine-learning-for-trading/SKILL.md`, `.cursor/skills/pybroker/SKILL.md`, `.cursor/skills/finrl-trading/SKILL.md`, or `.cursor/skills/tensortrade/SKILL.md` when building ML/RL backtest or strategy pipelines.
+- `.cursor/skills/octobot/SKILL.md` or `.cursor/skills/lumibot/SKILL.md` when designing grid/DCA bots or broker-connected automation patterns.
+- `.cursor/skills/langalpha/SKILL.md` or `.cursor/skills/ai-hedge-fund-crypto/SKILL.md` when building persistent finance workspaces or LangGraph crypto strategy graphs.
+- **ion-private-core** `.cursor/skills/ion-github-daily-discovery/SKILL.md` when running **daily GitHub high-star discovery** (catalog 与 `github-discovered` 存根仅闭源仓；公开仓为指针 Skill + `scripts/github-daily-*.mjs`）。
+- **ion-private-core** `.cursor/skills/github-discovered/**/SKILL.md` when working against clones listed in `ion-private-core/.memory-bank/github-daily/installed.json`（经 `link-skills-to-ion-dex.ps1` 链到 `.cursor/skills-private/`）。
+- `.cursor/skills/hyperframes/SKILL.md`, `.cursor/skills/hyperframes-cli/SKILL.md`, `.cursor/skills/hyperframes-media/SKILL.md` for programmatic video/audio; `.cursor/skills/three/SKILL.md` / `.cursor/skills/typegpu/SKILL.md` for 3D/WebGL dashboard visuals.
 
 ## Core Requirements
 
@@ -31,7 +44,8 @@ Before working on this project, load and follow:
 - Before any development work, read `docs/00-engineering-standards.md` as the development iron law.
 - Before any implementation or UI claim, retrieve `.memory-bank/overall-design-framework.md`, `.memory-bank/live-data-reference.md`, `.memory-bank/implementation-playbook.md`, `.memory-bank/architecture-audit.md`, and `.memory-bank/ion-dex-nuke/official-source-index.md`; search Git history when current memory appears incomplete.
 - Before security-sensitive work, also retrieve `.memory-bank/security-audit-and-stress-framework.md`, read `docs/23-security-audit-and-stress-sandbox.md`, and run `node scripts/security-preflight.mjs` when shell access is available.
-- Before frontend/UI work, read `docs/10-ui-design-route.md` and run `node scripts/dev-preflight.mjs` when shell access is available.
+- Before frontend/UI work, read `.memory-bank/ui-cyber-glass-iron-law.md`, `.memory-bank/ui-design-master-template.md`, `.memory-bank/design-refs/README.md`, `docs/10-ui-design-route.md`, and run `node scripts/dev-preflight.mjs` when shell access is available. Compare UI to the matching PNG in `.memory-bank/design-refs/screens/` until P0 gaps are zero.
+- **New feature UI must follow the Master template** (iron law §0, design template §0): reuse existing glass/neon components and tokens; no parallel visual style for new pages or modules.
 - Never create UTF-16, GBK, ANSI, or BOM files.
 - Verify encoding after every file write.
 - Do not claim completion without build/test/lint/security evidence.

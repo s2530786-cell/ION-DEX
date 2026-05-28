@@ -232,6 +232,108 @@ describe("ION DEX API gateway", () => {
     assert.equal(data.verifier.replayProtection, true);
   });
 
+  it("serves market ion payload with oracle diagnostics", async () => {
+    const response = await requestJson("/api/market/ion");
+    const data = response.body.data as {
+      priceUsd: number;
+      oracleMethod?: string;
+      oracleSpreadBps?: number;
+      oracleUsedQuotes?: number;
+      oracleUsedFeeds?: Array<{ platformId: string; weight: number; priceUsd: number }>;
+      oracleRejectedFeeds?: Array<{ platformId: string; rejectReason: string }>;
+    };
+
+    assert.equal(response.status, 200);
+    assert.ok(data.priceUsd >= 0);
+    assert.equal(typeof data.oracleMethod, "string");
+    assert.equal(typeof data.oracleSpreadBps, "number");
+    assert.equal(typeof data.oracleUsedQuotes, "number");
+    assert.ok(Array.isArray(data.oracleUsedFeeds));
+    assert.ok(Array.isArray(data.oracleRejectedFeeds));
+    assert.ok((data.oracleUsedFeeds?.length ?? 0) >= 1);
+    assert.ok(typeof data.oracleUsedFeeds?.[0]?.platformId === "string");
+  });
+
+  it("keeps oracle diagnostics contract aligned between price and market endpoints", async () => {
+    const [priceResponse, marketResponse] = await Promise.all([
+      requestJson("/api/price/ion"),
+      requestJson("/api/market/ion"),
+    ]);
+
+    assert.equal(priceResponse.status, 200);
+    assert.equal(marketResponse.status, 200);
+    assert.ok(priceResponse.body.data && typeof priceResponse.body.data === "object");
+    assert.ok(marketResponse.body.data && typeof marketResponse.body.data === "object");
+
+    const priceData = priceResponse.body.data as Record<string, unknown>;
+    const marketData = marketResponse.body.data as Record<string, unknown>;
+    const oracleDiagnosticKeys = [
+      "oracleMethod",
+      "oracleSpreadBps",
+      "oracleUsedQuotes",
+      "oracleUsedFeeds",
+      "oracleRejectedFeeds",
+    ] as const;
+
+    assert.deepEqual(
+      Object.fromEntries(oracleDiagnosticKeys.map((key) => [key, key in priceData])),
+      Object.fromEntries(oracleDiagnosticKeys.map((key) => [key, true])),
+      "price endpoint missing oracle diagnostics field(s)",
+    );
+    assert.deepEqual(
+      Object.fromEntries(oracleDiagnosticKeys.map((key) => [key, key in marketData])),
+      Object.fromEntries(oracleDiagnosticKeys.map((key) => [key, true])),
+      "market endpoint missing oracle diagnostics field(s)",
+    );
+
+    assert.equal(typeof priceData.oracleMethod, typeof marketData.oracleMethod);
+    assert.equal(typeof priceData.oracleSpreadBps, typeof marketData.oracleSpreadBps);
+    assert.equal(typeof priceData.oracleUsedQuotes, typeof marketData.oracleUsedQuotes);
+    assert.equal(Array.isArray(priceData.oracleUsedFeeds), true);
+    assert.equal(Array.isArray(marketData.oracleUsedFeeds), true);
+    assert.equal(Array.isArray(priceData.oracleRejectedFeeds), true);
+    assert.equal(Array.isArray(marketData.oracleRejectedFeeds), true);
+  });
+
+  it("locks oracle diagnostics key snapshot for price and market endpoints", async () => {
+    const [priceResponse, marketResponse] = await Promise.all([
+      requestJson("/api/price/ion"),
+      requestJson("/api/market/ion"),
+    ]);
+
+    assert.equal(priceResponse.status, 200);
+    assert.equal(marketResponse.status, 200);
+    assert.ok(priceResponse.body.data && typeof priceResponse.body.data === "object");
+    assert.ok(marketResponse.body.data && typeof marketResponse.body.data === "object");
+
+    const expectedOracleKeys = [
+      "oracleMethod",
+      "oracleSpreadBps",
+      "oracleUsedQuotes",
+      "oracleUsedFeeds",
+      "oracleRejectedFeeds",
+    ] as const;
+
+    const pickOracleKeys = (payload: Record<string, unknown>) =>
+      Object.keys(payload)
+        .filter((key) => key.startsWith("oracle"))
+        .sort();
+    const expected = [...expectedOracleKeys].sort() as string[];
+    const checkSnapshot = (endpointName: string, payload: Record<string, unknown>) => {
+      const actual = pickOracleKeys(payload);
+      const missing = expected.filter((key) => !actual.includes(key));
+      const extra = actual.filter((key) => !expected.includes(key));
+      assert.deepEqual(
+        { missing, extra },
+        { missing: [], extra: [] },
+        `${endpointName} oracle diagnostics snapshot drifted`,
+      );
+    };
+
+    checkSnapshot("price", priceResponse.body.data as Record<string, unknown>);
+    checkSnapshot("market", marketResponse.body.data as Record<string, unknown>);
+  });
+
   it("resolves valid .ion domains and rejects invalid domain names", async () => {
     const resolved = await requestJson("/api/domain/resolve?name=Demo.ION");
     const resolvedData = resolved.body.data as {

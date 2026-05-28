@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { parseEther } from "viem";
 import { bsc } from "wagmi/chains";
+import { SentinelAlertTestPanel } from "@/components/sentinel/SentinelAlertTestPanel";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -311,6 +312,8 @@ export function AiSubscriptionPage() {
           </p>
         ) : null}
       </GlassPanel>
+
+      <SentinelAlertTestPanel />
     </div>
   );
 }

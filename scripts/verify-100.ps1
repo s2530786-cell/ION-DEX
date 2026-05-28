@@ -224,6 +224,11 @@ Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
 if ($failed -eq 0 -and $passed -eq $Iterations) {
   Add-Content -Path $summary -Value "RESULT=GREEN" -Encoding utf8
   Write-Log "RESULT=GREEN"
+  if ($env:ION_AGENT_AUTONOMOUS -eq "1") {
+    Write-Log "AUTO-ADVANCE: trigger watchdog (commit+push -> Batch C/D -> stress)"
+    Set-Location $root
+    & node (Join-Path $root "scripts\autonomous-work-watchdog.mjs") --once
+  }
   exit 0
 }
 

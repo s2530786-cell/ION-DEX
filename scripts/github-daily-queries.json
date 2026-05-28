@@ -1,0 +1,234 @@
+{
+  "version": 1,
+  "description": "GitHub Search API queries for ION DEX daily star discovery. Each entry: category id, human label, search q string, per_page cap.",
+  "defaults": {
+    "perPage": 8,
+    "minStars": 500,
+    "sort": "stars",
+    "order": "desc"
+  },
+  "ionRelevanceTags": [
+    "dex",
+    "defi",
+    "web3",
+    "ethereum",
+    "solidity",
+    "func",
+    "ton",
+    "swap",
+    "amm",
+    "bridge",
+    "wallet",
+    "staking",
+    "aggregator",
+    "cross-chain",
+    "react",
+    "vite",
+    "tailwind",
+    "playwright",
+    "agent",
+    "llm",
+    "mcp",
+    "trading",
+    "quant",
+    "video",
+    "audio",
+    "3d",
+    "webgl",
+    "ui",
+    "design-system"
+  ],
+  "categories": [
+    {
+      "id": "ai-agents-llm",
+      "label": "AI Agents / LLM orchestration",
+      "q": "stars:>8000 topic:llm topic:agents",
+      "skills": ["claude-flow", "cursor-engineering-workflow"],
+      "privateSkills": ["claude-flow"]
+    },
+    {
+      "id": "ai-coding-assistants",
+      "label": "AI coding assistants & dev agents",
+      "q": "stars:>5000 topic:ai topic:developer-tools in:name,description,readme agent",
+      "skills": ["cursor-engineering-workflow", "ion-dev-accelerators"]
+    },
+    {
+      "id": "mcp-tooling",
+      "label": "MCP servers & tool protocols",
+      "q": "stars:>1000 topic:mcp model-context-protocol in:name,description,readme",
+      "skills": ["cursor-engineering-workflow", "find-skill"]
+    },
+    {
+      "id": "web3-defi-dex",
+      "label": "Web3 DEX / DeFi (broad)",
+      "q": "stars:>2000 (amm OR uniswap OR pancakeswap OR \"defi dex\" OR defi-dex) in:name,description,readme -swap -deepfake -faceswap -topic:awesome -topic:list",
+      "perPage": 10,
+      "skills": ["ion-contract-audit", "ion-data-backend", "ion-web3-ui"],
+      "memoryBank": [".memory-bank/live-data-reference.md", ".memory-bank/architecture-audit.md"]
+    },
+    {
+      "id": "web3-dex-uniswap-class",
+      "label": "DEX: Uniswap / Pancake / Sushi",
+      "q": "stars:>2000 (uniswap OR pancakeswap OR sushiswap) in:name",
+      "perPage": 10,
+      "skills": ["ion-contract-audit", "ion-data-backend", "ion-web3-ui"],
+      "memoryBank": [".memory-bank/live-data-reference.md", ".memory-bank/architecture-audit.md"]
+    },
+    {
+      "id": "web3-dex-curve-balancer",
+      "label": "DEX: Curve / Balancer / Velodrome",
+      "q": "stars:>1500 (curve OR balancer OR velodrome) in:name",
+      "perPage": 10,
+      "skills": ["ion-contract-audit", "ion-data-backend", "ion-web3-ui"]
+    },
+    {
+      "id": "web3-dex-aggregators",
+      "label": "DEX aggregators (1inch / ParaSwap / Matcha)",
+      "q": "stars:>800 (1inch OR paraswap OR matcha) in:name",
+      "perPage": 8,
+      "skills": ["ion-data-backend", "ion-web3-ui"]
+    },
+    {
+      "id": "cross-chain-bridge",
+      "label": "Cross-chain / bridge / messaging",
+      "q": "stars:>1500 topic:bridge cross-chain layerzero wormhole in:name,description,readme",
+      "skills": ["ion-contract-audit", "ion-data-backend"]
+    },
+    {
+      "id": "smart-contracts-solidity",
+      "label": "Smart contracts (Solidity / security)",
+      "q": "stars:>3000 topic:solidity smart-contracts security audit in:name,description,readme",
+      "skills": ["ion-contract-audit"],
+      "securityPreflight": true
+    },
+    {
+      "id": "ton-func-blockchain",
+      "label": "TON / FunC / non-EVM",
+      "q": "stars:>500 ton blockchain func tvm in:name,description,readme",
+      "skills": ["ion-official-source", "ion-contract-audit"]
+    },
+    {
+      "id": "wallet-web3-frontend",
+      "label": "Web3 wallets & dApp frontends",
+      "q": "stars:>3000 (wagmi OR web3modal OR rainbowkit) in:name,description",
+      "perPage": 8,
+      "skills": ["ion-web3-ui", "ion-data-backend"]
+    },
+    {
+      "id": "fullstack-react",
+      "label": "Full-stack / React / Vite architecture",
+      "q": "stars:>8000 topic:react topic:typescript vite monorepo in:name,description,readme",
+      "skills": ["ion-web3-ui", "cursor-engineering-workflow"]
+    },
+    {
+      "id": "ui-design-systems",
+      "label": "UI / design systems / component libs",
+      "q": "stars:>5000 topic:ui topic:design-system react components in:name,description,readme",
+      "skills": ["ion-web3-ui", "tailwind", "gsap"]
+    },
+    {
+      "id": "css-motion-frontend",
+      "label": "CSS motion / animation (product UI)",
+      "q": "stars:>3000 topic:animation css gsap framer-motion in:name,description,readme",
+      "skills": ["gsap", "css-animations", "waapi", "animejs"]
+    },
+    {
+      "id": "video-generation",
+      "label": "AI video / programmatic video",
+      "q": "stars:>2000 topic:video-generation ai video remotion ffmpeg in:name,description,readme",
+      "skills": ["hyperframes", "hyperframes-cli", "remotion-to-hyperframes"],
+      "privateSkills": ["money-printer-turbo", "hyperframes"]
+    },
+    {
+      "id": "audio-tts-voice",
+      "label": "Audio / TTS / voice / music AI",
+      "q": "stars:>1500 topic:text-to-speech audio-generation voice ai in:name,description,readme",
+      "skills": ["hyperframes-media"]
+    },
+    {
+      "id": "3d-webgl-three",
+      "label": "3D / WebGL / Three.js / GPU viz",
+      "q": "stars:>4000 topic:threejs webgl 3d graphics in:name,description,readme",
+      "skills": ["three", "typegpu"]
+    },
+    {
+      "id": "data-indexing-analytics",
+      "label": "Indexing / on-chain analytics / APIs",
+      "q": "stars:>1000 topic:blockchain indexer graphql subgraph thegraph in:name,description,readme",
+      "skills": ["ion-data-backend"]
+    },
+    {
+      "id": "testing-e2e-quality",
+      "label": "E2E / testing / quality",
+      "q": "stars:>5000 topic:playwright topic:testing e2e in:name,description,readme",
+      "skills": ["luke-agent-browser-clawdbot", "cursor-engineering-workflow"]
+    },
+    {
+      "id": "quant-trading-opensource",
+      "label": "Quant / trading bots / backtest",
+      "q": "stars:>2000 topic:trading-bot backtesting quantitative-finance in:name,description,readme",
+      "skills": ["quant-trading-frameworks"],
+      "privateSkills": ["quant-trading-frameworks", "kronos", "trading-agents-cn"]
+    },
+    {
+      "id": "security-monitoring",
+      "label": "Security / monitoring / observability",
+      "q": "stars:>3000 topic:security monitoring observability opentelemetry in:name,description,readme",
+      "skills": ["ion-contract-audit", "cursor-engineering-workflow"]
+    },
+    {
+      "id": "docs-research-rag",
+      "label": "RAG / docs / research tooling",
+      "q": "stars:>3000 topic:rag vector-database embeddings in:name,description,readme",
+      "skills": ["tavily", "summarize-pro"]
+    },
+    {
+      "id": "website-capture-promo",
+      "label": "Website capture / promo / motion marketing",
+      "q": "stars:>500 hyperframes remotion promo landing-page video in:name,description,readme",
+      "skills": ["website-to-hyperframes", "hyperframes", "contribute-catalog"]
+    },
+    {
+      "id": "devops-cicd",
+      "label": "CI/CD / GitHub Actions / DevOps",
+      "q": "stars:>3000 topic:ci-cd topic:devops github-actions in:name,description,readme",
+      "skills": ["cursor-engineering-workflow", "ion-dev-accelerators"]
+    },
+    {
+      "id": "backend-apis-node",
+      "label": "Backend APIs / Node / TypeScript services",
+      "q": "stars:>5000 topic:nodejs topic:typescript api framework in:name,description,readme",
+      "skills": ["ion-data-backend", "cursor-engineering-workflow"]
+    },
+    {
+      "id": "databases-orm",
+      "label": "Databases / ORM / Postgres",
+      "q": "stars:>4000 topic:database topic:postgresql prisma drizzle in:name,description,readme",
+      "skills": ["ion-data-backend"]
+    },
+    {
+      "id": "monorepo-build",
+      "label": "Monorepo / build / package tooling",
+      "q": "stars:>5000 topic:monorepo turborepo nx pnpm in:name,description,readme",
+      "skills": ["cursor-engineering-workflow", "ion-dev-accelerators"]
+    },
+    {
+      "id": "containers-kubernetes",
+      "label": "Containers / Kubernetes / infra",
+      "q": "stars:>5000 topic:kubernetes topic:docker devops in:name,description,readme",
+      "skills": ["cursor-engineering-workflow"]
+    },
+    {
+      "id": "static-analysis",
+      "label": "Lint / format / static analysis",
+      "q": "stars:>8000 topic:eslint topic:linter formatter in:name,description,readme",
+      "skills": ["cursor-engineering-workflow"]
+    },
+    {
+      "id": "docs-developer-experience",
+      "label": "Docs / DX / API documentation",
+      "q": "stars:>3000 topic:documentation developer-experience openapi in:name,description,readme",
+      "skills": ["summarize-pro", "cursor-engineering-workflow"]
+    }
+  ]
+}

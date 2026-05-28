@@ -1,0 +1,351 @@
+{
+  "$schema": "./skill-routing.schema.json",
+  "version": 1,
+  "description": "ION DEX Cursor Skill autopilot — path and keyword routing. Private skills resolve under .cursor/skills-private/ first.",
+  "baseSkills": [
+    "chinese-language",
+    "ion-dex-memory",
+    "cursor-engineering-workflow",
+    "ion-dev-accelerators"
+  ],
+  "privateSkillRoot": ".cursor/skills-private",
+  "publicSkillRoot": ".cursor/skills",
+  "pathRoutes": [
+    {
+      "id": "engineering-standards",
+      "priority": 100,
+      "paths": ["docs/00-engineering-standards.md", "AGENTS.md", "SESSION_STATE.md"],
+      "skills": [],
+      "docs": ["docs/00-engineering-standards.md"],
+      "memoryBank": [],
+      "preflight": true
+    },
+    {
+      "id": "frontend-ui",
+      "priority": 90,
+      "paths": ["frontend/src/**", "frontend/e2e/**", "frontend/playwright.config.ts", "frontend/tailwind.config.*", "frontend/index.html"],
+      "skills": ["ion-web3-ui"],
+      "docs": ["docs/05-product-prd.md", "docs/06-page-flow-and-user-journeys.md", "docs/10-ui-design-route.md"],
+      "memoryBank": [".memory-bank/overall-design-framework.md", ".memory-bank/implementation-playbook.md"],
+      "preflight": true,
+      "verify": ["node scripts/dev-preflight.mjs", "cd frontend && npm run verify"]
+    },
+    {
+      "id": "backend-data",
+      "priority": 90,
+      "paths": ["backend/src/**", "backend/test/**"],
+      "skills": ["ion-data-backend"],
+      "docs": ["docs/00-engineering-standards.md"],
+      "memoryBank": [".memory-bank/live-data-reference.md", ".memory-bank/architecture-audit.md"],
+      "preflight": true,
+      "verify": ["cd backend && npm run build && npm run test"]
+    },
+    {
+      "id": "contracts-func",
+      "priority": 95,
+      "paths": ["contracts/ion/**", "contracts/**/*.fc", "contracts/**/*.func"],
+      "skills": ["ion-contract-audit", "ion-official-source"],
+      "docs": ["docs/23-security-audit-and-stress-sandbox.md"],
+      "memoryBank": [".memory-bank/security-audit-and-stress-framework.md", ".memory-bank/ion-dex-nuke/official-source-index.md"],
+      "preflight": true,
+      "securityPreflight": true
+    },
+    {
+      "id": "contracts-solidity",
+      "priority": 95,
+      "paths": ["contracts/**/*.sol", "contracts/script/**"],
+      "skills": ["ion-contract-audit"],
+      "memoryBank": [".memory-bank/security-audit-and-stress-framework.md"],
+      "securityPreflight": true
+    },
+    {
+      "id": "verification-scripts",
+      "priority": 80,
+      "paths": ["scripts/**", ".github/**"],
+      "skills": ["cursor-engineering-workflow", "ion-autonomous-work-resume"],
+      "verify": ["scripts\\verify-full-save-log.cmd --no-pause"]
+    },
+    {
+      "id": "autonomous-work-queue",
+      "priority": 85,
+      "paths": [
+        ".memory-bank/autonomous-work-queue.json",
+        ".memory-bank/autonomous-work-watchdog-state.json",
+        "scripts/autonomous-work-watchdog.mjs",
+        "scripts/run-autonomous-work-watchdog.cmd"
+      ],
+      "skills": ["ion-autonomous-work-resume", "ion-dex-memory"],
+      "preflight": false
+    },
+    {
+      "id": "memory-bank",
+      "priority": 70,
+      "paths": [".memory-bank/**"],
+      "skills": ["ion-dex-memory", "self-evolving"],
+      "preflight": false
+    },
+    {
+      "id": "cursor-skills-public",
+      "priority": 60,
+      "paths": [".cursor/skills/**"],
+      "skills": ["find-skill", "skill-vetter"],
+      "preflight": false
+    },
+    {
+      "id": "cursor-skills-private",
+      "priority": 60,
+      "paths": [".cursor/skills-private/**"],
+      "skills": ["find-skill", "skill-vetter"],
+      "privateOnly": true,
+      "preflight": false
+    },
+    {
+      "id": "docs-product",
+      "priority": 50,
+      "paths": ["docs/**"],
+      "skills": ["ion-dex-memory", "summarize-pro"],
+      "preflight": true
+    },
+    {
+      "id": "github-daily",
+      "priority": 55,
+      "paths": [
+        "scripts/github-daily-discovery.mjs",
+        "scripts/github-daily-pipeline.mjs",
+        "scripts/github-daily-install.mjs",
+        "scripts/github-daily-skill-stubs.mjs",
+        "scripts/github-daily-queries.json",
+        "scripts/github-daily.cmd",
+        "scripts/register-github-daily-task.ps1",
+        ".memory-bank/github-daily/**",
+        "docs/github-daily-discovery.md"
+      ],
+      "skills": ["ion-github-daily-discovery", "skill-vetter", "find-skill"],
+      "memoryBank": ["ion-private-core/.memory-bank/github-daily/README.md"],
+      "preflight": false
+    },
+    {
+      "id": "github-discovered-stubs",
+      "priority": 56,
+      "paths": [".cursor/skills/github-discovered/**"],
+      "skills": ["ion-github-daily-discovery", "skill-vetter"],
+      "preflight": false
+    },
+    {
+      "id": "media-motion-skills",
+      "priority": 58,
+      "paths": [
+        ".cursor/skills/hyperframes/**",
+        ".cursor/skills/hyperframes-*/**",
+        ".cursor/skills/gsap/**",
+        ".cursor/skills/three/**",
+        ".cursor/skills/typegpu/**",
+        ".cursor/skills/lottie/**",
+        ".cursor/skills/remotion-to-hyperframes/**",
+        ".cursor/skills/website-to-hyperframes/**"
+      ],
+      "skills": ["hyperframes", "hyperframes-cli", "gsap", "three", "typegpu"],
+      "privateSkills": ["hyperframes", "money-printer-turbo"],
+      "preflight": false
+    }
+  ],
+  "keywordRoutes": [
+    {
+      "id": "kw-kronos",
+      "keywords": ["kronos", "k线预测", "k线", "ohlcv", "candlestick", "foundation model", "kronospredictor"],
+      "skills": ["quant-trading-frameworks", "kronos"],
+      "privateSkills": ["kronos", "quant-trading-frameworks"]
+    },
+    {
+      "id": "kw-quant-router",
+      "keywords": ["量化", "回测", "网格", "dca", "tradingagents", "quantdinger", "octobot", "finrl", "pybroker", "tensortrade", "lumibot"],
+      "skills": ["quant-trading-frameworks"],
+      "privateSkills": ["quant-trading-frameworks"]
+    },
+    {
+      "id": "kw-trading-agents-cn",
+      "keywords": ["tradingagents-cn", "a股", "多智能体", "国产模型", "deepseek", "通义"],
+      "skills": ["trading-agents-cn"],
+      "privateSkills": ["trading-agents-cn"]
+    },
+    {
+      "id": "kw-trading-agents",
+      "keywords": ["tradingagents", "tauric"],
+      "skills": ["trading-agents"],
+      "privateSkills": ["trading-agents"]
+    },
+    {
+      "id": "kw-mcp-quant",
+      "keywords": ["vibe-trading", "quantdinger-mcp", "vibe-trading-mcp"],
+      "skills": ["vibe-trading", "quantdinger"],
+      "privateSkills": ["vibe-trading", "quantdinger"]
+    },
+    {
+      "id": "kw-video-ai",
+      "keywords": ["moneyprinter", "短视频", "streamlit", "hyperframes", "remotion", "视频生成", "video generation"],
+      "skills": ["hyperframes", "hyperframes-cli", "remotion-to-hyperframes", "website-to-hyperframes"],
+      "privateSkills": ["money-printer-turbo", "hyperframes", "hyperframes-media"]
+    },
+    {
+      "id": "kw-audio-media",
+      "keywords": ["tts", "text-to-speech", "whisper", "音频", "配音", "kokoro", "voiceover"],
+      "skills": ["hyperframes-media"],
+      "privateSkills": ["hyperframes-media"]
+    },
+    {
+      "id": "kw-3d-webgl",
+      "keywords": ["three.js", "webgl", "webgpu", "3d", "galaxy", "shader", "typegpu"],
+      "skills": ["three", "typegpu"]
+    },
+    {
+      "id": "kw-ui-motion",
+      "keywords": ["gsap", "lottie", "waapi", "anime.js", "动效", "glassmorphism", "cyberpunk ui"],
+      "skills": ["ion-web3-ui", "gsap", "css-animations", "waapi", "lottie", "animejs"]
+    },
+    {
+      "id": "kw-web-scraping-stack",
+      "keywords": [
+        "scrapy",
+        "portia",
+        "scrapling",
+        "obscura",
+        "firecrawl",
+        "web scraping",
+        "爬虫",
+        "抓取",
+        "crawler",
+        "crawl"
+      ],
+      "skills": [
+        "ion-github-daily-discovery",
+        "tavily",
+        "firecrawl",
+        "luke-agent-browser-clawdbot",
+        "cursor-engineering-workflow"
+      ],
+      "memoryBank": ["ion-private-core/.memory-bank/github-daily/README.md"]
+    },
+    {
+      "id": "kw-github-daily",
+      "keywords": [
+        "github daily",
+        "github发现",
+        "github-discovered",
+        "高星",
+        "trending repo",
+        "开源发现",
+        "vendor-ion-discovery",
+        "每日github",
+        "langchain",
+        "autogpt",
+        "affaan-m/ecc",
+        "oven-sh/bun",
+        "scrapy/scrapy",
+        "scrapinghub/portia",
+        "d4vinci/scrapling",
+        "h4ckf0r0day/obscura",
+        "firecrawl/firecrawl"
+      ],
+      "skills": ["ion-github-daily-discovery", "skill-vetter", "tavily", "find-skill"],
+      "memoryBank": ["ion-private-core/.memory-bank/github-daily/README.md"]
+    },
+    {
+      "id": "kw-fullstack-arch",
+      "keywords": ["全栈", "architecture", "monorepo", "vite", "react 19", "api design"],
+      "skills": ["ion-data-backend", "ion-web3-ui", "cursor-engineering-workflow"]
+    },
+    {
+      "id": "kw-mcp-devtools",
+      "keywords": ["mcp server", "model context protocol", "devtools", "developer tools"],
+      "skills": ["cursor-engineering-workflow", "find-skill", "ion-dev-accelerators"]
+    },
+    {
+      "id": "kw-solidity-evm",
+      "keywords": ["solidity", "foundry", "hardhat", "openzeppelin", "smart contract"],
+      "skills": ["ion-contract-audit"],
+      "securityPreflight": true
+    },
+    {
+      "id": "kw-indexer-subgraph",
+      "keywords": ["indexer", "subgraph", "the graph", "graphql chain", "区块索引"],
+      "skills": ["ion-data-backend"]
+    },
+    {
+      "id": "kw-ai-analysis",
+      "keywords": ["ai 市场", "ai分析", "行情分析", "sentinel", "llm分析"],
+      "skills": ["ion-data-backend", "quant-trading-frameworks"],
+      "privateSkills": ["kronos", "trading-agents-cn", "langalpha"]
+    },
+    {
+      "id": "kw-bridge-treasury",
+      "keywords": ["bridge", "跨链", "treasury", "金库", "staking", "burn", "销毁"],
+      "skills": ["ion-contract-audit", "ion-data-backend"],
+      "memoryBank": [".memory-bank/security-audit-and-stress-framework.md"]
+    },
+    {
+      "id": "kw-dns-wallet",
+      "keywords": ["dns", "domain", "wallet", "tonlib", "lite-client", "ion id", "kyc"],
+      "skills": ["ion-official-source", "ion-web3-ui", "ion-data-backend"]
+    },
+    {
+      "id": "kw-verify",
+      "keywords": ["verify", "e2e", "playwright", "验证", "preflight"],
+      "skills": ["cursor-engineering-workflow", "luke-agent-browser-clawdbot"]
+    },
+    {
+      "id": "kw-research",
+      "keywords": ["搜索", "调研", "documentation", "latest"],
+      "skills": ["tavily"]
+    },
+    {
+      "id": "kw-swarm",
+      "keywords": ["claude-flow", "ruflo", "swarm", "orchestrat"],
+      "skills": ["claude-flow"],
+      "privateSkills": ["claude-flow"]
+    },
+    {
+      "id": "kw-autonomous-resume",
+      "keywords": [
+        "怎么停了",
+        "继续跑",
+        "不要停",
+        "自动续跑",
+        "看门狗",
+        "watchdog",
+        "work order",
+        "工单",
+        "autonomous-work",
+        "verify-100 lock"
+      ],
+      "skills": ["ion-autonomous-work-resume", "cursor-engineering-workflow"]
+    }
+  ],
+  "taskRoutes": [
+    {
+      "id": "task-new-feature",
+      "patterns": ["新功能", "实现", "开发", "implement", "build feature"],
+      "skills": ["ion-skill-autopilot"],
+      "steps": ["read SESSION_STATE.md", "run skill-route", "run dev-preflight"]
+    },
+    {
+      "id": "task-ui-page",
+      "patterns": ["页面", "dashboard", "swap", "staking", "ui", "frontend"],
+      "routeId": "frontend-ui"
+    },
+    {
+      "id": "task-contract",
+      "patterns": ["合约", "func", "solidity", "amm", "vault"],
+      "routeId": "contracts-func"
+    },
+    {
+      "id": "task-github-discovery",
+      "patterns": ["github", "高星", "trending", "开源项目", "daily discovery"],
+      "skills": ["ion-github-daily-discovery"],
+      "steps": [
+        "node scripts/github-daily-pipeline.mjs",
+        "read ion-private-core/.memory-bank/github-daily/latest.md",
+        "node scripts/skill-route.mjs --task"
+      ]
+    }
+  ]
+}

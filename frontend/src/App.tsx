@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { SplashScreen } from "@/components/layout/SplashScreen";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
+import { PageContent } from "@/components/layout/PageContent";
 import { RiskModal } from "@/components/compliance/RiskModal";
 import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
 import { BusinessPage, type BusinessPageKey } from "@/pages/BusinessPages";
@@ -105,21 +106,29 @@ export function App() {
 
   return (
     <>
-      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
-      {showRisk && <RiskModal onClose={() => setShowRisk(false)} />}
-      <AppShell activePage={activePage} onPageChange={navigate}>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activePage}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          initial={{ opacity: 0, y: 8 }}
-          transition={{ duration: 0.18, ease: "easeOut" }}
-        >
-          <PageRouter onNavigate={navigate} page={activePage} />
-        </motion.div>
-      </AnimatePresence>
-      </AppShell>
+      {showSplash ? (
+        <SplashScreen onFinish={() => setShowSplash(false)} />
+      ) : (
+        <div className="flex min-h-0 flex-1 flex-col">
+          {showRisk ? <RiskModal onClose={() => setShowRisk(false)} /> : null}
+          <AppShell activePage={activePage} onPageChange={navigate}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activePage}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                initial={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="min-w-0"
+              >
+                <PageContent>
+                  <PageRouter onNavigate={navigate} page={activePage} />
+                </PageContent>
+              </motion.div>
+            </AnimatePresence>
+          </AppShell>
+        </div>
+      )}
     </>
   );
 }

@@ -13,16 +13,18 @@ Before doing any ION DEX work, read these files in order if they exist:
 2. `AGENTS.md`
 3. `.cursor/skills/chinese-language/SKILL.md`
 4. `docs/00-engineering-standards.md`
-5. `.memory-bank/overall-design-framework.md`
-6. `.memory-bank/live-data-reference.md`
-7. `.memory-bank/implementation-playbook.md`
-8. `.memory-bank/architecture-audit.md`
-9. `.memory-bank/security-audit-and-stress-framework.md`
-10. `.memory-bank/ion-dex-nuke/official-source-index.md`
-11. `docs/01-product-blueprint.md`
-12. `docs/02-technical-architecture.md`
-13. `docs/03-development-roadmap.md`
-14. `docs/99-current-progress.md`
+5. `.memory-bank/ui-cyber-glass-iron-law.md` (frontend UI color/layout/glass iron law)
+6. `.memory-bank/ui-design-master-template.md` + `.memory-bank/design-refs/README.md` (Master design PNG/MP4; gap-analysis workflow)
+7. `.memory-bank/overall-design-framework.md`
+8. `.memory-bank/live-data-reference.md`
+9. `.memory-bank/implementation-playbook.md`
+10. `.memory-bank/architecture-audit.md`
+11. `.memory-bank/security-audit-and-stress-framework.md`
+12. `.memory-bank/ion-dex-nuke/official-source-index.md`
+13. `docs/01-product-blueprint.md`
+14. `docs/02-technical-architecture.md`
+15. `docs/03-development-roadmap.md`
+16. `docs/99-current-progress.md`
 
 If these files do not contain a user-confirmed requirement, search Git history before answering or implementing. Do not rely only on current visible files when the user says a decision was made earlier.
 
@@ -38,7 +40,7 @@ Always preserve these facts across sessions:
 - All source files must be UTF-8 without BOM, never UTF-16/GBK/ANSI.
 - Every created or edited file must be verified for encoding.
 - Every implementation step must include test evidence before it is called complete.
-- Frontend UI must follow the confirmed neon/futuristic/aurora/galaxy design direction.
+- Frontend UI must follow `.memory-bank/ui-cyber-glass-iron-law.md` (cyan `#00FFFF`, purple `#6020FF`, magenta `#FF00FF`, glass blur 18px, Dashboard five-zone layout).
 - Smart contracts must follow strict audit discipline: reentrancy, access control, oracle manipulation, MEV, multisig, timelock, gas, events, fuzzing, and formal specs where possible.
 - Backend, contracts, frontend, deployment, testing, and security are all part of the final deliverable.
 - Do not claim shell/build/test success without actual command output or user-provided output.

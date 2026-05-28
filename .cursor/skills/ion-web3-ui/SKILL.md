@@ -5,11 +5,26 @@ description: Guides ION DEX frontend UI development. Use when building or modify
 
 # ION Web3 UI
 
+## New feature blocks (global consistency)
+
+**Every new page, modal, panel, or feature section must use the same Master template style as existing ION DEX UI.** Do not invent a parallel visual language.
+
+- Reuse existing primitives (`NeonGlassCard`, `NeonButton`, `FeatureTile`, `PageHero`, `AuroraGalaxyBackground`, `.flow-border`).
+- Use CSS tokens only (`--ion-cyan`, `--ion-purple`, `--ion-magenta`, `--glass-*`, `--panel-radius`).
+- Pick the closest reference screen from `.memory-bank/design-refs/screens/` (see `ui-design-master-template.md` §0.2).
+- Complete the pre-delivery checklist in `ui-cyber-glass-iron-law.md` §0.1 before claiming done.
+
 ## Design Direction
+
+**Mandatory:** Before any UI edit, read:
+
+1. `.memory-bank/ui-cyber-glass-iron-law.md` (locked tricolor, layout, glass CSS)
+2. `.memory-bank/ui-design-master-template.md` + open matching file under `.memory-bank/design-refs/screens/` (Master design template; run gap-analysis workflow §4)
 
 ION DEX UI must feel like a premium OKX Web3-style trading product:
 
 - Dark blue/purple base, cyberpunk neon, glassmorphism, aurora and galaxy motion.
+- **Colors locked:** `#00FFFF` / `#6020FF` / `#FF00FF` only for primary gradients (CSS vars in `global.css`).
 - 4D liquid-glass panels with translucent depth, glossy highlights, aurora reflections, and rounded irregular card silhouettes when appropriate.
 - Thick luminous cyan/magenta/violet neon rims on hero cards and feature tiles; major cards should look like glowing glass objects, not flat bordered divs.
 - 3D floating icons/cards for feature modules such as Pool, Bridge, Burn, Domain, Trade, Grid, and AI.
@@ -24,7 +39,8 @@ ION DEX UI must feel like a premium OKX Web3-style trading product:
 
 ## Implementation Rules
 
-- Before any UI edit, read `docs/00-engineering-standards.md`, `.memory-bank/overall-design-framework.md`, `.memory-bank/live-data-reference.md`, `.memory-bank/implementation-playbook.md`, `.memory-bank/architecture-audit.md`, and `docs/10-ui-design-route.md`, then run `node scripts/dev-preflight.mjs` when shell access is available.
+- Before any UI edit, read `docs/00-engineering-standards.md`, **`.memory-bank/ui-cyber-glass-iron-law.md`**, **`.memory-bank/ui-design-master-template.md`**, `.memory-bank/design-refs/README.md`, `.memory-bank/overall-design-framework.md`, `.memory-bank/live-data-reference.md`, `.memory-bank/implementation-playbook.md`, `.memory-bank/architecture-audit.md`, and `docs/10-ui-design-route.md`, then run `node scripts/dev-preflight.mjs` when shell access is available.
+- After UI edits: compare implementation to the screen PNG (1440px); document gaps using the template in `ui-design-master-template.md` §5 until P0=0.
 - For wallet/profile/avatar work, retrieve the Profile Hub requirements from `.memory-bank/overall-design-framework.md` and search Git history if anything is unclear.
 - Do not introduce a new UI framework unless the user approves.
 - Prefer small focused components in `frontend/src/components/` and page shells in `frontend/src/pages/`.

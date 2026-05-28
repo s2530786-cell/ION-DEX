@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  sast-audit:
+    image: python:3.12-slim
+    working_dir: /workspace
+    command: >
+      bash -lc "python -m pip install --no-cache-dir bandit semgrep &&
+      bandit -r backend/src -f txt || true"
+    volumes:
+      - ../../:/workspace:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["sast-audit"]
+
+  scraping-lab:
+    image: python:3.12-slim
+    working_dir: /workspace
+    environment:
+      FIRECRAWL_API_KEY: ${FIRECRAWL_API_KEY:-}
+      SCRAPING_LAB_MODE: "1"
+    command: >
+      bash -lc "python -V && echo 'Scraping lab ready. Mount is read-only by default.'"
+    volumes:
+      - ../../:/workspace:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["scraping-lab"]
+
+  offsec-lab:
+    image: python:3.12-slim
+    working_dir: /sandbox
+    command: >
+      bash -lc "echo 'offsec-lab isolated mode (network disabled)'; sleep infinity"
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /sandbox
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["offsec-lab"]
+
+  sentinel-lab:
+    image: python:3.12-slim
+    working_dir: /tools
+    environment:
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      ION_SENTINEL_VENDOR_ROOT: /tools/vendor
+    command: >
+      bash -lc "echo 'sentinel-lab ready (controlled outbound for recon tools)'; sleep infinity"
+    volumes:
+      - ${ION_SENTINEL_VENDOR_ROOT:-../../../vendor-ion-discovery/D4Vinci}:/tools/vendor:ro
+      - ./scripts:/scripts:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /root/.cache
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["sentinel-lab"]
+

@@ -1,6 +1,9 @@
+import type { ReactNode } from "react";
+
 type MetricTileProps = {
   label: string;
   value: string;
+  detail?: ReactNode;
   tone?: "cyan" | "magenta" | "gold" | "emerald";
   testId?: string;
 };
@@ -12,11 +15,12 @@ const toneClass: Record<NonNullable<MetricTileProps["tone"]>, string> = {
   emerald: "text-emerald-200",
 };
 
-export function MetricTile({ label, value, tone = "cyan", testId }: MetricTileProps) {
+export function MetricTile({ label, value, detail, tone = "cyan", testId }: MetricTileProps) {
   return (
     <div className={`glass-surface rounded-2xl px-4 py-3 ${toneClass[tone]}`} data-testid={testId}>
       <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/45">{label}</p>
       <p className="mt-2 text-xl font-black text-white">{value}</p>
+      {detail ? <div className="mt-1 text-[0.7rem] text-cyan-200/80">{detail}</div> : null}
     </div>
   );
 }

@@ -20,6 +20,12 @@ test.describe("Settings page", () => {
     await expect(page.getByTestId("settings-slippage-value")).toContainText("0.5%");
     await expect(page.getByTestId("settings-notify-toggle")).toBeVisible();
     await expect(page.getByTestId("settings-summary-theme")).toBeVisible();
+    await expect(page.getByTestId("settings-sentinel-alert-test")).toBeVisible();
+  });
+
+  test("runs sentinel alert self-test from settings", async ({ page }) => {
+    await page.getByTestId("settings-sentinel-alert-test-btn").click();
+    await expect(page.getByTestId("settings-sentinel-alert-test-result")).toBeVisible({ timeout: 15_000 });
   });
 
   test("updates slippage and clears removable cache entries", async ({ page }) => {

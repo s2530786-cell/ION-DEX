@@ -5,6 +5,9 @@ import { bscEthCall } from "./bsc-rpc.js";
 const SELECTOR_GET_RESERVES = "0x0902f1ac";
 const SELECTOR_TOKEN0 = "0x0dfe1681";
 const SELECTOR_TOKEN1 = "0xd21220c7";
+const SELECTOR_SLOT0 = "0x3850c7bd";
+const WBNB_BSC = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c";
+const Q96 = 2n ** 96n;
 
 function decodeAddress(slotHex: string): string {
   return `0x${slotHex.slice(-40).toLowerCase()}`;
@@ -66,10 +69,48 @@ export async function fetchPancakeIonPoolReserves(
   };
 }
 
-export async function fetchPancakeIonPerBnb(config: ServerConfig): Promise<number> {
-  const pool = await fetchPancakeIonPoolReserves(config);
-  if (pool.quoteReserve <= 0n || pool.ionReserve <= 0n) {
-    throw new Error("Pancake pool reserves are zero.");
+function sqrtPriceX96ToToken1PerToken0(sqrtPriceX96: bigint): number {
+  const sqrt = Number(sqrtPriceX96) / Number(Q96);
+  return sqrt * sqrt;
+}
+
+/** WBNB needed to buy 1 ION (from official LP). Supports Pancake V2 reserves or V3 slot0. */
+export async function fetchPancakeIonWbnbPrice(
+  config: ServerConfig,
+  poolAddress: string = ION_BSC_LP_POOL,
+): Promise<number> {
+  try {
+    const pool = await fetchPancakeIonPoolReserves(config, poolAddress);
+    if (pool.ionReserve <= 0n || pool.quoteReserve <= 0n) {
+      throw new Error("Pancake pool reserves are zero.");
+    }
+    return Number(pool.quoteReserve) / Number(pool.ionReserve);
+  } catch {
+    const [token0Hex, slot0Hex] = await Promise.all([
+      bscEthCall(config, poolAddress, SELECTOR_TOKEN0),
+      bscEthCall(config, poolAddress, SELECTOR_SLOT0),
+    ]);
+    const token0 = decodeAddress(token0Hex.slice(2));
+    const sqrtPriceX96 = BigInt(`0x${slot0Hex.slice(2, 66)}`);
+    const token1PerToken0 = sqrtPriceX96ToToken1PerToken0(sqrtPriceX96);
+    const ionLower = BSC_ION_TOKEN.toLowerCase();
+    const wbnbLower = WBNB_BSC.toLowerCase();
+
+    if (token0 === wbnbLower) {
+      return token1PerToken0;
+    }
+    if (token0 === ionLower) {
+      return 1 / token1PerToken0;
+    }
+    throw new Error("Official Pancake pool token0 is neither WBNB nor ION.");
   }
-  return Number(pool.ionReserve) / Number(pool.quoteReserve);
+}
+
+/** ION token amount per 1 WBNB (V2 reserve ratio). V3 pools use {@link fetchPancakeIonWbnbPrice} for USD. */
+export async function fetchPancakeIonPerBnb(config: ServerConfig): Promise<number> {
+  const wbnbPerIon = await fetchPancakeIonWbnbPrice(config);
+  if (wbnbPerIon <= 0) {
+    throw new Error("Pancake ION/WBNB price is zero.");
+  }
+  return 1 / wbnbPerIon;
 }

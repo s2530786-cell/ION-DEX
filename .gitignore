@@ -20,6 +20,11 @@ frontend/.env.local
 # Root tooling dependencies
 node_modules/
 
+# Private AI/quant skills (junction to ion-private-core) — NEVER commit
+.cursor/skills-private/
+.cursor/hooks/.ion-skill-route-last.json
+vendor-quant/
+
 # Hermes Agent (cloned upstream; keep venv/node_modules out of git)
 hermes-agent/venv/
 hermes-agent/node_modules/
