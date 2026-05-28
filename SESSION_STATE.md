@@ -13,12 +13,14 @@
 | **W2** | 7 wallets + chain switch + sign summary | OK |
 | **W3** | UI Pixel Correction（仅 CSS） | ✅ |
 | **W4** | 链上接线（Copy/Batch/Domain） | ✅ verify-full · stress×3 · verify-100 GREEN（2026-05-27 续跑完成） |
-| **W5** | Indexer 骨架 + burn/staking 读路径 | ⏳ 骨架已落地 · CURRENT_PHASE |
-| **W6** | Sandwich + Bridge 双重签功能测 | ⏳ |
+| **W5** | Indexer 骨架 + burn/staking 读路径 | ✅ 已 push `a80534dd` · verify-100 GREEN（2026-05-28） |
+| **W6** | Sandwich + Bridge 双重签功能测 | ⏳ 待启动 |
 | **W7** | CI/CD + 测试网脚本（无密钥则 W7-SKIP） | ⏳ |
 | **W8** | 全仓收口 verify-100 | ⏳ |
 
-**CURRENT_PHASE=W5**（W4 出口 verify-100：`%TEMP%\ion-verify-100-summary-20260527-234453.txt` · PASSED=100 FAILED=0 RESULT=GREEN）
+**CURRENT_PHASE=W6**（W5 出口 verify-100：`%TEMP%\ion-verify-100-summary-20260528-114641.txt` · PASSED=100 FAILED=0 RESULT=GREEN）
+
+**进度汇报节奏（Master 2026-05-28）**：verify-100 未 GREEN 前 **每 30 分钟**汇报（`node scripts/verify-100-progress-snapshot.mjs` + 看门狗队列）；全绿后汇报 GREEN + commit+push + 下一阶段。
 
 **GitHub 每日高星发现（2026-05-27）**：
 - 脚本：`scripts/github-daily-discovery.mjs` + `github-daily-install.mjs` + `github-daily-queries.json`（20 品类：AI/Web3/合约/全栈/UI/视频/音频/3D/量化/MCP 等）

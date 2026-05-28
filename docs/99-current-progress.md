@@ -1,5 +1,22 @@
 # Current Progress
 
+## 2026-05-28 W5 出口收尾（verify-100 GREEN）
+
+- **阶段状态**：W5 已达出口门禁，`verify-100` 最终 **100/100 全绿**，`RESULT=GREEN`，退出码 `0`。
+- **关键证据**：
+  - 运行终端：`terminals/330371.txt`
+  - 摘要文件：`%TEMP%\ion-verify-100-summary-20260528-114641.txt`
+  - 日志文件：`%TEMP%\ion-verify-100-20260528-114641.log`
+- **里程碑结果**：
+  - `PASS 100 OK (100/100 green)`
+  - `RESULT=GREEN`
+  - 结束时间：2026-05-28 14:47:57 (UTC+8)
+- **代码与提交现状**：
+  - W5 功能提交：`a80534dd`（indexer 骨架 + burn/staking 读路径）
+  - E2E 稳定性提交：`e3afdaa5`（verify 稳定修复）
+- **阶段切换**：`SESSION_STATE.md` 已从 `CURRENT_PHASE=W5` 更新为 `CURRENT_PHASE=W6`。
+- **下一步**：进入 W6（Sandwich + Bridge 双重签功能测）并按同门禁流程执行 `verify-full` + `verify-100`。
+
 ## 2026-05-26 UI 铁律入库（赛博极光玻璃）
 
 - **记忆库**：`.memory-bank/ui-cyber-glass-iron-law.md`（Master 锁定三色 `#00FFFF` / `#6020FF` / `#FF00FF`、五区布局、玻璃 CSS、避坑、验收）。
