@@ -1,6 +1,6 @@
 # ION DEX
 
-ION DEX is a planned, crucial first full-stack Web3 DEX trading and ecosystem portal on the ION chain, open to the ICE network. It is independently developed by community developer Master.
+ION DEX is a planned, crucial first full-stack Web3 DEX trading and ecosystem portal on the ION chain, open to the ICE Open network ION block chain. It is independently developed by community developer Master.
 
 It is designed to include:
 
