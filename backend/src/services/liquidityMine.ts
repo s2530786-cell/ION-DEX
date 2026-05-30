@@ -75,7 +75,15 @@ const poolSeeds: PoolSeed[] = [
 
 const userStakes = new Map<number, UserStake>();
 
-console.warn("[liquidity-mine] on-chain pool registry not yet wired; using local session + catalog seed.");
+let seedRegistryWarned = false;
+
+function warnSeedRegistryOnce(): void {
+  if (seedRegistryWarned) {
+    return;
+  }
+  seedRegistryWarned = true;
+  console.warn("[liquidity-mine] on-chain pool registry not yet wired; using local session + catalog seed.");
+}
 
 function formatIonFromWei(wei: bigint): string {
   const whole = wei / 10n ** 18n;
@@ -137,6 +145,7 @@ function buildPoolView(seed: PoolSeed): LiquidityMinePool {
 }
 
 export function getLiquidityMineSummary(): LiquidityMineSummary {
+  warnSeedRegistryOnce();
   const pools = poolSeeds.map(buildPoolView);
   let myLpShares = 0n;
   let pendingReward = 0n;

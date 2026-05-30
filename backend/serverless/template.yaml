@@ -1,0 +1,154 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: ION DEX API gateway — single Lambda behind HTTP API (Phase 1 lift-and-shift)
+
+Parameters:
+  StageName:
+    Type: String
+    Default: dev
+    AllowedPattern: "^[a-z0-9-]+$"
+  IonDataMode:
+    Type: String
+    Default: auto
+    AllowedValues:
+      - live
+      - auto
+      - test-mock
+  BscRpcUrl:
+    Type: String
+    Default: https://bsc-dataseed.binance.org/
+  IonApiBaseUrl:
+    Type: String
+    Default: https://api.mainnet.ice.io/http/v2/
+  BscChainId:
+    Type: String
+    Default: "56"
+  LambdaArchitecture:
+    Type: String
+    Default: x86_64
+    AllowedValues:
+      - x86_64
+      - arm64
+    Description: Use x86_64 for local Windows/macOS dev; arm64 for lower cost in AWS Graviton
+  IonHttpTimeoutMs:
+    Type: String
+    Default: "12000"
+  DbDriver:
+    Type: String
+    Default: disabled
+    AllowedValues:
+      - disabled
+      - sqlite
+      - postgres
+  PostgresUrl:
+    Type: String
+    Default: ""
+    NoEcho: true
+  CmcApiKey:
+    Type: String
+    Default: ""
+    NoEcho: true
+  BscIonTokenAddress:
+    Type: String
+    Default: ""
+  BscBurnContractAddress:
+    Type: String
+    Default: ""
+  BscVaultLockAddress:
+    Type: String
+    Default: ""
+  BurnIndexerUrl:
+    Type: String
+    Default: ""
+  EnableNodeSourceMaps:
+    Type: String
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Enable NODE_OPTIONS=--enable-source-maps (dev only; adds cold-start cost)
+
+Conditions:
+  UsePostgres: !Equals [!Ref DbDriver, postgres]
+  UseNodeSourceMaps: !Equals [!Ref EnableNodeSourceMaps, "true"]
+
+Globals:
+  Function:
+    Runtime: nodejs22.x
+    Architectures:
+      - !Ref LambdaArchitecture
+    Timeout: 29
+    MemorySize: 512
+    Tracing: Active
+    Environment:
+      Variables:
+        ION_DATA_MODE: !Ref IonDataMode
+        BSC_RPC_URL: !Ref BscRpcUrl
+        ION_API_BASE_URL: !Ref IonApiBaseUrl
+        BSC_CHAIN_ID: !Ref BscChainId
+        ION_HTTP_TIMEOUT_MS: !Ref IonHttpTimeoutMs
+        ION_DB_DRIVER: !Ref DbDriver
+        CMC_API_KEY: !Ref CmcApiKey
+        BSC_ION_TOKEN_ADDRESS: !Ref BscIonTokenAddress
+        BSC_BURN_CONTRACT_ADDRESS: !Ref BscBurnContractAddress
+        BSC_VAULT_LOCK_ADDRESS: !Ref BscVaultLockAddress
+        BURN_INDEXER_URL: !Ref BurnIndexerUrl
+        DATABASE_URL: !If [UsePostgres, !Ref PostgresUrl, ""]
+        NODE_OPTIONS: !If [UseNodeSourceMaps, "--enable-source-maps", !Ref AWS::NoValue]
+
+Resources:
+  IonDexHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref StageName
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - content-type
+          - x-request-id
+        MaxAge: 600
+
+  IonDexApiGatewayFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "ion-dex-api-${StageName}"
+      Description: ION DEX unified API gateway (wraps existing routeRequest)
+      CodeUri: ../
+      Handler: dist/serverless/handlers/gateway.handler
+      Events:
+        Root:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref IonDexHttpApi
+            Path: /
+            Method: ANY
+        ApiProxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref IonDexHttpApi
+            Path: /{proxy+}
+            Method: ANY
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSXrayWriteOnlyAccess
+    Metadata:
+      BuildMethod: nodejs22.x
+
+Outputs:
+  ApiEndpoint:
+    Description: HTTP API base URL
+    Value: !Sub "https://${IonDexHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+  HealthCheckUrl:
+    Description: Smoke-test health endpoint
+    Value: !Sub "https://${IonDexHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/health"
+  LambdaFunctionArn:
+    Description: API Lambda ARN
+    Value: !GetAtt IonDexApiGatewayFunction.Arn
+  LambdaFunctionName:
+    Description: API Lambda name
+    Value: !Ref IonDexApiGatewayFunction

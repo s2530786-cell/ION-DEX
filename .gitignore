@@ -12,6 +12,8 @@ frontend/test-results/
 backend/node_modules/
 backend/dist/
 backend/.env
+backend/.aws-sam/
+backend/serverless/samconfig.toml
 
 # Frontend
 frontend/.env

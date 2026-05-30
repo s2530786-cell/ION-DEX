@@ -10,7 +10,14 @@
     "test": "node scripts/run-tests.mjs",
     "stress": "npm run build && node scripts/run-stress.mjs",
     "verify": "npm run build && npm run test",
-    "audit:high": "node scripts/audit-high.mjs"
+    "audit:high": "node scripts/audit-high.mjs",
+    "sam:validate": "sam validate --lint -t serverless/template.yaml",
+    "sam:build": "npm run build && sam build -t serverless/template.yaml",
+    "sam:build:container": "npm run build && sam build -t serverless/template.yaml --use-container",
+    "sam:build:win": "node scripts/sam-build-win.mjs",
+    "sam:local:invoke": "sam local invoke IonDexApiGatewayFunction -t .aws-sam/build/template.yaml -e serverless/events/health-get.json",
+    "sam:local": "sam local start-api -t .aws-sam/build/template.yaml --port 3001 --warm-containers EAGER",
+    "sam:deploy:testnet": "node scripts/sam-deploy-testnet.mjs"
   },
   "engines": {
     "node": ">=22"
@@ -21,6 +28,7 @@
     "undici": "^8.3.0"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.150",
     "@types/node": "latest",
     "@types/pg": "^8.15.5",
     "typescript": "latest"

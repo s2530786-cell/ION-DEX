@@ -1,0 +1,7 @@
+# Exclude from Lambda deployment package (CodeUri: backend root)
+serverless/legacy-makefile-build/
+.aws-sam/
+tests/
+scripts/
+*.md
+!dist/**
