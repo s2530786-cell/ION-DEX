@@ -1,11 +1,54 @@
 {
   "version": 1,
-  "description": "ION DEX 自动工单队列 — verify-100 全绿后立即 commit+push，再全自动 Batch C/D",
+  "description": "ION DEX 自动工单队列 — P1 Dashboard quote 收口 → verify-100 → W6",
   "queues": [
+    {
+      "id": "p1-dashboard-w6-pipeline",
+      "title": "P1 Dashboard quote → verify-full → verify-100 → W6 启动",
+      "status": "active",
+      "autoAdvance": true,
+      "activatedAt": "2026-05-29T00:00:00.000Z",
+      "steps": [
+        {
+          "id": "dashboard-p1-quote-ui",
+          "title": "Dashboard P1 quoteLine 展示（Agent）",
+          "status": "completed",
+          "kind": "shell",
+          "command": "echo dashboard-p1-quote-ui-done",
+          "note": "DashboardSwapPanel + buildP1QuoteSummary",
+          "completedAt": "2026-05-29T00:00:00.000Z"
+        },
+        {
+          "id": "verify-full",
+          "title": "P1 Dashboard quote 门禁 verify-full",
+          "status": "pending",
+          "kind": "verify-full",
+          "requires": ["dashboard-p1-quote-ui"]
+        },
+        {
+          "id": "verify-100",
+          "title": "P1 Swap/Dashboard 前端收口 verify-100",
+          "status": "pending",
+          "kind": "verify-100",
+          "allowExternal": true,
+          "requires": ["verify-full"],
+          "note": "新 activatedAt；100/100 GREEN 后进入 W6 Agent 阶段"
+        },
+        {
+          "id": "w6-agent-kickoff",
+          "title": "W6 Sandwich + Bridge 双重签（Agent 续跑）",
+          "status": "pending",
+          "kind": "shell",
+          "command": "echo w6-sandwich-bridge-agent-phase",
+          "requires": ["verify-100"],
+          "note": "看门狗标记完成；实际 W6 由 Agent 在 SESSION_STATE 推进"
+        }
+      ]
+    },
     {
       "id": "ui-design-phase-b",
       "title": "UI Batch B → verify-100 GREEN → commit+push → Batch C/D",
-      "status": "active",
+      "status": "paused",
       "autoAdvance": true,
       "activatedAt": "2026-05-28T06:40:00.000Z",
       "steps": [

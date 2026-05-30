@@ -10,13 +10,17 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 2. Read matching `SKILL.md` under `.cursor/skills-private/github-discovered/<id>/`.
 3. Keywords `github发现`, `vendor-ion-discovery`, repo names also hit `kw-github-daily`.
 
-## Stubs installed (783 skills · 95 repos in catalog selection)
+## Stubs installed (977 skills · 270 repos in catalog selection)
 
 - `github-discovered-1inch-limit-order-protocol`
+- `github-discovered-2dust-v2rayn`
+- `github-discovered-2dust-v2rayng`
 - `github-discovered-6-tiny-segmenter`
+- `github-discovered-a-poc-redteam-tools`
 - `github-discovered-a2800276-porter`
 - `github-discovered-a2design-company-json-compare`
 - `github-discovered-aaif-goose-goose`
+- `github-discovered-aalansehaiyang-technology-talk`
 - `github-discovered-aasmith-feed-normalizer`
 - `github-discovered-abadojack-whatlanggo`
 - `github-discovered-abitdodgy-words-counted`
@@ -30,6 +34,10 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-agno-agi-agno`
 - `github-discovered-agonopol-go-stem`
 - `github-discovered-ahoward-forkoff`
+- `github-discovered-aihubcn-awesome-chinese-llm`
+- `github-discovered-airbnb-javascript`
+- `github-discovered-airbytehq-airbyte`
+- `github-discovered-alamofire-alamofire`
 - `github-discovered-alexdlaird-amazon-orders`
 - `github-discovered-alexreisner-geocoder`
 - `github-discovered-alir3z4-html2text`
@@ -45,19 +53,27 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-antchfx-xquery`
 - `github-discovered-antimatter15-ocrad-js`
 - `github-discovered-antiwork-shortest`
+- `github-discovered-apache-airflow`
+- `github-discovered-apache-spark`
 - `github-discovered-apify-crawlee`
 - `github-discovered-apify-crawlee-python`
 - `github-discovered-apifytech-proxy-chain`
 - `github-discovered-apohllo-srx-english`
+- `github-discovered-appflowy-io-appflowy`
 - `github-discovered-arbox-tokenizer`
+- `github-discovered-arendst-tasmota`
 - `github-discovered-argoproj-argo-cd`
+- `github-discovered-argoproj-argo-workflows`
 - `github-discovered-ariya-phantomjs`
+- `github-discovered-armory3d-armory`
 - `github-discovered-asm89-rx-php`
 - `github-discovered-assaf-zombie`
+- `github-discovered-assemblyscript-assemblyscript`
 - `github-discovered-asynchttpclient-async-http-client`
 - `github-discovered-atelierconvivialite-word-count`
 - `github-discovered-atrilla-nlptools`
 - `github-discovered-aurelian-ruby-stemmer`
+- `github-discovered-automatic1111-stable-diffusion-webui`
 - `github-discovered-automattic-kue`
 - `github-discovered-avajs-ava`
 - `github-discovered-avelino-slugify`
@@ -66,16 +82,21 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-awsong-mmsego`
 - `github-discovered-axios-axios`
 - `github-discovered-ayakashi-io-ayakashi`
+- `github-discovered-aymericdamien-tensorflow-examples`
 - `github-discovered-aymerick-douceur`
+- `github-discovered-babylonjs-babylon-js`
 - `github-discovered-balancer-balancer-v2-monorepo`
 - `github-discovered-balancer-v2-monorepo`
 - `github-discovered-balvig-spyke`
+- `github-discovered-base-node`
 - `github-discovered-beaugunderson-ip-address`
+- `github-discovered-behaviortree-behaviortree-cpp`
 - `github-discovered-benoitc-http-parser`
 - `github-discovered-benoitc-restkit`
 - `github-discovered-benoitc-tproxy`
 - `github-discovered-bernardphp-bernard`
 - `github-discovered-bestiejs-json3`
+- `github-discovered-bevyengine-bevy`
 - `github-discovered-bextuychiev-automated-price-tracking`
 - `github-discovered-bgrins-tinycolor`
 - `github-discovered-bhollis-maruku`
@@ -92,6 +113,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-brianhempel-fuzzy-tools`
 - `github-discovered-brianmario-yajl-ruby`
 - `github-discovered-brianray-mm`
+- `github-discovered-bridgecrewio-checkov`
 - `github-discovered-bspaulding-sheets`
 - `github-discovered-buriy-python-readability`
 - `github-discovered-burntsushi-toml`
@@ -103,12 +125,14 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-calibr-node-bookmarks-parser`
 - `github-discovered-cantino-ruby-readability`
 - `github-discovered-caolan-async`
+- `github-discovered-carbon-language-carbon-lang`
 - `github-discovered-cardmagic-simple-rss`
 - `github-discovered-cboden-ratchet`
 - `github-discovered-cebe-markdown`
 - `github-discovered-celery-kombu`
 - `github-discovered-celluloid-celluloid`
 - `github-discovered-celluloid-celluloid-dns`
+- `github-discovered-cesanta-mongoose`
 - `github-discovered-cgiffard-node-simplecrawler`
 - `github-discovered-cgoldberg-xvfbwrapper`
 - `github-discovered-chanchichoi-awesome-face-recognition`
@@ -116,6 +140,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-chardet-chardet`
 - `github-discovered-checkly-puppeteer-recorder`
 - `github-discovered-cheeriojs-cheerio`
+- `github-discovered-chen08209-flclash`
 - `github-discovered-chineking-cola`
 - `github-discovered-chorn-nameable`
 - `github-discovered-chrisglass-xhtml2pdf`
@@ -130,6 +155,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-cloudpipe-cloudpickle`
 - `github-discovered-cobrateam-splinter`
 - `github-discovered-cocur-slugify`
+- `github-discovered-codecrafters-io-build-your-own-x`
 - `github-discovered-codegangsta-gin`
 - `github-discovered-codeinthehole-purl`
 - `github-discovered-codelucas-newspaper`
@@ -137,12 +163,15 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-coleifer-micawber`
 - `github-discovered-colinsurprenant-hotwater`
 - `github-discovered-collectiveidea-delayed-job`
+- `github-discovered-comfy-org-comfyui`
 - `github-discovered-compileinc-hodor`
 - `github-discovered-composio`
 - `github-discovered-composiohq-composio`
 - `github-discovered-constverum-proxybroker`
 - `github-discovered-continuedev-continue`
 - `github-discovered-contracts`
+- `github-discovered-coollabsio-coolify`
+- `github-discovered-corentinj-real-time-voice-cloning`
 - `github-discovered-cowprotocol-contracts`
 - `github-discovered-cporter202-api-mega-list`
 - `github-discovered-crisu83-php-conversion`
@@ -156,14 +185,20 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-currentsapi-extractnet`
 - `github-discovered-curve-contract`
 - `github-discovered-curvefi-curve-contract`
+- `github-discovered-cvhub520-x-anylabeling`
+- `github-discovered-cxli233-friendsdontletfriends`
 - `github-discovered-d4vinci-scrapling`
+- `github-discovered-daattali-beautiful-jekyll`
 - `github-discovered-daijro-camoufox`
 - `github-discovered-dam5s-happymapper`
 - `github-discovered-danieldk-dpar`
 - `github-discovered-danieldk-go2vec`
+- `github-discovered-danielmiessler-seclists`
 - `github-discovered-danielstjules-stringy`
 - `github-discovered-danmactough-node-feedparser`
+- `github-discovered-darklife-darkriscv`
 - `github-discovered-datalib-libextract`
+- `github-discovered-datatalksclub-data-engineering-zoomcamp`
 - `github-discovered-dateutil-dateutil`
 - `github-discovered-david96182-ninjemail`
 - `github-discovered-daviddrysdale-python-phonenumbers`
@@ -172,9 +207,12 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-dchest-stemmer`
 - `github-discovered-deanmalmgren-textract`
 - `github-discovered-deepfryed-ots`
+- `github-discovered-deepseek-ai-deepseek-v3`
 - `github-discovered-defi-developer-road-map`
 - `github-discovered-denizsafak-abogen`
+- `github-discovered-denoland-deno`
 - `github-discovered-derek73-python-nameparser`
+- `github-discovered-developer-y-cs-video-courses`
 - `github-discovered-dflydev-dflydev-apache-mime-types`
 - `github-discovered-dflydev-dflydev-canal`
 - `github-discovered-dgraham-json-stream`
@@ -185,26 +223,35 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-diasks2-word-count-analyzer`
 - `github-discovered-digitalpebble-storm-crawler`
 - `github-discovered-dimka665-awesome-slugify`
+- `github-discovered-dkhamsing-open-source-ios-apps`
+- `github-discovered-domlysz-blendergis`
 - `github-discovered-donatj-phpuseragent`
+- `github-discovered-donnemartin-system-design-primer`
+- `github-discovered-dora-rs-dora`
 - `github-discovered-dreid-treq`
 - `github-discovered-dreikanter-ruby-bookmarks`
 - `github-discovered-drkjam-netaddr`
 - `github-discovered-duanhongyi-genius`
 - `github-discovered-dustin-go-humanize`
+- `github-discovered-dusty-nv-jetson-inference`
 - `github-discovered-dveselov-mystem`
 - `github-discovered-dydxprotocol-v4-chain`
 - `github-discovered-e2b-dev-code-interpreter`
 - `github-discovered-ealdent-uea-stemmer`
 - `github-discovered-editorconfig-editorconfig-core-go`
 - `github-discovered-eduardolundgren-tracking-js`
+- `github-discovered-electron-electron`
 - `github-discovered-eliasdabbas-advertools`
+- `github-discovered-embassy-rs-embassy`
 - `github-discovered-emersion-go-imap`
 - `github-discovered-emersion-go-message`
 - `github-discovered-emersion-go-vcard`
 - `github-discovered-empact-roo`
 - `github-discovered-empact-roxml`
+- `github-discovered-emqx-emqx`
 - `github-discovered-endeveit-enca`
 - `github-discovered-endeveit-guesslanguage`
+- `github-discovered-enjoy-digital-litex`
 - `github-discovered-ericciarla-aginews`
 - `github-discovered-ericciarla-aginews-podcast`
 - `github-discovered-erikriver-opengraph`
@@ -212,18 +259,27 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-erusev-parsedown`
 - `github-discovered-eslint-eslint`
 - `github-discovered-esnme-ultrajson`
+- `github-discovered-ethereum-go-ethereum`
+- `github-discovered-eugeneyan-applied-ml`
 - `github-discovered-euske-pdfminer`
 - `github-discovered-eventmachine-eventmachine`
+- `github-discovered-exaloop-codon`
 - `github-discovered-excon-excon`
+- `github-discovered-exelban-stats`
 - `github-discovered-exif-js-exif-js`
 - `github-discovered-explosion-spacy`
+- `github-discovered-f-prompts-chat`
 - `github-discovered-fabpot-goutte`
 - `github-discovered-facebook-immutable-js`
 - `github-discovered-facebook-php-webdriver`
+- `github-discovered-facebook-react`
+- `github-discovered-facebook-react-native`
 - `github-discovered-facebookgo-inject`
+- `github-discovered-fairyglade-ly`
 - `github-discovered-faisalman-ua-parser-js`
 - `github-discovered-famished-tiger-rley`
 - `github-discovered-fastai-fastai`
+- `github-discovered-fatedier-frp`
 - `github-discovered-fb55-htmlparser2`
 - `github-discovered-feedjira-feedjira`
 - `github-discovered-felipecsl-wombat`
@@ -243,43 +299,61 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-firstclassml-firecrawl-articles`
 - `github-discovered-flavorjones-loofah`
 - `github-discovered-flori-json`
+- `github-discovered-flutter-flutter`
 - `github-discovered-fortnightlabs-snowball-js`
 - `github-discovered-forward-sql-parser`
+- `github-discovered-frappe-lms`
 - `github-discovered-fruux-sabre-vobject`
 - `github-discovered-full-blockchain-solidity-course-js`
 - `github-discovered-fxsjy-jieba`
 - `github-discovered-gabrielelana-byte-units`
 - `github-discovered-gajus-surgeon`
+- `github-discovered-gatsbyjs-gatsby`
 - `github-discovered-gawel-pyquery`
 - `github-discovered-gbiczo-oxcelix`
 - `github-discovered-ged-linkparser`
+- `github-discovered-gedoor-legado`
+- `github-discovered-genymobile-scrcpy`
 - `github-discovered-geokit-geokit`
 - `github-discovered-gerapy-gerapy`
 - `github-discovered-gettalong-kramdown`
 - `github-discovered-geziyor-geziyor`
+- `github-discovered-ggml-org-llama-cpp`
 - `github-discovered-giggsey-libphonenumber-for-php`
 - `github-discovered-gimite-google-spreadsheet-ruby`
+- `github-discovered-gin-gonic-gin`
 - `github-discovered-github-markup`
 - `github-discovered-gka-chroma-js`
 - `github-discovered-go-gomail-gomail`
 - `github-discovered-gocolly-colly`
+- `github-discovered-godotengine-godot`
+- `github-discovered-gohugoio-hugo`
+- `github-discovered-golang-go`
 - `github-discovered-goodsign-icu`
 - `github-discovered-goodsign-libtextcat`
 - `github-discovered-goodsign-snowball`
+- `github-discovered-google-deepvariant`
+- `github-discovered-google-filament`
+- `github-discovered-google-research-bert`
 - `github-discovered-googlechrome-puppeteer`
+- `github-discovered-googlecloudplatform-microservices-demo`
 - `github-discovered-gorilla-websocket`
 - `github-discovered-gosimple-slug`
 - `github-discovered-gottfrois-link-thumbnailer`
 - `github-discovered-grangier-python-goose`
 - `github-discovered-grosser-i18n-data`
 - `github-discovered-grosser-parallel`
+- `github-discovered-growinggit-github-chinese-top-charts`
 - `github-discovered-gruns-furl`
 - `github-discovered-guille-ms-js`
+- `github-discovered-gumyr-build123d`
 - `github-discovered-guzzle-guzzle`
 - `github-discovered-h2non-toxy`
 - `github-discovered-h4ckf0r0day-obscura`
 - `github-discovered-hacksider-deep-live-cam`
+- `github-discovered-hadley-r4ds`
 - `github-discovered-hapijs-wreck`
+- `github-discovered-harisekhon-devops-bash-tools`
 - `github-discovered-harthur-color`
 - `github-discovered-hectane-hectane`
 - `github-discovered-hellysmile-fake-useragent`
@@ -287,6 +361,8 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-hexojs-hexo`
 - `github-discovered-hexydec-agentzero`
 - `github-discovered-hickford-mechanicalsoup`
+- `github-discovered-hiyouga-llamafactory`
+- `github-discovered-hlorus-cad-sketcher`
 - `github-discovered-hoaproject-eventsource`
 - `github-discovered-hoaproject-mime`
 - `github-discovered-hoaproject-ustring`
@@ -297,22 +373,31 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-httplib2-httplib2`
 - `github-discovered-httprb-http-rb`
 - `github-discovered-hu17889-go-spider`
+- `github-discovered-huggingface-transformers`
+- `github-discovered-huginn-huginn`
 - `github-discovered-hyperiongray-starbelly`
 - `github-discovered-iainbeeston-nickel`
+- `github-discovered-iced-rs-iced`
+- `github-discovered-icewhaletech-casaos`
 - `github-discovered-igorw-evenement`
 - `github-discovered-igrigorik-em-http-request`
 - `github-discovered-igrigorik-em-websocket`
 - `github-discovered-igrigorik-http-2`
+- `github-discovered-iina-iina`
 - `github-discovered-ijl-orjson`
+- `github-discovered-iluwatar-java-design-patterns`
 - `github-discovered-imangazaliev-didom`
+- `github-discovered-imthenachoman-how-to-secure-a-linux-server`
 - `github-discovered-imwildcat-scylla`
 - `github-discovered-indutny-node-ip`
 - `github-discovered-inikulin-parse5`
+- `github-discovered-inkonchain-node`
 - `github-discovered-interface`
 - `github-discovered-isaacs-sax-js`
 - `github-discovered-isnowfy-snownlp`
 - `github-discovered-itseez-opencv`
 - `github-discovered-j2a-pytils`
+- `github-discovered-jackfrued-python-100-days`
 - `github-discovered-jaimeiniesta-metainspector`
 - `github-discovered-jamwt-diesel`
 - `github-discovered-jarib-childprocess`
@@ -325,7 +410,11 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-jdkato-prose`
 - `github-discovered-jeckman-youtube-downloader`
 - `github-discovered-jedp-porter-stemmer`
+- `github-discovered-jekyll-jekyll`
+- `github-discovered-jellyfin-jellyfin`
 - `github-discovered-jeremykendall-php-domain-parser`
+- `github-discovered-jetbrains-kotlin`
+- `github-discovered-jlevy-the-art-of-command-line`
 - `github-discovered-jmcarp-robobrowser`
 - `github-discovered-jmikola-geojson`
 - `github-discovered-jnunemaker-httparty`
@@ -339,7 +428,10 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-jprichardson-string-js`
 - `github-discovered-jrobertson-chronic-between`
 - `github-discovered-jurismarches-chopper`
+- `github-discovered-justjavac-free-programming-books-zh-cn`
 - `github-discovered-jwage-purl`
+- `github-discovered-jwasham-coding-interview-university`
+- `github-discovered-k-dense-ai-scientific-agent-skills`
 - `github-discovered-kaliiiiiiiiii-vinyzu-patchright`
 - `github-discovered-kbandla-dpkt`
 - `github-discovered-keepsafe-aiohttp`
@@ -347,6 +439,9 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-kennethreitz-requests`
 - `github-discovered-kennethreitz-requests-html`
 - `github-discovered-kennethreitz-tablib`
+- `github-discovered-keras-team-keras`
+- `github-discovered-kholia-osx-kvm`
+- `github-discovered-khuedoan-homelab`
 - `github-discovered-kimtaro-ve`
 - `github-discovered-kirang89-pycrumbs`
 - `github-discovered-kiyoka-fuzzy-string-match`
@@ -356,10 +451,15 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-knrz-csv-js`
 - `github-discovered-kohlschutter-boilerpipe`
 - `github-discovered-kovidgoyal-html5-parser`
+- `github-discovered-krahets-hello-algo`
 - `github-discovered-kriasoft-react-starter-kit`
 - `github-discovered-kristopolous-porter-stemmer`
 - `github-discovered-kriswallsmith-buzz`
 - `github-discovered-kriswallsmith-spork`
+- `github-discovered-kroma-network-tachyon`
+- `github-discovered-krtirtho-spotube`
+- `github-discovered-kubeedge-kubeedge`
+- `github-discovered-kubernetes-kubernetes`
 - `github-discovered-kubernetes-sigs-aws-load-balancer-controller`
 - `github-discovered-kurtmckee-feedparser`
 - `github-discovered-kzykhys-ciconia`
@@ -367,21 +467,29 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-labstack-gommon`
 - `github-discovered-langchain`
 - `github-discovered-langchain-ai-langchain`
+- `github-discovered-laravel-framework`
 - `github-discovered-laurentj-slimerjs`
 - `github-discovered-lawouach-websocket-for-python`
 - `github-discovered-learnboost-websocket-io`
+- `github-discovered-leereilly-games`
 - `github-discovered-lefnord-nlp-toolz`
 - `github-discovered-lefnord-rstt`
+- `github-discovered-leiwang1999-fpga`
 - `github-discovered-leizongmin-js-xss`
 - `github-discovered-leonelquinteros-gotext`
 - `github-discovered-lepture-mistune`
 - `github-discovered-lexiforest-curl-cffi`
 - `github-discovered-lfcipriani-punkt-segmenter`
 - `github-discovered-lfj-gg-joe-v2`
+- `github-discovered-lh3-minimap2`
+- `github-discovered-lichess-org-lila`
+- `github-discovered-lightpanda-io-browser`
 - `github-discovered-limit-order-protocol`
 - `github-discovered-lint-staged-lint-staged`
+- `github-discovered-localsend-localsend`
 - `github-discovered-localshred-protobuf`
 - `github-discovered-lodash-lodash`
+- `github-discovered-logisim-evolution-logisim-evolution`
 - `github-discovered-lorien-awesome-pastebins`
 - `github-discovered-lorien-awesome-web-scraping`
 - `github-discovered-lorien-captcha-solver`
@@ -395,10 +503,14 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-louismullie-treat`
 - `github-discovered-luispedro-mahotas`
 - `github-discovered-lukasa-hyper`
+- `github-discovered-lukasmasuch-best-of-ml-python`
 - `github-discovered-luminosoinsight-python-ftfy`
+- `github-discovered-lvgl-lvgl`
 - `github-discovered-lxml-lxml`
 - `github-discovered-lxneng-xpinyin`
+- `github-discovered-ly0n-awesome-robotic-tooling`
 - `github-discovered-maccman-nestful`
+- `github-discovered-macrozheng-mall`
 - `github-discovered-madisonmay-tomorrow`
 - `github-discovered-mafintosh-multicast-dns`
 - `github-discovered-mafintosh-respawn`
@@ -415,6 +527,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-martinblech-xmltodict`
 - `github-discovered-mashape-unirest-python`
 - `github-discovered-masterminds-html5-php`
+- `github-discovered-mastodon-mastodon`
 - `github-discovered-matcornic-hermes`
 - `github-discovered-mathiasbynens-he`
 - `github-discovered-mattcg-socks5-http-client`
@@ -422,6 +535,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-mattn-go-runewidth`
 - `github-discovered-mauricesvay-imageresolver`
 - `github-discovered-maxhumber-gazpacho`
+- `github-discovered-maybe-finance-maybe`
 - `github-discovered-mbklein-equivalent-xml`
 - `github-discovered-mblongii-ruby-ner`
 - `github-discovered-mcfreely-epitome`
@@ -433,18 +547,25 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-mendableai-firecrawl-mcp-server`
 - `github-discovered-mgdm-opencv-for-php`
 - `github-discovered-mholt-caddy`
+- `github-discovered-michaelgrupp-evo`
 - `github-discovered-michaelhelmick-lassie`
 - `github-discovered-michelf-php-markdown`
 - `github-discovered-microcosm-cc-bluemonday`
+- `github-discovered-micropython-micropython`
+- `github-discovered-microsoft-iot-for-beginners`
 - `github-discovered-microsoft-playwright`
 - `github-discovered-microsoft-playwright-python`
+- `github-discovered-microsoft-powertoys`
 - `github-discovered-microsoft-pyright`
+- `github-discovered-microsoft-typescript`
+- `github-discovered-microsoft-vscode`
 - `github-discovered-miekg-dns`
 - `github-discovered-mihaivalentin-lunr-languages`
 - `github-discovered-mikeal-bent`
 - `github-discovered-mikeemoo-colorjizz-php`
 - `github-discovered-mikel-mail`
 - `github-discovered-mikepultz-netdns2`
+- `github-discovered-mikeroyal-photogrammetry-guide`
 - `github-discovered-mikhus-jsurl`
 - `github-discovered-milesj-decoda`
 - `github-discovered-milvus-io-milvus`
@@ -479,51 +600,69 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-mvdbos-php-spider`
 - `github-discovered-my8100-scrapydweb`
 - `github-discovered-n1k0-casperjs`
+- `github-discovered-n8n-io-n8n`
 - `github-discovered-nahi-httpclient`
 - `github-discovered-namd-pypln-backend`
 - `github-discovered-napi-rs-package-template`
 - `github-discovered-nategood-httpful`
+- `github-discovered-nativescript-nativescript`
 - `github-discovered-nats-io-go-nats`
 - `github-discovered-naturalnode-natural`
 - `github-discovered-nesquena-backburner`
+- `github-discovered-netbootxyz-netboot-xyz`
 - `github-discovered-netdata-netdata`
+- `github-discovered-nethereum-nethereum`
 - `github-discovered-netresearch-jsonmapper`
 - `github-discovered-netromdk-vermin`
 - `github-discovered-neurosnap-sentences`
+- `github-discovered-nextcloud-server`
 - `github-discovered-nickscamara-firecrawl-openai-realtime`
 - `github-discovered-nicksnyder-go-i18n`
 - `github-discovered-nicktimko-winloop`
 - `github-discovered-nicolas-grekas-patchwork-utf8`
 - `github-discovered-nieldlr-hanzi`
+- `github-discovered-nilbuild-developer-roadmap`
 - `github-discovered-node-modules-urllib`
 - `github-discovered-nodeca-js-yaml`
 - `github-discovered-nodejitsu-nexpect`
+- `github-discovered-noir-lang-noir`
 - `github-discovered-nojacko-email-validator`
+- `github-discovered-nousresearch-hermes-agent`
 - `github-discovered-npm-node-semver`
 - `github-discovered-nrabinowitz-pjscrape`
 - `github-discovered-nrwl-nx`
 - `github-discovered-nsqio-nsq`
 - `github-discovered-nuance-go-nlp`
+- `github-discovered-nukeop-nuclear`
+- `github-discovered-nullclaw-nullclaw`
+- `github-discovered-nvbn-thefuck`
+- `github-discovered-nvm-sh-nvm`
 - `github-discovered-nykakin-chompjs`
 - `github-discovered-nyxtom-salient`
 - `github-discovered-obaied-rake-go`
+- `github-discovered-ocornut-imgui`
 - `github-discovered-odos-router-v2`
 - `github-discovered-odos-xyz-odos-router-v2`
 - `github-discovered-offciercia-defi-developer-road-map`
 - `github-discovered-ohler55-oj`
 - `github-discovered-ohler55-ox`
+- `github-discovered-ohmyzsh-ohmyzsh`
 - `github-discovered-okfn-messytables`
 - `github-discovered-olebedev-when`
+- `github-discovered-ollama-ollama`
 - `github-discovered-omkarcloud-botasaurus`
 - `github-discovered-ondyari-faceforensics`
+- `github-discovered-open-sdr-openwifi`
 - `github-discovered-openai-swarm`
 - `github-discovered-openclaw-openclaw`
 - `github-discovered-openexchangerates-accounting-js`
 - `github-discovered-openexchangerates-money-js`
+- `github-discovered-opengeos-leafmap`
 - `github-discovered-openmoss-moss-tts`
 - `github-discovered-openzeppelin-contracts`
 - `github-discovered-openzeppelin-openzeppelin-contracts`
 - `github-discovered-optimalbits-bull`
+- `github-discovered-oracle-graal`
 - `github-discovered-oscarotero-embed`
 - `github-discovered-oven-sh-bun`
 - `github-discovered-packetfu-packetfu`
@@ -556,10 +695,14 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-polleverywhere-firehose`
 - `github-discovered-postmodern-raingrams`
 - `github-discovered-postmodern-spidr`
+- `github-discovered-powershell-powershell`
+- `github-discovered-practical-tutorials-project-based-learning`
 - `github-discovered-pradumnasaraf-devops`
 - `github-discovered-pricingassistant-mrq`
+- `github-discovered-prisma-prisma1`
 - `github-discovered-projectdiscovery-httpx`
 - `github-discovered-propublica-upton`
+- `github-discovered-provablehq-snarkos`
 - `github-discovered-proxymesh-python-proxy-headers`
 - `github-discovered-puerkitobio-goquery`
 - `github-discovered-pyca-pyopenssl`
@@ -576,9 +719,14 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-python-openxml-python-docx`
 - `github-discovered-pyyoshi-cchardet`
 - `github-discovered-qandidate-labs-broadway`
+- `github-discovered-qemu-qemu`
 - `github-discovered-quantmind-pulsar`
+- `github-discovered-rails-rails`
 - `github-discovered-rancher-rancher`
 - `github-discovered-rare-technologies-gensim`
+- `github-discovered-rasbt-llms-from-scratch`
+- `github-discovered-ray-project-ray`
+- `github-discovered-raysan5-raylib`
 - `github-discovered-rdegges-simpleq`
 - `github-discovered-react95-io-react95`
 - `github-discovered-reactphp-react`
@@ -590,12 +738,16 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-rest-client-rest-client`
 - `github-discovered-rich-harris-babyparse`
 - `github-discovered-richtr-guesslanguage-js`
+- `github-discovered-rickstrahl-markdownmonster`
+- `github-discovered-ripienaar-free-for-dev`
+- `github-discovered-risc0-risc0`
 - `github-discovered-rjohnsondev-golibstemmer`
 - `github-discovered-rmccue-requests`
 - `github-discovered-roach-php-core`
 - `github-discovered-roniemartinez-dude`
 - `github-discovered-rookii-paicehusk`
 - `github-discovered-rq-rq`
+- `github-discovered-rstudio-shiny`
 - `github-discovered-rsxdalv-tts-webui`
 - `github-discovered-rthalley-dnspython`
 - `github-discovered-rtomayko-posix-spawn`
@@ -608,6 +760,10 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-rushter-find-domains`
 - `github-discovered-rushter-selectolax`
 - `github-discovered-russross-blackfriday`
+- `github-discovered-rust-lang-rust`
+- `github-discovered-rustdesk-rustdesk`
+- `github-discovered-rustpython-rustpython`
+- `github-discovered-ruvnet-ruview`
 - `github-discovered-s0md3v-photon`
 - `github-discovered-saffsd-langid-py`
 - `github-discovered-saghul-pycares`
@@ -617,6 +773,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-sansan0-trendradar`
 - `github-discovered-savonrb-savon`
 - `github-discovered-sbstjn-allot`
+- `github-discovered-scala-scala`
 - `github-discovered-schneems-going-the-distance`
 - `github-discovered-scrapegraphai-scrapegraph-ai`
 - `github-discovered-scrapinghub-dateparser`
@@ -631,6 +788,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-scrapy-scrapy`
 - `github-discovered-sdk-core`
 - `github-discovered-sdogruyol-awesome-ruby`
+- `github-discovered-sdwebimage-sdwebimage`
 - `github-discovered-seamusabshere-fuzzy-match`
 - `github-discovered-seamusabshere-remote-table`
 - `github-discovered-seangeo-ratom`
@@ -650,12 +808,14 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-sergey-scat-unicaps`
 - `github-discovered-serpapi-nokolexbor`
 - `github-discovered-shadowsocks-shadowsocks`
+- `github-discovered-shadowsocks-shadowsocks-windows`
 - `github-discovered-shazow-urllib3`
 - `github-discovered-sheetjs-js-xlsx`
 - `github-discovered-shon-httpagentparser`
 - `github-discovered-shuding-react-wrap-balancer`
 - `github-discovered-sightmachine-simplecv`
 - `github-discovered-significant-gravitas-autogpt`
+- `github-discovered-sindresorhus-awesome`
 - `github-discovered-sindresorhus-got`
 - `github-discovered-sindresorhus-query-string`
 - `github-discovered-skroutz-greek-stemmer`
@@ -664,6 +824,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-slotix-dataflowkit`
 - `github-discovered-smart-order-router`
 - `github-discovered-smartcontractkit-full-blockchain-solidity-course-js`
+- `github-discovered-snailclimb-javaguide`
 - `github-discovered-socketio-engine-io`
 - `github-discovered-socketio-socket-io`
 - `github-discovered-sony-v8eval`
@@ -673,11 +834,15 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-sparklemotion-nokogiri`
 - `github-discovered-spekulatius-phpscraper`
 - `github-discovered-spencermountain-nlp-compromise`
+- `github-discovered-spmallick-learnopencv`
 - `github-discovered-sponsors-d4vinci`
 - `github-discovered-sporkmonger-addressable`
 - `github-discovered-spotify-dns-java`
+- `github-discovered-spring-projects-spring-boot`
+- `github-discovered-square-okhttp`
 - `github-discovered-sshaw-normalize-country`
 - `github-discovered-sshaw-yymmdd`
+- `github-discovered-ssloy-tinyrenderer`
 - `github-discovered-ssoper-summarize`
 - `github-discovered-sstephenson-global-phone`
 - `github-discovered-standard-standard`
@@ -688,17 +853,24 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-sushi-labs-sushiswap`
 - `github-discovered-sushiswap-sushiswap`
 - `github-discovered-svaksha-pythonidae`
+- `github-discovered-swiftlang-swift`
 - `github-discovered-sylvinus-node-crawler`
 - `github-discovered-symfony-dom-crawler`
+- `github-discovered-symfony-symfony`
+- `github-discovered-systran-faster-whisper`
 - `github-discovered-tabatkins-parse-css`
 - `github-discovered-tabbyml-tabby`
 - `github-discovered-talyssonoc-commonregexruby`
 - `github-discovered-tarcieri-http`
+- `github-discovered-tauri-apps-tauri`
 - `github-discovered-tavendo-autobahnpython`
 - `github-discovered-teampoltergeist-poltergeist`
 - `github-discovered-tech-engine-goscrapy`
 - `github-discovered-technosophos-querypath`
+- `github-discovered-tenable-terrascan`
+- `github-discovered-tensorflow-tensorflow`
 - `github-discovered-thbar-kiba`
+- `github-discovered-thealgorithms-python`
 - `github-discovered-thedotmack-claude-mem`
 - `github-discovered-thepaw-go-eco`
 - `github-discovered-thephpleague-commonmark`
@@ -709,6 +881,9 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-theturtle32-websocket-node`
 - `github-discovered-thoughtbot-capybara-webkit`
 - `github-discovered-threedaymonk-text`
+- `github-discovered-threedotslabs-watermill`
+- `github-discovered-tidyverse-dplyr`
+- `github-discovered-tidyverse-ggplot2`
 - `github-discovered-tiendung-ruby-nlp`
 - `github-discovered-tjfontaine-node-dns`
 - `github-discovered-tkellen-ruby-ngram`
@@ -720,14 +895,20 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-tonutils-go`
 - `github-discovered-tooljet-tooljet`
 - `github-discovered-toorop-go-dkim`
+- `github-discovered-topjohnwu-magisk`
 - `github-discovered-traderjoe-xyz-joe-v2`
 - `github-discovered-travisvn-openai-edge-tts`
+- `github-discovered-trekhleb-javascript-algorithms`
+- `github-discovered-trimstray-test-your-sysadmin-skills`
+- `github-discovered-trimstray-the-book-of-secret-knowledge`
 - `github-discovered-triplepoint-php-units-of-measure`
 - `github-discovered-tryolabs-requestium`
 - `github-discovered-turicas-rows`
+- `github-discovered-twitter-the-algorithm`
 - `github-discovered-typhoeus-typhoeus`
 - `github-discovered-ua-parser-uap-php`
 - `github-discovered-ua-parser-uap-python`
+- `github-discovered-ultraworkers-claw-code`
 - `github-discovered-umihico-minigun-requests`
 - `github-discovered-umihico-pythonista-chromeless`
 - `github-discovered-un33k-python-slugify`
@@ -741,6 +922,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-universal-router`
 - `github-discovered-unovue-reka-ui`
 - `github-discovered-upgundecha-howtheysre`
+- `github-discovered-utmapp-utm`
 - `github-discovered-v3-core`
 - `github-discovered-v4-chain`
 - `github-discovered-v4-core`
@@ -756,9 +938,12 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-vinta-awesome-python`
 - `github-discovered-vinta-haul`
 - `github-discovered-vinta-pangu-py`
+- `github-discovered-virtio-win-kvm-guest-drivers-windows`
 - `github-discovered-visionmedia-superagent`
+- `github-discovered-vllm-project-vllm`
 - `github-discovered-vmg-redcarpet`
 - `github-discovered-vmware-archive-clarity`
+- `github-discovered-wangzhiwubigdata-god-of-bigdata`
 - `github-discovered-watir-watir`
 - `github-discovered-waylan-python-markdown`
 - `github-discovered-wcong-ants-go`
@@ -767,9 +952,12 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-willdurand-emailreplyparser`
 - `github-discovered-wisembly-elephant-io`
 - `github-discovered-wisembly-excelant`
+- `github-discovered-withastro-astro`
+- `github-discovered-withastro-starlight`
 - `github-discovered-wooorm-franc`
 - `github-discovered-wummel-linkchecker`
 - `github-discovered-xaviershay-kronic`
+- `github-discovered-xitu-gold-miner`
 - `github-discovered-xssnick-tonutils-go`
 - `github-discovered-yamadashy-repomix`
 - `github-discovered-yaml-pyyaml`
@@ -785,6 +973,8 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-your-username-your-repository`
 - `github-discovered-yourusername-gpt-4-1-web-crawler`
 - `github-discovered-yourusername-price-tracker`
+- `github-discovered-yt-dlp-yt-dlp`
+- `github-discovered-yudaocode-springboot-labs`
 - `github-discovered-yujiosaka-headless-chrome-crawler`
 - `github-discovered-yzhang-rseg`
 - `github-discovered-zach-klippenstein-goregen`
@@ -792,116 +982,449 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - `github-discovered-zencephalon-tactful-tokenizer`
 - `github-discovered-zhayujie-cowagent`
 - `github-discovered-zhenjl-porter2`
+- `github-discovered-zhisheng17-flink-learning`
 - `github-discovered-ziadoz-awesome-php`
+- `github-discovered-ziglang-zig`
+- `github-discovered-zigtools-zls`
+- `github-discovered-zokrates-zokrates`
 - `github-discovered-zornade-visura-api`
 - `github-discovered-ztane-python-levenshtein`
 
 ## Per-category Top (stub source)
 
 ### ai-agents-llm
-- 184594★ `Significant-Gravitas/AutoGPT`
-- 137812★ `langchain-ai/langchain`
-- 56910★ `mem0ai/mem0`
-- 49706★ `run-llama/llama_index`
-- 46505★ `mudler/LocalAI`
+- 184643★ `Significant-Gravitas/AutoGPT`
+- 137989★ `langchain-ai/langchain`
+- 57094★ `mem0ai/mem0`
+- 49760★ `run-llama/llama_index`
+- 46535★ `mudler/LocalAI`
 
 ### ai-coding-assistants
-- 72457★ `daytonaio/daytona`
-- 40389★ `agno-agi/agno`
-- 33762★ `Pythagora-io/gpt-pilot`
-- 33549★ `TabbyML/tabby`
-- 33424★ `continuedev/continue`
+- 72504★ `daytonaio/daytona`
+- 40420★ `agno-agi/agno`
+- 33753★ `Pythagora-io/gpt-pilot`
+- 33552★ `TabbyML/tabby`
+- 33456★ `continuedev/continue`
 
 ### mcp-tooling
-- 196091★ `affaan-m/ECC`
-- 58455★ `sansan0/TrendRadar`
-- 46505★ `mudler/LocalAI`
-- 45964★ `aaif-goose/goose`
-- 44901★ `zhayujie/CowAgent`
+- 198560★ `affaan-m/ECC`
+- 58559★ `sansan0/TrendRadar`
+- 46535★ `mudler/LocalAI`
+- 46037★ `aaif-goose/goose`
 
 ### web3-defi-dex
-- 5492★ `cporter202/API-mega-list`
-- 4740★ `ChanChiChoi/awesome-Face_Recognition`
-- 2728★ `ondyari/FaceForensics`
+- 5523★ `cporter202/API-mega-list`
+- 4738★ `ChanChiChoi/awesome-Face_Recognition`
+- 2729★ `ondyari/FaceForensics`
 
 ### web3-dex-curve-balancer
 - 4295★ `kubernetes-sigs/aws-load-balancer-controller`
-- 4214★ `shuding/react-wrap-balancer`
+- 4213★ `shuding/react-wrap-balancer`
 
 ### web3-dex-aggregators
 - 810★ `VeloraDEX/paraswap-dex-lib`
 
 ### smart-contracts-solidity
-- 27106★ `OpenZeppelin/openzeppelin-contracts`
-- 6267★ `crytic/slither`
+- 27109★ `OpenZeppelin/openzeppelin-contracts`
+- 6273★ `crytic/slither`
 
 ### ton-func-blockchain
-- 685★ `xssnick/tonutils-go`
+- 687★ `xssnick/tonutils-go`
 
 ### fullstack-react
-- 92563★ `oven-sh/bun`
-- 28785★ `nrwl/nx`
-- 23595★ `kriasoft/react-starter-kit`
+- 92639★ `oven-sh/bun`
+- 28797★ `nrwl/nx`
+- 23598★ `kriasoft/react-starter-kit`
+- 17694★ `nukeop/nuclear`
 
 ### ui-design-systems
-- 23604★ `pedronauck/docz`
-- 7901★ `rebassjs/rebass`
+- 23602★ `pedronauck/docz`
+- 7900★ `rebassjs/rebass`
 - 7221★ `react95-io/React95`
-- 6505★ `unovue/reka-ui`
+- 6508★ `unovue/reka-ui`
 - 6402★ `vmware-archive/clarity`
 
 ### video-generation
-- 4007★ `calesthio/OpenMontage`
+- 4086★ `calesthio/OpenMontage`
 
 ### audio-tts-voice
-- 4608★ `denizsafak/abogen`
-- 3145★ `rsxdalv/TTS-WebUI`
-- 1985★ `OpenMOSS/MOSS-TTS`
-- 1902★ `travisvn/openai-edge-tts`
+- 4621★ `denizsafak/abogen`
+- 3149★ `rsxdalv/TTS-WebUI`
+- 2481★ `OpenMOSS/MOSS-TTS`
+- 1901★ `travisvn/openai-edge-tts`
 
 ### testing-e2e-quality
-- 5604★ `antiwork/shortest`
+- 5606★ `antiwork/shortest`
 
 ### security-monitoring
-- 9724★ `upgundecha/howtheysre`
+- 9725★ `upgundecha/howtheysre`
 
 ### docs-research-rag
-- 79168★ `thedotmack/claude-mem`
-- 60694★ `Mintplex-Labs/anything-llm`
-- 59555★ `pathwaycom/llm-app`
-- 44485★ `milvus-io/milvus`
-- 35340★ `patchy631/ai-engineering-hub`
+- 79610★ `thedotmack/claude-mem`
+- 60787★ `Mintplex-Labs/anything-llm`
+- 59535★ `pathwaycom/llm-app`
+- 44537★ `milvus-io/milvus`
+- 35390★ `patchy631/ai-engineering-hub`
 
 ### devops-cicd
-- 6733★ `sottlmarek/DevSecOps`
-- 3209★ `Pradumnasaraf/DevOps`
+- 6736★ `sottlmarek/DevSecOps`
+- 3212★ `Pradumnasaraf/DevOps`
 
 ### backend-apis-node
-- 69780★ `bytedance/deer-flow`
-- 42646★ `payloadcms/payload`
-- 41734★ `hexojs/hexo`
-- 37942★ `ToolJet/ToolJet`
-- 25640★ `yamadashy/repomix`
+- 69959★ `bytedance/deer-flow`
+- 42685★ `payloadcms/payload`
+- 41736★ `hexojs/hexo`
+- 37948★ `ToolJet/ToolJet`
+- 25737★ `yamadashy/repomix`
 
 ### databases-orm
-- 8854★ `paradedb/paradedb`
+- 8866★ `paradedb/paradedb`
 
 ### containers-kubernetes
-- 82508★ `bregman-arie/devops-exercises`
-- 78951★ `netdata/netdata`
-- 26064★ `yeasy/docker_practice`
-- 25613★ `rancher/rancher`
-- 22983★ `argoproj/argo-cd`
+- 82525★ `bregman-arie/devops-exercises`
+- 78970★ `netdata/netdata`
+- 26069★ `yeasy/docker_practice`
+- 25620★ `rancher/rancher`
+- 23006★ `argoproj/argo-cd`
 
 ### static-analysis
-- 29434★ `standard/standard`
-- 27251★ `eslint/eslint`
-- 14637★ `lint-staged/lint-staged`
+- 29433★ `standard/standard`
+- 27256★ `eslint/eslint`
+- 14639★ `lint-staged/lint-staged`
+
+### lang-python
+- 350846★ `donnemartin/system-design-primer`
+- 221464★ `TheAlgorithms/Python`
+- 184643★ `Significant-Gravitas/AutoGPT`
+- 172802★ `NousResearch/hermes-agent`
+- 166544★ `yt-dlp/yt-dlp`
+
+### lang-javascript
+- 245313★ `facebook/react`
+- 198560★ `affaan-m/ECC`
+- 196007★ `trekhleb/javascript-algorithms`
+- 155958★ `Snailclimb/JavaGuide`
+- 148112★ `airbnb/javascript`
+
+### lang-typescript
+- 190266★ `n8n-io/n8n`
+- 185526★ `microsoft/vscode`
+- 163030★ `f/prompts.chat`
+- 137989★ `langchain-ai/langchain`
+- 109006★ `microsoft/TypeScript`
+
+### lang-java
+- 126473★ `krahets/hello-algo`
+- 108133★ `GrowingGit/GitHub-Chinese-Top-Charts`
+- 94059★ `iluwatar/java-design-patterns`
+- 83735★ `macrozheng/mall`
+- 80720★ `spring-projects/spring-boot`
+
+### lang-go
+- 172618★ `ollama/ollama`
+- 134097★ `golang/go`
+- 122531★ `kubernetes/kubernetes`
+- 106965★ `fatedier/frp`
+- 88567★ `gin-gonic/gin`
+
+### lang-rust
+- 192840★ `ultraworkers/claw-code`
+- 115192★ `rustdesk/rustdesk`
+- 113198★ `rust-lang/rust`
+- 107255★ `tauri-apps/tauri`
+- 106898★ `denoland/deno`
+
+### lang-cpp
+- 195307★ `tensorflow/tensorflow`
+- 125921★ `facebook/react-native`
+- 121468★ `electron/electron`
+- 113710★ `ggml-org/llama.cpp`
+- 111338★ `godotengine/godot`
+
+### lang-csharp
+- 133638★ `microsoft/PowerToys`
+- 107252★ `2dust/v2rayN`
+- 59559★ `shadowsocks/shadowsocks-windows`
+- 53681★ `PowerShell/PowerShell`
+- 52684★ `jellyfin/jellyfin`
+
+### lang-ruby
+- 58464★ `rails/rails`
+- 54148★ `maybe-finance/maybe`
+- 51464★ `jekyll/jekyll`
+- 49980★ `mastodon/mastodon`
+- 49354★ `huginn/huginn`
+
+### lang-php
+- 71229★ `danielmiessler/SecLists`
+- 56185★ `coollabsio/coolify`
+- 35572★ `nextcloud/server`
+- 34733★ `laravel/framework`
+- 31061★ `symfony/symfony`
+
+### lang-swift
+- 70009★ `swiftlang/swift`
+- 45034★ `iina/iina`
+- 42387★ `Alamofire/Alamofire`
+- 39211★ `exelban/stats`
+- 34223★ `utmapp/UTM`
+
+### lang-kotlin
+- 60697★ `topjohnwu/Magisk`
+- 57069★ `2dust/v2rayNG`
+- 52777★ `JetBrains/kotlin`
+- 46972★ `square/okhttp`
+- 46916★ `gedoor/legado`
+
+### lang-scala
+- 73349★ `twitter/the-algorithm`
+- 43369★ `apache/spark`
+- 18289★ `lichess-org/lila`
+- 16393★ `prisma/prisma1`
+- 14454★ `scala/scala`
+
+### lang-r-lang
+- 7063★ `cxli233/FriendsDontLetFriends`
+- 6939★ `tidyverse/ggplot2`
+- 5650★ `rstudio/shiny`
+- 5057★ `hadley/r4ds`
+- 5030★ `tidyverse/dplyr`
+
+### lang-dart
+- 176565★ `flutter/flutter`
+- 82353★ `localsend/localsend`
+- 71439★ `AppFlowy-IO/AppFlowy`
+- 46607★ `KRTirtho/spotube`
+- 40166★ `chen08209/FlClash`
+
+### lang-zig
+- 42938★ `ziglang/zig`
+- 30671★ `lightpanda-io/browser`
+- 7634★ `nullclaw/nullclaw`
+- 7331★ `fairyglade/ly`
+- 4843★ `zigtools/zls`
+
+### os-linux-kernel
+- 161070★ `jlevy/the-art-of-command-line`
+- 27666★ `imthenachoman/How-To-Secure-A-Linux-Server`
+- 11800★ `netbootxyz/netboot.xyz`
+- 11603★ `trimstray/test-your-sysadmin-skills`
+- 8777★ `A-poc/RedTeam-Tools`
+
+### os-bsd
+- 187449★ `ohmyzsh/ohmyzsh`
+- 117039★ `justjavac/free-programming-books-zh_CN`
+- 97163★ `nvbn/thefuck`
+- 93597★ `nvm-sh/nvm`
+- 88311★ `gohugoio/hugo`
+
+### os-hypervisor
+- 23320★ `kholia/OSX-KVM`
+- 13201★ `qemu/qemu`
+- 2644★ `virtio-win/kvm-guest-drivers-windows`
+
+### embedded-rtos
+- 23674★ `lvgl/lvgl`
+- 21751★ `micropython/micropython`
+- 12828★ `cesanta/mongoose`
+- 9322★ `embassy-rs/embassy`
+
+### fpga-hdl
+- 7141★ `logisim-evolution/logisim-evolution`
+- 5459★ `LeiWang1999/FPGA`
+- 4633★ `open-sdr/openwifi`
+- 3906★ `enjoy-digital/litex`
+- 2557★ `darklife/darkriscv`
+
+### ml-pytorch
+- 163341★ `AUTOMATIC1111/stable-diffusion-webui`
+- 161051★ `huggingface/transformers`
+- 114919★ `Comfy-Org/ComfyUI`
+- 96280★ `rasbt/LLMs-from-scratch`
+- 81380★ `vllm-project/vllm`
+
+### ml-tensorflow
+- 195307★ `tensorflow/tensorflow`
+- 64074★ `keras-team/keras`
+- 59844★ `CorentinJ/Real-Time-Voice-Cloning`
+- 43761★ `aymericdamien/TensorFlow-Examples`
+- 42706★ `ray-project/ray`
+
+### ml-inference-serving
+- 192840★ `ultraworkers/claw-code`
+- 161051★ `huggingface/transformers`
+- 103646★ `deepseek-ai/DeepSeek-V3`
+
+### ml-computer-vision
+- 22942★ `spmallick/learnopencv`
+- 9259★ `CVHub520/X-AnyLabeling`
+
+### ml-nlp-classic
+- 161051★ `huggingface/transformers`
+- 71700★ `hiyouga/LlamaFactory`
+- 40023★ `google-research/bert`
+- 23568★ `lukasmasuch/best-of-ml-python`
+- 22581★ `AiHubCN/Awesome-Chinese-LLM`
+
+### game-engines
+- 111338★ `godotengine/godot`
+- 73555★ `ocornut/imgui`
+- 46349★ `bevyengine/bevy`
+- 25584★ `BabylonJS/Babylon.js`
+- 24794★ `leereilly/games`
+
+### graphics-rendering
+- 33181★ `raysan5/raylib`
+- 30601★ `iced-rs/iced`
+- 23674★ `lvgl/lvgl`
+- 23623★ `ssloy/tinyrenderer`
+- 20092★ `google/filament`
+
+### graphics-3d-assets
+- 9009★ `domlysz/BlenderGIS`
+- 3297★ `hlorus/CAD_Sketcher`
+- 3291★ `armory3d/armory`
+
+### sci-python-stack
+- 347705★ `jwasham/coding-interview-university`
+- 266908★ `practical-tutorials/project-based-learning`
+- 195307★ `tensorflow/tensorflow`
+- 182860★ `jackfrued/Python-100-Days`
+- 122782★ `ripienaar/free-for-dev`
+
+### sci-bioinformatics
+- 81634★ `Developer-Y/cs-video-courses`
+- 26541★ `K-Dense-AI/scientific-agent-skills`
+- 3708★ `google/deepvariant`
+- 2192★ `lh3/minimap2`
+
+### sci-gis-geospatial
+- 3703★ `opengeos/leafmap`
+- 1479★ `mikeroyal/Photogrammetry-Guide`
+
+### edu-platforms
+- 2951★ `frappe/lms`
+
+### static-site-generators
+- 59658★ `withastro/astro`
+- 55946★ `gatsbyjs/gatsby`
+- 51464★ `jekyll/jekyll`
+- 8562★ `withastro/starlight`
+- 5806★ `daattali/beautiful-jekyll`
+
+### cms-wordpress
+- 471210★ `sindresorhus/awesome`
+- 355700★ `nilbuild/developer-roadmap`
+- 350846★ `donnemartin/system-design-primer`
+
+### blog-docs-publish
+- 1677★ `RickStrahl/MarkdownMonster`
+
+### mobile-android
+- 176565★ `flutter/flutter`
+- 142650★ `Genymobile/scrcpy`
+- 125921★ `facebook/react-native`
+- 117039★ `justjavac/free-programming-books-zh_CN`
+- 115192★ `rustdesk/rustdesk`
+
+### mobile-ios
+- 50504★ `dkhamsing/open-source-ios-apps`
+- 34310★ `xitu/gold-miner`
+- 25653★ `SDWebImage/SDWebImage`
+- 25523★ `NativeScript/NativeScript`
+
+### mobile-cross-platform
+- 507344★ `codecrafters-io/build-your-own-x`
+- 355700★ `nilbuild/developer-roadmap`
+- 266908★ `practical-tutorials/project-based-learning`
+- 245313★ `facebook/react`
+- 198560★ `affaan-m/ECC`
+
+### chain-ethereum-clients
+- 68546★ `base/node`
+- 51066★ `ethereum/go-ethereum`
+- 36591★ `inkonchain/node`
+
+### chain-l1-alt
+- 471210★ `sindresorhus/awesome`
+- 347705★ `jwasham/coding-interview-university`
+- 166544★ `yt-dlp/yt-dlp`
+- 122782★ `ripienaar/free-for-dev`
+
+### chain-zk-crypto
+- 7677★ `kroma-network/tachyon`
+- 4525★ `ProvableHQ/snarkOS`
+- 2148★ `risc0/risc0`
+- 1878★ `Zokrates/ZoKrates`
+- 1350★ `noir-lang/noir`
+
+### chain-indexers-non-dex
+- 2250★ `Nethereum/Nethereum`
+
+### hardware-robotics
+- 8867★ `dusty-nv/jetson-inference`
+- 4236★ `MichaelGrupp/evo`
+- 4036★ `BehaviorTree/BehaviorTree.CPP`
+- 3824★ `Ly0n/awesome-robotic-tooling`
+- 3745★ `dora-rs/dora`
+
+### iot-edge
+- 68236★ `ruvnet/RuView`
+- 16919★ `microsoft/IoT-For-Beginners`
+- 16327★ `emqx/emqx`
+- 7458★ `kubeedge/kubeedge`
+
+### home-automation
+- 33950★ `IceWhaleTech/CasaOS`
+- 24441★ `arendst/Tasmota`
+- 23246★ `SYSTRAN/faster-whisper`
+
+### hardware-cad-3dprint
+- 2362★ `gumyr/build123d`
+
+### data-engineering
+- 45597★ `apache/airflow`
+- 41555★ `DataTalksClub/data-engineering-zoomcamp`
+- 29558★ `eugeneyan/applied-ml`
+- 21352★ `airbytehq/airbyte`
+- 16724★ `argoproj/argo-workflows`
+
+### message-queues
+- 20103★ `yudaocode/SpringBoot-Labs`
+- 15054★ `zhisheng17/flink-learning`
+- 14703★ `aalansehaiyang/technology-talk`
+- 10467★ `wangzhiwubigdata/God-Of-BigData`
+- 9732★ `ThreeDotsLabs/watermill`
+
+### search-analytics-db
+- 355700★ `nilbuild/developer-roadmap`
+- 350846★ `donnemartin/system-design-primer`
+- 198560★ `affaan-m/ECC`
+
+### cloud-terraform-iac
+- 20369★ `GoogleCloudPlatform/microservices-demo`
+- 9254★ `khuedoan/homelab`
+- 8755★ `bridgecrewio/checkov`
+- 8284★ `HariSekhon/DevOps-Bash-tools`
+- 5212★ `tenable/terrascan`
+
+### compiler-llvm-wasm
+- 33717★ `carbon-language/carbon-lang`
+- 22084★ `RustPython/RustPython`
+- 21589★ `oracle/graal`
+- 17918★ `AssemblyScript/assemblyscript`
+- 16778★ `exaloop/codon`
+
+### networking-servers
+- 471212★ `sindresorhus/awesome`
+- 350846★ `donnemartin/system-design-primer`
+- 225468★ `trimstray/the-book-of-secret-knowledge`
+- 182860★ `jackfrued/Python-100-Days`
 
 ### web3-dex-curated
-- 5512★ `Uniswap/interface`
-- 4990★ `Uniswap/v3-core`
-- 2495★ `Uniswap/v4-core`
+- 5513★ `Uniswap/interface`
+- 4991★ `Uniswap/v3-core`
+- 2496★ `Uniswap/v4-core`
 - 1945★ `sushi-labs/sushiswap`
 - 1103★ `curvefi/curve-contract`
 - 810★ `VeloraDEX/paraswap-dex-lib`
@@ -910,7 +1433,7 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - 367★ `pancakeswap/pancake-smart-contracts`
 - 357★ `pancakeswap/pancake-subgraph`
 - 356★ `balancer/balancer-v2-monorepo`
-- 328★ `dydxprotocol/v4-chain`
+- 329★ `dydxprotocol/v4-chain`
 - 304★ `1inch/limit-order-protocol`
 - 165★ `lfj-gg/joe-v2`
 - 154★ `cowprotocol/contracts`
@@ -918,33 +1441,3 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - 115★ `aerodrome-finance/contracts`
 - 65★ `velodrome-finance/contracts`
 - 51★ `odos-xyz/odos-router-v2`
-
-### awesome-ingest-awesome-web-scraping
-- 0★ `6/tiny_segmenter`
-- 0★ `Alir3z4/html2text`
-- 0★ `Alir3z4/sanitize`
-- 0★ `AndreiDrang/python3-anticaptcha`
-- 0★ `Anorov/PySocks`
-
-### awesome-ingest-scrapy-scrapy
-- 0★ `scrapy/scrapy`
-
-### awesome-ingest-firecrawl-firecrawl
-- 0★ `BexTuychiev/automated-price-tracking`
-- 0★ `FirstClassML/firecrawl_articles`
-- 0★ `YOUR_USERNAME/YOUR_REPO_NAME`
-- 0★ `avajs/ava`
-- 0★ `e2b-dev/code-interpreter`
-
-### awesome-ingest-h4ckf0r0day-obscura
-- 0★ `h4ckf0r0day/obscura`
-
-### awesome-ingest-scrapinghub-portia
-- 0★ `scrapinghub/portia`
-
-### awesome-ingest-d4vinci-scrapling
-- 375114★ `openclaw/openclaw`
-- 54555★ `D4Vinci/Scrapling`
-- 20446★ `python/mypy`
-- 15459★ `microsoft/pyright`
-- 11795★ `MagicStack/uvloop`

@@ -1,33 +1,22 @@
 {
-  "lastTickAt": "2026-05-28T08:05:46.418Z",
+  "lastTickAt": "2026-05-29T00:00:00.000Z",
+  "activeQueueId": "p1-dashboard-w6-pipeline",
   "steps": [
     {
-      "id": "verify-full",
+      "id": "dashboard-p1-quote-ui",
       "status": "completed"
     },
     {
-      "id": "screenshots",
-      "status": "completed"
+      "id": "verify-full",
+      "status": "pending"
     },
     {
       "id": "verify-100",
-      "status": "completed",
-      "external": false
-    },
-    {
-      "id": "git-commit-push-b",
-      "status": "failed",
-      "managedPid": 52556,
-      "error": "git-commit-push exit 1"
-    },
-    {
-      "id": "batch-c-auto",
       "status": "pending"
     },
     {
-      "id": "stress-smoke-100",
+      "id": "w6-agent-kickoff",
       "status": "pending"
     }
-  ],
-  "activeQueueId": "ui-design-phase-b"
+  ]
 }

@@ -1,7 +1,10 @@
 import { ArrowDownUp } from "lucide-react";
 import { useMemo, useState } from "react";
+import { buildP1QuoteSummary } from "@/hooks/useDashboardMarket";
+import { useSwapTradeQuote } from "@/hooks/useSwapTradeQuote";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonGlassCard } from "@/components/ui/NeonGlassCard";
+import { formatDataSourceLabel } from "@/lib/ionApi";
 
 type SwapToken = "BNB" | "ION" | "USDT";
 
@@ -20,6 +23,36 @@ export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) 
   const [payAmount, setPayAmount] = useState("");
 
   const pairLabel = useMemo(() => `${fromToken} → ${toToken}`, [fromToken, toToken]);
+  const amountForQuote = payAmount.trim() || "1";
+  const tradeQuote = useSwapTradeQuote({
+    fromToken,
+    toToken,
+    payAmount: amountForQuote,
+    slippagePct: "1",
+  });
+
+  const quotePreview = useMemo(() => {
+    if (tradeQuote.state === "loading") {
+      return { kind: "loading" as const, text: "Loading P1 quote…" };
+    }
+    if (tradeQuote.state === "error") {
+      return {
+        kind: "error" as const,
+        text: tradeQuote.error ?? "Quote unavailable",
+      };
+    }
+    if (tradeQuote.state === "ready" && tradeQuote.request) {
+      const summary = buildP1QuoteSummary(tradeQuote.data);
+      const text = tradeQuote.meta
+        ? `${summary} · ${formatDataSourceLabel(tradeQuote.meta)}`
+        : summary;
+      return { kind: "ready" as const, text };
+    }
+    return {
+      kind: "fallback" as const,
+      text: `Route preview: ${pairLabel}${payAmount ? ` · ${payAmount}` : ""}`,
+    };
+  }, [pairLabel, payAmount, tradeQuote.data, tradeQuote.error, tradeQuote.meta, tradeQuote.request, tradeQuote.state]);
 
   function flipPair() {
     setFromToken(toToken);
@@ -75,9 +108,13 @@ export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) 
           />
         </label>
 
-        <p className="text-xs text-cyan-100/55">
-          Route preview: <span className="font-semibold text-cyan-100">{pairLabel}</span>
-          {payAmount ? ` · ${payAmount}` : ""}
+        <p
+          className={`text-xs leading-relaxed ${
+            quotePreview.kind === "error" ? "text-rose-200/80" : "text-cyan-100/55"
+          }`}
+          data-testid="dashboard-p1-quote-line"
+        >
+          {quotePreview.text}
         </p>
 
         <NeonButton

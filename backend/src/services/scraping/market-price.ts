@@ -80,11 +80,15 @@ export type ScrapedLivePriceFailure = {
 
 const SCRAPE_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 ION-DEX-Scraper/1.0";
 
-export async function fetchPageHtml(url: string, timeoutMs: number): Promise<string> {
+export async function fetchPageHtml(
+  url: string,
+  timeoutMs: number,
+  fetchImpl: typeof fetch = fetch,
+): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(url, {
+    const res = await fetchImpl(url, {
       signal: controller.signal,
       headers: {
         "User-Agent": SCRAPE_UA,

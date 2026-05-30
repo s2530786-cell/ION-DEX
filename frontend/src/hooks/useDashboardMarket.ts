@@ -31,6 +31,23 @@ const emptyQuote: TradeQuote = {
   provenance: { source: "local-seed", priceModel: "" },
 };
 
+function formatBpsAsPercent(bps: number): string {
+  return (bps / 100).toFixed(2);
+}
+
+/** Full P1 swap quote summary for dashboard / compact swap surfaces. */
+export function buildP1QuoteSummary(quote: TradeQuote): string {
+  const route = quote.route.length > 0 ? quote.route.join(" → ") : "—";
+  const source = quote.provenance?.source ?? "unknown";
+  const amountIn = quote.amountIn || "1";
+  return (
+    `${amountIn} ${quote.inputToken} → est ${quote.estimatedOutput} ${quote.outputToken} · ` +
+    `min ${quote.minimumReceived} · fee ${quote.protocolFee} (${quote.protocolFeeBps} bps) · ` +
+    `slip ${formatBpsAsPercent(quote.slippageBps)}% · impact ~${formatBpsAsPercent(quote.priceImpactBps)}% · ` +
+    `route ${route} · ${source}`
+  );
+}
+
 export function useDashboardMarket() {
   const fetchTickers = useCallback((signal: AbortSignal) => fetchMarketTickers(signal), []);
   const fetchQuote = useCallback(
@@ -77,7 +94,7 @@ export function useDashboardMarket() {
     }
     return {
       ticker: `ION ${ionTicker.displayPrice} · ${ionTicker.displayChange}`,
-      swap: `1 BNB → min ${quote.data.minimumReceived} ION · fee ${quote.data.protocolFee} · route ${quote.data.route.join(" → ")}`,
+      swap: buildP1QuoteSummary(quote.data),
       quoteMeta: quote.meta,
       tickerMeta: tickers.meta,
     };
