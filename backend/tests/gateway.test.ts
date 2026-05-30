@@ -436,4 +436,82 @@ describe("ION DEX API gateway", () => {
     assert.equal(response.headers.get("x-request-id"), "test-options-request");
     assert.equal(response.headers.get("access-control-allow-methods"), "GET, POST, OPTIONS");
   });
+
+  it("serves AI Gateway health and capabilities stubs", async () => {
+    const health = await requestJson("/v1/ai/health");
+    assert.equal(health.status, 200);
+    const healthData = health.body.data as {
+      status?: string;
+      service?: string;
+      sentinel?: string;
+      allowlist_loaded?: boolean;
+      registry_loaded?: boolean;
+      routes?: string[];
+    };
+    assert.equal(healthData.status, "ok");
+    assert.equal(healthData.service, "ion-ai-gateway");
+    assert.equal(healthData.sentinel, "active");
+    assert.equal(typeof healthData.allowlist_loaded, "boolean");
+    assert.equal(typeof healthData.registry_loaded, "boolean");
+    assert.ok(healthData.routes?.includes("POST /v1/ai/design/prototype"));
+
+    const capabilities = await requestJson("/v1/ai/capabilities");
+    assert.equal(capabilities.status, 200);
+    const capData = capabilities.body.data as {
+      capabilities?: Array<{ capability_id?: string; label?: string | null }>;
+      provenance?: { disclaimer?: string };
+    };
+    assert.ok(Array.isArray(capData.capabilities));
+    assert.equal(capData.provenance?.disclaimer, "Not financial advice.");
+  });
+
+  it("serves Phase C draft POST routes when private allowlist is loaded", async () => {
+    const designBody = JSON.stringify({
+      actor_id: "user-test",
+      session_id: "sess-test",
+      prompt: "Dashboard hero refresh",
+    });
+    const design = await requestJson("/v1/ai/design/prototype", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: designBody,
+    });
+
+    if (design.status === 200) {
+      const data = design.body.data as { kind?: string; capability_id?: string };
+      assert.equal(data.kind, "design_prototype");
+      assert.equal(data.capability_id, "design.workspace.open-design");
+    } else {
+      assert.equal(design.status, 403);
+      assert.match(design.body.error?.message ?? "", /DENY|allowlist/i);
+    }
+
+    const video = await requestJson("/v1/ai/content/video/brief", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        actor_id: "user-test",
+        session_id: "sess-test",
+        topic: "ION swap",
+        duration_sec: 60,
+      }),
+    });
+    assert.ok(video.status === 200 || video.status === 403);
+
+    const missingActor = await requestJson("/v1/ai/design/prototype", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ prompt: "no session" }),
+    });
+    assert.equal(missingActor.status, 400);
+  });
+
+  it("returns 404 for forbidden /v1/ai/tx and wallet routes", async () => {
+    const tx = await requestJson("/v1/ai/tx/submit");
+    assert.equal(tx.status, 404);
+    assert.equal(tx.body.error?.code, apiErrorCodes.notFound);
+
+    const wallet = await requestJson("/v1/ai/wallet/sign");
+    assert.equal(wallet.status, 404);
+  });
 });

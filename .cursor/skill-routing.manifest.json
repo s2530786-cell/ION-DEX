@@ -125,6 +125,30 @@
       "preflight": false
     },
     {
+      "id": "ai-civilization-kernel",
+      "priority": 54,
+      "paths": [
+        "scripts/ion-private-core-path.mjs",
+        "scripts/check-public-ip-leak.mjs",
+        "docs/ai-sentinel-gateway-contract.md",
+        ".memory-bank/ai-civilization-kernel/**",
+        "backend/src/ai/**",
+        ".cursor/skills/ion-ai-civilization-kernel/**"
+      ],
+      "skills": [
+        "ion-ai-civilization-kernel",
+        "ion-contract-audit",
+        "ion-data-backend",
+        "cursor-engineering-workflow"
+      ],
+      "memoryBank": [
+        "ion-private-core/.memory-bank/ai-civilization-kernel/",
+        ".memory-bank/ai-civilization-kernel/README.md"
+      ],
+      "securityPreflight": true,
+      "preflight": false
+    },
+    {
       "id": "github-discovered-stubs",
       "priority": 56,
       "paths": [".cursor/skills/github-discovered/**"],
@@ -248,6 +272,31 @@
       ],
       "skills": ["ion-github-daily-discovery", "skill-vetter", "tavily", "find-skill"],
       "memoryBank": ["ion-private-core/.memory-bank/github-daily/README.md"]
+    },
+    {
+      "id": "kw-ai-civilization-kernel",
+      "keywords": [
+        "文明内核",
+        "ai civilization kernel",
+        "ai-civilization-kernel",
+        "sentinel gateway",
+        "tool allowlist",
+        "evaluateToolCall",
+        "I1 invariant"
+      ],
+      "skills": [
+        "ion-ai-civilization-kernel",
+        "ion-contract-audit",
+        "ion-data-backend",
+        "cursor-engineering-workflow"
+      ],
+      "memoryBank": [
+        "ion-private-core/.memory-bank/ai-civilization-kernel/",
+        ".memory-bank/ai-civilization-kernel/README.md",
+        "docs/28-public-development-scope.md",
+        "docs/ai-sentinel-gateway-contract.md"
+      ],
+      "securityPreflight": true
     },
     {
       "id": "kw-fullstack-arch",

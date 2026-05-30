@@ -28,6 +28,7 @@ docs/01-official-addresses-and-assumptions.md
 docs/02-tokenomics-and-fees.md
 docs/03-technical-architecture.md
 docs/04-development-roadmap.md
+docs/28-public-development-scope.md   # 对外开发范围概要（中文，无战略细节）
 docs/05-product-prd.md
 docs/06-page-flow-and-user-journeys.md
  

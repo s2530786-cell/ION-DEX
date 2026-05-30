@@ -10,7 +10,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { execSync } from "node:child_process";
-import { getPrivateCoreRoot } from "./ion-private-core-path.mjs";
+import { aiCivilizationKernelDir, getPrivateCoreRoot } from "./ion-private-core-path.mjs";
 import {
   matchDiscoveredSkills,
   listDiscoveredSkillIds,
@@ -51,6 +51,19 @@ function resolveMemoryBankPath(rel) {
   if (priv && relNorm.includes("github-daily")) {
     const abs = join(priv, relNorm);
     if (existsSync(abs)) return { path: abs, source: "private-core" };
+  }
+  if (relNorm.includes("ai-civilization-kernel")) {
+    const kernelDir = aiCivilizationKernelDir(root);
+    const kernelTail = relNorm.replace(/^\.memory-bank\/ai-civilization-kernel\/?/, "");
+    if (kernelDir) {
+      const abs = kernelTail ? join(kernelDir, kernelTail) : join(kernelDir, "full-kernel.md");
+      if (existsSync(abs)) return { path: abs, source: "private-core" };
+    }
+    const pubPointer = join(root, ".memory-bank", "ai-civilization-kernel", "README.md");
+    if (existsSync(pubPointer) && !kernelTail) {
+      return { path: normalizePath(pubPointer), source: "public-pointer" };
+    }
+    return { path: rel, source: "missing" };
   }
   const pub = join(root, rel);
   if (existsSync(pub)) return { path: normalizePath(pub), source: "public" };

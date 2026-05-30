@@ -34,6 +34,7 @@ Before working on this project, load and follow:
 - `.cursor/skills/octobot/SKILL.md` or `.cursor/skills/lumibot/SKILL.md` when designing grid/DCA bots or broker-connected automation patterns.
 - `.cursor/skills/langalpha/SKILL.md` or `.cursor/skills/ai-hedge-fund-crypto/SKILL.md` when building persistent finance workspaces or LangGraph crypto strategy graphs.
 - **ion-private-core** `.cursor/skills/ion-github-daily-discovery/SKILL.md` when running **daily GitHub high-star discovery** (catalog 与 `github-discovered` 存根仅闭源仓；公开仓为指针 Skill + `scripts/github-daily-*.mjs`）。
+- **ion-private-core** `.cursor/skills/ion-ai-civilization-kernel/SKILL.md`（或 `.cursor/skills-private/` 链入）when editing **非公开** AI 内核、allowlist/registry 正文或 vendor 集成；公开仓仅指针 + `docs/28-public-development-scope.md` + `docs/ai-sentinel-gateway-contract.md` + `backend/src/ai/` stub。
 - **ion-private-core** `.cursor/skills/github-discovered/**/SKILL.md` when working against clones listed in `ion-private-core/.memory-bank/github-daily/installed.json`（经 `link-skills-to-ion-dex.ps1` 链到 `.cursor/skills-private/`）。
 - `.cursor/skills/hyperframes/SKILL.md`, `.cursor/skills/hyperframes-cli/SKILL.md`, `.cursor/skills/hyperframes-media/SKILL.md` for programmatic video/audio; `.cursor/skills/three/SKILL.md` / `.cursor/skills/typegpu/SKILL.md` for 3D/WebGL dashboard visuals.
 

@@ -43,6 +43,15 @@ if errorlevel 1 (
 )
 
 echo.
+echo === 1b) Public IP leak gate (staged files) ===
+node "%CD%\scripts\check-public-ip-leak.mjs"
+if errorlevel 1 (
+  echo ERROR: public IP leak check failed with exit code !ERRORLEVEL!
+  if not defined _ION_VNP pause
+  exit /b 1
+)
+
+echo.
 echo === 2) Contract verify (FunC + Solidity + deploy readiness) ===
 node "%CD%\scripts\verify-contracts.mjs"
 if errorlevel 1 (

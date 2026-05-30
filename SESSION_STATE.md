@@ -20,6 +20,12 @@
 
 **CURRENT_PHASE=W6**（W5 出口 verify-100：`%TEMP%\ion-verify-100-summary-20260528-114641.txt` · PASSED=100 FAILED=0 RESULT=GREEN）
 
+**P1 Dashboard quote 收口流水线（2026-05-29）**：
+- 队列：`p1-dashboard-w6-pipeline`（active）· 旧 `ui-design-phase-b` → **paused**
+- 步骤：`dashboard-p1-quote-ui` ✅ → `verify-full` → `verify-100`（新 activatedAt）→ W6 Agent
+- 看门狗：`scripts/run-autonomous-work-watchdog.cmd` / `node scripts/autonomous-work-watchdog.mjs --once`
+- **未授权 commit**：`git-commit-push` 仍 blocked（需用户明确说 commit）
+
 **进度汇报节奏（Master 2026-05-28）**：verify-100 未 GREEN 前 **每 30 分钟**汇报（`node scripts/verify-100-progress-snapshot.mjs` + 看门狗队列）；全绿后汇报 GREEN + commit+push + 下一阶段。
 
 **GitHub 每日高星发现（2026-05-27）**：
@@ -30,6 +36,21 @@
 - **Token**：`scripts/.github-token.local`（从 `github-daily-token.local.example` 复制）
 - **已克隆**（`d:\vendor-ion-discovery`）：OpenZeppelin、mem0、tonutils-go、langchain、composio
 - **Skill 存根**（仅 private-core）：`.cursor/skills/github-discovered/github-discovered-*`（5 个，已迁出公开仓）
+
+**AI 文明内核公私拆分（2026-05-29）**：
+- **机密全量**：`ion-private-core/.memory-bank/ai-civilization-kernel/`（战略正文与 allowlist，不推公开 remote）
+- **公开范围概要**：`docs/28-public-development-scope.md`（对外路线图，点到为止）
+- **公开指针**：`.memory-bank/ai-civilization-kernel/README.md` · 契约 `docs/ai-sentinel-gateway-contract.md` · Skill 存根 `.cursor/skills/ion-ai-civilization-kernel/`
+- **Phase 1 stub**：`backend/src/ai/sentinel/` + `backend/src/ai/gateway/routes.ts`（`GET /v1/ai/health|capabilities`；Phase C `POST` design/video brief stub；禁止 `/v1/ai/tx/*`）
+- **泄漏门禁**：`scripts/check-public-ip-leak.mjs`（verify-full 步骤 1b）
+- **路径解析**：`scripts/ion-private-core-path.mjs` → `aiCivilizationKernelDir()`
+- **验证（2026-05-29）**：`verify-full` ✅（backend 89/89 · frontend 33 passed · encoding · leak gate · audit:high）
+- **Phase C（Creator OS + Gateway stub，2026-05-29）**：
+  - `POST /v1/ai/design/prototype` · `POST /v1/ai/content/video/brief`（mock stub，经 Sentinel + 私有 allowlist）
+  - `backend/src/ai/registry/` 读私有 `capability-registry.json` · `draft-routes.ts` + `ai-gateway-draft.test.ts`
+  - I1：`execute_swap` 等下划线工具名经 normalize 后硬拒
+  - **验证**：`npm run build && npm run test` 89/89 ✅ · `verify-full-save-log.cmd --no-pause` ✅
+- **附带修复**：`frontend/src/hooks/useSwapTradeQuote.ts`（Dashboard swap 报价 hook，解除 frontend build 阻塞）
 
 **W5 进行中（2026-05-27）**：
 - `backend/src/indexer/`：ION/BSC worker 骨架、`IndexerReadCache`、burn/staking enrich

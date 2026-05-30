@@ -2,6 +2,8 @@
 
 This roadmap defines the build order. Each phase depends on the phase before it unless explicitly marked parallel.
 
+> **Public audience:** For a high-level product/tech scope without internal strategy detail, read [`28-public-development-scope.md`](28-public-development-scope.md) (中文概要). This file is the **engineering phase checklist**; it may name modules and deliverables but does not document confidential AI vendor or ops plans.
+
 ## Phase 0 - Confirmation And Blueprint
 
 Goal: freeze assumptions and avoid building on unknown official addresses or unstable APIs.

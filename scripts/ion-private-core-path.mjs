@@ -35,6 +35,13 @@ export function privateSkillsRoot(cwd = process.cwd()) {
   return priv ? join(priv, ".cursor", "skills") : null;
 }
 
+/** Full AI civilization kernel (CONFIDENTIAL) — no public fallback. */
+export function aiCivilizationKernelDir(cwd = process.cwd()) {
+  const priv = getPrivateCoreRoot(cwd);
+  if (priv) return join(priv, ".memory-bank", "ai-civilization-kernel");
+  return null;
+}
+
 export function requirePrivateCore(cwd = process.cwd()) {
   const priv = getPrivateCoreRoot(cwd);
   if (!priv) {

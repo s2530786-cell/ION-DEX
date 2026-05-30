@@ -84,6 +84,14 @@ export async function routeRequest(
 
   const url = new URL(request.url ?? "/", "http://localhost");
 
+  if (url.pathname.startsWith("/v1/ai")) {
+    const { handleAiGatewayRoute } = await import("../ai/gateway/routes.js");
+    const handled = await handleAiGatewayRoute(request, response, url.pathname, meta);
+    if (handled) {
+      return;
+    }
+  }
+
   if (url.pathname.startsWith("/api/copy-trade/")) {
     const handled = await handleCopyTradeRoute(request, response, url.pathname, meta);
     if (handled) {

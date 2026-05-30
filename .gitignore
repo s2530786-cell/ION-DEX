@@ -46,6 +46,16 @@ NUL
 # FunC probe outputs
 contracts/ion/build/_probe_*
 
+# Strategic audit drafts (local only — do not push to public remote)
+COMPREHENSIVE_AUDIT_REPORT_*.md
+EXECUTIVE_SUMMARY_*.md
+DETAILED_FIXES_IMPLEMENTATION.md
+VULNERABILITY_MATRIX_AND_RISK_SCORES.md
+SECURITY_FIXES_V*.md
+FINAL_V7_FIXES_SUMMARY.md
+QUICK_REFERENCE.md
+FILE_INDEX.md
+
 # Build artifacts
 contracts/out/
 contracts/cache/

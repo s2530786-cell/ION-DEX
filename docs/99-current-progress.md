@@ -1,5 +1,18 @@
 # Current Progress
 
+## 2026-05-29 AI Gateway — Phase C draft stub + 公开范围文档
+
+- **Phase C**：AI Gateway 增加 design / video brief 类 **draft stub**（经 Sentinel + deny-by-default allowlist）；详见 `docs/ai-sentinel-gateway-contract.md`。
+- **公开范围**：新增 `docs/28-public-development-scope.md`（对外路线图概要，无战略细节）；AI 指针文档已脱敏。
+- **测试/验证**：backend **89/89** · `verify-full-save-log.cmd --no-pause` ✅。
+- **未 commit**（需 Master 明确授权）。
+
+## 2026-05-29 AI Gateway — Phase 1 Sentinel stub + 公私拆分
+
+- 公开仓：I1–I8 摘要、Gateway/Sentinel **契约**、`backend/src/ai/` stub、`check-public-ip-leak.mjs`。
+- 完整 AI 内核与白名单正文：**非公开仓**（授权访问）。
+- **Dashboard 报价 hook**：`useSwapTradeQuote.ts`。
+
 ## 2026-05-28 W5 出口收尾（verify-100 GREEN）
 
 - **阶段状态**：W5 已达出口门禁，`verify-100` 最终 **100/100 全绿**，`RESULT=GREEN`，退出码 `0`。
