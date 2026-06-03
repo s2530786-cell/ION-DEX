@@ -1,6 +1,4 @@
-<p align="center">
-  <strong>English</strong> · <a href="./README.zh-CN.md">简体中文</a> · <a href="./README.es.md">Español</a> · <a href="./README.ar.md">العربية</a> · <a href="./README.ru.md">Русский</a>
-</p>
+**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [Español](./README.es.md) | [العربية](./README.ar.md) | [Русский](./README.ru.md)
 
 > This is not a typical DEX repository. It is the public front door of a long-horizon digital civilization.
 
