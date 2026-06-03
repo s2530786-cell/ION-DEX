@@ -67,7 +67,9 @@
 
 ## Executive Summary
 
-ION DEX begins with a concrete business foundation: **28-chain trading infrastructure, frictionless multi-chain payments, merchant-facing settlement rails, and a unified gateway into the ION ecosystem**.
+ION DEX starts with its clearest public business anchor: **a 28-chain decentralized exchange designed for liquidity access, routing, settlement, and frictionless multi-chain payment flow**.
+
+Around that DEX foundation, the platform is building merchant-facing settlement rails, developer integration surfaces, on-chain proof systems, ecosystem entry points, and future AI-enhanced operating layers. In other words, the DEX is the front door — but not the ceiling.
 
 That foundation is designed to serve more than traders. It is meant to attract **investors looking for platform-scale expansion**, **developers looking for a serious ecosystem to build into**, **merchants and e-commerce operators looking for better payment and settlement systems**, and **service providers looking for traffic, coordination, and new business entry points**.
 
