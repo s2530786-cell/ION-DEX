@@ -99,7 +99,7 @@ ION DEX is not only for traders. It is also positioning itself as an entry point
 Developers should be able to see a real reason to participate: APIs, contracts, SDKs, technical docs, ecosystem entry points, and a platform that is still expanding rather than freezing into a closed tool. This makes ION DEX more attractive to builders who want leverage, visibility, and technical depth instead of just another front-end integration task.
 
 ### 5. AI Flagship Layer
-AI is one of the platform’s flagship tracks, not a decorative extra. That includes AI-facing market analysis, intelligent operational layers, decision support, ecosystem coordination, and future AI-enhanced platform modules. The AI board is one of the major reasons ION DEX can grow beyond a conventional exchange and become a higher-order platform.
+AI is one of the platform’s flagship tracks, not a decorative extra. That includes AI-facing market analysis, intelligent operational layers, decision support, ecosystem coordination, future AI-enhanced platform modules, and self-evolving upgrade capacity. The AI board is one of the major reasons ION DEX can grow beyond a conventional exchange and become a higher-order platform.
 
 ### 6. Identity Infrastructure Across the Entire Ecosystem
 Official identity is another core pillar. ION Identity is meant to run across the full ecosystem rather than sit beside it as an isolated feature. Over time, identity is expected to connect users, merchants, developers, service providers, proof systems, reputation systems, and coordination logic into one continuous platform fabric. This is one of the strongest long-term differentiators because it gives the ecosystem memory, continuity, recognizability, and recoverable standing.
@@ -139,6 +139,8 @@ For investors, this creates a platform with multiple expansion surfaces instead 
 At the center of ION is a simple idea:
 
 **A digital civilization should be able to remember, identify, verify, judge, coordinate, and evolve.**
+
+That evolution is not only institutional — it is also computational. Over time, the platform is intended to support **AI self-evolution and upgrade capacity**, so that analysis, coordination, arbitration support, operational intelligence, and ecosystem logic can improve without reducing continuity across the wider system.
 
 ---
 
