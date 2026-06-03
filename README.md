@@ -28,12 +28,17 @@ A public front door for a system that begins with exchange infrastructure and gr
 
 ## Choose Your Entry
 
-| Role | Start Here | What You Likely Need |
-|------|------------|----------------------|
-| **Merchants** | `docs/merchant-onboarding.md` | payment access, settlement integration, commerce onboarding |
-| **Developers** | `docs/developer-index.md` | architecture, contracts, APIs, SDKs, quick start |
-| **Builders & Partners** | `docs/ecosystem-entry.md` | ecosystem coordination, collaboration, integration paths |
-| **Researchers & Community** | `docs/public-structure.md` | roadmap, whitepaper, proof, public structure |
+- **[Merchants](./docs/merchant-onboarding.md)**  
+  [Payment Access](./docs/payment-access.md), [Settlement Integration](./docs/settlement-integration.md), commerce onboarding
+
+- **[Developers](./docs/developer-index.md)**  
+  [API Overview](./docs/api-overview.md), [Contracts Overview](./docs/contracts-overview.md), [SDK Overview](./docs/sdk-overview.md), [Quick Start](./docs/quick-start.md)
+
+- **[Builders & Partners](./docs/ecosystem-entry.md)**  
+  Ecosystem coordination, collaboration, integration paths
+
+- **[Researchers & Community](./docs/public-structure.md)**  
+  [Roadmap Guide](./docs/roadmap-guide.md), [Whitepaper Index](./docs/whitepaper-index.md), proof, public structure
 
 ---
 
@@ -112,21 +117,18 @@ ION treats public trust as something that must be supported by verifiability, no
 
 ## Documentation Map
 
-| Layer | Purpose |
-|------|---------|
-| **README** | Public-facing entry point, strategic overview, brand identity |
-| **Whitepaper** | `docs/whitepaper-index.md` |
-| **Developer Entry** | `docs/developer-index.md` |
-| **Merchant Entry** | `docs/merchant-onboarding.md` |
-| **Public Structure** | `docs/public-structure.md` |
-| **Roadmap Guide** | `docs/roadmap-guide.md` |
-| **Ecosystem Entry** | `docs/ecosystem-entry.md` |
-| **API Overview** | `docs/api-overview.md` |
-| **Contracts Overview** | `docs/contracts-overview.md` |
-| **SDK Overview** | `docs/sdk-overview.md` |
-| **Quick Start** | `docs/quick-start.md` |
-| **Payment Access** | `docs/payment-access.md` |
-| **Settlement Integration** | `docs/settlement-integration.md` |
+- **[Whitepaper](./docs/whitepaper-index.md)** — deeper doctrine, reasoning, system synthesis
+- **[Developer Entry](./docs/developer-index.md)** — developer-facing entry point
+- **[Merchant Entry](./docs/merchant-onboarding.md)** — merchant-facing entry point
+- **[Public Structure](./docs/public-structure.md)** — public / structural / technical / staged boundary map
+- **[Roadmap Guide](./docs/roadmap-guide.md)** — staged long-horizon sequence
+- **[Ecosystem Entry](./docs/ecosystem-entry.md)** — partner and ecosystem coordination entry
+- **[API Overview](./docs/api-overview.md)** — API surface structure
+- **[Contracts Overview](./docs/contracts-overview.md)** — contract-facing system layer
+- **[SDK Overview](./docs/sdk-overview.md)** — SDK role and abstraction layer
+- **[Quick Start](./docs/quick-start.md)** — shortest credible technical entry
+- **[Payment Access](./docs/payment-access.md)** — visible payment-facing layer
+- **[Settlement Integration](./docs/settlement-integration.md)** — deeper settlement-facing layer
 
 ---
 
