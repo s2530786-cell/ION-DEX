@@ -1,7 +1,7 @@
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [Español](./README.es.md) | [العربية](./README.ar.md) | [Русский](./README.ru.md)
 
 <p align="center">
-  <img src="./assets/logo/ion-logo.png" alt="ION Logo" width="148" />
+  <img src="./assets/logo/ion-logo.png" alt="ION Logo" width="220" />
 </p>
 
 <h1 align="center">ION DEX</h1>
@@ -20,30 +20,38 @@
   This is not a typical DEX repository. It is the public front door of a long-horizon digital civilization.
 </p>
 
-<p align="center">
-  <a href="https://ice.io/">Website</a> ·
-  <a href="https://explorer.ice.io/">Explorer</a> ·
-  <a href="./docs">Documentation</a> ·
-  <a href="#choose-your-entry">Choose Your Entry</a> ·
-  <a href="#documentation-map">Docs Map</a>
-</p>
-
 > **Current Stage:** Building the infrastructure, memory, identity, proof, and payment foundations before the full civilization shell.
+
+---
+
+## Core Gateways
+
+- **[🌐 Official Website](https://ice.io/)**  
+  The sovereign narrative entry for the ION world, worldview, and public positioning.
+
+- **[🔎 Blockchain Explorer](https://explorer.ice.io/)**  
+  The sovereign proof surface for addresses, transactions, and on-chain verification.
+
+- **[📚 Documentation Hub](./docs)**  
+  The structured entry into technical docs, system maps, build context, and public materials.
+
+- **[📄 Whitepaper Index](./docs/whitepaper-index.md)**  
+  The deeper doctrine, long-horizon system reasoning, and civilization-scale synthesis.
 
 ---
 
 ## Choose Your Entry
 
-- **[Merchants](./docs/merchant-onboarding.md)**  
+- **[🛒 Merchants](./docs/merchant-onboarding.md)**  
   Direct access to [Payment Access](./docs/payment-access.md), [Settlement Integration](./docs/settlement-integration.md), and commerce onboarding.
 
-- **[Developers](./docs/developer-index.md)**  
+- **[🧑‍💻 Developers](./docs/developer-index.md)**  
   Start with [API Overview](./docs/api-overview.md), [Contracts Overview](./docs/contracts-overview.md), [SDK Overview](./docs/sdk-overview.md), and [Quick Start](./docs/quick-start.md).
 
-- **[Builders & Partners](./docs/ecosystem-entry.md)**  
+- **[🤝 Builders & Partners](./docs/ecosystem-entry.md)**  
   Enter through ecosystem coordination, collaboration, and integration pathways.
 
-- **[Researchers & Community](./docs/public-structure.md)**  
+- **[🛰️ Researchers & Community](./docs/public-structure.md)**  
   Go straight to [Roadmap Guide](./docs/roadmap-guide.md), [Whitepaper Index](./docs/whitepaper-index.md), and public structure context.
 
 ---
