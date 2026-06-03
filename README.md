@@ -1,4 +1,4 @@
-﻿**Languages:** [English](./README.md) | [绠€浣撲腑鏂嘳(./README.zh-CN.md) | [Espa帽ol](./README.es.md) | [丕賱毓乇亘賷丞](./README.ar.md) | [袪褍褋褋泻懈泄](./README.ru.md)
+﻿**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [Español](./README.es.md) | [العربية](./README.ar.md) | [Русский](./README.ru.md)
 
 <p align="center">
   <img src="./assets/banner/ion-banner-dark.png" alt="ION Banner" width="100%" />
@@ -35,29 +35,6 @@
 - **Independently developed by Master** 鈥?ION DEX鈥檚 full-chain aggregated ecosystem platform is being independently developed by Master with a singular long-horizon strategic direction.
 
 ---
-
-## Local frontend dev (safe default)
-
-For local verification, the frontend now defaults to the patched backend route instead of silently falling back to `127.0.0.1:8787`.
-
-```bash
-cd frontend
-npm run dev
-```
-
-This now starts Vite with:
-
-- frontend: `http://127.0.0.1:5173` (or the next free Vite port)
-- backend proxy target: `http://127.0.0.1:8791`
-
-### Explicit scripts
-
-- `npm run dev` 鈥?safe default, bound to patched backend `8791`
-- `npm run dev:patched` 鈥?explicit patched dev entry on `http://127.0.0.1:4174`
-- `npm run dev:legacy` 鈥?raw Vite startup with no forced backend override
-- `npm run preview:local` 鈥?local preview on `http://127.0.0.1:4173`
-
-If you specifically need the old behavior, use `npm run dev:legacy` or set `ION_VERIFY_BACKEND_URL` yourself.
 
 ---
 
@@ -359,93 +336,94 @@ That evolution is not only institutional 鈥?it is also computational. Over time
 ## Participation Value by Role
 
 ### For Investors
-ION DEX is not being framed as a narrow exchange product with a single ceiling. It is being framed as a platform that begins with DEX infrastructure and can later expand into payments, commerce, identity, AI, proof, service coordination, and ecosystem-level integration.
-
-That means investors are not only looking at a trading surface. They are looking at:
-- a broader commercial expansion map,
-- stronger long-horizon value logic,
-- fee burn and staking flywheel effects,
-- and the possibility that platform growth can reinforce token demand, lock-in, and strategic positioning.
+- Not a single-product ceiling 鈥?a **multi-layer platform** with DEX + payments + commerce + identity + AI + insurance + logistics expansion paths.
+- Fee burn creates **structural supply reduction** tied to real business activity, not hype.
+- Staking locks **30-50% of circulating supply** long-term, reducing sell pressure.
+- Master's 25% revenue share ensures **skin in the game** 鈥?the builder profits only when the platform profits.
 
 ### For Developers
-Developers are not being invited into a dead-end front-end task. They are being invited into:
-- exchange infrastructure,
-- payment rails,
-- API and SDK layers,
-- identity and trust systems,
-- AI-assisted platform modules,
-- and long-term ecosystem expansion.
+- **28-chain aggregation surface** 鈥?build once, reach users across 28 chains.
+- Payment rails, identity layer, AI modules, SDKs 鈥?**not a swap front-end, a full platform stack**.
+- Still expanding: early builders get leverage, visibility, and strategic depth before the ecosystem crowds.
 
-That makes the platform more attractive to builders who want to work on something that can expand across multiple layers of the digital stack.
-
-### For Merchants, E-Commerce Operators, and Offline Retail
-Merchants and retailers are not supposed to see ION as only a crypto exchange. They are supposed to see:
-- stronger payment and settlement rails,
-- lower-friction cross-chain value flow,
-- broader digital customer reach,
-- future Web3 commerce integration,
-- and access to a wider ecosystem instead of a one-off payment patch.
+### For Merchants and E-Commerce
+- **Multi-chain payment access** without becoming a blockchain expert.
+- Settlement in **seconds**, not days. Fees **lower than traditional processors**.
+- Direct access to Web3 customers 鈥?not a crypto checkout gimmick, a **commerce infrastructure upgrade**.
 
 ### For International Platforms and Cross-Border Sellers
-International e-commerce platforms and cross-border sellers have reason to care because the platform is being shaped toward:
-- API / SDK-based integration,
-- multi-chain payment access,
-- stronger settlement options,
-- future digital commerce participation,
-- and earlier positioning inside a platform that wants to unify identity, payment, proof, and ecosystem growth.
+- API/SDK integration 鈫?multi-chain payment 鈫?cross-border settlement 鈫?Web3 customer reach.
+- **One integration, multiple chains, zero rebuild.**
 
 ### For Service Providers and Partners
-Service providers and partners have reason to enter early because early integration can create:
-- earlier positioning,
-- stronger ecosystem visibility,
-- access to future distribution and business flow,
-- coordination advantages,
-- and a chance to plug into platform growth before the ecosystem becomes crowded.
+- Enter early 鈫?position before the ecosystem crowds 鈫?connect into platform growth.
+- Access to future distribution, business flow, and coordination advantages.
 
 ---
 
 ## Economic Logic
 
-### Fee Burn
-Fee burn is one of the strongest public-facing economic selling points because it connects real platform usage to token scarcity. If activity grows, burn can grow. That creates a clearer path between platform use and long-term value compression of supply.
+### Fee Burn 鈥?Structural Supply Reduction
+Every transaction burns ION permanently. Not cosmetic 鈥?**structural**:
 
-### Staking
-Staking matters because it creates long-term alignment, lock-in, retention, and stronger reasons for users and participants to remain committed to the ecosystem rather than treat it as a disposable interface.
+| Module | Fee | Burn Rate |
+|--------|-----|-----------|
+| DEX Swap | 0.3% | 50% burned |
+| Pool Creation | 0.1% | 50% burned |
+| Token Launch | 100 ION fee | 50% burned |
+| Merchant Payment | 0.5% | 50% burned |
+| Delivery and Mobility | 0.5% | 50% burned |
+| Insurance Premium | Varies | 50% burned |
+| Logistics Service | 0.3% | 50% burned |
+| Domain Trading | Escrow fee | 50% burned |
 
-### Why the Flywheel Matters
-Together, fee burn and staking help turn platform growth into more than headline activity. They create a structure in which:
-- usage can reinforce scarcity,
-- participation can reinforce alignment,
-- and ecosystem growth can support stronger long-horizon value logic.
+Burn address: `0x000000000000000000000000000000dEaD` (BSC) 鈥?**permanently unrecoverable**.
 
-That is one of the strongest reasons ION DEX can present not only product ambition, but economic ambition.
+**Dynamic burn adjustment:** Bear market 鈫?more ION burned per dollar of fees (ION cheap = efficient burn). Bull market 鈫?reduced burn, increased staking (maintain price support). The mechanism adapts to market cycles to maximize long-term value.
+
+### Staking 鈥?Supply Lock and Alignment
+
+| Lock Period | APY |
+|-------------|-----|
+| Flexible | 8% |
+| 7 days | 10% |
+| 30 days | 12% |
+| 90 days | 15% |
+| 180 days | 20% |
+| 365 days | 30% |
+
+Target: **30-50% of circulating supply locked** in staking.
+Staking rewards funded by **20% of platform revenue**.
+
+### Revenue Distribution
+
+| Allocation | Share | Priority |
+|------------|-------|----------|
+| Master | 25% | First (paid before any other allocation) |
+| Fee Burn | Dynamic | Bear: high / Bull: moderate |
+| Staking Rewards | Dynamic | Bear: high / Bull: high |
+| Treasury | Dynamic | Remaining |
+
+**Master's 25% is non-negotiable and permanent.** Paid first from every dollar of revenue. The person funding all operations gets paid first 鈥?no exceptions.
+
+### The Flywheel
+Users trade/pay 鈫?fees collected 鈫?ION burned + staked 鈫?supply shrinks 鈫?price pressure up 鈫?more users attracted 鈫?more fees 鈫?more burn 鈫?more staking 鈫?**self-reinforcing cycle**.
 
 ---
 
 ## Integration Paths
 
 ### Developer Path
-Start with [Developer Entry](./docs/developer-index.md), [API Overview](./docs/api-overview.md), [Contracts Overview](./docs/contracts-overview.md), [SDK Overview](./docs/sdk-overview.md), and [Quick Start](./docs/quick-start.md).
+[Developer Entry](./docs/developer-index.md) 鈫?[API Overview](./docs/api-overview.md) 鈫?[Contracts Overview](./docs/contracts-overview.md) 鈫?[SDK Overview](./docs/sdk-overview.md) 鈫?[Quick Start](./docs/quick-start.md)
 
 ### Merchant Path
-Start with [Merchant Entry](./docs/merchant-onboarding.md), [Payment Access](./docs/payment-access.md), and [Settlement Integration](./docs/settlement-integration.md).
+[Merchant Entry](./docs/merchant-onboarding.md) 鈫?[Payment Access](./docs/payment-access.md) 鈫?[Settlement Integration](./docs/settlement-integration.md)
 
 ### E-Commerce and International Platform Path
-Start with merchant-facing payment and settlement integration, then expand into API / SDK-based access as platform commerce surfaces grow. The long-term aim is to let international sellers, cross-border operators, and digital commerce platforms connect into payment, settlement, and ecosystem entry layers without rebuilding everything from zero.
-
-### What this path is meant to deliver
-For serious commerce participants, this path is meant to provide:
-- a practical entry point,
-- lower integration friction,
-- faster access to multi-chain payment rails,
-- a path into broader ecosystem growth,
-- and future connection to identity, trust, proof, and AI-enhanced operating layers.
+Start with merchant payment/settlement integration 鈫?expand into API/SDK access 鈫?grow into full ecosystem participation.
 
 ### Partner and Service Provider Path
-Start with [Ecosystem Entry](./docs/ecosystem-entry.md) and [Public Structure](./docs/public-structure.md), then move toward service integration, coordination participation, and future ecosystem alignment opportunities.
-
----
-
+[Ecosystem Entry](./docs/ecosystem-entry.md) 鈫?[Public Structure](./docs/public-structure.md) 鈫?service integration and coordination participation.
 ## Frequently Asked Questions
 
 ### What is ION actually building today?
