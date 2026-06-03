@@ -6,14 +6,23 @@
 
 <h1 align="center">ION DEX</h1>
 
-<p align="center"><strong>The Operating System for a Super Digital Civilization</strong></p>
+<p align="center"><strong>28-chain trading, frictionless multi-chain payments, and a unified gateway into the ION ecosystem.</strong></p>
 
 <p align="center">
-  <strong>Multi-chain aggregation</strong> ·
-  <strong>Frictionless payments</strong> ·
-  <strong>Unified identity</strong> ·
-  <strong>Verifiable history</strong> ·
-  <strong>Civilization-scale coordination</strong>
+  ION DEX begins as a multi-chain exchange and payment infrastructure layer, then expands into merchant access, developer integration, on-chain proof, ecosystem coordination, and long-horizon digital civilization systems.
+</p>
+
+<p align="center">
+  It is designed for users who need trading, payments, routing, and settlement across chains without fragmented experiences — and for builders who need one platform to enter the ION ecosystem through clear technical, commercial, and public gateways.
+</p>
+
+<p align="center">
+  <strong>28-chain reach</strong> ·
+  <strong>frictionless payments</strong> ·
+  <strong>merchant onboarding</strong> ·
+  <strong>developer integration</strong> ·
+  <strong>on-chain proof</strong> ·
+  <strong>ecosystem entry</strong>
 </p>
 
 <p align="center">
