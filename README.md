@@ -4,32 +4,34 @@
   <img src="./assets/banner/ion-banner-dark.png" alt="ION Banner" width="100%" />
 </p>
 
-<h1 align="center">ION DEX</h1>
+<p align="center"><strong>This is not a typical DEX repository. It is the public front door of a long-horizon digital civilization.</strong></p>
 
-<p align="center"><strong>28-chain trading, frictionless multi-chain payments, and a unified gateway into the ION ecosystem.</strong></p>
+<h1 align="center">ION — The Operating System for a Super Digital Civilization</h1>
 
-<p align="center">
-  ION DEX begins as a multi-chain exchange and payment infrastructure layer, then expands into merchant access, developer integration, on-chain proof, ecosystem coordination, and long-horizon digital civilization systems.
-</p>
+<p align="center"><strong>Multi-chain aggregation. Frictionless payments. Unified identity. Verifiable history. Reputation, arbitration, coordination, self-evolution, and AI sentinel defense — designed as one long-horizon civilization stack.</strong></p>
 
-<p align="center">
-  It is designed for users who need trading, payments, routing, and settlement across chains without fragmented experiences — and for builders who need one platform to enter the ION ecosystem through clear technical, commercial, and public gateways.
-</p>
+<p align="center"><strong>A public front door for a system that begins with exchange infrastructure and grows into a durable digital civilization layer by layer.</strong></p>
 
 <p align="center">
-  <strong>28-chain reach</strong> ·
-  <strong>frictionless payments</strong> ·
-  <strong>merchant onboarding</strong> ·
-  <strong>developer integration</strong> ·
-  <strong>on-chain proof</strong> ·
-  <strong>ecosystem entry</strong>
-</p>
-
-<p align="center">
-  This is not a typical DEX repository. It is the public front door of a long-horizon digital civilization.
+  <a href="https://ice.io/">Website</a> ·
+  <a href="https://explorer.ice.io/">Explorer</a> ·
+  <a href="./docs">Documentation</a> ·
+  <a href="#civilization-core">Architecture</a> ·
+  <a href="#long-horizon-roadmap">Roadmap</a>
 </p>
 
 > **Current Stage:** Building the infrastructure, memory, identity, proof, and payment foundations before the full civilization shell.
+
+---
+
+## Core Selling Points
+
+- **28-chain decentralized exchange** — a multi-chain trading surface built around liquidity access, routing, settlement, and a stronger user-facing trading experience.
+- **Frictionless multi-chain payments** — payment complexity moves into the infrastructure layer so users, merchants, and platforms can transact with less fragmentation.
+- **Official identity across the full ecosystem** — ION Identity is meant to connect users, merchants, developers, service providers, proof, reputation, and coordination into one continuous ecosystem fabric.
+- **AI flagship capability stack** — AI analysis, AI-assisted arbitration, AI sentinel defense, AI-enhanced coordination, and AI self-evolutionary upgrade capacity are part of the platform’s long-term architecture.
+- **Fee burn, staking, and long-term value flywheel** — platform usage is designed to support token scarcity, lock-in effects, ecosystem alignment, and long-horizon value capture.
+- **API and SDK integration surface** — merchants, e-commerce platforms, service providers, and developers are expected to connect through direct integration pathways, not just passive observation.
 
 ---
 
@@ -196,6 +198,55 @@ ION treats public trust as something that must be supported by verifiability, no
 - **[Quick Start](./docs/quick-start.md)** — shortest credible technical entry
 - **[Payment Access](./docs/payment-access.md)** — visible payment-facing layer
 - **[Settlement Integration](./docs/settlement-integration.md)** — deeper settlement-facing layer
+
+---
+
+## Frequently Asked Questions
+
+### What is ION actually building today?
+ION is currently building around a **28-chain decentralized exchange foundation**: liquidity access, routing, settlement, and frictionless multi-chain payment rails. The DEX is the first live business anchor, not the final boundary of the platform.
+
+### Why is ION more than a normal DEX?
+A normal DEX stops at trading. ION uses DEX infrastructure as the first visible layer, then expands into payments, identity, proof, reputation, AI-assisted arbitration, AI sentinel defense, ecosystem coordination, and long-horizon platform evolution.
+
+### What does 28-chain infrastructure mean in practice?
+It means the platform is designed to reduce fragmented chain experience by giving users, merchants, and builders a stronger unified surface for trading, routing, settlement, and future payment and service flows.
+
+### What is frictionless multi-chain payment flow?
+It means payment complexity is pushed downward into the infrastructure layer, so the user-facing experience can become simpler while routing, settlement, and chain-level friction are handled in the background.
+
+### Why launch the DEX first?
+Because the DEX is the first revenue, liquidity, settlement, and trust anchor. It creates the commercial and technical base that later business lines can grow on top of instead of pretending that every future module is already live.
+
+### What business areas can expand after the DEX?
+Merchant payments, international and cross-border e-commerce, offline retail integration, service-provider access, API/SDK integration surfaces, AI flagship modules, identity and proof systems, arbitration, ecosystem coordination, and wider real-world service participation.
+
+### Why should developers build here?
+Because ION is not just a front-end exchange surface. It is a growing platform with APIs, contracts, SDKs, ecosystem entry points, identity and trust layers, AI modules, and long-horizon expansion space.
+
+### Why should merchants, e-commerce operators, and offline retailers care?
+Because the platform is designed to offer multi-chain payment access, easier settlement rails, future Web3 commerce integration, broader digital user reach, and a path into a larger ecosystem rather than a one-off payment plugin.
+
+### Why should international e-commerce platforms or large sellers connect?
+Because a direct API/SDK integration path can let them plug into multi-chain payment and settlement capabilities, future Web3 commerce flows, broader digital customer access, and a long-term ecosystem with stronger growth and coordination potential.
+
+### Why should service providers and partners enter early?
+Because they can integrate before the ecosystem becomes crowded, gain earlier positioning, connect services into a broader commercial network, and benefit from platform growth, distribution, and expanding business surfaces.
+
+### Why do fee burn and staking matter?
+Because they are not cosmetic tokenomics. They are core selling points that connect platform usage to scarcity, lock-in, ecosystem alignment, long-term participation, and the economic logic behind stronger value capture.
+
+### Why do AI, AI arbitration, AI sentinel defense, and AI self-evolution matter?
+Because they push the platform beyond being a normal trading venue. They introduce intelligence, structured dispute handling, defense, adaptation, and long-term upgrade capacity into the ecosystem itself.
+
+### Why does official identity matter so much?
+Because official ecosystem identity is intended to run across users, merchants, developers, service providers, proof systems, reputation, and coordination. It gives the platform continuity, recognizability, memory, and a stronger long-term operating fabric.
+
+### If I want to participate now, where do I start?
+- **Investors / observers** → start with the [Whitepaper](./docs/whitepaper-index.md), [Roadmap Guide](./docs/roadmap-guide.md), [Public Structure](./docs/public-structure.md), and [Explorer](https://explorer.ice.io/)
+- **Developers** → start with [Developer Entry](./docs/developer-index.md), [API Overview](./docs/api-overview.md), [Contracts Overview](./docs/contracts-overview.md), [SDK Overview](./docs/sdk-overview.md), and [Quick Start](./docs/quick-start.md)
+- **Merchants / e-commerce / retail** → start with [Merchant Entry](./docs/merchant-onboarding.md), [Payment Access](./docs/payment-access.md), and [Settlement Integration](./docs/settlement-integration.md)
+- **Partners / service providers** → start with [Ecosystem Entry](./docs/ecosystem-entry.md) and [Public Structure](./docs/public-structure.md)
 
 ---
 
