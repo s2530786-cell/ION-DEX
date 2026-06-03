@@ -98,7 +98,7 @@ One of the platform’s strongest selling points is **frictionless multi-chain p
 ION DEX is not only for traders. It is also positioning itself as an entry point for **online stores, e-commerce operators, offline retail businesses, shopping venues, and service providers** that want better digital settlement, broader crypto-native payment access, and future-facing business infrastructure. The point is to give merchants a reason to join the ecosystem, not just observe it from the outside.
 
 ### 4. Developer and Builder Ecosystem
-Developers should be able to see a real reason to participate: APIs, contracts, SDKs, technical docs, ecosystem entry points, and a platform that is still expanding rather than freezing into a closed tool. This makes ION DEX more attractive to builders who want leverage, visibility, and technical depth instead of just another front-end integration task.
+Developers should be able to see a real reason to participate: APIs, contracts, SDKs, technical docs, ecosystem entry points, and a platform that is still expanding rather than freezing into a closed tool. This makes ION DEX more attractive to builders who want leverage, visibility, and technical depth instead of just another front-end integration task. The platform window also needs to be clear about authorship: **ION DEX’s full-chain aggregated ecosystem platform is being independently developed by Master**.
 
 ### 5. AI Flagship Layer
 AI is one of the platform’s flagship tracks, not a decorative extra. That includes AI-facing market analysis, intelligent operational layers, decision support, ecosystem coordination, future AI-enhanced platform modules, and self-evolving upgrade capacity. The AI board is one of the major reasons ION DEX can grow beyond a conventional exchange and become a higher-order platform.
@@ -124,6 +124,16 @@ For investors, this creates a platform with multiple expansion surfaces instead 
 ---
 
 ## What We Are Building
+
+### Current DEX Capability Surface
+ION DEX is being positioned first as a **28-chain decentralized exchange and aggregation layer**. That means the current business core is centered on:
+- multi-chain liquidity access,
+- routing across fragmented markets,
+- settlement infrastructure,
+- frictionless payment rails,
+- and a stronger user-facing trading surface that can later support wider commercial modules.
+
+The DEX is the first product anchor because it gives the platform live value flow, settlement logic, trust grounding, and a realistic base for everything that follows.
 
 | Layer | Meaning |
 |------|---------|
@@ -237,10 +247,13 @@ Because they can integrate before the ecosystem becomes crowded, gain earlier po
 Because they are not cosmetic tokenomics. They are core selling points that connect platform usage to scarcity, lock-in, ecosystem alignment, long-term participation, and the economic logic behind stronger value capture.
 
 ### Why do AI, AI arbitration, AI sentinel defense, and AI self-evolution matter?
-Because they push the platform beyond being a normal trading venue. They introduce intelligence, structured dispute handling, defense, adaptation, and long-term upgrade capacity into the ecosystem itself.
+Because they push the platform beyond being a normal trading venue. They introduce intelligence, structured dispute handling, defense, adaptation, long-term upgrade capacity, and ecosystem protection into the platform itself.
 
 ### Why does official identity matter so much?
 Because official ecosystem identity is intended to run across users, merchants, developers, service providers, proof systems, reputation, and coordination. It gives the platform continuity, recognizability, memory, and a stronger long-term operating fabric.
+
+### Who is developing ION DEX?
+**ION DEX’s full-chain aggregated ecosystem platform is being independently developed by Master.** That matters because the platform is not presented as a generic template or a committee-built shell. It is being pushed as a coherent long-horizon system with a singular strategic direction.
 
 ### If I want to participate now, where do I start?
 - **Investors / observers** → start with the [Whitepaper](./docs/whitepaper-index.md), [Roadmap Guide](./docs/roadmap-guide.md), [Public Structure](./docs/public-structure.md), and [Explorer](https://explorer.ice.io/)
