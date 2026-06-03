@@ -1,25 +1,31 @@
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [Español](./README.es.md) | [العربية](./README.ar.md) | [Русский](./README.ru.md)
 
-> This is not a typical DEX repository. It is the public front door of a long-horizon digital civilization.
-
-<!-- Banner asset pending: ./assets/banner/ion-banner-dark.png -->
-
 <p align="center">
-  <img src="./assets/logo/ion-logo.png" alt="ION Logo" width="96" />
+  <img src="./assets/logo/ion-logo.png" alt="ION Logo" width="148" />
 </p>
 
-# ION — The Operating System for a Super Digital Civilization
+<h1 align="center">ION DEX</h1>
 
-**Multi-chain aggregation. Frictionless payments. Unified identity. Verifiable history. Reputation, arbitration, coordination, and self-evolution — designed as one long-horizon civilization stack.**
+<p align="center"><strong>The Operating System for a Super Digital Civilization</strong></p>
 
-A public front door for a system that begins with exchange infrastructure and grows into a durable digital civilization layer by layer.
+<p align="center">
+  <strong>Multi-chain aggregation</strong> ·
+  <strong>Frictionless payments</strong> ·
+  <strong>Unified identity</strong> ·
+  <strong>Verifiable history</strong> ·
+  <strong>Civilization-scale coordination</strong>
+</p>
+
+<p align="center">
+  This is not a typical DEX repository. It is the public front door of a long-horizon digital civilization.
+</p>
 
 <p align="center">
   <a href="https://ice.io/">Website</a> ·
   <a href="https://explorer.ice.io/">Explorer</a> ·
   <a href="./docs">Documentation</a> ·
-  <a href="#civilization-core">Architecture</a> ·
-  <a href="#long-horizon-roadmap">Roadmap</a>
+  <a href="#choose-your-entry">Choose Your Entry</a> ·
+  <a href="#documentation-map">Docs Map</a>
 </p>
 
 > **Current Stage:** Building the infrastructure, memory, identity, proof, and payment foundations before the full civilization shell.
@@ -29,16 +35,16 @@ A public front door for a system that begins with exchange infrastructure and gr
 ## Choose Your Entry
 
 - **[Merchants](./docs/merchant-onboarding.md)**  
-  [Payment Access](./docs/payment-access.md), [Settlement Integration](./docs/settlement-integration.md), commerce onboarding
+  Direct access to [Payment Access](./docs/payment-access.md), [Settlement Integration](./docs/settlement-integration.md), and commerce onboarding.
 
 - **[Developers](./docs/developer-index.md)**  
-  [API Overview](./docs/api-overview.md), [Contracts Overview](./docs/contracts-overview.md), [SDK Overview](./docs/sdk-overview.md), [Quick Start](./docs/quick-start.md)
+  Start with [API Overview](./docs/api-overview.md), [Contracts Overview](./docs/contracts-overview.md), [SDK Overview](./docs/sdk-overview.md), and [Quick Start](./docs/quick-start.md).
 
 - **[Builders & Partners](./docs/ecosystem-entry.md)**  
-  Ecosystem coordination, collaboration, integration paths
+  Enter through ecosystem coordination, collaboration, and integration pathways.
 
 - **[Researchers & Community](./docs/public-structure.md)**  
-  [Roadmap Guide](./docs/roadmap-guide.md), [Whitepaper Index](./docs/whitepaper-index.md), proof, public structure
+  Go straight to [Roadmap Guide](./docs/roadmap-guide.md), [Whitepaper Index](./docs/whitepaper-index.md), and public structure context.
 
 ---
 
