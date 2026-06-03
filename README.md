@@ -101,6 +101,44 @@ That is why the DEX comes first. It is not a side module. It is the first produc
 ### What makes this DEX strategically different
 The DEX is not being framed as an isolated trading interface. It is being framed as the **unified value-flow entrance** for the broader platform. That means liquidity, routing, settlement, and payments are not dead-end functions — they are the first rails on which merchant payments, e-commerce access, service integration, identity continuity, proof, arbitration, and future ecosystem coordination can later run.
 
+### Payment Infrastructure Layer
+
+The DEX is only the first visible layer. Underneath, ION is building a **payment infrastructure designed for mass adoption**:
+
+- **Frictionless payments** — payment complexity is pushed into the infrastructure layer. Users, merchants, and platforms can transact without managing chain-level friction.
+- **ION backend fee routing** — platform fees are collected and routed through ION-based settlement logic, not patched on as an afterthought.
+- **Flakes fine-grained payments** — 1 ION = 1,000,000,000 flakes (9 decimals). Designed for micro-transactions, high-frequency flows, and future mass-payment scenarios where full ION units are too coarse.
+- **Targeting 1,000,000+ TPS** — ION's architecture is designed to scale toward million-TPS throughput, making it viable for global payment volume rather than niche trading only.
+- **Sub-second settlement** — payment confirmation and settlement are designed to complete in seconds, not minutes or hours, enabling real-time commerce and service flows.
+- **Global seamless access** — the platform is designed so that ordinary users anywhere can plug into payment and settlement rails without needing deep blockchain expertise.
+
+This payment layer is what makes the DEX more than a trading terminal. It becomes a **live settlement rail** for future commerce, services, and real-world business activity.
+
+### DEX Trading Capabilities
+
+The DEX is built to support **real trading workflows**, not just basic swaps:
+
+- **Spot trading** — direct token-to-token swaps across 28 chains, with liquidity aggregation and intelligent routing.
+- **Grid trading** — automated buy-low, sell-high strategies that run continuously without manual intervention. Users can set grid parameters and let the system execute across volatility.
+- **Professional trading interface** — designed for users who need more than simple swaps: order book depth, price charts, advanced order types, and execution analytics.
+- **Liquidity provision** — users can provide liquidity to pools and earn fees from trading activity, with multi-chain exposure management.
+- **Routing optimization** — the platform routes orders across multiple liquidity sources to improve execution price and reduce slippage.
+
+These capabilities make the DEX a **real trading engine** rather than a basic swap front-end.
+
+### Future Ecosystem High-Value Business
+
+The DEX and payment layer are the foundation. On top of that, the platform is designed to expand into **high-value real-world business modules**:
+
+- **RWA (Real-World Assets)** — tokenized real-world assets (real estate, commodities, securities) traded and settled on-chain through ION infrastructure.
+- **Delivery and mobility** — food delivery, ride-hailing, and local service coordination using ION payment and settlement rails.
+- **Domain trading** — on-chain domain name marketplace with ION-based bidding, escrow, and transfer.
+- **Insurance** — parametric insurance products (flight delay, weather, event cancellation) with oracle-fed triggers and automated claim payouts.
+- **Logistics** — supply chain tracking, proof of delivery, and freight coordination with on-chain settlement and escrow.
+- **Service marketplace** — professional services, gig work, and B2B coordination with reputation, escrow, and dispute resolution.
+
+Each of these modules is designed to plug into the same payment, identity, proof, and trust layer — so ecosystem activity reinforces platform value rather than fragmenting into isolated silos.
+
 ---
 
 ## Future Business Expansion
