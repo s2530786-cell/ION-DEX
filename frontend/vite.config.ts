@@ -5,13 +5,13 @@ import { defineConfig } from "vite";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig(() => {
-  const verifyBackendTarget =
-    process.env.ION_VERIFY_BACKEND_URL?.trim() || "http://127.0.0.1:8787";
+const verifyBackendTarget =
+  process.env.ION_VERIFY_BACKEND_URL?.trim() || "http://127.0.0.1:8787";
 
-  return {
+export default defineConfig({
   plugins: [react()],
   server: {
+    host: "127.0.0.1",
     port: 3000,
     proxy: {
       "/api": {
@@ -21,6 +21,7 @@ export default defineConfig(() => {
     },
   },
   preview: {
+    host: "127.0.0.1",
     proxy: {
       "/api": {
         target: verifyBackendTarget,
@@ -33,5 +34,4 @@ export default defineConfig(() => {
       "@": path.resolve(rootDir, "src"),
     },
   },
-  };
 });

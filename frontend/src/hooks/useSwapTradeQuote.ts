@@ -92,13 +92,14 @@ export function useSwapTradeQuote(params: SwapTradeQuoteParams) {
     }
 
     const controller = new AbortController();
+    const requestSignal = controller.signal;
     const timeout = window.setTimeout(() => controller.abort(), 15_000);
     let cancelled = false;
 
     setState("loading");
     setError(null);
 
-    fetchTradeQuote(request, controller.signal)
+    fetchTradeQuote(request, requestSignal)
       .then((response) => {
         if (cancelled) {
           return;
@@ -111,13 +112,17 @@ export function useSwapTradeQuote(params: SwapTradeQuoteParams) {
         if (cancelled) {
           return;
         }
+        if (cause instanceof DOMException && cause.name === "AbortError") {
+          return;
+        }
         setData(emptyQuote);
         setMeta(null);
         setState("error");
         setError(cause instanceof Error ? cause.message : "Quote request failed");
       })
-      .finally(() => window.clearTimeout(timeout));
-
+      .finally(() => {
+        window.clearTimeout(timeout);
+      });
     return () => {
       cancelled = true;
       window.clearTimeout(timeout);
