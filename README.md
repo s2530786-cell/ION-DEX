@@ -1,7 +1,7 @@
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [Español](./README.es.md) | [العربية](./README.ar.md) | [Русский](./README.ru.md)
 
 <p align="center">
-  <img src="./assets/logo/ion-logo.png" alt="ION Logo" width="220" />
+  <img src="./assets/banner/ion-banner-dark.png" alt="ION Banner" width="100%" />
 </p>
 
 <h1 align="center">ION DEX</h1>
