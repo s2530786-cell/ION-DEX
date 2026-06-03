@@ -104,8 +104,8 @@ AI is one of the platform’s flagship tracks, not a decorative extra. That incl
 ### 6. Identity Infrastructure Across the Entire Ecosystem
 Official identity is another core pillar. ION Identity is meant to run across the full ecosystem rather than sit beside it as an isolated feature. Over time, identity is expected to connect users, merchants, developers, service providers, proof systems, reputation systems, and coordination logic into one continuous platform fabric. This is one of the strongest long-term differentiators because it gives the ecosystem memory, continuity, recognizability, and recoverable standing.
 
-### 7. Identity, Proof, and Trust Infrastructure
-Another major expansion path is the combination of **identity, proof, reputation, verification, and trust systems**. This is important for users, merchants, partners, and developers alike, because a serious platform cannot depend only on transactions — it must also build memory, proof, accountability, and recognizable standing across its ecosystem.
+### 7. Identity, Proof, Trust, and AI Arbitration
+Another major expansion path is the combination of **identity, proof, reputation, verification, trust systems, and AI-assisted arbitration**. This is important for users, merchants, partners, and developers alike, because a serious platform cannot depend only on transactions — it must also build memory, proof, accountability, recognizable standing, and structured dispute handling across its ecosystem.
 
 ### 8. Ecosystem Coordination and Service Integration
 Over time, ION DEX is meant to become more than a trading or payment venue. It is being shaped as a coordination layer for merchants, partners, developers, service providers, and real-world business flows. That includes stronger public structure, clearer access paths, and future ecosystem flywheel effects across digital and real-world services.
@@ -128,7 +128,7 @@ For investors, this creates a platform with multiple expansion surfaces instead 
 | **Infrastructure Layer** | DEX infrastructure, liquidity, routing, settlement, treasury, burn, staking primitives |
 | **Payment Layer** | Frictionless payments, stablecoin-facing frontend, ION-integrated backend routing, fine-grained monetary expression |
 | **Civil Layer** | Unified identity, official ecosystem ID continuity, reputation, civil standing, historical continuity |
-| **Review & Trust Layer** | Immutable proof, explorer verification, arbitration, appeal, recovery |
+| **Review & Trust Layer** | Immutable proof, explorer verification, AI-assisted arbitration, appeal, recovery |
 | **Coordination Layer** | Commerce, delivery, mobility, logistics, insurance, retail, cross-border services |
 | **Evolution Layer** | Self-evolving system structure, AI-enhanced operations, error memory, rule refinement, continuity-preserving adaptation |
 
