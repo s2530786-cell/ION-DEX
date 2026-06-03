@@ -111,6 +111,17 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
   });
 
+  test("boot splash renders upgraded ION DEX brand overlays before skip", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const splash = page.getByTestId("boot-splash-screen");
+    await expect(splash).toBeVisible();
+    await expect(page.getByText("Galaxy liquidity gateway", { exact: true })).toBeVisible();
+    await expect(page.getByText("点击跳过", { exact: true })).toBeVisible();
+    await expect(page.getByText(/CYBER AURORA|NEBULA MATRIX|GALAXY SPIRAL/).first()).toBeVisible();
+    await dismissBootSplashIfPresent(page);
+    await expect(page.getByTestId("main-content")).toBeVisible({ timeout: 30_000 });
+  });
+
   test("wallet shell connects via official ION extension provider mock", async ({ page }) => {
     await page.addInitScript(() => {
       const mockAddress = "EQCTestWalletAddressForE2eSmokeOnlyxxxxxxxxxx";

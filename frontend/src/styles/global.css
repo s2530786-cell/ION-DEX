@@ -300,6 +300,81 @@ select {
   html[data-ion-e2e-stable="1"] button:active {
     transform: none !important;
   }
+
+  .boot-horizon-grid {
+    position: relative;
+    height: 14rem;
+    border-top: 1px solid rgba(0, 255, 255, 0.26);
+    background:
+      linear-gradient(180deg, rgba(0, 255, 255, 0.12), transparent 28%),
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 255, 255, 0.16) 0,
+        rgba(0, 255, 255, 0.16) 1px,
+        transparent 1px,
+        transparent 74px
+      ),
+      repeating-linear-gradient(
+        180deg,
+        rgba(96, 32, 255, 0.22) 0,
+        rgba(96, 32, 255, 0.22) 1px,
+        transparent 1px,
+        transparent 38px
+      );
+    clip-path: polygon(0 100%, 100% 100%, 63% 20%, 37% 20%);
+    opacity: 0.72;
+    filter: drop-shadow(0 0 18px rgba(0, 255, 255, 0.22));
+  }
+
+  .boot-horizon-grid::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(0, 255, 255, 0.24), transparent 44%);
+  }
+
+  .boot-brand-chip,
+  .boot-fallback-shell {
+    isolation: isolate;
+  }
+
+  .boot-fallback-nebula {
+    background:
+      radial-gradient(circle at 50% 20%, rgba(0, 255, 255, 0.18), transparent 28%),
+      radial-gradient(circle at 78% 24%, rgba(255, 0, 255, 0.16), transparent 32%),
+      radial-gradient(circle at 20% 78%, rgba(96, 32, 255, 0.22), transparent 36%),
+      linear-gradient(180deg, rgba(5, 10, 28, 0.18), rgba(3, 8, 24, 0.72));
+  }
+
+  .boot-fallback-grid {
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(0, 255, 255, 0.12) 100%),
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 255, 255, 0.2) 0,
+        rgba(0, 255, 255, 0.2) 1px,
+        transparent 1px,
+        transparent 46px
+      ),
+      repeating-linear-gradient(
+        180deg,
+        rgba(141, 77, 255, 0.22) 0,
+        rgba(141, 77, 255, 0.22) 1px,
+        transparent 1px,
+        transparent 24px
+      );
+    clip-path: polygon(0 100%, 100% 100%, 72% 0, 28% 0);
+    opacity: 0.62;
+  }
+
+  .boot-fallback-orb {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8), rgba(0, 255, 255, 0.2) 32%, rgba(255, 0, 255, 0.08) 54%, transparent 72%);
+    box-shadow:
+      0 0 26px rgba(0, 255, 255, 0.3),
+      0 0 80px rgba(96, 32, 255, 0.18);
+    filter: blur(1px);
+  }
 }
 
 /* ========== Keyframe Animations ========== */

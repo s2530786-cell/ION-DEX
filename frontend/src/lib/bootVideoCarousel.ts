@@ -120,7 +120,7 @@ function readLastIndex(): number {
 
   try {
 
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
 
     if (raw == null) return -1;
 
@@ -142,7 +142,7 @@ function writeIndex(index: number): void {
 
   try {
 
-    sessionStorage.setItem(STORAGE_KEY, String(index));
+    localStorage.setItem(STORAGE_KEY, String(index));
 
   } catch {
 

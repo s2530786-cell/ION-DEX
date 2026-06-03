@@ -8,6 +8,8 @@ const SELECTOR_TOKEN1 = "0xd21220c7";
 const SELECTOR_SLOT0 = "0x3850c7bd";
 const WBNB_BSC = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c";
 const Q96 = 2n ** 96n;
+const WBNB_DECIMALS = 18;
+const ION_DECIMALS = 9;
 
 function decodeAddress(slotHex: string): string {
   return `0x${slotHex.slice(-40).toLowerCase()}`;
@@ -74,6 +76,10 @@ function sqrtPriceX96ToToken1PerToken0(sqrtPriceX96: bigint): number {
   return sqrt * sqrt;
 }
 
+function applyDecimalScale(price: number, token0Decimals: number, token1Decimals: number): number {
+  return price * 10 ** (token0Decimals - token1Decimals);
+}
+
 /** WBNB needed to buy 1 ION (from official LP). Supports Pancake V2 reserves or V3 slot0. */
 export async function fetchPancakeIonWbnbPrice(
   config: ServerConfig,
@@ -92,15 +98,16 @@ export async function fetchPancakeIonWbnbPrice(
     ]);
     const token0 = decodeAddress(token0Hex.slice(2));
     const sqrtPriceX96 = BigInt(`0x${slot0Hex.slice(2, 66)}`);
-    const token1PerToken0 = sqrtPriceX96ToToken1PerToken0(sqrtPriceX96);
+    const rawToken1PerToken0 = sqrtPriceX96ToToken1PerToken0(sqrtPriceX96);
     const ionLower = BSC_ION_TOKEN.toLowerCase();
     const wbnbLower = WBNB_BSC.toLowerCase();
 
     if (token0 === wbnbLower) {
-      return token1PerToken0;
+      const ionPerWbnb = applyDecimalScale(rawToken1PerToken0, WBNB_DECIMALS, ION_DECIMALS);
+      return 1 / ionPerWbnb;
     }
     if (token0 === ionLower) {
-      return 1 / token1PerToken0;
+      return applyDecimalScale(rawToken1PerToken0, ION_DECIMALS, WBNB_DECIMALS);
     }
     throw new Error("Official Pancake pool token0 is neither WBNB nor ION.");
   }

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SplashScreen } from "@/components/layout/SplashScreen";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
 import { PageContent } from "@/components/layout/PageContent";
-import { RiskModal } from "@/components/compliance/RiskModal";
+
 import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
 import { BusinessPage, type BusinessPageKey } from "@/pages/BusinessPages";
 import { DashboardPage } from "@/pages/DashboardPage";
@@ -78,19 +78,8 @@ function PageRouter({
   }
 }
 
-const MODAL_STORAGE_KEY = "ion-dex-risk-ack-v1";
-
-function riskAccepted(): boolean {
-  try {
-    return window.localStorage.getItem(MODAL_STORAGE_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
 export function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const [showRisk, setShowRisk] = useState(() => !riskAccepted());
   const [activePage, setActivePage] = useState<PageKey>(() => pageKeyFromHash());
 
   const navigate = useCallback((page: PageKey) => {
@@ -110,7 +99,6 @@ export function App() {
         <SplashScreen onFinish={() => setShowSplash(false)} />
       ) : (
         <div className="flex min-h-0 flex-1 flex-col">
-          {showRisk ? <RiskModal onClose={() => setShowRisk(false)} /> : null}
           <AppShell activePage={activePage} onPageChange={navigate}>
             <AnimatePresence mode="wait">
               <motion.div

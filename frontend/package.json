@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:local": "vite --host=127.0.0.1 --port=3001",
+    "dev:patched": "ION_VERIFY_BACKEND_URL=http://127.0.0.1:8791 vite --host=127.0.0.1 --port=4174",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "preview:local": "vite preview --host=127.0.0.1 --port=4173",
@@ -13,7 +14,7 @@
     "test:e2e": "playwright test",
     "verify:e2e": "playwright test",
     "verify": "node scripts/verify.mjs",
-    "audit:high": "node scripts/audit-high.mjs"
+
   },
   "dependencies": {
     "@ion-gateway/sdk": "3.1.1-beta.0",
