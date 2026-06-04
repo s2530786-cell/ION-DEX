@@ -858,35 +858,79 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 **Why We''re Cheaper:** Smart contract automation + blockchain settlement = no intermediaries = 90% cost reduction.
 
 
-#### E-Commerce Membership Service Breakdown
+#### E-Commerce Membership — China Market Aligned
 
-**Seller ($50/month) — Ordinary Member:**
+**Individual Seller ($19/month) — 散户:**
 - Payment processing (0.5% fee)
-- .ion storefront (1 store, 100 products max)
-- Basic analytics (daily sales, top products)
-- Standard support (email, 48h response)
+- .ion storefront (1 store, 50 products max)
+- Basic analytics (daily sales)
+- Community support
 - No AI services
+- **Who it's for:** Hobby sellers, part-time sellers, testing the platform
 
-**Merchant ($199/month) — Advanced Member:**
-- Everything in Seller, plus:
-- **AI merchandising** — AI generates product descriptions, optimizes images, suggests pricing
-- **Priority support** — Chat support, 4h response
-- **Advanced analytics** — Customer segmentation, demand forecasting, revenue trends
-- **Custom branding** — Logo, colors, custom checkout page
-- **5 stores, 1,000 products max**
-- **Reduced fee** — 0.3% payment processing fee
+**Small Merchant ($79/month) — 个体户:**
+- Everything in Individual, plus:
+- 200 products max
+- Email support (24h response)
+- Basic AI: Smart pricing suggestions
+- **Reduced fee** — 0.4% payment processing
+- **Who it's for:** Individual entrepreneurs, small shops, local businesses
 
-**Enterprise ($499/month) — VIP Member:**
-- Everything in Merchant, plus:
-- **Dedicated account manager** — 1-on-1 support, weekly check-ins
-- **SLA guarantees** — 99.9% uptime, 1h support response
-- **Full AI suite** — AI customer support chatbot, AI inventory optimization, AI fraud detection
-- **Unlimited stores and products**
-- **Custom integration** — API access, webhook configuration, ERP integration
-- **Reduced fee** — 0.2% payment processing fee
-- **Purchase protection** — Automatic insurance on high-value orders
+**Growing Business ($199/month) — 小商家:**
+- Everything in Small Merchant, plus:
+- 1,000 products max
+- Chat support (4h response)
+- AI merchandising — product descriptions, image optimization
+- Advanced analytics — customer segmentation, demand forecasting
+- Custom branding — logo, colors
+- **Reduced fee** — 0.3% payment processing
+- **Who it's for:** Growing online shops, multi-product sellers
 
-**Brand ($1,999/month) — Brand Partner:**
+**Medium Merchant ($499/month) — 中等商家:**
+- Everything in Growing Business, plus:
+- Unlimited products
+- Dedicated account manager (weekly check-ins)
+- Full AI suite — customer support chatbot, inventory optimization, fraud detection
+- Priority support (2h response)
+- API access, webhook configuration
+- **Reduced fee** — 0.2% payment processing
+- **Who it's for:** Established e-commerce businesses, multi-channel sellers
+
+**Brand Partner ($1,499/month) — 品牌入驻:**
+- Everything in Medium Merchant, plus:
+- Multi-store management (up to 5 stores)
+- Brand-wide analytics
+- Custom AI models trained on brand data
+- SLA guarantees — 99.9% uptime, 1h support
+- $100/month advertising credits
+- **Reduced fee** — 0.15% payment processing
+- **Who it's for:** Recognized brands, multi-store operations
+
+**Enterprise Brand ($4,999/month) — 大品牌:**
+- Everything in Brand Partner, plus:
+- Unlimited stores
+- White-label options
+- Custom integration — ERP, CRM, supply chain
+- 24/7 dedicated support team
+- $300/month advertising credits
+- **Zero fee** — 0% on first $50,000/month in transactions
+- **Who it's for:** Major brands, franchise operations, enterprise groups
+
+**Why This Pricing Structure?**
+
+Aligned with China e-commerce reality:
+
+| Seller Type | Our Price | Taobao/Tmall Equivalent | JD Equivalent |
+|-------------|----------|------------------------|---------------|
+| Individual | $19 | Free + 0.5-1% fee | Free + fees |
+| Small merchant | $79 | Deposit + fees | Deposit + fees |
+| Growing business | $199 | Tmall deposit ~$15K + commission | JD deposit + commission |
+| Medium merchant | $499 | Tmall flagship fees | JD flagship fees |
+| Brand | $1,499 | Tmall brand store | JD brand store |
+| Enterprise | $4,999 | Tmall flagship + marketing | JD flagship + marketing |
+
+**Key difference:** We don't charge deposits (保证金). Instead, monthly subscription + pay-as-you-go fees. Lower barrier to entry, sustainable revenue.
+
 - Everything in Enterprise, plus:
 - **Multi-store management** — Centralized dashboard for all stores
 - **Brand-wide analytics** — Cross-store performance, brand-level customer insights
