@@ -684,22 +684,24 @@ Each module is designed to:
 
 ---
 
-### 9.1 Merchant Payments & E-Commerce
+### 9.1 Merchant Payments & Web3 E-Commerce
 
 #### The Problem
 
-Traditional payment processors extract 2-3% from every transaction. Settlement takes 2-7 days. Cross-border payments require multiple intermediaries, currency conversion fees, and regulatory friction. Merchants have no direct access to Web3-native customers.
+Traditional payment processors extract 2–3% from every transaction. Settlement takes 2–7 days. Cross-border payments require multiple intermediaries, currency conversion fees, and regulatory friction. Merchants have no direct access to Web3-native customers. E-commerce platforms charge 5–15% commission on top of payment processing fees, and merchants must comply with each platform's rules or risk being deplatformed.
 
 #### What ION DEX Provides
 
-| Feature | Traditional | ION DEX |
-|---------|-------------|--------|
-| Settlement time | 2-7 days | 5-15 seconds |
-| Transaction fee | 2-3% | 0.5% |
+| Feature | Traditional E-Commerce | ION DEX |
+|---------|----------------------|--------|
+| Settlement time | 2–7 days | 5–15 seconds |
+| Transaction fee | 2–3% (payment) + 5–15% (platform) | 0.5% total |
 | Cross-border friction | Multiple processors, conversion fees | Single ION rail |
 | Web3 customer reach | None | Direct access |
 | Chain complexity | N/A | Handled by infrastructure |
 | Verifiable proof | No | Every transaction on Explorer |
+| AI services | None (or expensive third-party) | Built-in AI merchandising |
+| Storefront | Platform-controlled | Own `.ion` domain |
 
 #### How It Works
 
@@ -711,15 +713,75 @@ Customer pays USDT at checkout
     → 50% (0.25%) burned to 0x000...dEaD (permanent)
     → 50% (0.25%) to staking pool + treasury
   → Remaining ION routed to merchant wallet
-  → Settlement notification via webhook (5-15 seconds)
+  → Settlement notification via webhook (5–15 seconds)
   → Merchant fulfills order
 ```
 
-#### Merchant Integration Paths
+#### Merchant Onboarding Guide
 
-1. **Payment Button** — Drop-in checkout widget for simple integration.
-2. **API Integration** — Full control over checkout flow, custom UX.
-3. **Direct Settlement** — High-volume merchants receive ION directly.
+**Step 1: Create ION Identity.** The merchant registers an ION Identity (one ID per person/business). This identity is permanent and carries reputation across all modules.
+
+**Step 2: Choose Integration Path.**
+
+| Path | Best For | Setup Time |
+|------|----------|------------|
+| **Payment Button** | Simple stores, low volume | 5 minutes (drop-in widget) |
+| **API Integration** | Custom checkout, medium volume | 1–2 days |
+| **Direct Settlement** | High-volume merchants, enterprises | 3–5 days (compliance review) |
+
+**Step 3: Set Up Storefront.** Merchants receive a `.ion` domain (e.g., `shop.ion`) that resolves to their ION Identity and payment wallet. No hosting required — the platform provides a storefront template that renders at the `.ion` domain.
+
+**Step 4: Start Selling.** Products are listed with ION or stablecoin pricing. When a customer pays, the merchant receives ION in seconds. The merchant can hold ION, swap to stablecoins via the DEX, or withdraw to an external wallet.
+
+#### Merchant Membership Plans
+
+ION DEX offers tiered merchant memberships, payable in ION:
+
+| Plan | Monthly | Quarterly | Annual | Features |
+|------|---------|-----------|--------|----------|
+| **Basic** | 50 ION | 135 ION (10% off) | 480 ION (20% off) | Payment processing, .ion storefront, basic analytics |
+| **Professional** | 150 ION | 405 ION (10% off) | 1,440 ION (20% off) | Everything in Basic + AI merchandising + priority support + advanced analytics + custom branding |
+| **Enterprise** | Custom | Custom | Custom | Everything in Professional + dedicated account manager + custom integration + SLA guarantees + volume discounts |
+
+**Why Quarterly/Annual Discounts?**
+
+- **Merchant commitment.** Longer subscriptions mean merchants are committed to the platform, creating a stable revenue base.
+- **Fee burn flywheel.** Membership fees paid in ION → 50% burned permanently → circulating supply shrinks with every merchant subscription.
+- **Predictable revenue.** Quarterly and annual plans give the platform predictable revenue for planning and development.
+
+#### AI Services for Merchants
+
+**Basic Plan — Included AI:**
+
+- **Smart pricing.** AI analyzes market conditions and competitor pricing to suggest optimal product prices.
+- **Fraud detection.** AI flags suspicious orders for manual review before shipment.
+- **Inventory alerts.** AI predicts stock depletion based on sales velocity.
+
+**Professional Plan — Advanced AI:**
+
+- **AI merchandising.** AI generates product descriptions, optimizes product images, and recommends product bundles based on customer behavior.
+- **Customer segmentation.** AI analyzes purchase history to segment customers and target promotions.
+- **Demand forecasting.** AI predicts seasonal demand to help merchants optimize inventory.
+- **Automated customer support.** AI chatbot handles common customer questions, escalation to human for complex issues.
+
+**Enterprise Plan — Custom AI:**
+
+- **Custom AI models.** Trained on the merchant's specific data for maximum relevance.
+- **Cross-module AI coordination.** AI optimizes across e-commerce, logistics, and insurance simultaneously.
+- **Predictive analytics dashboard.** Real-time AI insights on sales trends, customer behavior, and market opportunities.
+
+#### Advertising
+
+Merchants can purchase advertising placements on the platform:
+
+| Placement | Cost | Duration |
+|-----------|------|----------|
+| Homepage featured | 100 ION/week | 7 days |
+| Category featured | 50 ION/week | 7 days |
+| Search result boost | 20 ION/week | 7 days |
+| Banner ad | 30 ION/week | 7 days |
+
+**50% of advertising revenue is burned permanently.** Every ad purchased reduces circulating supply.
 
 #### Why Traditional Solutions Cannot Compete
 
@@ -727,13 +789,16 @@ Customer pays USDT at checkout
 - Traditional processors cannot offer sub-second settlement without pre-funding.
 - Traditional processors cannot connect to Web3 customers.
 - Traditional processors cannot provide Explorer-verifiable proof of every fee deduction.
+- Traditional e-commerce platforms cannot offer built-in AI services at any membership tier.
+- Traditional platforms cannot offer a .ion domain storefront with integrated payments.
 
 #### Connection to Other Modules
 
-- **Identity**: Merchant standing affects fee tiers, dispute resolution priority.
+- **Identity**: Merchant standing affects fee tiers, dispute resolution priority, and AI service access.
 - **Insurance**: Purchase protection policies for high-value transactions.
 - **Logistics**: Integrated shipping and tracking for physical goods.
 - **Domain**: `.ion` domains for merchant storefronts.
+- **AI Quant Platform**: Merchants who also trade can use the same ION wallet for both commerce and trading.
 
 ---
 
@@ -1088,7 +1153,112 @@ Asset tokenization:
 
 ---
 
-### 9.7 Shared Substrate: Why This Is Not Just Isolated Apps
+### 9.7 AI Quantitative Trading Platform
+
+ION DEX integrates with AI-driven trading strategies to provide automated, risk-managed trading for users who do not want to actively manage their positions.
+
+#### The Problem
+
+Most crypto traders lose money. They buy high, sell low, panic during volatility, and lack the discipline to follow systematic strategies. AI trading systems exist, but they are:
+
+- **Expensive.** Institutional-grade AI trading costs $500–5,000/month in subscription fees.
+- **Opaque.** Users cannot verify what the AI is doing with their funds.
+- **Custodial.** Users must deposit funds to a third-party platform.
+- **Disconnected.** AI trading platforms do not integrate with DEX liquidity, payments, or identity.
+
+#### What ION DEX Provides
+
+| Feature | Traditional AI Trading | ION DEX AI Platform |
+|---------|----------------------|---------------------|
+| Subscription cost | $500–5,000/month | 10–50 ION/month (affordable) |
+| Transparency | Black box | All trades verifiable on Explorer |
+| Custody | Third-party custody | Non-custodial (user's wallet) |
+| Risk limits | User must set manually | Hard-coded limits enforced by platform |
+| Integration | Standalone | Integrated with DEX, payments, identity |
+| Copy trading | Often unavailable | Built-in with performance tracking |
+
+#### AI Trading Membership Plans
+
+| Plan | Monthly | Quarterly | Annual | Features |
+|-------|---------|-----------|--------|----------|
+| **Starter** | 10 ION | 27 ION (10% off) | 96 ION (20% off) | Grid trading automation + basic risk limits + 5 strategies |
+| **Professional** | 30 ION | 81 ION (10% off) | 288 ION (20% off) | Everything in Starter + AI strategy selection + advanced risk management + 20 strategies + copy trading |
+| **Advanced** | 50 ION | 135 ION (10% off) | 480 ION (20% off) | Everything in Professional + custom AI model training + priority execution + unlimited strategies + API access |
+
+**What 10–50 ION/month Means:** At ION = $0.01, 10 ION = $0.10/month. At ION = $1, 10 ION = $10/month. The AI platform is designed to be affordable even when ION appreciates.
+
+#### AI Trading Capabilities
+
+**Grid Trading.** Automated buy-low / sell-high execution across 28 chains. Users set parameters (price range, grid count, investment amount), and the AI executes continuously without manual intervention.
+
+**Strategy Selection.** Users choose from pre-built AI strategies:
+
+| Strategy Type | Risk Level | Typical Return (Historical) |
+|--------------|------------|---------------------------|
+| Conservative Grid | Low | 5–10% APY |
+| Balanced Grid | Medium | 10–20% APY |
+| Aggressive Grid | High | 20–40% APY |
+| Momentum Following | Medium-High | Variable |
+| Mean Reversion | Medium | Variable |
+
+**Copy Trading.** Users can automatically copy the trades of top-performing AI strategies. The platform tracks performance metrics (win rate, max drawdown, Sharpe ratio) for each strategy, and users can select strategies based on risk tolerance.
+
+**Copy Trading Fees:** When a user copies a profitable strategy, the platform deducts 5% of profits and distributes:
+- 50% (2.5% of profit) burned permanently.
+- 50% (2.5% of profit) to staking pool and treasury.
+
+#### Advanced Model Unlock
+
+Users can unlock advanced AI models with ION payments:
+
+| Model | Cost | Capability |
+|-------|------|------------|
+| Basic LSTM | Included in all plans | Standard grid trading, price prediction |
+| Transformer | 5 ION one-time | Advanced pattern recognition, multi-asset correlation |
+| Ensemble | 10 ION one-time | Multiple models voting, higher accuracy |
+| Custom Trained | 50 ION one-time | Trained on user's specific portfolio and preferences |
+
+**50% of model unlock fees are burned permanently.**
+
+#### Risk Management (Hard-Coded)
+
+As detailed in Section 3.5 (AI Trading Risk Limits), all AI strategies operate within hard-coded risk limits:
+
+- **Daily position cap** — Maximum total position size per strategy.
+- **Per-trade limit** — Maximum size of a single trade.
+- **Leverage cap** — Maximum leverage multiplier.
+- **Loss cutoff** — Strategy paused if daily losses exceed threshold.
+
+These limits are enforced at the execution layer — the AI cannot override them.
+
+#### Non-Custodial Design
+
+Users never deposit funds to a third-party platform. All trading happens from the user's own wallet:
+
+1. User connects wallet to ION DEX.
+2. User selects AI strategy and sets risk parameters.
+3. AI submits trades on user's behalf via wallet signature delegation (Account Abstraction).
+4. Funds never leave user's wallet except when executing a trade.
+
+This design eliminates custodial risk — if the platform goes offline, users retain full control of their funds.
+
+#### Why Traditional Solutions Cannot Compete
+
+- Traditional AI trading platforms cannot offer subscription fees as low as 10–50 ION/month while maintaining profitability.
+- Traditional platforms cannot offer non-custodial AI trading.
+- Traditional platforms cannot integrate AI trading with DEX liquidity, payments, identity, and insurance.
+- Traditional platforms cannot burn 50% of fees permanently, creating deflationary pressure.
+
+#### Connection to Other Modules
+
+- **DEX**: AI strategies execute through ION DEX liquidity pools.
+- **Identity**: User standing affects AI strategy access and fee tiers.
+- **Insurance**: Trading insurance available for high-value positions.
+- **Merchant**: Merchants can use AI trading to manage ION holdings from sales revenue.
+
+---
+
+### 9.8 Shared Substrate: Why This Is Not Just Isolated Apps
 
 The key point is not to create random adjacent businesses. The key point is to let these ecosystems plug into **shared infrastructure**:
 
