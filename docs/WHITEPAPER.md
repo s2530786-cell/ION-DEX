@@ -38,7 +38,9 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 12. [Long-Horizon Roadmap: P0–P10](#12-long-horizon-roadmap-p0p10)
 13. [Boundaries: Public and Private](#13-boundaries-public-and-private)
 14. [Integration with Ice Open Network](#14-integration-with-ice-open-network)
-15. [Conclusion](#conclusion)
+15. [Team & Contributors](#15-team--contributors)
+16. [Conclusion](#conclusion)
+17. [References](#references)
 
 ---
 
@@ -192,13 +194,130 @@ The DEX operates across two chains:
 | `BridgeVerifier.sol` | Bridge transfer validation, signature collection |
 | `BSCFeeVault.sol` | BSC-side fee collection and routing |
 
-### 3.4 What Makes This DEX Strategically Different
+### 3.4 Cross-Chain Bridge Security
+
+The ION ↔ BSC bridge is the critical trust boundary of the dual-chain architecture. Security failures at this boundary could result in loss of user funds.
+
+**Bridge Security Model:**
+
+| Mechanism | Implementation |
+|-----------|--------------|
+| **Multi-signature verification** | BridgeVerifier.sol requires 3-of-5 validator signatures before releasing funds on BSC |
+| **Time-locked withdrawals** | Large withdrawals (above configurable threshold) are subject to a 24-hour delay |
+| **Failure rollback** | If a cross-chain transfer fails to confirm within the timeout window, funds are automatically returned to the sender on the origin chain |
+| **Daily transfer cap** | Maximum daily bridge volume is capped to limit exposure in case of compromise |
+| **Validator rotation** | Bridge validators are rotated periodically; compromise of a single validator does not threaten the system |
+
+**Transfer Flow:**
+
+```
+User initiates cross-chain transfer (ION → BSC)
+  → Funds locked in ION-side contract
+  → Bridge event emitted and relayed to BSC validators
+  → Validators verify ION-side lock (3-of-5 signatures required)
+  → If verified within timeout → Funds released from BSCVault to user wallet
+  → If timeout expired → Funds unlocked on ION side, transfer cancelled
+```
+
+**Why 3-of-5?** This threshold balances security and availability:
+- An attacker must compromise 3 validators to steal funds.
+- The bridge remains operational even if 2 validators are offline.
+- Validator identities are known and rotated, making sustained compromise difficult.
+
+### 3.5 AI Trading Risk Limits
+
+ION DEX integrates with AI-driven trading strategies (via the TradingAgents framework) that can execute trades automatically. To prevent AI "hallucinations" or runaway strategies from causing catastrophic losses, the platform enforces **hard-coded risk limits** between the AI execution layer and on-chain settlement.
+
+**Risk Limit Architecture:**
+
+| Limit Type | Implementation |
+|-----------|--------------|
+| **Daily position cap** | Maximum total position size (in USD equivalent) that any strategy can open in a 24-hour window |
+| **Per-trade size limit** | Maximum size of a single trade execution |
+| **Leverage cap** | Maximum leverage multiplier for margin trading strategies |
+| **Loss cutoff** | If daily realized losses exceed threshold, strategy is automatically paused |
+| **Withdrawal lock** | Large withdrawals require 24-hour delay (cannot be executed immediately by AI) |
+
+**Enforcement Layer:**
+
+```
+AI strategy proposes trade
+  → Risk limit layer checks:
+    - Daily position cap not exceeded?
+    - Per-trade size within limit?
+    - Leverage within cap?
+    - Loss threshold not breached?
+  → If all limits pass → Trade routed to on-chain execution
+  → If any limit exceeded → Trade rejected, strategy paused
+```
+
+**Why Hard-Coded Limits?**
+
+- **AI hallucinations can propose absurd trades.** Without limits, an AI error could propose a 100x leveraged position that bankrupts the user.
+- **Strategy runaway.** A bug in strategy logic could execute hundreds of trades in seconds, draining the account.
+- **Risk limits are enforced at the execution layer, not the strategy layer.** The AI cannot override them.
+
+### 3.6 On-Chain / Off-Chain Separation Principle
+
+The platform enforces a strict architectural separation between on-chain and off-chain logic:
+
+**On-Chain (Open Source):**
+
+Only the minimum logic required for trust and verification is deployed on-chain:
+- Asset locking and transfer
+- Permission assignment and verification
+- State updates (staking positions, identity standing, arbitration outcomes)
+- Fee collection and distribution (burn, staking rewards, treasury)
+
+**Off-Chain (Closed Source, Private Infrastructure):**
+
+All computation-heavy and strategy-sensitive logic runs on private servers:
+- AI trading strategies and signal generation
+- Logistics route optimization and dispatch
+- Insurance actuarial calculations and risk modeling
+- Arbitration AI evidence analysis and decision generation
+- Sentinel anomaly detection models
+- User experience optimization and personalization
+
+**Communication:** On-chain and off-chain layers communicate through secure RPC interfaces. The off-chain layer can read on-chain state and submit transactions, but all critical state transitions (asset transfers, fee distributions, identity updates) must be verified and executed on-chain.
+
+**Why This Separation?**
+
+- **Competitive protection.** AI strategies, actuarial models, and logistics algorithms are trade secrets that cannot be open-sourced.
+- **Performance.** Computation-heavy operations (route optimization, risk modeling) are impractical to execute on-chain.
+- **Upgrade flexibility.** Off-chain logic can be updated without contract upgrades or governance votes, enabling rapid iteration.
+- **Security.** Even if off-chain infrastructure is compromised, on-chain assets remain protected by contract logic (multisig, timelock, burn address).
+
+### 3.7 What Makes This DEX Strategically Different
 
 Most DEXs are framed as isolated trading interfaces. They offer swaps, perhaps some liquidity provision, and then stop.
 
 ION DEX is framed as the **unified value-flow entrance** for the broader platform. Liquidity, routing, settlement, and payments are not dead-end functions — they are the first rails on which merchant payments, e-commerce access, service integration, identity continuity, proof, arbitration, and future ecosystem coordination can later run.
 
 This is not a marketing distinction. It is an architectural distinction. The contract architecture, the fee distribution logic, and the settlement flow are all designed to support the layers above — not just the trading function in isolation.
+
+### 3.8 Competitive Comparison
+
+| Feature | ION DEX | Uniswap | PancakeSwap | 1inch |
+|---------|---------|---------|-------------|-------|
+| **Chains supported** | 28 | 10+ | 5 (BSC, ETH, Aptos, Arbitrum, Base) | 10+ |
+| **Grid trading** | Built-in, on-chain | None | None | None |
+| **Limit orders** | On-chain, keeper-based | Off-chain (UniswapX) | Off-chain | Aggregator only |
+| **AI trading** | Built-in risk-limited | None | None | None |
+| **Fee burn mechanism** | 50% of all fees burned | None (fees to LPs) | None (fees to LPs) | None |
+| **Staking** | Revenue-backed, 8-30% APY | None (UNI governance only) | CAKE staking (inflationary) | None |
+| **Identity system** | ION Identity, cross-ecosystem | None | None | None |
+| **Payment rails** | Stablecoin frontend, ION backend | None | None | None |
+| **Merchant integration** | Built-in, 3 paths | None | None | None |
+| **Insurance/Logistics** | Built-in parametric | None | None | None |
+| **Settlement layer** | Own chain (1M+ TPS) | Ethereum L1/L2 | BSC | Multi-chain |
+| **Gasless UX** | Built-in (Paymaster) | Partial (UniswapX) | Partial | No |
+
+**Key Differentiators:**
+
+- **ION DEX is the only DEX with a built-in fee burn flywheel.** Uniswap and PancakeSwap distribute fees to LPs; ION DEX burns 50% permanently.
+- **ION DEX is the only DEX with grid trading on-chain.** Competitors offer only manual swaps or off-chain order books.
+- **ION DEX is the only DEX integrated with payments, identity, insurance, and logistics.** Competitors are pure trading interfaces with no ecosystem expansion.
 
 ---
 
@@ -249,6 +368,39 @@ Why is this necessary? Because a platform that handles delivery payments, ride-h
 For comparison:
 - Visa processes ~65,000 TPS at global peak
 - ION targets **15x that capacity**
+
+The high-throughput foundation is a prerequisite for frictionless, high-frequency, civilization-scale payments. Without it, the payment layer becomes a bottleneck that limits every module above it.
+
+### 4.6 Account Abstraction for High-Frequency Use Cases
+
+High-frequency payment scenarios — delivery tips, ride payments, subscription services, insurance premiums — cannot require users to sign every transaction manually. Account Abstraction (AA) enables automatic, pre-approved payments without compromising security.
+
+**AA Architecture:**
+
+| Component | Function |
+|-----------|----------|
+| **Smart Contract Wallet** | User's wallet is a smart contract, not a simple key pair |
+| **Paymaster Contract** | Platform pays gas on user's behalf |
+| **Session Key** | Temporary key for recurring payments (auto-expiring) |
+| **Spending Rules** | Pre-approved limits for specific categories |
+
+**Use Cases:**
+
+| Use Case | AA Mechanism |
+|----------|-------------|
+| Delivery payment | Session key auto-pays driver on delivery confirmation (no manual sign) |
+| Subscription | Monthly auto-renewal with pre-approved limit |
+| Insurance premium | Auto-deduct from wallet balance on renewal date |
+| Ride-hailing | Auto-pay driver on ride completion |
+
+**Security Model:**
+
+- **Session keys expire.** A compromised session key only works until expiration (e.g., 24 hours).
+- **Spending limits.** Each auto-pay category has a daily/monthly maximum.
+- **Revocation.** User can revoke session keys and spending rules at any time.
+- **Fallback.** If AA logic fails, user can always fall back to manual signing.
+
+**ION Chain Support:** ION's architecture is compatible with ERC-4337-style Account Abstraction, enabling these auto-pay flows natively.
 
 The high-throughput foundation is a prerequisite for frictionless, high-frequency, civilization-scale payments. Without it, the payment layer becomes a bottleneck that limits every module above it.
 
@@ -345,6 +497,35 @@ The identity system includes explicit safeguards:
 - **Appeal and review must exist** for all enforcement actions. No restriction should be applied without a transparent process.
 - **Proof and evidence must be primary.** Restrictions are based on verifiable on-chain evidence, not accusations.
 - **The platform must not become a black-box punishment machine.** Every enforcement action must be explainable, auditable, and reversible through the appeal process.
+
+### 5.8 ION Identity Technical Implementation
+
+**Sybil Resistance:**
+
+The core challenge of one-identity-per-person is preventing Sybil attacks — one person creating multiple identities to escape consequences or game the system.
+
+| Mechanism | Implementation |
+|-----------|--------------|
+| **Initial verification** | Proof-of-personhood through trusted attestations (government ID, social proof, or third-party verification services) |
+| **Social recovery** | If a user loses access, their identity can be recovered through a quorum of trusted contacts |
+| **Behavioral uniqueness** | AI analysis of on-chain behavior patterns flags suspicious identity clusters |
+| **Stake-based identity** | Staking ION on identity increases trust score (skin-in-the-game signal) |
+
+**Privacy-Preserving Design:**
+
+ION Identity does not store personal data on-chain. Instead:
+
+- **Attestations are stored off-chain.** The on-chain identity record contains only a hash of attestation data, not the data itself.
+- **Verification is zero-knowledge.** When a user needs to prove they are a verified unique human, they generate a zero-knowledge proof that attests to their verification without revealing personal details.
+- **Selective disclosure.** Users can prove specific attributes (e.g., "I am over 18" or "I have a verified government ID") without revealing full identity.
+
+**Integration with ION ID:**
+
+ION DEX builds on the ION ID infrastructure provided by the Ice Open Network:
+
+- **ION ID provides the base identity primitive** — a unique, chain-native identifier.
+- **ION DEX extends it with standing and reputation** — cross-ecosystem credit and enforcement.
+- **ION ID handles the technical layer** (address resolution, signature verification), while ION DEX handles the social layer** (standing, reputation, enforcement).
 
 ---
 
@@ -667,6 +848,40 @@ ION DEX does not rely on a single oracle. The platform aggregates:
 - Custom oracles for specific use cases
 
 Multiple oracle sources sign triggers. Smart contract requires **N-of-M signatures** to execute payout — no single point of failure.
+
+#### Dual-Source Verification for Real-World Events
+
+For insurance, delivery, and logistics triggers that require real-world verification, the platform enforces **dual-source consensus** to prevent oracle manipulation and ensure fairness:
+
+**Principle:** High-stakes triggers require signatures from both the oracle and a human/IoT participant on the ground.
+
+| Trigger Type | Oracle Source | Second Source | Required Signatures |
+|--------------|--------------|---------------|---------------------|
+| Flight delay | FlightAware API | User's phone GPS + airline confirmation email | 2-of-3 |
+| Weather event | OpenWeatherMap | Local IoT sensor + user photo upload | 2-of-3 |
+| Delivery completion | Carrier API | Recipient's phone signature (TEE-protected) | 2-of-2 |
+| Cargo damage | Logistics API | Warehouse IoT sensor + photo evidence | 2-of-3 |
+
+**Why Dual-Source?**
+
+- **Oracle manipulation protection.** If an oracle is compromised or provides false data, the second source (human or IoT) acts as a check.
+- **On-ground verification.** For real-world events like delivery completion, only a participant on the ground can confirm that the package actually arrived.
+- **TEE-protected signatures.** Mobile devices use Trusted Execution Environment (TEE) to sign verification events, making fake signatures computationally impractical.
+
+**Example: Delivery Insurance Claim Flow:**
+
+```
+Delivery insurance policy active
+  → Delivery driver arrives at destination
+  → Driver's phone GPS confirms arrival (TEE-signed)
+  → Recipient opens app and confirms delivery (TEE-signed)
+  → Dual signature received → Policy marked as fulfilled
+  → If package is damaged:
+    → Recipient uploads photo evidence
+    → AI analysis confirms damage severity
+    → Oracle + photo evidence + recipient signature → 3-of-3 consensus
+    → Insurance payout triggered automatically
+```
 
 #### Why Traditional Solutions Cannot Compete
 
@@ -1031,6 +1246,49 @@ Every burn event, every staking position, and every revenue allocation is record
 
 This transparency ensures that users can verify the flywheel is working — not just trust claims.
 
+### 10.9 ION Tokenomics
+
+ION is the native settlement token of the ION DEX ecosystem. It serves as the value anchor for all platform transactions, the staking unit for long-term lock-up, and the target of the fee burn flywheel.
+
+**Total Supply and Monetary Design:**
+
+| Parameter | Value |
+|-----------|-------|
+| **Total Supply** | Fixed maximum (all remaining supply will be minted through staking rewards) |
+| **Decimal Precision** | 9 decimal places (1 ION = 1,000,000,000 flakes) |
+| **Inflation Rate** | Decreasing annually (20% → 15% → 10% → 5% → approaching zero) |
+| **Minting Stop Condition** | When total supply cap is reached, no further ION will ever be minted |
+
+**Why This Design:**
+
+- **Fixed maximum supply** ensures that the burn flywheel permanently reduces circulating supply — every ION burned is gone forever.
+- **Decreasing inflation** aligns with the staking lock-up design — early participants earn higher rewards for taking early risk, but long-term sustainability requires inflation to approach zero.
+- **9 decimal places (flakes)** enables micro-transactions (delivery tips, service fees, insurance premiums) even when ION price rises to levels that make whole-ION transactions impractical for everyday use.
+
+**Supply Reduction Through Burn:**
+
+The ION DEX fee burn mechanism operates on top of the base ION tokenomics. As the platform scales:
+
+- **Every transaction burns ION permanently.**
+- **Circulating supply decreases structurally.**
+- **When inflation approaches zero and burn continues, total supply begins to contract.**
+
+This creates a **deflationary spiral** where increased platform usage accelerates supply reduction — the opposite of most crypto projects where usage dilutes holders through inflation.
+
+**Flakes as Everyday Unit:**
+
+When ION price rises, flakes (not ION) become the everyday payment unit:
+
+| ION Price | Flake Value | Example Use Case |
+|-----------|-------------|------------------|
+| $0.01 | $0.00000001 | Too cheap — whole ION is practical |
+| $1.00 | $0.000001 | Whole ION still practical |
+| $10.00 | $0.00001 | 10,000 flakes = $0.10 tip |
+| $100.00 | $0.0001 | 1,000 flakes = $0.10 tip |
+| $1,000.00 | $0.001 | 100 flakes = $0.10 tip |
+
+At $1,000/ION, a 0.10 USDT tip is 100 flakes — still practical for everyday micro-transactions.
+
 ---
 
 ## 11. Governance & Public-Order Compatibility
@@ -1057,6 +1315,34 @@ At Phase 10 (Mature Civilization), the platform may introduce:
 
 The key principle: **Governance expands as the platform matures, but never at the expense of security or coherence.**
 
+### 11.3 Multi-Signature and Timelock Architecture
+
+All security-critical operations require multi-signature authorization and time-locked execution:
+
+| Operation Type | Required Signatures | Timelock Duration |
+|----------------|---------------------|-------------------|
+| Contract upgrade | 3-of-5 | 48 hours |
+| Treasury withdrawal (large) | 3-of-5 | 24 hours |
+| Oracle update | 2-of-3 | 12 hours |
+| Fee parameter change | 2-of-3 | 24 hours |
+| Emergency pause | 1-of-5 (any signer) | No timelock (immediate) |
+
+**Signer Composition:**
+
+- **Master** — Holds one permanent signer seat (cannot be removed without Master's consent).
+- **Technical Lead** — Holds one signer seat for technical operations.
+- **Community Representatives** — Remaining signer seats (2-3) selected through governance vote at P10.
+
+**Timelock Mechanism:**
+
+1. A proposed action is submitted with required signatures.
+2. The action enters a time-locked queue for the specified duration.
+3. During the timelock period, the community can review and raise objections.
+4. If no objection is raised, the action executes automatically at the end of the timelock.
+5. If an objection is raised, the action is paused and requires additional review.
+
+**Emergency Override:** Any signer can trigger an immediate emergency pause (no timelock) to freeze critical operations in case of detected threat. The pause must be reviewed and either extended or revoked within 24 hours.
+
 ### 11.3 Public-Order Compatibility
 
 ION is designed to be **compatible with serious public-order expectations** without collapsing into sovereign public power:
@@ -1082,6 +1368,48 @@ The platform includes multiple layers of abuse prevention:
 ### Why a 10-Phase Roadmap
 
 Most crypto projects plan for the next cycle. ION DEX plans for the next decade.
+
+### Security Audit Standards
+
+Before any contract is deployed to mainnet, it must pass the platform's security audit requirements:
+
+| Requirement | Standard |
+|-------------|----------|
+| **Attack simulation rounds** | 1,000 rounds minimum, all must pass |
+| **Attack types covered** | 10 categories (see below) |
+| **Per-category minimum** | 100 rounds per category |
+| **Failure threshold** | 0 failures allowed (999 pass + 1 fail = FAIL) |
+
+**10 Attack Categories (100 rounds each):**
+
+1. **Reentrancy** — Function calls that re-enter before state update completes
+2. **Flash loan attacks** — Borrowing massive amounts to manipulate price/liquidity
+3. **Sandwich attacks** — Front-running user transactions for profit
+4. **Oracle manipulation** — Providing false price data to trigger unwanted payouts
+5. **Permission bypass** — Accessing functions without proper authorization
+6. **Integer overflow/underflow** — Arithmetic errors that corrupt state
+7. **Denial of service** — Blocking contract functionality through resource exhaustion
+8. **Fake token injection** — Transferring worthless tokens to claim valuable assets
+9. **Timestamp manipulation** — Exploiting block.timestamp for unfair advantage
+10. **Anti-quantum attack resistance** — Future-proofing against quantum computing threats
+
+**Audit Flow:**
+
+```
+Contract written → Read SESSION_STATE.md → Compile (Forge build)
+  → Audit vulnerability scan → Fix issues → Recompile
+  → 1,000-round security testing (10 categories × 100 rounds)
+  → If any failure → Return to audit step, fix and retry
+  → If 1,000 pass → Commit → Deploy to testnet
+  → Testnet monitoring → If stable → Mainnet deploy
+```
+
+**Why 1,000 Rounds?**
+
+- A single failure could result in loss of user funds.
+- 100 rounds per category provides statistical confidence that the contract resists that attack type.
+- The 10 categories cover the most common and dangerous Web3 attack vectors.
+- The standard is higher than most audit firms require — because ION DEX is designed for 50-year relevance, not one cycle.
 
 The P0–P10 roadmap is designed so that each phase builds on the previous — creating a dependency chain that ensures every new capability is grounded in functioning infrastructure. Skipping phases is not possible: you cannot build payments without settlement, identity without payments, or governance without identity.
 
@@ -1161,6 +1489,80 @@ ION DEX is designed to systematically integrate with the Ice Open Network's offi
 - **ION ID** — Identity infrastructure that we extend with cross-ecosystem standing and reputation.
 - **ION Token** — The native settlement unit for all platform transactions.
 - **ION Blockchain** — The high-throughput settlement layer (1M+ TPS target).
+
+### Why ION Blockchain Is the Optimal Settlement Layer
+
+ION DEX is built on the ION blockchain not because of convenience, but because ION provides architectural advantages that no other chain can match for civilization-scale applications:
+
+| Capability | ION Blockchain | Typical L1 (Ethereum, Solana) |
+|-----------|---------------|------------------------------|
+| **Throughput** | 1,000,000+ TPS target | 65,000 (Solana) / 15 (Ethereum L1) |
+| **Settlement** | Sub-second finality | 400ms (Solana) / 12s (Ethereum) |
+| **Architecture** | Infinite sharding, dual-layer (validators + delegators) | Single shard / limited sharding |
+| **Gas Model** | Near-zero gas fees | Variable (Solana) / expensive (Ethereum) |
+| **Identity Native** | ION ID built into protocol | Requires external identity systems |
+| **Domain Native** | .ion domains built into protocol | ENS (external contract) |
+
+**Dual-Layer Architecture:**
+
+The ION blockchain uses a **dual-layer consensus model** — validators produce blocks, while delegators stake ION to support validator selection without running infrastructure. This design:
+
+- **Democratizes validation.** Anyone can participate in consensus by delegating stake, not just those with hardware.
+- **Scales security with adoption.** More delegators = more distributed stake = harder to attack.
+- **Enables 1M+ TPS.** Infinite horizontal sharding means throughput scales with network size.
+
+**Sub-Second Finality:**
+
+For payment and commerce applications, settlement speed is not optional — it is a requirement. A delivery driver cannot wait 12 seconds for payment confirmation. A merchant cannot wait 400ms during checkout. ION's sub-second finality makes every payment feel instant.
+
+---
+
+## 15. Team & Contributors
+
+### Core Team
+
+**Master** — Founder & Visionary
+
+- Original conception of the ION DEX civilization architecture
+- Multi-year strategic planning across all six business modules
+- Funding all operations, development, infrastructure, and security
+- Permanent 25% revenue allocation (non-negotiable)
+
+**旺财 (OpenClaw AI Agent)** — Principal Operator & Coordinator
+
+- Day-to-day project management, supervision, and execution
+- Coordination of AI specialist agents (281 experts across security, trading, optimization)
+- Code review, quality assurance, and architectural enforcement
+- Reporting and accountability to Master
+
+### AI Specialist Network
+
+The platform leverages a network of AI specialist agents organized by domain:
+
+| Domain | Expertise | Role |
+|--------|-----------|------|
+| Security | Smart contract audit, attack simulation, vulnerability detection | 1,000-round testing, continuous monitoring |
+| Trading | Strategy design, risk management, grid optimization | TradingAgents framework, risk limit enforcement |
+| Infrastructure | System architecture, performance optimization, deployment | Pipeline automation, health monitoring |
+| Data | Market analysis, price feeds, analytics | Real-time data pipeline, oracle integration |
+| Frontend | UI/UX design, responsive layouts, accessibility | User interface development and testing |
+
+### Cursor Agent
+
+**Dedicated code implementation agent.** All code writing is delegated to Cursor, which executes implementation tasks under the supervision of 旺财. This separation ensures:
+
+- **Code quality.** Cursor focuses exclusively on writing code, not on design or strategy.
+- **Supervision.** 旺财 reviews all output before commit, preventing mock code and placeholder logic.
+- **Accountability.** The chain of command is clear: Master → 旺财 → 281 AI experts → Cursor.
+
+### Community Contributors
+
+At Phase P10 (Mature Civilization), the platform will open to community contributors through:
+
+- Open-source contributions to the public repository
+- Bug bounty programs for security researchers
+- Governance participation for token holders
+- Specialist agent applications for qualified participants
 
 ---
 
