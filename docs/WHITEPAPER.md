@@ -421,26 +421,51 @@ Sentinel defense makes ION **self-protecting**. When something goes wrong, the s
 
 ---
 
-## 8. Self-Evolution
+## 8. Self-Evolution: Learning from Errors
 
-### Learning and Correction
+### 8.1 Why Platforms Need to Evolve
 
-The platform is designed to **learn from its own errors** and improve over time.
+Static platforms degrade over time. Rules that made sense at launch may become inadequate as the ecosystem grows. Attack vectors that were unknown at launch may emerge as the platform gains visibility. User behavior patterns may shift in ways that require adaptive responses.
 
-- Error memory: Past mistakes feed into future decisions.
-- Rule refinement: Governance rules improve based on outcomes.
-- Continuity preservation: The platform evolves without breaking trust or history.
+A digital civilization that cannot learn from its errors is destined to repeat them. A civilization that can learn, adapt, and improve — without breaking continuity or trust — is positioned to survive across multiple cycles.
 
-### Adaptive Upgrade Capacity
+### 8.2 Error Memory
+
+The platform maintains a structured error memory system:
+
+- **Past incidents are recorded** with full context: what happened, why it happened, how it was resolved, and what was learned.
+- **Future decisions reference error memory.** When a similar situation arises, the system can recall previous incidents and apply lessons learned.
+- **Error memory is not just for the AI.** Human operators, validators, and governance participants can reference error memory when making decisions.
+
+### 8.3 Rule Refinement
+
+Governance rules are not static. They are refined based on outcomes:
+
+- **Rules that produce good outcomes** (measured by dispute rates, user satisfaction, and ecosystem health) are reinforced.
+- **Rules that produce bad outcomes** (measured by the same metrics) are revised or replaced.
+- **Rule changes are recorded on-chain**, creating a complete audit trail of governance evolution.
+
+### 8.4 Continuity-Preserving Adaptation
+
+The most critical constraint on self-evolution is **continuity preservation**. The platform must be able to adapt without breaking trust or history.
+
+This means:
+- **Identity records are never erased**, even when rules change.
+- **Arbitration precedents remain valid**, even when procedures are updated.
+- **Fee structures can adapt**, but always within the constraint that 50% of fees are burned and 25% goes to Master.
+- **Governance can expand**, but never at the expense of security or coherence.
+
+### 8.5 Adaptive Upgrade Capacity
 
 Over time, the platform supports **AI self-evolution and upgrade capacity**, so that:
-- Analysis
-- Coordination
-- Arbitration support
-- Operational intelligence
-- Ecosystem logic
 
-can improve without reducing continuity across the wider system.
+- **Analysis** — pattern detection, anomaly identification, ecosystem health monitoring
+- **Coordination** — cross-module optimization, resource allocation, conflict resolution
+- **Arbitration support** — evidence analysis, precedent matching, decision explanation
+- **Operational intelligence** — performance optimization, cost reduction, efficiency improvement
+- **Ecosystem logic** — user behavior prediction, market adaptation, strategic planning
+
+can improve without reducing continuity across the wider system. Each upgrade is recorded, auditable, and reversible if it produces unintended consequences.
 
 ---
 
@@ -991,76 +1016,132 @@ This transparency ensures that users can verify the flywheel is working — not 
 
 ## 11. Governance & Public-Order Compatibility
 
-### Current Stage: Single-Operator
+### 11.1 Current Stage: Single-Operator
 
 ION DEX is currently in Phase 0–1 (Brand & Infrastructure). During this stage:
 - Master makes all strategic decisions.
 - Development direction follows the P0–P10 roadmap.
 - Contract upgrades require Master signature + timelock.
 
-This is intentional. A civilization-scale project needs **coherent direction** during foundation-building. Committee governance at this stage would dilute the long-horizon vision.
+**Why single-operator governance now?** A civilization-scale project needs **coherent direction** during foundation-building. Committee governance at this stage would dilute the long-horizon vision. Every successful infrastructure project in history — whether a railway, a power grid, or a communication network — began with a single coherent vision before opening to broader governance.
 
-### Future Stage: Community Governance (P10)
+The alternative — committee governance from day one — would produce compromise decisions, scope creep, and strategic inconsistency. ION DEX cannot afford these during foundation-building.
+
+### 11.2 Future Stage: Community Governance (P10)
 
 At Phase 10 (Mature Civilization), the platform may introduce:
-- Proposal system — Community can propose feature additions.
-- Voting mechanism — Token-weighted voting on non-security decisions.
-- Multisig treasury — 3/5 or 5/7 multisig for treasury operations.
-- Timelock — 48-hour delay on all governance actions.
+
+- **Proposal system** — Community can propose feature additions, parameter adjustments, and ecosystem improvements.
+- **Voting mechanism** — Token-weighted voting on non-security decisions. Security-critical decisions (contract upgrades, oracle changes, fee distribution) remain under multi-signature control.
+- **Multisig treasury** — 3/5 or 5/7 multisig for treasury operations, with at least one seat reserved for Master.
+- **Timelock** — 48-hour delay on all governance actions, providing time for community review and emergency intervention.
 
 The key principle: **Governance expands as the platform matures, but never at the expense of security or coherence.**
 
-### Public-Order Compatibility
+### 11.3 Public-Order Compatibility
 
 ION is designed to be **compatible with serious public-order expectations** without collapsing into sovereign public power:
 
-- Persistent identity creates accountability without surveillance.
-- Immutable history creates trust without central control.
-- Proof systems create verifiability without requiring permission.
-- The platform cooperates with legitimate public-order needs while preserving user sovereignty.
+- **Persistent identity creates accountability without surveillance.** Users are accountable for their actions, but their behavior is not monitored — only the consequences of their actions are recorded.
+- **Immutable history creates trust without central control.** Trust comes from verifiable evidence, not from authority.
+- **Proof systems create verifiability without requiring permission.** Anyone can verify any claim on Explorer, without needing to ask permission.
+- **The platform cooperates with legitimate public-order needs while preserving user sovereignty.** Court orders and lawful process are respected, but the platform does not proactively surveil or censor.
+
+### 11.4 Anti-Abuse Measures
+
+The platform includes multiple layers of abuse prevention:
+
+- **Identity-based enforcement.** Bad-faith actors cannot escape consequences by creating new accounts.
+- **AI Sentinel detection.** Automated systems detect and flag suspicious patterns in real time.
+- **Arbitration escalation.** Disputes that cannot be resolved at the module level escalate to cross-ecosystem arbitration.
+- **Standing consequences.** Repeated abuse leads to cross-ecosystem restrictions — higher fees, limited access, and reputation damage.
 
 ---
 
-## 12. Long-Horizon Roadmap
+## 12. Long-Horizon Roadmap: P0–P10
 
-| Phase | Focus | What Gets Built |
-|-------|-------|-----------------|
-| **P0** | Brand & Thesis | Public positioning, README flagship, whitepaper, official channels |
-| **P1** | DEX Infrastructure | 28-chain aggregation, swap router, liquidity pools, grid trading |
-| **P2** | Identity & Proof | ION Identity, one-ID-per-person, immutable history, explorer verification |
-| **P3** | Payment Rails | Frictionless payments, stablecoin frontend / ION backend, flakes layer |
-| **P4** | AI Arbitration & Defense | AI-assisted dispute resolution, sentinel defense, anomaly detection |
-| **P5** | Self-Evolution | Learning, correction, rule refinement, continuity-preserving adaptation |
-| **P6** | Merchant & E-Commerce | Merchant onboarding, payment integration, settlement rails |
-| **P7** | Real-World Services | Delivery, mobility, insurance, logistics on ION rails |
-| **P8** | Economic Integration | Fee burn flywheel, staking lock-in, dynamic burn, treasury |
-| **P9** | Governance & Anti-Abuse | Public-order compatibility, dispute escalation, abuse prevention |
-| **P10** | Mature Civilization | Full coordination layer, global seamless access, billion-scale expansion |
+### Why a 10-Phase Roadmap
+
+Most crypto projects plan for the next cycle. ION DEX plans for the next decade.
+
+The P0–P10 roadmap is designed so that each phase builds on the previous — creating a dependency chain that ensures every new capability is grounded in functioning infrastructure. Skipping phases is not possible: you cannot build payments without settlement, identity without payments, or governance without identity.
+
+### Phase Details
+
+| Phase | Focus | What Gets Built | Dependencies |
+|-------|-------|-----------------|-------------|
+| **P0** | Brand & Thesis | Public positioning, README flagship, whitepaper, official channels | None — foundation |
+| **P1** | DEX Infrastructure | 28-chain aggregation, swap router, liquidity pools, grid trading | P0 (brand & positioning) |
+| **P2** | Identity & Proof | ION Identity, one-ID-per-person, immutable history, Explorer verification | P1 (settlement rails) |
+| **P3** | Payment Rails | Frictionless payments, stablecoin frontend / ION backend, flakes layer | P1 (DEX liquidity), P2 (identity) |
+| **P4** | AI Arbitration & Defense | AI-assisted dispute resolution, Sentinel defense, anomaly detection | P2 (identity), P3 (payments) |
+| **P5** | Self-Evolution | Learning, correction, rule refinement, continuity-preserving adaptation | P4 (arbitration data) |
+| **P6** | Merchant & E-Commerce | Merchant onboarding, payment integration, settlement rails | P3 (payments), P2 (identity) |
+| **P7** | Real-World Services | Delivery, mobility, insurance, logistics on ION rails | P6 (merchant base), P4 (arbitration) |
+| **P8** | Economic Integration | Fee burn flywheel, staking lock-in, dynamic burn, treasury | P1–P7 (revenue from all modules) |
+| **P9** | Governance & Anti-Abuse | Public-order compatibility, dispute escalation, abuse prevention | P5 (evolution), P8 (economic stability) |
+| **P10** | Mature Civilization | Full coordination layer, global seamless access, billion-scale expansion | P0–P9 (all layers functional) |
 
 **Current position:** P0–P1 in active development. P2–P3 in design. P4+ planned.
 
 ---
 
-## 13. Boundaries
+## 13. Boundaries: Public and Private
 
-### Public-Safe Content (This Whitepaper)
+### What This Whitepaper Discloses
 
-- High-level direction and architecture
-- Roadmap phases and deliverables
-- Proof and verification principles
-- Economic logic (fee structure, burn, staking)
-- Identity and reputation principles
-- Governance philosophy
+This whitepaper is a public document. It discloses:
+
+- **High-level direction and architecture** — the ten layers, their dependencies, and their design rationale.
+- **Roadmap phases and deliverables** — the P0–P10 roadmap with dependencies.
+- **Proof and verification principles** — how every claim can be verified on Explorer.
+- **Economic logic** — fee structure, burn mechanism, staking products, and revenue distribution.
+- **Identity and reputation principles** — one ID per person, immutable history, adaptive standing.
+- **Governance philosophy** — single-operator governance during foundation-building, community governance at maturity.
 
 ### What Remains Private
 
-- Detailed rollout timing for unannounced modules
-- Competitive strategy against other DEX projects
-- Internal arbitration and risk handling specifics
-- Proprietary AI model specifics
-- Sensitive execution logic
+The following information is not disclosed in this whitepaper, and is maintained in private repositories:
+
+- **Detailed rollout timing** for unannounced modules — competitive timing is a strategic advantage.
+- **Competitive strategy** against other DEX projects — public disclosure would benefit competitors.
+- **Internal arbitration and risk handling specifics** — detailed arbitration logic and risk models are proprietary.
+- **Proprietary AI model specifics** — Sentinel detection models and arbitration AI architecture are trade secrets.
+- **Sensitive execution logic** — specific implementation details that could be exploited if publicly known.
 
 This separation allows **transparent public development** while protecting competitive advantage.
+
+### What Never Goes Public
+
+The following content is permanently private and must never be pushed to any public repository:
+
+- Complete business blueprints (detailed plans for e-commerce, delivery, ride-hailing, insurance, logistics)
+- Tokenomics fine-tuning details (specific dynamic burn algorithms, treasury allocation formulas)
+- ION Identity detailed planning (verification methods, standing calculation formulas, enforcement thresholds)
+- Master's vision documents and private strategy notes
+
+---
+
+## 14. Integration with Ice Open Network
+
+### Two Sovereign Nodes
+
+ION DEX integrates with the Ice Open Network through two sovereign P0 nodes:
+
+1. **[ice.io](https://ice.io/)** — Official narrative sovereignty entrance. Responsible for brand, worldview, official positioning, social media matrix, and external narrative.
+2. **[explorer.ice.io](https://explorer.ice.io/)** — Official evidence sovereignty entrance. Responsible for on-chain verification, fact proof, address mapping, transaction tracing, and announcement credibility anchoring.
+
+**The principle: the official website provides narrative, the Explorer provides evidence.** Every claim in this whitepaper should be verifiable through the Explorer.
+
+### Official Ecosystem Integration
+
+ION DEX is designed to systematically integrate with the Ice Open Network's official ecosystem — not just as an external compatible project, but as a participant in the ION official ecosystem core layer. This integration includes:
+
+- **ION Connect** — Gasless user experience, social login, and wallet abstraction.
+- **ION Domains** — `.ion` domain registration, resolution, and marketplace.
+- **ION ID** — Identity infrastructure that we extend with cross-ecosystem standing and reputation.
+- **ION Token** — The native settlement unit for all platform transactions.
+- **ION Blockchain** — The high-throughput settlement layer (1M+ TPS target).
 
 ---
 
@@ -1068,10 +1149,19 @@ This separation allows **transparent public development** while protecting compe
 
 ION DEX is not a typical DEX repository. It is the public front door of a **long-horizon digital civilization**.
 
-The standard is not "does it trade tokens?"  
-The standard is **"can it become a durable civilization stack — one that begins with infrastructure, then grows into identity, proof, payment, reputation, arbitration, coordination, and long-term evolution?"**
+The standard is not "does it trade tokens?" The standard is: **"Can it become a durable civilization stack — one that begins with infrastructure, then grows into identity, proof, payment, reputation, arbitration, coordination, and long-term evolution?"**
 
-That is what we are building toward.
+The answer is built into the architecture:
+
+- **Ten layers** that depend on each other, each grounded in real infrastructure.
+- **Dual flywheel** that structurally reduces supply and locks value, driven by real usage.
+- **Identity system** that makes behavior consequential across the entire ecosystem.
+- **Proof-first architecture** that makes every claim verifiable.
+- **AI arbitration and defense** that makes the ecosystem self-governing and self-protecting.
+- **Self-evolution** that ensures the platform improves over time.
+- **Six business modules** that reinforce each other through shared infrastructure.
+
+That is what we are building toward. Not a token narrative. Not a cycle play. **Infrastructure designed to remain relevant for fifty years.**
 
 ---
 
