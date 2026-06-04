@@ -26,7 +26,8 @@ const WORKFLOW_STEPS = [
   "5. Data: typed backend API only — no empty data or pseudo-code",
   "6. Visual self-check: 5D aurora + thick neon rims vs reference (not flat tables)",
   "7. Verify: encoding, frontend verify, audit:high, backend verify when touched",
-  "8. Update SESSION_STATE.md and docs/99-current-progress.md",
+  "8. Visual acceptance: capture fresh screenshots against designated reference assets when the touched surface is visual",
+  "9. Update SESSION_STATE.md and docs/99-current-progress.md",
 ];
 
 function parseArgs(argv) {
@@ -127,6 +128,11 @@ console.log("=== SESSION_STATE next actions ===");
 for (const line of extractNextActions()) {
   console.log(line);
 }
+console.log("");
+console.log("=== Visual acceptance workflow ===");
+console.log("  node scripts/visual-acceptance-workflow.mjs --surface dashboard --batch B");
+console.log("  node scripts/visual-acceptance-workflow.mjs --surface dashboard --batch B --execute");
+console.log("  docs/visual-acceptance-workflow-plan.md");
 console.log("");
 
 if (!execute) {

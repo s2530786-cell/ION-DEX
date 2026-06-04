@@ -79,7 +79,8 @@ Every implementation loop must follow this order:
 8. Verify states: cover default, hover/focus where practical, disabled, and real loading/error lifecycle states once data is introduced.
 9. Verify breakpoints: 375px, 768px, 1440px.
 10. Run project verification: encoding, frontend verify, audit high, and full verification when required.
-11. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
+11. Run the visual acceptance workflow for touched visual surfaces: `node scripts/visual-acceptance-workflow.mjs --surface <name> --batch <name> --execute`.
+12. Update `docs/99-current-progress.md` and `SESSION_STATE.md`.
 
 `scripts/verify-full.cmd`, `scripts/verify-full.ps1`, `scripts/agent-verify.cmd`, and `scripts/verify-full-save-log.cmd --no-pause` must run the preflight automatically.
 
