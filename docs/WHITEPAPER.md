@@ -736,7 +736,7 @@ Customer pays USDT at checkout
 
 ION DEX offers tiered merchant memberships. **Prices are quoted in USDT for stability 鈥?the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
-| Plan | Monthly | Annual | Target User | Features |
+| Tier | Monthly | Annual | Target | Features |
 |------|---------|-----------|--------|----------|
 | **Seller** | $50 USDT | $480 USDT (20% off) | Small sellers | Payment processing, .ion storefront, basic analytics |
 | **Merchant** | $199 USDT | $1,910 USDT (20% off) | Growing businesses | Everything in Seller + AI merchandising + priority support + advanced analytics + custom branding |
@@ -1544,7 +1544,7 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 
 **Prices are quoted in USDT for stability 鈥?the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
-| Plan | Monthly | Annual | Target User | Features |
+| Tier | Monthly | Annual | Target | Features |
 |-------|---------|-----------|--------|----------|
 | **Basic** | $50 USDT | $480 USDT (20% off) | Individual traders | Grid trading automation + basic risk limits + 5 strategies |
 | **Professional** | $199 USDT | $1,910 USDT (20% off) | Serious traders | Everything in Basic + AI strategy selection + advanced risk management + 20 strategies + copy trading |
