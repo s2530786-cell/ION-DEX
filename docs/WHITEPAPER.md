@@ -798,6 +798,59 @@ The ION DEX pricing model is designed for a future where ION appreciates dramati
 | Growth | 10,000 | $100 | $1,000,000 | $12,000,000 | $6,000,000 |
 | Maturity | 100,000 | $200 | $20,000,000 | $240,000,000 | $120,000,000 |
 | Global scale | 1,000,000 | $300 | $300,000,000 | $3,600,000,000 | $1,800,000,000 |
+
+#### E-Commerce Membership Service Breakdown
+
+**Seller ($50/month) — Ordinary Member:**
+- Payment processing (0.5% fee)
+- .ion storefront (1 store, 100 products max)
+- Basic analytics (daily sales, top products)
+- Standard support (email, 48h response)
+- No AI services
+
+**Merchant ($199/month) — Advanced Member:**
+- Everything in Seller, plus:
+- **AI merchandising** — AI generates product descriptions, optimizes images, suggests pricing
+- **Priority support** — Chat support, 4h response
+- **Advanced analytics** — Customer segmentation, demand forecasting, revenue trends
+- **Custom branding** — Logo, colors, custom checkout page
+- **5 stores, 1,000 products max**
+- **Reduced fee** — 0.3% payment processing fee
+
+**Enterprise ($499/month) — VIP Member:**
+- Everything in Merchant, plus:
+- **Dedicated account manager** — 1-on-1 support, weekly check-ins
+- **SLA guarantees** — 99.9% uptime, 1h support response
+- **Full AI suite** — AI customer support chatbot, AI inventory optimization, AI fraud detection
+- **Unlimited stores and products**
+- **Custom integration** — API access, webhook configuration, ERP integration
+- **Reduced fee** — 0.2% payment processing fee
+- **Purchase protection** — Automatic insurance on high-value orders
+
+**Brand ($1,999/month) — Brand Partner:**
+- Everything in Enterprise, plus:
+- **Multi-store management** — Centralized dashboard for all stores
+- **Brand-wide analytics** — Cross-store performance, brand-level customer insights
+- **Exclusive AI models** — Custom-trained AI on brand data
+- **Advertising credits** — $200 USDT/month in advertising credits
+- **Reduced fee** — 0.1% payment processing fee
+- **Priority dispute resolution** — AI arbitration prioritized
+
+**Franchise ($9,999/month) — Franchise Partner:**
+- Everything in Brand, plus:
+- **Franchise-wide reporting** — All franchisee performance in one dashboard
+- **Custom compliance** — Region-specific regulatory compliance automation
+- **White-label options** — Brand the entire platform for franchise use
+- **Advertising credits** — $1,000 USDT/month in advertising credits
+- **Zero processing fee** — 0% on first $100,000/month in transactions
+
+**Institutional ($50,000–$1,000,000/month) — Enterprise Group:**
+- Everything in Franchise, plus:
+- **Dedicated infrastructure** — Isolated servers, custom deployment
+- **Legal support** — Dedicated legal team for compliance across jurisdictions
+- **Custom supply chain integration** — Connect to any logistics provider globally
+- **Global rollout coordination** — Dedicated project manager for multi-region expansion
+- **Zero processing fee** — 0% on all transactions
 #### AI Services for Merchants
 
 **Basic Plan 鈥?Included AI:**
@@ -903,6 +956,47 @@ ION DEX provides SDKs and APIs that allow existing delivery and ride-hailing pla
 - A ride-hailing startup in Africa uses the ION DEX API to handle payment escrow and driver payout. They reduce their payment processing cost from 3% to 0.5%.
 - A restaurant aggregator in Latin America uses the White-Label solution to launch a delivery platform powered entirely by ION rails.
 
+
+#### Per-Order Pricing Model (No Mandatory Membership)
+
+Food delivery and ride-hailing services are **per-order priced** — no membership required to use the platform. Users pay per order, drivers/riders earn per delivery. Membership is optional and provides enhanced benefits.
+
+**Base Pricing (Free Users):**
+
+| Service | Platform Fee | Settlement | Insurance |
+|---------|-------------|------------|-----------|
+| Food delivery | 0.5% per order | Instant | None (optional add-on) |
+| Ride-hailing | 0.5% per ride | Instant | None (optional add-on) |
+| Group purchase | 0.5% per group order | Instant | None |
+
+**Optional Membership — Enhanced Benefits:**
+
+| Tier | Monthly | Platform Fee | Order Priority | Insurance | AI Features | Support |
+|------|---------|-------------|---------------|-----------|-------------|---------|
+| **Free** | $0 | 0.5% | Standard | Pay per order | None | Standard |
+| **Commuter** | $50 | 0.3% | Priority matching | Free delivery guarantee | Smart route suggestions | Priority chat |
+| **Premium** | $199 | 0.2% | High priority + premium orders | Free ride insurance + delivery guarantee | AI route optimization + demand prediction | Dedicated support |
+| **Elite** | $499 | 0.1% | Top priority + exclusive orders | Full insurance (accident + delivery + vehicle) | AI personal assistant + custom route planning | White-glove 24/7 |
+
+**Why Per-Order + Optional Membership?**
+
+- **Usage frequency varies wildly.** Some users order food once a month, others twice daily. Mandatory membership penalizes low-frequency users.
+- **Per-order pricing is fair.** Every user pays proportional to their usage.
+- **Membership is an upgrade, not a barrier.** Users can start free, experience the service, then upgrade when they see value.
+- **The flywheel still works.** Per-order fees (0.5% → 0.1%) are all converted to ION, with 50% burned.
+
+**Driver/Rider Pricing Model:**
+
+Drivers and riders stake ION to unlock benefits (staking, not subscription):
+
+| Stake Level | ION Staked | Platform Fee | Order Priority | Insurance | Reputation Boost |
+|-------------|-----------|-------------|---------------|-----------|-----------------|
+| **Free rider** | 0 | 0.5% | Standard | None | Normal speed |
+| **Staked rider** | 100 ION (~$50) | 0.3% | Priority | Basic accident coverage | 1.5x faster |
+| **Captain** | 500 ION (~$250) | 0.2% | High priority | Full accident + vehicle coverage | 2x faster |
+| **Fleet leader** | 2,000 ION (~$1,000) | 0.1% | Top priority | Full coverage + passenger insurance | 3x faster |
+
+**Staking is skin-in-the-game.** Staked riders signal commitment — they complete orders on time, provide good service, and build reputation faster. They cannot unstake immediately (7-day minimum lock), ensuring consistency.
 #### Web3 E-Commerce + Food Delivery Integration
 
 ION DEX food delivery is not a standalone app 鈥?it is integrated with the Web3 e-commerce module:
