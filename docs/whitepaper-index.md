@@ -2,6 +2,14 @@
 
 > The complete public doctrine of ION DEX and its long-horizon digital civilization design.
 
+## Primary Document
+
+### 📜 [ION DEX Whitepaper v1.0](./WHITEPAPER.md)
+
+The complete whitepaper covering all 13 sections: Core Thesis, Strategic Architecture (10 layers), DEX Layer, Payment Civilization, Identity & Civil Standing, Proof & Trust, AI Arbitration & Sentinel Defense, Self-Evolution, Ecosystem Coordination, Economic Logic, Governance & Public-Order Compatibility, Long-Horizon Roadmap (P0-P10), and Boundaries.
+
+---
+
 ## Core Documents
 
 ### Civilization Blueprint

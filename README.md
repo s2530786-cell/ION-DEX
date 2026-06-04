@@ -47,6 +47,9 @@
 - **[📚 Documentation Hub](./docs)**  
   The structured entry into technical docs, system maps, build context, and public materials.
 
+- **[📖 Whitepaper](./docs/WHITEPAPER.md)**  
+  The complete civilization-scale whitepaper — 13 sections covering architecture, identity, payments, arbitration, economics, and roadmap.
+
 - **[📖 Whitepaper Index](./docs/whitepaper-index.md)**  
   The deeper doctrine, long-horizon system reasoning, and civilization-scale synthesis.
 
