@@ -317,31 +317,413 @@ can improve without reducing continuity across the wider system.
 
 ## 9. Ecosystem Coordination
 
-### Coordination Layer
+ION DEX is not building isolated apps. It is building a **coordination layer** where multiple business modules plug into shared payment rails, identity, reputation, proof, arbitration, and defense.
 
-ION DEX is designed as a coordination layer across:
+Each module is designed to:
+1. Solve real-world pain points that traditional solutions cannot.
+2. Feed the fee burn and staking flywheel.
+3. Reinforce identity and reputation across the ecosystem.
+4. Connect to other modules through shared infrastructure.
 
-| Module | Function |
-|--------|----------|
-| **Merchant payments** | ION checkout for online/offline commerce |
-| **Delivery & mobility** | Food delivery, ride-hailing on ION rails |
-| **Insurance** | Parametric policies with oracle triggers and automated payouts |
-| **Logistics** | Supply chain tracking + on-chain settlement |
-| **Domain trading** | On-chain domain marketplace |
-| **RWA** | Tokenized real-world assets on ION |
+---
 
-### Shared Substrate
+### 9.1 Merchant Payments & E-Commerce
 
-The key point is not to create random adjacent businesses. The key point is to let these ecosystems plug into shared:
-- Payment rails
-- Identity
-- Reputation
-- Proof
-- AI-assisted arbitration
-- AI defense
-- Coordination logic
+#### The Problem
 
-This makes the wider ecosystem **stronger than a set of isolated apps**. Multiple business layers connect into the same trust system, reinforcing one another.
+Traditional payment processors extract 2-3% from every transaction. Settlement takes 2-7 days. Cross-border payments require multiple intermediaries, currency conversion fees, and regulatory friction. Merchants have no direct access to Web3-native customers.
+
+#### What ION DEX Provides
+
+| Feature | Traditional | ION DEX |
+|---------|-------------|--------|
+| Settlement time | 2-7 days | 5-15 seconds |
+| Transaction fee | 2-3% | 0.5% |
+| Cross-border friction | Multiple processors, conversion fees | Single ION rail |
+| Web3 customer reach | None | Direct access |
+| Chain complexity | N/A | Handled by infrastructure |
+| Verifiable proof | No | Every transaction on Explorer |
+
+#### How It Works
+
+```
+Customer pays USDT at checkout
+  → ION DEX payment layer receives payment
+  → Backend converts USDT → ION via DEX liquidity pool
+  → 0.5% platform fee deducted:
+    → 50% (0.25%) burned to 0x000...dEaD (permanent)
+    → 50% (0.25%) to staking pool + treasury
+  → Remaining ION routed to merchant wallet
+  → Settlement notification via webhook (5-15 seconds)
+  → Merchant fulfills order
+```
+
+#### Merchant Integration Paths
+
+1. **Payment Button** — Drop-in checkout widget for simple integration.
+2. **API Integration** — Full control over checkout flow, custom UX.
+3. **Direct Settlement** — High-volume merchants receive ION directly.
+
+#### Why Traditional Solutions Cannot Compete
+
+- Traditional processors cannot reduce fees below their operational costs.
+- Traditional processors cannot offer sub-second settlement without pre-funding.
+- Traditional processors cannot connect to Web3 customers.
+- Traditional processors cannot provide Explorer-verifiable proof of every fee deduction.
+
+#### Connection to Other Modules
+
+- **Identity**: Merchant standing affects fee tiers, dispute resolution priority.
+- **Insurance**: Purchase protection policies for high-value transactions.
+- **Logistics**: Integrated shipping and tracking for physical goods.
+- **Domain**: `.ion` domains for merchant storefronts.
+
+---
+
+### 9.2 Delivery & Mobility (Food Delivery, Ride-Hailing)
+
+#### The Problem
+
+Food delivery and ride-hailing platforms extract 25-40% from every order. Drivers and riders wait days for payout. Settlement is opaque. Reputation is siloed — a driver's rating on one platform does not transfer to another.
+
+#### What ION DEX Provides
+
+| Feature | Traditional Platforms | ION DEX |
+|---------|----------------------|--------|
+| Platform fee | 25-40% | 0.5% |
+| Driver/rider payout | 2-7 days | Instant (seconds) |
+| Reputation portability | None — siloed per platform | Cross-ecosystem via ION Identity |
+| Dispute resolution | Opaque, platform-favoring | AI-assisted arbitration, appeal-capable |
+| Verifiable proof | No | Every order, payout, and fee on Explorer |
+
+#### How It Works
+
+```
+Customer orders food / requests ride
+  → Order created on ION rails
+  → Customer payment escrowed in smart contract
+  → Driver/rider accepts order
+  → Service completed
+  → Customer confirms (or auto-confirm after timeout)
+  → Smart contract releases payment:
+    → 0.5% platform fee → 50% burned, 50% staking/treasury
+    → Remaining → Driver/rider wallet (instant)
+  → Reputation updated for both parties (good/bad record)
+```
+
+#### Driver/Rider Staking
+
+Drivers and riders can stake ION to:
+- Unlock higher earnings tiers (reduced platform fee).
+- Access premium order allocation.
+- Build reputation faster (staked skin-in-the-game signals commitment).
+
+#### Why Traditional Solutions Cannot Compete
+
+- Traditional platforms cannot reduce fees below ~25% without collapsing their business model.
+- Traditional platforms cannot offer instant settlement without pre-funding.
+- Traditional platforms cannot make reputation portable across services.
+- Traditional platforms cannot provide transparent, auditable fee distribution.
+
+#### Connection to Other Modules
+
+- **Identity**: Driver/rider standing affects order allocation, fee tiers.
+- **Insurance**: Delivery guarantees, ride insurance.
+- **Logistics**: Multi-stop delivery optimization.
+- **Merchant Payments**: Restaurant integration for food delivery.
+
+---
+
+### 9.3 Insurance (Parametric Policies)
+
+#### The Problem
+
+Traditional insurance is slow, opaque, and adversarial. Claims take weeks or months. Payouts require manual approval. Fraud detection is reactive. Policyholders have no visibility into why claims are approved or denied.
+
+#### What ION DEX Provides
+
+| Feature | Traditional Insurance | ION DEX |
+|---------|----------------------|--------|
+| Claim processing | Weeks to months | Seconds (oracle-triggered) |
+| Transparency | Opaque | Every policy, claim, and payout on Explorer |
+| Fraud detection | Reactive | AI sentinel defense (proactive) |
+| Dispute resolution | Adversarial, slow | AI-assisted arbitration, appeal-capable |
+| Premium payment | Fiat, slow | ION, instant |
+| Payout | Bank transfer, days | ION, seconds |
+
+#### Parametric Insurance Design
+
+Parametric insurance pays out automatically when predefined conditions are met — no manual claims approval required.
+
+**Example: Flight Delay Insurance**
+
+```
+Policy parameters:
+- Flight number: AA123
+- Departure date: 2026-06-05
+- Delay threshold: 2 hours
+- Payout amount: 100 ION
+
+Oracle monitors flight status:
+- If delay >= 2 hours → Oracle signs trigger
+- Smart contract verifies oracle signature
+- Payout sent to policyholder wallet (seconds)
+- No claim filing, no approval, no delay
+```
+
+**Example: Weather Insurance**
+
+```
+Policy parameters:
+- Location: Tokyo, Japan
+- Date range: 2026-07-01 to 2026-07-31
+- Condition: Rainfall > 100mm in 24 hours
+- Payout amount: 500 ION
+
+Oracle monitors weather data:
+- If condition met → Oracle signs trigger
+- Smart contract verifies and pays out
+```
+
+#### Oracle Architecture
+
+ION DEX does not rely on a single oracle. The platform aggregates:
+- Flight data APIs (FlightAware, etc.)
+- Weather data APIs (OpenWeatherMap, etc.)
+- On-chain price feeds (for crypto price triggers)
+- Custom oracles for specific use cases
+
+Multiple oracle sources sign triggers. Smart contract requires **N-of-M signatures** to execute payout — no single point of failure.
+
+#### Why Traditional Solutions Cannot Compete
+
+- Traditional insurers cannot process claims in seconds without fraud risk.
+- Traditional insurers cannot make every policy and claim transparent on-chain.
+- Traditional insurers cannot integrate with identity and reputation across services.
+- Traditional insurers cannot offer instant premium payment and payout in a single currency.
+
+#### Connection to Other Modules
+
+- **Identity**: Policyholder standing affects premium rates, coverage limits.
+- **Delivery & Mobility**: Delivery guarantees, ride insurance.
+- **Logistics**: Cargo insurance, shipping guarantees.
+- **Merchant Payments**: Purchase protection for e-commerce.
+
+---
+
+### 9.4 Logistics (Supply Chain, Freight, Proof of Delivery)
+
+#### The Problem
+
+Traditional logistics is fragmented, opaque, and slow. Shipment tracking is siloed per carrier. Proof of delivery is manual and disputable. Payment settlement takes 30-90 days. Cross-border logistics requires multiple intermediaries.
+
+#### What ION DEX Provides
+
+| Feature | Traditional Logistics | ION DEX |
+|---------|----------------------|--------|
+| Shipment tracking | Siloed per carrier | Unified on ION rails |
+| Proof of delivery | Manual, disputable | On-chain, verifiable on Explorer |
+| Settlement | 30-90 days | Seconds (on delivery confirmation) |
+| Cross-border friction | Multiple intermediaries | Single ION rail |
+| Dispute resolution | Slow, opaque | AI-assisted arbitration |
+| Verifiable proof | No | Every shipment, delivery, and payment on Explorer |
+
+#### How It Works
+
+```
+Shipper creates shipment on ION rails
+  → Shipment details recorded on-chain:
+    - Origin, destination, contents, value
+    - Carrier assignment
+    - Estimated delivery date
+  → Carrier accepts shipment
+  → Shipment in transit:
+    - GPS tracking updates recorded on-chain (or oracle-fed)
+    - Temperature/humidity monitoring (for cold chain)
+  → Delivery completed:
+    - Recipient signs proof of delivery (or IoT device signs)
+    - Smart contract verifies signature
+    → 0.3% platform fee → 50% burned, 50% staking/treasury
+    → Remaining → Carrier wallet (instant)
+  → Shipment record permanent on Explorer
+```
+
+#### Cold Chain Monitoring
+
+For temperature-sensitive shipments (pharmaceuticals, food):
+- IoT temperature sensors record data continuously.
+- Oracle feeds temperature data on-chain.
+- If temperature exceeds threshold → automatic insurance payout.
+- Complete temperature history verifiable on Explorer.
+
+#### Bill of Lading NFT
+
+Each shipment is represented as a **Bill of Lading NFT**:
+- Transferable — can be traded or used as collateral.
+- Verifiable — complete shipment history on Explorer.
+- Dispute-capable — AI arbitration for delivery disputes.
+
+#### Why Traditional Solutions Cannot Compete
+
+- Traditional logistics cannot unify tracking across carriers without building massive infrastructure.
+- Traditional logistics cannot offer instant settlement without pre-funding.
+- Traditional logistics cannot make every shipment verifiable on-chain.
+- Traditional logistics cannot integrate with identity and reputation across services.
+
+#### Connection to Other Modules
+
+- **Identity**: Carrier standing affects order allocation, insurance rates.
+- **Insurance**: Cargo insurance, delivery guarantees.
+- **Delivery & Mobility**: Last-mile delivery integration.
+- **Merchant Payments**: E-commerce fulfillment.
+
+---
+
+### 9.5 Domain Trading (.ion Domains)
+
+#### The Problem
+
+Traditional domain registrars extract high fees, offer no secondary market, and provide no integration with identity or payments. Domain transfers are manual and slow. Disputes are adversarial and opaque.
+
+#### What ION DEX Provides
+
+| Feature | Traditional Registrars | ION DEX |
+|---------|----------------------|--------|
+| Registration fee | $10-50/year | 5 ION (one-time) |
+| Secondary market | Limited, high fees | Built-in marketplace, 0.5% fee |
+| Transfer time | Days | Seconds |
+| Identity integration | None | `.ion` domain = ION Identity alias |
+| Payment integration | None | Receive payments at `shop.ion` |
+| Dispute resolution | Adversarial, slow | AI-assisted arbitration |
+| Verifiable proof | No | Every registration, transfer, and sale on Explorer |
+
+#### How It Works
+
+```
+User searches for domain (e.g., 'shop.ion')
+  → Domain available → User pays 5 ION registration fee
+    → 50% burned, 50% staking/treasury
+    → Domain registered to user's ION Identity
+  → User configures domain:
+    - Resolve to wallet address
+    - Set profile (name, avatar, description)
+    - Enable payment receiving
+  → User can list domain for sale:
+    - Set price or auction
+    - Buyer purchases → 0.5% fee → 50% burned
+    - Domain transfers to buyer (seconds)
+```
+
+#### Homoglyph Protection
+
+ION DEX protects users from homoglyph attacks (domains that look identical but use different Unicode characters):
+- Registration checks for homoglyphs across existing domains.
+- Users cannot register domains that visually match existing domains.
+- AI sentinel defense flags potential phishing attempts.
+
+#### Why Traditional Solutions Cannot Compete
+
+- Traditional registrars cannot offer instant, on-chain transfers.
+- Traditional registrars cannot integrate domains with identity and payments.
+- Traditional registrars cannot provide AI-assisted dispute resolution.
+- Traditional registrars cannot make every registration and transfer verifiable on-chain.
+
+#### Connection to Other Modules
+
+- **Identity**: `.ion` domain = ION Identity alias.
+- **Merchant Payments**: Receive payments at `shop.ion`.
+- **Ecosystem Coordination**: Merchant storefronts, service provider profiles.
+
+---
+
+### 9.6 RWA (Real-World Assets)
+
+#### The Problem
+
+Real-world assets (real estate, commodities, securities) are illiquid, opaque, and inaccessible to most investors. Fractional ownership is limited. Trading requires intermediaries. Settlement is slow.
+
+#### What ION DEX Provides
+
+| Feature | Traditional RWA | ION DEX |
+|---------|-----------------|--------|
+| Liquidity | Low, illiquid | On-chain trading, 24/7 |
+| Fractional ownership | Limited | Tokenized, divisible |
+| Transparency | Opaque | Every asset, trade, and dividend on Explorer |
+| Settlement | Days to weeks | Seconds |
+| Access | Accredited investors only | Global access (regulation-permitting) |
+| Fee | 2-5% + intermediaries | 0.3% |
+
+#### How It Works
+
+```
+Asset tokenization:
+  → Asset owner registers real-world asset (e.g., commercial property)
+  → Legal framework: asset SPV, token represents ownership share
+  → Asset details recorded on-chain:
+    - Asset type, location, valuation, legal documents
+    - Oracle feeds for ongoing valuation (e.g., property index)
+  → Tokens minted representing fractional ownership
+  → Trading on ION DEX:
+    - Buyers purchase tokens with ION
+    - 0.3% fee → 50% burned, 50% staking/treasury
+    - Tokens transfer to buyer wallet (seconds)
+  → Dividend distribution:
+    - Rental income / dividends paid in ION
+    - Distributed pro-rata to token holders
+```
+
+#### Asset Types
+
+| Asset Type | Oracle Integration | Example |
+|------------|-------------------|---------|
+| Real estate | Property index, rental income | Commercial property, residential |
+| Commodities | Commodity price feeds | Gold, oil, agricultural products |
+| Securities | Stock price feeds | Equity, bonds (regulation-permitting) |
+| Art/Collectibles | Appraisal oracle | Fine art, rare collectibles |
+
+#### Why Traditional Solutions Cannot Compete
+
+- Traditional RWA markets cannot offer 24/7 trading without massive infrastructure.
+- Traditional RWA markets cannot offer instant settlement.
+- Traditional RWA markets cannot make every asset and trade transparent on-chain.
+- Traditional RWA markets cannot integrate with identity and reputation across services.
+
+#### Connection to Other Modules
+
+- **Identity**: Investor standing affects access, leverage limits.
+- **Insurance**: Asset insurance, title insurance.
+- **Logistics**: For physical assets (commodities, art).
+- **Domain**: Asset listing pages at `asset.ion`.
+
+---
+
+### 9.7 Shared Substrate: Why This Is Not Just Isolated Apps
+
+The key point is not to create random adjacent businesses. The key point is to let these ecosystems plug into **shared infrastructure**:
+
+| Shared Layer | What It Provides |
+|--------------|------------------|
+| **Payment rails** | All modules settle in ION, feed the burn flywheel |
+| **Identity** | One ID per person, standing affects all modules |
+| **Reputation** | Cross-ecosystem enforcement, no reset by switching modules |
+| **Proof** | Every transaction verifiable on Explorer |
+| **AI Arbitration** | Consistent dispute resolution across all modules |
+| **AI Defense** | Ecosystem-wide anomaly detection and response |
+| **Coordination** | Modules reinforce each other, not compete |
+
+#### Example: Cross-Module Coordination
+
+A merchant who cheats customers on e-commerce:
+- Their reputation drops (Identity module).
+- They face higher fees on future transactions (Merchant Payments).
+- They may be excluded from premium logistics (Logistics).
+- Their insurance premiums increase (Insurance).
+- Their domain may be flagged (Domain).
+- Their RWA investments may face restrictions (RWA).
+
+**Bad behavior in one module has consequences across all modules.**
+
+This is what makes the wider ecosystem **stronger than a set of isolated apps**.
 
 ---
 
