@@ -1266,12 +1266,14 @@ Traditional domain registrars extract high fees ($10鈥?0/year), offer no second
 
 #### Domain Registration Pricing
 
-| Domain Length | Registration Fee | Renewal |
+| Domain Length | Registration Fee | Rarity |
 |---------------|------------------|----------|
 | 1 character | $1,000 USDT (one-time) | None 鈥?permanent ownership |
-| 2 characters | $5,000 USDT (one-time) | None |
-| 3 characters | $500 USDT (one-time) | None |
-| 4+ characters | $50 USDT (one-time) | None — permanent ownership |
+| **5 characters** | $1,000 USDT (one-time) | None |
+| **6 characters** | $500 USDT (one-time) | None |
+| **7 characters** | $250 USDT (one-time) | None |
+| **8+ characters** | $100 USDT (one-time) | None — most common |
+| **Premium keywords** | Auction-based | None |
 | Premium keywords | Auction-based | None |
 
 **How Registration Fee Works:**
