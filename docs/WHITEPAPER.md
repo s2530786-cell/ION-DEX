@@ -735,19 +735,32 @@ Customer pays USDT at checkout
 
 #### Merchant Membership Plans
 
-ION DEX offers tiered merchant memberships, payable in ION:
+ION DEX offers tiered merchant memberships. **Prices are quoted in USDT for stability — the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
 | Plan | Monthly | Quarterly | Annual | Features |
 |------|---------|-----------|--------|----------|
-| **Basic** | 50 ION | 135 ION (10% off) | 480 ION (20% off) | Payment processing, .ion storefront, basic analytics |
-| **Professional** | 150 ION | 405 ION (10% off) | 1,440 ION (20% off) | Everything in Basic + AI merchandising + priority support + advanced analytics + custom branding |
+| **Basic** | $10 USDT | $27 USDT (10% off) | $96 USDT (20% off) | Payment processing, .ion storefront, basic analytics |
+| **Professional** | $30 USDT | $81 USDT (10% off) | $288 USDT (20% off) | Everything in Basic + AI merchandising + priority support + advanced analytics + custom branding |
 | **Enterprise** | Custom | Custom | Custom | Everything in Professional + dedicated account manager + custom integration + SLA guarantees + volume discounts |
 
-**Why Quarterly/Annual Discounts?**
+**How USDT → ION Conversion Works:**
 
-- **Merchant commitment.** Longer subscriptions mean merchants are committed to the platform, creating a stable revenue base.
-- **Fee burn flywheel.** Membership fees paid in ION → 50% burned permanently → circulating supply shrinks with every merchant subscription.
-- **Predictable revenue.** Quarterly and annual plans give the platform predictable revenue for planning and development.
+```
+Merchant pays $30 USDT for Professional monthly plan
+  → Backend converts USDT → ION via DEX liquidity pool (at market rate)
+  → Converted ION distributed:
+    → 50% burned to 0x000...dEaD (permanent)
+    → 50% to staking pool + treasury
+  → Merchant sees only $30 USDT charge (simple, familiar pricing)
+  → ION ecosystem gains: buy pressure on ION + permanent supply reduction
+```
+
+**Why USDT Pricing Instead of ION Pricing?**
+
+- **Merchant familiarity.** Merchants understand USDT pricing. ION pricing introduces volatility risk that discourages adoption.
+- **Stable budgeting.** Merchants can budget $30/month regardless of ION price fluctuations.
+- **Same flywheel effect.** The backend converts to ION instantly, so the burn and staking effects are identical.
+- **Rising ION demand.** As more merchants subscribe, the platform buys more ION on the open market, creating consistent buy pressure that supports ION price.
 
 #### AI Services for Merchants
 
@@ -776,10 +789,10 @@ Merchants can purchase advertising placements on the platform:
 
 | Placement | Cost | Duration |
 |-----------|------|----------|
-| Homepage featured | 100 ION/week | 7 days |
-| Category featured | 50 ION/week | 7 days |
-| Search result boost | 20 ION/week | 7 days |
-| Banner ad | 30 ION/week | 7 days |
+| Homepage featured | $5 USDT/week | 7 days |
+| Category featured | $2.50 USDT/week | 7 days |
+| Search result boost | $1 USDT/week | 7 days |
+| Banner ad | $1.50 USDT/week | 7 days |
 
 **50% of advertising revenue is burned permanently.** Every ad purchased reduces circulating supply.
 
@@ -924,9 +937,9 @@ ION DEX food delivery is not a standalone app — it is integrated with the Web3
 
 | Stake Amount | Benefits |
 |-------------|----------|
-| 100 ION | Premium order allocation + fee reduction to 0.3% + insurance coverage |
-| 500 ION | Priority order allocation + fee reduction to 0.2% + priority dispute resolution |
-| 1,000 ION | Top-tier allocation + fee reduction to 0.1% + premium insurance + AI route optimization |
+| 100 ION (~$1 USDT equivalent) | Premium order allocation + fee reduction to 0.3% + insurance coverage |
+| 500 ION (~$5 USDT equivalent) | Priority order allocation + fee reduction to 0.2% + priority dispute resolution |
+| 1,000 ION (~$10 USDT equivalent) | Top-tier allocation + fee reduction to 0.1% + premium insurance + AI route optimization |
 
 **Staking is skin-in-the-game.** A staked driver signals commitment to the platform — they are more likely to complete orders on time and provide good service. Reputation builds faster for staked participants.
 
@@ -1090,20 +1103,20 @@ ION DEX offers insurance membership plans that reduce per-policy costs:
 
 | Plan | Monthly | Annual | Benefits |
 |------|---------|--------|----------|
-| **Basic** | 5 ION | 48 ION (20% off) | Standard policy processing, 5 active policies max |
-| **Premium** | 20 ION | 192 ION (20% off) | Priority claim processing, 20 active policies, higher coverage limits, insurance consultation |
+| **Basic** | $1 USDT | $9.60 USDT (20% off) | Standard policy processing, 5 active policies max |
+| **Premium** | $5 USDT | $48 USDT (20% off) | Priority claim processing, 20 active policies, higher coverage limits, insurance consultation |
 | **Enterprise** | Custom | Custom | Bulk policies, custom coverage, dedicated claims manager, API access for automated policy issuance |
 
 #### Insurance Types Available
 
 | Insurance Type | Premium Range | Coverage |
 |----------------|---------------|----------|
-| **Delivery Guarantee** | 1–5 ION per order | Up to 500 ION if delivery fails or is damaged |
-| **Ride Insurance** | 0.5 ION per ride | Up to 1,000 ION for accidents during ride |
-| **Cargo Insurance** | 5–50 ION per shipment | Up to 10,000 ION for loss/damage |
-| **E-Commerce Purchase Protection** | 2% of purchase price | Full refund if product not as described |
-| **Merchant Business Insurance** | 50 ION/month | Up to 10,000 ION for fraud, chargebacks, disputes |
-| **Travel Insurance** | 10–50 ION per trip | Flight delay, cancellation, lost baggage (oracle-triggered) |
+| **Delivery Guarantee** | $0.05–$0.25 USDT per order | Up to $25 USDT if delivery fails or is damaged |
+| **Ride Insurance** | $0.03 USDT per ride | Up to $50 USDT for accidents during ride |
+| **Cargo Insurance** | $0.25–$2.50 USDT per shipment | Up to $500 USDT for loss/damage |
+| **E-Commerce Purchase Protection** | 2% of purchase price (in USDT) | Full refund if product not as described |
+| **Merchant Business Insurance** | $2.50 USDT/month | Up to $500 USDT for fraud, chargebacks, disputes |
+| **Travel Insurance** | $0.50–$2.50 USDT per trip | Flight delay, cancellation, lost baggage (oracle-triggered) |
 
 #### Cross-Module Insurance Integration
 
@@ -1375,13 +1388,32 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 
 #### AI Trading Membership Plans
 
+**Prices are quoted in USDT for stability — the backend automatically converts to ION at market rate, feeding the burn flywheel.**
+
 | Plan | Monthly | Quarterly | Annual | Features |
 |-------|---------|-----------|--------|----------|
-| **Starter** | 10 ION | 27 ION (10% off) | 96 ION (20% off) | Grid trading automation + basic risk limits + 5 strategies |
-| **Professional** | 30 ION | 81 ION (10% off) | 288 ION (20% off) | Everything in Starter + AI strategy selection + advanced risk management + 20 strategies + copy trading |
-| **Advanced** | 50 ION | 135 ION (10% off) | 480 ION (20% off) | Everything in Professional + custom AI model training + priority execution + unlimited strategies + API access |
+| **Starter** | $5 USDT | $13.50 USDT (10% off) | $48 USDT (20% off) | Grid trading automation + basic risk limits + 5 strategies |
+| **Professional** | $15 USDT | $40.50 USDT (10% off) | $144 USDT (20% off) | Everything in Starter + AI strategy selection + advanced risk management + 20 strategies + copy trading |
+| **Advanced** | $30 USDT | $81 USDT (10% off) | $288 USDT (20% off) | Everything in Professional + custom AI model training + priority execution + unlimited strategies + API access |
 
-**What 10–50 ION/month Means:** At ION = $0.01, 10 ION = $0.10/month. At ION = $1, 10 ION = $10/month. The AI platform is designed to be affordable even when ION appreciates.
+**How USDT → ION Conversion Works:**
+
+```
+User pays $15 USDT for Professional monthly plan
+  → Backend converts USDT → ION via DEX liquidity pool (at market rate)
+  → Converted ION distributed:
+    → 50% burned to 0x000...dEaD (permanent)
+    → 50% to staking pool + treasury
+  → User sees only $15 USDT charge (simple, familiar pricing)
+  → ION ecosystem gains: buy pressure on ION + permanent supply reduction
+```
+
+**Why USDT Pricing?**
+
+- **User familiarity.** Traders understand USDT. ION pricing introduces confusion about cost.
+- **Stable budgeting.** Users know exactly what they pay per month.
+- **Same flywheel.** Backend conversion means identical burn and staking effects.
+- **Rising ION demand.** As more users subscribe, consistent buy pressure supports ION price.
 
 #### AI Trading Capabilities
 
@@ -1410,9 +1442,9 @@ Users can unlock advanced AI models with ION payments:
 | Model | Cost | Capability |
 |-------|------|------------|
 | Basic LSTM | Included in all plans | Standard grid trading, price prediction |
-| Transformer | 5 ION one-time | Advanced pattern recognition, multi-asset correlation |
-| Ensemble | 10 ION one-time | Multiple models voting, higher accuracy |
-| Custom Trained | 50 ION one-time | Trained on user's specific portfolio and preferences |
+| Transformer | $2.50 USDT one-time | Advanced pattern recognition, multi-asset correlation |
+| Ensemble | $5 USDT one-time | Multiple models voting, higher accuracy |
+| Custom Trained | $25 USDT one-time | Trained on user's specific portfolio and preferences |
 
 **50% of model unlock fees are burned permanently.**
 
