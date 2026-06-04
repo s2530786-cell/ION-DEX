@@ -35,12 +35,13 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 9. [Ecosystem Coordination](#9-ecosystem-coordination)
 10. [Economic Logic: The Dual Flywheel](#10-economic-logic-the-dual-flywheel)
 11. [Governance & Public-Order Compatibility](#11-governance--public-order-compatibility)
-12. [Long-Horizon Roadmap: P0–P10](#12-long-horizon-roadmap-p0p10)
-13. [Boundaries: Public and Private](#13-boundaries-public-and-private)
-14. [Integration with Ice Open Network](#14-integration-with-ice-open-network)
-15. [Team & Contributors](#15-team--contributors)
-16. [Conclusion](#conclusion)
-17. [References](#references)
+12. [Security Architecture: Battle-Tested Infrastructure](#12-security-architecture-battle-tested-infrastructure)
+13. [Long-Horizon Roadmap: P0–P10](#13-long-horizon-roadmap-p0p10)
+14. [Boundaries: Public and Private](#14-boundaries-public-and-private)
+15. [Integration with Ice Open Network](#15-integration-with-ice-open-network)
+16. [Team & Contributors](#16-team--contributors)
+17. [Conclusion](#conclusion)
+18. [References](#references)
 
 ---
 
@@ -1363,35 +1364,127 @@ The platform includes multiple layers of abuse prevention:
 
 ---
 
-## 12. Long-Horizon Roadmap: P0–P10
+## 12. Security Architecture: Battle-Tested Infrastructure
 
-### Why a 10-Phase Roadmap
+### 12.1 Security as Core Differentiator
 
-Most crypto projects plan for the next cycle. ION DEX plans for the next decade.
+Most DEXs treat security as a checkbox — pass an audit, deploy, hope nothing breaks. ION DEX treats security as the **foundational layer** that every other component builds upon.
 
-### Security Audit Standards
+**Why security matters more for a civilization-scale project:**
+
+- A DEX that holds user funds for days (delivery payments, escrow, insurance) has larger attack surface than a simple swap interface.
+- An identity system that tracks reputation across an ecosystem is a high-value target for manipulation.
+- A platform that processes merchant payments, insurance claims, and logistics settlements cannot afford downtime from security incidents.
+
+### 12.2 Attack Resistance by Category
+
+ION DEX is designed to resist the 10 most common and dangerous Web3 attack vectors:
+
+#### 12.2.1 Reentrancy Protection
+
+**Attack:** A malicious contract calls back into the vulnerable contract before state updates complete, allowing multiple withdrawals.
+
+**Defense:**
+- All state changes complete before external calls (Checks-Effects-Interactions pattern).
+- Reentrancy guards on all public functions that modify state.
+- 100+ simulation rounds per contract testing reentrancy scenarios.
+
+#### 12.2.2 Flash Loan Attack Resistance
+
+**Attack:** Borrow massive amounts without collateral, manipulate prices/liquidity, profit, repay loan — all in one block.
+
+**Defense:**
+- Price oracles use time-weighted average prices (TWAP) over multiple blocks, preventing single-block manipulation.
+- Large trades trigger delayed execution, making flash-loan arbitrage impractical.
+- 100+ simulation rounds per contract testing flash loan scenarios.
+
+#### 12.2.3 Sandwich Attack Resistance
+
+**Attack:** Attacker sees pending transaction, front-runs with buy, lets victim execute, then back-runs with sell — profiting from price impact.
+
+**Defense:**
+- Commit-reveal schemes for large trades (user commits hash, reveals later).
+- Private mempool submission for sensitive transactions.
+- Slippage protection enforced at routing layer.
+- 100+ simulation rounds per contract testing sandwich scenarios.
+
+#### 12.2.4 Oracle Manipulation Resistance
+
+**Attack:** Attacker compromises or manipulates oracle to provide false price data, triggering unwanted contract behavior.
+
+**Defense:**
+- Multi-source oracle aggregation (N-of-M signatures required).
+- Dual-source verification for real-world events (oracle + ground-truth signature).
+- Anomaly detection: if oracle price deviates significantly from moving average, trigger review.
+- 100+ simulation rounds per contract testing oracle manipulation scenarios.
+
+#### 12.2.5 Permission Bypass Resistance
+
+**Attack:** Attacker exploits access control vulnerabilities to execute restricted functions.
+
+**Defense:**
+- Role-based access control (RBAC) with explicit permission grants.
+- Multi-signature requirements for privileged operations.
+- Regular access control audits and permission revocation reviews.
+- 100+ simulation rounds per contract testing permission bypass scenarios.
+
+#### 12.2.6 Integer Overflow/Underflow Protection
+
+**Attack:** Arithmetic operations wrap around unexpectedly, corrupting state.
+
+**Defense:**
+- All contracts use SafeMath libraries or Solidity 0.8+ built-in overflow protection.
+- Boundary testing for all arithmetic operations.
+- 100+ simulation rounds per contract testing arithmetic edge cases.
+
+#### 12.2.7 Denial of Service Resistance
+
+**Attack:** Attacker floods contract with transactions or exploits gas costs to block functionality.
+
+**Defense:**
+- Rate limiting per address and per function.
+- Gas cost bounds on critical functions.
+- Emergency pause mechanism (any multisig signer can trigger).
+- 100+ simulation rounds per contract testing DoS scenarios.
+
+#### 12.2.8 Fake Token Injection Resistance
+
+**Attack:** Attacker transfers worthless tokens to contract, tricking it into releasing valuable assets.
+
+**Defense:**
+- Whitelist of accepted token addresses.
+- Balance checks against expected token contracts only.
+- 100+ simulation rounds per contract testing fake token scenarios.
+
+#### 12.2.9 Timestamp Manipulation Resistance
+
+**Attack:** Miners manipulate block timestamps to influence contract behavior.
+
+**Defense:**
+- No critical logic depends solely on block.timestamp.
+- Time-based logic uses block numbers or external oracle timestamps as cross-check.
+- 100+ simulation rounds per contract testing timestamp manipulation scenarios.
+
+#### 12.2.10 Anti-Quantum Attack Resistance
+
+**Attack:** Quantum computers break ECDSA signatures, allowing attackers to forge signatures and steal funds.
+
+**Defense:**
+- **Post-quantum signature readiness.** The platform monitors quantum-resistant signature algorithm standards (e.g., CRYSTALS-Dilithium, SPHINCS+).
+- **Upgrade path designed.** When quantum-resistant algorithms become production-ready, contracts can be upgraded to support new signature schemes.
+- **Hybrid signature option.** For high-value operations, users can opt into hybrid signatures (ECDSA + post-quantum) before quantum threat materializes.
+- **100+ simulation rounds** testing post-quantum signature verification.
+
+### 12.3 Security Audit Standards
 
 Before any contract is deployed to mainnet, it must pass the platform's security audit requirements:
 
 | Requirement | Standard |
 |-------------|----------|
 | **Attack simulation rounds** | 1,000 rounds minimum, all must pass |
-| **Attack types covered** | 10 categories (see below) |
+| **Attack types covered** | 10 categories (see above) |
 | **Per-category minimum** | 100 rounds per category |
 | **Failure threshold** | 0 failures allowed (999 pass + 1 fail = FAIL) |
-
-**10 Attack Categories (100 rounds each):**
-
-1. **Reentrancy** — Function calls that re-enter before state update completes
-2. **Flash loan attacks** — Borrowing massive amounts to manipulate price/liquidity
-3. **Sandwich attacks** — Front-running user transactions for profit
-4. **Oracle manipulation** — Providing false price data to trigger unwanted payouts
-5. **Permission bypass** — Accessing functions without proper authorization
-6. **Integer overflow/underflow** — Arithmetic errors that corrupt state
-7. **Denial of service** — Blocking contract functionality through resource exhaustion
-8. **Fake token injection** — Transferring worthless tokens to claim valuable assets
-9. **Timestamp manipulation** — Exploiting block.timestamp for unfair advantage
-10. **Anti-quantum attack resistance** — Future-proofing against quantum computing threats
 
 **Audit Flow:**
 
@@ -1404,12 +1497,16 @@ Contract written → Read SESSION_STATE.md → Compile (Forge build)
   → Testnet monitoring → If stable → Mainnet deploy
 ```
 
-**Why 1,000 Rounds?**
+### 12.4 Continuous Security Monitoring
 
-- A single failure could result in loss of user funds.
-- 100 rounds per category provides statistical confidence that the contract resists that attack type.
-- The 10 categories cover the most common and dangerous Web3 attack vectors.
-- The standard is higher than most audit firms require — because ION DEX is designed for 50-year relevance, not one cycle.
+Security does not end at deployment. The platform runs continuous monitoring:
+
+- **AI Sentinel** — Real-time anomaly detection across all transactions.
+- **Bug bounty program** — External security researchers incentivized to find vulnerabilities before attackers.
+- **Incident response team** — 24/7 on-call for security incidents.
+- **Regular re-audits** — All contracts re-audited after upgrades or when new attack vectors emerge.
+
+---
 
 The P0–P10 roadmap is designed so that each phase builds on the previous — creating a dependency chain that ensures every new capability is grounded in functioning infrastructure. Skipping phases is not possible: you cannot build payments without settlement, identity without payments, or governance without identity.
 
@@ -1433,7 +1530,35 @@ The P0–P10 roadmap is designed so that each phase builds on the previous — c
 
 ---
 
-## 13. Boundaries: Public and Private
+## 13. Long-Horizon Roadmap: P0–P10
+
+### Why a 10-Phase Roadmap
+
+Most crypto projects plan for the next cycle. ION DEX plans for the next decade.
+
+The P0–P10 roadmap is designed so that each phase builds on the previous — creating a dependency chain that ensures every new capability is grounded in functioning infrastructure. Skipping phases is not possible: you cannot build payments without settlement, identity without payments, or governance without identity.
+
+### Phase Details
+
+| Phase | Focus | What Gets Built | Dependencies |
+|-------|-------|-----------------|-------------|
+| **P0** | Brand & Thesis | Public positioning, README flagship, whitepaper, official channels | None — foundation |
+| **P1** | DEX Infrastructure | 28-chain aggregation, swap router, liquidity pools, grid trading | P0 (brand & positioning) |
+| **P2** | Identity & Proof | ION Identity, one-ID-per-person, immutable history, Explorer verification | P1 (settlement rails) |
+| **P3** | Payment Rails | Frictionless payments, stablecoin frontend / ION backend, flakes layer | P1 (DEX liquidity), P2 (identity) |
+| **P4** | AI Arbitration & Defense | AI-assisted dispute resolution, Sentinel defense, anomaly detection | P2 (identity), P3 (payments) |
+| **P5** | Self-Evolution | Learning, correction, rule refinement, continuity-preserving adaptation | P4 (arbitration data) |
+| **P6** | Merchant & E-Commerce | Merchant onboarding, payment integration, settlement rails | P3 (payments), P2 (identity) |
+| **P7** | Real-World Services | Delivery, mobility, insurance, logistics on ION rails | P6 (merchant base), P4 (arbitration) |
+| **P8** | Economic Integration | Fee burn flywheel, staking lock-in, dynamic burn, treasury | P1–P7 (revenue from all modules) |
+| **P9** | Governance & Anti-Abuse | Public-order compatibility, dispute escalation, abuse prevention | P5 (evolution), P8 (economic stability) |
+| **P10** | Mature Civilization | Full coordination layer, global seamless access, billion-scale expansion | P0–P9 (all layers functional) |
+
+**Current position:** P0–P1 in active development. P2–P3 in design. P4+ planned.
+
+---
+
+## 14. Boundaries: Public and Private
 
 ### What This Whitepaper Discloses
 
@@ -1469,7 +1594,7 @@ The following content is permanently private and must never be pushed to any pub
 
 ---
 
-## 14. Integration with Ice Open Network
+## 15. Integration with Ice Open Network
 
 ### Two Sovereign Nodes
 
@@ -1517,7 +1642,7 @@ For payment and commerce applications, settlement speed is not optional — it i
 
 ---
 
-## 15. Team & Contributors
+## 16. Team & Contributors
 
 ### Core Team
 
