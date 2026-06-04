@@ -24,19 +24,21 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 
 ## Table of Contents
 
-1. [Core Thesis](#1-core-thesis)
-2. [Strategic Architecture](#2-strategic-architecture)
-3. [The DEX Layer](#3-the-dex-layer)
-4. [Payment Civilization](#4-payment-civilization)
-5. [Identity & Civil Standing](#5-identity--civil-standing)
-6. [Proof & Trust](#6-proof--trust)
+1. [The Civilization Question](#1-the-civilization-question)
+2. [Strategic Architecture: The Ten Layers](#2-strategic-architecture-the-ten-layers)
+3. [The DEX Layer: First Revenue Engine](#3-the-dex-layer-first-revenue-engine)
+4. [Payment Civilization: Frictionless by Design](#4-payment-civilization-frictionless-by-design)
+5. [Identity & Civil Standing: One ID Per Person](#5-identity--civil-standing-one-id-per-person)
+6. [Proof & Trust: Verify Everything](#6-proof--trust-verify-everything)
 7. [AI Arbitration & Sentinel Defense](#7-ai-arbitration--sentinel-defense)
-8. [Self-Evolution](#8-self-evolution)
+8. [Self-Evolution: Learning from Errors](#8-self-evolution-learning-from-errors)
 9. [Ecosystem Coordination](#9-ecosystem-coordination)
-10. [Economic Logic](#10-economic-logic)
+10. [Economic Logic: The Dual Flywheel](#10-economic-logic-the-dual-flywheel)
 11. [Governance & Public-Order Compatibility](#11-governance--public-order-compatibility)
-12. [Long-Horizon Roadmap](#12-long-horizon-roadmap)
-13. [Boundaries](#13-boundaries)
+12. [Long-Horizon Roadmap: P0–P10](#12-long-horizon-roadmap-p0p10)
+13. [Boundaries: Public and Private](#13-boundaries-public-and-private)
+14. [Integration with Ice Open Network](#14-integration-with-ice-open-network)
+15. [Conclusion](#conclusion)
 
 ---
 
@@ -249,6 +251,23 @@ For comparison:
 - ION targets **15x that capacity**
 
 The high-throughput foundation is a prerequisite for frictionless, high-frequency, civilization-scale payments. Without it, the payment layer becomes a bottleneck that limits every module above it.
+
+### 4.5 Gasless User Experience
+
+Following the design pioneered by ION Connect, the ION DEX payment layer implements a **gasless model** for end-user interactions. Users do not need to hold ION to pay gas fees. The platform absorbs gas costs on the backend, routing them through the fee distribution system.
+
+**Why this matters:**
+
+- **No barrier to entry.** Users don't need to understand gas, manage token balances for fees, or worry about network congestion before making a payment.
+- **Familiar experience.** Users interact with the platform the same way they interact with traditional payment processors — select a payment method, confirm, done.
+- **Mass adoption prerequisite.** If users need to understand blockchain mechanics before using the platform, the platform has failed at its most basic task: making payments frictionless.
+
+**How it works:**
+
+1. User initiates payment (USDT, USDC, ION, or other token).
+2. Backend routes the transaction and pays gas on user's behalf.
+3. Gas costs are absorbed into the platform fee structure.
+4. User sees only the final amount — no gas surprises.
 
 ---
 
@@ -1170,8 +1189,14 @@ That is what we are building toward. Not a token narrative. Not a cycle play. **
 - [README](../README.md) — Brand window and executive summary
 - [Roadmap Guide](./roadmap-guide.md) — P0-P10 detailed execution plan
 - [Technical Architecture](./03-technical-architecture.md) — System layers and contracts
+- [API Overview](./api-overview.md) — REST and WebSocket API reference
+- [Contracts Overview](./contracts-overview.md) — Dual-chain contract architecture
+- [Merchant Onboarding](./merchant-onboarding.md) — Integration paths and fee structure
 - [ION Explorer](https://explorer.ice.io/) — On-chain verification
 - [Official Website](https://ice.io/) — Narrative and positioning
+- [ION GitBook](https://docs.ice.io) — Official protocol documentation
+- [ION GitHub](https://github.com/ice-blockchain/ion) — Full node source code (C++)
+- [ION DEX Official Channel](https://t.me/iondex888) — Telegram official channel
 
 ---
 
