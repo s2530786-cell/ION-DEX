@@ -736,16 +736,19 @@ Customer pays USDT at checkout
 
 ION DEX offers tiered merchant memberships. **Prices are quoted in USDT for stability 鈥?the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
-| Plan | Monthly | Quarterly | Annual | Features |
+| Plan | Monthly | Annual | Target User | Features |
 |------|---------|-----------|--------|----------|
-| **Basic** | $10 USDT | $27 USDT (10% off) | $96 USDT (20% off) | Payment processing, .ion storefront, basic analytics |
-| **Professional** | $30 USDT | $81 USDT (10% off) | $288 USDT (20% off) | Everything in Basic + AI merchandising + priority support + advanced analytics + custom branding |
-| **Enterprise** | Custom | Custom | Custom | Everything in Professional + dedicated account manager + custom integration + SLA guarantees + volume discounts |
+| **Seller** | $50 USDT | $480 USDT (20% off) | Small sellers | Payment processing, .ion storefront, basic analytics |
+| **Merchant** | $199 USDT | $1,910 USDT (20% off) | Growing businesses | Everything in Seller + AI merchandising + priority support + advanced analytics + custom branding |
+| **Enterprise** | $499 USDT | $4,790 USDT (20% off) | Established brands | Everything in Merchant + dedicated account manager + custom integration + SLA guarantees |
+| **Brand** | $1,999 USDT | $19,190 USDT (20% off) | Multi-store chains | Everything in Enterprise + multi-store management + brand-wide analytics + exclusive AI models |
+| **Franchise** | $9,999 USDT | $95,990 USDT (20% off) | Franchise networks | Everything in Brand + franchise-wide reporting + custom compliance + white-label options |
+| **Institutional** | Custom | Custom | Enterprise groups | Full customization + SLA + dedicated infrastructure + legal support + dedicated account manager + custom integration + SLA guarantees + volume discounts |
 
 **How USDT 鈫?ION Conversion Works:**
 
 ```
-Merchant pays $30 USDT for Professional monthly plan
+Merchant pays $199 USDT for Merchant monthly plan
   鈫?Backend converts USDT 鈫?ION via DEX liquidity pool (at market rate)
   鈫?Converted ION distributed:
     鈫?50% burned to 0x000...dEaD (permanent)
@@ -788,10 +791,10 @@ Merchants can purchase advertising placements on the platform:
 
 | Placement | Cost | Duration |
 |-----------|------|----------|
-| Homepage featured | $5 USDT/week | 7 days |
-| Category featured | $2.50 USDT/week | 7 days |
-| Search result boost | $1 USDT/week | 7 days |
-| Banner ad | $1.50 USDT/week | 7 days |
+| Homepage featured | $50 USDT/week | 7 days |
+| Category featured | $25 USDT/week | 7 days |
+| Search result boost | $10 USDT/week | 7 days |
+| Banner ad | $15 USDT/week | 7 days |
 
 **50% of advertising revenue is burned permanently.** Every ad purchased reduces circulating supply.
 
@@ -936,9 +939,9 @@ ION DEX food delivery is not a standalone app 鈥?it is integrated with the Web3
 
 | Stake Amount | Benefits |
 |-------------|----------|
-| 100 ION (~$1 USDT equivalent) | Premium order allocation + fee reduction to 0.3% + insurance coverage |
-| 500 ION (~$5 USDT equivalent) | Priority order allocation + fee reduction to 0.2% + priority dispute resolution |
-| 1,000 ION (~$10 USDT equivalent) | Top-tier allocation + fee reduction to 0.1% + premium insurance + AI route optimization |
+| 100 ION (~$5 USDT equivalent) | Premium order allocation + fee reduction to 0.3% + insurance coverage |
+| 500 ION (~$25 USDT equivalent) | Priority order allocation + fee reduction to 0.2% + priority dispute resolution |
+| 1,000 ION (~$50 USDT equivalent) | Top-tier allocation + fee reduction to 0.1% + premium insurance + AI route optimization |
 
 **Staking is skin-in-the-game.** A staked driver signals commitment to the platform 鈥?they are more likely to complete orders on time and provide good service. Reputation builds faster for staked participants.
 
@@ -1102,8 +1105,8 @@ ION DEX offers insurance membership plans that reduce per-policy costs:
 
 | Plan | Monthly | Annual | Benefits |
 |------|---------|--------|----------|
-| **Basic** | $1 USDT | $9.60 USDT (20% off) | Standard policy processing, 5 active policies max |
-| **Premium** | $5 USDT | $48 USDT (20% off) | Priority claim processing, 20 active policies, higher coverage limits, insurance consultation |
+| **Policyholder** | $50 USDT | $480 USDT (20% off) | Individual users | Standard policy processing, 5 active policies max |
+| **Agent** | $199 USDT | $1,910 USDT (20% off) | Insurance professionals | Priority claim processing, 20 active policies, higher coverage limits, insurance consultation |
 | **Enterprise** | Custom | Custom | Bulk policies, custom coverage, dedicated claims manager, API access for automated policy issuance |
 
 #### Insurance Types Available
@@ -1111,10 +1114,10 @@ ION DEX offers insurance membership plans that reduce per-policy costs:
 | Insurance Type | Premium Range | Coverage |
 |----------------|---------------|----------|
 | **Delivery Guarantee** | $0.05鈥?0.25 USDT per order | Up to $25 USDT if delivery fails or is damaged |
-| **Ride Insurance** | $0.03 USDT per ride | Up to $50 USDT for accidents during ride |
+| **Ride Insurance** | | **Ride Insurance** | $0.03 USDT per ride | Up to $50 USDT.50 USDT per ride | Up to $200 USDT for accidents during ride |
 | **Cargo Insurance** | $0.25鈥?2.50 USDT per shipment | Up to $500 USDT for loss/damage |
 | **E-Commerce Purchase Protection** | 2% of purchase price (in USDT) | Full refund if product not as described |
-| **Merchant Business Insurance** | $2.50 USDT/month | Up to $500 USDT for fraud, chargebacks, disputes |
+| **Merchant Business Insurance** | $50 USDT/month | Up to $5,000 USDT for fraud, chargebacks, disputes |
 | **Travel Insurance** | $0.50鈥?2.50 USDT per trip | Flight delay, cancellation, lost baggage (oracle-triggered) |
 
 #### Cross-Module Insurance Integration
@@ -1266,9 +1269,9 @@ Traditional domain registrars extract high fees ($10鈥?0/year), offer no second
 | Domain Length | Registration Fee | Renewal |
 |---------------|------------------|----------|
 | 1 character | $1,000 USDT (one-time) | None 鈥?permanent ownership |
-| 2 characters | $500 USDT (one-time) | None |
-| 3 characters | $100 USDT (one-time) | None |
-| 4+ characters | $10 USDT (one-time) | None |
+| 2 characters | $5,000 USDT (one-time) | None |
+| 3 characters | $500 USDT (one-time) | None |
+| 4+ characters | $50 USDT (one-time) | None — permanent ownership |
 | Premium keywords | Auction-based | None |
 
 **How Registration Fee Works:**
@@ -1539,16 +1542,19 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 
 **Prices are quoted in USDT for stability 鈥?the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
-| Plan | Monthly | Quarterly | Annual | Features |
+| Plan | Monthly | Annual | Target User | Features |
 |-------|---------|-----------|--------|----------|
-| **Starter** | $5 USDT | $13.50 USDT (10% off) | $48 USDT (20% off) | Grid trading automation + basic risk limits + 5 strategies |
-| **Professional** | $15 USDT | $40.50 USDT (10% off) | $144 USDT (20% off) | Everything in Starter + AI strategy selection + advanced risk management + 20 strategies + copy trading |
-| **Advanced** | $30 USDT | $81 USDT (10% off) | $288 USDT (20% off) | Everything in Professional + custom AI model training + priority execution + unlimited strategies + API access |
+| **Basic** | $50 USDT | $480 USDT (20% off) | Individual traders | Grid trading automation + basic risk limits + 5 strategies |
+| **Professional** | $199 USDT | $1,910 USDT (20% off) | Serious traders | Everything in Basic + AI strategy selection + advanced risk management + 20 strategies + copy trading |
+| **Advanced** | $499 USDT | $4,790 USDT (20% off) | High-net-worth individuals | Everything in Professional + custom AI model training + priority execution + unlimited strategies + API access |
+| **Whale** | $1,999 USDT | $19,190 USDT (20% off) | Large traders / small institutions | Everything in Advanced + dedicated strategist + exclusive API node + white-glove service |
+| **Market Maker** | $9,999 USDT | $95,990 USDT (20% off) | Market makers / institutions | Everything in Whale + liquidity incentives + dedicated clearing channel + co-location API |
+| **Institutional** | Custom | Custom | Large institutions | Full customization + compliance support + dedicated legal team + on-premise deployment + custom AI model training + priority execution + unlimited strategies + API access |
 
 **How USDT 鈫?ION Conversion Works:**
 
 ```
-User pays $15 USDT for Professional monthly plan
+User pays $199 USDT for Professional monthly plan
   鈫?Backend converts USDT 鈫?ION via DEX liquidity pool (at market rate)
   鈫?Converted ION distributed:
     鈫?50% burned to 0x000...dEaD (permanent)
@@ -1591,9 +1597,9 @@ Users can unlock advanced AI models with ION payments:
 | Model | Cost | Capability |
 |-------|------|------------|
 | Basic LSTM | Included in all plans | Standard grid trading, price prediction |
-| Transformer | $2.50 USDT one-time | Advanced pattern recognition, multi-asset correlation |
-| Ensemble | $5 USDT one-time | Multiple models voting, higher accuracy |
-| Custom Trained | $25 USDT one-time | Trained on user's specific portfolio and preferences |
+| Transformer | $19.9 USDT one-time | Advanced pattern recognition, multi-asset correlation |
+| Ensemble | $49 USDT one-time | Multiple models voting, higher accuracy |
+| Custom Trained | $99 USDT one-time | Trained on user's specific portfolio and preferences |
 
 **50% of model unlock fees are burned permanently.**
 
