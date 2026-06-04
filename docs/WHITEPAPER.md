@@ -1747,7 +1747,105 @@ Investor visits rwa.ion:
 - **Insurance**: Asset insurance, title insurance, rental guarantee.
 - **Logistics**: For physical assets (commodities, art).
 - **Domain**: Asset listing pages at asset.ion.
-### 9.7 AI Quantitative Trading Platform
+
+### 9.7 AI Platform — Complete Ecosystem
+
+The ION DEX AI platform is not limited to quantitative trading. It provides AI services across all ecosystem modules — trading, e-commerce, delivery, insurance, logistics, and RWA.
+
+#### AI Service Categories
+
+**Category 1: AI Trading Services (量化交易)**
+
+For individual traders, professionals, and institutions:
+
+| Tier | Monthly | Annual | Target | Features |
+|------|---------|--------|--------|----------|
+| **Basic** | $19 | $182 | Individual traders | Grid trading, 5 strategies, basic risk limits |
+| **Professional** | $49 | $470 | Serious traders | 20 strategies, AI selection, copy trading |
+| **Advanced** | $99 | $950 | High-net-worth | Unlimited strategies, custom models, API |
+| **Whale** | $199 | $1,910 | Large traders | Dedicated strategist, exclusive API node |
+| **Market Maker** | $499 | $4,790 | Market makers | Liquidity incentives, dedicated clearing, co-location API |
+| **Institutional Trading** | $999-$4,999 | Custom | Trading firms | Full infrastructure, custom models, compliance |
+
+**Category 2: AI Market Making Services (做市商服务)**
+
+Market makers provide liquidity to DEX pools. This is fundamentally different from trading:
+
+| Tier | Monthly | Target | What Market Makers Get |
+|------|---------|--------|------------------------|
+| **Junior MM** | $2,499 | Small market makers | Pool analytics, basic arbitrage tools, 0.1% fee rebate |
+| **Professional MM** | $9,999 | Medium market makers | Advanced analytics, real-time arbitrage, 0.15% fee rebate, priority pool access |
+| **Elite MM** | $24,999 | Large market makers | Custom liquidity strategies, dedicated API endpoints, 0.2% fee rebate, exclusive pool incentives |
+| **Partner MM** | $49,999 | Top-tier market makers | Full infrastructure, co-location, 0.25% fee rebate, governance participation, revenue share from pools |
+
+**Why Market Maker Pricing is Higher:**
+- Market makers earn from spread + fee rebates + pool incentives
+- A professional MM earning $50K+/month can easily afford $9,999 subscription
+- Elite MM earning $200K+/month finds $24,999 reasonable
+- Fee rebates offset subscription cost (0.2% rebate on $5M volume = $10,000/month)
+
+**Category 3: AI E-Commerce Services (商家AI服务)**
+
+For merchants across all e-commerce tiers:
+
+| Service | One-Time Fee | Monthly Fee | What It Does |
+|---------|--------------|-------------|--------------|
+| **AI Product Description** | $9.9 per product | - | Generates SEO-optimized descriptions from product images |
+| **AI Image Optimization** | $4.9 per product | - | Removes background, enhances lighting, adds branding |
+| **AI Pricing Intelligence** | - | $29 | Analyzes competitors, suggests optimal pricing |
+| **AI Customer Support Bot** | - | $49 | 24/7 chatbot handling common customer questions |
+| **AI Inventory Forecasting** | - | $99 | Predicts demand, suggests reorder quantities |
+| **AI Fraud Detection** | - | $79 | Flags suspicious orders, reduces chargebacks |
+
+**Why Separate Pricing?** Small merchants may only need AI descriptions ($9.9). Medium merchants may need all services ($29+$49+$99+$79 = $256/month). Large brands may want custom AI models ($999/month).
+
+**Category 4: AI Delivery & Logistics Services**
+
+For delivery platforms, riders, and logistics providers:
+
+| Service | Per-Use Fee | Monthly Fee | Target |
+|---------|-------------|-------------|--------|
+| **AI Route Optimization** | $0.10 per route | $29 | Riders, drivers |
+| **AI Demand Prediction** | - | $199 | Delivery platforms, fleet managers |
+| **AI Dispatch System** | - | $999 | Large delivery operations |
+| **AI Cargo Tracking** | $0.50 per shipment | $199 | Logistics providers |
+
+**Category 5: AI Insurance Services**
+
+For insurance providers and policyholders:
+
+| Service | Fee | Target |
+|---------|-----|--------|
+| **AI Damage Assessment** | $0.50 per claim | Insurance providers |
+| **AI Fraud Detection** | $0.10 per policy | Insurance providers |
+| **AI Risk Scoring** | $99/month | Insurance providers, underwriters |
+
+**Category 6: AI RWA Services**
+
+For RWA issuers and managers:
+
+| Service | Fee | Target |
+|---------|-----|--------|
+| **AI Valuation Model** | $499/month | RWA issuers |
+| **AI Rental Income Prediction** | $199/month | Real estate RWA |
+| **AI Commodity Price Forecast** | $149/month | Commodity RWA |
+
+#### Institutional AI Services
+
+Large institutions need completely different services:
+
+| Institution Type | Monthly Fee | What They Get |
+|------------------|-------------|---------------|
+| **Hedge Fund** | $4,999 | Trading infrastructure + custom models + compliance reporting |
+| **Asset Manager** | $9,999 | Multi-strategy platform + AUM reporting + investor dashboards |
+| **Bank** | $24,999 | Full infrastructure + regulatory compliance + dedicated team |
+| **Sovereign Wealth Fund** | $49,999+ | On-premise deployment + custom everything + 24/7 white-glove |
+
+**Why Institutional Pricing is 10-100x Higher:**
+- Hedge funds manage $10M-$1B, $5K/month is 0.006-0.06% of AUM — negligible
+- Banks need compliance, audit trails, dedicated infrastructure — expensive to provide
+- Sovereign wealth funds need custom everything — we dedicate a team to them
+
 
 ION DEX integrates with AI-driven trading strategies to provide automated, risk-managed trading for users who do not want to actively manage their positions.
 
