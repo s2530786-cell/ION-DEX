@@ -777,7 +777,7 @@ All ION DEX ecosystem modules follow a unified pricing structure:
 | **Premium** | $499/month | High-net-worth individuals, established businesses | Full features, dedicated resources |
 | **Elite** | $1,999/month | Large traders, multi-store brands | Exclusive access, white-glove service |
 | **Enterprise** | $9,999/month | Market makers, franchises | Institutional-grade infrastructure |
-| **Institutional** | $50,000–$1,000,000/month | Banks, sovereign wealth funds | Full customization, on-premise deployment, dedicated teams |
+| **Institutional** | $9,999–$50,000/month | Banks, sovereign wealth funds | Full customization, on-premise deployment, dedicated teams |
 
 **Why $0 to $1,000,000?**
 
@@ -786,7 +786,7 @@ The ION DEX pricing model is designed for a future where ION appreciates dramati
 - **At ION = $0.01**, a $50 subscription converts to 5,000 ION. The flywheel burns 2,500 ION per subscription.
 - **At ION = $1**, a $50 subscription converts to 50 ION. The flywheel still burns 25 ION per subscription.
 - **At ION = $1,000**, a $50 subscription converts to 0.05 ION. The flywheel burns 0.025 ION — but the dollar value is identical, and the platform still profits.
-- **At ION = $10,000+**, institutional clients pay $50,000–$1,000,000/month, converting to substantial ION volumes that continue feeding the burn flywheel.
+- **At ION = $10,000+**, institutional clients pay $9,999–$50,000/month, converting to substantial ION volumes that continue feeding the burn flywheel.
 
 **The key insight:** USDT pricing decouples user cost from ION price. No matter how high ION rises, users always pay the same dollar amount. The flywheel never stops — it actually accelerates as more users join.
 
@@ -797,7 +797,7 @@ The ION DEX pricing model is designed for a future where ION appreciates dramati
 | Early stage | 1,000 | $50 | $50,000 | $600,000 | $300,000 |
 | Growth | 10,000 | $100 | $1,000,000 | $12,000,000 | $6,000,000 |
 | Maturity | 100,000 | $200 | $20,000,000 | $240,000,000 | $120,000,000 |
-| Global scale | 1,000,000 | $300 | $300,000,000 | $3,600,000,000 | $1,800,000,000 |
+| Global scale | 1,000,000 | $100 | $100,000,000 | $1,200,000,000 | $600,000,000 |
 
 #### E-Commerce Membership Service Breakdown
 
@@ -844,7 +844,7 @@ The ION DEX pricing model is designed for a future where ION appreciates dramati
 - **Advertising credits** — $1,000 USDT/month in advertising credits
 - **Zero processing fee** — 0% on first $100,000/month in transactions
 
-**Institutional ($50,000–$1,000,000/month) — Enterprise Group:**
+**Institutional ($9,999–$50,000/month) — Enterprise Group:**
 - Everything in Franchise, plus:
 - **Dedicated infrastructure** — Isolated servers, custom deployment
 - **Legal support** — Dedicated legal team for compliance across jurisdictions
