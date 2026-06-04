@@ -764,6 +764,40 @@ Merchant pays $199 USDT for Merchant monthly plan
 - **Same flywheel effect.** The backend converts to ION instantly, so the burn and staking effects are identical.
 - **Rising ION demand.** As more merchants subscribe, the platform buys more ION on the open market, creating consistent buy pressure that supports ION price.
 
+
+#### Unified Pricing Philosophy: $0 to $1,000,000
+
+All ION DEX ecosystem modules follow a unified pricing structure:
+
+| Tier | Price Range | Who It''s For | What They Get |
+|------|-------------|---------------|---------------|
+| **Free** | $0 | Explorers, first-time users | Limited access, basic features, advertising-supported |
+| **Entry** | $50/month | Individual users, small operators | Full basic features, standard support |
+| **Standard** | $199/month | Professionals, growing businesses | Advanced features, priority support |
+| **Premium** | $499/month | High-net-worth individuals, established businesses | Full features, dedicated resources |
+| **Elite** | $1,999/month | Large traders, multi-store brands | Exclusive access, white-glove service |
+| **Enterprise** | $9,999/month | Market makers, franchises | Institutional-grade infrastructure |
+| **Institutional** | $50,000–$1,000,000/month | Banks, sovereign wealth funds | Full customization, on-premise deployment, dedicated teams |
+
+**Why $0 to $1,000,000?**
+
+The ION DEX pricing model is designed for a future where ION appreciates dramatically due to the burn flywheel:
+
+- **At ION = $0.01**, a $50 subscription converts to 5,000 ION. The flywheel burns 2,500 ION per subscription.
+- **At ION = $1**, a $50 subscription converts to 50 ION. The flywheel still burns 25 ION per subscription.
+- **At ION = $1,000**, a $50 subscription converts to 0.05 ION. The flywheel burns 0.025 ION — but the dollar value is identical, and the platform still profits.
+- **At ION = $10,000+**, institutional clients pay $50,000–$1,000,000/month, converting to substantial ION volumes that continue feeding the burn flywheel.
+
+**The key insight:** USDT pricing decouples user cost from ION price. No matter how high ION rises, users always pay the same dollar amount. The flywheel never stops — it actually accelerates as more users join.
+
+**Revenue projection at scale:**
+
+| Scenario | Users | Avg Monthly Fee | Monthly Revenue | Annual Revenue | ION Burned (50%) |
+|----------|-------|----------------|-----------------|----------------|-------------------|
+| Early stage | 1,000 | $50 | $50,000 | $600,000 | $300,000 |
+| Growth | 10,000 | $100 | $1,000,000 | $12,000,000 | $6,000,000 |
+| Maturity | 100,000 | $200 | $20,000,000 | $240,000,000 | $120,000,000 |
+| Global scale | 1,000,000 | $300 | $300,000,000 | $3,600,000,000 | $1,800,000,000 |
 #### AI Services for Merchants
 
 **Basic Plan 鈥?Included AI:**
