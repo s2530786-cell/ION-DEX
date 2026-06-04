@@ -2,9 +2,9 @@
 
 > **The Infrastructure Layer of a Long-Horizon Digital Civilization**
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Date:** June 2026  
-**Status:** Public Draft  
+**Status:** Public Draft — Comprehensive Edition  
 
 ---
 
@@ -40,8 +40,10 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 14. [Boundaries: Public and Private](#14-boundaries-public-and-private)
 15. [Integration with Ice Open Network](#15-integration-with-ice-open-network)
 16. [Team & Contributors](#16-team--contributors)
-17. [Conclusion](#conclusion)
-18. [References](#references)
+18. [Conclusion](#conclusion)
+19. [Risk Disclosure](#risk-disclosure)
+20. [Glossary](#glossary)
+21. [References](#references)
 
 ---
 
@@ -1344,7 +1346,7 @@ All security-critical operations require multi-signature authorization and time-
 
 **Emergency Override:** Any signer can trigger an immediate emergency pause (no timelock) to freeze critical operations in case of detected threat. The pause must be reviewed and either extended or revoked within 24 hours.
 
-### 11.3 Public-Order Compatibility
+### 11.4 Public-Order Compatibility
 
 ION is designed to be **compatible with serious public-order expectations** without collapsing into sovereign public power:
 
@@ -1353,7 +1355,7 @@ ION is designed to be **compatible with serious public-order expectations** with
 - **Proof systems create verifiability without requiring permission.** Anyone can verify any claim on Explorer, without needing to ask permission.
 - **The platform cooperates with legitimate public-order needs while preserving user sovereignty.** Court orders and lawful process are respected, but the platform does not proactively surveil or censor.
 
-### 11.4 Anti-Abuse Measures
+### 11.5 Anti-Abuse Measures
 
 The platform includes multiple layers of abuse prevention:
 
@@ -1507,26 +1509,6 @@ Security does not end at deployment. The platform runs continuous monitoring:
 - **Regular re-audits** — All contracts re-audited after upgrades or when new attack vectors emerge.
 
 ---
-
-The P0–P10 roadmap is designed so that each phase builds on the previous — creating a dependency chain that ensures every new capability is grounded in functioning infrastructure. Skipping phases is not possible: you cannot build payments without settlement, identity without payments, or governance without identity.
-
-### Phase Details
-
-| Phase | Focus | What Gets Built | Dependencies |
-|-------|-------|-----------------|-------------|
-| **P0** | Brand & Thesis | Public positioning, README flagship, whitepaper, official channels | None — foundation |
-| **P1** | DEX Infrastructure | 28-chain aggregation, swap router, liquidity pools, grid trading | P0 (brand & positioning) |
-| **P2** | Identity & Proof | ION Identity, one-ID-per-person, immutable history, Explorer verification | P1 (settlement rails) |
-| **P3** | Payment Rails | Frictionless payments, stablecoin frontend / ION backend, flakes layer | P1 (DEX liquidity), P2 (identity) |
-| **P4** | AI Arbitration & Defense | AI-assisted dispute resolution, Sentinel defense, anomaly detection | P2 (identity), P3 (payments) |
-| **P5** | Self-Evolution | Learning, correction, rule refinement, continuity-preserving adaptation | P4 (arbitration data) |
-| **P6** | Merchant & E-Commerce | Merchant onboarding, payment integration, settlement rails | P3 (payments), P2 (identity) |
-| **P7** | Real-World Services | Delivery, mobility, insurance, logistics on ION rails | P6 (merchant base), P4 (arbitration) |
-| **P8** | Economic Integration | Fee burn flywheel, staking lock-in, dynamic burn, treasury | P1–P7 (revenue from all modules) |
-| **P9** | Governance & Anti-Abuse | Public-order compatibility, dispute escalation, abuse prevention | P5 (evolution), P8 (economic stability) |
-| **P10** | Mature Civilization | Full coordination layer, global seamless access, billion-scale expansion | P0–P9 (all layers functional) |
-
-**Current position:** P0–P1 in active development. P2–P3 in design. P4+ planned.
 
 ---
 
@@ -1691,6 +1673,28 @@ At Phase P10 (Mature Civilization), the platform will open to community contribu
 
 ---
 
+## Risk Disclosure
+
+**This whitepaper describes a vision and architectural design, not a guarantee of outcomes.**
+
+Participants in the ION DEX ecosystem should understand:
+
+- **Smart contract risk.** Despite security audits and attack simulation rounds, no contract can be guaranteed bug-free. A previously undiscovered vulnerability could result in loss of funds.
+
+- **Market risk.** ION price, liquidity, and trading volume depend on market conditions that the platform cannot control. Bear markets can reduce fee revenue, affecting the burn flywheel and staking rewards.
+
+- **Regulatory risk.** The platform operates in a regulatory environment that may change. New regulations could restrict certain features or require adjustments to the architecture.
+
+- **Technology risk.** The ION blockchain, cross-chain bridges, and oracle systems rely on third-party infrastructure. Failures in these systems could affect platform operations.
+
+- **Adoption risk.** The civilization-scale vision depends on user adoption across all modules (DEX, payments, insurance, logistics, etc.). If adoption does not reach critical mass, some modules may not reach their intended scale.
+
+- **Execution risk.** The roadmap spans 10 phases over multiple years. Some phases may be delayed, adjusted, or cancelled based on changing conditions.
+
+**Participants should conduct their own research and never invest more than they can afford to lose.**
+
+---
+
 ## Conclusion
 
 ION DEX is not a typical DEX repository. It is the public front door of a **long-horizon digital civilization**.
@@ -1708,6 +1712,40 @@ The answer is built into the architecture:
 - **Six business modules** that reinforce each other through shared infrastructure.
 
 That is what we are building toward. Not a token narrative. Not a cycle play. **Infrastructure designed to remain relevant for fifty years.**
+
+---
+
+## Glossary
+
+**ION** — The native token of the Ice Open Network, used as the settlement unit for all ION DEX transactions.
+
+**Flakes** — The fine-grained unit of ION (1 ION = 1,000,000,000 flakes), used for micro-transactions.
+
+**DEX** — Decentralized Exchange, a trading platform that operates without centralized intermediaries.
+
+**AMM** — Automated Market Maker, a liquidity mechanism that uses algorithmic pricing instead of order books.
+
+**Grid Trading** — An automated trading strategy that places buy and sell orders at predetermined price intervals.
+
+**TWAP** — Time-Weighted Average Price, a pricing method that averages prices over multiple blocks to prevent manipulation.
+
+**Oracle** — A system that provides external data (prices, flight status, weather) to smart contracts.
+
+**Staking** — Locking tokens to earn rewards and support network security.
+
+**Fee Burn** — Permanently destroying tokens by sending them to an unrecoverable address, reducing circulating supply.
+
+**Account Abstraction** — A smart contract wallet design that enables advanced features like auto-payments and gasless transactions.
+
+**Sybil Attack** — An attack where one entity creates multiple fake identities to manipulate a system.
+
+**TEE** — Trusted Execution Environment, a secure hardware enclave that protects cryptographic operations.
+
+**Multi-signature (Multisig)** — A mechanism requiring multiple parties to approve an operation before execution.
+
+**Timelock** — A delay period before an operation can execute, providing time for review.
+
+**Finality** — The point at which a transaction is confirmed and cannot be reversed.
 
 ---
 
