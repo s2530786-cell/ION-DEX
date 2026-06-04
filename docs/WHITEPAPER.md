@@ -802,43 +802,166 @@ Merchants can purchase advertising placements on the platform:
 
 ---
 
-### 9.2 Delivery & Mobility (Food Delivery, Ride-Hailing)
+### 9.2 Food Delivery & Ride-Hailing
 
 #### The Problem
 
-Food delivery and ride-hailing platforms extract 25-40% from every order. Drivers and riders wait days for payout. Settlement is opaque. Reputation is siloed — a driver's rating on one platform does not transfer to another.
+Food delivery and ride-hailing platforms extract 25–40% from every order. Drivers and riders wait days for payout. Reputation is siloed — a driver's rating on one platform does not transfer to another. Customers pay premium prices that include platform markup. Restaurants and merchants lose margins to platform commissions.
 
 #### What ION DEX Provides
 
 | Feature | Traditional Platforms | ION DEX |
 |---------|----------------------|--------|
-| Platform fee | 25-40% | 0.5% |
-| Driver/rider payout | 2-7 days | Instant (seconds) |
+| Platform fee | 25–40% | 0.5% |
+| Driver/rider payout | 2–7 days | Instant (seconds) |
 | Reputation portability | None — siloed per platform | Cross-ecosystem via ION Identity |
 | Dispute resolution | Opaque, platform-favoring | AI-assisted arbitration, appeal-capable |
 | Verifiable proof | No | Every order, payout, and fee on Explorer |
+| Web3 e-commerce integration | None | Direct sync with merchant storefronts |
 
 #### How It Works
 
 ```
-Customer orders food / requests ride
-  → Order created on ION rails
+Customer opens ION DEX app → Selects Food Delivery or Ride-Hailing
+  → Customer browses restaurants (synced from Web3 e-commerce merchants)
+  → Customer places order / requests ride
   → Customer payment escrowed in smart contract
-  → Driver/rider accepts order
-  → Service completed
-  → Customer confirms (or auto-confirm after timeout)
+  → Restaurant confirms order / Driver/rider accepts ride
+  → Service in progress:
+    - Food: Restaurant prepares → Rider picks up → Delivers to customer
+    - Ride: Driver arrives → Customer rides → Destination reached
+  → Customer confirms delivery/ride completion (TEE-signed on phone)
+  → Dual-source verification: Customer signature + Rider/driver GPS confirmation
   → Smart contract releases payment:
     → 0.5% platform fee → 50% burned, 50% staking/treasury
-    → Remaining → Driver/rider wallet (instant)
-  → Reputation updated for both parties (good/bad record)
+    → Remaining → Restaurant/driver wallet (instant)
+  → Reputation updated for all parties (good/bad record)
 ```
+
+#### How Existing Platforms Can Integrate
+
+ION DEX provides SDKs and APIs that allow existing delivery and ride-hailing platforms to adopt ION settlement rails:
+
+| Integration Type | What the Platform Gets | How to Connect |
+|------------------|----------------------|---------------|
+| **SDK Integration** | ION payment rails, escrow, settlement, reputation | JavaScript/TypeScript SDK for web apps; mobile SDK for iOS/Android |
+| **API Integration** | Order creation, payment escrow, completion verification, payout | REST API + WebSocket for real-time order tracking |
+| **White-Label Solution** | Full ION DEX delivery platform, branded for the partner | Pre-built UI components, custom branding, full backend |
+
+**Integration Examples:**
+
+- A local food delivery app in Southeast Asia uses the ION DEX SDK to replace their Stripe/PayPal payment processing. They keep their own UI and dispatch logic, but settlement happens on ION rails.
+- A ride-hailing startup in Africa uses the ION DEX API to handle payment escrow and driver payout. They reduce their payment processing cost from 3% to 0.5%.
+- A restaurant aggregator in Latin America uses the White-Label solution to launch a delivery platform powered entirely by ION rails.
+
+#### Web3 E-Commerce + Food Delivery Integration
+
+ION DEX food delivery is not a standalone app — it is integrated with the Web3 e-commerce module:
+
+**Modeled on Chinese E-Commerce Platforms:**
+
+| Platform | Model | ION DEX Equivalent |
+|----------|-------|-------------------|
+| **淘宝 (Taobao)** | Marketplace + search + recommendations + delivery | Web3 merchant storefronts + AI recommendations + ION delivery |
+| **京东 (JD.com)** | Direct sales + quality guarantee + fast delivery | Verified merchants + quality certification + priority delivery |
+| **拼多多 (Pinduoduo)** | Group buying + social sharing + low prices | Group purchase orders + social referral rewards + ION settlement |
+
+**How the Integration Works:**
+
+1. **Merchant lists products** on their `.ion` storefront (Web3 e-commerce module).
+2. **Customer browses** on the ION DEX app, sees merchant's products with delivery options.
+3. **Customer orders** — payment is escrowed, delivery request is created.
+4. **Delivery rider** accepts the order from the delivery module.
+5. **Dual-source verification** — rider GPS + customer phone signature confirm delivery.
+6. **Smart contract releases payment** — merchant and rider are paid instantly.
+7. **Reputation updated** — merchant product quality, rider delivery speed, customer payment timeliness all recorded.
+
+**Pinduoduo-style Group Buying:**
+
+- Customers can invite friends to join a group purchase (3–10 people).
+- When the group reaches minimum size, the order is placed at a discounted price.
+- Each group member pays their share into escrow.
+- On delivery, each member's share is released.
+- **Social referral rewards:** The group organizer earns 5 ION per successful group order (50% burned).
+
+#### User Experience — What Users Get
+
+**For Customers:**
+
+| Service | Experience |
+|---------|-----------|
+| **Order tracking** | Real-time GPS tracking of rider/driver, verified on Explorer |
+| **Instant delivery confirmation** | Phone TEE signature confirms delivery, auto-releases payment |
+| **Reputation visibility** | See restaurant/merchant/rider reputation score before ordering |
+| **Escrow protection** | Payment held in escrow until delivery confirmed — no risk of non-delivery |
+| **Group buying discounts** | Invite friends for lower prices, social rewards |
+| **Insurance** | Purchase delivery guarantee insurance for high-value orders |
+| **Cross-service reputation** | Your rating as a customer follows you across delivery, ride-hailing, e-commerce, and insurance |
+
+**For Drivers/Riders:**
+
+| Service | Experience |
+|---------|-----------|
+| **Instant payout** | Payment in wallet seconds after delivery confirmation |
+| **Staking benefits** | Stake ION to unlock premium orders, higher earnings, faster reputation building |
+| **Portable reputation** | Your rating follows you across delivery, ride-hailing, and logistics |
+| **Fee reduction** | Staked riders pay 0.3% instead of 0.5% platform fee |
+| **Insurance** | Ride insurance covers accidents and vehicle damage |
+| **No platform lock-in** | Switch between delivery and ride-hailing freely — same wallet, same identity, same reputation |
+
+**For Restaurants/Merchants:**
+
+| Service | Experience |
+|---------|-----------|
+| **Same storefront** | Restaurant's `.ion` storefront serves both dine-in customers and delivery orders |
+| **Instant settlement** | Payment in wallet seconds after delivery, no 2–7 day wait |
+| **0.5% fee** | Instead of 25–40% commission, only 0.5% goes to platform |
+| **AI menu optimization** | AI suggests menu changes based on demand patterns |
+| **Reputation sync** | Restaurant's e-commerce reputation affects delivery order priority |
+| **Cross-module promotion** | Restaurant can purchase advertising on the delivery app for 50 ION/week |
 
 #### Driver/Rider Staking
 
-Drivers and riders can stake ION to:
-- Unlock higher earnings tiers (reduced platform fee).
-- Access premium order allocation.
-- Build reputation faster (staked skin-in-the-game signals commitment).
+| Stake Amount | Benefits |
+|-------------|----------|
+| 100 ION | Premium order allocation + fee reduction to 0.3% + insurance coverage |
+| 500 ION | Priority order allocation + fee reduction to 0.2% + priority dispute resolution |
+| 1,000 ION | Top-tier allocation + fee reduction to 0.1% + premium insurance + AI route optimization |
+
+**Staking is skin-in-the-game.** A staked driver signals commitment to the platform — they are more likely to complete orders on time and provide good service. Reputation builds faster for staked participants.
+
+#### How the Modules Link Together
+
+```
+Web3 E-Commerce (merchant storefronts + product listings)
+  ↓ Orders placed
+Food Delivery (rider dispatch + GPS tracking + delivery verification)
+  ↓ Payment escrowed
+Insurance (delivery guarantee + rider coverage + vehicle protection)
+  ↓ Claims processed
+Logistics (multi-stop optimization + cold chain monitoring)
+  ↓ Shipment tracked
+Identity (reputation for merchant + rider + customer)
+  ↓ Standing updated
+Proof (every order, payment, delivery, claim on Explorer)
+  ↓ Verifiable
+AI Sentinel (fraud detection + anomaly flagging + pattern analysis)
+  ↓ Protected
+Economic Logic (0.5% fee → 50% burned → supply shrinks)
+```
+
+**Example: A Complete Order Flow Across All Modules:**
+
+A customer orders sushi from a restaurant on their `.ion` storefront:
+
+1. **E-Commerce** — Customer finds restaurant on `sushi.ion`, selects products, pays 100 USDT.
+2. **Payment Layer** — USDT converted to ION, 0.5% fee deducted, 50% burned.
+3. **Food Delivery** — Rider with 500 ION staked accepts order, picks up food, delivers.
+4. **Dual-Source Verification** — Customer phone confirms delivery (TEE-signed), rider GPS confirms.
+5. **Insurance** — Customer purchased $5 delivery guarantee. If food arrives damaged, photo evidence triggers automatic payout.
+6. **Identity** — All three parties (restaurant, rider, customer) reputation updated.
+7. **Proof** — Entire order lifecycle recorded on Explorer: payment → escrow → pickup → delivery → settlement → reputation update.
+8. **AI Sentinel** — Flags suspicious patterns (e.g., rider always delivers to same address → possible fraud).
 
 #### Why Traditional Solutions Cannot Compete
 
@@ -846,13 +969,8 @@ Drivers and riders can stake ION to:
 - Traditional platforms cannot offer instant settlement without pre-funding.
 - Traditional platforms cannot make reputation portable across services.
 - Traditional platforms cannot provide transparent, auditable fee distribution.
-
-#### Connection to Other Modules
-
-- **Identity**: Driver/rider standing affects order allocation, fee tiers.
-- **Insurance**: Delivery guarantees, ride insurance.
-- **Logistics**: Multi-stop delivery optimization.
-- **Merchant Payments**: Restaurant integration for food delivery.
+- Traditional platforms cannot integrate e-commerce, delivery, insurance, and logistics into a single ecosystem.
+- Traditional platforms cannot offer group buying with social referral rewards on blockchain rails.
 
 ---
 
@@ -964,6 +1082,44 @@ Delivery insurance policy active
 - **Delivery & Mobility**: Delivery guarantees, ride insurance.
 - **Logistics**: Cargo insurance, shipping guarantees.
 - **Merchant Payments**: Purchase protection for e-commerce.
+- **E-Commerce**: Product warranty insurance for high-value items.
+
+#### Insurance Membership Plans
+
+ION DEX offers insurance membership plans that reduce per-policy costs:
+
+| Plan | Monthly | Annual | Benefits |
+|------|---------|--------|----------|
+| **Basic** | 5 ION | 48 ION (20% off) | Standard policy processing, 5 active policies max |
+| **Premium** | 20 ION | 192 ION (20% off) | Priority claim processing, 20 active policies, higher coverage limits, insurance consultation |
+| **Enterprise** | Custom | Custom | Bulk policies, custom coverage, dedicated claims manager, API access for automated policy issuance |
+
+#### Insurance Types Available
+
+| Insurance Type | Premium Range | Coverage |
+|----------------|---------------|----------|
+| **Delivery Guarantee** | 1–5 ION per order | Up to 500 ION if delivery fails or is damaged |
+| **Ride Insurance** | 0.5 ION per ride | Up to 1,000 ION for accidents during ride |
+| **Cargo Insurance** | 5–50 ION per shipment | Up to 10,000 ION for loss/damage |
+| **E-Commerce Purchase Protection** | 2% of purchase price | Full refund if product not as described |
+| **Merchant Business Insurance** | 50 ION/month | Up to 10,000 ION for fraud, chargebacks, disputes |
+| **Travel Insurance** | 10–50 ION per trip | Flight delay, cancellation, lost baggage (oracle-triggered) |
+
+#### Cross-Module Insurance Integration
+
+**How Insurance Links to Other Services:**
+
+1. **E-Commerce → Purchase Protection.** When a customer buys a product on a `.ion` storefront, they can add purchase protection for 2% of the purchase price. If the product is not as described, the customer uploads photo evidence, AI analyzes, and payout is triggered.
+
+2. **Delivery → Delivery Guarantee.** A customer orders food from a restaurant. For 2 ION, they add delivery guarantee. If the food is cold or damaged, photo evidence triggers automatic payout.
+
+3. **Logistics → Cargo Insurance.** A merchant ships 1,000 ION worth of products. For 20 ION, they add cargo insurance. If the shipment is lost or damaged, oracle + photo evidence triggers payout.
+
+4. **Ride-Hailing → Ride Insurance.** A customer takes a ride. For 0.5 ION, they add ride insurance. If an accident occurs, medical expenses are covered up to 1,000 ION.
+
+5. **Merchant → Business Insurance.** A merchant pays 50 ION/month for business insurance. If they face a fraudulent chargeback, the insurance covers the loss up to 10,000 ION.
+
+**All insurance premiums contribute to the fee burn flywheel:** 50% of all insurance premiums are burned permanently.
 
 ---
 
@@ -1032,6 +1188,46 @@ Each shipment is represented as a **Bill of Lading NFT**:
 - **Insurance**: Cargo insurance, delivery guarantees.
 - **Delivery & Mobility**: Last-mile delivery integration.
 - **Merchant Payments**: E-commerce fulfillment.
+
+#### Logistics Provider Integration
+
+ION DEX provides APIs and SDKs for existing logistics companies to adopt ION settlement rails:
+
+| Integration Type | What the Provider Gets | Example |
+|------------------|----------------------|----------|
+| **SDK Integration** | ION payment rails, proof of delivery, bill of lading NFT | Regional logistics company replaces bank transfers with ION instant settlement |
+| **API Integration** | Shipment creation, tracking, delivery confirmation, payout | Freight forwarder uses ION API for cross-border shipment settlement |
+| **White-Label** | Full logistics platform powered by ION rails | New logistics startup launches with zero payment infrastructure cost |
+
+#### Cross-Module Logistics Integration
+
+1. **E-Commerce → Logistics.** A merchant sells a product on their `.ion` storefront. The order automatically creates a logistics shipment. The customer can track the shipment in real-time on Explorer.
+
+2. **Logistics → Insurance.** A high-value shipment automatically purchases cargo insurance. If temperature exceeds threshold (cold chain) or shipment is lost, insurance payout is triggered automatically.
+
+3. **Logistics → Delivery.** When a shipment arrives at the local distribution center, it transitions to the last-mile delivery module. A rider picks it up and delivers to the customer.
+
+4. **Logistics → Identity.** Carrier performance (on-time delivery rate, damage rate, customer satisfaction) is recorded permanently. High-performing carriers get priority allocation. Low-performing carriers face higher insurance premiums.
+
+5. **Logistics → Proof.** Every shipment, GPS update, temperature reading, and delivery confirmation is recorded on Explorer. All stakeholders can verify shipment status independently.
+
+**Full Shipment Flow Across Modules:**
+
+```
+Merchant sells product on .ion storefront (E-Commerce)
+  → Order created, payment escrowed (Payment Layer)
+  → Cargo insurance purchased automatically (Insurance)
+  → Shipment created, carrier assigned (Logistics)
+  → GPS tracking updates recorded on-chain (Proof)
+  → Temperature monitoring for cold chain (Oracle)
+  → If temperature breach → automatic insurance payout
+  → Shipment arrives at distribution center (Logistics)
+  → Last-mile rider assigned (Delivery)
+  → Customer confirms delivery (Dual-Source Verification)
+  → Smart contract releases payment to merchant + carrier + rider (0.5% fee → 50% burned)
+  → All parties reputation updated (Identity)
+  → Entire flow verifiable on Explorer (Proof)
+```
 
 ---
 
