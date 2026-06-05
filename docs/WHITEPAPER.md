@@ -2091,8 +2091,6 @@ Staking locks ION long-term, reducing circulating supply and aligning holders wi
 
 **This Allocation Never Changes.** The 25% figure is permanent. It will not be reduced, renegotiated, or diluted. Master's incentive is permanently aligned with platform success.
 
-**Master's Receiving Address:** `0x8ff2e1210434495c4f5629bd9d8bd4965a67b84c` (BSC)
-
 ### 10.6 The Flywheel in Action
 
 ```
