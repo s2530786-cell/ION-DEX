@@ -80,7 +80,13 @@ select {
   }
 
   .glass-surface {
-    border: 1px solid transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-image: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0.4),
+        rgba(255, 255, 255, 0.02)
+      )
+      1;
     background:
       linear-gradient(
           125deg,
@@ -89,7 +95,7 @@ select {
           rgba(255, 0, 255, 0.68)
         )
         border-box,
-      var(--glass-bg) padding-box;
+      rgba(255, 255, 255, 0.03) padding-box;
     background-clip: padding-box, border-box;
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
@@ -112,14 +118,16 @@ select {
   .glass-surface::after {
     content: "";
     position: absolute;
-    left: 8%;
-    right: 8%;
-    bottom: 0;
-    height: 42%;
+    inset: 6% 8% 0;
     z-index: 0;
     pointer-events: none;
     filter: blur(60px);
-    background: linear-gradient(90deg, rgba(0, 255, 255, 0.48), rgba(255, 0, 255, 0.42));
+    background: linear-gradient(
+      135deg,
+      rgba(0, 255, 255, 0.12) 0%,
+      rgba(96, 32, 255, 0.08) 40%,
+      rgba(255, 0, 255, 0.1) 100%
+    );
     transform: translateZ(0);
   }
 

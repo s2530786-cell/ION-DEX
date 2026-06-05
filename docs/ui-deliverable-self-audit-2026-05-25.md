@@ -74,9 +74,9 @@
 |--------|------|
 | OKX Web3 霓虹玻璃 | 通过（沿用既有 token） |
 | 无 shell/draft 占位 | 通过 |
-| `verify-full` | **34/34** E2E 绿 |
+| `verify-full` | 历史上曾 **34/34** E2E 绿 |
 
-**结论**：**PASS** — W2 出口达成，进入 W3 UI Pixel Correction。
+**结论**：**PASS（实现层）** — 当前代码具备钱包入口、链 scaffold 与签名摘要 UI；但现有验证主要是 mock/provider-simulated 流程，不应表述为真实钱包连接、真实链切换、真实签名广播已经 live verified。
 
 ---
 

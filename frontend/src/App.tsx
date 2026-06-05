@@ -80,6 +80,7 @@ function PageRouter({
 
 export function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [splashSettled, setSplashSettled] = useState(false);
   const [activePage, setActivePage] = useState<PageKey>(() => pageKeyFromHash());
 
   const navigate = useCallback((page: PageKey) => {
@@ -96,9 +97,18 @@ export function App() {
   return (
     <>
       {showSplash ? (
-        <SplashScreen onFinish={() => setShowSplash(false)} />
+        <SplashScreen
+          onFinish={() => {
+            setShowSplash(false);
+            window.setTimeout(() => setSplashSettled(true), 0);
+          }}
+        />
       ) : (
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div
+          className={`flex min-h-0 flex-1 flex-col transition-opacity duration-300 ${
+            splashSettled ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        >
           <AppShell activePage={activePage} onPageChange={navigate}>
             <AnimatePresence mode="wait">
               <motion.div

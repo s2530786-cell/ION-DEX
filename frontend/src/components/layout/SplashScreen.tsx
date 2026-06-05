@@ -167,7 +167,7 @@ export function SplashScreen({ onFinish }: { onFinish?: () => void }) {
   const splash = (
     <motion.div
       animate={{ opacity: visible ? 1 : 0 }}
-      className="fixed inset-0 z-[200] flex min-h-[100dvh] min-h-[100svh] w-full cursor-pointer items-center justify-center overflow-hidden bg-[#010611] before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_50%_48%,rgba(0,255,255,0.12),transparent_18%),radial-gradient(circle_at_50%_52%,rgba(96,32,255,0.14),transparent_32%),radial-gradient(circle_at_50%_50%,rgba(255,0,255,0.1),transparent_44%),linear-gradient(180deg,rgba(1,6,17,0.44),rgba(1,6,17,0.74))] before:backdrop-blur-[18px] before:content-[''] max-md:pb-[env(safe-area-inset-bottom)] max-md:pt-[env(safe-area-inset-top)]"
+      className="fixed inset-0 z-[9999] flex min-h-[100dvh] min-h-[100svh] w-full cursor-pointer items-center justify-center overflow-hidden bg-[#010611] before:absolute before:inset-0 before:z-[0] before:bg-[radial-gradient(circle_at_50%_48%,rgba(0,255,255,0.18),transparent_18%),radial-gradient(circle_at_50%_52%,rgba(96,32,255,0.2),transparent_32%),radial-gradient(circle_at_50%_50%,rgba(255,0,255,0.14),transparent_44%),linear-gradient(180deg,rgba(1,6,17,0.76),rgba(1,6,17,0.94))] before:backdrop-blur-[28px] before:content-[''] after:absolute after:inset-0 after:z-[0] after:bg-[#020611]/78 after:content-[''] max-md:pb-[env(safe-area-inset-bottom)] max-md:pt-[env(safe-area-inset-top)]"
       data-boot-clip={clipId}
       data-launch-phase={phase}
       data-boot-variant={variant}

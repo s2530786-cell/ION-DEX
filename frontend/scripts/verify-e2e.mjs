@@ -32,26 +32,28 @@ async function getFreePort() {
   return address.port;
 }
 
-async function waitForTcp(port, timeoutMs = 20_000) {
+async function waitForTcp(port, timeoutMs = 20_000, label = `server on ${host}:${port}`) {
   const deadline = Date.now() + timeoutMs;
+  let lastError = "unreachable";
   while (Date.now() < deadline) {
-    const connected = await new Promise((resolve) => {
+    const result = await new Promise((resolve) => {
       const socket = net.connect({ host, port });
       socket.once("connect", () => {
         socket.destroy();
-        resolve(true);
+        resolve({ ok: true, message: "connected" });
       });
-      socket.once("error", () => {
+      socket.once("error", (error) => {
         socket.destroy();
-        resolve(false);
+        resolve({ ok: false, message: `${error.code || error.name || "ERROR"}: ${error.message}` });
       });
     });
-    if (connected) {
+    if (result.ok) {
       return;
     }
+    lastError = result.message;
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
-  throw new Error(`Timed out waiting for server on ${host}:${port}`);
+  throw new Error(`Timed out waiting for ${label}; last probe: ${lastError}`);
 }
 
 async function isTcpOpen(port) {
@@ -143,27 +145,60 @@ async function tryRecyclePort(port, attempts = 8) {
 async function backendHasRequiredRoutes(backendPort) {
   const base = `http://${host}:${backendPort}`;
   try {
-    const [profile, liquidityMine, domainManage, batchTransfer] = await Promise.all([
+    const [health, profile, liquidityMine, domainManage, batchTransfer] = await Promise.all([
+      fetch(`${base}/api/health`),
       fetch(`${base}/api/profile/demo`),
       fetch(`${base}/api/liquidity-mine/pools`),
       fetch(`${base}/api/domain-manage/overview`),
       fetch(`${base}/api/batch-transfer/config`),
     ]);
-    return profile.ok && liquidityMine.ok && domainManage.ok && batchTransfer.ok;
+    return health.ok && profile.ok && liquidityMine.ok && domainManage.ok && batchTransfer.ok;
   } catch {
     return false;
   }
 }
 
-async function waitForHealthyBackend(backendPort, timeoutMs = 30_000) {
+async function previewProxyHasRequiredRoutes(previewBaseUrl, timeoutMs = 20_000) {
   const deadline = Date.now() + timeoutMs;
+  let lastStatus = "proxy routes not ready";
   while (Date.now() < deadline) {
-    if (await backendHasRequiredRoutes(backendPort)) {
-      return;
+    try {
+      const [health, liquidityMine, domainManage, batchTransfer] = await Promise.all([
+        fetch(`${previewBaseUrl}/api/health`),
+        fetch(`${previewBaseUrl}/api/liquidity-mine/pools`),
+        fetch(`${previewBaseUrl}/api/domain-manage/overview`),
+        fetch(`${previewBaseUrl}/api/batch-transfer/config`),
+      ]);
+      if (health.ok && liquidityMine.ok && domainManage.ok && batchTransfer.ok) {
+        return;
+      }
+      lastStatus = `proxy responded but required routes were not all ok (health=${health.status}, liquidityMine=${liquidityMine.status}, domainManage=${domainManage.status}, batchTransfer=${batchTransfer.status})`;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      lastStatus = `proxy fetch failed: ${message}`;
     }
     await new Promise((resolve) => setTimeout(resolve, 400));
   }
-  throw new Error(`Backend on :${backendPort} never exposed required API routes`);
+  throw new Error(`Preview proxy never became healthy; last status: ${lastStatus}`);
+}
+
+async function waitForHealthyBackend(backendPort, timeoutMs = 30_000) {
+  const deadline = Date.now() + timeoutMs;
+  let lastStatus = "routes not ready";
+  while (Date.now() < deadline) {
+    const tcpOpen = await isTcpOpen(backendPort);
+    if (!tcpOpen) {
+      lastStatus = `tcp closed on ${host}:${backendPort}`;
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      continue;
+    }
+    if (await backendHasRequiredRoutes(backendPort)) {
+      return;
+    }
+    lastStatus = `tcp open on ${host}:${backendPort} but required API routes not ready`;
+    await new Promise((resolve) => setTimeout(resolve, 400));
+  }
+  throw new Error(`Backend on :${backendPort} never became healthy; last status: ${lastStatus}`);
 }
 
 async function resolveBackendPort() {
@@ -212,6 +247,14 @@ const backend = spawn(process.execPath, ["dist/src/server.js"], {
   shell: useShell,
 });
 
+backend.once("exit", (code, signal) => {
+  if (!shuttingDown) {
+    console.error(
+      `[verify-e2e] backend process exited early (port=${backendPort}, code=${code ?? "null"}, signal=${signal ?? "null"})`,
+    );
+  }
+});
+
 console.log(`[verify-e2e] backend=${verifyBackendUrl} preview will bind next`);
 
 const preview = spawn(
@@ -227,6 +270,14 @@ const preview = spawn(
     shell: useShell,
   },
 );
+
+preview.once("exit", (code, signal) => {
+  if (!shuttingDown) {
+    console.error(
+      `[verify-e2e] preview process exited early (port=${previewPort}, code=${code ?? "null"}, signal=${signal ?? "null"})`,
+    );
+  }
+});
 
 let shuttingDown = false;
 function stopPreview() {
@@ -251,9 +302,10 @@ function stopBackend() {
 }
 
 try {
-  await waitForTcp(backendPort);
+  await waitForTcp(backendPort, 20_000, `verify backend on ${host}:${backendPort}`);
   await waitForHealthyBackend(backendPort);
-  await waitForTcp(previewPort);
+  await waitForTcp(previewPort, 20_000, `preview server on ${host}:${previewPort}`);
+  await previewProxyHasRequiredRoutes(baseUrl);
   const playwrightArgs = ["playwright", "test", "--workers=1", "--retries=1"];
   if (process.env.PLAYWRIGHT_TEST_PATH?.trim()) {
     playwrightArgs.push(process.env.PLAYWRIGHT_TEST_PATH.trim());

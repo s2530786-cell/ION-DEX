@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { copyFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { basename, dirname, join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
@@ -14,7 +14,7 @@ const SURFACES = {
       ".memory-bank/design-refs/screens/01-glass-panel-wave-border.png",
       ".memory-bank/design-refs/screens/02-mobile-feature-grid-dfi-dex.png",
     ],
-    captureCommand: (batch) => [process.execPath, [captureScript, "--batch", batch]],
+    captureCommand: (batch) => [process.execPath, [captureScript, "--surface", "dashboard", "--batch", batch]],
     captureOutputs: (batch) => {
       const lower = String(batch).toLowerCase();
       return [
@@ -36,8 +36,15 @@ const SURFACES = {
       ".memory-bank/design-refs/boot/boot-master-portrait.mp4",
       ".memory-bank/design-refs/brand/ion-dex-brand-logo.png",
     ],
-    captureCommand: null,
-    captureOutputs: () => [],
+    captureCommand: (batch) => [process.execPath, [captureScript, "--surface", "splash", "--batch", batch]],
+    captureOutputs: (batch) => {
+      const lower = String(batch).toLowerCase();
+      return [
+        `docs/screenshots/ui-signoff/batch-${lower}/splash-375.png`,
+        `docs/screenshots/ui-signoff/batch-${lower}/splash-768.png`,
+        `docs/screenshots/ui-signoff/batch-${lower}/splash-1440.png`,
+      ];
+    },
     acceptanceAnchors: [
       "brand/logo identity matches master asset",
       "boot overlay dominates first paint visually",
@@ -74,8 +81,14 @@ function run(command, args) {
     shell: process.platform === "win32",
     env: process.env,
   });
-  if (result.status !== 0) {
-    throw new Error(`${command} ${args.join(" ")} exited with ${result.status ?? 1}`);
+  if (result.error) {
+    throw result.error;
+  }
+  if (typeof result.status === "number" && result.status !== 0) {
+    throw new Error(`${command} ${args.join(" ")} exited with ${result.status}`);
+  }
+  if (typeof result.signal === "string") {
+    throw new Error(`${command} ${args.join(" ")} terminated via signal ${result.signal}`);
   }
 }
 

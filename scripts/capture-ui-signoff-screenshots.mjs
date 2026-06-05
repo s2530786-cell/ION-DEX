@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Capture UI signoff screenshots (375/768/1440) via Playwright.
- * Usage: node scripts/capture-ui-signoff-screenshots.mjs --batch B
+ * Usage: node scripts/capture-ui-signoff-screenshots.mjs --surface dashboard --batch B
  */
 
 import { spawn, spawnSync } from "node:child_process";
@@ -17,21 +17,50 @@ const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";
 const useShell = process.platform === "win32";
 const backend = join(root, "backend");
 const frontend = join(root, "frontend");
-const spec = "e2e/dashboard-visual-signoff.spec.ts";
 
-function parseBatch(argv) {
+const SURFACES = {
+  dashboard: {
+    spec: "e2e/dashboard-visual-signoff.spec.ts",
+    outputs: ["dashboard-375.png", "dashboard-768.png", "dashboard-1440.png"],
+  },
+  splash: {
+    spec: "e2e/splash-visual-signoff.spec.ts",
+    outputs: ["splash-375.png", "splash-768.png", "splash-1440.png"],
+  },
+};
+
+function parseArgs(argv) {
+  const parsed = { batch: "B", surface: "dashboard" };
   for (let i = 2; i < argv.length; i += 1) {
     if (argv[i] === "--batch" && argv[i + 1]) {
-      return String(argv[++i]).toUpperCase();
+      parsed.batch = String(argv[++i]).toUpperCase();
+      continue;
     }
     if (argv[i].startsWith("--batch=")) {
-      return argv[i].slice("--batch=".length).toUpperCase();
+      parsed.batch = argv[i].slice("--batch=".length).toUpperCase();
+      continue;
+    }
+    if (argv[i] === "--surface" && argv[i + 1]) {
+      parsed.surface = String(argv[++i]).toLowerCase();
+      continue;
+    }
+    if (argv[i].startsWith("--surface=")) {
+      parsed.surface = argv[i].slice("--surface=".length).toLowerCase();
     }
   }
-  return "B";
+  return parsed;
 }
 
-const batch = parseBatch(process.argv);
+function getSurfaceConfig(name) {
+  const config = SURFACES[name];
+  if (!config) {
+    throw new Error(`Unknown surface: ${name}`);
+  }
+  return config;
+}
+
+const { batch, surface } = parseArgs(process.argv);
+const surfaceConfig = getSurfaceConfig(surface);
 const outDir = join(root, "docs", "screenshots", "ui-signoff", `batch-${batch.toLowerCase()}`);
 const captureDir = join(frontend, "test-results", "ui-signoff");
 
@@ -74,7 +103,7 @@ async function waitForHttp(url, timeoutMs = 30_000) {
   throw new Error(`Timed out waiting for ${url}`);
 }
 
-console.log(`=== UI signoff screenshots: batch ${batch} ===`);
+console.log(`=== UI signoff screenshots: surface ${surface} batch ${batch} ===`);
 
 const backendBuild = spawnSync(npmCommand, ["run", "build"], {
   cwd: backend,
@@ -124,13 +153,14 @@ try {
 
   const run = spawnSync(
     npxCommand,
-    ["playwright", "test", spec, "--reporter=line", "--workers=1"],
+    ["playwright", "test", surfaceConfig.spec, "--reporter=line", "--workers=1"],
     {
       cwd: frontend,
       encoding: "utf8",
       shell: useShell,
       env: {
         ...process.env,
+        ION_UI_SIGNOFF: "1",
         PLAYWRIGHT_BASE_URL: baseUrl,
         PLAYWRIGHT_API_BASE_URL: `http://${host}:${backendPort}`,
       },
@@ -144,9 +174,9 @@ try {
   }
 
   mkdirSync(outDir, { recursive: true });
-  for (const label of ["375", "768", "1440"]) {
-    const src = join(captureDir, `dashboard-${label}.png`);
-    const dest = join(outDir, `dashboard-${label}.png`);
+  for (const fileName of surfaceConfig.outputs) {
+    const src = join(captureDir, fileName);
+    const dest = join(outDir, fileName);
     if (!existsSync(src)) {
       console.error(`missing capture: ${src}`);
       process.exit(1);

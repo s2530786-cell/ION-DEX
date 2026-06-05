@@ -62,16 +62,16 @@
 ## TASK-P2B SettingPage — 2026-05-24 ✅
 
 - **前端**：`frontend/src/lib/appSettings.ts` + `SettingPage.tsx`；路由/导航 `settings`；`SwapPage` 默认滑点联动；`global.css` 浅色对比 profile。
-- **E2E**：`settings.spec.ts`（2 tests）；smoke 导航 settings 控件可见。
-- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **26/26**）。
+- **E2E**：`settings.spec.ts`（2 tests）；只证明 settings 页面壳体、局部 UI 状态更新、本地缓存清理 banner，以及 verify 环境中的 sentinel self-test 结果可见。
+- **验证**：历史上曾有 `verify-full-save-log.cmd --no-pause` exit **0**（当时 Playwright **26/26**）；这不是 skill toggle / reconnect / OAuth / 远端持久化 的验证证据。
 - **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md) P2B 节。
 
 ## TASK-P2A DomainManage — 2026-05-24 ✅
 
 - **后端**：`domainManage.ts` + `domainManage.routes.ts`；`domain-manage.test.ts`（4 tests）。
 - **前端**：`DomainManagePage.tsx` + 路由；`ionApi` DomainManage API；`verify-e2e` 检测 domain-manage overview。
-- **E2E**：`domain-manage.spec.ts`（2 tests）；smoke 导航/域名/AI 断言更新。
-- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **24/24**）。
+- **E2E**：`domain-manage.spec.ts`（2 tests）；只证明 verify 环境中的 lookup/register intent 类流程，不等同真实链上注册完成。
+- **验证**：历史上曾有 `verify-full-save-log.cmd --no-pause` exit **0**（当时 Playwright **24/24**）；当前会话重新跑 `frontend npm run verify` 时，`domain-manage.spec.ts` 的注册断言曾出现 `HTTP 502`，因此这里不能继续表述为稳定的 live completion。
 - **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md) P2A 节。
 
 ## TASK-P1B LiquidityMine — 2026-05-24 ✅
@@ -79,7 +79,7 @@
 - **合约**：`contracts/bsc/LiquidityMine.sol` + `LiquidityMine.t.sol`（6 tests）；`stress-forge-contract-100.mjs --match-contract LiquidityMine` **100/100**。
 - **后端**：`liquidityMine.ts` + `liquidityMine.routes.ts`（pools / stake / unstake / claim）；backend **35** tests 绿。
 - **前端**：`LiquidityMinePage.tsx` + 路由/导航；`e2e/liquidity-mine.spec.ts`（2 tests）。
-- **验证**：`verify-full-save-log.cmd --no-pause` exit **0**（Playwright **20/20**）。
+- **验证**：历史上曾有 `verify-full-save-log.cmd --no-pause` exit **0**（当时 Playwright **20/20**）；当前 E2E 只证明 verify 环境中的页面壳体与 stake intent 提交流程，不等同真实链上 staking 执行。
 - **修复**：`verify-e2e.mjs` Windows 端口释放（PowerShell）；E2E stake 用例改为 UI intent 断言，避免 stale backend 405。
 - **UI 自审**：已并入 [`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md) P1B 节。
 
@@ -87,8 +87,8 @@
 
 - **后端**：`copyTrade.ts` 服务 + `copyTrade.routes.ts`（GET stats / POST start / POST stop）；gateway CORS 支持 POST；**32** backend tests 绿。
 - **前端**：`CopyTradePage.tsx` + 路由/导航；`ionApi` CopyTrade API；默认 API `8787`。
-- **E2E**：`e2e/copy-trade.spec.ts`（2 tests）；`stress-playwright-100.mjs` **100/100** 绿。
-- **全量**：`verify-full-save-log.cmd --no-pause` exit **0**（18 Playwright，含 copy-trade）。
+- **E2E**：`e2e/copy-trade.spec.ts`（2 tests）；只证明 verify 环境下的页面/本地 API start/stop 交互，不等同 live copy-trading execution。
+- **全量**：历史上曾有 `verify-full-save-log.cmd --no-pause` exit **0**（18 Playwright，含 copy-trade）；当前会话重新跑 `frontend npm run verify` 时，`copy-trade.spec.ts` 的 toggle 断言失败，因此这里不能继续表述为稳定 live-complete。
 - **UI 自审**：[`docs/ui-deliverable-self-audit-2026-05-24.md`](ui-deliverable-self-audit-2026-05-24.md)
 - **附带修复**：FunC `lp_account.fc` / `lp_wallet.fc` / `vault.fc` 迁移至 `ctx::` 访问器；bridge smoke 数据源断言兼容 `upstream`。
 

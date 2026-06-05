@@ -993,27 +993,27 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 ## Per-category Top (stub source)
 
 ### ai-agents-llm
-- 184736★ `Significant-Gravitas/AutoGPT`
-- 138438★ `langchain-ai/langchain`
-- 57613★ `mem0ai/mem0`
-- 49883★ `run-llama/llama_index`
-- 46650★ `mudler/LocalAI`
+- 184765★ `Significant-Gravitas/AutoGPT`
+- 138509★ `langchain-ai/langchain`
+- 57722★ `mem0ai/mem0`
+- 49921★ `run-llama/llama_index`
+- 46674★ `mudler/LocalAI`
 
 ### ai-coding-assistants
-- 72501★ `daytonaio/daytona`
-- 40495★ `agno-agi/agno`
-- 33749★ `Pythagora-io/gpt-pilot`
-- 33563★ `TabbyML/tabby`
-- 33524★ `continuedev/continue`
+- 72506★ `daytonaio/daytona`
+- 40523★ `agno-agi/agno`
+- 33751★ `Pythagora-io/gpt-pilot`
+- 33564★ `TabbyML/tabby`
+- 33537★ `continuedev/continue`
 
 ### mcp-tooling
-- 205692★ `affaan-m/ECC`
-- 58782★ `sansan0/TrendRadar`
-- 46650★ `mudler/LocalAI`
-- 46343★ `aaif-goose/goose`
+- 207197★ `affaan-m/ECC`
+- 58898★ `sansan0/TrendRadar`
+- 46674★ `mudler/LocalAI`
+- 46493★ `aaif-goose/goose`
 
 ### web3-defi-dex
-- 5765★ `cporter202/API-mega-list`
+- 5775★ `cporter202/API-mega-list`
 - 4742★ `ChanChiChoi/awesome-Face_Recognition`
 - 2730★ `ondyari/FaceForensics`
 
@@ -1025,161 +1025,161 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - 810★ `VeloraDEX/paraswap-dex-lib`
 
 ### smart-contracts-solidity
-- 27120★ `OpenZeppelin/openzeppelin-contracts`
+- 27121★ `OpenZeppelin/openzeppelin-contracts`
 - 6282★ `crytic/slither`
 
 ### ton-func-blockchain
-- 687★ `xssnick/tonutils-go`
+- 686★ `xssnick/tonutils-go`
 
 ### fullstack-react
-- 92772★ `oven-sh/bun`
-- 28809★ `nrwl/nx`
-- 23599★ `kriasoft/react-starter-kit`
-- 17725★ `nukeop/nuclear`
+- 92802★ `oven-sh/bun`
+- 28810★ `nrwl/nx`
+- 23600★ `kriasoft/react-starter-kit`
+- 17732★ `nukeop/nuclear`
 
 ### ui-design-systems
 - 23606★ `pedronauck/docz`
-- 7902★ `rebassjs/rebass`
+- 7903★ `rebassjs/rebass`
 - 7223★ `react95-io/React95`
-- 6524★ `unovue/reka-ui`
+- 6527★ `unovue/reka-ui`
 - 6404★ `vmware-archive/clarity`
 
 ### video-generation
-- 4286★ `calesthio/OpenMontage`
+- 4357★ `calesthio/OpenMontage`
 
 ### audio-tts-voice
-- 4693★ `denizsafak/abogen`
+- 4730★ `denizsafak/abogen`
 - 3153★ `rsxdalv/TTS-WebUI`
-- 2958★ `OpenMOSS/MOSS-TTS`
-- 1910★ `travisvn/openai-edge-tts`
+- 3078★ `OpenMOSS/MOSS-TTS`
+- 1914★ `travisvn/openai-edge-tts`
 
 ### testing-e2e-quality
-- 5609★ `antiwork/shortest`
+- 5611★ `antiwork/shortest`
 
 ### security-monitoring
 - 9725★ `upgundecha/howtheysre`
 
 ### docs-research-rag
-- 80473★ `thedotmack/claude-mem`
-- 61006★ `Mintplex-Labs/anything-llm`
-- 59454★ `pathwaycom/llm-app`
-- 44614★ `milvus-io/milvus`
-- 35510★ `patchy631/ai-engineering-hub`
+- 80667★ `thedotmack/claude-mem`
+- 61059★ `Mintplex-Labs/anything-llm`
+- 59445★ `pathwaycom/llm-app`
+- 44629★ `milvus-io/milvus`
+- 35539★ `patchy631/ai-engineering-hub`
 
 ### devops-cicd
 - 6741★ `sottlmarek/DevSecOps`
-- 3214★ `Pradumnasaraf/DevOps`
+- 3215★ `Pradumnasaraf/DevOps`
 
 ### backend-apis-node
-- 70388★ `bytedance/deer-flow`
-- 42782★ `payloadcms/payload`
+- 70468★ `bytedance/deer-flow`
+- 42804★ `payloadcms/payload`
 - 41742★ `hexojs/hexo`
-- 37969★ `ToolJet/ToolJet`
-- 25925★ `yamadashy/repomix`
+- 37978★ `ToolJet/ToolJet`
+- 25974★ `yamadashy/repomix`
 
 ### databases-orm
-- 8891★ `paradedb/paradedb`
+- 8899★ `paradedb/paradedb`
 
 ### containers-kubernetes
-- 82568★ `bregman-arie/devops-exercises`
-- 79052★ `netdata/netdata`
-- 26076★ `yeasy/docker_practice`
-- 25634★ `rancher/rancher`
-- 23045★ `argoproj/argo-cd`
+- 82575★ `bregman-arie/devops-exercises`
+- 79064★ `netdata/netdata`
+- 26077★ `yeasy/docker_practice`
+- 25643★ `rancher/rancher`
+- 23059★ `argoproj/argo-cd`
 
 ### static-analysis
-- 29431★ `standard/standard`
-- 27266★ `eslint/eslint`
-- 14642★ `lint-staged/lint-staged`
+- 29432★ `standard/standard`
+- 27265★ `eslint/eslint`
+- 14647★ `lint-staged/lint-staged`
 
 ### lang-python
-- 351633★ `donnemartin/system-design-primer`
-- 221625★ `TheAlgorithms/Python`
-- 184736★ `Significant-Gravitas/AutoGPT`
-- 179073★ `NousResearch/hermes-agent`
-- 167763★ `yt-dlp/yt-dlp`
+- 351777★ `donnemartin/system-design-primer`
+- 221652★ `TheAlgorithms/Python`
+- 184765★ `Significant-Gravitas/AutoGPT`
+- 180940★ `NousResearch/hermes-agent`
+- 168045★ `yt-dlp/yt-dlp`
 
 ### lang-javascript
-- 245421★ `facebook/react`
-- 205695★ `affaan-m/ECC`
-- 196031★ `trekhleb/javascript-algorithms`
-- 156094★ `Snailclimb/JavaGuide`
+- 245460★ `facebook/react`
+- 207198★ `affaan-m/ECC`
+- 196045★ `trekhleb/javascript-algorithms`
+- 156128★ `Snailclimb/JavaGuide`
 - 148106★ `airbnb/javascript`
 
 ### lang-typescript
-- 190975★ `n8n-io/n8n`
-- 185759★ `microsoft/vscode`
-- 163265★ `f/prompts.chat`
-- 138438★ `langchain-ai/langchain`
-- 109061★ `microsoft/TypeScript`
+- 191113★ `n8n-io/n8n`
+- 185804★ `microsoft/vscode`
+- 163301★ `f/prompts.chat`
+- 138509★ `langchain-ai/langchain`
+- 109072★ `microsoft/TypeScript`
 
 ### lang-java
-- 126538★ `krahets/hello-algo`
-- 108203★ `GrowingGit/GitHub-Chinese-Top-Charts`
-- 94105★ `iluwatar/java-design-patterns`
-- 83790★ `macrozheng/mall`
-- 80763★ `spring-projects/spring-boot`
+- 126563★ `krahets/hello-algo`
+- 108214★ `GrowingGit/GitHub-Chinese-Top-Charts`
+- 94103★ `iluwatar/java-design-patterns`
+- 83795★ `macrozheng/mall`
+- 80772★ `spring-projects/spring-boot`
 
 ### lang-go
-- 173066★ `ollama/ollama`
-- 134252★ `golang/go`
-- 122666★ `kubernetes/kubernetes`
-- 107080★ `fatedier/frp`
-- 88600★ `gin-gonic/gin`
+- 173192★ `ollama/ollama`
+- 134274★ `golang/go`
+- 122692★ `kubernetes/kubernetes`
+- 107104★ `fatedier/frp`
+- 88605★ `gin-gonic/gin`
 
 ### lang-rust
-- 193211★ `ultraworkers/claw-code`
-- 115496★ `rustdesk/rustdesk`
-- 113373★ `rust-lang/rust`
-- 107451★ `tauri-apps/tauri`
-- 106935★ `denoland/deno`
+- 193267★ `ultraworkers/claw-code`
+- 115575★ `rustdesk/rustdesk`
+- 113418★ `rust-lang/rust`
+- 107501★ `tauri-apps/tauri`
+- 106944★ `denoland/deno`
 
 ### lang-cpp
-- 195390★ `tensorflow/tensorflow`
-- 125949★ `facebook/react-native`
-- 121529★ `electron/electron`
-- 114480★ `ggml-org/llama.cpp`
-- 112018★ `godotengine/godot`
+- 195412★ `tensorflow/tensorflow`
+- 125960★ `facebook/react-native`
+- 121534★ `electron/electron`
+- 114641★ `ggml-org/llama.cpp`
+- 112068★ `godotengine/godot`
 
 ### lang-csharp
-- 133759★ `microsoft/PowerToys`
-- 107813★ `2dust/v2rayN`
+- 133776★ `microsoft/PowerToys`
+- 107927★ `2dust/v2rayN`
 - 59557★ `shadowsocks/shadowsocks-windows`
-- 53772★ `PowerShell/PowerShell`
-- 52873★ `jellyfin/jellyfin`
+- 53788★ `PowerShell/PowerShell`
+- 52913★ `jellyfin/jellyfin`
 
 ### lang-ruby
-- 58477★ `rails/rails`
-- 54149★ `maybe-finance/maybe`
-- 51475★ `jekyll/jekyll`
-- 49984★ `mastodon/mastodon`
-- 49394★ `huginn/huginn`
+- 58482★ `rails/rails`
+- 54153★ `maybe-finance/maybe`
+- 51478★ `jekyll/jekyll`
+- 49991★ `mastodon/mastodon`
+- 49398★ `huginn/huginn`
 
 ### lang-php
-- 71332★ `danielmiessler/SecLists`
-- 56406★ `coollabsio/coolify`
-- 35628★ `nextcloud/server`
-- 34741★ `laravel/framework`
-- 31058★ `symfony/symfony`
+- 71362★ `danielmiessler/SecLists`
+- 56467★ `coollabsio/coolify`
+- 35658★ `nextcloud/server`
+- 34746★ `laravel/framework`
+- 31063★ `symfony/symfony`
 
 ### lang-swift
-- 70017★ `swiftlang/swift`
-- 45097★ `iina/iina`
-- 42390★ `Alamofire/Alamofire`
-- 39320★ `exelban/stats`
-- 34269★ `utmapp/UTM`
+- 70021★ `swiftlang/swift`
+- 45110★ `iina/iina`
+- 42392★ `Alamofire/Alamofire`
+- 39338★ `exelban/stats`
+- 34279★ `utmapp/UTM`
 
 ### lang-kotlin
-- 60759★ `topjohnwu/Magisk`
-- 57414★ `2dust/v2rayNG`
-- 52798★ `JetBrains/kotlin`
-- 46966★ `square/okhttp`
-- 46886★ `gedoor/legado`
+- 60783★ `topjohnwu/Magisk`
+- 57476★ `2dust/v2rayNG`
+- 52807★ `JetBrains/kotlin`
+- 46968★ `square/okhttp`
+- 46892★ `gedoor/legado`
 
 ### lang-scala
-- 73370★ `twitter/the-algorithm`
-- 43390★ `apache/spark`
-- 18308★ `lichess-org/lila`
+- 73373★ `twitter/the-algorithm`
+- 43395★ `apache/spark`
+- 18311★ `lichess-org/lila`
 - 16395★ `prisma/prisma1`
 - 14453★ `scala/scala`
 
@@ -1188,173 +1188,173 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - 6944★ `tidyverse/ggplot2`
 - 5654★ `rstudio/shiny`
 - 5058★ `hadley/r4ds`
-- 5031★ `tidyverse/dplyr`
+- 5032★ `tidyverse/dplyr`
 
 ### lang-dart
-- 176635★ `flutter/flutter`
-- 82703★ `localsend/localsend`
-- 71731★ `AppFlowy-IO/AppFlowy`
-- 46694★ `KRTirtho/spotube`
-- 41051★ `chen08209/FlClash`
+- 176650★ `flutter/flutter`
+- 82791★ `localsend/localsend`
+- 71790★ `AppFlowy-IO/AppFlowy`
+- 46710★ `KRTirtho/spotube`
+- 41193★ `chen08209/FlClash`
 
 ### lang-zig
-- 42972★ `ziglang/zig`
-- 30774★ `lightpanda-io/browser`
+- 42976★ `ziglang/zig`
+- 30802★ `lightpanda-io/browser`
 - 7656★ `nullclaw/nullclaw`
-- 7340★ `fairyglade/ly`
-- 4877★ `zigtools/zls`
+- 7344★ `fairyglade/ly`
+- 4882★ `zigtools/zls`
 
 ### os-linux-kernel
-- 161184★ `jlevy/the-art-of-command-line`
-- 27711★ `imthenachoman/How-To-Secure-A-Linux-Server`
-- 11807★ `netbootxyz/netboot.xyz`
-- 11619★ `trimstray/test-your-sysadmin-skills`
-- 8789★ `A-poc/RedTeam-Tools`
+- 161199★ `jlevy/the-art-of-command-line`
+- 27717★ `imthenachoman/How-To-Secure-A-Linux-Server`
+- 11811★ `netbootxyz/netboot.xyz`
+- 11620★ `trimstray/test-your-sysadmin-skills`
+- 8792★ `A-poc/RedTeam-Tools`
 
 ### os-bsd
-- 187608★ `ohmyzsh/ohmyzsh`
-- 117078★ `justjavac/free-programming-books-zh_CN`
-- 97187★ `nvbn/thefuck`
-- 93659★ `nvm-sh/nvm`
-- 88380★ `gohugoio/hugo`
+- 187643★ `ohmyzsh/ohmyzsh`
+- 117083★ `justjavac/free-programming-books-zh_CN`
+- 97213★ `nvbn/thefuck`
+- 93675★ `nvm-sh/nvm`
+- 88402★ `gohugoio/hugo`
 
 ### os-hypervisor
-- 23335★ `kholia/OSX-KVM`
-- 13224★ `qemu/qemu`
-- 2646★ `virtio-win/kvm-guest-drivers-windows`
+- 23339★ `kholia/OSX-KVM`
+- 13228★ `qemu/qemu`
+- 2648★ `virtio-win/kvm-guest-drivers-windows`
 
 ### embedded-rtos
-- 23715★ `lvgl/lvgl`
-- 21775★ `micropython/micropython`
-- 12834★ `cesanta/mongoose`
-- 9351★ `embassy-rs/embassy`
+- 23727★ `lvgl/lvgl`
+- 21779★ `micropython/micropython`
+- 12837★ `cesanta/mongoose`
+- 9358★ `embassy-rs/embassy`
 
 ### fpga-hdl
-- 7160★ `logisim-evolution/logisim-evolution`
-- 5469★ `LeiWang1999/FPGA`
-- 4641★ `open-sdr/openwifi`
-- 3913★ `enjoy-digital/litex`
+- 7164★ `logisim-evolution/logisim-evolution`
+- 5472★ `LeiWang1999/FPGA`
+- 4643★ `open-sdr/openwifi`
+- 3917★ `enjoy-digital/litex`
 - 2561★ `darklife/darkriscv`
 
 ### ml-pytorch
-- 163415★ `AUTOMATIC1111/stable-diffusion-webui`
-- 161257★ `huggingface/transformers`
-- 115580★ `Comfy-Org/ComfyUI`
-- 96591★ `rasbt/LLMs-from-scratch`
-- 81869★ `vllm-project/vllm`
+- 163441★ `AUTOMATIC1111/stable-diffusion-webui`
+- 161286★ `huggingface/transformers`
+- 115723★ `Comfy-Org/ComfyUI`
+- 96661★ `rasbt/LLMs-from-scratch`
+- 81948★ `vllm-project/vllm`
 
 ### ml-tensorflow
-- 195390★ `tensorflow/tensorflow`
+- 195412★ `tensorflow/tensorflow`
 - 64086★ `keras-team/keras`
-- 59872★ `CorentinJ/Real-Time-Voice-Cloning`
-- 43755★ `aymericdamien/TensorFlow-Examples`
-- 42762★ `ray-project/ray`
+- 59886★ `CorentinJ/Real-Time-Voice-Cloning`
+- 43752★ `aymericdamien/TensorFlow-Examples`
+- 42770★ `ray-project/ray`
 
 ### ml-inference-serving
-- 193211★ `ultraworkers/claw-code`
-- 161257★ `huggingface/transformers`
-- 103674★ `deepseek-ai/DeepSeek-V3`
+- 193267★ `ultraworkers/claw-code`
+- 161286★ `huggingface/transformers`
+- 103676★ `deepseek-ai/DeepSeek-V3`
 
 ### ml-computer-vision
-- 22949★ `spmallick/learnopencv`
-- 9307★ `CVHub520/X-AnyLabeling`
+- 22951★ `spmallick/learnopencv`
+- 9315★ `CVHub520/X-AnyLabeling`
 
 ### ml-nlp-classic
-- 161257★ `huggingface/transformers`
-- 71845★ `hiyouga/LlamaFactory`
-- 40024★ `google-research/bert`
-- 23614★ `lukasmasuch/best-of-ml-python`
-- 22587★ `AiHubCN/Awesome-Chinese-LLM`
+- 161286★ `huggingface/transformers`
+- 71880★ `hiyouga/LlamaFactory`
+- 40022★ `google-research/bert`
+- 23615★ `lukasmasuch/best-of-ml-python`
+- 22591★ `AiHubCN/Awesome-Chinese-LLM`
 
 ### game-engines
-- 112018★ `godotengine/godot`
-- 73649★ `ocornut/imgui`
-- 46427★ `bevyengine/bevy`
-- 25604★ `BabylonJS/Babylon.js`
-- 24812★ `leereilly/games`
+- 112069★ `godotengine/godot`
+- 73683★ `ocornut/imgui`
+- 46443★ `bevyengine/bevy`
+- 25602★ `BabylonJS/Babylon.js`
+- 24814★ `leereilly/games`
 
 ### graphics-rendering
-- 33262★ `raysan5/raylib`
-- 30638★ `iced-rs/iced`
-- 23715★ `lvgl/lvgl`
-- 23650★ `ssloy/tinyrenderer`
-- 20105★ `google/filament`
+- 33286★ `raysan5/raylib`
+- 30646★ `iced-rs/iced`
+- 23727★ `lvgl/lvgl`
+- 23654★ `ssloy/tinyrenderer`
+- 20108★ `google/filament`
 
 ### graphics-3d-assets
-- 9020★ `domlysz/BlenderGIS`
-- 3301★ `hlorus/CAD_Sketcher`
+- 9025★ `domlysz/BlenderGIS`
+- 3304★ `hlorus/CAD_Sketcher`
 - 3294★ `armory3d/armory`
 
 ### sci-python-stack
-- 348991★ `jwasham/coding-interview-university`
-- 267496★ `practical-tutorials/project-based-learning`
-- 195390★ `tensorflow/tensorflow`
-- 182993★ `jackfrued/Python-100-Days`
-- 122884★ `ripienaar/free-for-dev`
+- 349702★ `jwasham/coding-interview-university`
+- 267622★ `practical-tutorials/project-based-learning`
+- 195412★ `tensorflow/tensorflow`
+- 183020★ `jackfrued/Python-100-Days`
+- 122904★ `ripienaar/free-for-dev`
 
 ### sci-bioinformatics
-- 81713★ `Developer-Y/cs-video-courses`
-- 27119★ `K-Dense-AI/scientific-agent-skills`
+- 81720★ `Developer-Y/cs-video-courses`
+- 27254★ `K-Dense-AI/scientific-agent-skills`
 - 3718★ `google/deepvariant`
-- 2194★ `lh3/minimap2`
+- 2195★ `lh3/minimap2`
 
 ### sci-gis-geospatial
 - 3705★ `opengeos/leafmap`
 - 1480★ `mikeroyal/Photogrammetry-Guide`
 
 ### edu-platforms
-- 2961★ `frappe/lms`
+- 2965★ `frappe/lms`
 
 ### static-site-generators
-- 59807★ `withastro/astro`
-- 55951★ `gatsbyjs/gatsby`
-- 51475★ `jekyll/jekyll`
-- 8591★ `withastro/starlight`
+- 59845★ `withastro/astro`
+- 55950★ `gatsbyjs/gatsby`
+- 51478★ `jekyll/jekyll`
+- 8600★ `withastro/starlight`
 - 5806★ `daattali/beautiful-jekyll`
 
 ### cms-wordpress
-- 472667★ `sindresorhus/awesome`
-- 356179★ `nilbuild/developer-roadmap`
-- 351634★ `donnemartin/system-design-primer`
+- 472949★ `sindresorhus/awesome`
+- 356270★ `nilbuild/developer-roadmap`
+- 351777★ `donnemartin/system-design-primer`
 
 ### blog-docs-publish
-- 1680★ `RickStrahl/MarkdownMonster`
+- 1679★ `RickStrahl/MarkdownMonster`
 
 ### mobile-android
-- 176635★ `flutter/flutter`
-- 142952★ `Genymobile/scrcpy`
-- 125949★ `facebook/react-native`
-- 117078★ `justjavac/free-programming-books-zh_CN`
-- 115497★ `rustdesk/rustdesk`
+- 176650★ `flutter/flutter`
+- 143018★ `Genymobile/scrcpy`
+- 125960★ `facebook/react-native`
+- 117083★ `justjavac/free-programming-books-zh_CN`
+- 115576★ `rustdesk/rustdesk`
 
 ### mobile-ios
-- 50579★ `dkhamsing/open-source-ios-apps`
-- 34307★ `xitu/gold-miner`
-- 25654★ `SDWebImage/SDWebImage`
-- 25525★ `NativeScript/NativeScript`
+- 50590★ `dkhamsing/open-source-ios-apps`
+- 34306★ `xitu/gold-miner`
+- 25653★ `SDWebImage/SDWebImage`
+- 25528★ `NativeScript/NativeScript`
 
 ### mobile-cross-platform
-- 511559★ `codecrafters-io/build-your-own-x`
-- 356179★ `nilbuild/developer-roadmap`
-- 267496★ `practical-tutorials/project-based-learning`
-- 245421★ `facebook/react`
-- 205701★ `affaan-m/ECC`
+- 511920★ `codecrafters-io/build-your-own-x`
+- 356270★ `nilbuild/developer-roadmap`
+- 267622★ `practical-tutorials/project-based-learning`
+- 245461★ `facebook/react`
+- 207203★ `affaan-m/ECC`
 
 ### chain-ethereum-clients
-- 68537★ `base/node`
-- 51070★ `ethereum/go-ethereum`
-- 36583★ `inkonchain/node`
+- 68536★ `base/node`
+- 51072★ `ethereum/go-ethereum`
+- 36582★ `inkonchain/node`
 
 ### chain-l1-alt
-- 472667★ `sindresorhus/awesome`
-- 348992★ `jwasham/coding-interview-university`
-- 167764★ `yt-dlp/yt-dlp`
-- 122884★ `ripienaar/free-for-dev`
+- 472949★ `sindresorhus/awesome`
+- 349705★ `jwasham/coding-interview-university`
+- 168045★ `yt-dlp/yt-dlp`
+- 122904★ `ripienaar/free-for-dev`
 
 ### chain-zk-crypto
-- 7676★ `kroma-network/tachyon`
+- 7675★ `kroma-network/tachyon`
 - 4527★ `ProvableHQ/snarkOS`
-- 2151★ `risc0/risc0`
+- 2152★ `risc0/risc0`
 - 1878★ `Zokrates/ZoKrates`
 - 1353★ `noir-lang/noir`
 
@@ -1362,68 +1362,68 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 - 2250★ `Nethereum/Nethereum`
 
 ### hardware-robotics
-- 8874★ `dusty-nv/jetson-inference`
-- 4242★ `MichaelGrupp/evo`
-- 4046★ `BehaviorTree/BehaviorTree.CPP`
-- 3830★ `Ly0n/awesome-robotic-tooling`
-- 3757★ `dora-rs/dora`
+- 8873★ `dusty-nv/jetson-inference`
+- 4246★ `MichaelGrupp/evo`
+- 4047★ `BehaviorTree/BehaviorTree.CPP`
+- 3831★ `Ly0n/awesome-robotic-tooling`
+- 3761★ `dora-rs/dora`
 
 ### iot-edge
-- 70527★ `ruvnet/RuView`
-- 16934★ `microsoft/IoT-For-Beginners`
-- 16345★ `emqx/emqx`
+- 70779★ `ruvnet/RuView`
+- 16937★ `microsoft/IoT-For-Beginners`
+- 16358★ `emqx/emqx`
 - 7460★ `kubeedge/kubeedge`
 
 ### home-automation
-- 34011★ `IceWhaleTech/CasaOS`
-- 24457★ `arendst/Tasmota`
-- 23359★ `SYSTRAN/faster-whisper`
+- 34018★ `IceWhaleTech/CasaOS`
+- 24459★ `arendst/Tasmota`
+- 23389★ `SYSTRAN/faster-whisper`
 
 ### hardware-cad-3dprint
-- 2393★ `gumyr/build123d`
+- 2398★ `gumyr/build123d`
 
 ### data-engineering
-- 45683★ `apache/airflow`
-- 42060★ `DataTalksClub/data-engineering-zoomcamp`
-- 29627★ `eugeneyan/applied-ml`
-- 21386★ `airbytehq/airbyte`
-- 16740★ `argoproj/argo-workflows`
+- 45692★ `apache/airflow`
+- 42095★ `DataTalksClub/data-engineering-zoomcamp`
+- 29638★ `eugeneyan/applied-ml`
+- 21388★ `airbytehq/airbyte`
+- 16743★ `argoproj/argo-workflows`
 
 ### message-queues
-- 20101★ `yudaocode/SpringBoot-Labs`
-- 15060★ `zhisheng17/flink-learning`
-- 14706★ `aalansehaiyang/technology-talk`
-- 10472★ `wangzhiwubigdata/God-Of-BigData`
+- 20100★ `yudaocode/SpringBoot-Labs`
+- 15061★ `zhisheng17/flink-learning`
+- 14705★ `aalansehaiyang/technology-talk`
+- 10473★ `wangzhiwubigdata/God-Of-BigData`
 - 9743★ `ThreeDotsLabs/watermill`
 
 ### search-analytics-db
-- 356179★ `nilbuild/developer-roadmap`
-- 351634★ `donnemartin/system-design-primer`
-- 205703★ `affaan-m/ECC`
+- 356270★ `nilbuild/developer-roadmap`
+- 351777★ `donnemartin/system-design-primer`
+- 207204★ `affaan-m/ECC`
 
 ### cloud-terraform-iac
-- 20390★ `GoogleCloudPlatform/microservices-demo`
-- 9260★ `khuedoan/homelab`
-- 8764★ `bridgecrewio/checkov`
+- 20396★ `GoogleCloudPlatform/microservices-demo`
+- 9261★ `khuedoan/homelab`
+- 8762★ `bridgecrewio/checkov`
 - 8293★ `HariSekhon/DevOps-Bash-tools`
-- 5213★ `tenable/terrascan`
+- 5212★ `tenable/terrascan`
 
 ### compiler-llvm-wasm
-- 33726★ `carbon-language/carbon-lang`
-- 22092★ `RustPython/RustPython`
+- 33732★ `carbon-language/carbon-lang`
+- 22095★ `RustPython/RustPython`
 - 21589★ `oracle/graal`
-- 17922★ `AssemblyScript/assemblyscript`
-- 16780★ `exaloop/codon`
+- 17921★ `AssemblyScript/assemblyscript`
+- 16781★ `exaloop/codon`
 
 ### networking-servers
-- 472667★ `sindresorhus/awesome`
-- 351634★ `donnemartin/system-design-primer`
-- 226432★ `trimstray/the-book-of-secret-knowledge`
-- 182993★ `jackfrued/Python-100-Days`
+- 472950★ `sindresorhus/awesome`
+- 351777★ `donnemartin/system-design-primer`
+- 226595★ `trimstray/the-book-of-secret-knowledge`
+- 183020★ `jackfrued/Python-100-Days`
 
 ### web3-dex-curated
-- 5514★ `Uniswap/interface`
-- 4994★ `Uniswap/v3-core`
+- 5512★ `Uniswap/interface`
+- 4995★ `Uniswap/v3-core`
 - 2498★ `Uniswap/v4-core`
 - 1945★ `sushi-labs/sushiswap`
 - 1103★ `curvefi/curve-contract`

@@ -2,14 +2,6 @@
 /**
  * Autonomous phase gate runner for ION DEX agents.
  * Runs ONE gate per invocation; exit 0 = pass, exit 1 = fail with compact diagnostics.
- *
- * Usage:
- *   node scripts/autonomous-phase-gate.mjs --gate verify-full
- *   node scripts/autonomous-phase-gate.mjs --gate verify-100
- *   node scripts/autonomous-phase-gate.mjs --gate stress-e2e --spec e2e/copy-trade.spec.ts
- *   node scripts/autonomous-phase-gate.mjs --gate stress-forge --match-contract LiquidityMine
- *   node scripts/autonomous-phase-gate.mjs --gate dev-preflight
- *   node scripts/autonomous-phase-gate.mjs --gate security-1000
  */
 
 import { spawnSync } from "node:child_process";
@@ -57,6 +49,19 @@ function tailFile(path, lines = 40) {
   return arr.slice(-lines).join("\n");
 }
 
+function windowsCommand(name, fallback = name) {
+  const sysRoot = process.env.SystemRoot || "C:\\Windows";
+  const system32 = `${sysRoot}\\System32`;
+  const winPs = `${system32}\\WindowsPowerShell\\v1.0`;
+  const candidates = [
+    `${system32}\\${name}`,
+    `${winPs}\\${name}`,
+    name,
+    fallback,
+  ];
+  return candidates[0];
+}
+
 function run(cmd, args, opts = {}) {
   const result = spawnSync(cmd, args, {
     cwd: opts.cwd ?? root,
@@ -67,7 +72,7 @@ function run(cmd, args, opts = {}) {
       ION_AGENT_AUTONOMOUS: "1",
       ...opts.env,
     },
-    shell: isWin,
+    shell: opts.shell ?? false,
   });
   return result.status ?? 1;
 }
@@ -105,7 +110,7 @@ function printFail(stage, exitCode, hint) {
 function main() {
   const { gate, spec, matchContract, rounds } = parseArgs(process.argv);
   let code = 0;
-  let stage = gate;
+  const stage = gate;
 
   switch (gate) {
     case "dev-preflight": {
@@ -116,7 +121,7 @@ function main() {
     }
     case "verify-full": {
       if (isWin) {
-        code = run("cmd.exe", ["/d", "/c", "scripts\\verify-full-save-log.cmd", "--no-pause"]);
+        code = run(windowsCommand("cmd.exe"), ["/d", "/c", "scripts\\verify-full-save-log.cmd", "--no-pause"]);
       } else {
         code = run("bash", ["scripts/verify-full.sh"]);
       }
@@ -124,7 +129,7 @@ function main() {
     }
     case "verify-100": {
       if (isWin) {
-        code = run("powershell.exe", [
+        code = run(windowsCommand("powershell.exe"), [
           "-NoProfile",
           "-ExecutionPolicy",
           "Bypass",

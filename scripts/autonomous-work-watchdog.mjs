@@ -445,17 +445,26 @@ function runVerify100Step(step, queue, state) {
 
 function runVerifyFullStep(step) {
   if (step.status === "completed") return null;
-  const code = spawnSync("cmd", ["/c", "scripts\\verify-full-save-log.cmd --no-pause"], {
+  const cmd = join(
+    process.env.SystemRoot || "C:\\Windows",
+    "System32",
+    "cmd.exe",
+  );
+  const result = spawnSync(cmd, ["/d", "/c", "scripts\\verify-full-save-log.cmd", "--no-pause"], {
     cwd: root,
     stdio: "inherit",
     shell: false,
-  }).status;
+    env: { ...process.env, ION_VERIFY_NONINTERACTIVE: "1", ION_AGENT_AUTONOMOUS: "1" },
+  });
+  const code = result.status ?? 1;
   if (code === 0) {
     step.status = "completed";
+    step.error = undefined;
     log("DONE step=verify-full");
   } else {
     step.status = "failed";
     step.error = `verify-full exit ${code}`;
+    log(`FAIL step=verify-full exit=${code}`);
   }
   return null;
 }
