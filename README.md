@@ -6,9 +6,9 @@
 
 <p align="center"><strong>This is not a typical DEX repository. It is the public front door of a long-horizon digital civilization.</strong></p>
 
-<h1 align="center">ION —The Operating System for a Super Digital Civilization</h1>
+<h1 align="center">ION — The Operating System for a Super Digital Civilization</h1>
 
-<p align="center"><strong>Multi-chain aggregation. Frictionless payments. Unified identity. Verifiable history. Reputation, arbitration, coordination, self-evolution, and AI sentinel defense —designed as one long-horizon civilization stack.</strong></p>
+<p align="center"><strong>Multi-chain aggregation. Frictionless payments. Unified identity. Verifiable history. Reputation, arbitration, coordination, self-evolution, and AI sentinel defense — designed as one long-horizon civilization stack.</strong></p>
 
 <p align="center"><strong>A public front door for a system that begins with exchange infrastructure and grows into a durable digital civilization layer by layer.</strong></p>
 
@@ -26,13 +26,13 @@
 
 ## Core Selling Points
 
-- **28-chain decentralized exchange** —a full-chain aggregation surface built around liquidity access, routing, settlement, and stronger user-facing execution.
-- **Frictionless multi-chain payments** —payment complexity is pushed into the infrastructure layer so users, merchants, and platforms can transact with less fragmentation.
-- **Official identity across the entire ecosystem** —ION Identity is designed to connect users, merchants, developers, service providers, proof systems, reputation systems, and coordination logic into one continuous platform fabric.
-- **AI flagship stack** —AI analysis, AI-assisted arbitration, AI sentinel defense, AI-enhanced coordination, and AI self-evolutionary upgrade capacity are part of the platform's long-term architecture.
-- **Fee burn, staking, and long-term value flywheel** —platform usage is designed to support token scarcity, lock-in effects, ecosystem alignment, and long-horizon value capture.
-- **API and SDK integration surface** —merchants, international e-commerce platforms, service providers, and developers are expected to connect through direct integration pathways, not just passive observation.
-- **Independently developed by Master** —ION DEX's full-chain aggregated ecosystem platform is being independently developed by Master with a singular long-horizon strategic direction.
+- **28-chain decentralized exchange** — a full-chain aggregation surface built around liquidity access, routing, settlement, and stronger user-facing execution.
+- **Frictionless multi-chain payments** — payment complexity is pushed into the infrastructure layer so users, merchants, and platforms can transact with less fragmentation.
+- **Official identity across the entire ecosystem** — ION Identity is designed to connect users, merchants, developers, service providers, proof systems, reputation systems, and coordination logic into one continuous platform fabric.
+- **AI flagship stack** — AI analysis, AI-assisted arbitration, AI sentinel defense, AI-enhanced coordination, and AI self-evolutionary upgrade capacity are part of the platform's long-term architecture.
+- **Fee burn, staking, and long-term value flywheel** — platform usage is designed to support token scarcity, lock-in effects, ecosystem alignment, and long-horizon value capture.
+- **API and SDK integration surface** — merchants, international e-commerce platforms, service providers, and developers are expected to connect through direct integration pathways, not just passive observation.
+- **Independently developed by Master** — ION DEX's full-chain aggregated ecosystem platform is being independently developed by Master with a singular long-horizon strategic direction.
 
 ---
 
@@ -75,7 +75,7 @@
 
 ION DEX starts with its clearest public business anchor: **a 28-chain decentralized exchange designed for liquidity access, routing, settlement, and frictionless multi-chain payment flow**.
 
-That DEX is not presented as the final shape of the system. It is the first visible business engine —the layer that creates real liquidity, real value flow, real settlement logic, and a live trust foundation strong enough to support broader expansion.
+That DEX is not presented as the final shape of the system. It is the first visible business engine — the layer that creates real liquidity, real value flow, real settlement logic, and a live trust foundation strong enough to support broader expansion.
 
 Around that exchange base, the platform is being built into a larger commercial and civil stack: merchant-facing settlement rails, international e-commerce integration, developer-facing APIs and SDKs, official identity continuity, proof and trust systems, AI-assisted arbitration, AI sentinel defense, AI self-evolutionary upgrade capacity, and wider coordination across commerce and real-world services.
 
@@ -102,18 +102,18 @@ If the DEX layer is weak, the wider platform story collapses. If the DEX layer i
 That is why the DEX comes first. It is not a side module. It is the first product anchor, the first revenue and settlement anchor, and the first visible surface through which the rest of the ecosystem can later grow.
 
 ### What makes this DEX strategically different
-The DEX is not being framed as an isolated trading interface. It is being framed as the **unified value-flow entrance** for the broader platform. That means liquidity, routing, settlement, and payments are not dead-end functions —they are the first rails on which merchant payments, e-commerce access, service integration, identity continuity, proof, arbitration, and future ecosystem coordination can later run.
+The DEX is not being framed as an isolated trading interface. It is being framed as the **unified value-flow entrance** for the broader platform. That means liquidity, routing, settlement, and payments are not dead-end functions — they are the first rails on which merchant payments, e-commerce access, service integration, identity continuity, proof, arbitration, and future ecosystem coordination can later run.
 
 ### Payment Infrastructure Layer
 
 The DEX is only the first visible layer. Underneath, ION is building a **payment infrastructure designed for mass adoption**:
 
-- **Frictionless payments** —payment complexity is pushed into the infrastructure layer. Users, merchants, and platforms can transact without managing chain-level friction.
-- **ION backend fee routing** —platform fees are collected and routed through ION-based settlement logic, not patched on as an afterthought.
+- **Frictionless payments** — payment complexity is pushed into the infrastructure layer. Users, merchants, and platforms can transact without managing chain-level friction.
+- **ION backend fee routing** — platform fees are collected and routed through ION-based settlement logic, not patched on as an afterthought.
 - **Flakes fine-grained payments** —1 ION = 1,000,000,000 flakes (9 decimals). Designed for micro-transactions, high-frequency flows, and future mass-payment scenarios where full ION units are too coarse.
-- **Targeting 1,000,000+ TPS** —ION's architecture is designed to scale toward million-TPS throughput, making it viable for global payment volume rather than niche trading only.
-- **Sub-second settlement** —payment confirmation and settlement are designed to complete in seconds, not minutes or hours, enabling real-time commerce and service flows.
-- **Global seamless access** —the platform is designed so that ordinary users anywhere can plug into payment and settlement rails without needing deep blockchain expertise.
+- **Targeting 1,000,000+ TPS** — ION's architecture is designed to scale toward million-TPS throughput, making it viable for global payment volume rather than niche trading only.
+- **Sub-second settlement** — payment confirmation and settlement are designed to complete in seconds, not minutes or hours, enabling real-time commerce and service flows.
+- **Global seamless access** — the platform is designed so that ordinary users anywhere can plug into payment and settlement rails without needing deep blockchain expertise.
 
 This payment layer is what makes the DEX more than a trading terminal. It becomes a **live settlement rail** for future commerce, services, and real-world business activity.
 
@@ -121,11 +121,11 @@ This payment layer is what makes the DEX more than a trading terminal. It become
 
 The DEX is built to support **real trading workflows**, not just basic swaps:
 
-- **Spot trading** —direct token-to-token swaps across 28 chains, with liquidity aggregation and intelligent routing.
-- **Grid trading** —automated buy-low, sell-high strategies that run continuously without manual intervention. Users can set grid parameters and let the system execute across volatility.
-- **Professional trading interface** —designed for users who need more than simple swaps: order book depth, price charts, advanced order types, and execution analytics.
-- **Liquidity provision** —users can provide liquidity to pools and earn fees from trading activity, with multi-chain exposure management.
-- **Routing optimization** —the platform routes orders across multiple liquidity sources to improve execution price and reduce slippage.
+- **Spot trading** — direct token-to-token swaps across 28 chains, with liquidity aggregation and intelligent routing.
+- **Grid trading** — automated buy-low, sell-high strategies that run continuously without manual intervention. Users can set grid parameters and let the system execute across volatility.
+- **Professional trading interface** — designed for users who need more than simple swaps: order book depth, price charts, advanced order types, and execution analytics.
+- **Liquidity provision** — users can provide liquidity to pools and earn fees from trading activity, with multi-chain exposure management.
+- **Routing optimization** — the platform routes orders across multiple liquidity sources to improve execution price and reduce slippage.
 
 These capabilities make the DEX a **real trading engine** rather than a basic swap front-end.
 
@@ -133,14 +133,14 @@ These capabilities make the DEX a **real trading engine** rather than a basic sw
 
 The DEX and payment layer are the foundation. On top of that, the platform is designed to expand into **high-value real-world business modules**:
 
-- **RWA (Real-World Assets)** —tokenized real-world assets (real estate, commodities, securities) traded and settled on-chain through ION infrastructure.
-- **Delivery and mobility** —food delivery, ride-hailing, and local service coordination using ION payment and settlement rails.
-- **Domain trading** —on-chain domain name marketplace with ION-based bidding, escrow, and transfer.
-- **Insurance** —parametric insurance products (flight delay, weather, event cancellation) with oracle-fed triggers and automated claim payouts.
-- **Logistics** —supply chain tracking, proof of delivery, and freight coordination with on-chain settlement and escrow.
-- **Service marketplace** —professional services, gig work, and B2B coordination with reputation, escrow, and dispute resolution.
+- **RWA (Real-World Assets)** — tokenized real-world assets (real estate, commodities, securities) traded and settled on-chain through ION infrastructure.
+- **Delivery and mobility** — food delivery, ride-hailing, and local service coordination using ION payment and settlement rails.
+- **Domain trading** — on-chain domain name marketplace with ION-based bidding, escrow, and transfer.
+- **Insurance** — parametric insurance products (flight delay, weather, event cancellation) with oracle-fed triggers and automated claim payouts.
+- **Logistics** — supply chain tracking, proof of delivery, and freight coordination with on-chain settlement and escrow.
+- **Service marketplace** — professional services, gig work, and B2B coordination with reputation, escrow, and dispute resolution.
 
-Each of these modules is designed to plug into the same payment, identity, proof, and trust layer —so ecosystem activity reinforces platform value rather than fragmenting into isolated silos.
+Each of these modules is designed to plug into the same payment, identity, proof, and trust layer — so ecosystem activity reinforces platform value rather than fragmenting into isolated silos.
 
 ---
 
@@ -195,27 +195,27 @@ At the center of ION is a simple idea:
 
 **A digital civilization should be able to remember, identify, verify, judge, coordinate, and evolve.**
 
-That evolution is not only institutional —it is also computational. Over time, the platform is intended to support **AI self-evolution and upgrade capacity**, so that analysis, coordination, arbitration support, operational intelligence, and ecosystem logic can improve without reducing continuity across the wider system.
+That evolution is not only institutional — it is also computational. Over time, the platform is intended to support **AI self-evolution and upgrade capacity**, so that analysis, coordination, arbitration support, operational intelligence, and ecosystem logic can improve without reducing continuity across the wider system.
 
 ---
 
 ## Participation Value by Role
 
 ### For Investors
-- Not a single-product ceiling —a **multi-layer platform** with DEX + payments + commerce + identity + AI + insurance + logistics expansion paths.
+- Not a single-product ceiling — a **multi-layer platform** with DEX + payments + commerce + identity + AI + insurance + logistics expansion paths.
 - Fee burn creates **structural supply reduction** tied to real business activity, not hype.
 - Staking locks **30-50% of circulating supply** long-term, reducing sell pressure.
-- Master's 25% revenue share ensures **skin in the game** —the builder profits only when the platform profits.
+- Master's 25% revenue share ensures **skin in the game** — the builder profits only when the platform profits.
 
 ### For Developers
-- **28-chain aggregation surface** —build once, reach users across 28 chains.
+- **28-chain aggregation surface** — build once, reach users across 28 chains.
 - Payment rails, identity layer, AI modules, SDKs —**not a swap front-end, a full platform stack**.
 - Still expanding: early builders get leverage, visibility, and strategic depth before the ecosystem crowds.
 
 ### For Merchants and E-Commerce
 - **Multi-chain payment access** without becoming a blockchain expert.
 - Settlement in **seconds**, not days. Fees **lower than traditional processors**.
-- Direct access to Web3 customers —not a crypto checkout gimmick, a **commerce infrastructure upgrade**.
+- Direct access to Web3 customers — not a crypto checkout gimmick, a **commerce infrastructure upgrade**.
 
 ### For International Platforms and Cross-Border Sellers
 - API/SDK integration →multi-chain payment →cross-border settlement →Web3 customer reach.
@@ -229,7 +229,7 @@ That evolution is not only institutional —it is also computational. Over time,
 
 ## Economic Logic
 
-### Fee Burn —Structural Supply Reduction
+### Fee Burn — Structural Supply Reduction
 Every transaction burns ION permanently. Not cosmetic —**structural**:
 
 | Module | Fee | Burn Rate |
@@ -247,7 +247,7 @@ Burn address: `0x000000000000000000000000000000000000dEaD` (BSC) —**permanentl
 
 **Dynamic burn adjustment:** Bear market →more ION burned per dollar of fees (ION cheap = efficient burn). Bull market →reduced burn, increased staking (maintain price support). The mechanism adapts to market cycles to maximize long-term value.
 
-### Staking —Supply Lock and Alignment
+### Staking — Supply Lock and Alignment
 
 | Lock Period | APY |
 |-------------|-----|
@@ -270,7 +270,7 @@ Staking rewards funded by **20% of platform revenue**.
 | Staking Rewards | Dynamic | Bear: high / Bull: high |
 | Treasury | Dynamic | Remaining |
 
-**Master's 25% is non-negotiable and permanent.** Paid first from every dollar of revenue. The person funding all operations gets paid first —no exceptions.
+**Master's 25% is non-negotiable and permanent.** Paid first from every dollar of revenue. The person funding all operations gets paid first — no exceptions.
 
 ### The Flywheel
 Users trade/pay →fees collected →ION burned + staked →supply shrinks →price pressure up →more users attracted →more fees →more burn →more staking →**self-reinforcing cycle**.
@@ -412,6 +412,6 @@ One ID across the entire ecosystem: trading, commerce, delivery, insurance, logi
 
 ION should not be judged only by whether it resembles a familiar category.
 
-The deeper question is whether it is capable of becoming a durable digital civilization stack —one that begins with infrastructure, then grows into identity, proof, payment, reputation, arbitration, coordination, and long-term evolution.
+The deeper question is whether it is capable of becoming a durable digital civilization stack — one that begins with infrastructure, then grows into identity, proof, payment, reputation, arbitration, coordination, and long-term evolution.
 
 That is the standard we are building toward.

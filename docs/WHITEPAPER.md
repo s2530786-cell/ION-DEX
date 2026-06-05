@@ -4,7 +4,7 @@
 
 **Version:** 2.0  
 **Date:** June 2026  
-**Status:** Public Draft —Comprehensive Edition  
+**Status:** Public Draft — Comprehensive Edition  
 
 ---
 
@@ -12,11 +12,11 @@
 
 Most decentralized exchanges exist to swap tokens. ION DEX exists to build infrastructure.
 
-This whitepaper presents the design of ION DEX —a 28-chain decentralized exchange that serves as the first visible business engine of a broader digital civilization stack. The DEX is not the final shape of the system. It is the layer that creates real liquidity, real value flow, real settlement logic, and a live trust foundation strong enough to support expansion into payments, identity, proof, arbitration, coordination, and long-horizon ecosystem civilization.
+This whitepaper presents the design of ION DEX — a 28-chain decentralized exchange that serves as the first visible business engine of a broader digital civilization stack. The DEX is not the final shape of the system. It is the layer that creates real liquidity, real value flow, real settlement logic, and a live trust foundation strong enough to support expansion into payments, identity, proof, arbitration, coordination, and long-horizon ecosystem civilization.
 
-The platform is designed around ten strategic layers —Value, Payment, Identity, Proof, Arbitration, Evolution, Coordination, Governance, Culture, and Expansion —each reinforcing the others, each built to survive multiple market cycles, each designed to be improved continuously rather than discarded.
+The platform is designed around ten strategic layers — Value, Payment, Identity, Proof, Arbitration, Evolution, Coordination, Governance, Culture, and Expansion — each reinforcing the others, each built to survive multiple market cycles, each designed to be improved continuously rather than discarded.
 
-At the economic core, every transaction feeds a dual flywheel: 50% of all platform fees are permanently burned, reducing circulating supply structurally, while staking locks 30—0% of supply long-term. A dynamic burn mechanism adapts to market conditions —burning more efficiently during bear markets when ION is cheap, and shifting toward staking during bull markets to maintain price support. Master receives 25% of all revenue, paid first, as a permanent and non-negotiable allocation that ensures the builder profits only when the platform profits.
+At the economic core, every transaction feeds a dual flywheel: 50% of all platform fees are permanently burned, reducing circulating supply structurally, while staking locks 30–50% of supply long-term. A dynamic burn mechanism adapts to market conditions — burning more efficiently during bear markets when ION is cheap, and shifting toward staking during bull markets to maintain price support. Master receives 25% of all revenue, paid first, as a permanent and non-negotiable allocation that ensures the builder profits only when the platform profits.
 
 This is not a token narrative. This is infrastructure designed to remain relevant for fifty years.
 
@@ -36,7 +36,7 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 10. [Economic Logic: The Dual Flywheel](#10-economic-logic-the-dual-flywheel)
 11. [Governance & Public-Order Compatibility](#11-governance--public-order-compatibility)
 12. [Security Architecture: Battle-Tested Infrastructure](#12-security-architecture-battle-tested-infrastructure)
-13. [Long-Horizon Roadmap: P0鈥揚10](#13-long-horizon-roadmap-p0p10)
+13. [Long-Horizon Roadmap: P0–P10](#13-long-horizon-roadmap-p0p10)
 14. [Boundaries: Public and Private](#14-boundaries-public-and-private)
 15. [Integration with Ice Open Network](#15-integration-with-ice-open-network)
 16. [Team & Contributors](#16-team--contributors)
@@ -71,16 +71,16 @@ The answer is not a token. It is not a governance mechanism. It is not a marketi
 
 The answer is a **stack of layers**, each designed to survive multiple cycles, each designed to reinforce the others, each designed to be built once, improved continuously, and never discarded:
 
-1. **Value Layer** —Exchange, settlement, treasury, burn, staking
-2. **Payment Layer** —Frictionless, high-throughput, fine-grained
-3. **Identity Layer** —One ID per person, durable history, adaptive standing
-4. **Proof Layer** —Immutable, verifiable, Explorer-backed
-5. **Arbitration Layer** —AI-assisted, appeal-capable, accountability-embedded
-6. **Evolution Layer** —Learning, correction, adaptation
-7. **Coordination Layer** —Merchants, services, logistics, insurance
-8. **Governance Layer** —Rule boundaries, anti-abuse, public-order compatibility
-9. **Culture Layer** —Ethos, honor, builder identity
-10. **Expansion Layer** —Global seamless access, billion-scale design
+1. **Value Layer** — Exchange, settlement, treasury, burn, staking
+2. **Payment Layer** — Frictionless, high-throughput, fine-grained
+3. **Identity Layer** — One ID per person, durable history, adaptive standing
+4. **Proof Layer** — Immutable, verifiable, Explorer-backed
+5. **Arbitration Layer** — AI-assisted, appeal-capable, accountability-embedded
+6. **Evolution Layer** — Learning, correction, adaptation
+7. **Coordination Layer** — Merchants, services, logistics, insurance
+8. **Governance Layer** — Rule boundaries, anti-abuse, public-order compatibility
+9. **Culture Layer** — Ethos, honor, builder identity
+10. **Expansion Layer** — Global seamless access, billion-scale design
 
 ### Why the DEX Comes First
 
@@ -88,7 +88,7 @@ If the DEX layer is weak, the wider platform story collapses.
 
 If the DEX layer is strong, it becomes the first living proof that the wider ecosystem can carry real value flow, real business activity, and real long-term expansion capacity. The DEX is not a side module. It is the **first product anchor, the first revenue and settlement anchor, and the first visible surface** through which the rest of the ecosystem can later grow.
 
-This is why ION DEX is positioned as a 28-chain decentralized exchange first —not because trading is the end goal, but because trading is the most direct way to create the value flow, settlement logic, and trust foundation that everything else requires.
+This is why ION DEX is positioned as a 28-chain decentralized exchange first — not because trading is the end goal, but because trading is the most direct way to create the value flow, settlement logic, and trust foundation that everything else requires.
 
 ---
 
@@ -102,11 +102,11 @@ Without a functioning Value Layer, there is no revenue to burn, no value to stak
 
 ### 2.2 Payment Layer
 
-The Payment Layer makes the Value Layer accessible to users who are not traders. It provides frictionless payment rails that push complexity into the infrastructure —users pay with stablecoins on the frontend, while the backend routes through ION settlement logic automatically. Flakes (1 ION = 1,000,000,000 flakes, 9 decimals) enable micro-transactions, and the architecture targets 1,000,000+ TPS with sub-second settlement.
+The Payment Layer makes the Value Layer accessible to users who are not traders. It provides frictionless payment rails that push complexity into the infrastructure — users pay with stablecoins on the frontend, while the backend routes through ION settlement logic automatically. Flakes (1 ION = 1,000,000,000 flakes, 9 decimals) enable micro-transactions, and the architecture targets 1,000,000+ TPS with sub-second settlement.
 
 ### 2.3 Identity Layer
 
-The Identity Layer gives every participant in the ecosystem one durable primary ION Identity ID. This is not per wallet, not per account, not per platform —one identity per human. History is immutable (good transactions build credit; bad ones are recorded permanently), but standing is adaptive (recovery is possible through consistent good behavior, though history is never erased).
+The Identity Layer gives every participant in the ecosystem one durable primary ION Identity ID. This is not per wallet, not per account, not per platform — one identity per human. History is immutable (good transactions build credit; bad ones are recorded permanently), but standing is adaptive (recovery is possible through consistent good behavior, though history is never erased).
 
 ### 2.4 Proof Layer
 
@@ -122,7 +122,7 @@ The Evolution Layer enables the platform to learn from its own errors and improv
 
 ### 2.7 Coordination Layer
 
-The Coordination Layer connects the platform's six business modules —Merchant Payments, Delivery & Mobility, Insurance, Logistics, Domain Trading, and RWA —through shared payment rails, identity, reputation, proof, arbitration, and defense. Each module reinforces the others, creating an ecosystem that is stronger than any individual application.
+The Coordination Layer connects the platform's six business modules — Merchant Payments, Delivery & Mobility, Insurance, Logistics, Domain Trading, and RWA — through shared payment rails, identity, reputation, proof, arbitration, and defense. Each module reinforces the others, creating an ecosystem that is stronger than any individual application.
 
 ### 2.8 Governance Layer
 
@@ -130,7 +130,7 @@ The Governance Layer defines the rule boundaries of the ecosystem, including ant
 
 ### 2.9 Culture Layer
 
-The Culture Layer establishes the ethos of the ecosystem: long-term contribution over short-term extraction, builder honor over speculator advantage, and ecosystem alignment over individual gain. This is not enforced by code —it is reinforced by the identity and reputation systems that make behavior visible and consequential.
+The Culture Layer establishes the ethos of the ecosystem: long-term contribution over short-term extraction, builder honor over speculator advantage, and ecosystem alignment over individual gain. This is not enforced by code — it is reinforced by the identity and reputation systems that make behavior visible and consequential.
 
 ### 2.10 Expansion Layer
 
@@ -138,7 +138,7 @@ The Expansion Layer ensures that the platform can serve billions of users across
 
 ### Layer Dependencies
 
-Each layer depends on the previous. The DEX (Value Layer) is the foundation. Payment builds on Value. Identity builds on Payment. Proof builds on Identity. And so on, up to Expansion. This dependency chain ensures that each layer is grounded in real, functioning infrastructure —not theoretical capability.
+Each layer depends on the previous. The DEX (Value Layer) is the foundation. Payment builds on Value. Identity builds on Payment. Proof builds on Identity. And so on, up to Expansion. This dependency chain ensures that each layer is grounded in real, functioning infrastructure — not theoretical capability.
 
 ---
 
@@ -150,25 +150,25 @@ The ION DEX is designed to perform five functions that go beyond simple token sw
 
 1. **Aggregate liquidity across chains.** Users are not trapped inside isolated markets. The platform routes orders across 28 chains to find the best execution price and the deepest liquidity.
 
-2. **Route value intelligently.** The system handles cross-chain complexity —users specify what they want to trade, and the routing engine determines the optimal path. Users do not need to understand liquidity fragmentation, bridge mechanics, or gas optimization.
+2. **Route value intelligently.** The system handles cross-chain complexity — users specify what they want to trade, and the routing engine determines the optimal path. Users do not need to understand liquidity fragmentation, bridge mechanics, or gas optimization.
 
-3. **Provide settlement infrastructure.** The DEX is not just a trading terminal —it is a settlement rail that merchants, platforms, and service providers can build on top of. Every trade creates a verified, on-chain settlement record.
+3. **Provide settlement infrastructure.** The DEX is not just a trading terminal — it is a settlement rail that merchants, platforms, and service providers can build on top of. Every trade creates a verified, on-chain settlement record.
 
-4. **Support frictionless payment rails.** Payments and settlement are not separate from trading —they are part of the same infrastructure. A user who swaps tokens and a merchant who receives payment use the same settlement layer.
+4. **Support frictionless payment rails.** Payments and settlement are not separate from trading — they are part of the same infrastructure. A user who swaps tokens and a merchant who receives payment use the same settlement layer.
 
-5. **Act as the first trust anchor.** The DEX is the first living proof that the platform can handle real value flow, real business activity, and real long-term expansion. Every subsequent layer —identity, proof, arbitration, coordination —runs on DEX-proven rails.
+5. **Act as the first trust anchor.** The DEX is the first living proof that the platform can handle real value flow, real business activity, and real long-term expansion. Every subsequent layer — identity, proof, arbitration, coordination — runs on DEX-proven rails.
 
 ### 3.2 Trading Capabilities
 
-**Spot Trading.** Direct token-to-token swaps across 28 chains. The platform aggregates liquidity from multiple sources —AMM pools, limit order books, and cross-chain bridges —to find the best available price for each trade. Slippage protection is built in: users set their maximum acceptable slippage, and the routing engine will not execute a trade that exceeds that threshold.
+**Spot Trading.** Direct token-to-token swaps across 28 chains. The platform aggregates liquidity from multiple sources — AMM pools, limit order books, and cross-chain bridges — to find the best available price for each trade. Slippage protection is built in: users set their maximum acceptable slippage, and the routing engine will not execute a trade that exceeds that threshold.
 
-**Grid Trading.** Automated buy-low / sell-high strategies that run 24/7 without manual intervention. Users set grid parameters (price range, number of grids, total investment amount), and a keeper-based execution system handles the rest. Each grid step is recorded on-chain, providing a complete audit trail of strategy performance. Grid trading is one of the strongest differentiators from other DEXs —most decentralized exchanges offer only manual swaps, while ION DEX offers continuous automated strategy execution.
+**Grid Trading.** Automated buy-low / sell-high strategies that run 24/7 without manual intervention. Users set grid parameters (price range, number of grids, total investment amount), and a keeper-based execution system handles the rest. Each grid step is recorded on-chain, providing a complete audit trail of strategy performance. Grid trading is one of the strongest differentiators from other DEXs — most decentralized exchanges offer only manual swaps, while ION DEX offers continuous automated strategy execution.
 
 **Limit Orders.** Price-triggered orders that execute automatically when market conditions are met. Users place limit orders (buy at or below a target price, sell at or above a target price), and the keeper system monitors market conditions and executes orders when triggered. This enables trading strategies that do not require constant attention.
 
 **Liquidity Provision.** Users can provide liquidity to AMM pools and earn fees from trading activity. The platform supports multi-chain liquidity provision, allowing users to manage exposure across multiple chains from a single interface. Impermanent loss estimation is provided to help users make informed decisions.
 
-**Routing Optimization.** The platform routes orders across multiple liquidity sources —including ION DEX pools, PancakeSwap pools on BSC, and other on-chain liquidity venues —to improve execution price and reduce slippage. The routing engine evaluates multiple paths simultaneously and selects the optimal route based on price impact, gas costs, and bridge fees.
+**Routing Optimization.** The platform routes orders across multiple liquidity sources — including ION DEX pools, PancakeSwap pools on BSC, and other on-chain liquidity venues — to improve execution price and reduce slippage. The routing engine evaluates multiple paths simultaneously and selects the optimal route based on price impact, gas costs, and bridge fees.
 
 ### 3.3 Contract Architecture
 
@@ -295,9 +295,9 @@ All computation-heavy and strategy-sensitive logic runs on private servers:
 
 Most DEXs are framed as isolated trading interfaces. They offer swaps, perhaps some liquidity provision, and then stop.
 
-ION DEX is framed as the **unified value-flow entrance** for the broader platform. Liquidity, routing, settlement, and payments are not dead-end functions —they are the first rails on which merchant payments, e-commerce access, service integration, identity continuity, proof, arbitration, and future ecosystem coordination can later run.
+ION DEX is framed as the **unified value-flow entrance** for the broader platform. Liquidity, routing, settlement, and payments are not dead-end functions — they are the first rails on which merchant payments, e-commerce access, service integration, identity continuity, proof, arbitration, and future ecosystem coordination can later run.
 
-This is not a marketing distinction. It is an architectural distinction. The contract architecture, the fee distribution logic, and the settlement flow are all designed to support the layers above —not just the trading function in isolation.
+This is not a marketing distinction. It is an architectural distinction. The contract architecture, the fee distribution logic, and the settlement flow are all designed to support the layers above — not just the trading function in isolation.
 
 ### 3.8 Competitive Comparison
 
@@ -328,7 +328,7 @@ This is not a marketing distinction. It is an architectural distinction. The con
 
 ### 4.1 The Problem with Current Payment Systems
 
-Traditional payment processors extract 2—% from every transaction. Settlement takes 2— days. Cross-border payments require multiple intermediaries, each adding their own fees and delays. Merchants have no direct access to Web3-native customers. And none of the fees charged by traditional processors are verifiable —merchants must trust that the processor is deducting the correct amount.
+Traditional payment processors extract 2—% from every transaction. Settlement takes 2— days. Cross-border payments require multiple intermediaries, each adding their own fees and delays. Merchants have no direct access to Web3-native customers. And none of the fees charged by traditional processors are verifiable — merchants must trust that the processor is deducting the correct amount.
 
 Blockchain-based payment solutions have their own problems. Most require users to hold cryptocurrency before they can make payments. Gas fees add friction to every transaction. Wallet management is complex. And the user experience is far from what ordinary consumers expect from a payment system.
 
@@ -336,7 +336,7 @@ Blockchain-based payment solutions have their own problems. Most require users t
 
 ION DEX solves these problems through a **frontend/backend split** that separates what users experience from what happens behind the scenes.
 
-**Frontend: What Users See.** Users pay with stablecoins (USDT, USDC) or other familiar tokens. They do not need to hold ION. They do not need to understand blockchain mechanics. They simply select a payment method and confirm the transaction —the same experience they are accustomed to from traditional payment processors.
+**Frontend: What Users See.** Users pay with stablecoins (USDT, USDC) or other familiar tokens. They do not need to hold ION. They do not need to understand blockchain mechanics. They simply select a payment method and confirm the transaction — the same experience they are accustomed to from traditional payment processors.
 
 **Backend: What Happens Behind.** The payment layer automatically converts the user's stablecoin payment into ION through the DEX liquidity pool. Platform fees are deducted and routed: 50% is permanently burned, and the remaining 50% is distributed to the staking pool and treasury. The ION is then routed to the merchant's settlement wallet. The entire process completes in 5—5 seconds.
 
@@ -376,7 +376,7 @@ The high-throughput foundation is a prerequisite for frictionless, high-frequenc
 
 ### 4.6 Account Abstraction for High-Frequency Use Cases
 
-High-frequency payment scenarios —delivery tips, ride payments, subscription services, insurance premiums —cannot require users to sign every transaction manually. Account Abstraction (AA) enables automatic, pre-approved payments without compromising security.
+High-frequency payment scenarios — delivery tips, ride payments, subscription services, insurance premiums — cannot require users to sign every transaction manually. Account Abstraction (AA) enables automatic, pre-approved payments without compromising security.
 
 **AA Architecture:**
 
@@ -414,7 +414,7 @@ Following the design pioneered by ION Connect, the ION DEX payment layer impleme
 **Why this matters:**
 
 - **No barrier to entry.** Users don't need to understand gas, manage token balances for fees, or worry about network congestion before making a payment.
-- **Familiar experience.** Users interact with the platform the same way they interact with traditional payment processors —select a payment method, confirm, done.
+- **Familiar experience.** Users interact with the platform the same way they interact with traditional payment processors — select a payment method, confirm, done.
 - **Mass adoption prerequisite.** If users need to understand blockchain mechanics before using the platform, the platform has failed at its most basic task: making payments frictionless.
 
 **How it works:**
@@ -422,7 +422,7 @@ Following the design pioneered by ION Connect, the ION DEX payment layer impleme
 1. User initiates payment (USDT, USDC, ION, or other token).
 2. Backend routes the transaction and pays gas on user's behalf.
 3. Gas costs are absorbed into the platform fee structure.
-4. User sees only the final amount —no gas surprises.
+4. User sees only the final amount — no gas surprises.
 
 ---
 
@@ -430,13 +430,13 @@ Following the design pioneered by ION Connect, the ION DEX payment layer impleme
 
 ### 5.1 Why Identity Matters for a Digital Civilization
 
-A civilization without identity cannot remember, verify, or hold its participants accountable. In traditional Web2 platforms, identity is fragmented across dozens of accounts —each with its own login, its own reputation system, and its own data silo. Bad behavior on one platform does not follow a user to another.
+A civilization without identity cannot remember, verify, or hold its participants accountable. In traditional Web2 platforms, identity is fragmented across dozens of accounts — each with its own login, its own reputation system, and its own data silo. Bad behavior on one platform does not follow a user to another.
 
 In a digital civilization, identity must be:
-- **Durable** —it persists across sessions, platforms, and market cycles
-- **Immutable** —history cannot be silently erased
-- **Cross-ecosystem** —behavior in one module affects standing in all modules
-- **Recoverable** —standing can be rebuilt, but history is never erased
+- **Durable** — it persists across sessions, platforms, and market cycles
+- **Immutable** — history cannot be silently erased
+- **Cross-ecosystem** — behavior in one module affects standing in all modules
+- **Recoverable** — standing can be rebuilt, but history is never erased
 
 ### 5.2 The Principle: One ID Per Person
 
@@ -450,8 +450,8 @@ The rationale is straightforward: if a user can create multiple identities, they
 
 Critical actions are durably anchored on-chain and cannot be silently erased:
 
-- Good transactions —completing deliveries, fulfilling orders, making timely payments —build credit over time.
-- Bad transactions —cheating customers, defaulting on obligations, submitting fraudulent claims —are recorded permanently.
+- Good transactions — completing deliveries, fulfilling orders, making timely payments — build credit over time.
+- Bad transactions — cheating customers, defaulting on obligations, submitting fraudulent claims — are recorded permanently.
 - The record remains; the current standing may change.
 
 This is not surveillance. It is accountability. The distinction matters: surveillance collects data about what people do; accountability records the consequences of their actions. ION Identity records consequences, not behaviors.
@@ -460,16 +460,16 @@ This is not surveillance. It is accountability. The distinction matters: surveil
 
 Reputation is not a momentary score that resets when a user switches platforms. It is a **long-lived civilization record** that accumulates over time.
 
-- Good behavior accumulates into **standing** —higher standing unlocks better fee tiers, priority access to services, and lower deposit requirements.
-- Bad-faith behavior produces **cross-ecosystem consequences** —a merchant who cheats customers on the e-commerce module carries that record into logistics, insurance, and payment access.
-- Reputation affects **access, privileges, fees, deposits, and cooperation opportunities** —in a mature digital civilization, collapsed reputation materially reduces one's ability to operate across the ecosystem.
+- Good behavior accumulates into **standing** — higher standing unlocks better fee tiers, priority access to services, and lower deposit requirements.
+- Bad-faith behavior produces **cross-ecosystem consequences** — a merchant who cheats customers on the e-commerce module carries that record into logistics, insurance, and payment access.
+- Reputation affects **access, privileges, fees, deposits, and cooperation opportunities** — in a mature digital civilization, collapsed reputation materially reduces one's ability to operate across the ecosystem.
 
 ### 5.5 Adaptive Standing: Recovery Is Possible
 
 Severe bad-faith behavior can justify long-lasting restrictions, but recovery is possible under rule-based conditions:
 
 - A **five-year no-new-serious-violation path** can support gradual repair of standing.
-- Repair does not erase history —it rebuilds standing through consistent good behavior.
+- Repair does not erase history — it rebuilds standing through consistent good behavior.
 - Appeal and review must exist for all restrictions.
 
 The principle: **permanent record, repairable standing.** History is immutable; standing is adaptive.
@@ -479,11 +479,11 @@ The principle: **permanent record, repairable standing.** History is immutable; 
 Bad behavior should **not reset by switching modules**.
 
 Identity links behavior across:
-- Payments —late payments, chargebacks, fraudulent transactions
-- Retail —product quality, delivery fulfillment, customer complaints
-- Delivery —order completion rate, customer ratings, on-time performance
-- Commerce —advertising honesty, product accuracy, refund compliance
-- Services —service quality, professional conduct, dispute history
+- Payments — late payments, chargebacks, fraudulent transactions
+- Retail — product quality, delivery fulfillment, customer complaints
+- Delivery — order completion rate, customer ratings, on-time performance
+- Commerce — advertising honesty, product accuracy, refund compliance
+- Services — service quality, professional conduct, dispute history
 
 **Example:** A merchant who cheats customers on the e-commerce module faces consequences across all modules:
 - Their reputation drops (Identity module)
@@ -505,7 +505,7 @@ The identity system includes explicit safeguards:
 
 **Sybil Resistance:**
 
-The core challenge of one-identity-per-person is preventing Sybil attacks —one person creating multiple identities to escape consequences or game the system.
+The core challenge of one-identity-per-person is preventing Sybil attacks — one person creating multiple identities to escape consequences or game the system.
 
 | Mechanism | Implementation |
 |-----------|--------------|
@@ -526,8 +526,8 @@ ION Identity does not store personal data on-chain. Instead:
 
 ION DEX builds on the ION ID infrastructure provided by the Ice Open Network:
 
-- **ION ID provides the base identity primitive** —a unique, chain-native identifier.
-- **ION DEX extends it with standing and reputation** —cross-ecosystem credit and enforcement.
+- **ION ID provides the base identity primitive** — a unique, chain-native identifier.
+- **ION DEX extends it with standing and reputation** — cross-ecosystem credit and enforcement.
 - **ION ID handles the technical layer** (address resolution, signature verification), while ION DEX handles the social layer** (standing, reputation, enforcement).
 
 ---
@@ -538,10 +538,10 @@ ION DEX builds on the ION ID infrastructure provided by the Ice Open Network:
 
 Every transaction, every arbitration outcome, every identity action, and every fee deduction is recorded on-chain. The [ION Explorer](https://explorer.ice.io/) provides the sovereign proof surface where anyone can verify:
 
-- **Transaction history and settlement records** —every trade, payment, and transfer is permanently recorded.
-- **Fee burn events and supply reduction** —every instance of ION sent to the burn address is visible and countable.
-- **Staking activity and lock-up periods** —every staking position, its lock-up duration, and its reward accrual is on-chain.
-- **Arbitration outcomes and appeal records** —every dispute resolution decision and its evidence are permanently recorded.
+- **Transaction history and settlement records** — every trade, payment, and transfer is permanently recorded.
+- **Fee burn events and supply reduction** — every instance of ION sent to the burn address is visible and countable.
+- **Staking activity and lock-up periods** — every staking position, its lock-up duration, and its reward accrual is on-chain.
+- **Arbitration outcomes and appeal records** — every dispute resolution decision and its evidence are permanently recorded.
 
 ### 6.2 Proof-First Architecture
 
@@ -554,14 +554,14 @@ The platform is designed so that **claims are backed by verifiable evidence**, n
 | "The arbitration decision was based on evidence" | Check the arbitration record on Explorer |
 | "Your identity standing is Good" | Check the identity contract on Explorer |
 
-This is not 鈥渢rust us.—This is 鈥渧erify yourself.—
+This is not “trust us.” This is “verify yourself.”
 ### 6.3 Why Proof Matters for Civilization
 
 A civilization that requires trust in central authorities is vulnerable to corruption, manipulation, and opacity. A civilization that provides verifiable proof for every significant claim is resistant to all three.
 
 Proof-first architecture means:
 - **No hidden fees.** Every fee deduction is recorded on-chain and verifiable.
-- **No unverified claims.** When the platform says 鈥渨e burned X ION,—anyone can verify.
+- **No unverified claims.** When the platform says “we burned X ION,” anyone can verify.
 - **No opaque decisions.** Every arbitration outcome comes with recorded evidence.
 - **No secret enforcement.** Every restriction on identity standing is explainable and appealable.
 
@@ -573,7 +573,7 @@ Proof-first architecture means:
 
 Traditional dispute resolution is slow (weeks to months), opaque (decisions are made behind closed doors), inconsistent (similar cases may receive different outcomes), and adversarial (both parties are incentivized to maximize their own position rather than seek fair resolution).
 
-In a platform that handles payments, commerce, insurance, and logistics simultaneously, slow and opaque dispute resolution is not an inconvenience —it is a systemic risk. Merchants cannot wait weeks for payment disputes to resolve. Insurance claimants cannot wait months for payouts. Delivery drivers cannot survive while their earnings are frozen in escrow.
+In a platform that handles payments, commerce, insurance, and logistics simultaneously, slow and opaque dispute resolution is not an inconvenience — it is a systemic risk. Merchants cannot wait weeks for payment disputes to resolve. Insurance claimants cannot wait months for payouts. Delivery drivers cannot survive while their earnings are frozen in escrow.
 
 ### 7.2 AI-Assisted Arbitration
 
@@ -581,7 +581,7 @@ ION DEX replaces traditional committee-based dispute resolution with **AI-assist
 
 **How it works:**
 
-1. **Evidence collection.** When a dispute is filed, the system automatically collects relevant evidence from both parties —transaction records, delivery confirmations, communication logs, and any other on-chain data.
+1. **Evidence collection.** When a dispute is filed, the system automatically collects relevant evidence from both parties — transaction records, delivery confirmations, communication logs, and any other on-chain data.
 
 2. **AI analysis.** The arbitration AI analyzes the evidence, applies consistent rules across all dispute types, and produces an explainable decision. The decision includes:
    - What evidence was considered
@@ -617,9 +617,9 @@ The platform runs **24/7 anomaly detection and defensive response** through the 
 
 ### 7.4 Why This Matters
 
-A platform that handles payments, commerce, insurance, and logistics cannot afford slow dispute resolution or blind spots in security. AI arbitration and Sentinel defense together make the ecosystem **self-governing and self-protecting** —the two capabilities that separate a durable platform from a fragile one.
+A platform that handles payments, commerce, insurance, and logistics cannot afford slow dispute resolution or blind spots in security. AI arbitration and Sentinel defense together make the ecosystem **self-governing and self-protecting** — the two capabilities that separate a durable platform from a fragile one.
 
-Sentinel defense makes ION **self-protecting**. When something goes wrong, the system detects and responds —it does not wait for a human to notice.
+Sentinel defense makes ION **self-protecting**. When something goes wrong, the system detects and responds — it does not wait for a human to notice.
 
 ---
 
@@ -629,7 +629,7 @@ Sentinel defense makes ION **self-protecting**. When something goes wrong, the s
 
 Static platforms degrade over time. Rules that made sense at launch may become inadequate as the ecosystem grows. Attack vectors that were unknown at launch may emerge as the platform gains visibility. User behavior patterns may shift in ways that require adaptive responses.
 
-A digital civilization that cannot learn from its errors is destined to repeat them. A civilization that can learn, adapt, and improve —without breaking continuity or trust —is positioned to survive across multiple cycles.
+A digital civilization that cannot learn from its errors is destined to repeat them. A civilization that can learn, adapt, and improve — without breaking continuity or trust — is positioned to survive across multiple cycles.
 
 ### 8.2 Error Memory
 
@@ -661,11 +661,11 @@ This means:
 
 Over time, the platform supports **AI self-evolution and upgrade capacity**, so that:
 
-- **Analysis** —pattern detection, anomaly identification, ecosystem health monitoring
-- **Coordination** —cross-module optimization, resource allocation, conflict resolution
-- **Arbitration support** —evidence analysis, precedent matching, decision explanation
-- **Operational intelligence** —performance optimization, cost reduction, efficiency improvement
-- **Ecosystem logic** —user behavior prediction, market adaptation, strategic planning
+- **Analysis** — pattern detection, anomaly identification, ecosystem health monitoring
+- **Coordination** — cross-module optimization, resource allocation, conflict resolution
+- **Arbitration support** — evidence analysis, precedent matching, decision explanation
+- **Operational intelligence** — performance optimization, cost reduction, efficiency improvement
+- **Ecosystem logic** — user behavior prediction, market adaptation, strategic planning
 
 can improve without reducing continuity across the wider system. Each upgrade is recorded, auditable, and reversible if it produces unintended consequences.
 
@@ -728,13 +728,13 @@ Customer pays USDT at checkout
 | **API Integration** | Custom checkout, medium volume | 1— days |
 | **Direct Settlement** | High-volume merchants, enterprises | 3— days (compliance review) |
 
-**Step 3: Set Up Storefront.** Merchants receive a `.ion` domain (e.g., `shop.ion`) that resolves to their ION Identity and payment wallet. No hosting required —the platform provides a storefront template that renders at the `.ion` domain.
+**Step 3: Set Up Storefront.** Merchants receive a `.ion` domain (e.g., `shop.ion`) that resolves to their ION Identity and payment wallet. No hosting required — the platform provides a storefront template that renders at the `.ion` domain.
 
 **Step 4: Start Selling.** Products are listed with ION or stablecoin pricing. When a customer pays, the merchant receives ION in seconds. The merchant can hold ION, swap to stablecoins via the DEX, or withdraw to an external wallet.
 
 #### Merchant Membership Plans
 
-ION DEX offers tiered merchant memberships. **Prices are quoted in USDT for stability —the backend automatically converts to ION at market rate, feeding the burn flywheel.**
+ION DEX offers tiered merchant memberships. **Prices are quoted in USDT for stability — the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
 | Tier | Monthly | Annual | Target | Features |
 |------|---------|-----------|--------|----------|
@@ -956,20 +956,20 @@ Aligned with China e-commerce reality:
 - **Zero processing fee** — 0% on all transactions
 #### AI Services for Merchants
 
-**Basic Plan —Included AI:**
+**Basic Plan — Included AI:**
 
 - **Smart pricing.** AI analyzes market conditions and competitor pricing to suggest optimal product prices.
 - **Fraud detection.** AI flags suspicious orders for manual review before shipment.
 - **Inventory alerts.** AI predicts stock depletion based on sales velocity.
 
-**Professional Plan —Advanced AI:**
+**Professional Plan — Advanced AI:**
 
 - **AI merchandising.** AI generates product descriptions, optimizes product images, and recommends product bundles based on customer behavior.
 - **Customer segmentation.** AI analyzes purchase history to segment customers and target promotions.
 - **Demand forecasting.** AI predicts seasonal demand to help merchants optimize inventory.
 - **Automated customer support.** AI chatbot handles common customer questions, escalation to human for complex issues.
 
-**Enterprise Plan —Custom AI:**
+**Enterprise Plan — Custom AI:**
 
 - **Custom AI models.** Trained on the merchant's specific data for maximum relevance.
 - **Cross-module AI coordination.** AI optimizes across e-commerce, logistics, and insurance simultaneously.
@@ -1011,7 +1011,7 @@ Merchants can purchase advertising placements on the platform:
 
 #### The Problem
 
-Food delivery and ride-hailing platforms extract 25—0% from every order. Drivers and riders wait days for payout. Reputation is siloed —a driver's rating on one platform does not transfer to another. Customers pay premium prices that include platform markup. Restaurants and merchants lose margins to platform commissions.
+Food delivery and ride-hailing platforms extract 25—0% from every order. Drivers and riders wait days for payout. Reputation is siloed — a driver's rating on one platform does not transfer to another. Customers pay premium prices that include platform markup. Restaurants and merchants lose margins to platform commissions.
 
 #### What ION DEX Provides
 
@@ -1019,7 +1019,7 @@ Food delivery and ride-hailing platforms extract 25—0% from every order. Drive
 |---------|----------------------|--------|
 | Platform fee | 25—0% | 0.5% |
 | Driver/rider payout | 2— days | Instant (seconds) |
-| Reputation portability | None —siloed per platform | Cross-ecosystem via ION Identity |
+| Reputation portability | None — siloed per platform | Cross-ecosystem via ION Identity |
 | Dispute resolution | Opaque, platform-favoring | AI-assisted arbitration, appeal-capable |
 | Verifiable proof | No | Every order, payout, and fee on Explorer |
 | Web3 e-commerce integration | None | Direct sync with merchant storefronts |
@@ -1102,7 +1102,7 @@ Drivers and riders stake ION to unlock benefits (staking, not subscription):
 **Staking is skin-in-the-game.** Staked riders signal commitment — they complete orders on time, provide good service, and build reputation faster. They cannot unstake immediately (7-day minimum lock), ensuring consistency.
 #### Web3 E-Commerce + Food Delivery Integration
 
-ION DEX food delivery is not a standalone app —it is integrated with the Web3 e-commerce module:
+ION DEX food delivery is not a standalone app — it is integrated with the Web3 e-commerce module:
 
 **Modeled on Chinese E-Commerce Platforms:**
 
@@ -1116,11 +1116,11 @@ ION DEX food delivery is not a standalone app —it is integrated with the Web3 
 
 1. **Merchant lists products** on their `.ion` storefront (Web3 e-commerce module).
 2. **Customer browses** on the ION DEX app, sees merchant's products with delivery options.
-3. **Customer orders** —payment is escrowed, delivery request is created.
+3. **Customer orders** — payment is escrowed, delivery request is created.
 4. **Delivery rider** accepts the order from the delivery module.
-5. **Dual-source verification** —rider GPS + customer phone signature confirm delivery.
-6. **Smart contract releases payment** —merchant and rider are paid instantly.
-7. **Reputation updated** —merchant product quality, rider delivery speed, customer payment timeliness all recorded.
+5. **Dual-source verification** — rider GPS + customer phone signature confirm delivery.
+6. **Smart contract releases payment** — merchant and rider are paid instantly.
+7. **Reputation updated** — merchant product quality, rider delivery speed, customer payment timeliness all recorded.
 
 **Pinduoduo-style Group Buying:**
 
@@ -1130,7 +1130,7 @@ ION DEX food delivery is not a standalone app —it is integrated with the Web3 
 - On delivery, each member's share is released.
 - **Social referral rewards:** The group organizer earns 5 ION per successful group order (50% burned).
 
-#### User Experience —What Users Get
+#### User Experience — What Users Get
 
 **For Customers:**
 
@@ -1139,7 +1139,7 @@ ION DEX food delivery is not a standalone app —it is integrated with the Web3 
 | **Order tracking** | Real-time GPS tracking of rider/driver, verified on Explorer |
 | **Instant delivery confirmation** | Phone TEE signature confirms delivery, auto-releases payment |
 | **Reputation visibility** | See restaurant/merchant/rider reputation score before ordering |
-| **Escrow protection** | Payment held in escrow until delivery confirmed —no risk of non-delivery |
+| **Escrow protection** | Payment held in escrow until delivery confirmed — no risk of non-delivery |
 | **Group buying discounts** | Invite friends for lower prices, social rewards |
 | **Insurance** | Purchase delivery guarantee insurance for high-value orders |
 | **Cross-service reputation** | Your rating as a customer follows you across delivery, ride-hailing, e-commerce, and insurance |
@@ -1153,7 +1153,7 @@ ION DEX food delivery is not a standalone app —it is integrated with the Web3 
 | **Portable reputation** | Your rating follows you across delivery, ride-hailing, and logistics |
 | **Fee reduction** | Staked riders pay 0.3% instead of 0.5% platform fee |
 | **Insurance** | Ride insurance covers accidents and vehicle damage |
-| **No platform lock-in** | Switch between delivery and ride-hailing freely —same wallet, same identity, same reputation |
+| **No platform lock-in** | Switch between delivery and ride-hailing freely — same wallet, same identity, same reputation |
 
 **For Restaurants/Merchants:**
 
@@ -1174,7 +1174,7 @@ ION DEX food delivery is not a standalone app —it is integrated with the Web3 
 | 500 ION (~$25 USDT equivalent) | Priority order allocation + fee reduction to 0.2% + priority dispute resolution |
 | 1,000 ION (~$50 USDT equivalent) | Top-tier allocation + fee reduction to 0.1% + premium insurance + AI route optimization |
 
-**Staking is skin-in-the-game.** A staked driver signals commitment to the platform —they are more likely to complete orders on time and provide good service. Reputation builds faster for staked participants.
+**Staking is skin-in-the-game.** A staked driver signals commitment to the platform — they are more likely to complete orders on time and provide good service. Reputation builds faster for staked participants.
 
 #### How the Modules Link Together
 
@@ -1200,14 +1200,14 @@ Economic Logic (0.5% fee →50% burned →supply shrinks)
 
 A customer orders sushi from a restaurant on their `.ion` storefront:
 
-1. **E-Commerce** —Customer finds restaurant on `sushi.ion`, selects products, pays 100 USDT.
-2. **Payment Layer** —USDT converted to ION, 0.5% fee deducted, 50% burned.
-3. **Food Delivery** —Rider with 500 ION staked accepts order, picks up food, delivers.
-4. **Dual-Source Verification** —Customer phone confirms delivery (TEE-signed), rider GPS confirms.
-5. **Insurance** —Customer purchased $5 delivery guarantee. If food arrives damaged, photo evidence triggers automatic payout.
-6. **Identity** —All three parties (restaurant, rider, customer) reputation updated.
-7. **Proof** —Entire order lifecycle recorded on Explorer: payment →escrow →pickup →delivery →settlement →reputation update.
-8. **AI Sentinel** —Flags suspicious patterns (e.g., rider always delivers to same address →possible fraud).
+1. **E-Commerce** — Customer finds restaurant on `sushi.ion`, selects products, pays 100 USDT.
+2. **Payment Layer** — USDT converted to ION, 0.5% fee deducted, 50% burned.
+3. **Food Delivery** — Rider with 500 ION staked accepts order, picks up food, delivers.
+4. **Dual-Source Verification** — Customer phone confirms delivery (TEE-signed), rider GPS confirms.
+5. **Insurance** — Customer purchased $5 delivery guarantee. If food arrives damaged, photo evidence triggers automatic payout.
+6. **Identity** — All three parties (restaurant, rider, customer) reputation updated.
+7. **Proof** — Entire order lifecycle recorded on Explorer: payment →escrow →pickup →delivery →settlement →reputation update.
+8. **AI Sentinel** — Flags suspicious patterns (e.g., rider always delivers to same address →possible fraud).
 
 #### Why Traditional Solutions Cannot Compete
 
@@ -1239,7 +1239,7 @@ Traditional insurance is slow, opaque, and adversarial. Claims take weeks or mon
 
 #### Parametric Insurance Design
 
-Parametric insurance pays out automatically when predefined conditions are met —no manual claims approval required.
+Parametric insurance pays out automatically when predefined conditions are met — no manual claims approval required.
 
 **Example: Flight Delay Insurance**
 
@@ -1279,7 +1279,7 @@ ION DEX does not rely on a single oracle. The platform aggregates:
 - On-chain price feeds (for crypto price triggers)
 - Custom oracles for specific use cases
 
-Multiple oracle sources sign triggers. Smart contract requires **N-of-M signatures** to execute payout —no single point of failure.
+Multiple oracle sources sign triggers. Smart contract requires **N-of-M signatures** to execute payout — no single point of failure.
 
 #### Dual-Source Verification for Real-World Events
 
@@ -1417,9 +1417,9 @@ For temperature-sensitive shipments (pharmaceuticals, food):
 #### Bill of Lading NFT
 
 Each shipment is represented as a **Bill of Lading NFT**:
-- Transferable —can be traded or used as collateral.
-- Verifiable —complete shipment history on Explorer.
-- Dispute-capable —AI arbitration for delivery disputes.
+- Transferable — can be traded or used as collateral.
+- Verifiable — complete shipment history on Explorer.
+- Dispute-capable — AI arbitration for delivery disputes.
 
 #### Why Traditional Solutions Cannot Compete
 
@@ -1499,7 +1499,7 @@ Traditional domain registrars extract high fees ($10—0/year), offer no seconda
 
 | Domain Length | Registration Fee | Rarity |
 |---------------|------------------|----------|
-| 1 character | $100 USDT (one-time) | None —permanent ownership |
+| 1 character | $100 USDT (one-time) | None — permanent ownership |
 | **5 characters** | $100 USDT (one-time) | None |
 | **6 characters** | $100 USDT (one-time) | None |
 | **7 characters** | $250 USDT (one-time) | None |
@@ -1528,7 +1528,7 @@ User registers 'shop.ion' (4+ characters)
 
 - **User simplicity.** No recurring payments, no expiration worry, no domain loss due to missed renewal.
 - **Permanent value.** A domain is a one-time investment that lasts forever.
-- **Flywheel effect.** Every registration burns ION permanently —no dilution from renewals.
+- **Flywheel effect.** Every registration burns ION permanently — no dilution from renewals.
 
 #### User Step-by-Step Guide
 
@@ -1871,7 +1871,7 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 
 #### AI Trading Membership Plans
 
-**Prices are quoted in USDT for stability —the backend automatically converts to ION at market rate, feeding the burn flywheel.**
+**Prices are quoted in USDT for stability — the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
 | Tier | Monthly | Annual | Target | Features |
 |-------|---------|-----------|--------|----------|
@@ -1938,12 +1938,12 @@ Users can unlock advanced AI models with ION payments:
 
 As detailed in Section 3.5 (AI Trading Risk Limits), all AI strategies operate within hard-coded risk limits:
 
-- **Daily position cap** —Maximum total position size per strategy.
-- **Per-trade limit** —Maximum size of a single trade.
-- **Leverage cap** —Maximum leverage multiplier.
-- **Loss cutoff** —Strategy paused if daily losses exceed threshold.
+- **Daily position cap** — Maximum total position size per strategy.
+- **Per-trade limit** — Maximum size of a single trade.
+- **Leverage cap** — Maximum leverage multiplier.
+- **Loss cutoff** — Strategy paused if daily losses exceed threshold.
 
-These limits are enforced at the execution layer —the AI cannot override them.
+These limits are enforced at the execution layer — the AI cannot override them.
 
 #### Non-Custodial Design
 
@@ -1954,7 +1954,7 @@ Users never deposit funds to a third-party platform. All trading happens from th
 3. AI submits trades on user's behalf via wallet signature delegation (Account Abstraction).
 4. Funds never leave user's wallet except when executing a trade.
 
-This design eliminates custodial risk —if the platform goes offline, users retain full control of their funds.
+This design eliminates custodial risk — if the platform goes offline, users retain full control of their funds.
 
 #### Why Traditional Solutions Cannot Compete
 
@@ -2006,18 +2006,18 @@ This is what makes the wider ecosystem **stronger than a set of isolated apps**.
 
 ### 10.1 Why Economic Design Matters for a Digital Civilization
 
-A token without economic logic is a token without staying power. Most crypto projects rely on speculation to drive price —buy because others will buy, sell because others will sell. This works during bull markets, but collapses when conditions change.
+A token without economic logic is a token without staying power. Most crypto projects rely on speculation to drive price — buy because others will buy, sell because others will sell. This works during bull markets, but collapses when conditions change.
 
-ION DEX is designed differently. Every transaction feeds a **dual flywheel** that structurally reduces supply and locks value long-term. The mechanism does not depend on speculation. It depends on real usage —trading, payments, commerce, services. The more the platform is used, the stronger the flywheel becomes.
+ION DEX is designed differently. Every transaction feeds a **dual flywheel** that structurally reduces supply and locks value long-term. The mechanism does not depend on speculation. It depends on real usage — trading, payments, commerce, services. The more the platform is used, the stronger the flywheel becomes.
 
-### 10.2 Flywheel 1: Fee Burn —Structural Supply Reduction
+### 10.2 Flywheel 1: Fee Burn — Structural Supply Reduction
 
-Every transaction on the platform burns ION permanently. This is not cosmetic burning —it is **structural supply reduction**.
+Every transaction on the platform burns ION permanently. This is not cosmetic burning — it is **structural supply reduction**.
 
 **Why 50%?** The burn percentage is set at 50% of all platform fees. This ratio ensures that:
 - Every transaction visibly reduces circulating supply.
 - The burn rate is large enough to matter, but not so large that it eliminates all revenue for staking and treasury.
-- Users can verify every burn event on Explorer —transparency builds trust.
+- Users can verify every burn event on Explorer — transparency builds trust.
 
 **Fee Schedule by Module:**
 
@@ -2032,29 +2032,29 @@ Every transaction on the platform burns ION permanently. This is not cosmetic bu
 | Logistics | 0.3% | 50% | 1,000 ION shipment →3 ION fee →1.5 ION burned |
 | Domain Trading | Escrow fee | 50% | Domain sale →50% burned |
 
-**Burn Address:** `0x000000000000000000000000000000000000dEaD` (BSC) —permanently unrecoverable. Every ION sent to this address is visible on Explorer and can never be retrieved.
+**Burn Address:** `0x000000000000000000000000000000000000dEaD` (BSC) — permanently unrecoverable. Every ION sent to this address is visible on Explorer and can never be retrieved.
 
 ### 10.3 Dynamic Burn Adjustment: Adapting to Market Conditions
 
 The burn mechanism is **dynamic**, adjusting to market conditions to maximize long-term value.
 
-**Why dynamic?** Burning ION during a bull market (when ION is expensive) is inefficient —each dollar of fees burns fewer ION. Burning ION during a bear market (when ION is cheap) is efficient —each dollar of fees burns more ION.
+**Why dynamic?** Burning ION during a bull market (when ION is expensive) is inefficient — each dollar of fees burns fewer ION. Burning ION during a bear market (when ION is cheap) is efficient — each dollar of fees burns more ION.
 
 **The Logic:**
 
 | Market Condition | ION Price | Burn Efficiency | Strategy |
 |------------------|-----------|-----------------|----------|
-| Bear market | Low | High (more ION per dollar) | Maximum burn —efficient supply reduction |
-| Bull market | High | Low (fewer ION per dollar) | Reduced burn, increased staking —maintain price support |
+| Bear market | Low | High (more ION per dollar) | Maximum burn — efficient supply reduction |
+| Bull market | High | Low (fewer ION per dollar) | Reduced burn, increased staking — maintain price support |
 
 **How It Works:**
 
 1. During bear markets: The platform burns the maximum percentage of fees. ION is cheap, so burning is efficient. Circulating supply shrinks rapidly.
 2. During bull markets: The platform reduces the burn percentage and increases staking rewards. ION is expensive, so burning is less efficient. Staking locks supply and maintains price support.
 
-This adaptation ensures that the flywheel is **always working** —whether ION is cheap or expensive, the platform optimizes for long-term value.
+This adaptation ensures that the flywheel is **always working** — whether ION is cheap or expensive, the platform optimizes for long-term value.
 
-### 10.4 Flywheel 2: Staking —Supply Lock and Alignment
+### 10.4 Flywheel 2: Staking — Supply Lock and Alignment
 
 Staking locks ION long-term, reducing circulating supply and aligning holders with the platform's success.
 
@@ -2069,11 +2069,11 @@ Staking locks ION long-term, reducing circulating supply and aligning holders wi
 | 180 days | 20% | Half-year lock, maximum reward |
 | 365 days | 30% | Annual lock, highest reward |
 
-**Target:** 30—0% of circulating supply locked in staking.
+**Target:** 30–50% of circulating supply locked in staking.
 
-**Why This Target?** If 30—0% of supply is locked, then circulating supply is significantly reduced. Price pressure from the burn flywheel is amplified by supply lock from the staking flywheel.
+**Why This Target?** If 30–50% of supply is locked, then circulating supply is significantly reduced. Price pressure from the burn flywheel is amplified by supply lock from the staking flywheel.
 
-**Staking Rewards Source:** 20% of platform revenue. Rewards are paid in ION, from actual platform activity —not from token inflation.
+**Staking Rewards Source:** 20% of platform revenue. Rewards are paid in ION, from actual platform activity — not from token inflation.
 
 ### 10.5 Revenue Distribution: Master's Permanent Allocation
 
@@ -2081,14 +2081,14 @@ Staking locks ION long-term, reducing circulating supply and aligning holders wi
 
 | Allocation | Share | Priority |
 |------------|-------|----------|
-| **Master** | 25% | **First** —paid before any other allocation |
+| **Master** | 25% | **First** — paid before any other allocation |
 | Fee Burn | Dynamic | Bear: maximum / Bull: reduced |
 | Staking Rewards | Dynamic | Bear: high / Bull: high |
 | Treasury | Dynamic | Remaining |
 
-**Why Master's 25%?** The person funding all operations —development, infrastructure, marketing, security —gets paid first from every dollar of revenue. This is non-negotiable and permanent.
+**Why Master's 25%?** The person funding all operations — development, infrastructure, marketing, security — gets paid first from every dollar of revenue. This is non-negotiable and permanent.
 
-**Why Paid First?** If Master's allocation comes after burn and staking, then during periods of high burn, Master's actual revenue could shrink to near-zero. Paying Master first ensures that the builder profits when the platform profits —always.
+**Why Paid First?** If Master's allocation comes after burn and staking, then during periods of high burn, Master's actual revenue could shrink to near-zero. Paying Master first ensures that the builder profits when the platform profits — always.
 
 **This Allocation Never Changes.** The 25% figure is permanent. It will not be reduced, renegotiated, or diluted. Master's incentive is permanently aligned with platform success.
 
@@ -2106,7 +2106,7 @@ Users trade / pay / use services
   →Self-reinforcing cycle
 ```
 
-**The Key Insight:** The flywheel does not depend on speculation. It depends on **real usage**. The more the platform is used, the stronger the flywheel becomes. This is the opposite of most crypto projects —where price depends on buying pressure from speculators.
+**The Key Insight:** The flywheel does not depend on speculation. It depends on **real usage**. The more the platform is used, the stronger the flywheel becomes. This is the opposite of most crypto projects — where price depends on buying pressure from speculators.
 
 ### 10.7 Minimum Income Guarantee for Master
 
@@ -2114,17 +2114,17 @@ If platform revenue on a given day is insufficient to cover Master's operational
 
 **Why?** Master funds all operations. If revenue is low during early stages or bear markets, Master should not be forced to operate at a loss. The subsidy ensures that operations can continue through difficult periods.
 
-**When Does This Apply?** Only during early stages (P0鈥揚5) or severe bear markets. Once the platform reaches mature revenue levels, the subsidy is irrelevant —Master's 25% far exceeds operational costs.
+**When Does This Apply?** Only during early stages (P0–P5) or severe bear markets. Once the platform reaches mature revenue levels, the subsidy is irrelevant — Master's 25% far exceeds operational costs.
 
 ### 10.8 Public Transparency
 
 Every burn event, every staking position, and every revenue allocation is recorded on-chain and verifiable on Explorer.
 
 - **Hourly burn announcements:** The platform posts hourly updates showing total ION burned, cumulative burn, and burn address balance.
-- **Staking positions verifiable:** Every staking position —its lock-up duration, reward accrual, and withdrawal history —is on Explorer.
+- **Staking positions verifiable:** Every staking position — its lock-up duration, reward accrual, and withdrawal history — is on Explorer.
 - **Revenue allocation visible:** The treasury contract shows every payment to Master, staking pool, and burn address.
 
-This transparency ensures that users can verify the flywheel is working —not just trust claims.
+This transparency ensures that users can verify the flywheel is working — not just trust claims.
 
 ### 10.9 ION Tokenomics
 
@@ -2141,8 +2141,8 @@ ION is the native settlement token of the ION DEX ecosystem. It serves as the va
 
 **Why This Design:**
 
-- **Fixed maximum supply** ensures that the burn flywheel permanently reduces circulating supply —every ION burned is gone forever.
-- **Decreasing inflation** aligns with the staking lock-up design —early participants earn higher rewards for taking early risk, but long-term sustainability requires inflation to approach zero.
+- **Fixed maximum supply** ensures that the burn flywheel permanently reduces circulating supply — every ION burned is gone forever.
+- **Decreasing inflation** aligns with the staking lock-up design — early participants earn higher rewards for taking early risk, but long-term sustainability requires inflation to approach zero.
 - **9 decimal places (flakes)** enables micro-transactions (delivery tips, service fees, insurance premiums) even when ION price rises to levels that make whole-ION transactions impractical for everyday use.
 
 **Supply Reduction Through Burn:**
@@ -2153,7 +2153,7 @@ The ION DEX fee burn mechanism operates on top of the base ION tokenomics. As th
 - **Circulating supply decreases structurally.**
 - **When inflation approaches zero and burn continues, total supply begins to contract.**
 
-This creates a **deflationary spiral** where increased platform usage accelerates supply reduction —the opposite of most crypto projects where usage dilutes holders through inflation.
+This creates a **deflationary spiral** where increased platform usage accelerates supply reduction — the opposite of most crypto projects where usage dilutes holders through inflation.
 
 **Flakes as Everyday Unit:**
 
@@ -2161,13 +2161,13 @@ When ION price rises, flakes (not ION) become the everyday payment unit:
 
 | ION Price | Flake Value | Example Use Case |
 |-----------|-------------|------------------|
-| $0.01 | $0.00000001 | Too cheap —whole ION is practical |
+| $0.01 | $0.00000001 | Too cheap — whole ION is practical |
 | $1.00 | $0.000001 | Whole ION still practical |
 | $10.00 | $0.00001 | 10,000 flakes = $0.10 tip |
 | $100.00 | $0.0001 | 1,000 flakes = $0.10 tip |
 | $1,000.00 | $0.001 | 100 flakes = $0.10 tip |
 
-At $1,000/ION, a 0.10 USDT tip is 100 flakes —still practical for everyday micro-transactions.
+At $1,000/ION, a 0.10 USDT tip is 100 flakes — still practical for everyday micro-transactions.
 
 ---
 
@@ -2177,19 +2177,19 @@ At $1,000/ION, a 0.10 USDT tip is 100 flakes —still practical for everyday mic
 
 ION DEX is currently in Phase 0— (Brand & Infrastructure). During this stage:
 - Master makes all strategic decisions.
-- Development direction follows the P0鈥揚10 roadmap.
+- Development direction follows the P0–P10 roadmap.
 - Contract upgrades require Master signature + timelock.
 
-**Why single-operator governance now?** A civilization-scale project needs **coherent direction** during foundation-building. Committee governance at this stage would dilute the long-horizon vision. Every successful infrastructure project in history —whether a railway, a power grid, or a communication network —began with a single coherent vision before opening to broader governance.
+**Why single-operator governance now?** A civilization-scale project needs **coherent direction** during foundation-building. Committee governance at this stage would dilute the long-horizon vision. Every successful infrastructure project in history — whether a railway, a power grid, or a communication network — began with a single coherent vision before opening to broader governance.
 
-The alternative —committee governance from day one —would produce compromise decisions, scope creep, and strategic inconsistency. ION DEX cannot afford these during foundation-building.
+The alternative — committee governance from day one — would produce compromise decisions, scope creep, and strategic inconsistency. ION DEX cannot afford these during foundation-building.
 
 ### 11.2 Future Stage: Community Governance (P10)
 
 At Phase 10 (Mature Civilization), the platform may introduce:
 
-- **Proposal system** —Community can propose feature additions, parameter adjustments, and ecosystem improvements.
-- **Voting mechanism** —Token-weighted voting on non-security decisions. Security-critical decisions (contract upgrades, oracle changes, fee distribution) remain under multi-signature control.
+- **Proposal system** — Community can propose feature additions, parameter adjustments, and ecosystem improvements.
+- **Voting mechanism** — Token-weighted voting on non-security decisions. Security-critical decisions (contract upgrades, oracle changes, fee distribution) remain under multi-signature control.
 - **Multisig treasury** —3/5 or 5/7 multisig for treasury operations, with at least one seat reserved for Master.
 - **Timelock** —48-hour delay on all governance actions, providing time for community review and emergency intervention.
 
@@ -2209,9 +2209,9 @@ All security-critical operations require multi-signature authorization and time-
 
 **Signer Composition:**
 
-- **Master** —Holds one permanent signer seat (cannot be removed without Master's consent).
-- **Technical Lead** —Holds one signer seat for technical operations.
-- **Community Representatives** —Remaining signer seats (2-3) selected through governance vote at P10.
+- **Master** — Holds one permanent signer seat (cannot be removed without Master's consent).
+- **Technical Lead** — Holds one signer seat for technical operations.
+- **Community Representatives** — Remaining signer seats (2-3) selected through governance vote at P10.
 
 **Timelock Mechanism:**
 
@@ -2227,7 +2227,7 @@ All security-critical operations require multi-signature authorization and time-
 
 ION is designed to be **compatible with serious public-order expectations** without collapsing into sovereign public power:
 
-- **Persistent identity creates accountability without surveillance.** Users are accountable for their actions, but their behavior is not monitored —only the consequences of their actions are recorded.
+- **Persistent identity creates accountability without surveillance.** Users are accountable for their actions, but their behavior is not monitored — only the consequences of their actions are recorded.
 - **Immutable history creates trust without central control.** Trust comes from verifiable evidence, not from authority.
 - **Proof systems create verifiability without requiring permission.** Anyone can verify any claim on Explorer, without needing to ask permission.
 - **The platform cooperates with legitimate public-order needs while preserving user sovereignty.** Court orders and lawful process are respected, but the platform does not proactively surveil or censor.
@@ -2239,7 +2239,7 @@ The platform includes multiple layers of abuse prevention:
 - **Identity-based enforcement.** Bad-faith actors cannot escape consequences by creating new accounts.
 - **AI Sentinel detection.** Automated systems detect and flag suspicious patterns in real time.
 - **Arbitration escalation.** Disputes that cannot be resolved at the module level escalate to cross-ecosystem arbitration.
-- **Standing consequences.** Repeated abuse leads to cross-ecosystem restrictions —higher fees, limited access, and reputation damage.
+- **Standing consequences.** Repeated abuse leads to cross-ecosystem restrictions — higher fees, limited access, and reputation damage.
 
 ---
 
@@ -2247,7 +2247,7 @@ The platform includes multiple layers of abuse prevention:
 
 ### 12.1 Security as Core Differentiator
 
-Most DEXs treat security as a checkbox —pass an audit, deploy, hope nothing breaks. ION DEX treats security as the **foundational layer** that every other component builds upon.
+Most DEXs treat security as a checkbox — pass an audit, deploy, hope nothing breaks. ION DEX treats security as the **foundational layer** that every other component builds upon.
 
 **Why security matters more for a civilization-scale project:**
 
@@ -2270,7 +2270,7 @@ ION DEX is designed to resist the 10 most common and dangerous Web3 attack vecto
 
 #### 12.2.2 Flash Loan Attack Resistance
 
-**Attack:** Borrow massive amounts without collateral, manipulate prices/liquidity, profit, repay loan —all in one block.
+**Attack:** Borrow massive amounts without collateral, manipulate prices/liquidity, profit, repay loan — all in one block.
 
 **Defense:**
 - Price oracles use time-weighted average prices (TWAP) over multiple blocks, preventing single-block manipulation.
@@ -2279,7 +2279,7 @@ ION DEX is designed to resist the 10 most common and dangerous Web3 attack vecto
 
 #### 12.2.3 Sandwich Attack Resistance
 
-**Attack:** Attacker sees pending transaction, front-runs with buy, lets victim execute, then back-runs with sell —profiting from price impact.
+**Attack:** Attacker sees pending transaction, front-runs with buy, lets victim execute, then back-runs with sell — profiting from price impact.
 
 **Defense:**
 - Commit-reveal schemes for large trades (user commits hash, reveals later).
@@ -2380,28 +2380,28 @@ Contract written →Read SESSION_STATE.md →Compile (Forge build)
 
 Security does not end at deployment. The platform runs continuous monitoring:
 
-- **AI Sentinel** —Real-time anomaly detection across all transactions.
-- **Bug bounty program** —External security researchers incentivized to find vulnerabilities before attackers.
+- **AI Sentinel** — Real-time anomaly detection across all transactions.
+- **Bug bounty program** — External security researchers incentivized to find vulnerabilities before attackers.
 - **Incident response team** —24/7 on-call for security incidents.
-- **Regular re-audits** —All contracts re-audited after upgrades or when new attack vectors emerge.
+- **Regular re-audits** — All contracts re-audited after upgrades or when new attack vectors emerge.
 
 ---
 
 ---
 
-## 13. Long-Horizon Roadmap: P0鈥揚10
+## 13. Long-Horizon Roadmap: P0–P10
 
 ### Why a 10-Phase Roadmap
 
 Most crypto projects plan for the next cycle. ION DEX plans for the next decade.
 
-The P0鈥揚10 roadmap is designed so that each phase builds on the previous —creating a dependency chain that ensures every new capability is grounded in functioning infrastructure. Skipping phases is not possible: you cannot build payments without settlement, identity without payments, or governance without identity.
+The P0–P10 roadmap is designed so that each phase builds on the previous — creating a dependency chain that ensures every new capability is grounded in functioning infrastructure. Skipping phases is not possible: you cannot build payments without settlement, identity without payments, or governance without identity.
 
 ### Phase Details
 
 | Phase | Focus | What Gets Built | Dependencies |
 |-------|-------|-----------------|-------------|
-| **P0** | Brand & Thesis | Public positioning, README flagship, whitepaper, official channels | None —foundation |
+| **P0** | Brand & Thesis | Public positioning, README flagship, whitepaper, official channels | None — foundation |
 | **P1** | DEX Infrastructure | 28-chain aggregation, swap router, liquidity pools, grid trading | P0 (brand & positioning) |
 | **P2** | Identity & Proof | ION Identity, one-ID-per-person, immutable history, Explorer verification | P1 (settlement rails) |
 | **P3** | Payment Rails | Frictionless payments, stablecoin frontend / ION backend, flakes layer | P1 (DEX liquidity), P2 (identity) |
@@ -2409,11 +2409,11 @@ The P0鈥揚10 roadmap is designed so that each phase builds on the previous —
 | **P5** | Self-Evolution | Learning, correction, rule refinement, continuity-preserving adaptation | P4 (arbitration data) |
 | **P6** | Merchant & E-Commerce | Merchant onboarding, payment integration, settlement rails | P3 (payments), P2 (identity) |
 | **P7** | Real-World Services | Delivery, mobility, insurance, logistics on ION rails | P6 (merchant base), P4 (arbitration) |
-| **P8** | Economic Integration | Fee burn flywheel, staking lock-in, dynamic burn, treasury | P1鈥揚7 (revenue from all modules) |
+| **P8** | Economic Integration | Fee burn flywheel, staking lock-in, dynamic burn, treasury | 1–P7 (revenue from all modules) |
 | **P9** | Governance & Anti-Abuse | Public-order compatibility, dispute escalation, abuse prevention | P5 (evolution), P8 (economic stability) |
-| **P10** | Mature Civilization | Full coordination layer, global seamless access, billion-scale expansion | P0鈥揚9 (all layers functional) |
+| **P10** | Mature Civilization | Full coordination layer, global seamless access, billion-scale expansion | P0–P9 (all layers functional) |
 
-**Current position:** P0鈥揚1 in active development. P2鈥揚3 in design. P4+ planned.
+**Current position:** P0–P1 in active development. 2–P3 in design. P4+ planned.
 
 ---
 
@@ -2423,22 +2423,22 @@ The P0鈥揚10 roadmap is designed so that each phase builds on the previous —
 
 This whitepaper is a public document. It discloses:
 
-- **High-level direction and architecture** —the ten layers, their dependencies, and their design rationale.
-- **Roadmap phases and deliverables** —the P0鈥揚10 roadmap with dependencies.
-- **Proof and verification principles** —how every claim can be verified on Explorer.
-- **Economic logic** —fee structure, burn mechanism, staking products, and revenue distribution.
-- **Identity and reputation principles** —one ID per person, immutable history, adaptive standing.
-- **Governance philosophy** —single-operator governance during foundation-building, community governance at maturity.
+- **High-level direction and architecture** — the ten layers, their dependencies, and their design rationale.
+- **Roadmap phases and deliverables** — the P0–P10 roadmap with dependencies.
+- **Proof and verification principles** — how every claim can be verified on Explorer.
+- **Economic logic** — fee structure, burn mechanism, staking products, and revenue distribution.
+- **Identity and reputation principles** — one ID per person, immutable history, adaptive standing.
+- **Governance philosophy** — single-operator governance during foundation-building, community governance at maturity.
 
 ### What Remains Private
 
 The following information is not disclosed in this whitepaper, and is maintained in private repositories:
 
-- **Detailed rollout timing** for unannounced modules —competitive timing is a strategic advantage.
-- **Competitive strategy** against other DEX projects —public disclosure would benefit competitors.
-- **Internal arbitration and risk handling specifics** —detailed arbitration logic and risk models are proprietary.
-- **Proprietary AI model specifics** —Sentinel detection models and arbitration AI architecture are trade secrets.
-- **Sensitive execution logic** —specific implementation details that could be exploited if publicly known.
+- **Detailed rollout timing** for unannounced modules — competitive timing is a strategic advantage.
+- **Competitive strategy** against other DEX projects — public disclosure would benefit competitors.
+- **Internal arbitration and risk handling specifics** — detailed arbitration logic and risk models are proprietary.
+- **Proprietary AI model specifics** — Sentinel detection models and arbitration AI architecture are trade secrets.
+- **Sensitive execution logic** — specific implementation details that could be exploited if publicly known.
 
 This separation allows **transparent public development** while protecting competitive advantage.
 
@@ -2459,20 +2459,20 @@ The following content is permanently private and must never be pushed to any pub
 
 ION DEX integrates with the Ice Open Network through two sovereign P0 nodes:
 
-1. **[ice.io](https://ice.io/)** —Official narrative sovereignty entrance. Responsible for brand, worldview, official positioning, social media matrix, and external narrative.
-2. **[explorer.ice.io](https://explorer.ice.io/)** —Official evidence sovereignty entrance. Responsible for on-chain verification, fact proof, address mapping, transaction tracing, and announcement credibility anchoring.
+1. **[ice.io](https://ice.io/)** — Official narrative sovereignty entrance. Responsible for brand, worldview, official positioning, social media matrix, and external narrative.
+2. **[explorer.ice.io](https://explorer.ice.io/)** — Official evidence sovereignty entrance. Responsible for on-chain verification, fact proof, address mapping, transaction tracing, and announcement credibility anchoring.
 
 **The principle: the official website provides narrative, the Explorer provides evidence.** Every claim in this whitepaper should be verifiable through the Explorer.
 
 ### Official Ecosystem Integration
 
-ION DEX is designed to systematically integrate with the Ice Open Network's official ecosystem —not just as an external compatible project, but as a participant in the ION official ecosystem core layer. This integration includes:
+ION DEX is designed to systematically integrate with the Ice Open Network's official ecosystem — not just as an external compatible project, but as a participant in the ION official ecosystem core layer. This integration includes:
 
-- **ION Connect** —Gasless user experience, social login, and wallet abstraction.
+- **ION Connect** — Gasless user experience, social login, and wallet abstraction.
 - **ION Domains** —`.ion` domain registration, resolution, and marketplace.
-- **ION ID** —Identity infrastructure that we extend with cross-ecosystem standing and reputation.
-- **ION Token** —The native settlement unit for all platform transactions.
-- **ION Blockchain** —The high-throughput settlement layer (1M+ TPS target).
+- **ION ID** — Identity infrastructure that we extend with cross-ecosystem standing and reputation.
+- **ION Token** — The native settlement unit for all platform transactions.
+- **ION Blockchain** — The high-throughput settlement layer (1M+ TPS target).
 
 ### Why ION Blockchain Is the Optimal Settlement Layer
 
@@ -2489,7 +2489,7 @@ ION DEX is built on the ION blockchain not because of convenience, but because I
 
 **Dual-Layer Architecture:**
 
-The ION blockchain uses a **dual-layer consensus model** —validators produce blocks, while delegators stake ION to support validator selection without running infrastructure. This design:
+The ION blockchain uses a **dual-layer consensus model** — validators produce blocks, while delegators stake ION to support validator selection without running infrastructure. This design:
 
 - **Democratizes validation.** Anyone can participate in consensus by delegating stake, not just those with hardware.
 - **Scales security with adoption.** More delegators = more distributed stake = harder to attack.
@@ -2497,7 +2497,7 @@ The ION blockchain uses a **dual-layer consensus model** —validators produce b
 
 **Sub-Second Finality:**
 
-For payment and commerce applications, settlement speed is not optional —it is a requirement. A delivery driver cannot wait 12 seconds for payment confirmation. A merchant cannot wait 400ms during checkout. ION's sub-second finality makes every payment feel instant.
+For payment and commerce applications, settlement speed is not optional — it is a requirement. A delivery driver cannot wait 12 seconds for payment confirmation. A merchant cannot wait 400ms during checkout. ION's sub-second finality makes every payment feel instant.
 
 ---
 
@@ -2505,14 +2505,14 @@ For payment and commerce applications, settlement speed is not optional —it is
 
 ### Core Team
 
-**Master** —Founder & Visionary
+**Master** — Founder & Visionary
 
 - Original conception of the ION DEX civilization architecture
 - Multi-year strategic planning across all six business modules
 - Funding all operations, development, infrastructure, and security
 - Permanent 25% revenue allocation (non-negotiable)
 
-**鏃鸿储 (OpenClaw AI Agent)** —Principal Operator & Coordinator
+**鏃鸿储 (OpenClaw AI Agent)** — Principal Operator & Coordinator
 
 - Day-to-day project management, supervision, and execution
 - Coordination of AI specialist agents (281 experts across security, trading, optimization)
@@ -2576,7 +2576,7 @@ Participants in the ION DEX ecosystem should understand:
 
 ION DEX is not a typical DEX repository. It is the public front door of a **long-horizon digital civilization**.
 
-The standard is not "does it trade tokens?" The standard is: **"Can it become a durable civilization stack —one that begins with infrastructure, then grows into identity, proof, payment, reputation, arbitration, coordination, and long-term evolution?"**
+The standard is not "does it trade tokens?" The standard is: **"Can it become a durable civilization stack — one that begins with infrastructure, then grows into identity, proof, payment, reputation, arbitration, coordination, and long-term evolution?"**
 
 The answer is built into the architecture:
 
@@ -2594,51 +2594,51 @@ That is what we are building toward. Not a token narrative. Not a cycle play. **
 
 ## Glossary
 
-**ION** —The native token of the Ice Open Network, used as the settlement unit for all ION DEX transactions.
+**ION** — The native token of the Ice Open Network, used as the settlement unit for all ION DEX transactions.
 
-**Flakes** —The fine-grained unit of ION (1 ION = 1,000,000,000 flakes), used for micro-transactions.
+**Flakes** — The fine-grained unit of ION (1 ION = 1,000,000,000 flakes), used for micro-transactions.
 
-**DEX** —Decentralized Exchange, a trading platform that operates without centralized intermediaries.
+**DEX** — Decentralized Exchange, a trading platform that operates without centralized intermediaries.
 
-**AMM** —Automated Market Maker, a liquidity mechanism that uses algorithmic pricing instead of order books.
+**AMM** — Automated Market Maker, a liquidity mechanism that uses algorithmic pricing instead of order books.
 
-**Grid Trading** —An automated trading strategy that places buy and sell orders at predetermined price intervals.
+**Grid Trading** — An automated trading strategy that places buy and sell orders at predetermined price intervals.
 
-**TWAP** —Time-Weighted Average Price, a pricing method that averages prices over multiple blocks to prevent manipulation.
+**TWAP** — Time-Weighted Average Price, a pricing method that averages prices over multiple blocks to prevent manipulation.
 
-**Oracle** —A system that provides external data (prices, flight status, weather) to smart contracts.
+**Oracle** — A system that provides external data (prices, flight status, weather) to smart contracts.
 
-**Staking** —Locking tokens to earn rewards and support network security.
+**Staking** — Locking tokens to earn rewards and support network security.
 
-**Fee Burn** —Permanently destroying tokens by sending them to an unrecoverable address, reducing circulating supply.
+**Fee Burn** — Permanently destroying tokens by sending them to an unrecoverable address, reducing circulating supply.
 
-**Account Abstraction** —A smart contract wallet design that enables advanced features like auto-payments and gasless transactions.
+**Account Abstraction** — A smart contract wallet design that enables advanced features like auto-payments and gasless transactions.
 
-**Sybil Attack** —An attack where one entity creates multiple fake identities to manipulate a system.
+**Sybil Attack** — An attack where one entity creates multiple fake identities to manipulate a system.
 
-**TEE** —Trusted Execution Environment, a secure hardware enclave that protects cryptographic operations.
+**TEE** — Trusted Execution Environment, a secure hardware enclave that protects cryptographic operations.
 
-**Multi-signature (Multisig)** —A mechanism requiring multiple parties to approve an operation before execution.
+**Multi-signature (Multisig)** — A mechanism requiring multiple parties to approve an operation before execution.
 
-**Timelock** —A delay period before an operation can execute, providing time for review.
+**Timelock** — A delay period before an operation can execute, providing time for review.
 
-**Finality** —The point at which a transaction is confirmed and cannot be reversed.
+**Finality** — The point at which a transaction is confirmed and cannot be reversed.
 
 ---
 
 ## References
 
-- [README](../README.md) —Brand window and executive summary
-- [Roadmap Guide](./roadmap-guide.md) —P0-P10 detailed execution plan
-- [Technical Architecture](./03-technical-architecture.md) —System layers and contracts
-- [API Overview](./api-overview.md) —REST and WebSocket API reference
-- [Contracts Overview](./contracts-overview.md) —Dual-chain contract architecture
-- [Merchant Onboarding](./merchant-onboarding.md) —Integration paths and fee structure
-- [ION Explorer](https://explorer.ice.io/) —On-chain verification
-- [Official Website](https://ice.io/) —Narrative and positioning
-- [ION GitBook](https://docs.ice.io) —Official protocol documentation
-- [ION GitHub](https://github.com/ice-blockchain/ion) —Full node source code (C++)
-- [ION DEX Official Channel](https://t.me/iondex888) —Telegram official channel
+- [README](../README.md) — Brand window and executive summary
+- [Roadmap Guide](./roadmap-guide.md) — P0-P10 detailed execution plan
+- [Technical Architecture](./03-technical-architecture.md) — System layers and contracts
+- [API Overview](./api-overview.md) — REST and WebSocket API reference
+- [Contracts Overview](./contracts-overview.md) — Dual-chain contract architecture
+- [Merchant Onboarding](./merchant-onboarding.md) — Integration paths and fee structure
+- [ION Explorer](https://explorer.ice.io/) — On-chain verification
+- [Official Website](https://ice.io/) — Narrative and positioning
+- [ION GitBook](https://docs.ice.io) — Official protocol documentation
+- [ION GitHub](https://github.com/ice-blockchain/ion) — Full node source code (C++)
+- [ION DEX Official Channel](https://t.me/iondex888) — Telegram official channel
 
 ---
 
