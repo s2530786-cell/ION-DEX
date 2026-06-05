@@ -270,7 +270,9 @@ Staking rewards funded by **20% of platform revenue**.
 | Staking Rewards | Dynamic | Bear: high / Bull: high |
 | Treasury | Dynamic | Remaining |
 
-**Master's 25% is non-negotiable and permanent.** Paid first from every dollar of revenue. The person funding all operations gets paid first — no exceptions.
+**Master's 25% is non-negotiable and permanent.** Paid first from every dollar of revenue. The person funding all operations gets paid first.
+
+**Master's Receiving Address:** `0x8ff2e1210434495c4f5629bd9d8bd4965a67b84c` (BSC)n funding all operations gets paid first — no exceptions.
 
 ### The Flywheel
 Users trade/pay →fees collected →ION burned + staked →supply shrinks →price pressure up →more users attracted →more fees →more burn →more staking →**self-reinforcing cycle**.
