@@ -40,10 +40,40 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 14. [Boundaries: Public and Private](#14-boundaries-public-and-private)
 15. [Integration with Ice Open Network](#15-integration-with-ice-open-network)
 16. [Team & Contributors](#16-team--contributors)
-17. [Conclusion](#conclusion)
-18. [Risk Disclosure](#risk-disclosure)
-19. [Glossary](#glossary)
-20. [References](#references)
+17. [Developer & Ecosystem Integration](#17-developer--ecosystem-integration)
+18. [Conclusion](#conclusion)
+19. [Risk Disclosure](#risk-disclosure)
+20. [Glossary](#glossary)
+21. [References](#references)
+
+   **Merchant & E-Commerce**
+   - [Merchant Onboarding Guide](#merchant-onboarding-guide)
+   - [Payment Button / API / Direct Settlement](#merchant-onboarding-guide)
+   - [Merchant Membership Plans](#merchant-membership-plans)
+
+   **Delivery & Ride-Hailing**
+   - [How Existing Platforms Can Integrate](#how-existing-platforms-can-integrate)
+   - [SDK / API / White-Label Integration](#how-existing-platforms-can-integrate)
+   - [Driver / Rider Staking](#driverrider-staking)
+
+   **Insurance**
+   - [Parametric Insurance Design](#parametric-insurance-design)
+   - [Oracle Inputs & Claims Trigger Flow](#parametric-insurance-design)
+
+   **Logistics**
+   - [Logistics Provider Integration](#logistics-provider-integration)
+   - [Shipment Flow / Proof of Delivery / Cold Chain](#full-shipment-flow-across-modules)
+
+   **Domains & Identity**
+   - [User Step-by-Step Guide](#user-step-by-step-guide)
+   - [Domain Marketplace](#domain-marketplace)
+
+   **Developers**
+   - [Authentication & Access Model](#171-authentication--access-model)
+   - [REST API / WebSocket / Webhooks](#172-rest-api-websocket--webhooks)
+   - [SDK Packages](#173-sdk-packages)
+   - [Explorer Verification](#174-explorer--proof-verification)
+   - [White-Label / Enterprise Integration](#175-white-label--enterprise-integration)
 
 ---
 
@@ -2501,6 +2531,98 @@ For payment and commerce applications, settlement speed is not optional — it i
 ---
 
 ## 16. Team & Contributors
+
+The whitepaper should not force users, merchants, logistics operators, insurers, or developers to dig through hundreds of lines to discover how integration works. This section consolidates the platform's integration surface into one public developer-facing entry point.
+
+### 17.1 Authentication & Access Model
+
+ION DEX exposes multiple integration paths, each with a different trust boundary:
+
+| Integration Path | Intended User | Auth Model | Typical Use |
+|------------------|--------------|-----------|-------------|
+| **Payment Button** | Small merchants | No backend signing required | Embed checkout in an existing storefront |
+| **REST API** | Platforms / backend teams | API key + request signing | Orders, settlement, status polling |
+| **WebSocket** | Real-time apps | Authenticated session token | Order status, shipment state, payout events |
+| **Webhook** | Merchants / partners | Signed callback verification | Settlement complete, delivery confirmed, payout triggered |
+| **SDK** | Frontend / mobile / backend developers | Uses API credentials underneath | Faster integration with less boilerplate |
+| **White-Label** | Enterprise operators | Dedicated environment + contractual onboarding | Launch an ION-powered vertical quickly |
+
+**Principles:**
+- User wallets remain the source of asset authorization.
+- Backend integrations never replace on-chain proof; they only improve usability.
+- High-risk actions require stronger authentication, replay protection, and audit logs.
+- Explorer-verifiable state remains the final public truth layer.
+
+### 17.2 REST API, WebSocket & Webhooks
+
+The public integration surface is organized around the major ecosystem modules.
+
+| Module | REST API Surface | WebSocket / Event Surface | Typical Webhook |
+|--------|------------------|---------------------------|-----------------|
+| **Merchant Payments** | Checkout session, invoice creation, settlement status | Payment pending / settled / failed | `payment.settled` |
+| **Delivery & Ride-Hailing** | Order creation, escrow status, completion verification, payout | Driver assigned, route update, completion confirmed | `delivery.completed` |
+| **Insurance** | Policy issuance, oracle condition status, claim payout record | Trigger matched, payout queued, payout completed | `insurance.payout` |
+| **Logistics** | Shipment creation, carrier assignment, tracking checkpoint, delivery proof | GPS / milestone / temperature breach events | `shipment.delivered` |
+| **Domains** | Registration, transfer, offer, marketplace listing | Auction update, transfer complete | `domain.transferred` |
+| **RWA** | Asset issuance, token sale, dividend distribution, compliance state | Sale progress, dividend event, compliance hold | `rwa.dividend_paid` |
+| **Identity / Reputation** | Identity lookup, standing summary, reputation history | Reputation updated, arbitration result posted | `identity.updated` |
+
+**Design rule:** every critical callback should map back to an explorer-verifiable event or an auditable system record.
+
+### 17.3 SDK Packages
+
+ION DEX integration is intended to be available through SDK packages rather than forcing every partner to build raw protocol glue themselves.
+
+| SDK Package | Target | Use Case |
+|-------------|--------|----------|
+| **Web SDK** | Browser storefronts / dashboards | Checkout, wallet connect, merchant settlement status |
+| **Mobile SDK** | iOS / Android apps | Delivery confirmation, rider workflows, customer payment UX |
+| **Backend SDK** | Node / server environments | Order orchestration, payout control, webhook verification |
+| **Commerce SDK** | E-commerce platforms | Product checkout, storefront payment, merchant identity linkage |
+| **Logistics SDK** | Carriers / freight platforms | Shipment lifecycle, proof of delivery, cold-chain telemetry |
+| **Insurance SDK** | Insurers / embedded protection flows | Policy issuance, oracle trigger handling, payout verification |
+| **Identity SDK** | Ecosystem apps | ION Identity lookup, reputation-aware access control |
+
+### 17.4 Explorer & Proof Verification
+
+Every serious integration must support verifiability, not just convenience.
+
+Partners should be able to map user-facing states back to proof artifacts such as:
+- payment settlement records,
+- burn events,
+- shipment milestones,
+- claim payouts,
+- identity / reputation changes,
+- domain transfers,
+- RWA dividend distributions.
+
+This is what allows the platform to serve merchants, logistics companies, insurers, and external developers without asking them to trust a black box.
+
+### 17.5 White-Label & Enterprise Integration
+
+Not every partner wants to integrate feature-by-feature. Some want an entire stack delivered quickly.
+
+| Model | Best For | What It Includes |
+|------|----------|------------------|
+| **Component Integration** | Teams with existing product surfaces | Payment widgets, APIs, webhooks, settlement rails |
+| **SDK-Led Integration** | Startups shipping fast | Shared auth model, event handling, UI helpers |
+| **White-Label Vertical** | Delivery / commerce / logistics operators | Branded frontend, integrated backend, ION settlement rails |
+| **Enterprise Deployment** | Large institutions / regulated operators | Dedicated onboarding, compliance review, custom infra path |
+
+### 17.6 Ecosystem-by-Ecosystem Navigation
+
+To remove friction, each public ecosystem path should be reachable directly from the whitepaper table of contents:
+
+- **Merchants & E-commerce** → onboarding, payment button, API integration, direct settlement, membership plans.
+- **Delivery & Ride-Hailing** → existing platform integration, SDK/API/white-label options, staking model.
+- **Insurance** → parametric structure, oracle conditions, trigger and payout logic.
+- **Logistics** → provider integration, shipment tracking, proof of delivery, cold-chain events.
+- **Domains & Identity** → registration flow, marketplace flow, identity linkage.
+- **RWA** → issuance flow, token sale, dividend distribution, proof and compliance surface.
+
+The rule is simple: if a partner category matters strategically, that category should have a direct, clickable path in the whitepaper.
+
+## 17. Developer & Ecosystem Integration
 
 ### Core Team
 
