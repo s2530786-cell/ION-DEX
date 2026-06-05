@@ -328,7 +328,7 @@ This is not a marketing distinction. It is an architectural distinction. The con
 
 ### 4.1 The Problem with Current Payment Systems
 
-Traditional payment processors extract 2—% from every transaction. Settlement takes 2— days. Cross-border payments require multiple intermediaries, each adding their own fees and delays. Merchants have no direct access to Web3-native customers. And none of the fees charged by traditional processors are verifiable — merchants must trust that the processor is deducting the correct amount.
+Traditional payment processors extract 2–3% from every transaction. Settlement takes 2–3 days. Cross-border payments require multiple intermediaries, each adding their own fees and delays. Merchants have no direct access to Web3-native customers. And none of the fees charged by traditional processors are verifiable — merchants must trust that the processor is deducting the correct amount.
 
 Blockchain-based payment solutions have their own problems. Most require users to hold cryptocurrency before they can make payments. Gas fees add friction to every transaction. Wallet management is complex. And the user experience is far from what ordinary consumers expect from a payment system.
 
@@ -338,7 +338,7 @@ ION DEX solves these problems through a **frontend/backend split** that separate
 
 **Frontend: What Users See.** Users pay with stablecoins (USDT, USDC) or other familiar tokens. They do not need to hold ION. They do not need to understand blockchain mechanics. They simply select a payment method and confirm the transaction — the same experience they are accustomed to from traditional payment processors.
 
-**Backend: What Happens Behind.** The payment layer automatically converts the user's stablecoin payment into ION through the DEX liquidity pool. Platform fees are deducted and routed: 50% is permanently burned, and the remaining 50% is distributed to the staking pool and treasury. The ION is then routed to the merchant's settlement wallet. The entire process completes in 5—5 seconds.
+**Backend: What Happens Behind.** The payment layer automatically converts the user's stablecoin payment into ION through the DEX liquidity pool. Platform fees are deducted and routed: 50% is permanently burned, and the remaining 50% is distributed to the staking pool and treasury. The ION is then routed to the merchant's settlement wallet. The entire process completes in 5–15 seconds.
 
 ```
 User pays 100 USDT at checkout
@@ -348,7 +348,7 @@ User pays 100 USDT at checkout
     →50% (0.25 USDT) permanently burned to 0x000...dEaD
     →50% (0.25 USDT) distributed to staking pool + treasury
   →Remaining ION routed to merchant wallet
-  →Settlement notification via webhook (5—5 seconds)
+  →Settlement notification via webhook (5–15 seconds)
   →Merchant fulfills order
 ```
 
@@ -528,7 +528,7 @@ ION DEX builds on the ION ID infrastructure provided by the Ice Open Network:
 
 - **ION ID provides the base identity primitive** — a unique, chain-native identifier.
 - **ION DEX extends it with standing and reputation** — cross-ecosystem credit and enforcement.
-- **ION ID handles the technical layer** (address resolution, signature verification), while ION DEX handles the social layer** (standing, reputation, enforcement).
+- **ION ID handles the technical layer** (address resolution, signature verification), while ION DEX handles the social layer (standing, reputation, enforcement).
 
 ---
 
@@ -687,14 +687,14 @@ Each module is designed to:
 
 #### The Problem
 
-Traditional payment processors extract 2—% from every transaction. Settlement takes 2— days. Cross-border payments require multiple intermediaries, currency conversion fees, and regulatory friction. Merchants have no direct access to Web3-native customers. E-commerce platforms charge 5—5% commission on top of payment processing fees, and merchants must comply with each platform's rules or risk being deplatformed.
+Traditional payment processors extract 2–3% from every transaction. Settlement takes 2–3 days. Cross-border payments require multiple intermediaries, currency conversion fees, and regulatory friction. Merchants have no direct access to Web3-native customers. E-commerce platforms charge 5–15% commission on top of payment processing fees, and merchants must comply with each platform's rules or risk being deplatformed.
 
 #### What ION DEX Provides
 
 | Feature | Traditional E-Commerce | ION DEX |
 |---------|----------------------|--------|
-| Settlement time | 2— days | 5—5 seconds |
-| Transaction fee | 2—% (payment) + 5—5% (platform) | 0.5% total |
+| Settlement time | 2–3 days | 5–15 seconds |
+| Transaction fee | 2–3% (payment) + 5–15% (platform) | 0.5% total |
 | Cross-border friction | Multiple processors, conversion fees | Single ION rail |
 | Web3 customer reach | None | Direct access |
 | Chain complexity | N/A | Handled by infrastructure |
@@ -712,7 +712,7 @@ Customer pays USDT at checkout
     →50% (0.25%) burned to 0x000...dEaD (permanent)
     →50% (0.25%) to staking pool + treasury
   →Remaining ION routed to merchant wallet
-  →Settlement notification via webhook (5—5 seconds)
+  →Settlement notification via webhook (5–15 seconds)
   →Merchant fulfills order
 ```
 
@@ -725,8 +725,8 @@ Customer pays USDT at checkout
 | Path | Best For | Setup Time |
 |------|----------|------------|
 | **Payment Button** | Simple stores, low volume | 5 minutes (drop-in widget) |
-| **API Integration** | Custom checkout, medium volume | 1— days |
-| **Direct Settlement** | High-volume merchants, enterprises | 3— days (compliance review) |
+| **API Integration** | Custom checkout, medium volume | 1–2 days |
+| **Direct Settlement** | High-volume merchants, enterprises | 3–5 days (compliance review) |
 
 **Step 3: Set Up Storefront.** Merchants receive a `.ion` domain (e.g., `shop.ion`) that resolves to their ION Identity and payment wallet. No hosting required — the platform provides a storefront template that renders at the `.ion` domain.
 
@@ -1011,14 +1011,14 @@ Merchants can purchase advertising placements on the platform:
 
 #### The Problem
 
-Food delivery and ride-hailing platforms extract 25—0% from every order. Drivers and riders wait days for payout. Reputation is siloed — a driver's rating on one platform does not transfer to another. Customers pay premium prices that include platform markup. Restaurants and merchants lose margins to platform commissions.
+Food delivery and ride-hailing platforms extract 25–30% from every order. Drivers and riders wait days for payout. Reputation is siloed — a driver's rating on one platform does not transfer to another. Customers pay premium prices that include platform markup. Restaurants and merchants lose margins to platform commissions.
 
 #### What ION DEX Provides
 
 | Feature | Traditional Platforms | ION DEX |
 |---------|----------------------|--------|
-| Platform fee | 25—0% | 0.5% |
-| Driver/rider payout | 2— days | Instant (seconds) |
+| Platform fee | 25–30% | 0.5% |
+| Driver/rider payout | 2–3 days | Instant (seconds) |
 | Reputation portability | None — siloed per platform | Cross-ecosystem via ION Identity |
 | Dispute resolution | Opaque, platform-favoring | AI-assisted arbitration, appeal-capable |
 | Verifiable proof | No | Every order, payout, and fee on Explorer |
@@ -1124,7 +1124,7 @@ ION DEX food delivery is not a standalone app — it is integrated with the Web3
 
 **Pinduoduo-style Group Buying:**
 
-- Customers can invite friends to join a group purchase (3—0 people).
+- Customers can invite friends to join a group purchase (3–10 people).
 - When the group reaches minimum size, the order is placed at a discounted price.
 - Each group member pays their share into escrow.
 - On delivery, each member's share is released.
@@ -1160,8 +1160,8 @@ ION DEX food delivery is not a standalone app — it is integrated with the Web3
 | Service | Experience |
 |---------|-----------|
 | **Same storefront** | Restaurant's `.ion` storefront serves both dine-in customers and delivery orders |
-| **Instant settlement** | Payment in wallet seconds after delivery, no 2— day wait |
-| **0.5% fee** | Instead of 25—0% commission, only 0.5% goes to platform |
+| **Instant settlement** | Payment in wallet seconds after delivery, no 2–3 day wait |
+| **0.5% fee** | Instead of 25–30% commission, only 0.5% goes to platform |
 | **AI menu optimization** | AI suggests menu changes based on demand patterns |
 | **Reputation sync** | Restaurant's e-commerce reputation affects delivery order priority |
 | **Cross-module promotion** | Restaurant can purchase advertising on the delivery app for 50 ION/week |
@@ -1344,12 +1344,12 @@ ION DEX offers insurance membership plans that reduce per-policy costs:
 
 | Insurance Type | Premium Range | Coverage |
 |----------------|---------------|----------|
-| **Delivery Guarantee** | $0.05—0.25 USDT per order | Up to $25 USDT if delivery fails or is damaged |
-| **Ride Insurance** | | **Ride Insurance** | $0.03 USDT per ride | Up to $50 USDT.50 USDT per ride | Up to $200 USDT for accidents during ride |
-| **Cargo Insurance** | $0.25—2.50 USDT per shipment | Up to $500 USDT for loss/damage |
+| **Delivery Guarantee** | $0.05–0.25 USDT per order | Up to $25 USDT if delivery fails or is damaged |
+| **Ride Insurance** | $0.03 USDT per ride | Up to $200 USDT for accidents during ride |
+| **Cargo Insurance** | $0.25–2.50 USDT per shipment | Up to $500 USDT for loss/damage |
 | **E-Commerce Purchase Protection** | 2% of purchase price (in USDT) | Full refund if product not as described |
 | **Merchant Business Insurance** | $50 USDT/month | Up to $5,000 USDT for fraud, chargebacks, disputes |
-| **Travel Insurance** | $0.50—2.50 USDT per trip | Flight delay, cancellation, lost baggage (oracle-triggered) |
+| **Travel Insurance** | $0.50–2.50 USDT per trip | Flight delay, cancellation, lost baggage (oracle-triggered) |
 
 #### Cross-Module Insurance Integration
 
@@ -1481,14 +1481,14 @@ Merchant sells product on .ion storefront (E-Commerce)
 
 #### The Problem
 
-Traditional domain registrars extract high fees ($10—0/year), offer no secondary market, and provide no integration with identity or payments. Domain transfers are manual and slow (days). Disputes are adversarial and opaque. Users cannot use their domain as a payment address or identity alias.
+Traditional domain registrars extract high fees ($10–20/year), offer no secondary market, and provide no integration with identity or payments. Domain transfers are manual and slow (days). Disputes are adversarial and opaque. Users cannot use their domain as a payment address or identity alias.
 
 #### What ION DEX Provides
 
 | Feature | Traditional Registrars | ION DEX |
 |---------|----------------------|--------|
-| Registration fee | $10—0/year (recurring) | One-time fee (payable in USDT, backend converts to ION) |
-| Secondary market | Limited, high fees (15—5%) | Built-in marketplace, 0.5% fee |
+| Registration fee | $10–20/year (recurring) | One-time fee (payable in USDT, backend converts to ION) |
+| Secondary market | Limited, high fees (15–25%) | Built-in marketplace, 0.5% fee |
 | Transfer time | Days | Seconds |
 | Identity integration | None | `.ion` domain = ION Identity alias |
 | Payment integration | None | Receive payments at `shop.ion` |
@@ -1614,7 +1614,6 @@ ION DEX protects users from homoglyph attacks (domains that look identical but u
 
 ---
 
-### 9.6 RWA (Real-World Assets)
 ### 9.6 RWA (Real-World Assets)
 
 #### The Problem
@@ -1853,7 +1852,7 @@ ION DEX integrates with AI-driven trading strategies to provide automated, risk-
 
 Most crypto traders lose money. They buy high, sell low, panic during volatility, and lack the discipline to follow systematic strategies. AI trading systems exist, but they are:
 
-- **Expensive.** Institutional-grade AI trading costs $500—,000/month in subscription fees.
+- **Expensive.** Institutional-grade AI trading costs $500–5,000/month in subscription fees.
 - **Opaque.** Users cannot verify what the AI is doing with their funds.
 - **Custodial.** Users must deposit funds to a third-party platform.
 - **Disconnected.** AI trading platforms do not integrate with DEX liquidity, payments, or identity.
@@ -1862,7 +1861,7 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 
 | Feature | Traditional AI Trading | ION DEX AI Platform |
 |---------|----------------------|---------------------|
-| Subscription cost | $500—,000/month | 10—0 ION/month (affordable) |
+| Subscription cost | $500–5,000/month | 10–100 ION/month (affordable) |
 | Transparency | Black box | All trades verifiable on Explorer |
 | Custody | Third-party custody | Non-custodial (user's wallet) |
 | Risk limits | User must set manually | Hard-coded limits enforced by platform |
@@ -1909,9 +1908,9 @@ User pays $199 USDT for Professional monthly plan
 
 | Strategy Type | Risk Level | Typical Return (Historical) |
 |--------------|------------|---------------------------|
-| Conservative Grid | Low | 5—0% APY |
-| Balanced Grid | Medium | 10—0% APY |
-| Aggressive Grid | High | 20—0% APY |
+| Conservative Grid | Low | 5–10% APY |
+| Balanced Grid | Medium | 10–15% APY |
+| Aggressive Grid | High | 20–30% APY |
 | Momentum Following | Medium-High | Variable |
 | Mean Reversion | Medium | Variable |
 
@@ -1958,7 +1957,7 @@ This design eliminates custodial risk — if the platform goes offline, users re
 
 #### Why Traditional Solutions Cannot Compete
 
-- Traditional AI trading platforms cannot offer subscription fees as low as 10—0 ION/month while maintaining profitability.
+- Traditional AI trading platforms cannot offer subscription fees as low as 10–100 ION/month while maintaining profitability.
 - Traditional platforms cannot offer non-custodial AI trading.
 - Traditional platforms cannot integrate AI trading with DEX liquidity, payments, identity, and insurance.
 - Traditional platforms cannot burn 50% of fees permanently, creating deflationary pressure.
@@ -2091,6 +2090,8 @@ Staking locks ION long-term, reducing circulating supply and aligning holders wi
 **Why Paid First?** If Master's allocation comes after burn and staking, then during periods of high burn, Master's actual revenue could shrink to near-zero. Paying Master first ensures that the builder profits when the platform profits — always.
 
 **This Allocation Never Changes.** The 25% figure is permanent. It will not be reduced, renegotiated, or diluted. Master's incentive is permanently aligned with platform success.
+
+**Master's Receiving Address:** `0x8ff2e1210434495c4f5629bd9d8bd4965a67b84c` (BSC)
 
 ### 10.6 The Flywheel in Action
 
