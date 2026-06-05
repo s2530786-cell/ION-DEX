@@ -46,6 +46,101 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 20. [Glossary](#glossary)
 21. [References](#references)
 
+### 3. [The DEX Layer: First Revenue Engine](#3-the-dex-layer-first-revenue-engine)
+- [3.1 What the DEX Is Built to Do](#31-what-the-dex-is-built-to-do)
+- [3.2 Trading Capabilities](#32-trading-capabilities)
+- [3.3 Contract Architecture](#33-contract-architecture)
+- [3.4 Cross-Chain Bridge Security](#34-cross-chain-bridge-security)
+
+### 9. [Ecosystem Coordination](#9-ecosystem-coordination)
+- [9.1 Merchant Payments & Web3 E-Commerce](#91-merchant-payments--web3-e-commerce)
+  - [9.1.1 The Problem](#911-the-problem)
+  - [9.1.2 What ION DEX Provides](#912-what-ion-dex-provides)
+  - [9.1.3 How It Works](#913-how-it-works)
+  - [9.1.4 Merchant Onboarding Guide](#914-merchant-onboarding-guide)
+  - [9.1.5 Merchant Membership Plans](#915-merchant-membership-plans)
+  - [9.1.6 Unified Pricing Philosophy](#916-unified-pricing-philosophy-0-to-1000000)
+  - [9.1.7 Market Pricing Benchmark](#917-market-pricing-benchmark)
+  - [9.1.8 E-Commerce Membership — China Market Aligned](#918-e-commerce-membership--china-market-aligned)
+  - [9.1.9 AI Services for Merchants](#919-ai-services-for-merchants)
+  - [9.1.10 Advertising](#9110-advertising)
+  - [9.1.11 Why Traditional Solutions Cannot Compete](#9111-why-traditional-solutions-cannot-compete)
+  - [9.1.12 Connection to Other Modules](#9112-connection-to-other-modules)
+- [9.2 Food Delivery & Ride-Hailing](#92-food-delivery--ride-hailing)
+  - [9.2.1 The Problem](#921-the-problem)
+  - [9.2.2 What ION DEX Provides](#922-what-ion-dex-provides)
+  - [9.2.3 How It Works](#923-how-it-works)
+  - [9.2.4 How Existing Platforms Can Integrate](#924-how-existing-platforms-can-integrate)
+  - [9.2.5 Per-Order Pricing Model](#925-per-order-pricing-model-no-mandatory-membership)
+  - [9.2.6 Web3 E-Commerce + Food Delivery Integration](#926-web3-e-commerce--food-delivery-integration)
+  - [9.2.7 User Experience — What Users Get](#927-user-experience--what-users-get)
+  - [9.2.8 Driver/Rider Staking](#928-driverrider-staking)
+  - [9.2.9 How the Modules Link Together](#929-how-the-modules-link-together)
+  - [9.2.10 Why Traditional Solutions Cannot Compete](#9210-why-traditional-solutions-cannot-compete)
+- [9.3 Insurance (Parametric Policies)](#93-insurance-parametric-policies)
+  - [9.3.1 The Problem](#931-the-problem)
+  - [9.3.2 What ION DEX Provides](#932-what-ion-dex-provides)
+  - [9.3.3 Parametric Insurance Design](#933-parametric-insurance-design)
+  - [9.3.4 Oracle Architecture](#934-oracle-architecture)
+  - [9.3.5 Dual-Source Verification for Real-World Events](#935-dual-source-verification-for-real-world-events)
+  - [9.3.6 Why Traditional Solutions Cannot Compete](#936-why-traditional-solutions-cannot-compete)
+  - [9.3.7 Connection to Other Modules](#937-connection-to-other-modules)
+  - [9.3.8 Insurance Membership Plans](#938-insurance-membership-plans)
+  - [9.3.9 Insurance Types Available](#939-insurance-types-available)
+  - [9.3.10 Cross-Module Insurance Integration](#9310-cross-module-insurance-integration)
+- [9.4 Logistics (Supply Chain, Freight, Proof of Delivery)](#94-logistics-supply-chain-freight-proof-of-delivery)
+  - [9.4.1 The Problem](#941-the-problem)
+  - [9.4.2 What ION DEX Provides](#942-what-ion-dex-provides)
+  - [9.4.3 How It Works](#943-how-it-works)
+  - [9.4.4 Cold Chain Monitoring](#944-cold-chain-monitoring)
+  - [9.4.5 Bill of Lading NFT](#945-bill-of-lading-nft)
+  - [9.4.6 Why Traditional Solutions Cannot Compete](#946-why-traditional-solutions-cannot-compete)
+  - [9.4.7 Connection to Other Modules](#947-connection-to-other-modules)
+  - [9.4.8 Logistics Provider Integration](#948-logistics-provider-integration)
+  - [9.4.9 Cross-Module Logistics Integration](#949-cross-module-logistics-integration)
+- [9.5 Domain Trading (.ion Domains)](#95-domain-trading-ion-domains)
+  - [9.5.1 The Problem](#951-the-problem)
+  - [9.5.2 What ION DEX Provides](#952-what-ion-dex-provides)
+  - [9.5.3 Domain Registration Pricing](#953-domain-registration-pricing)
+  - [9.5.4 User Step-by-Step Guide](#954-user-step-by-step-guide)
+  - [9.5.5 Domain Marketplace](#955-domain-marketplace)
+  - [9.5.6 Domain for Merchants](#956-domain-for-merchants)
+  - [9.5.7 Homoglyph Protection](#957-homoglyph-protection)
+  - [9.5.8 Why Traditional Solutions Cannot Compete](#958-why-traditional-solutions-cannot-compete)
+  - [9.5.9 Connection to Other Modules](#959-connection-to-other-modules)
+- [9.6 RWA (Real-World Assets)](#96-rwa-real-world-assets)
+  - [9.6.1 The Problem](#961-the-problem)
+  - [9.6.2 What ION DEX Provides](#962-what-ion-dex-provides)
+  - [9.6.3 How RWA Tokenization Works - 6 Steps](#963-how-rwa-tokenization-works---6-steps)
+  - [9.6.4 Asset Types and Oracle Integration](#964-asset-types-and-oracle-integration)
+  - [9.6.5 RWA Marketplace Membership](#965-rwa-marketplace-membership)
+  - [9.6.6 User Step-by-Step Guide](#966-user-step-by-step-guide)
+  - [9.6.7 Cross-Module RWA Integration](#967-cross-module-rwa-integration)
+  - [9.6.8 Why Traditional Solutions Cannot Compete](#968-why-traditional-solutions-cannot-compete)
+  - [9.6.9 Connection to Other Modules](#969-connection-to-other-modules)
+- [9.7 AI Platform — Complete Ecosystem](#97-ai-platform--complete-ecosystem)
+  - [9.7.1 AI Service Categories](#971-ai-service-categories)
+  - [9.7.2 Institutional AI Services](#972-institutional-ai-services)
+  - [9.7.3 The Problem](#973-the-problem)
+  - [9.7.4 What ION DEX Provides](#974-what-ion-dex-provides)
+  - [9.7.5 AI Trading Membership Plans](#975-ai-trading-membership-plans)
+  - [9.7.6 AI Trading Capabilities](#976-ai-trading-capabilities)
+  - [9.7.7 Advanced Model Unlock](#977-advanced-model-unlock)
+  - [9.7.8 Risk Management (Hard-Coded)](#978-risk-management-hard-coded)
+  - [9.7.9 Non-Custodial Design](#979-non-custodial-design)
+  - [9.7.10 Why Traditional Solutions Cannot Compete](#9710-why-traditional-solutions-cannot-compete)
+  - [9.7.11 Connection to Other Modules](#9711-connection-to-other-modules)
+- [9.8 Shared Substrate: Why This Is Not Just Isolated Apps](#98-shared-substrate-why-this-is-not-just-isolated-apps)
+  - [9.8.1 Example: Cross-Module Coordination](#981-example-cross-module-coordination)
+
+### 17. [Developer & Ecosystem Integration](#17-developer--ecosystem-integration)
+- [17.1 Authentication & Access Model](#171-authentication--access-model)
+- [17.2 REST API, WebSocket & Webhooks](#172-rest-api-websocket--webhooks)
+- [17.3 SDK Packages](#173-sdk-packages)
+- [17.4 Explorer & Proof Verification](#174-explorer--proof-verification)
+- [17.5 White-Label & Enterprise Integration](#175-white-label--enterprise-integration)
+- [17.6 Ecosystem-by-Ecosystem Navigation](#176-ecosystem-by-ecosystem-navigation)
+
    **Merchant & E-Commerce**
    - [Merchant Onboarding Guide](#merchant-onboarding-guide)
    - [Payment Button / API / Direct Settlement](#merchant-onboarding-guide)
@@ -715,11 +810,11 @@ Each module is designed to:
 
 ### 9.1 Merchant Payments & Web3 E-Commerce
 
-#### The Problem
+#### 9.1.1 The Problem
 
 Traditional payment processors extract 2–3% from every transaction. Settlement takes 2–3 days. Cross-border payments require multiple intermediaries, currency conversion fees, and regulatory friction. Merchants have no direct access to Web3-native customers. E-commerce platforms charge 5–15% commission on top of payment processing fees, and merchants must comply with each platform's rules or risk being deplatformed.
 
-#### What ION DEX Provides
+#### 9.1.2 What ION DEX Provides
 
 | Feature | Traditional E-Commerce | ION DEX |
 |---------|----------------------|--------|
@@ -732,7 +827,7 @@ Traditional payment processors extract 2–3% from every transaction. Settlement
 | AI services | None (or expensive third-party) | Built-in AI merchandising |
 | Storefront | Platform-controlled | Own `.ion` domain |
 
-#### How It Works
+#### 9.1.3 How It Works
 
 ```
 Customer pays USDT at checkout
@@ -746,7 +841,7 @@ Customer pays USDT at checkout
   →Merchant fulfills order
 ```
 
-#### Merchant Onboarding Guide
+#### 9.1.4 Merchant Onboarding Guide
 
 **Step 1: Create ION Identity.** The merchant registers an ION Identity (one ID per person/business). This identity is permanent and carries reputation across all modules.
 
@@ -762,7 +857,7 @@ Customer pays USDT at checkout
 
 **Step 4: Start Selling.** Products are listed with ION or stablecoin pricing. When a customer pays, the merchant receives ION in seconds. The merchant can hold ION, swap to stablecoins via the DEX, or withdraw to an external wallet.
 
-#### Merchant Membership Plans
+#### 9.1.5 Merchant Membership Plans
 
 ION DEX offers tiered merchant memberships. **Prices are quoted in USDT for stability — the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
@@ -795,7 +890,7 @@ Merchant pays $199 USDT for Merchant monthly plan
 - **Rising ION demand.** As more merchants subscribe, the platform buys more ION on the open market, creating consistent buy pressure that supports ION price.
 
 
-#### Unified Pricing Philosophy: $0 to $1,000,000
+#### 9.1.6 Unified Pricing Philosophy: $0 to $1,000,000
 
 All ION DEX ecosystem modules follow a unified pricing structure:
 
@@ -830,7 +925,7 @@ The ION DEX pricing model is designed for a future where ION appreciates dramati
 | Global scale | 1,000,000 | $100 | $100,000,000 | $1,200,000,000 | $600,000,000 |
 
 
-#### Market Pricing Benchmark
+#### 9.1.7 Market Pricing Benchmark
 
 All ION DEX pricing is benchmarked against existing market leaders. We do not arbitrarily set prices — every tier is justified by competitive analysis.
 
@@ -888,7 +983,7 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 **Why We''re Cheaper:** Smart contract automation + blockchain settlement = no intermediaries = 90% cost reduction.
 
 
-#### E-Commerce Membership — China Market Aligned
+#### 9.1.8 E-Commerce Membership — China Market Aligned
 
 **Individual Seller ($19/month) — 散户:**
 - Payment processing (0.5% fee)
@@ -984,7 +1079,7 @@ Aligned with China e-commerce reality:
 - **Custom supply chain integration** — Connect to any logistics provider globally
 - **Global rollout coordination** — Dedicated project manager for multi-region expansion
 - **Zero processing fee** — 0% on all transactions
-#### AI Services for Merchants
+#### 9.1.9 AI Services for Merchants
 
 **Basic Plan — Included AI:**
 
@@ -1005,7 +1100,7 @@ Aligned with China e-commerce reality:
 - **Cross-module AI coordination.** AI optimizes across e-commerce, logistics, and insurance simultaneously.
 - **Predictive analytics dashboard.** Real-time AI insights on sales trends, customer behavior, and market opportunities.
 
-#### Advertising
+#### 9.1.10 Advertising
 
 Merchants can purchase advertising placements on the platform:
 
@@ -1018,7 +1113,7 @@ Merchants can purchase advertising placements on the platform:
 
 **50% of advertising revenue is burned permanently.** Every ad purchased reduces circulating supply.
 
-#### Why Traditional Solutions Cannot Compete
+#### 9.1.11 Why Traditional Solutions Cannot Compete
 
 - Traditional processors cannot reduce fees below their operational costs.
 - Traditional processors cannot offer sub-second settlement without pre-funding.
@@ -1027,7 +1122,7 @@ Merchants can purchase advertising placements on the platform:
 - Traditional e-commerce platforms cannot offer built-in AI services at any membership tier.
 - Traditional platforms cannot offer a .ion domain storefront with integrated payments.
 
-#### Connection to Other Modules
+#### 9.1.12 Connection to Other Modules
 
 - **Identity**: Merchant standing affects fee tiers, dispute resolution priority, and AI service access.
 - **Insurance**: Purchase protection policies for high-value transactions.
@@ -1039,11 +1134,11 @@ Merchants can purchase advertising placements on the platform:
 
 ### 9.2 Food Delivery & Ride-Hailing
 
-#### The Problem
+#### 9.2.1 The Problem
 
 Food delivery and ride-hailing platforms extract 25–30% from every order. Drivers and riders wait days for payout. Reputation is siloed — a driver's rating on one platform does not transfer to another. Customers pay premium prices that include platform markup. Restaurants and merchants lose margins to platform commissions.
 
-#### What ION DEX Provides
+#### 9.2.2 What ION DEX Provides
 
 | Feature | Traditional Platforms | ION DEX |
 |---------|----------------------|--------|
@@ -1054,7 +1149,7 @@ Food delivery and ride-hailing platforms extract 25–30% from every order. Driv
 | Verifiable proof | No | Every order, payout, and fee on Explorer |
 | Web3 e-commerce integration | None | Direct sync with merchant storefronts |
 
-#### How It Works
+#### 9.2.3 How It Works
 
 ```
 Customer opens ION DEX app →Selects Food Delivery or Ride-Hailing
@@ -1073,7 +1168,7 @@ Customer opens ION DEX app →Selects Food Delivery or Ride-Hailing
   →Reputation updated for all parties (good/bad record)
 ```
 
-#### How Existing Platforms Can Integrate
+#### 9.2.4 How Existing Platforms Can Integrate
 
 ION DEX provides SDKs and APIs that allow existing delivery and ride-hailing platforms to adopt ION settlement rails:
 
@@ -1090,7 +1185,7 @@ ION DEX provides SDKs and APIs that allow existing delivery and ride-hailing pla
 - A restaurant aggregator in Latin America uses the White-Label solution to launch a delivery platform powered entirely by ION rails.
 
 
-#### Per-Order Pricing Model (No Mandatory Membership)
+#### 9.2.5 Per-Order Pricing Model (No Mandatory Membership)
 
 Food delivery and ride-hailing services are **per-order priced** — no membership required to use the platform. Users pay per order, drivers/riders earn per delivery. Membership is optional and provides enhanced benefits.
 
@@ -1130,7 +1225,7 @@ Drivers and riders stake ION to unlock benefits (staking, not subscription):
 | **Fleet leader** | 2,000 ION (~$1,000) | 0.1% | Top priority | Full coverage + passenger insurance | 3x faster |
 
 **Staking is skin-in-the-game.** Staked riders signal commitment — they complete orders on time, provide good service, and build reputation faster. They cannot unstake immediately (7-day minimum lock), ensuring consistency.
-#### Web3 E-Commerce + Food Delivery Integration
+#### 9.2.6 Web3 E-Commerce + Food Delivery Integration
 
 ION DEX food delivery is not a standalone app — it is integrated with the Web3 e-commerce module:
 
@@ -1138,9 +1233,9 @@ ION DEX food delivery is not a standalone app — it is integrated with the Web3
 
 | Platform | Model | ION DEX Equivalent |
 |----------|-------|-------------------|
-| **娣樺疂 (Taobao)** | Marketplace + search + recommendations + delivery | Web3 merchant storefronts + AI recommendations + ION delivery |
-| **浜笢 (JD.com)** | Direct sales + quality guarantee + fast delivery | Verified merchants + quality certification + priority delivery |
-| **鎷煎澶?(Pinduoduo)** | Group buying + social sharing + low prices | Group purchase orders + social referral rewards + ION settlement |
+| **Taobao** | Marketplace + search + recommendations + delivery | Web3 merchant storefronts + AI recommendations + ION delivery |
+| **JD.com** | Direct sales + quality guarantee + fast delivery | Verified merchants + quality certification + priority delivery |
+| **Pinduoduo** | Group buying + social sharing + low prices | Group purchase orders + social referral rewards + ION settlement |
 
 **How the Integration Works:**
 
@@ -1160,7 +1255,7 @@ ION DEX food delivery is not a standalone app — it is integrated with the Web3
 - On delivery, each member's share is released.
 - **Social referral rewards:** The group organizer earns 5 ION per successful group order (50% burned).
 
-#### User Experience — What Users Get
+#### 9.2.7 User Experience — What Users Get
 
 **For Customers:**
 
@@ -1196,7 +1291,7 @@ ION DEX food delivery is not a standalone app — it is integrated with the Web3
 | **Reputation sync** | Restaurant's e-commerce reputation affects delivery order priority |
 | **Cross-module promotion** | Restaurant can purchase advertising on the delivery app for 50 ION/week |
 
-#### Driver/Rider Staking
+#### 9.2.8 Driver/Rider Staking
 
 | Stake Amount | Benefits |
 |-------------|----------|
@@ -1206,7 +1301,7 @@ ION DEX food delivery is not a standalone app — it is integrated with the Web3
 
 **Staking is skin-in-the-game.** A staked driver signals commitment to the platform — they are more likely to complete orders on time and provide good service. Reputation builds faster for staked participants.
 
-#### How the Modules Link Together
+#### 9.2.9 How the Modules Link Together
 
 ```
 Web3 E-Commerce (merchant storefronts + product listings)
@@ -1239,7 +1334,7 @@ A customer orders sushi from a restaurant on their `.ion` storefront:
 7. **Proof** — Entire order lifecycle recorded on Explorer: payment →escrow →pickup →delivery →settlement →reputation update.
 8. **AI Sentinel** — Flags suspicious patterns (e.g., rider always delivers to same address →possible fraud).
 
-#### Why Traditional Solutions Cannot Compete
+#### 9.2.10 Why Traditional Solutions Cannot Compete
 
 - Traditional platforms cannot reduce fees below ~25% without collapsing their business model.
 - Traditional platforms cannot offer instant settlement without pre-funding.
@@ -1252,11 +1347,11 @@ A customer orders sushi from a restaurant on their `.ion` storefront:
 
 ### 9.3 Insurance (Parametric Policies)
 
-#### The Problem
+#### 9.3.1 The Problem
 
 Traditional insurance is slow, opaque, and adversarial. Claims take weeks or months. Payouts require manual approval. Fraud detection is reactive. Policyholders have no visibility into why claims are approved or denied.
 
-#### What ION DEX Provides
+#### 9.3.2 What ION DEX Provides
 
 | Feature | Traditional Insurance | ION DEX |
 |---------|----------------------|--------|
@@ -1267,7 +1362,7 @@ Traditional insurance is slow, opaque, and adversarial. Claims take weeks or mon
 | Premium payment | Fiat, slow | ION, instant |
 | Payout | Bank transfer, days | ION, seconds |
 
-#### Parametric Insurance Design
+#### 9.3.3 Parametric Insurance Design
 
 Parametric insurance pays out automatically when predefined conditions are met — no manual claims approval required.
 
@@ -1301,7 +1396,7 @@ Oracle monitors weather data:
 - Smart contract verifies and pays out
 ```
 
-#### Oracle Architecture
+#### 9.3.4 Oracle Architecture
 
 ION DEX does not rely on a single oracle. The platform aggregates:
 - Flight data APIs (FlightAware, etc.)
@@ -1311,7 +1406,7 @@ ION DEX does not rely on a single oracle. The platform aggregates:
 
 Multiple oracle sources sign triggers. Smart contract requires **N-of-M signatures** to execute payout — no single point of failure.
 
-#### Dual-Source Verification for Real-World Events
+#### 9.3.5 Dual-Source Verification for Real-World Events
 
 For insurance, delivery, and logistics triggers that require real-world verification, the platform enforces **dual-source consensus** to prevent oracle manipulation and ensure fairness:
 
@@ -1345,14 +1440,14 @@ Delivery insurance policy active
     →Insurance payout triggered automatically
 ```
 
-#### Why Traditional Solutions Cannot Compete
+#### 9.3.6 Why Traditional Solutions Cannot Compete
 
 - Traditional insurers cannot process claims in seconds without fraud risk.
 - Traditional insurers cannot make every policy and claim transparent on-chain.
 - Traditional insurers cannot integrate with identity and reputation across services.
 - Traditional insurers cannot offer instant premium payment and payout in a single currency.
 
-#### Connection to Other Modules
+#### 9.3.7 Connection to Other Modules
 
 - **Identity**: Policyholder standing affects premium rates, coverage limits.
 - **Delivery & Mobility**: Delivery guarantees, ride insurance.
@@ -1360,7 +1455,7 @@ Delivery insurance policy active
 - **Merchant Payments**: Purchase protection for e-commerce.
 - **E-Commerce**: Product warranty insurance for high-value items.
 
-#### Insurance Membership Plans
+#### 9.3.8 Insurance Membership Plans
 
 ION DEX offers insurance membership plans that reduce per-policy costs:
 
@@ -1370,7 +1465,7 @@ ION DEX offers insurance membership plans that reduce per-policy costs:
 | **Agent** | $29 USDT | $278 USDT (20% off) | Insurance professionals | Priority claim processing, 20 active policies, higher coverage limits, insurance consultation |
 | **Enterprise** | Custom | Custom | Bulk policies, custom coverage, dedicated claims manager, API access for automated policy issuance |
 
-#### Insurance Types Available
+#### 9.3.9 Insurance Types Available
 
 | Insurance Type | Premium Range | Coverage |
 |----------------|---------------|----------|
@@ -1381,7 +1476,7 @@ ION DEX offers insurance membership plans that reduce per-policy costs:
 | **Merchant Business Insurance** | $50 USDT/month | Up to $5,000 USDT for fraud, chargebacks, disputes |
 | **Travel Insurance** | $0.50–2.50 USDT per trip | Flight delay, cancellation, lost baggage (oracle-triggered) |
 
-#### Cross-Module Insurance Integration
+#### 9.3.10 Cross-Module Insurance Integration
 
 **How Insurance Links to Other Services:**
 
@@ -1401,11 +1496,11 @@ ION DEX offers insurance membership plans that reduce per-policy costs:
 
 ### 9.4 Logistics (Supply Chain, Freight, Proof of Delivery)
 
-#### The Problem
+#### 9.4.1 The Problem
 
 Traditional logistics is fragmented, opaque, and slow. Shipment tracking is siloed per carrier. Proof of delivery is manual and disputable. Payment settlement takes 30-90 days. Cross-border logistics requires multiple intermediaries.
 
-#### What ION DEX Provides
+#### 9.4.2 What ION DEX Provides
 
 | Feature | Traditional Logistics | ION DEX |
 |---------|----------------------|--------|
@@ -1416,7 +1511,7 @@ Traditional logistics is fragmented, opaque, and slow. Shipment tracking is silo
 | Dispute resolution | Slow, opaque | AI-assisted arbitration |
 | Verifiable proof | No | Every shipment, delivery, and payment on Explorer |
 
-#### How It Works
+#### 9.4.3 How It Works
 
 ```
 Shipper creates shipment on ION rails
@@ -1436,7 +1531,7 @@ Shipper creates shipment on ION rails
   →Shipment record permanent on Explorer
 ```
 
-#### Cold Chain Monitoring
+#### 9.4.4 Cold Chain Monitoring
 
 For temperature-sensitive shipments (pharmaceuticals, food):
 - IoT temperature sensors record data continuously.
@@ -1444,28 +1539,28 @@ For temperature-sensitive shipments (pharmaceuticals, food):
 - If temperature exceeds threshold →automatic insurance payout.
 - Complete temperature history verifiable on Explorer.
 
-#### Bill of Lading NFT
+#### 9.4.5 Bill of Lading NFT
 
 Each shipment is represented as a **Bill of Lading NFT**:
 - Transferable — can be traded or used as collateral.
 - Verifiable — complete shipment history on Explorer.
 - Dispute-capable — AI arbitration for delivery disputes.
 
-#### Why Traditional Solutions Cannot Compete
+#### 9.4.6 Why Traditional Solutions Cannot Compete
 
 - Traditional logistics cannot unify tracking across carriers without building massive infrastructure.
 - Traditional logistics cannot offer instant settlement without pre-funding.
 - Traditional logistics cannot make every shipment verifiable on-chain.
 - Traditional logistics cannot integrate with identity and reputation across services.
 
-#### Connection to Other Modules
+#### 9.4.7 Connection to Other Modules
 
 - **Identity**: Carrier standing affects order allocation, insurance rates.
 - **Insurance**: Cargo insurance, delivery guarantees.
 - **Delivery & Mobility**: Last-mile delivery integration.
 - **Merchant Payments**: E-commerce fulfillment.
 
-#### Logistics Provider Integration
+#### 9.4.8 Logistics Provider Integration
 
 ION DEX provides APIs and SDKs for existing logistics companies to adopt ION settlement rails:
 
@@ -1475,7 +1570,7 @@ ION DEX provides APIs and SDKs for existing logistics companies to adopt ION set
 | **API Integration** | Shipment creation, tracking, delivery confirmation, payout | Freight forwarder uses ION API for cross-border shipment settlement |
 | **White-Label** | Full logistics platform powered by ION rails | New logistics startup launches with zero payment infrastructure cost |
 
-#### Cross-Module Logistics Integration
+#### 9.4.9 Cross-Module Logistics Integration
 
 1. **E-Commerce →Logistics.** A merchant sells a product on their `.ion` storefront. The order automatically creates a logistics shipment. The customer can track the shipment in real-time on Explorer.
 
@@ -1509,11 +1604,11 @@ Merchant sells product on .ion storefront (E-Commerce)
 
 ### 9.5 Domain Trading (.ion Domains)
 
-#### The Problem
+#### 9.5.1 The Problem
 
 Traditional domain registrars extract high fees ($10–20/year), offer no secondary market, and provide no integration with identity or payments. Domain transfers are manual and slow (days). Disputes are adversarial and opaque. Users cannot use their domain as a payment address or identity alias.
 
-#### What ION DEX Provides
+#### 9.5.2 What ION DEX Provides
 
 | Feature | Traditional Registrars | ION DEX |
 |---------|----------------------|--------|
@@ -1525,7 +1620,7 @@ Traditional domain registrars extract high fees ($10–20/year), offer no second
 | Dispute resolution | Adversarial, slow | AI-assisted arbitration |
 | Verifiable proof | No | Every registration, transfer, and sale on Explorer |
 
-#### Domain Registration Pricing
+#### 9.5.3 Domain Registration Pricing
 
 | Domain Length | Registration Fee | Rarity |
 |---------------|------------------|----------|
@@ -1560,7 +1655,7 @@ User registers 'shop.ion' (4+ characters)
 - **Permanent value.** A domain is a one-time investment that lasts forever.
 - **Flywheel effect.** Every registration burns ION permanently — no dilution from renewals.
 
-#### User Step-by-Step Guide
+#### 9.5.4 User Step-by-Step Guide
 
 **Step 1: Search for Domain.**
 User enters desired domain name (e.g., `myshop.ion`) in the ION DEX domain search.
@@ -1583,7 +1678,7 @@ User pays $10 USDT. Backend converts to ION, burns 50%, domain is registered.
 - **As identity alias.** The domain becomes an alias for the user's ION Identity.
 - **As storefront URL.** Customers can visit `myshop.ion` to see the merchant's products.
 
-#### Domain Marketplace
+#### 9.5.5 Domain Marketplace
 
 Users can list their domains for sale on the built-in marketplace:
 
@@ -1606,7 +1701,7 @@ User lists 'premium.ion' for $100 USDT
   →Sale recorded on Explorer (verifiable)
 ```
 
-#### Domain for Merchants
+#### 9.5.6 Domain for Merchants
 
 A `.ion` domain is a merchant's Web3 storefront address:
 
@@ -1621,7 +1716,7 @@ When a merchant registers a domain:
 2. Customer payments sent to `shop.ion` are routed to the merchant's payment wallet.
 3. Delivery orders from the storefront use the domain as the customer-facing identity.
 
-#### Homoglyph Protection
+#### 9.5.7 Homoglyph Protection
 
 ION DEX protects users from homoglyph attacks (domains that look identical but use different Unicode characters):
 - Registration checks for homoglyphs across existing domains.
@@ -1629,14 +1724,14 @@ ION DEX protects users from homoglyph attacks (domains that look identical but u
 - AI system flags potential homoglyph attempts for review.
 - AI sentinel defense flags potential phishing attempts.
 
-#### Why Traditional Solutions Cannot Compete
+#### 9.5.8 Why Traditional Solutions Cannot Compete
 
 - Traditional registrars cannot offer instant, on-chain transfers.
 - Traditional registrars cannot integrate domains with identity and payments.
 - Traditional registrars cannot provide AI-assisted dispute resolution.
 - Traditional registrars cannot make every registration and transfer verifiable on-chain.
 
-#### Connection to Other Modules
+#### 9.5.9 Connection to Other Modules
 
 - **Identity**: `.ion` domain = ION Identity alias.
 - **Merchant Payments**: Receive payments at `shop.ion`.
@@ -1646,11 +1741,11 @@ ION DEX protects users from homoglyph attacks (domains that look identical but u
 
 ### 9.6 RWA (Real-World Assets)
 
-#### The Problem
+#### 9.6.1 The Problem
 
 Real-world assets (real estate, commodities, securities, art) are illiquid, opaque, and inaccessible to most investors. Fractional ownership is limited to accredited investors. Trading requires multiple intermediaries (brokers, custodians, clearing houses). Settlement takes days to weeks. Dividends are distributed manually with no transparency.
 
-#### What ION DEX Provides
+#### 9.6.2 What ION DEX Provides
 
 | Feature | Traditional RWA | ION DEX |
 |---------|-----------------|--------|
@@ -1662,7 +1757,7 @@ Real-world assets (real estate, commodities, securities, art) are illiquid, opaq
 | Fee | 2-5% + intermediaries | 0.3% |
 | Dividend distribution | Manual, opaque | Automatic, transparent, on-chain |
 
-#### How RWA Tokenization Works - 6 Steps
+#### 9.6.3 How RWA Tokenization Works - 6 Steps
 
 **Step 1: Asset Registration.**
 Asset owner registers the asset on ION DEX:
@@ -1712,7 +1807,7 @@ Commercial property generates $10,000/month rental income
   -> Dividend recorded on Explorer (transparent)
 ```
 
-#### Asset Types and Oracle Integration
+#### 9.6.4 Asset Types and Oracle Integration
 
 | Asset Type | Oracle Integration | Valuation Update | Example |
 |------------|-------------------|------------------|----------|
@@ -1722,7 +1817,7 @@ Commercial property generates $10,000/month rental income
 | Art/Collectibles | Appraisal oracle | Quarterly | Fine art, rare collectibles, wine |
 | Infrastructure | Revenue feed (tolls, usage) | Monthly | Toll roads, solar farms, data centers |
 
-#### RWA Marketplace Membership
+#### 9.6.5 RWA Marketplace Membership
 
 | Plan | Monthly | Annual | Benefits |
 |------|---------|--------|----------|
@@ -1730,7 +1825,7 @@ Commercial property generates $10,000/month rental income
 | Premium | $25 USDT | $240 USDT (20% off) | Priority access to new listings, reduced fees (0.2%), early dividend notification |
 | Accredited | Custom | Custom | Accredited-only assets, higher investment limits, dedicated RWA advisor, legal support |
 
-#### User Step-by-Step Guide
+#### 9.6.6 User Step-by-Step Guide
 
 **Step 1: Complete Identity Verification.**
 Investor registers ION Identity and completes KYC:
@@ -1756,13 +1851,13 @@ Investor visits rwa.ion:
 - Buyer purchases, 0.3% fee, 50% burned.
 - Tokens transfer, ION to seller (seconds).
 
-#### Cross-Module RWA Integration
+#### 9.6.7 Cross-Module RWA Integration
 
 **RWA + Insurance:** Title insurance (title disputes), asset insurance (physical damage), rental guarantee (tenant default).
 **RWA + Logistics:** Storage tracking (GPS + oracle), transport insurance, chain of custody on Explorer.
 **RWA + Identity:** Investor standing from successful investments, accreditation verification, access tiers for higher-value listings.
 
-#### Why Traditional Solutions Cannot Compete
+#### 9.6.8 Why Traditional Solutions Cannot Compete
 
 - Cannot offer 24/7 trading without massive infrastructure.
 - Cannot offer instant settlement.
@@ -1770,7 +1865,7 @@ Investor visits rwa.ion:
 - Cannot offer automatic, transparent dividend distribution.
 - Cannot provide oracle-backed ongoing valuation.
 
-#### Connection to Other Modules
+#### 9.6.9 Connection to Other Modules
 
 - **Identity**: Investor standing affects access, leverage limits.
 - **Insurance**: Asset insurance, title insurance, rental guarantee.
@@ -1781,7 +1876,7 @@ Investor visits rwa.ion:
 
 The ION DEX AI platform is not limited to quantitative trading. It provides AI services across all ecosystem modules — trading, e-commerce, delivery, insurance, logistics, and RWA.
 
-#### AI Service Categories
+#### 9.7.1 AI Service Categories
 
 **Category 1: AI Trading Services (量化交易)**
 
@@ -1859,7 +1954,7 @@ For RWA issuers and managers:
 | **AI Rental Income Prediction** | $199/month | Real estate RWA |
 | **AI Commodity Price Forecast** | $149/month | Commodity RWA |
 
-#### Institutional AI Services
+#### 9.7.2 Institutional AI Services
 
 Large institutions need completely different services:
 
@@ -1878,7 +1973,7 @@ Large institutions need completely different services:
 
 ION DEX integrates with AI-driven trading strategies to provide automated, risk-managed trading for users who do not want to actively manage their positions.
 
-#### The Problem
+#### 9.7.3 The Problem
 
 Most crypto traders lose money. They buy high, sell low, panic during volatility, and lack the discipline to follow systematic strategies. AI trading systems exist, but they are:
 
@@ -1887,7 +1982,7 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 - **Custodial.** Users must deposit funds to a third-party platform.
 - **Disconnected.** AI trading platforms do not integrate with DEX liquidity, payments, or identity.
 
-#### What ION DEX Provides
+#### 9.7.4 What ION DEX Provides
 
 | Feature | Traditional AI Trading | ION DEX AI Platform |
 |---------|----------------------|---------------------|
@@ -1898,7 +1993,7 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 | Integration | Standalone | Integrated with DEX, payments, identity |
 | Copy trading | Often unavailable | Built-in with performance tracking |
 
-#### AI Trading Membership Plans
+#### 9.7.5 AI Trading Membership Plans
 
 **Prices are quoted in USDT for stability — the backend automatically converts to ION at market rate, feeding the burn flywheel.**
 
@@ -1930,7 +2025,7 @@ User pays $199 USDT for Professional monthly plan
 - **Same flywheel.** Backend conversion means identical burn and staking effects.
 - **Rising ION demand.** As more users subscribe, consistent buy pressure supports ION price.
 
-#### AI Trading Capabilities
+#### 9.7.6 AI Trading Capabilities
 
 **Grid Trading.** Automated buy-low / sell-high execution across 28 chains. Users set parameters (price range, grid count, investment amount), and the AI executes continuously without manual intervention.
 
@@ -1950,7 +2045,7 @@ User pays $199 USDT for Professional monthly plan
 - 50% (2.5% of profit) burned permanently.
 - 50% (2.5% of profit) to staking pool and treasury.
 
-#### Advanced Model Unlock
+#### 9.7.7 Advanced Model Unlock
 
 Users can unlock advanced AI models with ION payments:
 
@@ -1963,7 +2058,7 @@ Users can unlock advanced AI models with ION payments:
 
 **50% of model unlock fees are burned permanently.**
 
-#### Risk Management (Hard-Coded)
+#### 9.7.8 Risk Management (Hard-Coded)
 
 As detailed in Section 3.5 (AI Trading Risk Limits), all AI strategies operate within hard-coded risk limits:
 
@@ -1974,7 +2069,7 @@ As detailed in Section 3.5 (AI Trading Risk Limits), all AI strategies operate w
 
 These limits are enforced at the execution layer — the AI cannot override them.
 
-#### Non-Custodial Design
+#### 9.7.9 Non-Custodial Design
 
 Users never deposit funds to a third-party platform. All trading happens from the user's own wallet:
 
@@ -1985,14 +2080,14 @@ Users never deposit funds to a third-party platform. All trading happens from th
 
 This design eliminates custodial risk — if the platform goes offline, users retain full control of their funds.
 
-#### Why Traditional Solutions Cannot Compete
+#### 9.7.10 Why Traditional Solutions Cannot Compete
 
 - Traditional AI trading platforms cannot offer subscription fees as low as 10–100 ION/month while maintaining profitability.
 - Traditional platforms cannot offer non-custodial AI trading.
 - Traditional platforms cannot integrate AI trading with DEX liquidity, payments, identity, and insurance.
 - Traditional platforms cannot burn 50% of fees permanently, creating deflationary pressure.
 
-#### Connection to Other Modules
+#### 9.7.11 Connection to Other Modules
 
 - **DEX**: AI strategies execute through ION DEX liquidity pools.
 - **Identity**: User standing affects AI strategy access and fee tiers.
@@ -2015,7 +2110,7 @@ The key point is not to create random adjacent businesses. The key point is to l
 | **AI Defense** | Ecosystem-wide anomaly detection and response |
 | **Coordination** | Modules reinforce each other, not compete |
 
-#### Example: Cross-Module Coordination
+#### 9.8.1 Example: Cross-Module Coordination
 
 A merchant who cheats customers on e-commerce:
 - Their reputation drops (Identity module).
