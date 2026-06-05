@@ -40,10 +40,10 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 14. [Boundaries: Public and Private](#14-boundaries-public-and-private)
 15. [Integration with Ice Open Network](#15-integration-with-ice-open-network)
 16. [Team & Contributors](#16-team--contributors)
-18. [Conclusion](#conclusion)
-19. [Risk Disclosure](#risk-disclosure)
-20. [Glossary](#glossary)
-21. [References](#references)
+17. [Conclusion](#conclusion)
+18. [Risk Disclosure](#risk-disclosure)
+19. [Glossary](#glossary)
+20. [References](#references)
 
 ---
 
@@ -2409,11 +2409,11 @@ The P0–P10 roadmap is designed so that each phase builds on the previous — c
 | **P5** | Self-Evolution | Learning, correction, rule refinement, continuity-preserving adaptation | P4 (arbitration data) |
 | **P6** | Merchant & E-Commerce | Merchant onboarding, payment integration, settlement rails | P3 (payments), P2 (identity) |
 | **P7** | Real-World Services | Delivery, mobility, insurance, logistics on ION rails | P6 (merchant base), P4 (arbitration) |
-| **P8** | Economic Integration | Fee burn flywheel, staking lock-in, dynamic burn, treasury | 1–P7 (revenue from all modules) |
+| **P8** | Economic Integration | Fee burn flywheel, staking lock-in, dynamic burn, treasury | P1–P7 (revenue from all modules) |
 | **P9** | Governance & Anti-Abuse | Public-order compatibility, dispute escalation, abuse prevention | P5 (evolution), P8 (economic stability) |
 | **P10** | Mature Civilization | Full coordination layer, global seamless access, billion-scale expansion | P0–P9 (all layers functional) |
 
-**Current position:** P0–P1 in active development. 2–P3 in design. P4+ planned.
+**Current position:** P0–P1 in active development. P2–P3 in design. P4+ planned.
 
 ---
 
@@ -2642,4 +2642,4 @@ That is what we are building toward. Not a token narrative. Not a cycle play. **
 
 ---
 
-**End of Whitepaper v1.0**
+**End of Whitepaper v2.0**
