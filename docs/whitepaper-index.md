@@ -1,12 +1,19 @@
 # ION DEX Whitepaper Index
 
+**Languages:** [English](./WHITEPAPER.md) | [简体中文](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [Русский](./whitepaper/ru/WHITEPAPER.ru.md)
+
 > The complete public doctrine of ION DEX and its long-horizon digital civilization design.
 
 ## Primary Document
 
-### 📜 [ION DEX Whitepaper v1.0](./WHITEPAPER.md)
+### 📜 [ION DEX Whitepaper v2.0 (English Canonical Source)](./WHITEPAPER.md)
 
-The complete whitepaper covering all 13 sections: Core Thesis, Strategic Architecture (10 layers), DEX Layer, Payment Civilization, Identity & Civil Standing, Proof & Trust, AI Arbitration & Sentinel Defense, Self-Evolution, Ecosystem Coordination, Economic Logic, Governance & Public-Order Compatibility, Long-Horizon Roadmap (P0-P10), and Boundaries.
+The English whitepaper is the canonical source text for architecture, economics, governance, risk, and integration requirements.
+
+### 🌐 Language Editions
+
+- [简体中文 / Simplified Chinese](./whitepaper/zh/WHITEPAPER.zh-CN.md) — translated edition; English source controls in case of ambiguity.
+- [Русский / Russian](./whitepaper/ru/WHITEPAPER.ru.md) — translated edition; English source controls in case of ambiguity.
 
 ---
 
@@ -85,4 +92,4 @@ The complete whitepaper covering all 13 sections: Core Thesis, Strategic Archite
 
 ---
 
-Return to [README](../README.md) | [Developer Entry](./developer-index.md) | [Explorer](https://explorer.ice.io/)
+Return to [README](../README.md) | [Whitepaper (English)](./WHITEPAPER.md) | [白皮书（简中）](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [Белая книга (RU)](./whitepaper/ru/WHITEPAPER.ru.md) | [Developer Entry](./developer-index.md) | [Explorer](https://explorer.ice.io/)
