@@ -916,7 +916,7 @@ Merchant pays $199 USDT for a monthly Merchant plan
     → 50% burned to 0x000...dEaD (permanent)
     → 50% routed to the staking pool and treasury
   → Merchant sees only the USDT-denominated charge
-  → ION ecosystem effect: buy pressure on ION + permanent supply reduction
+  → ION ecosystem effect: recurring market demand for ION + permanent supply reduction
 ```
 
 **Why USDT Pricing Instead of ION Pricing?**
@@ -924,20 +924,20 @@ Merchant pays $199 USDT for a monthly Merchant plan
 - **Merchant familiarity.** Merchants understand USDT pricing. ION pricing introduces volatility risk that discourages adoption.
 - **Stable budgeting.** Merchants can budget in a stable unit of account regardless of ION price fluctuations.
 - **Same flywheel effect.** The backend converts to ION instantly, so the burn and staking effects are identical.
-- **Rising ION demand.** As more merchants subscribe, the platform buys more ION on the open market, creating consistent buy pressure that supports ION price.
+- **Rising ION demand.** As more merchants subscribe, the platform purchases more ION on the open market, creating recurring demand that supports the settlement ecosystem.
 
 
 #### 9.1.6 Unified Pricing Philosophy: $0 to $1,000,000
 
 All ION DEX ecosystem modules follow a unified pricing structure:
 
-| Tier | Price Range | Who It's For | What They Get |
+| Tier | Price Range | Target User Group | Included Capabilities |
 |------|-------------|---------------|---------------|
 | **Free** | $0 | Explorers, first-time users | Limited access, basic features, advertising-supported |
 | **Entry** | $50/month | Individual users, small operators | Full basic features, standard support |
 | **Standard** | $199/month | Professionals, growing businesses | Advanced features, priority support |
 | **Premium** | $499/month | High-net-worth individuals, established businesses | Full features, dedicated resources |
-| **Elite** | $1,999/month | Large traders, multi-store brands | Exclusive access, white-glove service |
+| **Elite** | $1,999/month | Large traders, multi-store brands | Exclusive access, priority service |
 | **Enterprise** | $9,999/month | Market makers, franchises | Institutional-grade infrastructure |
 | **Institutional** | $9,999–$50,000/month | Banks, sovereign wealth funds | Full customization, on-premise deployment, dedicated teams |
 
@@ -947,10 +947,10 @@ The ION DEX pricing model is designed for a future where ION appreciates dramati
 
 - **At ION = $0.01**, a $50 subscription converts to 5,000 ION. The flywheel burns 2,500 ION per subscription.
 - **At ION = $1**, a $50 subscription converts to 50 ION. The flywheel still burns 25 ION per subscription.
-- **At ION = $1,000**, a $50 subscription converts to 0.05 ION. The flywheel burns 0.025 ION — but the dollar value is identical, and the platform still profits.
+- **At ION = $1,000**, a $50 subscription converts to 0.05 ION. The flywheel burns 0.025 ION, while the fiat-denominated fee remains unchanged.
 - **At ION = $10,000+**, institutional clients pay $9,999–$50,000/month, converting to substantial ION volumes that continue feeding the burn flywheel.
 
-**The key insight:** USDT pricing decouples user cost from ION price. No matter how high ION rises, users always pay the same dollar amount. The flywheel never stops — it actually accelerates as more users join.
+**The key insight:** USDT pricing decouples user cost from ION price. No matter how high ION rises, users pay the same fiat-denominated amount, while the burn-and-staking mechanism continues to operate.
 
 **Revenue projection at scale:**
 
@@ -964,7 +964,7 @@ The ION DEX pricing model is designed for a future where ION appreciates dramati
 
 #### 9.1.7 Market Pricing Benchmark
 
-All ION DEX pricing is benchmarked against existing market leaders. We do not arbitrarily set prices — every tier is justified by competitive analysis.
+All ION DEX pricing is benchmarked against existing market leaders. Each tier is justified through competitive analysis rather than ad hoc pricing.
 
 **AI Trading Platform — Market Benchmark:**
 
@@ -973,7 +973,7 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 | Basic | $19/month | TradingView Pro | $14.95/month | + Automated execution |
 | Professional | $49/month | 3Commas Expert | $49.50/month | + AI strategy selection + copy trading |
 | Advanced | $99/month | Cryptohopper Hero | $99/month | + Custom models + API access |
-| Whale | $199/month | Custom bots | $100-500/month | + Dedicated strategist + white-glove |
+| Whale | $199/month | Custom bots | $100-500/month | + Dedicated strategist + priority support |
 | Institutional | $499/month | Professional tools | $200-500/month | + On-chain execution + DeFi integration |
 
 **E-Commerce Platform — Market Benchmark:**
@@ -1080,10 +1080,10 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 
 **Why This Pricing Structure?**
 
-Aligned with China e-commerce reality:
+The structure is aligned with China e-commerce market practice:
 
-| Seller Type | Our Price | Taobao/Tmall Equivalent | JD Equivalent |
-|-------------|----------|------------------------|---------------|
+| Seller Type | ION DEX Price | Taobao/Tmall Reference | JD Reference |
+|-------------|---------------|------------------------|--------------|
 | Individual | $19 | Free + 0.5-1% fee | Free + fees |
 | Small merchant | $79 | Deposit + fees | Deposit + fees |
 | Growing business | $199 | Tmall deposit ~$15K + commission | JD deposit + commission |
@@ -1091,18 +1091,10 @@ Aligned with China e-commerce reality:
 | Brand | $1,499 | Tmall brand store | JD brand store |
 | Enterprise | $4,999 | Tmall flagship + marketing | JD flagship + marketing |
 
-**Key difference:** We don't charge deposits (保证金). Instead, monthly subscription + pay-as-you-go fees. Lower barrier to entry, sustainable revenue.
-
-- Everything in Enterprise, plus:
-- **Multi-store management** — Centralized dashboard for all stores
-- **Brand-wide analytics** — Cross-store performance, brand-level customer insights
-- **Exclusive AI models** — Custom-trained AI on brand data
-- **Advertising credits** — $200 USDT/month in advertising credits
-- **Reduced fee** — 0.1% payment processing fee
-- **Priority dispute resolution** — AI arbitration prioritized
+**Key difference:** ION DEX does not require merchant deposits (保证金). Instead, it combines subscription pricing with transaction-based fees, reducing upfront capital requirements while preserving recurring platform revenue.
 
 **Franchise ($9,999/month) — Franchise Partner:**
-- Everything in Brand, plus:
+- Everything in Enterprise Brand, plus:
 - **Franchise-wide reporting** — All franchisee performance in one dashboard
 - **Custom compliance** — Region-specific regulatory compliance automation
 - **White-label options** — Brand the entire platform for franchise use
@@ -1111,10 +1103,10 @@ Aligned with China e-commerce reality:
 
 **Institutional ($9,999–$50,000/month) — Enterprise Group:**
 - Everything in Franchise, plus:
-- **Dedicated infrastructure** — Isolated servers, custom deployment
-- **Legal support** — Dedicated legal team for compliance across jurisdictions
-- **Custom supply chain integration** — Connect to any logistics provider globally
-- **Global rollout coordination** — Dedicated project manager for multi-region expansion
+- **Dedicated infrastructure** — Isolated servers and custom deployment
+- **Legal support** — Dedicated legal support for compliance across jurisdictions
+- **Custom supply chain integration** — Connectivity to global logistics providers
+- **Global rollout coordination** — Dedicated program management for multi-region expansion
 - **Zero processing fee** — 0% on all transactions
 #### 9.1.9 AI Services for Merchants
 
@@ -1241,7 +1233,7 @@ Food delivery and ride-hailing services are **per-order priced** — no membersh
 | **Free** | $0 | 0.5% | Standard | Pay per order | None | Standard |
 | **Commuter** | $19 | 0.3% | Priority matching | Free delivery guarantee | Smart route suggestions | Priority chat |
 | **Premium** | $39 | 0.2% | High priority + premium orders | Free ride insurance + delivery guarantee | AI route optimization + demand prediction | Dedicated support |
-| **Elite** | $79 | 0.1% | Top priority + exclusive orders | Full insurance (accident + delivery + vehicle) | AI personal assistant + custom route planning | White-glove 24/7 |
+| **Elite** | $79 | 0.1% | Top priority + exclusive orders | Full insurance (accident + delivery + vehicle) | AI personal assistant + custom route planning | Priority 24/7 support |
 
 **Why Per-Order + Optional Membership?**
 
@@ -2000,12 +1992,12 @@ Large institutions need completely different services:
 | **Hedge Fund** | $4,999 | Trading infrastructure + custom models + compliance reporting |
 | **Asset Manager** | $9,999 | Multi-strategy platform + AUM reporting + investor dashboards |
 | **Bank** | $24,999 | Full infrastructure + regulatory compliance + dedicated team |
-| **Sovereign Wealth Fund** | $49,999+ | On-premise deployment + custom everything + 24/7 white-glove |
+| **Sovereign Wealth Fund** | $49,999+ | On-premise deployment + bespoke infrastructure + 24/7 priority support |
 
 **Why Institutional Pricing is 10-100x Higher:**
 - Hedge funds manage $10M-$1B, $5K/month is 0.006-0.06% of AUM — negligible
 - Banks need compliance, audit trails, dedicated infrastructure — expensive to provide
-- Sovereign wealth funds need custom everything — we dedicate a team to them
+- Sovereign wealth funds often require bespoke infrastructure, dedicated operational support, and jurisdiction-specific compliance handling.
 
 
 ION DEX integrates with AI-driven trading strategies to provide automated, risk-managed trading for users who do not want to actively manage their positions.
@@ -2039,7 +2031,7 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 | **Basic** | $19 USDT | $182 USDT (20% off) | Individual traders | Grid trading automation + basic risk limits + 5 strategies |
 | **Professional** | $49 USDT | $470 USDT (20% off) | Serious traders | Everything in Basic + AI strategy selection + advanced risk management + 20 strategies + copy trading |
 | **Advanced** | $99 USDT | $950 USDT (20% off) | High-net-worth individuals | Everything in Professional + custom AI model training + priority execution + unlimited strategies + API access |
-| **Whale** | $199 USDT | $1,910 USDT (20% off) | Large traders / small institutions | Everything in Advanced + dedicated strategist + exclusive API node + white-glove service |
+| **Whale** | $199 USDT | $1,910 USDT (20% off) | Large traders / small institutions | Everything in Advanced + dedicated strategist + exclusive API node + priority service |
 | **Market Maker** | $499 USDT | $4,790 USDT (20% off) | Market makers / institutions | Everything in Whale + liquidity incentives + dedicated clearing channel + co-location API |
 | **Institutional** | Custom | Custom | Large institutions | Full customization + compliance support + dedicated legal team + on-premise deployment + custom AI model training + priority execution + unlimited strategies + API access |
 
@@ -2052,7 +2044,7 @@ User pays $49 USDT for a Professional monthly plan
     → 50% burned to 0x000...dEaD (permanent)
     → 50% routed to the staking pool and treasury
   → User sees only the USDT-denominated charge
-  → ION ecosystem effect: buy pressure on ION + permanent supply reduction
+  → ION ecosystem effect: recurring market demand for ION + permanent supply reduction
 ```
 
 **Why USDT Pricing?**
@@ -2060,7 +2052,7 @@ User pays $49 USDT for a Professional monthly plan
 - **User familiarity.** Traders understand USDT. ION pricing introduces confusion about cost.
 - **Stable budgeting.** Users know exactly what they pay per month.
 - **Same flywheel.** Backend conversion means identical burn and staking effects.
-- **Rising ION demand.** As more users subscribe, consistent buy pressure supports ION price.
+- **Rising ION demand.** As more users subscribe, recurring market demand supports the ION settlement ecosystem.
 
 #### 9.7.6 AI Trading Capabilities
 
