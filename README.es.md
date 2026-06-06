@@ -2,9 +2,9 @@
 
 # ION — El sistema operativo de una supercivilización digital
 
-Esta es la entrada en español de la página principal de ION en GitHub.
+La puerta de entrada en español a la página principal de ION en GitHub.
 
-ION no es un repositorio DEX común. Es un sistema digital de largo horizonte que comienza con infraestructura de intercambio y se expande hacia pagos, identidad, prueba, reputación, coordinación y autoevolución.
+ION no es un repositorio DEX común. Es un sistema digital de largo horizonte que nace en la infraestructura de intercambio y se expande hacia pagos, identidad, prueba, reputación, coordinación y autoevolución.
 
 ---
 
@@ -19,5 +19,5 @@ ION no es un repositorio DEX común. Es un sistema digital de largo horizonte qu
 
 ## Estado actual
 
-Esta página ofrece un punto de entrada claro, estable y utilizable en español.
-El contenido completo seguirá mejorando junto con los materiales públicos del proyecto.
+Esta página ofrece una entrada en español clara, estable y útil.
+El contenido completo seguirá afinándose junto con los materiales públicos del proyecto.

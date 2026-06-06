@@ -2,9 +2,9 @@
 
 # ION — Süper dijital bir uygarlık için işletim sistemi
 
-Bu sayfa, ION GitHub ana sayfasının Türkçe giriş noktasıdır.
+ION GitHub ana sayfasına açılan Türkçe kapı.
 
-ION sıradan bir DEX deposu değildir. Takas altyapısıyla başlayan ve ödemeler, kimlik, kanıt, itibar, koordinasyon ve kendini geliştirme alanlarına uzanan uzun vadeli bir dijital sistemdir.
+ION sıradan bir DEX deposu değildir. Takas altyapısından doğan ve ödemeler, kimlik, kanıt, itibar, koordinasyon ve kendini geliştirme katmanlarına doğru genişleyen uzun vadeli bir dijital sistemdir.
 
 ---
 
@@ -19,5 +19,5 @@ ION sıradan bir DEX deposu değildir. Takas altyapısıyla başlayan ve ödemel
 
 ## Güncel durum
 
-Bu sayfa Türkçe için açık, istikrarlı ve kullanılabilir bir giriş noktası sunar.
-Tam içerik, projenin kamuya açık materyalleriyle birlikte kademeli olarak geliştirilecektir.
+Bu sayfa Türkçe için açık, istikrarlı ve doğrudan kullanılabilir bir giriş sunar.
+Tam içerik, projenin kamuya açık materyalleriyle birlikte sürekli olarak rafine edilir.

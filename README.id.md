@@ -2,9 +2,9 @@
 
 # ION — Sistem operasi untuk peradaban digital super
 
-Ini adalah pintu masuk berbahasa Indonesia ke halaman utama ION di GitHub.
+Gerbang berbahasa Indonesia menuju halaman utama ION di GitHub.
 
-ION bukan repositori DEX biasa. Ini adalah sistem digital jangka panjang yang dimulai dari infrastruktur pertukaran lalu berkembang ke pembayaran, identitas, pembuktian, reputasi, koordinasi, dan evolusi mandiri.
+ION bukan repositori DEX biasa. Ini adalah sistem digital jangka panjang yang tumbuh dari infrastruktur pertukaran lalu meluas ke pembayaran, identitas, pembuktian, reputasi, koordinasi, dan evolusi mandiri.
 
 ---
 
@@ -19,5 +19,5 @@ ION bukan repositori DEX biasa. Ini adalah sistem digital jangka panjang yang di
 
 ## Status saat ini
 
-Halaman ini menyediakan titik masuk berbahasa Indonesia yang jelas, stabil, dan dapat langsung digunakan.
+Halaman ini menyediakan pintu masuk berbahasa Indonesia yang jelas, stabil, dan siap digunakan.
 Konten lengkapnya akan terus disempurnakan bersama materi publik proyek.

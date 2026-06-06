@@ -2,9 +2,9 @@
 
 # ION — Le système d’exploitation d’une supercivilisation numérique
 
-Voici la page d’entrée en français vers la page principale d’ION sur GitHub.
+La porte d’entrée en français vers la page principale d’ION sur GitHub.
 
-ION n’est pas un dépôt DEX ordinaire. C’est un système numérique de long horizon qui commence par une infrastructure d’échange et s’étend vers les paiements, l’identité, la preuve, la réputation, la coordination et l’auto-évolution.
+ION n’est pas un dépôt DEX ordinaire. C’est un système numérique de long horizon qui prend naissance dans l’infrastructure d’échange et s’étend vers les paiements, l’identité, la preuve, la réputation, la coordination et l’auto-évolution.
 
 ---
 
@@ -19,5 +19,5 @@ ION n’est pas un dépôt DEX ordinaire. C’est un système numérique de long
 
 ## État actuel
 
-Cette page fournit un point d’entrée en français clair, stable et directement utilisable.
-Le contenu complet continuera à être amélioré avec les documents publics du projet.
+Cette page offre une entrée en français claire, stable et directement exploitable.
+Le contenu complet continuera à être affiné avec les documents publics du projet.

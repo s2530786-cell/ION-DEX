@@ -2,9 +2,9 @@
 
 # ION — Das Betriebssystem für eine superdigitale Zivilisation
 
-Dies ist die deutschsprachige Einstiegsseite zur ION-Hauptseite auf GitHub.
+Der deutschsprachige Einstieg zur ION-Hauptseite auf GitHub.
 
-ION ist kein gewöhnliches DEX-Repository. Es ist ein langfristig angelegtes digitales System, das mit Austausch-Infrastruktur beginnt und sich in Zahlungen, Identität, Nachweis, Reputation, Koordination und Selbstentwicklung erweitert.
+ION ist kein gewöhnliches DEX-Repository. Es ist ein langfristig angelegtes digitales System, das aus Austausch-Infrastruktur hervorgeht und sich in Zahlungen, Identität, Nachweis, Reputation, Koordination und Selbstentwicklung erweitert.
 
 ---
 
@@ -20,4 +20,4 @@ ION ist kein gewöhnliches DEX-Repository. Es ist ein langfristig angelegtes dig
 ## Aktueller Stand
 
 Diese Seite bietet einen klaren, stabilen und nutzbaren Einstieg auf Deutsch.
-Der vollständige Inhalt wird zusammen mit den öffentlichen Projektmaterialien weiter ausgebaut.
+Der vollständige Inhalt wird gemeinsam mit den öffentlichen Projektmaterialien weiter verfeinert.
