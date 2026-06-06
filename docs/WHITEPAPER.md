@@ -498,11 +498,11 @@ Blockchain-based payment solutions have their own problems. Most require users t
 
 ### 4.2 The ION DEX Payment Architecture
 
-ION DEX solves these problems through a **frontend/backend split** that separates what users experience from what happens behind the scenes.
+ION DEX solves these problems through a **frontend/backend split** that separates user-facing flows from settlement and routing logic.
 
-**Frontend: What Users See.** Users pay with stablecoins (USDT, USDC) or other familiar tokens. They do not need to hold ION. They do not need to understand blockchain mechanics. They simply select a payment method and confirm the transaction — the same experience they are accustomed to from traditional payment processors.
+**User-Facing Layer.** Users pay with stablecoins (USDT, USDC) or other familiar tokens. They do not need to hold ION. They do not need to understand blockchain mechanics. They select a payment method and confirm the transaction in a manner broadly consistent with conventional payment interfaces.
 
-**Backend: What Happens Behind.** The payment layer automatically converts the user's stablecoin payment into ION through the DEX liquidity pool. Platform fees are deducted and routed: 50% is permanently burned, and the remaining 50% is distributed to the staking pool and treasury. The ION is then routed to the merchant's settlement wallet. The entire process completes in 5–15 seconds.
+**Settlement and Routing Layer.** The payment layer automatically converts the user's stablecoin payment into ION through the DEX liquidity pool. Platform fees are deducted and routed: 50% is permanently burned, and the remaining 50% is distributed to the staking pool and treasury. The ION is then routed to the merchant's settlement wallet. The entire process completes in 5–15 seconds.
 
 ```
 User pays 100 USDT at checkout
@@ -530,7 +530,7 @@ This is not arbitrary. It is designed so that:
 
 The ION blockchain targets **1,000,000+ TPS** and **sub-second settlement**.
 
-Why is this necessary? Because a platform that handles delivery payments, ride-hailing, insurance payouts, and e-commerce checkout simultaneously requires throughput that far exceeds conventional payment or exchange workloads.
+This throughput target is required because a platform that handles delivery payments, ride-hailing, insurance payouts, and e-commerce checkout simultaneously must support transaction volumes well beyond those of conventional payment or exchange workloads.
 
 For comparison:
 - Visa processes ~65,000 TPS at global peak
@@ -544,9 +544,9 @@ Following the design pioneered by ION Connect, the ION DEX payment layer impleme
 
 **Why this matters:**
 
-- **No barrier to entry.** Users don't need to understand gas, manage token balances for fees, or worry about network congestion before making a payment.
-- **Familiar experience.** Users interact with the platform the same way they interact with traditional payment processors — select a payment method, confirm, done.
-- **Mass adoption prerequisite.** If users need to understand blockchain mechanics before using the platform, the platform has failed at its most basic task: making payments frictionless.
+- **Low onboarding friction.** Users do not need to understand gas, manage token balances for fees, or worry about network congestion before making a payment.
+- **Familiar payment flow.** Users interact with the platform in a manner similar to conventional payment processors: select a payment method, confirm, and complete the transaction.
+- **Adoption feasibility.** If users must understand blockchain mechanics before using the platform, payment adoption remains structurally constrained.
 
 **How it works:**
 
@@ -856,7 +856,7 @@ Traditional payment processors extract 2–3% from every transaction. Settlement
 | Feature | Traditional E-Commerce | ION DEX |
 |---------|----------------------|--------|
 | Settlement time | 2–3 days | 5–15 seconds |
-| Transaction fee | 2–3% (payment) + 5–15% (platform) | 0.5% total |
+| Transaction fee | 2–3% (payment) + 5–15% (platform) | 0.5% platform fee |
 | Cross-border friction | Multiple processors, conversion fees | Single ION rail |
 | Web3 customer reach | None | Direct access |
 | Chain complexity | N/A | Handled by infrastructure |
@@ -868,14 +868,14 @@ Traditional payment processors extract 2–3% from every transaction. Settlement
 
 ```
 Customer pays USDT at checkout
-  →ION DEX payment layer receives payment
-  →Backend converts USDT →ION via DEX liquidity pool
-  →0.5% platform fee deducted:
-    →50% (0.25%) burned to 0x000...dEaD (permanent)
-    →50% (0.25%) to staking pool + treasury
-  →Remaining ION routed to merchant wallet
-  →Settlement notification via webhook (5–15 seconds)
-  →Merchant fulfills order
+  → ION DEX payment layer receives payment
+  → Backend converts USDT into ION via the DEX liquidity pool
+  → 0.5% platform fee is deducted
+    → 50% of the platform fee is burned to 0x000...dEaD (permanent)
+    → 50% of the platform fee is routed to the staking pool and treasury
+  → Remaining ION is routed to the merchant wallet
+  → Settlement notification is sent by webhook (5–15 seconds)
+  → Merchant fulfills order
 ```
 
 #### 9.1.4 Merchant Onboarding Guide
@@ -910,19 +910,19 @@ ION DEX offers tiered merchant memberships. **Prices are quoted in USDT for stab
 **How USDT →ION Conversion Works:**
 
 ```
-Merchant pays $199 USDT for Merchant monthly plan
-  →Backend converts USDT →ION via DEX liquidity pool (at market rate)
-  →Converted ION distributed:
-    →50% burned to 0x000...dEaD (permanent)
-    →50% to staking pool + treasury
-  →Merchant sees only $30 USDT charge (simple, familiar pricing)
-  →ION ecosystem gains: buy pressure on ION + permanent supply reduction
+Merchant pays $199 USDT for a monthly Merchant plan
+  → Backend converts USDT into ION via the DEX liquidity pool at market rate
+  → Converted ION is distributed:
+    → 50% burned to 0x000...dEaD (permanent)
+    → 50% routed to the staking pool and treasury
+  → Merchant sees only the USDT-denominated charge
+  → ION ecosystem effect: buy pressure on ION + permanent supply reduction
 ```
 
 **Why USDT Pricing Instead of ION Pricing?**
 
 - **Merchant familiarity.** Merchants understand USDT pricing. ION pricing introduces volatility risk that discourages adoption.
-- **Stable budgeting.** Merchants can budget $30/month regardless of ION price fluctuations.
+- **Stable budgeting.** Merchants can budget in a stable unit of account regardless of ION price fluctuations.
 - **Same flywheel effect.** The backend converts to ION instantly, so the burn and staking effects are identical.
 - **Rising ION demand.** As more merchants subscribe, the platform buys more ION on the open market, creating consistent buy pressure that supports ION price.
 
@@ -986,7 +986,7 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 | Brand | $799/month | Shopify Plus | $2,000/month | $1,200 cheaper + multi-store |
 | Franchise | $2,499/month | Custom enterprise | $5,000+/month | $2,500+ cheaper + franchise tools |
 
-**Why We''re Cheaper:** Traditional platforms charge 2-3% payment processing + platform fees. We charge 0.5% total. The savings allow us to offer lower subscription prices while maintaining profitability.
+**Comparative Cost Position:** Traditional platforms typically charge 2-3% in payment processing plus additional platform fees. ION DEX applies a 0.5% platform fee in this model, which supports lower subscription pricing while preserving platform economics.
 
 **Food Delivery & Ride-Hailing — Market Benchmark:**
 
@@ -997,7 +997,7 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 | Optional Premium membership | $99/month | Uber Pass | $24.99/month |
 | Driver stake (for benefits) | $50 ION | Uber driver requirements | Vehicle + insurance |
 
-**Why We''re 50x Cheaper:** Traditional platforms extract 25-40% to cover their centralized infrastructure + marketing + profit. We run on ION blockchain (near-zero marginal cost) + users bring their own marketing (Web3 communities).
+**Comparative Cost Position:** Traditional delivery and ride-hailing platforms often extract 15-30% per order or ride to support centralized operations, marketing, and margin. In this model, ION DEX applies a 0.5% platform fee and separates optional membership benefits from core settlement pricing.
 
 **Insurance — Market Benchmark:**
 
@@ -1007,7 +1007,7 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 | Ride insurance (per ride) | Ride insurance (per ride) | $0.30-0.50 | Travel accident insurance | $2-10.50-1.00 | Travel accident insurance | $5-20 |
 | Cargo insurance (per shipment) | $5-50 | Freight insurance | $50-500 |
 
-**Why We''re Cheaper:** Parametric insurance + oracle automation = no claims adjusters needed = 80% cost reduction.
+**Comparative Cost Position:** Parametric policy design and oracle-driven automation reduce administrative overhead substantially by removing manual claims handling from standard workflows.
 
 **RWA (Real-World Assets) — Market Benchmark:**
 
@@ -1017,7 +1017,7 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 | Annual management fee | 0.5-1.5% | REITs | 1-3% |
 | Dividend distribution | 0.1% | Traditional | Manual, no fee transparency |
 
-**Why We''re Cheaper:** Smart contract automation + blockchain settlement = no intermediaries = 90% cost reduction.
+**Comparative Cost Position:** Smart-contract automation and blockchain settlement reduce intermediary overhead materially relative to conventional escrow and settlement stacks.
 
 
 #### 9.1.8 E-Commerce Membership — China Market Aligned
@@ -1248,7 +1248,7 @@ Food delivery and ride-hailing services are **per-order priced** — no membersh
 - **Usage frequency varies wildly.** Some users order food once a month, others twice daily. Mandatory membership penalizes low-frequency users.
 - **Per-order pricing is fair.** Every user pays proportional to their usage.
 - **Membership is an upgrade, not a barrier.** Users can start free, experience the service, then upgrade when they see value.
-- **The flywheel still works.** Per-order fees (0.5% → 0.1%) are all converted to ION, with 50% burned.
+- **The burn and staking mechanism remains active across fee tiers.** Per-order fees in the 0.5% to 0.1% range are converted into ION, with 50% burned.
 
 **Driver/Rider Pricing Model:**
 
@@ -2023,8 +2023,8 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 
 | Feature | Traditional AI Trading | ION DEX AI Platform |
 |---------|----------------------|---------------------|
-| Subscription cost | $500–5,000/month | 10–100 ION/month (affordable) |
-| Transparency | Black box | All trades verifiable on Explorer |
+| Subscription cost | $500–5,000/month | 10–100 ION/month (retail-accessible) |
+| Transparency | Opaque internal execution | All trades verifiable on Explorer |
 | Custody | Third-party custody | Non-custodial (user's wallet) |
 | Risk limits | User must set manually | Hard-coded limits enforced by platform |
 | Integration | Standalone | Integrated with DEX, payments, identity |
@@ -2232,7 +2232,7 @@ Staking locks ION long-term, reducing circulating supply and aligning holders wi
 
 **Target:** 30–50% of circulating supply locked in staking.
 
-**Why This Target?** If 30–50% of supply is locked, then circulating supply is significantly reduced. Price pressure from the burn flywheel is amplified by supply lock from the staking flywheel.
+**Why This Target?** If 30–50% of circulating supply is locked, circulating supply is reduced materially. Price pressure from the burn flywheel is amplified by supply lock from the staking flywheel.
 
 **Staking Rewards Source:** 20% of platform revenue. Rewards are paid in ION, from actual platform activity — not from token inflation.
 
@@ -2267,7 +2267,7 @@ Users trade / pay / use services
   →Self-reinforcing cycle
 ```
 
-**The Key Insight:** The flywheel does not depend on speculation. It depends on **real usage**. The more the platform is used, the stronger the flywheel becomes. This is the opposite of most crypto projects — where price depends on buying pressure from speculators.
+**The Key Insight:** The flywheel does not depend on speculation. It depends on **real usage**. As platform activity expands, the burn and staking mechanisms scale with it. This differs from token models in which price support depends primarily on speculative demand.
 
 ### 10.7 Minimum Income Guarantee for Master
 
@@ -2281,9 +2281,9 @@ If platform revenue on a given day is insufficient to cover Master's operational
 
 Every burn event, every staking position, and every revenue allocation is recorded on-chain and verifiable on Explorer.
 
-- **Hourly burn announcements:** The platform posts hourly updates showing total ION burned, cumulative burn, and burn address balance.
+- **Hourly burn reporting:** The platform publishes hourly updates showing total ION burned, cumulative burn, and burn address balance.
 - **Staking positions verifiable:** Every staking position — its lock-up duration, reward accrual, and withdrawal history — is on Explorer.
-- **Revenue allocation visible:** The treasury contract shows every payment to Master, staking pool, and burn address.
+- **Revenue allocation visibility:** The treasury contract records every payment to Master, the staking pool, and the burn address.
 
 This transparency allows users and partners to verify that the flywheel is operating as described, rather than relying solely on platform statements.
 
@@ -2601,7 +2601,7 @@ The following information is not disclosed in this whitepaper, and is maintained
 - **Proprietary AI model specifics** — Sentinel detection models and arbitration AI architecture are trade secrets.
 - **Sensitive execution logic** — specific implementation details that could be exploited if publicly known.
 
-This separation allows **transparent public development** while protecting competitive advantage.
+This separation allows public architectural disclosure while preserving implementation-sensitive competitive advantages.
 
 ### 14.3 What Never Goes Public
 
@@ -2843,7 +2843,7 @@ The answer is built into the architecture:
 - **Self-evolution** that ensures the platform improves over time.
 - **Six business modules** that reinforce each other through shared infrastructure.
 
-That is the long-horizon objective: not a token narrative and not a cycle-dependent product, but **infrastructure designed to remain relevant for fifty years**.
+That is the long-horizon objective: infrastructure intended to remain relevant across multiple market cycles and to support long-duration ecosystem expansion.
 
 ---
 
