@@ -10,15 +10,16 @@
 
 ## Abstract
 
-Most decentralized exchanges exist to swap tokens. ION DEX exists to build infrastructure.
+Most decentralized exchanges are designed primarily for token exchange. ION DEX is designed as infrastructure.
 
-This whitepaper presents the design of ION DEX — a 28-chain decentralized exchange that serves as the first visible business engine of a broader digital civilization stack. The DEX is not the final shape of the system. It is the layer that creates real liquidity, real value flow, real settlement logic, and a live trust foundation strong enough to support expansion into payments, identity, proof, arbitration, coordination, and long-horizon ecosystem civilization.
+This whitepaper presents the design of ION DEX — a 28-chain decentralized exchange that serves as the first visible business engine of a broader digital civilization stack. The DEX is not the final shape of the system. It is the layer that creates real liquidity, real value flow, real settlement logic, and a live trust foundation strong enough to support expansion into payments, identity, proof, arbitration, coordination, and long-horizon ecosystem development.
 
-The platform is designed around ten strategic layers — Value, Payment, Identity, Proof, Arbitration, Evolution, Coordination, Governance, Culture, and Expansion — each reinforcing the others, each built to survive multiple market cycles, each designed to be improved continuously rather than discarded.
+The platform is designed around ten strategic layers — Value, Payment, Identity, Proof, Arbitration, Evolution, Coordination, Governance, Culture, and Expansion — each reinforcing the others, each built to survive multiple market cycles, and each designed to be improved continuously rather than discarded.
 
-At the economic core, every transaction feeds a dual flywheel: 50% of all platform fees are permanently burned, reducing circulating supply structurally, while staking locks 30–50% of supply long-term. A dynamic burn mechanism adapts to market conditions — burning more efficiently during bear markets when ION is cheap, and shifting toward staking during bull markets to maintain price support. Master receives 25% of all revenue, paid first, as a permanent and non-negotiable allocation that ensures the builder profits only when the platform profits.
+At the economic core, every transaction feeds a dual flywheel: 50% of applicable platform fees are permanently burned, reducing circulating supply structurally, while staking targets 30–50% of circulating supply for long-term lock-up. A dynamic burn mechanism adapts to market conditions by increasing burn efficiency during bear markets, when ION is cheaper, and shifting relatively more weight toward staking during bull markets to maintain long-term alignment. Master receives 25% of platform revenue, paid first, as a permanent and non-negotiable allocation.
 
-This is not a token narrative. This is infrastructure designed to remain relevant for fifty years.
+ION DEX is presented here as long-horizon infrastructure intended to remain relevant across multiple market cycles.
+
 
 ---
 
@@ -45,6 +46,24 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 19. [Risk Disclosure](#risk-disclosure)
 20. [Glossary](#glossary)
 21. [References](#references)
+
+### 1. [The Civilization Question](#1-the-civilization-question)
+- [1.1 Why Most Crypto Projects Fail at Scale](#11-why-most-crypto-projects-fail-at-scale)
+- [1.2 The Question ION DEX Asks](#12-the-question-ion-dex-asks)
+- [1.3 Why the DEX Comes First](#13-why-the-dex-comes-first)
+
+### 2. [Strategic Architecture: The Ten Layers](#2-strategic-architecture-the-ten-layers)
+- [2.1 Value Layer](#21-value-layer)
+- [2.2 Payment Layer](#22-payment-layer)
+- [2.3 Identity Layer](#23-identity-layer)
+- [2.4 Proof Layer](#24-proof-layer)
+- [2.5 Arbitration Layer](#25-arbitration-layer)
+- [2.6 Evolution Layer](#26-evolution-layer)
+- [2.7 Coordination Layer](#27-coordination-layer)
+- [2.8 Governance Layer](#28-governance-layer)
+- [2.9 Culture Layer](#29-culture-layer)
+- [2.10 Expansion Layer](#210-expansion-layer)
+- [2.11 Layer Dependencies](#211-layer-dependencies)
 
 ### 3. [The DEX Layer: First Revenue Engine](#3-the-dex-layer-first-revenue-engine)
 - [3.1 What the DEX Is Built to Do](#31-what-the-dex-is-built-to-do)
@@ -133,6 +152,26 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 - [9.8 Shared Substrate: Why This Is Not Just Isolated Apps](#98-shared-substrate-why-this-is-not-just-isolated-apps)
   - [9.8.1 Example: Cross-Module Coordination](#981-example-cross-module-coordination)
 
+### 13. [Long-Horizon Roadmap: P0–P10](#13-long-horizon-roadmap-p0p10)
+- [13.1 Why a 10-Phase Roadmap](#131-why-a-10-phase-roadmap)
+- [13.2 Phase Details](#132-phase-details)
+
+### 14. [Boundaries: Public and Private](#14-boundaries-public-and-private)
+- [14.1 What This Whitepaper Discloses](#141-what-this-whitepaper-discloses)
+- [14.2 What Remains Private](#142-what-remains-private)
+- [14.3 What Never Goes Public](#143-what-never-goes-public)
+
+### 15. [Integration with Ice Open Network](#15-integration-with-ice-open-network)
+- [15.1 Two Sovereign Nodes](#151-two-sovereign-nodes)
+- [15.2 Official Ecosystem Integration](#152-official-ecosystem-integration)
+- [15.3 Why ION Blockchain Is the Optimal Settlement Layer](#153-why-ion-blockchain-is-the-optimal-settlement-layer)
+
+### 16. [Team & Contributors](#16-team--contributors)
+- [16.1 Core Team](#161-core-team)
+- [16.2 AI Specialist Network](#162-ai-specialist-network)
+- [16.3 Cursor Agent](#163-cursor-agent)
+- [16.4 Community Contributors](#164-community-contributors)
+
 ### 17. [Developer & Ecosystem Integration](#17-developer--ecosystem-integration)
 - [17.1 Authentication & Access Model](#171-authentication--access-model)
 - [17.2 REST API, WebSocket & Webhooks](#172-rest-api-websocket--webhooks)
@@ -174,7 +213,7 @@ This is not a token narrative. This is infrastructure designed to remain relevan
 
 ## 1. The Civilization Question
 
-### Why Most Crypto Projects Fail at Scale
+### 1.1 Why Most Crypto Projects Fail at Scale
 
 Most blockchain projects begin with a question: "How do we capture value in the next cycle?" The answer usually involves a token, a governance mechanism, and a marketing narrative. Within one or two market cycles, the token loses narrative relevance, the governance mechanism captures no real decision-making power, and the marketing narrative fades into noise.
 
@@ -186,7 +225,7 @@ The pattern is consistent:
 
 Each of these failures shares a common root: the project was designed to solve a single problem in a single market condition, rather than to serve as durable infrastructure that can adapt across multiple cycles.
 
-### The Question ION DEX Asks
+### 1.2 The Question ION DEX Asks
 
 ION DEX asks a different question:
 
@@ -194,7 +233,7 @@ ION DEX asks a different question:
 
 The answer is not a token. It is not a governance mechanism. It is not a marketing narrative.
 
-The answer is a **stack of layers**, each designed to survive multiple cycles, each designed to reinforce the others, each designed to be built once, improved continuously, and never discarded:
+The answer is a **layered infrastructure stack** designed to survive multiple cycles, reinforce itself across modules, and be improved continuously without being discarded:
 
 1. **Value Layer** — Exchange, settlement, treasury, burn, staking
 2. **Payment Layer** — Frictionless, high-throughput, fine-grained
@@ -207,7 +246,7 @@ The answer is a **stack of layers**, each designed to survive multiple cycles, e
 9. **Culture Layer** — Ethos, honor, builder identity
 10. **Expansion Layer** — Global seamless access, billion-scale design
 
-### Why the DEX Comes First
+### 1.3 Why the DEX Comes First
 
 If the DEX layer is weak, the wider platform story collapses.
 
@@ -261,7 +300,7 @@ The Culture Layer establishes the ethos of the ecosystem: long-term contribution
 
 The Expansion Layer ensures that the platform can serve billions of users across diverse regions, languages, and regulatory environments. It includes global seamless access, billion-scale infrastructure design, and local adaptation logic that allows the platform to comply with regional requirements while preserving user sovereignty.
 
-### Layer Dependencies
+### 2.11 Layer Dependencies
 
 Each layer depends on the previous. The DEX (Value Layer) is the foundation. Payment builds on Value. Identity builds on Payment. Proof builds on Identity. And so on, up to Expansion. This dependency chain ensures that each layer is grounded in real, functioning infrastructure — not theoretical capability.
 
@@ -354,7 +393,7 @@ User initiates cross-chain transfer (ION →BSC)
 
 ### 3.5 AI Trading Risk Limits
 
-ION DEX integrates with AI-driven trading strategies (via the TradingAgents framework) that can execute trades automatically. To prevent AI "hallucinations" or runaway strategies from causing catastrophic losses, the platform enforces **hard-coded risk limits** between the AI execution layer and on-chain settlement.
+ION DEX integrates with AI-driven trading strategies (via the TradingAgents framework) that can execute trades automatically. To prevent AI model errors or runaway strategies from causing material losses, the platform enforces **hard-coded risk limits** between the AI execution layer and on-chain settlement.
 
 **Risk Limit Architecture:**
 
@@ -381,7 +420,7 @@ AI strategy proposes trade
 
 **Why Hard-Coded Limits?**
 
-- **AI hallucinations can propose absurd trades.** Without limits, an AI error could propose a 100x leveraged position that bankrupts the user.
+- **AI model errors can generate invalid trades.** Without hard limits, an automated strategy could propose an overleveraged position or an oversized execution that materially harms the user.
 - **Strategy runaway.** A bug in strategy logic could execute hundreds of trades in seconds, draining the account.
 - **Risk limits are enforced at the execution layer, not the strategy layer.** The AI cannot override them.
 
@@ -491,13 +530,30 @@ This is not arbitrary. It is designed so that:
 
 The ION blockchain targets **1,000,000+ TPS** and **sub-second settlement**.
 
-Why is this necessary? Because a platform that handles delivery payments, ride-hailing, insurance payouts, and e-commerce checkout simultaneously needs throughput that makes trading look like a warm-up.
+Why is this necessary? Because a platform that handles delivery payments, ride-hailing, insurance payouts, and e-commerce checkout simultaneously requires throughput that far exceeds conventional payment or exchange workloads.
 
 For comparison:
 - Visa processes ~65,000 TPS at global peak
 - ION targets **15x that capacity**
 
 The high-throughput foundation is a prerequisite for frictionless, high-frequency, civilization-scale payments. Without it, the payment layer becomes a bottleneck that limits every module above it.
+
+### 4.5 Gasless User Experience
+
+Following the design pioneered by ION Connect, the ION DEX payment layer implements a **gasless model** for end-user interactions. Users do not need to hold ION to pay gas fees. The platform absorbs gas costs on the backend, routing them through the fee distribution system.
+
+**Why this matters:**
+
+- **No barrier to entry.** Users don't need to understand gas, manage token balances for fees, or worry about network congestion before making a payment.
+- **Familiar experience.** Users interact with the platform the same way they interact with traditional payment processors — select a payment method, confirm, done.
+- **Mass adoption prerequisite.** If users need to understand blockchain mechanics before using the platform, the platform has failed at its most basic task: making payments frictionless.
+
+**How it works:**
+
+1. User initiates payment (USDT, USDC, ION, or other token).
+2. Backend routes the transaction and pays gas on user's behalf.
+3. Gas costs are absorbed into the platform fee structure.
+4. User sees only the final amount — no gas surprises.
 
 ### 4.6 Account Abstraction for High-Frequency Use Cases
 
@@ -530,25 +586,6 @@ High-frequency payment scenarios — delivery tips, ride payments, subscription 
 
 **ION Chain Support:** ION's architecture is compatible with ERC-4337-style Account Abstraction, enabling these auto-pay flows natively.
 
-The high-throughput foundation is a prerequisite for frictionless, high-frequency, civilization-scale payments. Without it, the payment layer becomes a bottleneck that limits every module above it.
-
-### 4.5 Gasless User Experience
-
-Following the design pioneered by ION Connect, the ION DEX payment layer implements a **gasless model** for end-user interactions. Users do not need to hold ION to pay gas fees. The platform absorbs gas costs on the backend, routing them through the fee distribution system.
-
-**Why this matters:**
-
-- **No barrier to entry.** Users don't need to understand gas, manage token balances for fees, or worry about network congestion before making a payment.
-- **Familiar experience.** Users interact with the platform the same way they interact with traditional payment processors — select a payment method, confirm, done.
-- **Mass adoption prerequisite.** If users need to understand blockchain mechanics before using the platform, the platform has failed at its most basic task: making payments frictionless.
-
-**How it works:**
-
-1. User initiates payment (USDT, USDC, ION, or other token).
-2. Backend routes the transaction and pays gas on user's behalf.
-3. Gas costs are absorbed into the platform fee structure.
-4. User sees only the final amount — no gas surprises.
-
 ---
 
 ## 5. Identity & Civil Standing: One ID Per Person
@@ -579,7 +616,7 @@ Critical actions are durably anchored on-chain and cannot be silently erased:
 - Bad transactions — cheating customers, defaulting on obligations, submitting fraudulent claims — are recorded permanently.
 - The record remains; the current standing may change.
 
-This is not surveillance. It is accountability. The distinction matters: surveillance collects data about what people do; accountability records the consequences of their actions. ION Identity records consequences, not behaviors.
+This is not surveillance. It is accountability. ION Identity records the consequences of actions that affect counterparties, contractual obligations, and ecosystem trust; it does not attempt to track irrelevant personal behavior.
 
 ### 5.4 Reputation as Civilization Record
 
@@ -2132,7 +2169,7 @@ This is what makes the wider ecosystem **stronger than a set of isolated apps**.
 
 A token without economic logic is a token without staying power. Most crypto projects rely on speculation to drive price — buy because others will buy, sell because others will sell. This works during bull markets, but collapses when conditions change.
 
-ION DEX is designed differently. Every transaction feeds a **dual flywheel** that structurally reduces supply and locks value long-term. The mechanism does not depend on speculation. It depends on real usage — trading, payments, commerce, services. The more the platform is used, the stronger the flywheel becomes.
+ION DEX is designed differently. Every transaction feeds a **dual flywheel** that structurally reduces supply and locks value over the long term. The mechanism does not rely on speculation. It relies on real usage — trading, payments, commerce, and services. As platform usage grows, the flywheel strengthens.
 
 ### 10.2 Flywheel 1: Fee Burn — Structural Supply Reduction
 
@@ -2176,7 +2213,7 @@ The burn mechanism is **dynamic**, adjusting to market conditions to maximize lo
 1. During bear markets: The platform burns the maximum percentage of fees. ION is cheap, so burning is efficient. Circulating supply shrinks rapidly.
 2. During bull markets: The platform reduces the burn percentage and increases staking rewards. ION is expensive, so burning is less efficient. Staking locks supply and maintains price support.
 
-This adaptation ensures that the flywheel is **always working** — whether ION is cheap or expensive, the platform optimizes for long-term value.
+This adaptation ensures that the flywheel remains effective across market conditions. Whether ION is relatively inexpensive or relatively expensive, the platform adjusts the balance between burn and staking to optimize for long-term value.
 
 ### 10.4 Flywheel 2: Staking — Supply Lock and Alignment
 
@@ -2210,9 +2247,9 @@ Staking locks ION long-term, reducing circulating supply and aligning holders wi
 | Staking Rewards | Dynamic | Bear: high / Bull: high |
 | Treasury | Dynamic | Remaining |
 
-**Why Master's 25%?** The person funding all operations — development, infrastructure, marketing, security — gets paid first from every dollar of revenue. This is non-negotiable and permanent.
+**Why Master's 25%?** The party funding operations — including development, infrastructure, marketing, and security — is compensated first from platform revenue. This allocation is permanent and non-negotiable.
 
-**Why Paid First?** If Master's allocation comes after burn and staking, then during periods of high burn, Master's actual revenue could shrink to near-zero. Paying Master first ensures that the builder profits when the platform profits — always.
+**Why Paid First?** If Master's allocation were subordinate to burn and staking, periods of elevated burn could reduce operational compensation disproportionately. Paying Master first preserves alignment between platform growth and builder compensation.
 
 **This Allocation Never Changes.** The 25% figure is permanent. It will not be reduced, renegotiated, or diluted. Master's incentive is permanently aligned with platform success.
 
@@ -2236,7 +2273,7 @@ Users trade / pay / use services
 
 If platform revenue on a given day is insufficient to cover Master's operational costs, the treasury subsidizes Master's daily income to ensure it is at least 1.5x the daily operational cost.
 
-**Why?** Master funds all operations. If revenue is low during early stages or bear markets, Master should not be forced to operate at a loss. The subsidy ensures that operations can continue through difficult periods.
+**Why?** Master funds operations. During early stages or severe bear markets, temporary treasury support may be required to maintain continuity of execution and infrastructure coverage.
 
 **When Does This Apply?** Only during early stages (P0–P5) or severe bear markets. Once the platform reaches mature revenue levels, the subsidy is irrelevant — Master's 25% far exceeds operational costs.
 
@@ -2248,7 +2285,7 @@ Every burn event, every staking position, and every revenue allocation is record
 - **Staking positions verifiable:** Every staking position — its lock-up duration, reward accrual, and withdrawal history — is on Explorer.
 - **Revenue allocation visible:** The treasury contract shows every payment to Master, staking pool, and burn address.
 
-This transparency ensures that users can verify the flywheel is working — not just trust claims.
+This transparency allows users and partners to verify that the flywheel is operating as described, rather than relying solely on platform statements.
 
 ### 10.9 ION Tokenomics
 
@@ -2515,13 +2552,13 @@ Security does not end at deployment. The platform runs continuous monitoring:
 
 ## 13. Long-Horizon Roadmap: P0–P10
 
-### Why a 10-Phase Roadmap
+### 13.1 Why a 10-Phase Roadmap
 
 Most crypto projects plan for the next cycle. ION DEX plans for the next decade.
 
 The P0–P10 roadmap is designed so that each phase builds on the previous — creating a dependency chain that ensures every new capability is grounded in functioning infrastructure. Skipping phases is not possible: you cannot build payments without settlement, identity without payments, or governance without identity.
 
-### Phase Details
+### 13.2 Phase Details
 
 | Phase | Focus | What Gets Built | Dependencies |
 |-------|-------|-----------------|-------------|
@@ -2543,7 +2580,7 @@ The P0–P10 roadmap is designed so that each phase builds on the previous — c
 
 ## 14. Boundaries: Public and Private
 
-### What This Whitepaper Discloses
+### 14.1 What This Whitepaper Discloses
 
 This whitepaper is a public document. It discloses:
 
@@ -2554,7 +2591,7 @@ This whitepaper is a public document. It discloses:
 - **Identity and reputation principles** — one ID per person, immutable history, adaptive standing.
 - **Governance philosophy** — single-operator governance during foundation-building, community governance at maturity.
 
-### What Remains Private
+### 14.2 What Remains Private
 
 The following information is not disclosed in this whitepaper, and is maintained in private repositories:
 
@@ -2566,7 +2603,7 @@ The following information is not disclosed in this whitepaper, and is maintained
 
 This separation allows **transparent public development** while protecting competitive advantage.
 
-### What Never Goes Public
+### 14.3 What Never Goes Public
 
 The following content is permanently private and must never be pushed to any public repository:
 
@@ -2579,7 +2616,7 @@ The following content is permanently private and must never be pushed to any pub
 
 ## 15. Integration with Ice Open Network
 
-### Two Sovereign Nodes
+### 15.1 Two Sovereign Nodes
 
 ION DEX integrates with the Ice Open Network through two sovereign P0 nodes:
 
@@ -2588,7 +2625,7 @@ ION DEX integrates with the Ice Open Network through two sovereign P0 nodes:
 
 **The principle: the official website provides narrative, the Explorer provides evidence.** Every claim in this whitepaper should be verifiable through the Explorer.
 
-### Official Ecosystem Integration
+### 15.2 Official Ecosystem Integration
 
 ION DEX is designed to systematically integrate with the Ice Open Network's official ecosystem — not just as an external compatible project, but as a participant in the ION official ecosystem core layer. This integration includes:
 
@@ -2598,7 +2635,7 @@ ION DEX is designed to systematically integrate with the Ice Open Network's offi
 - **ION Token** — The native settlement unit for all platform transactions.
 - **ION Blockchain** — The high-throughput settlement layer (1M+ TPS target).
 
-### Why ION Blockchain Is the Optimal Settlement Layer
+### 15.3 Why ION Blockchain Is the Optimal Settlement Layer
 
 ION DEX is built on the ION blockchain not because of convenience, but because ION provides architectural advantages that no other chain can match for civilization-scale applications:
 
@@ -2626,6 +2663,55 @@ For payment and commerce applications, settlement speed is not optional — it i
 ---
 
 ## 16. Team & Contributors
+
+### 16.1 Core Team
+
+**Master** — Founder & Visionary
+
+- Original conception of the ION DEX civilization architecture
+- Multi-year strategic planning across all six business modules
+- Funding all operations, development, infrastructure, and security
+- Permanent 25% revenue allocation (non-negotiable)
+
+**Wangcai (OpenClaw AI Agent)** — Principal Operator & Coordinator
+
+- Day-to-day project management, supervision, and execution
+- Coordination of AI specialist agents (281 experts across security, trading, optimization)
+- Code review, quality assurance, and architectural enforcement
+- Reporting and accountability to Master
+
+### 16.2 AI Specialist Network
+
+The platform leverages a network of AI specialist agents organized by domain:
+
+| Domain | Expertise | Role |
+|--------|-----------|------|
+| Security | Smart contract audit, attack simulation, vulnerability detection | 1,000-round testing, continuous monitoring |
+| Trading | Strategy design, risk management, grid optimization | TradingAgents framework, risk limit enforcement |
+| Infrastructure | System architecture, performance optimization, deployment | Pipeline automation, health monitoring |
+| Data | Market analysis, price feeds, analytics | Real-time data pipeline, oracle integration |
+| Frontend | UI/UX design, responsive layouts, accessibility | User interface development and testing |
+
+### 16.3 Cursor Agent
+
+**Dedicated code implementation agent.** All code writing is delegated to Cursor, which executes implementation tasks under the supervision of Wangcai. This separation ensures:
+
+- **Code quality.** Cursor focuses exclusively on writing code, not on design or strategy.
+- **Supervision.** Wangcai reviews all output before commit, preventing mock code and placeholder logic.
+- **Accountability.** The chain of command is clear: Master → Wangcai → 281 AI experts → Cursor.
+
+### 16.4 Community Contributors
+
+At Phase P10 (Mature Civilization), the platform will open to community contributors through:
+
+- Open-source contributions to the public repository
+- Bug bounty programs for security researchers
+- Governance participation for token holders
+- Specialist agent applications for qualified participants
+
+---
+
+## 17. Developer & Ecosystem Integration
 
 The whitepaper should not force users, merchants, logistics operators, insurers, or developers to dig through hundreds of lines to discover how integration works. This section consolidates the platform's integration surface into one public developer-facing entry point.
 
@@ -2691,7 +2777,7 @@ Partners should be able to map user-facing states back to proof artifacts such a
 - domain transfers,
 - RWA dividend distributions.
 
-This is what allows the platform to serve merchants, logistics companies, insurers, and external developers without asking them to trust a black box.
+This architecture allows the platform to serve merchants, logistics companies, insurers, and external developers without requiring trust in an opaque internal system.
 
 ### 17.5 White-Label & Enterprise Integration
 
@@ -2715,54 +2801,7 @@ To remove friction, each public ecosystem path should be reachable directly from
 - **Domains & Identity** → registration flow, marketplace flow, identity linkage.
 - **RWA** → issuance flow, token sale, dividend distribution, proof and compliance surface.
 
-The rule is simple: if a partner category matters strategically, that category should have a direct, clickable path in the whitepaper.
-
-## 17. Developer & Ecosystem Integration
-
-### Core Team
-
-**Master** — Founder & Visionary
-
-- Original conception of the ION DEX civilization architecture
-- Multi-year strategic planning across all six business modules
-- Funding all operations, development, infrastructure, and security
-- Permanent 25% revenue allocation (non-negotiable)
-
-**鏃鸿储 (OpenClaw AI Agent)** — Principal Operator & Coordinator
-
-- Day-to-day project management, supervision, and execution
-- Coordination of AI specialist agents (281 experts across security, trading, optimization)
-- Code review, quality assurance, and architectural enforcement
-- Reporting and accountability to Master
-
-### AI Specialist Network
-
-The platform leverages a network of AI specialist agents organized by domain:
-
-| Domain | Expertise | Role |
-|--------|-----------|------|
-| Security | Smart contract audit, attack simulation, vulnerability detection | 1,000-round testing, continuous monitoring |
-| Trading | Strategy design, risk management, grid optimization | TradingAgents framework, risk limit enforcement |
-| Infrastructure | System architecture, performance optimization, deployment | Pipeline automation, health monitoring |
-| Data | Market analysis, price feeds, analytics | Real-time data pipeline, oracle integration |
-| Frontend | UI/UX design, responsive layouts, accessibility | User interface development and testing |
-
-### Cursor Agent
-
-**Dedicated code implementation agent.** All code writing is delegated to Cursor, which executes implementation tasks under the supervision of 鏃鸿储. This separation ensures:
-
-- **Code quality.** Cursor focuses exclusively on writing code, not on design or strategy.
-- **Supervision.** 鏃鸿储 reviews all output before commit, preventing mock code and placeholder logic.
-- **Accountability.** The chain of command is clear: Master →鏃鸿储 →281 AI experts →Cursor.
-
-### Community Contributors
-
-At Phase P10 (Mature Civilization), the platform will open to community contributors through:
-
-- Open-source contributions to the public repository
-- Bug bounty programs for security researchers
-- Governance participation for token holders
-- Specialist agent applications for qualified participants
+The governing principle is straightforward: if a partner category is strategically important, it should have a direct and clickable path in the whitepaper.
 
 ---
 
@@ -2804,7 +2843,7 @@ The answer is built into the architecture:
 - **Self-evolution** that ensures the platform improves over time.
 - **Six business modules** that reinforce each other through shared infrastructure.
 
-That is what we are building toward. Not a token narrative. Not a cycle play. **Infrastructure designed to remain relevant for fifty years.**
+That is the long-horizon objective: not a token narrative and not a cycle-dependent product, but **infrastructure designed to remain relevant for fifty years**.
 
 ---
 

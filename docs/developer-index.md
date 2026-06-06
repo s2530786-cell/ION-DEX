@@ -60,6 +60,31 @@ See [Technical Architecture](./03-technical-architecture.md) for full details.
 
 ---
 
+## Economic Guardrails
+
+Developers integrating with ION DEX need to understand the platform's non-negotiable economic rules:
+
+- **DEX swap fee:** `0.3%`
+- **Pool creation fee:** `0.1%`
+- **Platform transaction fee:** `0.5%` for commerce, delivery, and similar settlement flows
+- **Burn rule:** `50%` of applicable platform fees are permanently burned to the public burn address
+- **Master allocation:** `25%` of platform revenue is reserved as a permanent first-priority builder allocation
+
+These values are not UI copy. They are platform-level constraints that affect settlement logic, fee routing, treasury accounting, analytics, and SDK/API expectations.
+
+---
+
+## Integration Constraints
+
+When building on ION DEX:
+
+- **Do not hardcode alternative fee assumptions.** Integrations should respect the canonical `0.3%`, `0.1%`, and `0.5%` platform rules.
+- **Burn-aware accounting is required.** Fee reporting, treasury views, and settlement callbacks should treat the burn path as first-class logic.
+- **Revenue logic must stay privacy-safe.** Public docs and developer integrations may describe fee routing and permanent allocation rules, but must not expose private beneficiary identity details, wallet ownership, or sensitive payout metadata.
+- **Explorer-verifiable outcomes matter.** If an integration reports settlement, burn, or payout state, it should map back to auditable system records or chain-visible proof.
+
+---
+
 ## ION Chain Integration
 
 ### RPC Endpoints
