@@ -553,7 +553,7 @@ Following the design pioneered by ION Connect, the ION DEX payment layer impleme
 1. User initiates payment (USDT, USDC, ION, or other token).
 2. Backend routes the transaction and pays gas on user's behalf.
 3. Gas costs are absorbed into the platform fee structure.
-4. User sees only the final amount — no gas surprises.
+4. User sees only the final amount, without a separate gas charge.
 
 ### 4.6 Account Abstraction for High-Frequency Use Cases
 
@@ -931,7 +931,7 @@ Merchant pays $199 USDT for a monthly Merchant plan
 
 All ION DEX ecosystem modules follow a unified pricing structure:
 
-| Tier | Price Range | Who It''s For | What They Get |
+| Tier | Price Range | Who It's For | What They Get |
 |------|-------------|---------------|---------------|
 | **Free** | $0 | Explorers, first-time users | Limited access, basic features, advertising-supported |
 | **Entry** | $50/month | Individual users, small operators | Full basic features, standard support |
@@ -1001,17 +1001,17 @@ All ION DEX pricing is benchmarked against existing market leaders. We do not ar
 
 **Insurance — Market Benchmark:**
 
-| Our Product | Our Price | Traditional Insurance | Their Price |
+| Product | ION DEX Price | Traditional Insurance Product | Traditional Price |
 |-------------|----------|----------------------|-------------|
 | Delivery guarantee (per order) | $1-3 | Package insurance | $2-5 |
-| Ride insurance (per ride) | Ride insurance (per ride) | $0.30-0.50 | Travel accident insurance | $2-10.50-1.00 | Travel accident insurance | $5-20 |
+| Ride insurance (per ride) | $0.30-1.00 | Travel accident insurance | $5-20 |
 | Cargo insurance (per shipment) | $5-50 | Freight insurance | $50-500 |
 
 **Comparative Cost Position:** Parametric policy design and oracle-driven automation reduce administrative overhead substantially by removing manual claims handling from standard workflows.
 
 **RWA (Real-World Assets) — Market Benchmark:**
 
-| Our Fee | Our Price | Traditional RWA Platform | Their Price |
+| Fee Type | ION DEX Price | Traditional RWA Platform | Traditional Price |
 |---------|----------|--------------------------|-------------|
 | Trading fee | 0.3% | Real estate crowdfunding | 2-5% |
 | Annual management fee | 0.5-1.5% | REITs | 1-3% |
@@ -1932,7 +1932,7 @@ For individual traders, professionals, and institutions:
 
 Market makers provide liquidity to DEX pools. This is fundamentally different from trading:
 
-| Tier | Monthly | Target | What Market Makers Get |
+| Tier | Monthly | Target | Market-Maker Benefits |
 |------|---------|--------|------------------------|
 | **Junior MM** | $2,499 | Small market makers | Pool analytics, basic arbitrage tools, 0.1% fee rebate |
 | **Professional MM** | $9,999 | Medium market makers | Advanced analytics, real-time arbitrage, 0.15% fee rebate, priority pool access |
@@ -1949,7 +1949,7 @@ Market makers provide liquidity to DEX pools. This is fundamentally different fr
 
 For merchants across all e-commerce tiers:
 
-| Service | One-Time Fee | Monthly Fee | What It Does |
+| Service | One-Time Fee | Monthly Fee | Function |
 |---------|--------------|-------------|--------------|
 | **AI Product Description** | $9.9 per product | - | Generates SEO-optimized descriptions from product images |
 | **AI Image Optimization** | $4.9 per product | - | Removes background, enhances lighting, adds branding |
@@ -1995,7 +1995,7 @@ For RWA issuers and managers:
 
 Large institutions need completely different services:
 
-| Institution Type | Monthly Fee | What They Get |
+| Institution Type | Monthly Fee | Included Capabilities |
 |------------------|-------------|---------------|
 | **Hedge Fund** | $4,999 | Trading infrastructure + custom models + compliance reporting |
 | **Asset Manager** | $9,999 | Multi-strategy platform + AUM reporting + investor dashboards |
@@ -2046,13 +2046,13 @@ Most crypto traders lose money. They buy high, sell low, panic during volatility
 **How USDT →ION Conversion Works:**
 
 ```
-User pays $199 USDT for Professional monthly plan
-  →Backend converts USDT →ION via DEX liquidity pool (at market rate)
-  →Converted ION distributed:
-    →50% burned to 0x000...dEaD (permanent)
-    →50% to staking pool + treasury
-  →User sees only $15 USDT charge (simple, familiar pricing)
-  →ION ecosystem gains: buy pressure on ION + permanent supply reduction
+User pays $49 USDT for a Professional monthly plan
+  → Backend converts USDT into ION via the DEX liquidity pool at market rate
+  → Converted ION is distributed:
+    → 50% burned to 0x000...dEaD (permanent)
+    → 50% routed to the staking pool and treasury
+  → User sees only the USDT-denominated charge
+  → ION ecosystem effect: buy pressure on ION + permanent supply reduction
 ```
 
 **Why USDT Pricing?**
