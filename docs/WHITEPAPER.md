@@ -180,6 +180,14 @@ ION DEX is presented here as long-horizon infrastructure intended to remain rele
 - [17.5 White-Label & Enterprise Integration](#175-white-label--enterprise-integration)
 - [17.6 Ecosystem-by-Ecosystem Navigation](#176-ecosystem-by-ecosystem-navigation)
 
+### 18. [Multilingual Publication Strategy](#18-multilingual-publication-strategy)
+- [18.1 Authoritative Source Text](#181-authoritative-source-text)
+- [18.2 First-Wave Language Set](#182-first-wave-language-set)
+- [18.3 Expansion Language Set](#183-expansion-language-set)
+- [18.4 Translation Governance Rules](#184-translation-governance-rules)
+- [18.5 Document Layout for Published Editions](#185-document-layout-for-published-editions)
+- [18.6 Product-Level Language Support](#186-product-level-language-support)
+
    **Merchant & E-Commerce**
    - [Merchant Onboarding Guide](#merchant-onboarding-guide)
    - [Payment Button / API / Direct Settlement](#merchant-onboarding-guide)
@@ -968,29 +976,29 @@ All ION DEX pricing is benchmarked against existing market leaders. Each tier is
 
 **AI Trading Platform — Market Benchmark:**
 
-| Our Tier | Our Price | Competitor | Competitor Price | Our Advantage |
+| ION DEX Tier | ION DEX Price | Competitor | Competitor Price | Comparative Position |
 |----------|----------|------------|-----------------|---------------|
-| Basic | $19/month | TradingView Pro | $14.95/month | + Automated execution |
-| Professional | $49/month | 3Commas Expert | $49.50/month | + AI strategy selection + copy trading |
-| Advanced | $99/month | Cryptohopper Hero | $99/month | + Custom models + API access |
-| Whale | $199/month | Custom bots | $100-500/month | + Dedicated strategist + priority support |
-| Institutional | $499/month | Professional tools | $200-500/month | + On-chain execution + DeFi integration |
+| Basic | $19/month | TradingView Pro | $14.95/month | Lower entry pricing with automated execution |
+| Professional | $49/month | 3Commas Expert | $49.50/month | Comparable pricing with AI strategy selection and copy trading |
+| Advanced | $99/month | Cryptohopper Hero | $99/month | Comparable pricing with custom models and API access |
+| Whale | $199/month | Custom bots | $100-500/month | Comparable pricing with dedicated strategy support |
+| Institutional | $499/month | Professional tools | $200-500/month | Higher pricing justified by on-chain execution and DeFi integration |
 
 **E-Commerce Platform — Market Benchmark:**
 
-| Our Tier | Our Price | Competitor | Competitor Price | Our Advantage |
+| ION DEX Tier | ION DEX Price | Competitor | Competitor Price | Comparative Position |
 |----------|----------|------------|-----------------|---------------|
-| Seller | $29/month | Shopify Basic | $29/month | Same price + .ion domain included |
-| Merchant | $79/month | Shopify Standard | $79/month | + AI merchandising included |
-| Enterprise | $299/month | Shopify Advanced | $399/month | $100 cheaper + AI services |
-| Brand | $799/month | Shopify Plus | $2,000/month | $1,200 cheaper + multi-store |
-| Franchise | $2,499/month | Custom enterprise | $5,000+/month | $2,500+ cheaper + franchise tools |
+| Seller | $29/month | Shopify Basic | $29/month | Price parity with an included .ion domain |
+| Merchant | $79/month | Shopify Standard | $79/month | Price parity with AI merchandising included |
+| Enterprise | $299/month | Shopify Advanced | $399/month | Lower pricing with AI services included |
+| Brand | $799/month | Shopify Plus | $2,000/month | Lower pricing with multi-store support |
+| Franchise | $2,499/month | Custom enterprise | $5,000+/month | Lower pricing with franchise management tools |
 
 **Comparative Cost Position:** Traditional platforms typically charge 2-3% in payment processing plus additional platform fees. ION DEX applies a 0.5% platform fee in this model, which supports lower subscription pricing while preserving platform economics.
 
 **Food Delivery & Ride-Hailing — Market Benchmark:**
 
-| Our Model | Our Price | Competitor | Competitor Price |
+| ION DEX Model | ION DEX Price | Competitor | Competitor Price |
 |-----------|----------|------------|-----------------|
 | Platform fee (per order) | 0.5% | Meituan, Uber Eats | 15-30% |
 | Optional Commuter membership | $29/month | None | N/A |
@@ -1028,7 +1036,7 @@ All ION DEX pricing is benchmarked against existing market leaders. Each tier is
 - Basic analytics (daily sales)
 - Community support
 - No AI services
-- **Who it's for:** Hobby sellers, part-time sellers, testing the platform
+- **Target user group:** Hobby sellers, part-time sellers, testing the platform
 
 **Small Merchant ($79/month) — 个体户:**
 - Everything in Individual, plus:
@@ -1036,7 +1044,7 @@ All ION DEX pricing is benchmarked against existing market leaders. Each tier is
 - Email support (24h response)
 - Basic AI: Smart pricing suggestions
 - **Reduced fee** — 0.4% payment processing
-- **Who it's for:** Individual entrepreneurs, small shops, local businesses
+- **Target user group:** Individual entrepreneurs, small shops, local businesses
 
 **Growing Business ($199/month) — 小商家:**
 - Everything in Small Merchant, plus:
@@ -1046,7 +1054,7 @@ All ION DEX pricing is benchmarked against existing market leaders. Each tier is
 - Advanced analytics — customer segmentation, demand forecasting
 - Custom branding — logo, colors
 - **Reduced fee** — 0.3% payment processing
-- **Who it's for:** Growing online shops, multi-product sellers
+- **Target user group:** Growing online shops, multi-product sellers
 
 **Medium Merchant ($499/month) — 中等商家:**
 - Everything in Growing Business, plus:
@@ -1056,7 +1064,7 @@ All ION DEX pricing is benchmarked against existing market leaders. Each tier is
 - Priority support (2h response)
 - API access, webhook configuration
 - **Reduced fee** — 0.2% payment processing
-- **Who it's for:** Established e-commerce businesses, multi-channel sellers
+- **Target user group:** Established e-commerce businesses, multi-channel sellers
 
 **Brand Partner ($1,499/month) — 品牌入驻:**
 - Everything in Medium Merchant, plus:
@@ -1066,7 +1074,7 @@ All ION DEX pricing is benchmarked against existing market leaders. Each tier is
 - SLA guarantees — 99.9% uptime, 1h support
 - $100/month advertising credits
 - **Reduced fee** — 0.15% payment processing
-- **Who it's for:** Recognized brands, multi-store operations
+- **Target user group:** Recognized brands, multi-store operations
 
 **Enterprise Brand ($4,999/month) — 大品牌:**
 - Everything in Brand Partner, plus:
@@ -1075,8 +1083,8 @@ All ION DEX pricing is benchmarked against existing market leaders. Each tier is
 - Custom integration — ERP, CRM, supply chain
 - 24/7 dedicated support team
 - $300/month advertising credits
-- **Zero fee** — 0% on first $50,000/month in transactions
-- **Who it's for:** Major brands, franchise operations, enterprise groups
+- **No processing fee allowance** — 0% on first $50,000/month in transactions
+- **Target user group:** Major brands, franchise operations, enterprise groups
 
 **Why This Pricing Structure?**
 
@@ -2176,14 +2184,14 @@ Every transaction on the platform burns ION permanently. This is not cosmetic bu
 
 | Module | Fee | Burn Rate | Example |
 |--------|-----|-----------|---------|
-| DEX Swap | 0.3% | 50% | 100 ION swap →0.3 ION fee →0.15 ION burned |
-| Pool Creation | 0.1% | 50% | 10,000 ION pool →10 ION fee →5 ION burned |
-| Token Launch | 100 ION | 50% | Launch fee →50 ION burned |
-| Merchant Payment | 0.5% | 50% | 100 USDT payment →0.5 USDT fee →0.25 USDT equivalent burned |
-| Delivery & Mobility | 0.5% | 50% | 50 ION order →0.25 ION fee →0.125 ION burned |
-| Insurance | Varies | 50% | Premium →50% burned |
-| Logistics | 0.3% | 50% | 1,000 ION shipment →3 ION fee →1.5 ION burned |
-| Domain Trading | Escrow fee | 50% | Domain sale →50% burned |
+| DEX Swap | 0.3% | 50% | 100 ION swap → 0.3 ION fee → 0.15 ION burned |
+| Pool Creation | 0.1% | 50% | 10,000 ION pool → 10 ION fee → 5 ION burned |
+| Token Launch | 100 ION | 50% | Launch fee → 50 ION burned |
+| Merchant Payment | 0.5% platform fee | 50% | 100 USDT payment → 0.5 USDT fee → 0.25 USDT equivalent burned |
+| Delivery & Mobility | 0.5% platform fee | 50% | 50 ION order → 0.25 ION fee → 0.125 ION burned |
+| Insurance | Varies by product | 50% | Premium → 50% of applicable fee burned |
+| Logistics | 0.3% platform fee | 50% | 1,000 ION shipment → 3 ION fee → 1.5 ION burned |
+| Domain Trading | Escrow fee | 50% | Domain sale → 50% of applicable fee burned |
 
 **Burn Address:** `0x000000000000000000000000000000000000dEaD` (BSC) — permanently unrecoverable. Every ION sent to this address is visible on Explorer and can never be retrieved.
 
@@ -2566,7 +2574,7 @@ The P0–P10 roadmap is designed so that each phase builds on the previous — c
 | **P9** | Governance & Anti-Abuse | Public-order compatibility, dispute escalation, abuse prevention | P5 (evolution), P8 (economic stability) |
 | **P10** | Mature Civilization | Full coordination layer, global seamless access, billion-scale expansion | P0–P9 (all layers functional) |
 
-**Current position:** P0–P1 in active development. P2–P3 in design. P4+ planned.
+**Current position:** P0–P1 in active development. P2–P3 in design. P4 and beyond planned.
 
 ---
 
@@ -2794,6 +2802,75 @@ To remove friction, each public ecosystem path should be reachable directly from
 - **RWA** → issuance flow, token sale, dividend distribution, proof and compliance surface.
 
 The governing principle is straightforward: if a partner category is strategically important, it should have a direct and clickable path in the whitepaper.
+
+---
+
+## 18. Multilingual Publication Strategy
+
+ION DEX is designed for cross-border usage and public verification across multiple jurisdictions. The whitepaper should therefore support multilingual publication as a distribution layer, while preserving a single authoritative source of truth for architecture, economics, and risk disclosure.
+
+### 18.1 Authoritative Source Text
+
+The English whitepaper serves as the canonical reference version for:
+- architecture and protocol descriptions,
+- fee schedules and allocation logic,
+- risk disclosures,
+- governance and security descriptions,
+- integration requirements.
+
+Translated editions are publication layers for accessibility, not independent source documents.
+
+### 18.2 First-Wave Language Set
+
+The recommended first-wave publication set is:
+- English
+- Simplified Chinese
+- Russian
+
+These languages provide efficient coverage across core builder, trading, and distribution audiences without creating unnecessary synchronization overhead during the finalization phase.
+
+### 18.3 Expansion Language Set
+
+After the English source text is frozen for public release, the language set can expand in phases to include:
+- Spanish
+- Portuguese
+- Arabic
+- French
+- Japanese
+- Korean
+- Hindi
+
+Additional languages should be added only when review capacity exists to preserve terminological consistency and prevent economic or legal drift across editions.
+
+### 18.4 Translation Governance Rules
+
+Every translated edition should follow these rules:
+- Numerical values, percentages, fee schedules, and allocation logic must remain identical to the canonical source text.
+- Defined terms should map consistently across all translated editions.
+- If a translation introduces ambiguity in a security, governance, or economic section, the English canonical text prevails.
+- Material updates to the canonical text should trigger version synchronization across published language editions.
+
+### 18.5 Document Layout for Published Editions
+
+A practical publication structure is:
+
+- `docs/whitepaper/en/WHITEPAPER.md`
+- `docs/whitepaper/zh/WHITEPAPER.zh-CN.md`
+- `docs/whitepaper/ru/WHITEPAPER.ru.md`
+
+As additional languages are approved, the same structure can be extended without changing the canonical document architecture.
+
+### 18.6 Product-Level Language Support
+
+The multilingual publication strategy also supports future product surfaces:
+- merchant onboarding,
+- delivery and rider workflows,
+- insurance policy explanations,
+- logistics event interfaces,
+- identity and reputation explanations,
+- RWA investor-facing summaries.
+
+This ensures that language accessibility is treated as part of ecosystem expansion, not as a disconnected marketing layer.
 
 ---
 
