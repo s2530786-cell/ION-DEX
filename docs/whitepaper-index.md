@@ -1,6 +1,6 @@
 # ION DEX Whitepaper Index
 
-**Languages:** [English](./WHITEPAPER.md) | [简体中文](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [Русский](./whitepaper/ru/WHITEPAPER.ru.md)
+**Languages:** [English](./WHITEPAPER.md) | [简体中文](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [繁體中文](./whitepaper/zh-TW/WHITEPAPER.zh-TW.md) | [Русский](./whitepaper/ru/WHITEPAPER.ru.md) | [Español](./whitepaper/es/WHITEPAPER.es.md) | [Português](./whitepaper/pt/WHITEPAPER.pt.md) | [العربية](./whitepaper/ar/WHITEPAPER.ar.md) | [Français](./whitepaper/fr/WHITEPAPER.fr.md) | [Deutsch](./whitepaper/de/WHITEPAPER.de.md) | [日本語](./whitepaper/ja/WHITEPAPER.ja.md) | [한국어](./whitepaper/ko/WHITEPAPER.ko.md) | [हिन्दी](./whitepaper/hi/WHITEPAPER.hi.md) | [Türkçe](./whitepaper/tr/WHITEPAPER.tr.md) | [Italiano](./whitepaper/it/WHITEPAPER.it.md) | [Bahasa Indonesia](./whitepaper/id/WHITEPAPER.id.md)
 
 > The complete public doctrine of ION DEX and its long-horizon digital civilization design.
 
@@ -13,7 +13,19 @@ The English whitepaper is the canonical source text for architecture, economics,
 ### 🌐 Language Editions
 
 - [简体中文 / Simplified Chinese](./whitepaper/zh/WHITEPAPER.zh-CN.md) — translated edition; English source controls in case of ambiguity.
+- [繁體中文 / Traditional Chinese](./whitepaper/zh-TW/WHITEPAPER.zh-TW.md) — translated edition; English source controls in case of ambiguity.
 - [Русский / Russian](./whitepaper/ru/WHITEPAPER.ru.md) — translated edition; English source controls in case of ambiguity.
+- [Español / Spanish](./whitepaper/es/WHITEPAPER.es.md) — translated edition; English source controls in case of ambiguity.
+- [Português / Portuguese](./whitepaper/pt/WHITEPAPER.pt.md) — translated edition; English source controls in case of ambiguity.
+- [العربية / Arabic](./whitepaper/ar/WHITEPAPER.ar.md) — translated edition; English source controls in case of ambiguity.
+- [Français / French](./whitepaper/fr/WHITEPAPER.fr.md) — translated edition; English source controls in case of ambiguity.
+- [Deutsch / German](./whitepaper/de/WHITEPAPER.de.md) — translated edition; English source controls in case of ambiguity.
+- [日本語 / Japanese](./whitepaper/ja/WHITEPAPER.ja.md) — translated edition; English source controls in case of ambiguity.
+- [한국어 / Korean](./whitepaper/ko/WHITEPAPER.ko.md) — translated edition; English source controls in case of ambiguity.
+- [हिन्दी / Hindi](./whitepaper/hi/WHITEPAPER.hi.md) — translated edition; English source controls in case of ambiguity.
+- [Türkçe / Turkish](./whitepaper/tr/WHITEPAPER.tr.md) — translated edition; English source controls in case of ambiguity.
+- [Italiano / Italian](./whitepaper/it/WHITEPAPER.it.md) — translated edition; English source controls in case of ambiguity.
+- [Bahasa Indonesia / Indonesian](./whitepaper/id/WHITEPAPER.id.md) — translated edition; English source controls in case of ambiguity.
 
 ---
 
@@ -92,4 +104,4 @@ The English whitepaper is the canonical source text for architecture, economics,
 
 ---
 
-Return to [README](../README.md) | [Whitepaper (English)](./WHITEPAPER.md) | [白皮书（简中）](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [Белая книга (RU)](./whitepaper/ru/WHITEPAPER.ru.md) | [Developer Entry](./developer-index.md) | [Explorer](https://explorer.ice.io/)
+Return to [README](../README.md) | [Whitepaper (English)](./WHITEPAPER.md) | [白皮书（简中）](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [白皮書（繁中）](./whitepaper/zh-TW/WHITEPAPER.zh-TW.md) | [Белая книга (RU)](./whitepaper/ru/WHITEPAPER.ru.md) | [Libro blanco (ES)](./whitepaper/es/WHITEPAPER.es.md) | [Livro branco (PT)](./whitepaper/pt/WHITEPAPER.pt.md) | [الورقة البيضاء (AR)](./whitepaper/ar/WHITEPAPER.ar.md) | [Livre blanc (FR)](./whitepaper/fr/WHITEPAPER.fr.md) | [Whitepaper (DE)](./whitepaper/de/WHITEPAPER.de.md) | [ホワイトペーパー (JA)](./whitepaper/ja/WHITEPAPER.ja.md) | [백서 (KO)](./whitepaper/ko/WHITEPAPER.ko.md) | [श्वेतपत्र (HI)](./whitepaper/hi/WHITEPAPER.hi.md) | [Beyaz Kitap (TR)](./whitepaper/tr/WHITEPAPER.tr.md) | [Libro bianco (IT)](./whitepaper/it/WHITEPAPER.it.md) | [Whitepaper (ID)](./whitepaper/id/WHITEPAPER.id.md) | [Developer Entry](./developer-index.md) | [Explorer](https://explorer.ice.io/)
