@@ -6,9 +6,12 @@ import {MockERC20} from "../bsc/MockERC20.sol";
 import {AdminManager} from "../bsc/AdminManager.sol";
 import {FeeReceiver} from "../bsc/FeeReceiver.sol";
 import {LiquidityMine} from "../bsc/LiquidityMine.sol";
+import {IonOracle} from "../bsc/IonOracle.sol";
+import {MockAggregator} from "./MockAggregator.sol";
 
 contract LiquidityMineTest is Test {
     address internal constant ION_TOKEN = 0xE1ab61f7b093435204dF32F5b3A405de55445Ea8;
+    address internal constant BURN = 0x000000000000000000000000000000000000dEaD;
 
     AdminManager internal admin;
     FeeReceiver internal feeReceiver;
@@ -16,6 +19,8 @@ contract LiquidityMineTest is Test {
     MockERC20 internal ion;
     MockERC20 internal lpIonUsdt;
     MockERC20 internal lpIonBnb;
+    MockAggregator internal priceFeed;
+    IonOracle internal oracle;
 
     address internal owner = address(0xA11CE);
     address internal treasury = address(0xBEEF);
@@ -32,7 +37,9 @@ contract LiquidityMineTest is Test {
         ion = MockERC20(ION_TOKEN);
 
         admin = new AdminManager(owner);
-        feeReceiver = new FeeReceiver(owner, ION_TOKEN, treasury, team, staking, keeper);
+        priceFeed = new MockAggregator(100_000_000, 8);
+        oracle = new IonOracle(owner, address(priceFeed), "mock");
+        feeReceiver = new FeeReceiver(owner, ION_TOKEN, treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
         mine = new LiquidityMine(address(admin), address(feeReceiver));
 
         lpIonUsdt = new MockERC20("ION-USDT LP", "IONUSDT", 18);
@@ -108,7 +115,7 @@ contract LiquidityMineTest is Test {
         mine.stake(poolIonUsdt, 200 ether, ionFee);
         vm.stopPrank();
 
-        assertEq(ion.balanceOf(address(0x000000000000000000000000000000000000dEaD)), (ionFee * 3500) / 10_000);
+        assertEq(ion.balanceOf(BURN), (ionFee * 3000) / 10_000);
     }
 
     function test_getPoolInfo_and_getUserInfo() public {

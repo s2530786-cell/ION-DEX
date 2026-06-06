@@ -6,12 +6,16 @@ import {MockERC20} from "../bsc/MockERC20.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
 import {FeeReceiver} from "../bsc/FeeReceiver.sol";
 import {BridgeRelay} from "../bsc/BridgeRelay.sol";
+import {IonOracle} from "../bsc/IonOracle.sol";
+import {MockAggregator} from "./MockAggregator.sol";
 
 contract BSCContractsTest is Test {
     MockERC20 internal token;
     BSCVault internal vault;
     FeeReceiver internal feeReceiver;
     BridgeRelay internal relay;
+    MockAggregator internal priceFeed;
+    IonOracle internal oracle;
 
     address internal owner = address(0xA11CE);
     address internal treasury = address(0xBEEF);
@@ -19,11 +23,14 @@ contract BSCContractsTest is Test {
     address internal staking = address(0x570A);
     address internal keeper = address(0x5EE7);
     address internal user = address(0x75E7);
+    address internal constant BURN = 0x000000000000000000000000000000000000dEaD;
 
     function setUp() public {
         token = new MockERC20("ION", "ION", 18);
         vault = new BSCVault(owner);
-        feeReceiver = new FeeReceiver(owner, address(token), treasury, team, staking, keeper);
+        priceFeed = new MockAggregator(100_000_000, 8);
+        oracle = new IonOracle(owner, address(priceFeed), "mock");
+        feeReceiver = new FeeReceiver(owner, address(token), treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
         relay = new BridgeRelay(owner, address(vault), 1);
         vm.prank(owner);
         vault.setBridgeRelay(address(relay));
@@ -56,11 +63,11 @@ contract BSCContractsTest is Test {
         vm.prank(user);
         feeReceiver.distributeFees(address(token), amount);
 
-        assertEq(token.balanceOf(address(0x000000000000000000000000000000000000dEaD)), (amount * 3500) / 10_000);
+        assertEq(token.balanceOf(BURN), (amount * 3000) / 10_000);
         assertEq(token.balanceOf(team), (amount * 2500) / 10_000);
-        assertEq(token.balanceOf(staking), (amount * 2000) / 10_000);
+        assertEq(token.balanceOf(staking), (amount * 2500) / 10_000);
         assertEq(token.balanceOf(treasury), (amount * 1500) / 10_000);
-        assertEq(token.balanceOf(keeper), amount - (amount * 3500) / 10_000 - (amount * 2500) / 10_000 - (amount * 2000) / 10_000 - (amount * 1500) / 10_000);
+        assertEq(token.balanceOf(keeper), (amount * 500) / 10_000);
     }
 
     function test_fee_receiver_rejects_non_ion() public {
@@ -82,7 +89,7 @@ contract BSCContractsTest is Test {
         token.approve(address(vault), 100 ether + ionFee);
         vault.lock(address(token), 100 ether, ionRecipient, ionFee);
         vm.stopPrank();
-        assertEq(token.balanceOf(address(0x000000000000000000000000000000000000dEaD)), (ionFee * 3500) / 10_000);
+        assertEq(token.balanceOf(BURN), (ionFee * 3000) / 10_000);
     }
 
     function test_revert_duplicate_nonce() public {

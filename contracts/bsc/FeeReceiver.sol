@@ -56,7 +56,7 @@ contract FeeReceiver {
     uint256 public constant FEE_DENOMINATOR = 10_000;
     uint256 public constant BPS_TEAM_IMMUTABLE = 2500;  // 铁律：Master 永远 25%
     uint256 public constant TIMELOCK_DURATION = 48 hours; // 时间锁：48 小时
-    uint256 public constant BSC_BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
+    address public constant BSC_BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
 
     // ── 不可变 ────────────────────────────────────────────
     address public immutable ionToken;
@@ -209,7 +209,7 @@ contract FeeReceiver {
         // 5. 执行转账（优先支付 Master）
         if (toTeam > 0 && !_transfer(token, team, toTeam))
             revert IonDexTokenTransferFailed();
-        if (toBurn > 0 && !_transfer(token, address(BSC_BURN_ADDRESS), toBurn))
+        if (toBurn > 0 && !_transfer(token, BSC_BURN_ADDRESS, toBurn))
             revert IonDexTokenTransferFailed();
         if (toStaking > 0 && !_transfer(token, stakingRewards, toStaking))
             revert IonDexTokenTransferFailed();

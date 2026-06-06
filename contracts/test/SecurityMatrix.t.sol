@@ -6,7 +6,9 @@ import {MockERC20} from "../bsc/MockERC20.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
 import {BridgeRelay} from "../bsc/BridgeRelay.sol";
 import {FeeReceiver} from "../bsc/FeeReceiver.sol";
-import {IonSwapRouter, IonSwapPoolMock, ISwapPool} from "../bsc/IonSwapRouter.sol";
+import {IonSwapRouter, IonSwapPoolMock} from "../bsc/IonSwapRouter.sol";
+import {IonOracle} from "../bsc/IonOracle.sol";
+import {MockAggregator} from "./MockAggregator.sol";
 
 /**
  * @notice P0-3 security matrix — 10 categories × 100 iterations = 1000 checks.
@@ -22,6 +24,8 @@ contract SecurityMatrixTest is Test {
     FeeReceiver internal feeReceiver;
     IonSwapRouter internal router;
     IonSwapPoolMock internal pool;
+    MockAggregator internal priceFeed;
+    IonOracle internal oracle;
 
     address internal owner = address(0xA11CE);
     address internal treasury = address(0xBEEF);
@@ -49,7 +53,9 @@ contract SecurityMatrixTest is Test {
         router = new IonSwapRouter(owner);
         pool = new IonSwapPoolMock(1_000_000 ether);
         _wireOfficialIonForRouter();
-        feeReceiver = new FeeReceiver(owner, OFFICIAL_BSC_ION, treasury, team, staking, keeper);
+        priceFeed = new MockAggregator(100_000_000, 8);
+        oracle = new IonOracle(owner, address(priceFeed), "mock");
+        feeReceiver = new FeeReceiver(owner, OFFICIAL_BSC_ION, treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
         vm.prank(owner);
         router.setFeeReceiver(address(feeReceiver));
 
@@ -62,7 +68,6 @@ contract SecurityMatrixTest is Test {
         fake.mint(user, 1_000_000 ether);
     }
 
-    /// 3a — Reentrancy / double-release idempotency
     function test_Security_3a_ReentrancyReleaseGuard_100x() public {
         vm.startPrank(user);
         ion.approve(address(vault), type(uint256).max);
@@ -79,7 +84,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3b — Flash-loan sized single-tx swap still respects minimum output
     function test_Security_3b_FlashLoanSizedSwap_100x() public {
         for (uint256 i = 0; i < ITER; i++) {
             uint256 hugeIn = 100_000 ether + i * 1000 ether;
@@ -91,7 +95,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3c — Sandwich / slippage floor (min output)
     function test_Security_3c_SandwichMinOutput_100x() public {
         for (uint256 i = 0; i < ITER; i++) {
             pool.setFixedOutput(80 ether + i);
@@ -101,7 +104,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3d — Oracle / manipulated low output rejected
     function test_Security_3d_OracleManipulationFloor_100x() public {
         for (uint256 i = 0; i < ITER; i++) {
             uint256 quotedMin = 200 ether + i * 1e16;
@@ -111,7 +113,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3e — Permission / unauthorized relayer & owner
     function test_Security_3e_PermissionDenied_100x() public {
         for (uint256 i = 0; i < ITER; i++) {
             vm.prank(attacker);
@@ -124,7 +125,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3f — Overflow-safe accounting (Solidity 0.8 checked math)
     function test_Security_3f_OverflowSafeLockAccounting_100x() public {
         vm.startPrank(user);
         ion.approve(address(vault), type(uint256).max);
@@ -140,7 +140,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3g — DoS: relayer list bounded at MAX_RELAYERS
     function test_Security_3g_DosRelayerCap_100x() public {
         vm.startPrank(owner);
         for (uint256 i = 0; i < MAX_RELAYERS - 1; i++) {
@@ -159,7 +158,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3h — Fake token rejected by FeeReceiver (ION-only)
     function test_Security_3h_FakeTokenRejected_100x() public {
         for (uint256 i = 0; i < ITER; i++) {
             MockERC20 other = new MockERC20("USDT", "USDT", 6);
@@ -172,7 +170,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3i — Timestamp independence: lock/release works across time warps
     function test_Security_3i_TimestampIndependence_100x() public {
         vm.startPrank(user);
         ion.approve(address(vault), type(uint256).max);
@@ -189,7 +186,6 @@ contract SecurityMatrixTest is Test {
         }
     }
 
-    /// 3j — Replay / nonce consumption (post-quantum style message-id uniqueness)
     function test_Security_3j_ReplayNonceConsumption_100x() public {
         vm.startPrank(user);
         ion.approve(address(vault), type(uint256).max);
