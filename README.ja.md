@@ -1,38 +1,23 @@
-# ION — 日本語 Entry
+**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
 
-This is the Japanese entry page for the main ION GitHub README.
+# ION — 超デジタル文明のオペレーティングシステム
 
-The current goal is not to fully translate the entire repository at once, but to establish a **credible, navigable, non-empty language entry point** for global users.
+これは、ION の GitHub メインページへ入るための日本語エントリーページです。
 
----
-
-## What is ION
-
-ION is not a typical DEX project.
-It is positioned as a long-horizon digital system that begins with exchange infrastructure and expands into payments, identity, proof, reputation, arbitration, coordination, and self-evolution.
-
-The English README remains the most complete global front-door version of the project.
-This page will be expanded gradually as a Japanese language mirror.
+ION は一般的な DEX リポジトリではありません。交換インフラを起点に、決済、アイデンティティ、証明、レピュテーション、協調、自己進化へと拡張していく長期志向のデジタルシステムです。
 
 ---
 
-## Start Here
+## ここから始める
 
-- Main English README: README.md
-- Roadmap guide: docs/roadmap-guide.md
-- Public structure: docs/public-structure.md
-- Whitepaper index: docs/whitepaper-index.md
-- Explorer: https://explorer.ice.io/
-
----
-
-## Current Status
-
-This page is a **phase-one language entry page**.
-Its first purpose is to ensure that a reliable Japanese route exists and can be expanded over time.
+- [English README](./README.md)
+- [Docs](./docs)
+- [White Paper](./docs/WHITEPAPER.md)
+- [Explorer](https://explorer.ice.io/)
 
 ---
 
-## Positioning in One Sentence
+## 現在の状況
 
-ION is not just an exchange product. It is an entry into a future digital civilization built on value infrastructure, payments, identity, proof, reputation, and long-horizon coordination.
+このページは、日本語で閲覧できる明確で安定した入口として提供されています。
+内容全体は、公開資料の整備に合わせて継続的に改善されます。

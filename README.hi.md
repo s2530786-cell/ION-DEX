@@ -1,38 +1,23 @@
-# ION — हिन्दी Entry
+**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
 
-This is the Hindi entry page for the main ION GitHub README.
+# ION — एक सुपर डिजिटल सभ्यता के लिए ऑपरेटिंग सिस्टम
 
-The current goal is not to fully translate the entire repository at once, but to establish a **credible, navigable, non-empty language entry point** for global users.
+यह ION के GitHub मुख्य पृष्ठ का हिन्दी प्रवेश पृष्ठ है।
 
----
-
-## What is ION
-
-ION is not a typical DEX project.
-It is positioned as a long-horizon digital system that begins with exchange infrastructure and expands into payments, identity, proof, reputation, arbitration, coordination, and self-evolution.
-
-The English README remains the most complete global front-door version of the project.
-This page will be expanded gradually as a Hindi language mirror.
+ION कोई सामान्य DEX रिपॉज़िटरी नहीं है। यह एक दीर्घकालिक डिजिटल प्रणाली है जो एक्सचेंज इन्फ्रास्ट्रक्चर से शुरू होकर भुगतान, पहचान, प्रमाण, प्रतिष्ठा, समन्वय और स्व-विकास तक विस्तृत होती है।
 
 ---
 
-## Start Here
+## यहाँ से शुरू करें
 
-- Main English README: README.md
-- Roadmap guide: docs/roadmap-guide.md
-- Public structure: docs/public-structure.md
-- Whitepaper index: docs/whitepaper-index.md
-- Explorer: https://explorer.ice.io/
-
----
-
-## Current Status
-
-This page is a **phase-one language entry page**.
-Its first purpose is to ensure that a reliable Hindi route exists and can be expanded over time.
+- [English README](./README.md)
+- [Docs](./docs)
+- [White Paper](./docs/WHITEPAPER.md)
+- [Explorer](https://explorer.ice.io/)
 
 ---
 
-## Positioning in One Sentence
+## वर्तमान स्थिति
 
-ION is not just an exchange product. It is an entry into a future digital civilization built on value infrastructure, payments, identity, proof, reputation, and long-horizon coordination.
+यह पृष्ठ हिन्दी में एक स्पष्ट और स्थिर प्रवेश बिंदु प्रदान करता है।
+पूर्ण सामग्री परियोजना की सार्वजनिक सामग्रियों के साथ लगातार परिष्कृत की जाएगी।

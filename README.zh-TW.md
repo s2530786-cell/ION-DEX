@@ -1,38 +1,23 @@
-# ION — 繁體中文 Entry
+**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
 
-This is the Traditional Chinese entry page for the main ION GitHub README.
+# ION — 超級數位文明的作業系統
 
-The current goal is not to fully translate the entire repository at once, but to establish a **credible, navigable, non-empty language entry point** for global users.
+這是 ION GitHub 主頁面的繁體中文入口。
 
----
-
-## What is ION
-
-ION is not a typical DEX project.
-It is positioned as a long-horizon digital system that begins with exchange infrastructure and expands into payments, identity, proof, reputation, arbitration, coordination, and self-evolution.
-
-The English README remains the most complete global front-door version of the project.
-This page will be expanded gradually as a Traditional Chinese language mirror.
+ION 不是普通的 DEX 倉庫，而是一個從交易基礎設施出發，逐步延伸到支付、身份、證明、聲譽、協調與自我進化的長期數位系統。
 
 ---
 
-## Start Here
+## 從這裡開始
 
-- Main English README: README.md
-- Roadmap guide: docs/roadmap-guide.md
-- Public structure: docs/public-structure.md
-- Whitepaper index: docs/whitepaper-index.md
-- Explorer: https://explorer.ice.io/
-
----
-
-## Current Status
-
-This page is a **phase-one language entry page**.
-Its first purpose is to ensure that a reliable Traditional Chinese route exists and can be expanded over time.
+- [English README](./README.md)
+- [Docs](./docs)
+- [White Paper](./docs/WHITEPAPER.md)
+- [Explorer](https://explorer.ice.io/)
 
 ---
 
-## Positioning in One Sentence
+## 目前說明
 
-ION is not just an exchange product. It is an entry into a future digital civilization built on value infrastructure, payments, identity, proof, reputation, and long-horizon coordination.
+本頁用於提供清晰、穩定、可進入的繁體中文入口。
+完整內容會隨著專案公開材料持續完善。

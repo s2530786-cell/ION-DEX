@@ -1,38 +1,23 @@
-# ION — Türkçe Entry
+**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
 
-This is the Turkish entry page for the main ION GitHub README.
+# ION — Süper dijital bir uygarlık için işletim sistemi
 
-The current goal is not to fully translate the entire repository at once, but to establish a **credible, navigable, non-empty language entry point** for global users.
+Bu sayfa, ION GitHub ana sayfasının Türkçe giriş noktasıdır.
 
----
-
-## What is ION
-
-ION is not a typical DEX project.
-It is positioned as a long-horizon digital system that begins with exchange infrastructure and expands into payments, identity, proof, reputation, arbitration, coordination, and self-evolution.
-
-The English README remains the most complete global front-door version of the project.
-This page will be expanded gradually as a Turkish language mirror.
+ION sıradan bir DEX deposu değildir. Takas altyapısıyla başlayan ve ödemeler, kimlik, kanıt, itibar, koordinasyon ve kendini geliştirme alanlarına uzanan uzun vadeli bir dijital sistemdir.
 
 ---
 
-## Start Here
+## Buradan başlayın
 
-- Main English README: README.md
-- Roadmap guide: docs/roadmap-guide.md
-- Public structure: docs/public-structure.md
-- Whitepaper index: docs/whitepaper-index.md
-- Explorer: https://explorer.ice.io/
-
----
-
-## Current Status
-
-This page is a **phase-one language entry page**.
-Its first purpose is to ensure that a reliable Turkish route exists and can be expanded over time.
+- [English README](./README.md)
+- [Docs](./docs)
+- [White Paper](./docs/WHITEPAPER.md)
+- [Explorer](https://explorer.ice.io/)
 
 ---
 
-## Positioning in One Sentence
+## Güncel durum
 
-ION is not just an exchange product. It is an entry into a future digital civilization built on value infrastructure, payments, identity, proof, reputation, and long-horizon coordination.
+Bu sayfa Türkçe için açık, istikrarlı ve kullanılabilir bir giriş noktası sunar.
+Tam içerik, projenin kamuya açık materyalleriyle birlikte kademeli olarak geliştirilecektir.

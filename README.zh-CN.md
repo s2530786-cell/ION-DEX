@@ -1,38 +1,23 @@
-# ION —— 超级数字文明的操作系统
+**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
 
-这是 ION GitHub 主 README 的简体中文入口占位版。
+# ION — 超级数字文明的操作系统
 
-当前目的不是一次性把全部中文版本写满，而是先建立一个**可信、可进入、非空跳转**的中文承接页。
+这是 ION GitHub 主页面的简体中文入口。
+
+ION 不是一个普通的 DEX 仓库，而是一个从交易基础设施出发，逐步延伸到支付、身份、证明、声誉、协调与自我进化的长期数字系统。
+
+---
+
+## 从这里开始
+
+- [English README](./README.md)
+- [Docs](./docs)
+- [White Paper](./docs/WHITEPAPER.md)
+- [Explorer](https://explorer.ice.io/)
 
 ---
 
 ## 当前说明
 
-ION 不是普通 DEX 项目。
-它被定义为一个以交易基础设施为起点，逐步长出支付、身份、证明、信誉、仲裁、协同与自我进化层的长期数字文明系统。
-
-英文主版 README 仍然是当前最完整的全球门面主稿。
-本页会逐步补齐中文镜像内容。
-
----
-
-## 建议先看
-
-- 英文主 README：`README.md`
-- 路线图入口：`docs/roadmap-guide.md`
-- 公开结构入口：`docs/public-structure.md`
-- Explorer：`https://explorer.ice.io/`
-
----
-
-## 当前状态
-
-本页为**第一阶段中文承接页**。
-目标是先保证中文入口存在、可信、可继续进入。
-后续再逐步补齐完整镜像结构。
-
----
-
-## 一句话定位
-
-ION 不是普通交易产品，而是一个从交换基础设施出发、面向长期秩序、支付文明、身份系统、证明系统与现实服务协同的未来数字文明入口。
+本页用于提供清晰、稳定、可进入的中文入口。
+完整内容会随着项目公开材料一起持续完善。
