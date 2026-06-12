@@ -9,6 +9,7 @@
 
 - **Phase**: 全自动工单 **W 系列**（记忆库缺口闭环）
 - **CURRENT_PHASE**: **W1**（W0 已完成：文档同步 + verify-full 绿）
+- **前端打包记忆**: `D:\openclaw-tools\ion-dex-nuke\.memory-bank\frontend-delivery-pack-2026-06-13.md`（前端已交付页面矩阵、UI 铁律、E2E 覆盖、恢复顺序）
 - **已完成**: 旺财派工单 P1A–P3A + AI 订阅（2026-05-24/25）
 - **合约编译**: 28/28 全绿 (FunC + Solidity)
 - **CI 基线**: Playwright 31/31 · backend 43 · `verify-full` exit 0
@@ -19,6 +20,7 @@
 |--------|------|------|------|
 | 🔴 P0 | `cursor-autonomous-work-order-2026-05-25.md` | docs/ | **当前**全自动派工单 W0–W8 |
 | 🔴 P0 | `architecture-audit.md` | .memory-bank/ | 审计 + UI Pixel Protocol 未勾项 |
+| 🔴 P0 | `frontend-delivery-pack-2026-06-13.md` | .memory-bank/ | 前端开发团队打包记忆：页面矩阵 / UI 铁律 / 恢复顺序 |
 | 🔴 P0 | `wallet-connect-requirements.md` | .memory-bank/ | 7 钱包真实对接 |
 | 🔴 P0 | `live-data-reference.md` | .memory-bank/ | 六引擎数据层 |
 | 🟡 P1 | `official-source-index.md` | .memory-bank/ion-dex-nuke/ | 官方仓库索引 |

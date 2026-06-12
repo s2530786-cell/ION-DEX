@@ -3,6 +3,7 @@
 ## 🤖 全自动工单 W 系列 — 2026-05-25（当前执行队列）
 
 **主文档**：[`docs/cursor-autonomous-work-order-2026-05-25.md`](docs/cursor-autonomous-work-order-2026-05-25.md)  
+**前端打包记忆**：`D:\openclaw-tools\ion-dex-nuke\.memory-bank\frontend-delivery-pack-2026-06-13.md`  
 **门禁脚本**：`node scripts/autonomous-phase-gate.mjs --gate verify-full|verify-100|stress-e2e|...`  
 **模式**：零人工确认 · 每阶段出口 **`verify-100` → PASSED=100 FAILED=0 RESULT=GREEN** · 失败自动读 `%TEMP%` 日志修复后重跑
 
@@ -25,6 +26,7 @@
 - 步骤：`dashboard-p1-quote-ui` ✅ → `verify-full` → `verify-100`（新 activatedAt）→ W6 Agent
 - 看门狗：`scripts/run-autonomous-work-watchdog.cmd` / `node scripts/autonomous-work-watchdog.mjs --once`
 - **未授权 commit**：`git-commit-push` 仍 blocked（需用户明确说 commit）
+- **前端恢复入口**：先读 `D:\openclaw-tools\ion-dex-nuke\.memory-bank\frontend-delivery-pack-2026-06-13.md`，再继续 Dashboard/W6 边界工作，禁止从零重做 UI
 
 **进度汇报节奏（Master 2026-05-28）**：verify-100 未 GREEN 前 **每 30 分钟**汇报（`node scripts/verify-100-progress-snapshot.mjs` + 看门狗队列）；全绿后汇报 GREEN + commit+push + 下一阶段。
 
