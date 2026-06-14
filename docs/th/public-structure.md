@@ -15,5 +15,13 @@
 - [Ecosystem Entry](./ecosystem-entry.md)
 - [Developer Index](./developer-index.md)
 
+
+## Deep Reading
+
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+- [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
+- [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
+
 > หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
 

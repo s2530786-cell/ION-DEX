@@ -15,5 +15,12 @@
 - [Developer Index](./developer-index.md)
 - [Merchant Onboarding](./merchant-onboarding.md)
 
+
+## Deep Reading
+
+- [Technical Architecture](./03-technical-architecture.md)
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
 

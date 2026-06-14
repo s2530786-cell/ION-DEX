@@ -16,5 +16,12 @@
 - [SDK Overview](./sdk-overview.md)
 - [Quick Start](./quick-start.md)
 
+
+## Deep Reading
+
+- [Technical Architecture](./03-technical-architecture.md)
+- [Swap Router Minimum Output Enforcement](./24-swap-router-minimum-output.md)
+- [ION Official DEX Core Logic Deep Dive](./ion-dex-core-logic-deep-dive.md)
+
 > Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
 

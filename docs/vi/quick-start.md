@@ -16,5 +16,12 @@
 - [Contracts Overview](./contracts-overview.md)
 - [SDK Overview](./sdk-overview.md)
 
+
+## Deep Reading
+
+- [ION Testnet Deploy Checklist](./26-ion-testnet-deploy-checklist.md)
+- [Technical Architecture](./03-technical-architecture.md)
+- [Official Addresses And Open Assumptions](./01-official-addresses-and-assumptions.md)
+
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
 

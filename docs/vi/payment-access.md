@@ -15,5 +15,12 @@
 - [Settlement Integration](./settlement-integration.md)
 - [Ecosystem Entry](./ecosystem-entry.md)
 
+
+## Deep Reading
+
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [Technical Architecture](./03-technical-architecture.md)
+- [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
+
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
 

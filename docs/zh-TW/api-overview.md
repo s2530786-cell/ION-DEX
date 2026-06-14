@@ -16,5 +16,12 @@
 - [SDK Overview](./sdk-overview.md)
 - [Quick Start](./quick-start.md)
 
+
+## Deep Reading
+
+- [Technical Architecture](./03-technical-architecture.md)
+- [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
+- [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
+
 > 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。
 

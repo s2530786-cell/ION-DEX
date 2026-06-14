@@ -15,5 +15,12 @@
 - [Developer Index](./developer-index.md)
 - [Merchant Onboarding](./merchant-onboarding.md)
 
+
+## Deep Reading
+
+- [Technical Architecture](./03-technical-architecture.md)
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+
 > 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。
 

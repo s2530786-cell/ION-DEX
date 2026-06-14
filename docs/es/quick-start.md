@@ -16,5 +16,12 @@
 - [Contracts Overview](./contracts-overview.md)
 - [SDK Overview](./sdk-overview.md)
 
+
+## Deep Reading
+
+- [ION Testnet Deploy Checklist](./26-ion-testnet-deploy-checklist.md)
+- [Technical Architecture](./03-technical-architecture.md)
+- [Official Addresses And Open Assumptions](./01-official-addresses-and-assumptions.md)
+
 > Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
 

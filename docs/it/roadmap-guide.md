@@ -15,5 +15,12 @@
 - [Developer Index](./developer-index.md)
 - [Merchant Onboarding](./merchant-onboarding.md)
 
+
+## Deep Reading
+
+- [Technical Architecture](./03-technical-architecture.md)
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
 

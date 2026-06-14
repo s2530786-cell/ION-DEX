@@ -1041,58 +1041,203 @@ const localizedLeafPages = [
     slug: "developer-index.md",
     title: "Developer Index",
     related: ["api-overview.md", "contracts-overview.md", "sdk-overview.md", "quick-start.md"],
+    deepDocs: ["03-technical-architecture.md", "01-official-addresses-and-assumptions.md", "ion-dex-core-logic-deep-dive.md"],
   },
   {
     slug: "api-overview.md",
     title: "API Overview",
     related: ["developer-index.md", "contracts-overview.md", "sdk-overview.md", "quick-start.md"],
+    deepDocs: ["03-technical-architecture.md", "27-ion-dex-scraping-security-integration-v1.md", "28-ai-sentinel-security-test-matrix-v1.md"],
   },
   {
     slug: "contracts-overview.md",
     title: "Contracts Overview",
     related: ["developer-index.md", "api-overview.md", "sdk-overview.md", "quick-start.md"],
+    deepDocs: ["03-technical-architecture.md", "24-swap-router-minimum-output.md", "ion-dex-core-logic-deep-dive.md"],
   },
   {
     slug: "sdk-overview.md",
     title: "SDK Overview",
     related: ["developer-index.md", "api-overview.md", "contracts-overview.md", "quick-start.md"],
+    deepDocs: ["03-technical-architecture.md", "26-ion-testnet-deploy-checklist.md", "01-official-addresses-and-assumptions.md"],
   },
   {
     slug: "quick-start.md",
     title: "Quick Start",
     related: ["developer-index.md", "api-overview.md", "contracts-overview.md", "sdk-overview.md"],
+    deepDocs: ["26-ion-testnet-deploy-checklist.md", "03-technical-architecture.md", "01-official-addresses-and-assumptions.md"],
   },
   {
     slug: "merchant-onboarding.md",
     title: "Merchant Onboarding",
     related: ["payment-access.md", "settlement-integration.md", "ecosystem-entry.md"],
+    deepDocs: ["02-tokenomics-and-fees.md", "26-ion-testnet-deploy-checklist.md", "27-ion-dex-scraping-security-integration-v1.md"],
   },
   {
     slug: "payment-access.md",
     title: "Payment Access",
     related: ["merchant-onboarding.md", "settlement-integration.md", "ecosystem-entry.md"],
+    deepDocs: ["02-tokenomics-and-fees.md", "03-technical-architecture.md", "27-ion-dex-scraping-security-integration-v1.md"],
   },
   {
     slug: "settlement-integration.md",
     title: "Settlement Integration",
     related: ["merchant-onboarding.md", "payment-access.md", "ecosystem-entry.md"],
+    deepDocs: ["02-tokenomics-and-fees.md", "03-technical-architecture.md", "27-ion-dex-scraping-security-integration-v1.md"],
   },
   {
     slug: "ecosystem-entry.md",
     title: "Ecosystem Entry",
     related: ["merchant-onboarding.md", "payment-access.md", "settlement-integration.md", "public-structure.md"],
+    deepDocs: ["ion-dex-flywheel-design.md", "ai-sentinel-gateway-contract.md", "28-ai-sentinel-security-test-matrix-v1.md"],
   },
   {
     slug: "public-structure.md",
     title: "Public Structure",
     related: ["roadmap-guide.md", "ecosystem-entry.md", "developer-index.md"],
+    deepDocs: ["02-tokenomics-and-fees.md", "ion-dex-flywheel-design.md", "ai-sentinel-gateway-contract.md", "28-ai-sentinel-security-test-matrix-v1.md"],
   },
   {
     slug: "roadmap-guide.md",
     title: "Roadmap Guide",
     related: ["public-structure.md", "developer-index.md", "merchant-onboarding.md"],
+    deepDocs: ["03-technical-architecture.md", "02-tokenomics-and-fees.md", "ion-dex-flywheel-design.md"],
   },
 ];
+
+const localizedDeepPages = [
+  {
+    slug: "01-official-addresses-and-assumptions.md",
+    title: "Official Addresses And Open Assumptions",
+    parent: "developer-index.md",
+    related: ["03-technical-architecture.md", "02-tokenomics-and-fees.md", "26-ion-testnet-deploy-checklist.md"],
+  },
+  {
+    slug: "02-tokenomics-and-fees.md",
+    title: "Tokenomics And Fee Blueprint",
+    parent: "public-structure.md",
+    related: ["03-technical-architecture.md", "ion-dex-flywheel-design.md", "26-ion-testnet-deploy-checklist.md"],
+  },
+  {
+    slug: "03-technical-architecture.md",
+    title: "Technical Architecture",
+    parent: "developer-index.md",
+    related: ["01-official-addresses-and-assumptions.md", "24-swap-router-minimum-output.md", "ion-dex-core-logic-deep-dive.md"],
+  },
+  {
+    slug: "24-swap-router-minimum-output.md",
+    title: "Swap Router Minimum Output Enforcement",
+    parent: "contracts-overview.md",
+    related: ["03-technical-architecture.md", "ion-dex-core-logic-deep-dive.md", "26-ion-testnet-deploy-checklist.md"],
+  },
+  {
+    slug: "26-ion-testnet-deploy-checklist.md",
+    title: "ION Testnet Deploy Checklist",
+    parent: "quick-start.md",
+    related: ["01-official-addresses-and-assumptions.md", "03-technical-architecture.md", "24-swap-router-minimum-output.md"],
+  },
+  {
+    slug: "27-ion-dex-scraping-security-integration-v1.md",
+    title: "ION DEX Scraping Security Integration Checklist",
+    parent: "api-overview.md",
+    related: ["28-ai-sentinel-security-test-matrix-v1.md", "ai-sentinel-gateway-contract.md", "03-technical-architecture.md"],
+  },
+  {
+    slug: "28-ai-sentinel-security-test-matrix-v1.md",
+    title: "AI Sentinel Security Test Matrix",
+    parent: "public-structure.md",
+    related: ["27-ion-dex-scraping-security-integration-v1.md", "ai-sentinel-gateway-contract.md", "03-technical-architecture.md"],
+  },
+  {
+    slug: "ai-sentinel-gateway-contract.md",
+    title: "AI Sentinel And Gateway Contract",
+    parent: "public-structure.md",
+    related: ["28-ai-sentinel-security-test-matrix-v1.md", "27-ion-dex-scraping-security-integration-v1.md", "ion-dex-flywheel-design.md"],
+  },
+  {
+    slug: "ion-dex-core-logic-deep-dive.md",
+    title: "ION Official DEX Core Logic Deep Dive",
+    parent: "contracts-overview.md",
+    related: ["03-technical-architecture.md", "24-swap-router-minimum-output.md", "01-official-addresses-and-assumptions.md"],
+  },
+  {
+    slug: "ion-dex-flywheel-design.md",
+    title: "ION DEX Flywheel Design",
+    parent: "public-structure.md",
+    related: ["02-tokenomics-and-fees.md", "03-technical-architecture.md", "ai-sentinel-gateway-contract.md"],
+  },
+];
+
+const docsHubDeepDocs = [
+  "03-technical-architecture.md",
+  "02-tokenomics-and-fees.md",
+  "01-official-addresses-and-assumptions.md",
+  "26-ion-testnet-deploy-checklist.md",
+  "ion-dex-core-logic-deep-dive.md",
+];
+
+function findLeafPage(slug) {
+  return localizedLeafPages.find((item) => item.slug === slug);
+}
+
+function findDeepPage(slug) {
+  return localizedDeepPages.find((item) => item.slug === slug);
+}
+
+function parseMarkdownDoc(markdown, fallbackTitle) {
+  const lines = markdown.split(/\r?\n/u);
+  const titleLine = lines.find((line) => line.startsWith("# "));
+  const title = titleLine ? titleLine.replace(/^#\s+/u, "").trim() : fallbackTitle;
+  const headings = lines
+    .filter((line) => line.startsWith("## ") || line.startsWith("### "))
+    .map((line) => line.replace(/^###?\s+/u, "").trim())
+    .slice(0, 10);
+
+  let lead = "";
+  let afterTitle = false;
+  const leadLines = [];
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!afterTitle) {
+      if (rawLine.startsWith("# ")) {
+        afterTitle = true;
+      }
+      continue;
+    }
+    if (!line) {
+      if (leadLines.length) {
+        break;
+      }
+      continue;
+    }
+    if (line.startsWith("## ") || line.startsWith("```") || line === "---") {
+      break;
+    }
+    leadLines.push(line.replace(/^>\s?/u, ""));
+  }
+  lead = leadLines.join(" ").trim();
+
+  return {
+    title,
+    lead,
+    headings,
+  };
+}
+
+function rewriteDeepLeadLinks(markdown, currentSlug) {
+  return markdown.replace(/(\[[^\]]+\])\(([^)]+)\)/gu, (full, label, href) => {
+    if (!href || href.startsWith("http://") || href.startsWith("https://") || href.startsWith("#") || href.startsWith("mailto:")) {
+      return full;
+    }
+    if (href === currentSlug) {
+      return full;
+    }
+    if (localizedDeepPages.some((page) => page.slug === href) || href === "28-public-development-scope.md") {
+      return `${label}(../${href})`;
+    }
+    return full;
+  });
+}
 
 function englishDocsHub() {
   return `${buildDocsNav(languages[0])}
@@ -1221,6 +1366,10 @@ ${copy.docsHubIntro}
 - [Payment Access](./payment-access.md)
 - [Settlement Integration](./settlement-integration.md)
 - [Ecosystem Entry](./ecosystem-entry.md)
+${docsHubDeepDocs.map((deepSlug) => {
+  const deepPage = findDeepPage(deepSlug);
+  return `- [${deepPage ? deepPage.title : deepSlug}](./${deepSlug})`;
+}).join("\n")}
 - [${copy.whitepaperIndexLabel}](./whitepaper-index.md)
 - [${copy.whitepaperOverviewLabel}](../whitepaper/${language.whitepaperDir}/${path.posix.basename(language.whitepaperFile)})
 - [${copy.englishDeveloperLabel}](../developer-index.md)
@@ -1301,7 +1450,43 @@ function renderDocsLeaf(language, page) {
 ## ${copy.nextHeading}
 
 ${page.related.map((related) => {
-  const relatedPage = localizedLeafPages.find((item) => item.slug === related);
+  const relatedPage = findLeafPage(related);
+  return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
+}).join("\n")}
+
+${page.deepDocs && page.deepDocs.length ? `\n## Deep Reading\n\n${page.deepDocs.map((deepSlug) => {
+  const deepPage = findDeepPage(deepSlug);
+  return `- [${deepPage ? deepPage.title : deepSlug}](./${deepSlug})`;
+}).join("\n")}` : ""}
+
+> ${copy.canonicalNote}
+`;
+}
+
+function renderDeepDoc(language, page, doc) {
+  const copy = language.copy;
+  const parent = findLeafPage(page.parent);
+  return `${buildDocsLeafNav(language, page.slug)}
+
+# ${page.title}
+
+${doc.lead ? `${rewriteDeepLeadLinks(doc.lead, page.slug)}\n` : ""}
+
+## ${copy.startHeading}
+
+- [${page.title} (English)](../${page.slug})
+- [${parent ? parent.title : page.parent}](./${page.parent})
+- [${copy.docsHubLabel}](./index.md)
+- [${copy.whitepaperIndexLabel}](./whitepaper-index.md)
+
+## Key Sections
+
+${doc.headings.length ? doc.headings.map((heading) => `- ${heading}`).join("\n") : "- See the English canonical document for the full section structure."}
+
+## ${copy.nextHeading}
+
+${page.related.map((related) => {
+  const relatedPage = findDeepPage(related);
   return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
 }).join("\n")}
 
@@ -1347,6 +1532,12 @@ async function main() {
   await write("docs/whitepaper-index.md", englishWhitepaperIndex());
   await updateEnglishWhitepaper();
 
+  const deepDocContent = new Map();
+  for (const page of localizedDeepPages) {
+    const source = await readFile(path.join(root, "docs", page.slug), "utf8");
+    deepDocContent.set(page.slug, parseMarkdownDoc(source, page.title));
+  }
+
   for (const language of languages.filter((item) => item.key !== "en")) {
     await write(language.readmeFile, `${renderReadme(language)}\n`);
     await write(`docs/${language.docsDir}/index.md`, `${renderDocsHub(language)}\n`);
@@ -1354,9 +1545,14 @@ async function main() {
     await write(language.whitepaperFile, `${renderWhitepaper(language)}\n`);
   }
 
-  for (const language of languages.filter((item) => item.key !== "en" && item.key !== "zh-CN")) {
+  for (const language of languages.filter((item) => item.key !== "en")) {
     for (const page of localizedLeafPages) {
-      await write(`docs/${language.docsDir}/${page.slug}`, `${renderDocsLeaf(language, page)}\n`);
+      if (language.key !== "zh-CN") {
+        await write(`docs/${language.docsDir}/${page.slug}`, `${renderDocsLeaf(language, page)}\n`);
+      }
+    }
+    for (const page of localizedDeepPages) {
+      await write(`docs/${language.docsDir}/${page.slug}`, `${renderDeepDoc(language, page, deepDocContent.get(page.slug))}\n`);
     }
   }
 }

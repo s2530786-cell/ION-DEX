@@ -1,3 +1,30 @@
+# 2026-06-14 preview cleanup complete, verify-100 restarted
+
+- **Scope**: removed the lingering frontend preview tree, confirmed `4173` and `8788` were free of live listeners, and relaunched the guarded `verify-100` gate from the existing resume point.
+- **What changed**:
+  - stopped the remaining `frontend` `preview:local` / `vite preview` process tree;
+  - verified `4173` and `8788` had no active listeners before restart;
+  - relaunched `scripts/verify-100.ps1` with:
+    - `StartAt=24`
+    - `InitialPassed=23`
+    - `ResumeSummary=%TEMP%\ion-verify-100-summary-20260614-171724.txt`
+    - `ResumeLog=%TEMP%\ion-verify-100-20260614-171724.log`
+  - the resumed run is active again and has already advanced to `PASS 25/100`.
+- **Files touched**:
+  - `SESSION_STATE.md`
+  - `docs/99-current-progress.md`
+- **Verification**:
+  - `Get-NetTCPConnection -LocalPort 4173,8788` showed no live listeners before the restart;
+  - `Get-CimInstance Win32_Process` no longer showed the lingering `preview:local` tree after cleanup;
+  - the resumed `verify-100` summary tail shows `PASS 25/100`.
+- **Important decision**:
+  - keep the active `verify-100` resume as the current truth and do not reopen the `settings` detour.
+- **Residual gap**:
+  - the 100-pass gate is still running and has not yet reached fresh green proof.
+- **Next step**:
+  1. continue monitoring the current `verify-100` resume;
+  2. if it fails again, inspect the new trace and patch only the failing step.
+
 # 2026-06-14 verify-100 stopped, isolated verify-e2e rerun green
 
 - **Scope**: removed the concurrent `verify-100` interference, then reran the smoke-only `verify-e2e` path in isolation to verify whether the backend `code=1` was real.
@@ -273,6 +300,63 @@
 - **Residual gap**:
   - the public second-layer docs leaves now exist across the full advertised 18-language switch path;
   - deeper long-form technical documents still remain English-canonical unless expanded separately.
+
+## 2026-06-14 README / docs 18-language deeper technical document completion
+
+- **Scope**: extended the repository-side 18-language docs tree from second-layer public leaf pages into deeper technical long-form documents, so multilingual readers can continue from docs hubs and leaf pages into real technical follow-up material instead of falling back to English immediately.
+- **What changed**:
+  - extended `scripts/generate-doc-language-editions.mjs` to generate localized deep technical document pages from canonical English sources.
+  - added deep-reading links from public docs hubs and leaf pages into the deeper technical layer.
+  - generated 10 deeper technical document pages for every public language tree under `docs/<lang>/`:
+    - `01-official-addresses-and-assumptions.md`
+    - `02-tokenomics-and-fees.md`
+    - `03-technical-architecture.md`
+    - `24-swap-router-minimum-output.md`
+    - `26-ion-testnet-deploy-checklist.md`
+    - `27-ion-dex-scraping-security-integration-v1.md`
+    - `28-ai-sentinel-security-test-matrix-v1.md`
+    - `ai-sentinel-gateway-contract.md`
+    - `ion-dex-core-logic-deep-dive.md`
+    - `ion-dex-flywheel-design.md`
+  - ensured `zh-CN` received the same deep technical layer so new links added to `docs/zh-CN/index.md` are real rather than partial placeholders.
+  - fixed localized deep-page lead-link rewriting so copied summary links like `28-public-development-scope.md` resolve correctly from each language subtree.
+- **Files touched**:
+  - `scripts/generate-doc-language-editions.mjs`
+  - `docs/zh-CN/index.md`
+  - `docs/zh-TW/index.md`
+  - `docs/ru/index.md`
+  - `docs/es/index.md`
+  - `docs/pt/index.md`
+  - `docs/ar/index.md`
+  - `docs/fr/index.md`
+  - `docs/de/index.md`
+  - `docs/ja/index.md`
+  - `docs/ko/index.md`
+  - `docs/hi/index.md`
+  - `docs/tr/index.md`
+  - `docs/it/index.md`
+  - `docs/id/index.md`
+  - `docs/vi/index.md`
+  - `docs/th/index.md`
+  - `docs/pl/index.md`
+  - `docs/zh-CN/{01-official-addresses-and-assumptions,02-tokenomics-and-fees,03-technical-architecture,24-swap-router-minimum-output,26-ion-testnet-deploy-checklist,27-ion-dex-scraping-security-integration-v1,28-ai-sentinel-security-test-matrix-v1,ai-sentinel-gateway-contract,ion-dex-core-logic-deep-dive,ion-dex-flywheel-design}.md`
+  - `docs/<lang>/{01-official-addresses-and-assumptions,02-tokenomics-and-fees,03-technical-architecture,24-swap-router-minimum-output,26-ion-testnet-deploy-checklist,27-ion-dex-scraping-security-integration-v1,28-ai-sentinel-security-test-matrix-v1,ai-sentinel-gateway-contract,ion-dex-core-logic-deep-dive,ion-dex-flywheel-design}.md` across `zh-TW`, `ru`, `es`, `pt`, `ar`, `fr`, `de`, `ja`, `ko`, `hi`, `tr`, `it`, `id`, `vi`, `th`, `pl`
+- **Verification**:
+  - `node --check scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node scripts/generate-doc-language-editions.mjs` -> PASS
+  - custom scan across `418` related README/docs/whitepaper/leaf/deep files -> `brokenCount=0`
+  - custom relative-link scan across `11378` targets -> `0` missing targets
+  - UTF-8 without BOM / no NUL validation across generator + generated files -> `encodingBadCount=0`
+  - targeted deeper chain checks -> PASS:
+    - `README.ko.md -> docs/ko/index.md -> docs/ko/developer-index.md -> docs/ko/03-technical-architecture.md`
+    - `README.vi.md -> docs/vi/index.md -> docs/vi/payment-access.md -> docs/vi/27-ion-dex-scraping-security-integration-v1.md`
+    - `README.pl.md -> docs/pl/index.md -> docs/pl/public-structure.md -> docs/pl/ion-dex-flywheel-design.md`
+    - `README.zh-CN.md -> docs/zh-CN/index.md -> docs/zh-CN/03-technical-architecture.md`
+- **Important decision**:
+  - the public 18-language GitHub docs switch now includes a deeper technical reading layer, but these pages still remain derivative language editions of canonical English engineering sources rather than independent normative specs.
+- **Residual gap**:
+  - public multilingual readers can now continue through docs hub, public leaf pages, and a deeper technical layer without hitting fake stops;
+  - the full repository still contains many additional English-only long-tail docs outside this curated multilingual technical set.
 
 # Current Progress
 

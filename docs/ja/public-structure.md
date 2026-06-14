@@ -15,5 +15,13 @@
 - [Ecosystem Entry](./ecosystem-entry.md)
 - [Developer Index](./developer-index.md)
 
+
+## Deep Reading
+
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+- [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
+- [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
+
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
 

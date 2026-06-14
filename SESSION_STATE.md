@@ -1,3 +1,29 @@
+# 2026-06-14 preview cleanup complete, verify-100 restarted
+
+- Last completed step:
+  - stopped the lingering `frontend` preview tree and confirmed `4173` / `8788` had no active listeners before relaunching the guarded gate.
+  - restarted `verify-100` from the existing resume point with:
+    - `StartAt=24`
+    - `InitialPassed=23`
+    - `ResumeSummary=%TEMP%\ion-verify-100-summary-20260614-171724.txt`
+    - `ResumeLog=%TEMP%\ion-verify-100-20260614-171724.log`
+  - the resumed run is now active again and has advanced to at least `PASS 25`.
+- Verification evidence:
+  - `Get-NetTCPConnection -LocalPort 4173,8788` showed no live listeners before restart.
+  - `Get-CimInstance Win32_Process` no longer showed the lingering `preview:local` tree after cleanup.
+  - `Start-Process ... scripts\\verify-100.ps1 ... -StartAt 24 -InitialPassed 23 ...` launched a new guarded run.
+  - the latest summary tail shows the resumed run reaching `PASS 25/100`.
+- Key decisions:
+  - do not continue chasing `settings`; the real issue was stale concurrent preview / gate processes.
+  - keep the resumed `verify-100` run as the current truth until it either completes green or stalls again.
+- Current blocker:
+  - none for the restart step itself.
+  - the 100-pass gate is still in progress and not yet green.
+- Exact next action:
+  1. monitor the current `verify-100` resume until it reaches `PASSED=100 FAILED=0 RESULT=GREEN` or fails again;
+  2. if it fails, inspect the new failing step and patch only that path;
+  3. keep the workspace free of parallel preview / verify gate contention.
+
 # 2026-06-14 verify-100 stopped, isolated verify-e2e rerun green
 
 - Last completed step:
@@ -182,6 +208,46 @@
   - unrelated repository-wide dirty changes still exist and must stay out of this scoped documentation commit.
 - Exact next action:
   1. stage only the generator, docs index updates, generated second-layer leaf files, and progress/state docs for this task;
+  2. commit directly on `main`;
+  3. push `origin main`.
+
+## 2026-06-14 README / docs 18-language deeper technical document completion
+
+- Last completed step:
+  - extended the GitHub-side 18-language docs tree from second-layer public leaf pages into a deeper technical document layer.
+  - generated 10 deeper technical document pages under every public language tree:
+    - `01-official-addresses-and-assumptions.md`
+    - `02-tokenomics-and-fees.md`
+    - `03-technical-architecture.md`
+    - `24-swap-router-minimum-output.md`
+    - `26-ion-testnet-deploy-checklist.md`
+    - `27-ion-dex-scraping-security-integration-v1.md`
+    - `28-ai-sentinel-security-test-matrix-v1.md`
+    - `ai-sentinel-gateway-contract.md`
+    - `ion-dex-core-logic-deep-dive.md`
+    - `ion-dex-flywheel-design.md`
+  - updated language docs hubs and public leaf pages so they now route readers into these deeper technical pages.
+  - included `zh-CN` in this deep-technical generation layer to avoid broken links from the Chinese docs hub.
+  - fixed localized deep-page summary link rewriting so copied canonical links like `28-public-development-scope.md` resolve correctly from localized subtrees.
+- Verification evidence:
+  - `node --check scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node scripts/generate-doc-language-editions.mjs` -> PASS
+  - custom scan across `418` related README/docs/whitepaper/leaf/deep files -> `brokenCount=0`
+  - custom relative-link scan -> `11378` links checked, `0` missing targets
+  - UTF-8 without BOM / no NUL scan across generator + generated files -> `encodingBadCount=0`
+  - targeted chain checks all passed:
+    - `README.ko.md -> docs/ko/index.md -> docs/ko/developer-index.md -> docs/ko/03-technical-architecture.md`
+    - `README.vi.md -> docs/vi/index.md -> docs/vi/payment-access.md -> docs/vi/27-ion-dex-scraping-security-integration-v1.md`
+    - `README.pl.md -> docs/pl/index.md -> docs/pl/public-structure.md -> docs/pl/ion-dex-flywheel-design.md`
+    - `README.zh-CN.md -> docs/zh-CN/index.md -> docs/zh-CN/03-technical-architecture.md`
+- Key decisions:
+  - the public 18-language switch is now treated as a three-layer static same-language tree: docs hub -> public leaf pages -> curated deeper technical pages.
+  - English remains canonical for final wording, economics, security boundaries, and release truth whenever localized technical editions diverge.
+- Current blocker:
+  - no blocker remains for this deeper multilingual technical layer itself.
+  - unrelated repository-wide dirty changes still exist and must remain outside this scoped docs commit.
+- Exact next action:
+  1. stage only the generator, docs index updates, generated deeper technical files, and progress/state docs for this task;
   2. commit directly on `main`;
   3. push `origin main`.
 

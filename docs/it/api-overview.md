@@ -16,5 +16,12 @@
 - [SDK Overview](./sdk-overview.md)
 - [Quick Start](./quick-start.md)
 
+
+## Deep Reading
+
+- [Technical Architecture](./03-technical-architecture.md)
+- [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
+- [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
+
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
 

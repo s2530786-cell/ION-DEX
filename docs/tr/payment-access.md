@@ -15,5 +15,12 @@
 - [Settlement Integration](./settlement-integration.md)
 - [Ecosystem Entry](./ecosystem-entry.md)
 
+
+## Deep Reading
+
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [Technical Architecture](./03-technical-architecture.md)
+- [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
+
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
 

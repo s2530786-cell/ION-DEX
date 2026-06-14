@@ -15,5 +15,12 @@
 - [Settlement Integration](./settlement-integration.md)
 - [Ecosystem Entry](./ecosystem-entry.md)
 
+
+## Deep Reading
+
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [ION Testnet Deploy Checklist](./26-ion-testnet-deploy-checklist.md)
+- [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
+
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
 

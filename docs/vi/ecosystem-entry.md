@@ -16,5 +16,12 @@
 - [Settlement Integration](./settlement-integration.md)
 - [Public Structure](./public-structure.md)
 
+
+## Deep Reading
+
+- [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+- [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
+- [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
+
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
 

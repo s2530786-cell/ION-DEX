@@ -16,5 +16,12 @@
 - [Settlement Integration](./settlement-integration.md)
 - [Public Structure](./public-structure.md)
 
+
+## Deep Reading
+
+- [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+- [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
+- [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
+
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
 

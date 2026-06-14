@@ -15,5 +15,12 @@
 - [Settlement Integration](./settlement-integration.md)
 - [Ecosystem Entry](./ecosystem-entry.md)
 
+
+## Deep Reading
+
+- [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
+- [ION Testnet Deploy Checklist](./26-ion-testnet-deploy-checklist.md)
+- [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
+
 > 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。
 

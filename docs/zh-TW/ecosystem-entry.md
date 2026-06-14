@@ -16,5 +16,12 @@
 - [Settlement Integration](./settlement-integration.md)
 - [Public Structure](./public-structure.md)
 
+
+## Deep Reading
+
+- [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+- [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
+- [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
+
 > 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。
 
