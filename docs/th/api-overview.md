@@ -1,0 +1,20 @@
+**Languages:** [English](../api-overview.md) | [简体中文](../zh-CN/api-overview.md) | [繁體中文](../zh-TW/api-overview.md) | [Русский](../ru/api-overview.md) | [Español](../es/api-overview.md) | [Português](../pt/api-overview.md) | [العربية](../ar/api-overview.md) | [Français](../fr/api-overview.md) | [Deutsch](../de/api-overview.md) | [日本語](../ja/api-overview.md) | [한국어](../ko/api-overview.md) | [हिन्दी](../hi/api-overview.md) | [Türkçe](../tr/api-overview.md) | [Italiano](../it/api-overview.md) | [Bahasa Indonesia](../id/api-overview.md) | [Tiếng Việt](../vi/api-overview.md) | [ไทย](./api-overview.md) | [Polski](../pl/api-overview.md)
+
+# API Overview
+
+## เริ่มที่นี่
+
+- [API Overview (English)](../api-overview.md)
+- [ศูนย์เอกสาร](./index.md)
+- [ดัชนี whitepaper](./whitepaper-index.md)
+- [ภาพรวม whitepaper](../whitepaper/th/WHITEPAPER.th.md)
+
+## อ่านต่อ
+
+- [Developer Index](./developer-index.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+
+> หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
+

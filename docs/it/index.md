@@ -7,6 +7,10 @@ Questa pagina è il gateway italiano alla documentazione di ION DEX e collega il
 ## Inizia da qui
 
 - [README in questa lingua](../../README.it.md)
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [Panoramica whitepaper](../whitepaper/it/WHITEPAPER.it.md)
 - [Indice whitepaper](./whitepaper-index.md)
 - [Whitepaper completa in inglese](../WHITEPAPER.md)
@@ -14,6 +18,13 @@ Questa pagina è il gateway italiano alla documentazione di ION DEX e collega il
 
 ## Letture successive
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [Indice whitepaper](./whitepaper-index.md)
 - [Panoramica whitepaper](../whitepaper/it/WHITEPAPER.it.md)
 - [English Developer Index](../developer-index.md)

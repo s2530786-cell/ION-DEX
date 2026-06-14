@@ -7,6 +7,10 @@
 ## यहाँ से शुरू करें
 
 - [इस भाषा का README](../../README.hi.md)
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [whitepaper overview](../whitepaper/hi/WHITEPAPER.hi.md)
 - [whitepaper index](./whitepaper-index.md)
 - [अंग्रेज़ी पूर्ण whitepaper](../WHITEPAPER.md)
@@ -14,6 +18,13 @@
 
 ## आगे क्या पढ़ें
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [whitepaper index](./whitepaper-index.md)
 - [whitepaper overview](../whitepaper/hi/WHITEPAPER.hi.md)
 - [English Developer Index](../developer-index.md)

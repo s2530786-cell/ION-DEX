@@ -1,0 +1,20 @@
+**Languages:** [English](../sdk-overview.md) | [简体中文](../zh-CN/sdk-overview.md) | [繁體中文](../zh-TW/sdk-overview.md) | [Русский](../ru/sdk-overview.md) | [Español](./sdk-overview.md) | [Português](../pt/sdk-overview.md) | [العربية](../ar/sdk-overview.md) | [Français](../fr/sdk-overview.md) | [Deutsch](../de/sdk-overview.md) | [日本語](../ja/sdk-overview.md) | [한국어](../ko/sdk-overview.md) | [हिन्दी](../hi/sdk-overview.md) | [Türkçe](../tr/sdk-overview.md) | [Italiano](../it/sdk-overview.md) | [Bahasa Indonesia](../id/sdk-overview.md) | [Tiếng Việt](../vi/sdk-overview.md) | [ไทย](../th/sdk-overview.md) | [Polski](../pl/sdk-overview.md)
+
+# SDK Overview
+
+## Empieza aquí
+
+- [SDK Overview (English)](../sdk-overview.md)
+- [Centro de documentación](./index.md)
+- [Índice del whitepaper](./whitepaper-index.md)
+- [Resumen del whitepaper](../whitepaper/es/WHITEPAPER.es.md)
+
+## Qué leer después
+
+- [Developer Index](./developer-index.md)
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [Quick Start](./quick-start.md)
+
+> Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
+

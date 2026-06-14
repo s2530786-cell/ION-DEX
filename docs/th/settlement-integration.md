@@ -1,0 +1,19 @@
+**Languages:** [English](../settlement-integration.md) | [简体中文](../zh-CN/settlement-integration.md) | [繁體中文](../zh-TW/settlement-integration.md) | [Русский](../ru/settlement-integration.md) | [Español](../es/settlement-integration.md) | [Português](../pt/settlement-integration.md) | [العربية](../ar/settlement-integration.md) | [Français](../fr/settlement-integration.md) | [Deutsch](../de/settlement-integration.md) | [日本語](../ja/settlement-integration.md) | [한국어](../ko/settlement-integration.md) | [हिन्दी](../hi/settlement-integration.md) | [Türkçe](../tr/settlement-integration.md) | [Italiano](../it/settlement-integration.md) | [Bahasa Indonesia](../id/settlement-integration.md) | [Tiếng Việt](../vi/settlement-integration.md) | [ไทย](./settlement-integration.md) | [Polski](../pl/settlement-integration.md)
+
+# Settlement Integration
+
+## เริ่มที่นี่
+
+- [Settlement Integration (English)](../settlement-integration.md)
+- [ศูนย์เอกสาร](./index.md)
+- [ดัชนี whitepaper](./whitepaper-index.md)
+- [ภาพรวม whitepaper](../whitepaper/th/WHITEPAPER.th.md)
+
+## อ่านต่อ
+
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Payment Access](./payment-access.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
+
+> หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
+

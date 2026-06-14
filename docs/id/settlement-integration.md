@@ -1,0 +1,19 @@
+**Languages:** [English](../settlement-integration.md) | [简体中文](../zh-CN/settlement-integration.md) | [繁體中文](../zh-TW/settlement-integration.md) | [Русский](../ru/settlement-integration.md) | [Español](../es/settlement-integration.md) | [Português](../pt/settlement-integration.md) | [العربية](../ar/settlement-integration.md) | [Français](../fr/settlement-integration.md) | [Deutsch](../de/settlement-integration.md) | [日本語](../ja/settlement-integration.md) | [한국어](../ko/settlement-integration.md) | [हिन्दी](../hi/settlement-integration.md) | [Türkçe](../tr/settlement-integration.md) | [Italiano](../it/settlement-integration.md) | [Bahasa Indonesia](./settlement-integration.md) | [Tiếng Việt](../vi/settlement-integration.md) | [ไทย](../th/settlement-integration.md) | [Polski](../pl/settlement-integration.md)
+
+# Settlement Integration
+
+## Mulai dari sini
+
+- [Settlement Integration (English)](../settlement-integration.md)
+- [Pusat dokumentasi](./index.md)
+- [Indeks whitepaper](./whitepaper-index.md)
+- [Ringkasan whitepaper](../whitepaper/id/WHITEPAPER.id.md)
+
+## Bacaan berikutnya
+
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Payment Access](./payment-access.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
+
+> Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
+

@@ -7,6 +7,10 @@ Cette page sert de porte d’entrée française à la documentation ION DEX et r
 ## Commencer ici
 
 - [README dans cette langue](../../README.fr.md)
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [Aperçu du whitepaper](../whitepaper/fr/WHITEPAPER.fr.md)
 - [Index du whitepaper](./whitepaper-index.md)
 - [Whitepaper complète en anglais](../WHITEPAPER.md)
@@ -14,6 +18,13 @@ Cette page sert de porte d’entrée française à la documentation ION DEX et r
 
 ## Lecture suivante
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [Index du whitepaper](./whitepaper-index.md)
 - [Aperçu du whitepaper](../whitepaper/fr/WHITEPAPER.fr.md)
 - [English Developer Index](../developer-index.md)

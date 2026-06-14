@@ -1,0 +1,20 @@
+**Languages:** [English](../ecosystem-entry.md) | [简体中文](../zh-CN/ecosystem-entry.md) | [繁體中文](../zh-TW/ecosystem-entry.md) | [Русский](../ru/ecosystem-entry.md) | [Español](../es/ecosystem-entry.md) | [Português](../pt/ecosystem-entry.md) | [العربية](./ecosystem-entry.md) | [Français](../fr/ecosystem-entry.md) | [Deutsch](../de/ecosystem-entry.md) | [日本語](../ja/ecosystem-entry.md) | [한국어](../ko/ecosystem-entry.md) | [हिन्दी](../hi/ecosystem-entry.md) | [Türkçe](../tr/ecosystem-entry.md) | [Italiano](../it/ecosystem-entry.md) | [Bahasa Indonesia](../id/ecosystem-entry.md) | [Tiếng Việt](../vi/ecosystem-entry.md) | [ไทย](../th/ecosystem-entry.md) | [Polski](../pl/ecosystem-entry.md)
+
+# Ecosystem Entry
+
+## ابدأ من هنا
+
+- [Ecosystem Entry (English)](../ecosystem-entry.md)
+- [مركز الوثائق](./index.md)
+- [فهرس whitepaper](./whitepaper-index.md)
+- [نظرة whitepaper](../whitepaper/ar/WHITEPAPER.ar.md)
+
+## ماذا تقرأ بعد ذلك
+
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Public Structure](./public-structure.md)
+
+> ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.
+

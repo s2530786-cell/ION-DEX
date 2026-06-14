@@ -7,6 +7,10 @@
 ## Начните здесь
 
 - [README на этом языке](../../README.ru.md)
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [Обзор whitepaper](../whitepaper/ru/WHITEPAPER.ru.md)
 - [Индекс whitepaper](./whitepaper-index.md)
 - [Полный whitepaper на английском](../WHITEPAPER.md)
@@ -14,6 +18,13 @@
 
 ## Что читать дальше
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [Индекс whitepaper](./whitepaper-index.md)
 - [Обзор whitepaper](../whitepaper/ru/WHITEPAPER.ru.md)
 - [English Developer Index](../developer-index.md)

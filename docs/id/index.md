@@ -7,6 +7,10 @@ Halaman ini adalah gerbang dokumentasi ION DEX dalam Bahasa Indonesia dan menghu
 ## Mulai dari sini
 
 - [README dalam bahasa ini](../../README.id.md)
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [Ringkasan whitepaper](../whitepaper/id/WHITEPAPER.id.md)
 - [Indeks whitepaper](./whitepaper-index.md)
 - [Whitepaper lengkap bahasa Inggris](../WHITEPAPER.md)
@@ -14,6 +18,13 @@ Halaman ini adalah gerbang dokumentasi ION DEX dalam Bahasa Indonesia dan menghu
 
 ## Bacaan berikutnya
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [Indeks whitepaper](./whitepaper-index.md)
 - [Ringkasan whitepaper](../whitepaper/id/WHITEPAPER.id.md)
 - [English Developer Index](../developer-index.md)

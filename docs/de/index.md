@@ -7,6 +7,10 @@ Diese Seite ist der deutschsprachige Einstieg in die ION-Dokumentation und verbi
 ## Hier starten
 
 - [README in dieser Sprache](../../README.de.md)
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [Whitepaper-Überblick](../whitepaper/de/WHITEPAPER.de.md)
 - [Whitepaper-Index](./whitepaper-index.md)
 - [Vollständiges englisches Whitepaper](../WHITEPAPER.md)
@@ -14,6 +18,13 @@ Diese Seite ist der deutschsprachige Einstieg in die ION-Dokumentation und verbi
 
 ## Weiterlesen
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [Whitepaper-Index](./whitepaper-index.md)
 - [Whitepaper-Überblick](../whitepaper/de/WHITEPAPER.de.md)
 - [English Developer Index](../developer-index.md)

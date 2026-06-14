@@ -1,3 +1,29 @@
+# 2026-06-14 verify-100 stopped, isolated verify-e2e rerun green
+
+- Last completed step:
+  - stopped the active `verify-100` / watchdog process tree that was contending with the verify backend window.
+  - reran `frontend/scripts/verify-e2e.mjs` in isolation with:
+    - `PLAYWRIGHT_TEST_PATH=e2e/smoke.spec.ts`
+    - `ION_BACKEND_EXIT_TRACE=1`
+    - `ION_BACKEND_TRACE_REQUESTS=1`
+  - confirmed the isolated smoke-only run passed cleanly:
+    - `17 passed`
+- Verification evidence:
+  - `Get-CimInstance Win32_Process` showed the active `verify-100` and `verify-e2e` process trees before cleanup.
+  - `taskkill /PID 148764 /T /F` and related cleanup removed the active `verify-100` / watchdog tree.
+  - `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; $env:ION_BACKEND_EXIT_TRACE='1'; $env:ION_BACKEND_TRACE_REQUESTS='1'; node scripts/verify-e2e.mjs` -> `17 passed`
+  - backend trace stayed healthy during the isolated rerun; no new product backend crash was observed.
+- Key decisions:
+  - stop treating the old `verify-e2e` `code=1` as a product failure once the isolated rerun passed.
+  - keep `settings` investigation paused; the real issue was concurrent gate interference.
+- Current blocker:
+  - no product blocker remains for the isolated `verify-e2e` path.
+  - `verify-100` still needs a fresh guarded rerun if the user wants a new 100-pass proof for the current worktree.
+- Exact next action:
+  1. if needed, rerun `verify-100` in a quiet window;
+  2. otherwise continue from the now-green isolated `verify-e2e` baseline;
+  3. keep future backend-exit debugging paired with `ION_BACKEND_EXIT_TRACE=1` and `ION_BACKEND_TRACE_REQUESTS=1` only if a new failure appears.
+
 # 2026-06-14 frontend smoke locale fix + verify-e2e backend exit investigation
 
 - Last completed step:
@@ -16,8 +42,57 @@
   - `verify-e2e` still needs a quiet window free from the active `verify-100` watchdog/port cleanup path before we can rule out any remaining backend exit cause
 - Exact next action:
   1. pause or finish the active `verify-100` run
-  2. rerun `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; node scripts/verify-e2e.mjs` in isolation
-  3. if the backend still exits early after isolation, inspect the new backend trace before changing product code
+2. rerun `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; node scripts/verify-e2e.mjs` in isolation
+3. if the backend still exits early after isolation, inspect the new backend trace before changing product code
+
+## 2026-06-14 verify-100 gate stabilization + autonomous commit guard repair
+
+- Last completed step:
+  - fixed the active autonomous gate regression that was repeatedly stopping the current `verify-100` resume at `PASS 21` with `backendAudit=1`.
+  - hardened:
+    - `backend/scripts/audit-high.mjs`
+    - `frontend/scripts/audit-high.mjs`
+    - `scripts/autonomous-git-commit-push.mjs`
+    - `scripts/verify-100-gate.mjs`
+  - the audit wrappers now inspect npm debug logs under `C:\Users\admin\AppData\Local\npm-cache\_logs\*-debug-0.log` so transient `npm audit` failures can be detected even when npm only surfaces the debug-log path on stderr.
+  - the autonomous commit path now stages scoped files before `verify-100-gate assert-commit`, and no longer mutates a doc file after fresh proof capture.
+  - `verify-100-gate` now excludes watchdog bookkeeping files from the fresh-proof workspace snapshot:
+    - `.memory-bank/autonomous-work-queue.json`
+    - `.memory-bank/autonomous-work-watchdog-state.json`
+    - `.memory-bank/autonomous-work-watchdog.log`
+- Verification evidence:
+  - `node --check scripts/autonomous-git-commit-push.mjs` -> PASS
+  - `node --check scripts/verify-100-gate.mjs` -> PASS
+  - `node --check backend/scripts/audit-high.mjs` -> PASS
+  - `node --check frontend/scripts/audit-high.mjs` -> PASS
+  - `cd backend && npm run audit:high` -> PASS
+  - `cd frontend && npm run audit:high` -> PASS
+  - backend audit wrapper 5-loop smoke -> all PASS
+  - frontend audit wrapper 5-loop smoke -> all PASS
+  - byte-level encoding checks:
+    - `backend/scripts/audit-high.mjs` -> `BOM=False`, `NUL=False`
+    - `frontend/scripts/audit-high.mjs` -> `BOM=False`, `NUL=False`
+    - `scripts/autonomous-git-commit-push.mjs` -> `BOM=False`, `NUL=False`
+    - `scripts/verify-100-gate.mjs` -> `BOM=False`, `NUL=False`
+  - active resumed verify evidence:
+    - `C:\Users\admin\AppData\Local\Temp\ion-verify-100-summary-20260614-171724.txt`
+    - same resumed run advanced from repeated historical `PASS 21 FAILED ... backendAudit=1` entries to:
+      - `PASS 21 OK`
+      - `PASS 22 OK`
+- Key decisions:
+  - treat the original `PASS 21` failure as a gate-wrapper reliability bug, not as a proven backend product regression.
+  - do not stop/restart the in-flight resumed `verify-100` once it is making forward progress again.
+  - keep commit/push blocked until a fresh current-worktree `PASSED=100 FAILED=0 RESULT=GREEN` proof exists.
+- Current blocker:
+  - the active `verify-100` run is still in progress; there is still no fresh full-green proof for the current worktree.
+  - the FunC / ION contract audit still needs to be turned into the final per-file整改清单 delivery text.
+- Exact next action:
+  1. continue monitoring `C:\Users\admin\AppData\Local\Temp\ion-verify-100-summary-20260614-171724.txt` until it reaches `PASSED=100 FAILED=0 RESULT=GREEN` or stalls again
+  2. if the resumed run fails again, extract the new exact failing step and patch only that gate path
+  3. in parallel, convert the existing FunC / ION findings into a per-file remediation checklist:
+     - 问题
+     - 修法
+     - 测试要补什么
 
 # Current Session State
 
@@ -68,6 +143,45 @@
   - repository-wide `verify-100` gate remains separately outstanding for unrelated broader worktree changes, but the user explicitly requested direct push to `main` for this scoped docs fix.
 - Exact next action:
   1. stage only the documentation language-switch files changed in this fix;
+  2. commit directly on `main`;
+  3. push `origin main`.
+
+## 2026-06-14 README / docs 18-language second-layer leaf completion
+
+- Last completed step:
+  - extended the GitHub-side 18-language docs switch beyond first-layer entry pages by generating second-layer same-language public docs leaves for every non-English public docs tree.
+  - updated `docs/<lang>/index.md` so each language docs hub now links into same-language leaf pages instead of stopping at whitepaper-only navigation.
+  - generated these leaf pages for `zh-TW`, `ru`, `es`, `pt`, `ar`, `fr`, `de`, `ja`, `ko`, `hi`, `tr`, `it`, `id`, `vi`, `th`, and `pl`:
+    - `developer-index.md`
+    - `api-overview.md`
+    - `contracts-overview.md`
+    - `sdk-overview.md`
+    - `quick-start.md`
+    - `merchant-onboarding.md`
+    - `payment-access.md`
+    - `settlement-integration.md`
+    - `ecosystem-entry.md`
+    - `public-structure.md`
+    - `roadmap-guide.md`
+  - kept the generator change in `scripts/generate-doc-language-editions.mjs` so future regeneration preserves this second-layer path.
+- Verification evidence:
+  - `node scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node --check scripts/generate-doc-language-editions.mjs` -> PASS
+  - custom scan across `248` related README/docs/whitepaper/leaf files -> `brokenCount=0`
+  - custom relative-link scan -> `6482` links checked, `0` missing targets
+  - UTF-8 without BOM / no NUL scan across generator + generated language files -> `encodingBadCount=0`
+  - targeted chain checks all passed:
+    - `README.ko.md -> docs/ko/index.md -> docs/ko/developer-index.md`
+    - `README.vi.md -> docs/vi/index.md -> docs/vi/payment-access.md`
+    - `README.pl.md -> docs/pl/index.md -> docs/pl/roadmap-guide.md`
+- Key decisions:
+  - the GitHub docs requirement for “18-language global switch” is treated as a static same-language tree that remains usable after entering the docs hub.
+  - English remains the canonical source for final wording and release/security/economics boundaries when editions diverge.
+- Current blocker:
+  - no blocker remains for this documentation-switch expansion itself.
+  - unrelated repository-wide dirty changes still exist and must stay out of this scoped documentation commit.
+- Exact next action:
+  1. stage only the generator, docs index updates, generated second-layer leaf files, and progress/state docs for this task;
   2. commit directly on `main`;
   3. push `origin main`.
 

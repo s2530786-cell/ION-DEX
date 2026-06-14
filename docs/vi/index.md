@@ -7,6 +7,10 @@ Trang này là cổng tài liệu Tiếng Việt cho ION DEX, kết nối README
 ## Bắt đầu từ đây
 
 - [README bằng ngôn ngữ này](../../README.vi.md)
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [Tổng quan whitepaper](../whitepaper/vi/WHITEPAPER.vi.md)
 - [Chỉ mục whitepaper](./whitepaper-index.md)
 - [Whitepaper đầy đủ tiếng Anh](../WHITEPAPER.md)
@@ -14,6 +18,13 @@ Trang này là cổng tài liệu Tiếng Việt cho ION DEX, kết nối README
 
 ## Đọc tiếp theo
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [Chỉ mục whitepaper](./whitepaper-index.md)
 - [Tổng quan whitepaper](../whitepaper/vi/WHITEPAPER.vi.md)
 - [English Developer Index](../developer-index.md)

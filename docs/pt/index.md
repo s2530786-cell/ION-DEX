@@ -7,6 +7,10 @@ Esta página funciona como a porta de entrada em português para a documentaçã
 ## Comece aqui
 
 - [README neste idioma](../../README.pt.md)
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [Resumo do whitepaper](../whitepaper/pt/WHITEPAPER.pt.md)
 - [Índice do whitepaper](./whitepaper-index.md)
 - [Whitepaper completo em inglês](../WHITEPAPER.md)
@@ -14,6 +18,13 @@ Esta página funciona como a porta de entrada em português para a documentaçã
 
 ## Leitura seguinte
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [Índice do whitepaper](./whitepaper-index.md)
 - [Resumo do whitepaper](../whitepaper/pt/WHITEPAPER.pt.md)
 - [English Developer Index](../developer-index.md)

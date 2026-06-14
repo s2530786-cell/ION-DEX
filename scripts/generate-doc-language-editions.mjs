@@ -1024,6 +1024,76 @@ function buildWhitepaperNav(current) {
   }).join(" | ")}`;
 }
 
+function buildDocsLeafNav(current, leaf) {
+  return `**Languages:** ${languages.map((language) => {
+    let href;
+    if (current.key === "en") {
+      href = language.key === "en" ? `./${leaf}` : `./${language.docsDir}/${leaf}`;
+    } else {
+      href = language.key === "en" ? `../${leaf}` : language.docsDir === current.docsDir ? `./${leaf}` : `../${language.docsDir}/${leaf}`;
+    }
+    return `[${language.label}](${href})`;
+  }).join(" | ")}`;
+}
+
+const localizedLeafPages = [
+  {
+    slug: "developer-index.md",
+    title: "Developer Index",
+    related: ["api-overview.md", "contracts-overview.md", "sdk-overview.md", "quick-start.md"],
+  },
+  {
+    slug: "api-overview.md",
+    title: "API Overview",
+    related: ["developer-index.md", "contracts-overview.md", "sdk-overview.md", "quick-start.md"],
+  },
+  {
+    slug: "contracts-overview.md",
+    title: "Contracts Overview",
+    related: ["developer-index.md", "api-overview.md", "sdk-overview.md", "quick-start.md"],
+  },
+  {
+    slug: "sdk-overview.md",
+    title: "SDK Overview",
+    related: ["developer-index.md", "api-overview.md", "contracts-overview.md", "quick-start.md"],
+  },
+  {
+    slug: "quick-start.md",
+    title: "Quick Start",
+    related: ["developer-index.md", "api-overview.md", "contracts-overview.md", "sdk-overview.md"],
+  },
+  {
+    slug: "merchant-onboarding.md",
+    title: "Merchant Onboarding",
+    related: ["payment-access.md", "settlement-integration.md", "ecosystem-entry.md"],
+  },
+  {
+    slug: "payment-access.md",
+    title: "Payment Access",
+    related: ["merchant-onboarding.md", "settlement-integration.md", "ecosystem-entry.md"],
+  },
+  {
+    slug: "settlement-integration.md",
+    title: "Settlement Integration",
+    related: ["merchant-onboarding.md", "payment-access.md", "ecosystem-entry.md"],
+  },
+  {
+    slug: "ecosystem-entry.md",
+    title: "Ecosystem Entry",
+    related: ["merchant-onboarding.md", "payment-access.md", "settlement-integration.md", "public-structure.md"],
+  },
+  {
+    slug: "public-structure.md",
+    title: "Public Structure",
+    related: ["roadmap-guide.md", "ecosystem-entry.md", "developer-index.md"],
+  },
+  {
+    slug: "roadmap-guide.md",
+    title: "Roadmap Guide",
+    related: ["public-structure.md", "developer-index.md", "merchant-onboarding.md"],
+  },
+];
+
 function englishDocsHub() {
   return `${buildDocsNav(languages[0])}
 
@@ -1133,6 +1203,10 @@ ${copy.docsHubIntro}
 ## ${copy.startHeading}
 
 - [${copy.localReadmeLabel}](../../${language.readmeFile})
+- [Developer Index](./developer-index.md)
+- [Merchant Onboarding](./merchant-onboarding.md)
+- [Public Structure](./public-structure.md)
+- [Roadmap Guide](./roadmap-guide.md)
 - [${copy.whitepaperOverviewLabel}](../whitepaper/${language.whitepaperDir}/${path.posix.basename(language.whitepaperFile)})
 - [${copy.whitepaperIndexLabel}](./whitepaper-index.md)
 - [${copy.englishWhitepaperLabel}](../WHITEPAPER.md)
@@ -1140,6 +1214,13 @@ ${copy.docsHubIntro}
 
 ## ${copy.nextHeading}
 
+- [API Overview](./api-overview.md)
+- [Contracts Overview](./contracts-overview.md)
+- [SDK Overview](./sdk-overview.md)
+- [Quick Start](./quick-start.md)
+- [Payment Access](./payment-access.md)
+- [Settlement Integration](./settlement-integration.md)
+- [Ecosystem Entry](./ecosystem-entry.md)
 - [${copy.whitepaperIndexLabel}](./whitepaper-index.md)
 - [${copy.whitepaperOverviewLabel}](../whitepaper/${language.whitepaperDir}/${path.posix.basename(language.whitepaperFile)})
 - [${copy.englishDeveloperLabel}](../developer-index.md)
@@ -1204,6 +1285,30 @@ ${copy.boundary}
 `;
 }
 
+function renderDocsLeaf(language, page) {
+  const copy = language.copy;
+  return `${buildDocsLeafNav(language, page.slug)}
+
+# ${page.title}
+
+## ${copy.startHeading}
+
+- [${page.title} (English)](../${page.slug})
+- [${copy.docsHubLabel}](./index.md)
+- [${copy.whitepaperIndexLabel}](./whitepaper-index.md)
+- [${copy.whitepaperOverviewLabel}](../whitepaper/${language.whitepaperDir}/${path.posix.basename(language.whitepaperFile)})
+
+## ${copy.nextHeading}
+
+${page.related.map((related) => {
+  const relatedPage = localizedLeafPages.find((item) => item.slug === related);
+  return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
+}).join("\n")}
+
+> ${copy.canonicalNote}
+`;
+}
+
 function buildEnglishWhitepaperNav() {
   return `**Languages:** ${languages.map((language) => {
     const href = language.key === "en"
@@ -1247,6 +1352,12 @@ async function main() {
     await write(`docs/${language.docsDir}/index.md`, `${renderDocsHub(language)}\n`);
     await write(`docs/${language.docsDir}/whitepaper-index.md`, `${renderWhitepaperIndex(language)}\n`);
     await write(language.whitepaperFile, `${renderWhitepaper(language)}\n`);
+  }
+
+  for (const language of languages.filter((item) => item.key !== "en" && item.key !== "zh-CN")) {
+    for (const page of localizedLeafPages) {
+      await write(`docs/${language.docsDir}/${page.slug}`, `${renderDocsLeaf(language, page)}\n`);
+    }
   }
 }
 
