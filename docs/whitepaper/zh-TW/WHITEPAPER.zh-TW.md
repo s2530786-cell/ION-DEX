@@ -1,11 +1,11 @@
 # ION DEX Whitepaper (Traditional Chinese)
 
-**Language switch:** [English](../../WHITEPAPER.md) | [简体中文](../zh/WHITEPAPER.zh-CN.md) | [Русский](../ru/WHITEPAPER.ru.md)
+**Language navigation:** Canonical source: [English](../../WHITEPAPER.md) | Continuous public docs: [简体中文文档树](../../zh-CN/whitepaper-index.md) · Whitepaper entry editions: [简体中文入口](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](./WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md)
 
-> Status: translated edition scaffold
+> Status: whitepaper entry page
 > Canonical source: ../../WHITEPAPER.md
 > Language: zh-TW
-> Translation scope: synchronized language edition for GitHub/docs language switching
+> Translation scope: entry edition for GitHub/docs language navigation, not a full same-language public document tree
 
 ## Translation Notice
 

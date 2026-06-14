@@ -1,4 +1,4 @@
-**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
+**Language navigation:** Full public docs: [English](./README.md) | [简体中文](./README.zh-CN.md) · Entry pages: [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
 
 <p align="center">
   <img src="./assets/banner/ion-banner-dark.png" alt="ION Banner" width="100%" />
@@ -16,11 +16,13 @@
   <a href="https://ice.io/">Website</a> ·
   <a href="https://explorer.ice.io/">Explorer</a> ·
   <a href="./docs">Docs</a> ·
-  <a href="#current-dex-capability-surface">DEX Capabilities</a> ·
+  <a href="#current-public-capability-surface">DEX Capabilities</a> ·
   <a href="#long-horizon-roadmap">Roadmap</a>
 </p>
 
-> **Current Stage:** Infrastructure, memory, identity, proof, payment, and trust layers in place before the full civilization shell.
+> **Current Stage (June 2026):** The public repository currently proves documentation, UI foundations, typed backend/data routes, verification tooling, and contract scaffolding. Many capabilities described below remain roadmap or draft-design items rather than deployed mainnet functionality.
+
+> **Language support note:** GitHub README / Markdown in this repository uses static language files, not runtime whole-site translation. Continuous same-language public navigation is currently available in English and Simplified Chinese. Other language links currently open entry pages while their broader public doc trees are still being expanded.
 
 ---
 
@@ -85,16 +87,21 @@ That foundation attracts more than traders. It attracts **investors looking for 
 
 ---
 
-## Current DEX Capability Surface
+## Current Public Capability Surface
 
-ION DEX is positioned first as a **28-chain decentralized exchange and aggregation layer**. The current product and business core is anchored in real exchange capability, not vague ecosystem language.
+ION DEX is positioned first as a **28-chain decentralized exchange and aggregation layer**. In the public repository today, the verifiable surface is the engineering foundation for that goal rather than a launched 28-chain production exchange.
 
-### What the DEX does
-- **Aggregate liquidity across chains** so users are not trapped inside isolated markets.
-- **Route value with greater intelligence** across fragmented environments instead of pushing unnecessary complexity back onto the user.
-- **Provide stronger settlement infrastructure** that supports merchants, platforms, and service providers above the exchange core.
-- **Support frictionless multi-chain payment rails** so payments and settlement become part of a broader commercial stack, not just a trading terminal.
-- **Act as the first trust and value anchor** for everything that follows, including commerce, identity, proof, arbitration, and coordination.
+### What is currently verifiable in this repository
+- **Frontend product shells and flows** for swap, trade, pool, stake, burn, bridge, domain, profile, and AI-facing entry points.
+- **Typed backend/data routes** with provenance, stale-state metadata, and a mix of live-read, mock, and test-oriented paths documented in `docs/` and `.memory-bank/`.
+- **Contract scaffolding and audit direction** for ION FunC and BSC Solidity modules, plus verification and review scripts.
+- **Verification tooling** covering encoding discipline, build/test flows, E2E smoke coverage, and project-level engineering gates.
+
+### What remains roadmap or design work
+- **Production 28-chain routing, settlement, and liquidity integration** across live venues.
+- **Mainnet-ready bridge, payment rails, and merchant settlement** with audited contracts and published addresses.
+- **Production ION identity, arbitration, and AI sentinel enforcement** beyond the current public gateway/stub contracts and design docs.
+- **Final tokenomics and governance constants**, which must come from audited contracts, published addresses, and mainnet release documentation.
 
 ### Why this matters
 If the DEX layer is weak, the wider platform story collapses. If the DEX layer is strong, it becomes living proof that the wider ecosystem can carry real value flow, real business activity, and real long-horizon expansion capacity.
@@ -106,27 +113,26 @@ The DEX is not framed as an isolated trading interface. It is framed as the **un
 
 ### Payment Infrastructure Layer
 
-The DEX is only the first visible layer. Beneath it, ION runs a **payment infrastructure for broad adoption**:
+The DEX is only the first visible layer. The **target payment architecture** is designed around:
 
-- **Frictionless payments** — payment complexity is absorbed into the infrastructure layer so users, merchants, and platforms can transact without carrying chain-level friction themselves.
-- **ION backend fee routing** — platform fees are collected and routed through ION-based settlement logic, not attached as an afterthought.
-- **Flakes fine-grained payments** — 1 ION = 1,000,000,000 flakes (9 decimals), for micro-transactions, high-frequency flows, and future payment environments where full ION units are too coarse.
-- **1,000,000+ TPS architecture** — million-TPS throughput at architectural scale, viable for global payment volume rather than niche trading alone.
-- **Sub-second settlement** — payment confirmation and settlement complete in seconds, not minutes or hours, enabling real-time commerce and service flows.
-- **Global seamless access** — ordinary users anywhere connect to payment and settlement rails without deep blockchain expertise.
+- **Frictionless payments** — payment complexity is intended to be absorbed into the infrastructure layer rather than pushed onto end users.
+- **ION-oriented fee routing** — platform fees are intended to route through explicit settlement logic rather than appear as ad hoc UI charges.
+- **Flakes fine-grained payments** — `1 ION = 1,000,000,000 flakes (9 decimals)` as a denomination model for micro-transactions.
+- **High-throughput ION assumptions** — public materials reference `1,000,000+ TPS` and sub-second settlement as ION network targets/positioning, not benchmark results produced by this repository.
+- **Global access goals** — a future user experience where merchants and users do not need deep chain-specific expertise to pay and settle.
 
-This payment layer is what makes the DEX more than a trading terminal. It becomes a **live settlement rail** for future commerce, services, and real-world business activity.
+This layer explains why ION DEX is framed as more than a trading terminal. In the current public repo, however, it should be read as **design direction**, not as proof that global payment rails are already live.
 
 ### DEX Trading Capabilities
-The DEX supports **real trading workflows**, not swaps alone:
+The **roadmap target** is a trading stack that goes beyond swaps alone:
 
-- **Spot trading** — direct token-to-token swaps across 28 chains with liquidity aggregation and intelligent routing.
-- **Grid trading** — automated buy-low, sell-high strategies that can run continuously without constant human intervention.
-- **Professional trading interface** — for users who need more than simple swaps, including order-book depth, price charts, advanced order types, and execution analytics.
-- **Liquidity provision** — users can provide liquidity to pools and earn fees from trading activity with multi-chain exposure management.
-- **Routing optimization** — orders are routed across multiple liquidity sources to improve execution quality and reduce slippage.
+- **Spot trading** — direct token-to-token swaps with multi-source routing.
+- **Grid trading** — automated buy-low, sell-high strategy execution.
+- **Professional trading interface** — charts, order-book depth, advanced order entry, and execution analytics.
+- **Liquidity provision** — pool participation and LP position management.
+- **Routing optimization** — execution paths designed to reduce slippage and improve pricing.
 
-These capabilities make the DEX a **real trading engine**, not merely a swap surface.
+In the public repository today, these appear primarily as **product surfaces, typed APIs, simulation paths, and draft/test flows** rather than audited mainnet trading infrastructure.
 
 ### Future Ecosystem Expansion
 
@@ -172,7 +178,7 @@ Each of these modules connects into the same payment, identity, proof, and trust
 | **P9** | Governance & Anti-Abuse | Public-order compatibility, dispute escalation, and abuse prevention |
 | **P10** | Mature Civilization | Full coordination layer, global seamless access, and billion-scale expansion |
 
-> **Current position:** P0–P1 in active development. P2–P3 in design. P4 onward planned.
+> **Current position:** P0–P1 public foundations are visible in the repository. P2–P3 remain largely design/integration work. P4 onward is roadmap planning.
 
 ---
 
@@ -211,7 +217,7 @@ That evolution is not only institutional — it is also computational. Over time
 
 ### For Merchants and E-Commerce
 - **Multi-chain payment access** without becoming a blockchain expert.
-- Settlement in **seconds**, not days. Fees **lower than traditional processors**.
+- Settlement and fee improvements are **design targets**, subject to final network, contract, and deployment realities.
 - Direct access to Web3 customers — not a crypto checkout gimmick, but a **commerce infrastructure upgrade**.
 
 ### For International Platforms and Cross-Border Sellers
@@ -226,52 +232,36 @@ That evolution is not only institutional — it is also computational. Over time
 
 ## Economic Logic
 
-### Fee Burn — Structural Supply Reduction
-Every transaction burns ION permanently. This is not cosmetic. It is structural.
+The economics described across the public repo are **draft design materials, not deployed contract constants**. Before mainnet, the canonical source of truth must be:
 
-| Module | Fee | Burn Rate |
-|--------|-----|-----------|
-| DEX Swap | 0.3% | 50% burned |
-| Pool Creation | 0.1% | 50% burned |
-| Token Launch | 100 ION fee | 50% burned |
-| Merchant Payment | 0.5% | 50% burned |
-| Delivery and Mobility | 0.5% | 50% burned |
-| Insurance Premium | Varies | 50% burned |
-| Logistics Service | 0.3% | 50% burned |
-| Domain Trading | Escrow fee | 50% burned |
+- audited contract code,
+- published contract addresses,
+- a finalized fee specification, and
+- explorer-verifiable burn / treasury / staking destinations.
 
-Burn address: `0x000000000000000000000000000000000000dEaD` (BSC) — **permanently unrecoverable**.
+The current engineering baseline is [`docs/02-tokenomics-and-fees.md`](./docs/02-tokenomics-and-fees.md), which explicitly states that final values remain subject to review before mainnet.
 
-### Dynamic burn adjustment
-In bear markets, more ION is burned per dollar of fees because lower token prices make burn more efficient. In bull markets, burn is moderated while staking increases to preserve support. The mechanism adapts across market cycles to maximize long-horizon value.
+### Public draft assumptions currently referenced
 
-### Staking — Supply Lock and Alignment
+| Item | Public draft status |
+|------|---------------------|
+| DEX swap fee | `0.3%` draft user-facing fee class |
+| Pool creation fee | `0.1%` draft fee class |
+| Commerce / service settlement fee | `0.5%` draft fee class for selected modules |
+| BSC burn destination | `0x000000000000000000000000000000000000dEaD` public reference |
+| ION mainnet burn destination | Pending official confirmation |
+| Burn / builder / staking / treasury split | Still draft and not yet canonical across all public documents |
+| Staking APY schedules and lock targets | Illustrative planning values, pending contract, risk, and market review |
 
-| Lock Period | APY |
-|-------------|-----|
-| Flexible | 8% |
-| 7 days | 10% |
-| 30 days | 12% |
-| 90 days | 15% |
-| 180 days | 20% |
-| 365 days | 30% |
+### Why this matters
+Public narrative documents can explain the intended flywheel, but they should not be mistaken for:
 
-Target: **30–50% of circulating supply locked** in staking.
-Staking rewards are funded by **20% of platform revenue**.
+- audited tokenomics,
+- immutable on-chain constants,
+- guaranteed APY,
+- or finalized revenue distribution.
 
-### Revenue Distribution
-
-| Allocation | Share | Priority |
-|------------|-------|----------|
-| Master | 25% | First (paid before any other allocation) |
-| Fee Burn | Dynamic | Bear: high / Bull: moderate |
-| Staking Rewards | Dynamic | Bear: high / Bull: high |
-| Treasury | Dynamic | Remaining |
-
-**Master’s 25% is non-negotiable and permanent.** It is paid first from every dollar of revenue. The person funding operations gets paid first — no exceptions.
-
-### The Flywheel
-Usage creates fees. Fees drive burn and staking. Burn reduces supply. Staking removes additional supply from circulation. Reduced supply strengthens long-horizon value pressure, which attracts more users, more activity, and more fees. The result is a **self-reinforcing flywheel**.
+The intended flywheel remains straightforward: **usage produces fees, fees can feed burn / staking / treasury logic, and transparent accounting should make those flows publicly auditable once deployed.**
 
 ---
 
@@ -293,38 +283,36 @@ Merchant payment and settlement integration → API and SDK access → full ecos
 
 ## AI Arbitration and Sentinel Defense
 
-### AI-Assisted Arbitration
-Disputes are resolved by **verifiable AI logic**, not opaque human committees. The arbitration system:
-- Analyzes evidence from both parties.
-- Applies consistent rules across dispute categories.
-- Produces explainable decisions that can be audited.
-- Supports appeals with human oversight for high-stakes cases.
-- Maintains a public record of arbitration outcomes.
+This section describes the **intended safety architecture**, not a currently deployed autonomous enforcement stack. In the public repository today, the AI surface is limited to documented gateway contracts, schema/stub routes, deny-by-default boundaries, and explicit prohibitions on AI-initiated asset movement.
 
-AI makes dispute resolution **faster, more consistent, and more transparent** than committee-bound systems.
+### AI-Assisted Arbitration
+The long-range design is an **AI-assisted arbitration** model that:
+- analyzes evidence from both parties,
+- applies consistent rules across dispute categories,
+- produces explainable outputs that can be audited,
+- supports appeal paths with human oversight for high-stakes cases, and
+- stores auditable records or proofs for the final decision path.
 
 ### AI Sentinel Defense
-The platform runs **24/7 anomaly detection and defensive response**:
-- Real-time monitoring of transaction patterns for suspicious activity.
-- Automated risk identification and alerting.
-- Defensive response logic that can freeze, flag, or escalate without human delay.
-- Ecosystem-wide watch capacity across modules.
-
-Sentinel defense makes ION **self-protecting**. The system detects and responds rather than waiting for a human to notice.
+The long-range design also includes **continuous anomaly detection and risk monitoring**:
+- monitoring suspicious transaction and interaction patterns,
+- generating risk alerts and evidence packages,
+- applying platform-side risk gates or escalation paths where the platform actually has control,
+- and preserving audit logs for later review.
 
 ### Why This Matters
-A platform that handles payments, commerce, insurance, and logistics cannot afford slow dispute resolution or blind spots in security. AI arbitration and sentinel defense together make the ecosystem **self-governing and self-protecting** — the capabilities that separate a durable platform from a fragile one.
+Payments, commerce, insurance, and logistics all need faster risk detection and better dispute tooling. The current repo contributes the **contracts, boundaries, and documentation** for that direction, but it does **not** prove that autonomous arbitration or automatic defensive action is already live in production.
 
 ---
 
 ## Public Trust and Proof
 
 ### Verifiable On-Chain History
-Every transaction, every arbitration outcome, and every identity action is recorded on-chain. This is not optional — it is structural. The [ION Explorer](https://explorer.ice.io/) is the sovereign proof surface where anyone can verify:
-- Transaction history and settlement records.
-- Fee-burn events and supply reduction.
-- Staking activity and lock-up periods.
-- Arbitration outcomes and appeal records.
+The design goal is that **critical financial and governance-relevant claims become explorer-verifiable once the corresponding modules are deployed**. In practice, only deployed modules can be verified on-chain; documentation alone is not proof. The [ION Explorer](https://explorer.ice.io/) is the intended sovereign proof surface for:
+- transaction history and settlement records,
+- fee-burn events and supply reduction,
+- staking activity and lock-up periods,
+- and other module-specific proofs once those modules are actually published and connected.
 
 ### Proof-First Architecture
 The platform is structured around **claims backed by verifiable evidence**, not trust in a central authority. In practice, that means:
@@ -345,22 +333,22 @@ ION is **compatible with serious public-order expectations** without collapsing 
 ## Frequently Asked Questions
 
 ### What is ION actually building today?
-A **28-chain decentralized exchange** with spot trading, grid trading, a professional trading interface, liquidity aggregation, intelligent routing, and a payment infrastructure layer built for **1,000,000+ TPS** and **sub-second settlement**.
+In the public repository today: **DEX/product foundations, backend/data routes, contract scaffolding, verification tooling, and public documentation** for a broader multi-chain trading and payment stack. That is different from claiming that a full 28-chain production exchange is already live.
 
 ### Why is ION more than a normal DEX?
 A normal DEX swaps tokens and stops there. ION uses trading as the first visible engine, then extends into merchant payments, delivery, ride-hailing, insurance, domain trading, and logistics — all on the same settlement rail, all feeding the same fee-burn and staking flywheel.
 
 ### What does 1,000,000+ TPS actually mean?
-Visa processes roughly 65,000 TPS at global peak. ION operates at **15x that scale**. A platform handling delivery payments, ride-hailing, insurance payouts, and e-commerce checkout at the same time needs throughput that makes trading look like the warm-up.
+In public ION-facing materials, `1,000,000+ TPS` is a **network-level target / positioning claim about ION architecture**, not a throughput benchmark produced by this repository. It should not be read as a measured performance result of the current open-source codebase.
 
 ### What are flakes and why do they matter?
 1 ION = **1,000,000,000 flakes** (9 decimals). As ION becomes more valuable, flakes become the everyday payment unit — similar to satoshis for Bitcoin. The denomination keeps **micro-transactions, delivery tips, and service fees practical even when ION itself becomes expensive**.
 
 ### What is frictionless payment in practice?
-The user pays with ION. The merchant receives ION, or a stablecoin equivalent through backend routing. No chain-switching. No gas management. No wallet juggling. **Payment complexity stays inside the infrastructure. The user just pays.**
+It is the **target user experience**: the user pays simply, while routing, denomination, and settlement complexity are pushed into the infrastructure layer. Public docs describe that direction; they are not proof that all merchant and stablecoin settlement paths are already deployed.
 
 ### What is grid trading and why does it matter?
-Grid trading automates buy-low, sell-high execution across price volatility. The user sets parameters. The system executes continuously. **Most DEXs stop at manual swaps. ION adds continuous automated strategy execution.**
+Grid trading is a **planned advanced trading capability** where users define parameters and keeper/oracle infrastructure executes the strategy. In the current repo, related product flows are largely design/test surfaces rather than audited mainnet automation.
 
 ### Why launch the DEX first?
 Because the DEX is the **first revenue engine**. Revenue leads to fee burn, fee burn reinforces scarcity, scarcity supports staking, staking supports liquidity, and liquidity drives more revenue. The flywheel starts with trading, not promises.
@@ -368,29 +356,29 @@ Because the DEX is the **first revenue engine**. Revenue leads to fee burn, fee 
 ### What business modules expand after the DEX?
 | Module | What It Does | Revenue Source |
 |--------|-------------|---------------|
-| Merchant payments | ION checkout for online and offline commerce | 0.5% service fee → 50% burned |
-| Delivery & mobility | Food delivery and ride-hailing on ION rails | 0.5% platform fee → 50% burned |
-| Insurance | Parametric policies with oracle triggers | Premium fees → 50% burned |
-| Logistics | Supply-chain tracking and on-chain settlement | 0.3% service fee → 50% burned |
-| Domain trading | On-chain domain marketplace | Escrow + transfer fees → 50% burned |
-| RWA | Tokenized real-world assets on ION | Trading + settlement fees → 50% burned |
+| Merchant payments | ION checkout for online and offline commerce | Draft settlement economics, pending final fee spec |
+| Delivery & mobility | Food delivery and ride-hailing on ION rails | Draft service economics, pending final fee spec |
+| Insurance | Parametric policies with oracle triggers | Draft premium / payout economics |
+| Logistics | Supply-chain tracking and on-chain settlement | Draft service economics |
+| Domain trading | On-chain domain marketplace | Draft escrow / transfer economics |
+| RWA | Tokenized real-world assets on ION | Draft trading / settlement economics |
 
-Every module burns ION. Every module stakes ION. **More usage leads to more burn, less supply, and stronger value pressure.**
+These modules are **roadmap expansion areas**. Their final burn, staking, treasury, and operator allocations must be confirmed by audited contracts and published deployment docs.
 
 ### Why should developers build here?
 Because this is more than a swap interface. It is a **28-chain aggregation surface** with payment rails, identity, AI modules, APIs, contracts, SDKs, and expansion space scaled by what developers build.
 
 ### Why should merchants care?
-Because they get multi-chain payment access without becoming blockchain specialists, settlement in seconds instead of days, and **lower fees than traditional processors** — plus direct access to Web3 customers. This is not a crypto checkout gimmick. It is **commerce infrastructure**.
+Because the design goal is multi-chain payment access without forcing merchants to become blockchain specialists. But that should be read as a **product direction**, not as a statement that audited production merchant settlement is already available today.
 
 ### Why should international e-commerce platforms connect?
 Because one integration unlocks multi-chain payment, cross-border settlement, and Web3 customer reach. **One integration, multiple chains, and no rebuild.**
 
 ### Why do fee burn and staking matter?
-Fee burn **permanently removes ION from supply**. Staking **locks ION out of circulation**. Together they create a supply squeeze that intensifies as platform usage grows. This is not cosmetic tokenomics. It is a structural reduction mechanism tied directly to real business activity.
+They matter because, once deployed transparently, they can tie platform usage to visible economic flows. The important qualifier is **once deployed transparently**: the public repo currently documents the intended model, while final numbers and destinations remain subject to audit and release.
 
 ### Why do AI arbitration and sentinel defense matter?
-Because disputes should not depend on opaque committees, and security should not depend on delayed human reaction. AI arbitration provides **verifiable dispute logic**. Sentinel defense provides **24/7 anomaly detection, risk monitoring, and automated defensive response**. Together they make the platform **self-governing and self-protecting**.
+Because better dispute tooling and risk monitoring can materially improve complex ecosystems. In ION DEX today, they exist publicly as **design goals, gateway contracts, and safety boundaries**, not as proof of a live autonomous governance or enforcement system.
 
 ### Why does ION Identity matter?
 Because one identity should persist across trading, commerce, delivery, insurance, logistics, and reputation. **Transaction history, credit standing, and dispute record travel across the ecosystem instead of resetting on every service.**

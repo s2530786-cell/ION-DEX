@@ -1,6 +1,6 @@
 # ION DEX Whitepaper Index
 
-**Languages:** [English](./WHITEPAPER.md) | [简体中文](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [繁體中文](./whitepaper/zh-TW/WHITEPAPER.zh-TW.md) | [Русский](./whitepaper/ru/WHITEPAPER.ru.md) | [Español](./whitepaper/es/WHITEPAPER.es.md) | [Português](./whitepaper/pt/WHITEPAPER.pt.md) | [العربية](./whitepaper/ar/WHITEPAPER.ar.md) | [Français](./whitepaper/fr/WHITEPAPER.fr.md) | [Deutsch](./whitepaper/de/WHITEPAPER.de.md) | [日本語](./whitepaper/ja/WHITEPAPER.ja.md) | [한국어](./whitepaper/ko/WHITEPAPER.ko.md) | [हिन्दी](./whitepaper/hi/WHITEPAPER.hi.md) | [Türkçe](./whitepaper/tr/WHITEPAPER.tr.md) | [Italiano](./whitepaper/it/WHITEPAPER.it.md) | [Bahasa Indonesia](./whitepaper/id/WHITEPAPER.id.md)
+**Language navigation:** Continuous public docs: [English](./WHITEPAPER.md) | [简体中文文档树](./zh-CN/whitepaper-index.md) · Whitepaper entry editions: [繁體中文](./whitepaper/zh-TW/WHITEPAPER.zh-TW.md) | [Русский](./whitepaper/ru/WHITEPAPER.ru.md) | [Español](./whitepaper/es/WHITEPAPER.es.md) | [Português](./whitepaper/pt/WHITEPAPER.pt.md) | [العربية](./whitepaper/ar/WHITEPAPER.ar.md) | [Français](./whitepaper/fr/WHITEPAPER.fr.md) | [Deutsch](./whitepaper/de/WHITEPAPER.de.md) | [日本語](./whitepaper/ja/WHITEPAPER.ja.md) | [한국어](./whitepaper/ko/WHITEPAPER.ko.md) | [हिन्दी](./whitepaper/hi/WHITEPAPER.hi.md) | [Türkçe](./whitepaper/tr/WHITEPAPER.tr.md) | [Italiano](./whitepaper/it/WHITEPAPER.it.md) | [Bahasa Indonesia](./whitepaper/id/WHITEPAPER.id.md)
 
 > The complete public doctrine of ION DEX and its long-horizon digital civilization design.
 
@@ -12,50 +12,43 @@ The English whitepaper is the canonical source text for architecture, economics,
 
 ### 🌐 Language Editions
 
-- [简体中文 / Simplified Chinese](./whitepaper/zh/WHITEPAPER.zh-CN.md) — translated edition; English source controls in case of ambiguity.
-- [繁體中文 / Traditional Chinese](./whitepaper/zh-TW/WHITEPAPER.zh-TW.md) — translated edition; English source controls in case of ambiguity.
-- [Русский / Russian](./whitepaper/ru/WHITEPAPER.ru.md) — translated edition; English source controls in case of ambiguity.
-- [Español / Spanish](./whitepaper/es/WHITEPAPER.es.md) — translated edition; English source controls in case of ambiguity.
-- [Português / Portuguese](./whitepaper/pt/WHITEPAPER.pt.md) — translated edition; English source controls in case of ambiguity.
-- [العربية / Arabic](./whitepaper/ar/WHITEPAPER.ar.md) — translated edition; English source controls in case of ambiguity.
-- [Français / French](./whitepaper/fr/WHITEPAPER.fr.md) — translated edition; English source controls in case of ambiguity.
-- [Deutsch / German](./whitepaper/de/WHITEPAPER.de.md) — translated edition; English source controls in case of ambiguity.
-- [日本語 / Japanese](./whitepaper/ja/WHITEPAPER.ja.md) — translated edition; English source controls in case of ambiguity.
-- [한국어 / Korean](./whitepaper/ko/WHITEPAPER.ko.md) — translated edition; English source controls in case of ambiguity.
-- [हिन्दी / Hindi](./whitepaper/hi/WHITEPAPER.hi.md) — translated edition; English source controls in case of ambiguity.
-- [Türkçe / Turkish](./whitepaper/tr/WHITEPAPER.tr.md) — translated edition; English source controls in case of ambiguity.
-- [Italiano / Italian](./whitepaper/it/WHITEPAPER.it.md) — translated edition; English source controls in case of ambiguity.
-- [Bahasa Indonesia / Indonesian](./whitepaper/id/WHITEPAPER.id.md) — translated edition; English source controls in case of ambiguity.
+> Current practical continuous navigation support: **English + Simplified Chinese**. Other language files currently remain whitepaper-entry editions rather than full same-language public document trees.
+
+- [简体中文 / Simplified Chinese](./whitepaper/zh/WHITEPAPER.zh-CN.md) — whitepaper entry plus a linked Chinese public-doc tree; English source controls in case of ambiguity.
+- [繁體中文 / Traditional Chinese](./whitepaper/zh-TW/WHITEPAPER.zh-TW.md) — entry edition; English source controls in case of ambiguity.
+- [Русский / Russian](./whitepaper/ru/WHITEPAPER.ru.md) — entry edition; English source controls in case of ambiguity.
+- [Español / Spanish](./whitepaper/es/WHITEPAPER.es.md) — entry edition; English source controls in case of ambiguity.
+- [Português / Portuguese](./whitepaper/pt/WHITEPAPER.pt.md) — entry edition; English source controls in case of ambiguity.
+- [العربية / Arabic](./whitepaper/ar/WHITEPAPER.ar.md) — entry edition; English source controls in case of ambiguity.
+- [Français / French](./whitepaper/fr/WHITEPAPER.fr.md) — entry edition; English source controls in case of ambiguity.
+- [Deutsch / German](./whitepaper/de/WHITEPAPER.de.md) — entry edition; English source controls in case of ambiguity.
+- [日本語 / Japanese](./whitepaper/ja/WHITEPAPER.ja.md) — entry edition; English source controls in case of ambiguity.
+- [한국어 / Korean](./whitepaper/ko/WHITEPAPER.ko.md) — entry edition; English source controls in case of ambiguity.
+- [हिन्दी / Hindi](./whitepaper/hi/WHITEPAPER.hi.md) — entry edition; English source controls in case of ambiguity.
+- [Türkçe / Turkish](./whitepaper/tr/WHITEPAPER.tr.md) — entry edition; English source controls in case of ambiguity.
+- [Italiano / Italian](./whitepaper/it/WHITEPAPER.it.md) — entry edition; English source controls in case of ambiguity.
+- [Bahasa Indonesia / Indonesian](./whitepaper/id/WHITEPAPER.id.md) — entry edition; English source controls in case of ambiguity.
 
 ---
 
 ## Core Documents
 
-### Civilization Blueprint
-- [ION Super Digital Civilization Master Blueprint](../memory/ion-super-digital-civilization-master-blueprint-v2.md) — The meta goal: build a civilization-scale infrastructure that remains relevant for 50+ years.
-- [ION Civilization Index](../memory/ion-civilization-index-v1.md) — Navigation layer for all civilization memory files.
+The files below are the public, repository-local replacements for earlier private-memory references.
+
+### Public Vision & Scope
+- [Public Structure](./public-structure.md) — Public organizational, governance, and disclosure boundaries.
+- [Public Development Scope](./28-public-development-scope.md) — What the open repository includes today, and what remains private or roadmap-only.
+- [Project Overview](./00-project-overview.md) — Product positioning and module map.
 
 ### Infrastructure & Integration
-- [ION Official Ecosystem Integration Plan](../memory/ion-official-ecosystem-integration-v1.md) — How ION DEX connects to Ice Open Network official primitives.
-- [ION Information Architecture](../memory/ion-information-architecture-v1.md) — README → Whitepaper → Docs → Private layer structure.
+- [Technical Architecture](./03-technical-architecture.md) — Frontend, backend, worker, storage, and contract layers.
+- [Reference Architecture](./09-reference-architecture.md) — Reviewed external patterns and the current implementation direction.
+- [Developer Index](./developer-index.md) — Public entry for APIs, SDKs, contracts, and build workflows.
 
-### Identity & Reputation
-- [ION Identity and Reputation Law v2](../memory/ion-identity-and-reputation-law-v2.md) — One-ID-per-person, immutable history, recoverable standing.
-- [ION Identity Reputation Civil Standing v1](../memory/ion-identity-reputation-civil-standing-v1.md) — Identity layer design principles.
-
-### Payment Civilization
-- [ION Payment Civilization Foundation v2](../memory/ion-payment-civilization-foundation-v2.md) — High-throughput payments, stablecoin frontend / ION backend, flakes layer.
-
-### AI & Arbitration
-- [ION AI Arbitration and Appeal v1](../memory/ion-ai-arbitration-and-appeal-v1.md) — AI-assisted dispute resolution, appeals, accountability.
-- [ION Self-Evolving System v1](../memory/ion-self-evolving-system-v1.md) — Learning, correction, adaptation, rule refinement.
-
-### Ecosystem Coordination
-- [ION Ecosystem Coordination Model v1](../memory/ion-ecosystem-coordination-model-v1.md) — Shared substrate across commerce, services, payments, brands.
-
-### Expansion & Governance
-- [ION Global Seamless Access v1](../memory/ion-global-seamless-access-and-billion-scale-expansion-v1.md) — Billion-scale design, global-local expansion.
-- [ION Public Order Compatibility v1](../memory/ion-public-order-compatibility-v1.md) — Persistent identity, proof, accountability, public-order boundaries.
+### Economics, Security, and Verification
+- [Tokenomics and Fees](./02-tokenomics-and-fees.md) — Draft fee and accounting blueprint; final values remain subject to mainnet review.
+- [Security Audit Matrix](./23-security-audit-and-stress-sandbox.md) — Attack vectors, verification expectations, and audit checklist.
+- [Six Pillars Verification](./07-verification-six-pillars.md) — Verification framework for public trust.
 
 ---
 
@@ -77,8 +70,14 @@ The English whitepaper is the canonical source text for architecture, economics,
 
 **For first-time observers:**
 1. [README](../README.md) — Brand window and executive summary.
-2. [Civilization Blueprint](../memory/ion-super-digital-civilization-master-blueprint-v2.md) — Understand the long-horizon vision.
-3. [Official Ecosystem Integration](../memory/ion-official-ecosystem-integration-v1.md) — See how we connect to ION primitives.
+2. [Whitepaper (English)](./WHITEPAPER.md) — Understand the long-horizon vision and current draft boundaries.
+3. [Public Development Scope](./28-public-development-scope.md) — See what is verifiable in the open repository today.
+
+**For Simplified Chinese readers:**
+1. [中文 README](../README.zh-CN.md) — Chinese flagship entry.
+2. [中文白皮书索引](./zh-CN/whitepaper-index.md) — Chinese same-language public reading path.
+3. [白皮书中文入口](./whitepaper/zh/WHITEPAPER.zh-CN.md) — Whitepaper-language switch entry.
+4. [Whitepaper (English)](./WHITEPAPER.md) — Canonical source text.
 
 **For developers:**
 1. [Project Overview](./00-project-overview.md) — Product modules and engineering principles.
@@ -88,7 +87,7 @@ The English whitepaper is the canonical source text for architecture, economics,
 **For investors:**
 1. [README Economic Logic section](../README.md#economic-logic) — Fee burn, staking, revenue distribution.
 2. [Tokenomics and Fees](./02-tokenomics-and-fees.md) — Detailed fee structure.
-3. [Civilization Blueprint](../memory/ion-super-digital-civilization-master-blueprint-v2.md) — 50-year horizon.
+3. [Whitepaper](./WHITEPAPER.md) — Long-horizon thesis, risk disclosure, and roadmap framing.
 
 ---
 
@@ -104,4 +103,4 @@ The English whitepaper is the canonical source text for architecture, economics,
 
 ---
 
-Return to [README](../README.md) | [Whitepaper (English)](./WHITEPAPER.md) | [白皮书（简中）](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [白皮書（繁中）](./whitepaper/zh-TW/WHITEPAPER.zh-TW.md) | [Белая книга (RU)](./whitepaper/ru/WHITEPAPER.ru.md) | [Libro blanco (ES)](./whitepaper/es/WHITEPAPER.es.md) | [Livro branco (PT)](./whitepaper/pt/WHITEPAPER.pt.md) | [الورقة البيضاء (AR)](./whitepaper/ar/WHITEPAPER.ar.md) | [Livre blanc (FR)](./whitepaper/fr/WHITEPAPER.fr.md) | [Whitepaper (DE)](./whitepaper/de/WHITEPAPER.de.md) | [ホワイトペーパー (JA)](./whitepaper/ja/WHITEPAPER.ja.md) | [백서 (KO)](./whitepaper/ko/WHITEPAPER.ko.md) | [श्वेतपत्र (HI)](./whitepaper/hi/WHITEPAPER.hi.md) | [Beyaz Kitap (TR)](./whitepaper/tr/WHITEPAPER.tr.md) | [Libro bianco (IT)](./whitepaper/it/WHITEPAPER.it.md) | [Whitepaper (ID)](./whitepaper/id/WHITEPAPER.id.md) | [Developer Entry](./developer-index.md) | [Explorer](https://explorer.ice.io/)
+Return to [README](../README.md) | [中文 README](../README.zh-CN.md) | [Whitepaper (English)](./WHITEPAPER.md) | [Chinese Public Doc Tree](./zh-CN/index.md) | [白皮书（简中入口）](./whitepaper/zh/WHITEPAPER.zh-CN.md) | [Developer Entry](./developer-index.md) | [Explorer](https://explorer.ice.io/)

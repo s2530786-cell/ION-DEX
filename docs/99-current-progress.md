@@ -1,5 +1,193 @@
 # Current Progress
 
+## 2026-06-14 README / whitepaper language-switch honesty repair
+
+- **Scope**: fixed the public documentation language-switch entry layer so GitHub readers are no longer told that every listed language is a full same-language sitewide switch.
+- **What changed**:
+  - rewrote the root language bars in `README.md`, `README.zh-CN.md`, and the other public `README.*.md` entry pages so they now distinguish:
+    - full public docs currently available in `English` and `简体中文`
+    - entry pages for the remaining listed languages
+  - updated `docs/whitepaper-index.md` to label only `English + Simplified Chinese` as continuous public doc navigation;
+  - updated `docs/whitepaper/zh/WHITEPAPER.zh-CN.md` and the other `docs/whitepaper/*/WHITEPAPER.*.md` entry files so they now describe themselves honestly as whitepaper entry editions / entry pages instead of implying a completed full-language document tree.
+- **Files touched**:
+  - `README.md`
+  - `README.zh-CN.md`
+  - `README.ar.md`
+  - `README.de.md`
+  - `README.es.md`
+  - `README.fr.md`
+  - `README.hi.md`
+  - `README.id.md`
+  - `README.it.md`
+  - `README.ja.md`
+  - `README.ko.md`
+  - `README.pt.md`
+  - `README.ru.md`
+  - `README.tr.md`
+  - `README.zh-TW.md`
+  - `docs/whitepaper-index.md`
+  - `docs/whitepaper/zh/WHITEPAPER.zh-CN.md`
+  - `docs/whitepaper/ar/WHITEPAPER.ar.md`
+  - `docs/whitepaper/de/WHITEPAPER.de.md`
+  - `docs/whitepaper/es/WHITEPAPER.es.md`
+  - `docs/whitepaper/fr/WHITEPAPER.fr.md`
+  - `docs/whitepaper/hi/WHITEPAPER.hi.md`
+  - `docs/whitepaper/id/WHITEPAPER.id.md`
+  - `docs/whitepaper/it/WHITEPAPER.it.md`
+  - `docs/whitepaper/ja/WHITEPAPER.ja.md`
+  - `docs/whitepaper/ko/WHITEPAPER.ko.md`
+  - `docs/whitepaper/pt/WHITEPAPER.pt.md`
+  - `docs/whitepaper/ru/WHITEPAPER.ru.md`
+  - `docs/whitepaper/tr/WHITEPAPER.tr.md`
+  - `docs/whitepaper/zh-TW/WHITEPAPER.zh-TW.md`
+- **Verification**:
+  - local relative-link check across all edited README / whitepaper language-entry files: `badCount=0`
+  - per-file UTF-8 without BOM / no NUL validation across all edited files: `encodingBadCount=0`
+- **Important decision**:
+  - do not present entry pages as if they were full same-language sitewide switching.
+  - only claim continuous public language support where the repository actually has a linked doc tree.
+- **Residual gap**:
+  - languages other than English and Simplified Chinese still remain entry-page level until their public doc trees are actually built out.
+
+## 2026-06-14 Frontend verify stabilization for autonomous gate
+
+- **Scope**: removed the frontend/E2E regressions that were blocking the new autonomous `verify-100` hard gate from resuming on a real green baseline.
+- **What changed**:
+  - stabilized English-only E2E baseline handling in `frontend/e2e/helpers.ts` without changing product default language;
+  - hardened `frontend/e2e/domain-manage.spec.ts` to wait on the actual register response instead of relying on brittle click timing;
+  - switched the wallet smoke assertion in `frontend/e2e/smoke.spec.ts` to stable `data-testid` targeting;
+  - added extra port-teardown tolerance in `frontend/scripts/verify-e2e.mjs` to reduce verify-time `EADDRINUSE` cleanup races.
+- **Files touched**:
+  - `frontend/e2e/helpers.ts`
+  - `frontend/e2e/domain-manage.spec.ts`
+  - `frontend/e2e/smoke.spec.ts`
+  - `frontend/scripts/verify-e2e.mjs`
+- **Verification**:
+  - targeted recovery:
+    - `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/domain-manage.spec.ts'; node scripts/verify-e2e.mjs`
+    - `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; node scripts/verify-e2e.mjs`
+  - full frontend verify:
+    - `cd frontend && npm run verify`
+    - result: `34 passed`, `2 skipped`
+  - full repository verify:
+    - `scripts\verify-full-save-log.cmd --no-pause`
+    - `%TEMP%\ion-verify-full.txt` tail confirms `34 passed`, `2 skipped`, frontend `audit:high` `found 0 vulnerabilities`, and `OK - verify-full completed.`
+- **Operational note**:
+  - the old `verify-100` status recorded in the autonomous queue/watchdog from 2026-06-13 is stale and has been reset for a fresh rerun.
+  - the next required step is a brand-new guarded `verify-100` run; no commit or push is allowed until that proof is green.
+
+## 2026-06-14 Autonomous workflow hard gate upgrade
+
+- **Scope**: upgraded the repository work-order pipeline so every stage now requires a fresh `verify-100` GREEN proof before any commit or push is allowed.
+- **What changed**:
+  - added `scripts/verify-100-gate.mjs` as the unified proof recorder and commit/push guard;
+  - added versioned repository hooks under `.githooks/` plus installer `scripts/install-git-hooks.mjs`;
+  - changed `scripts/verify-100.ps1` to record a proof immediately after `RESULT=GREEN`;
+  - changed `scripts/autonomous-work-watchdog.mjs` to pass queue/stage activation metadata into guarded verify and guarded auto-commit flows;
+  - replaced unsafe auto-shipping behavior in `scripts/verify-100-until-green.ps1` and `scripts/verify-100-watch-and-ship.ps1` so they no longer perform direct git commit/push;
+  - changed `scripts/autonomous-git-commit-push.mjs` and `scripts/ui-design-phase-pipeline.mjs` to use guarded commit flow plus scoped staging instead of `git add -A`;
+  - removed the `--skip-verify-100` bypass from the UI batch pipeline;
+  - updated automation/work-order docs so `verify-full` is only the fast loop and `verify-100` is the required stage-exit gate before commit/push.
+- **Files touched**:
+  - `.githooks/*`
+  - `.cursor/automations/ion-dex-autonomous-build.yml`
+  - `scripts/verify-100-gate.mjs`
+  - `scripts/install-git-hooks.mjs`
+  - `scripts/lib/git-stage-scope.mjs`
+  - `scripts/verify-100.ps1`
+  - `scripts/autonomous-work-watchdog.mjs`
+  - `scripts/autonomous-git-commit-push.mjs`
+  - `scripts/ui-design-phase-pipeline.mjs`
+  - `scripts/verify-100-until-green.ps1`
+  - `scripts/verify-100-watch-and-ship.ps1`
+  - `docs/08-ci-agent-automation.md`
+  - `docs/cursor-autonomous-work-order-2026-05-25.md`
+- **Verification planned in this task**:
+  - hook install
+  - script syntax smoke
+  - guarded proof path smoke
+- **Residual risk**:
+  - old ad hoc scripts outside the active workflow may still describe legacy commit habits in comments or history;
+  - local clones must run `node scripts/install-git-hooks.mjs` once to activate the versioned hooks.
+
+## 2026-06-14 Daily security loop unblock
+
+- **Scope**: unblocked the new daily security automation path so local security preflight and Docker security sandbox checks can run in this repository.
+- **What changed**:
+  - added `Hard Data Rules` to `.memory-bank/live-data-reference.md` so `node scripts/security-preflight.mjs` can complete successfully;
+  - hardened `docker/security-sandbox/docker-compose.yml` to avoid Docker Desktop address-pool exhaustion by reusing `network_mode: bridge` for networked sandbox profiles;
+  - kept the sandbox read-only while redirecting Python user install/cache paths into `tmpfs`-backed `/tmp`;
+  - updated `sast-audit` to invoke `python -m semgrep ...` and `python -m bandit ...`, avoiding PATH assumptions inside the container.
+- **Verification**:
+  - `node scripts/security-preflight.mjs` -> `OK - security preflight completed.`
+  - `node scripts/verify-security-1000.mjs` -> `OK - SecurityMatrix: 10 test functions × 100 iterations = 1000 checks (Foundry).`
+  - `docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --rm sast-audit` -> completed successfully after compose fixes.
+- **Residual risk**:
+  - current `sast-audit` installs tooling on every run, so the daily job is functional but slower than an image with prebuilt tools;
+  - `bandit` remains low-value for this mostly TypeScript/FunC/Solidity repository and reported `Total lines of code: 0`; `semgrep` is the more relevant part of the current SAST pass;
+  - this task did not run `verify-full` or `verify-100` because no product code path was changed beyond security-memory/compose unblock work, and the worktree already contains unrelated in-progress edits.
+
+## 2026-06-14 Daily security loop acceleration
+
+- **Scope**: reduced cold-start cost for the daily Docker SAST path and aligned the automation to the one confirmed Docker entry.
+- **What changed**:
+  - added `docker/security-sandbox/Dockerfile.sast-audit` to preinstall `semgrep` and `bandit`;
+  - switched `docker/security-sandbox/docker-compose.yml` `sast-audit` from ad-hoc `python:3.12-slim` + runtime `pip install` to a local built image: `ion-dex/sast-audit:local`;
+  - removed the per-run `pip install` step from the `sast-audit` command;
+  - updated `docker/security-sandbox/README.md` to use `docker compose ... run --build --rm sast-audit`.
+- **Expected impact**:
+  - daily security automation no longer needs to reinstall SAST tooling on every run;
+  - the confirmed Docker entry for defensive SAST is now `docker/security-sandbox` profile `sast-audit`.
+
+## 2026-06-14 README / Whitepaper public-disclosure audit
+
+- **Scope**: reviewed and corrected public-facing documentation language in `README.md`, `docs/WHITEPAPER.md`, `docs/whitepaper-index.md`, `docs/developer-index.md`, and `docs/public-structure.md`.
+- **Key fixes**:
+  - downgraded misleading "already live / already proven" wording into explicit `current repo evidence` vs `roadmap / draft design` boundaries;
+  - added a top-level whitepaper boundary note clarifying that the document is not proof of deployed mainnet functionality;
+  - repaired `docs/whitepaper-index.md` dead links by replacing missing private-memory references with public repository-local documents;
+  - removed BOM from `docs/WHITEPAPER.md`;
+  - corrected whitepaper TOC drift and removed duplicated TOC fragments;
+  - aligned economic language to `draft / pre-mainnet / audit-required` status instead of presenting conflicting fee splits as immutable fact.
+- **Verification**:
+  - local link check for edited public docs: `badCount=0`;
+  - BOM/NUL scan on edited files: all clean;
+  - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-encoding.ps1 -Path .\docs` -> `Scanned: 81 files`, `OK - All files are UTF-8 without BOM, no NUL bytes.`
+- **Residual risk**:
+  - other public docs outside this pass may still contain older economic or capability language;
+  - translated README/whitepaper editions were not synchronized in this task and may still reflect the old wording.
+
+## 2026-06-14 README / Whitepaper language-switch repair
+
+- **User correction**: the requested fix was not wording polish alone. The user explicitly required that README language switching stop being a placeholder and that switching should lead into a same-language documentation path instead of immediately falling back to English.
+- **What changed**:
+  - replaced the old short placeholder `README.zh-CN.md` with a full Chinese flagship README;
+  - added `docs/README.md` as a language-aware docs hub for GitHub directory entry;
+  - added a new public Chinese document tree under `docs/zh-CN/`;
+  - created same-language Chinese entry pages for:
+    - `index.md`
+    - `whitepaper-index.md`
+    - `developer-index.md`
+    - `api-overview.md`
+    - `contracts-overview.md`
+    - `sdk-overview.md`
+    - `quick-start.md`
+    - `merchant-onboarding.md`
+    - `payment-access.md`
+    - `settlement-integration.md`
+    - `ecosystem-entry.md`
+    - `public-structure.md`
+    - `roadmap-guide.md`
+  - upgraded `docs/whitepaper/zh/WHITEPAPER.zh-CN.md` from a pure scaffold into a Chinese whitepaper entry page that points into the new Chinese public-doc tree;
+  - updated `docs/whitepaper-index.md` to state the real support boundary clearly: practical continuous language navigation is now available for **English + Simplified Chinese**, while other languages remain entry editions.
+- **Verification**:
+  - local relative-link check across `README.zh-CN.md`, `docs/README.md`, `docs/whitepaper-index.md`, `docs/whitepaper/zh/WHITEPAPER.zh-CN.md`, and all `docs/zh-CN/*` files: `badCount=0`;
+  - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-encoding.ps1 -Path .\docs\zh-CN` -> `Scanned: 13 files`, `OK - All files are UTF-8 without BOM, no NUL bytes.`
+- **Residual risk**:
+  - GitHub Markdown cannot provide runtime whole-site machine translation; this fix implements a static same-language document tree instead;
+  - non-Chinese language READMEs and whitepaper entry files are still mostly entry editions, not full same-language public document trees;
+  - the Chinese whitepaper itself is still not a full synchronized translation of `docs/WHITEPAPER.md`.
+
 ## 2026-05-29 AI Gateway — Phase C draft stub + 公开范围文档
 
 - **Phase C**：AI Gateway 增加 design / video brief 类 **draft stub**（经 Sentinel + deny-by-default allowlist）；详见 `docs/ai-sentinel-gateway-contract.md`。
@@ -280,3 +468,82 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-full.ps1
 3. Next milestone: wire Burn/Stake/Bridge/Domain frontend read paths to adapter-backed APIs with loading/stale/source labels; add upstream timeout/retry contracts and optional Redis cache; then PostgreSQL schema scaffolding.
 4. Official ION reference: `D:/openclaw-tools/ion`.
 5. After meaningful diffs, run Cursor Agent Review (`/agent-review`) and then the verification baseline.
+
+## 2026-06-14 FunC / ION Contract Batch 1
+
+- Scope:
+  - `contracts/ion/common/common.fc`
+  - `contracts/ion/common/gas.fc`
+  - `contracts/ion/BridgeInbox.fc`
+  - `contracts/ion/router.fc` (minimal bridge execution + ack path for closed-loop delivery)
+- What changed:
+  - `ctx::body()` now exposes payload after the 32-bit opcode; added `ctx::raw_body()`.
+  - Replaced the unsafe `msgs::send_simple()` serialization with a proper internal-message wrapper built on `send_raw_message`.
+  - Added bridge opcodes, bridge error codes, and bridge gas/storage constants.
+  - Reworked `BridgeInbox.fc` from single-relayer immediate execution into:
+    - relayer registry with stable relayer index
+    - `pending_dict` approval aggregation
+    - quorum gating
+    - router forward
+    - router ack
+    - `executed_dict` replay protection after successful ack
+  - Added minimal `router.fc` support for `op::bridge_execute` and `op::bridge_ack`, plus optional `bridge_inbox_address` storage slot appended after the legacy router layout.
+- Verification:
+  - `node scripts/verify-func-ion.mjs` with `ION_FUNC_COMPILE_PASSES=1` -> PASS
+  - `node scripts/verify-func-ion.mjs` with `ION_FUNC_COMPILE_PASSES=5` -> PASS
+  - `node scripts/verify-contracts.mjs` -> PASS
+    - backend minimum-output tests passed
+    - FunC compile verification passed 100x per contract
+    - deploy phase-2 readiness passed
+    - fift dry-run skipped because `fift` binary is not installed in this environment
+- Encoding spot-check:
+  - `common.fc`, `gas.fc`, `BridgeInbox.fc`, `router.fc` are `BOM=False`, `NUL=False`
+  - `BridgeInbox.fc` is LF-only
+  - `common.fc`, `gas.fc`, `router.fc` currently still contain CRLF line endings
+- Remaining risks:
+  - No bridge runtime/integration tests yet for quorum, retry, bounce, duplicate approval, or ack loss.
+  - `router.fc` bridge execution path is still a minimal settlement stub, not final token mint/release accounting.
+  - `scripts/check-encoding.sh` is currently broken in this workspace because the script itself has CRLF issues; do not treat that specific script failure as a contract regression.
+
+## 2026-06-14 Frontend true sitewide i18n locale switch
+
+- Scope:
+  - `frontend/src/components/layout/AppShell.tsx`
+  - `frontend/src/components/dashboard/DashboardSwapPanel.tsx`
+  - `frontend/src/components/wallet/SignSummaryDialog.tsx`
+  - `frontend/src/wallet/signSummary.ts`
+  - `frontend/src/pages/SwapPage.tsx`
+  - `frontend/src/pages/PoolPage.tsx`
+  - `frontend/src/pages/StakePage.tsx`
+  - `frontend/src/pages/BridgePage.tsx`
+  - `frontend/src/pages/TradeProPage.tsx`
+  - `frontend/src/pages/BusinessPages.tsx`
+- What changed:
+  - repaired the broken `AppShell.tsx` wallet-panel copy and removed the corrupted Chinese strings from the provider help text.
+  - ensured locale switching now propagates across the visible app shell:
+    - sidebar / mobile-nav accessibility labels
+    - wallet panel title, provider descriptions, connect status, balance lines, and provider warnings
+    - footer and shared wallet signing summary labels
+  - completed real route-level copy switching for active frontend pages and shared desk panels:
+    - swap token rows, quote summary, CTA, and signature summary
+    - pool / stake / bridge form labels, validation text, preview copy, and confirmation text
+    - dashboard compact swap panel labels
+    - trade-pro chart placeholder title
+    - business-page embedded pool / stake / bridge / domain / AI form copy that is reachable from the current routed surfaces
+  - preserved the existing global locale store and route wiring instead of adding a parallel i18n path.
+- Verification:
+  - `node scripts/dev-preflight.mjs` -> PASS
+  - `cd frontend && npm run build` -> PASS
+  - `cd frontend && npm run audit:high` -> PASS, `found 0 vulnerabilities`
+  - `cd frontend && powershell -NoProfile -ExecutionPolicy Bypass -File ..\scripts\check-encoding.ps1 -Path .\src` -> PASS
+  - `cd frontend && npm run verify` -> PASS
+    - Playwright result: `35 passed`, `2 skipped`
+    - includes: `settings.spec.ts › switches locale across navigation and trade page copy`
+  - manual in-app browser walkthrough on local preview `http://127.0.0.1:4173/`:
+    - `/#/settings` title after default load: `System settings` once locale set to `en-US`
+    - `nav-trade`: `Trade`
+    - `/#/trade` title: `ION spot order desk`
+    - `trade-submit`: `Preview order (no chain submit)`
+- Known residual issues:
+  - some older non-routed draft/profile helper surfaces still contain English-only copy and were not needed for the current user-facing route chain.
+  - Vite still warns about large chunks and the ineffective dynamic import around `ionExtension.ts`; this is unrelated to locale switching and was not changed here.

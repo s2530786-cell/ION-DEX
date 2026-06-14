@@ -1,5 +1,165 @@
 # Current Session State
 
+## 2026-06-14 README language-switch entry honesty repair
+
+- Last completed step:
+  - corrected the public GitHub documentation language-entry layer so the repository no longer presents all listed README / whitepaper languages as if they were full same-language sitewide switches.
+  - updated the root `README` language bars, the non-English `README.*` entry pages, `docs/whitepaper-index.md`, and the `docs/whitepaper/*/WHITEPAPER.*.md` entry files to distinguish:
+    - continuous public docs currently available in `English` and `Simplified Chinese`
+    - entry-page-only language editions for the remaining listed languages
+- Verification evidence:
+  - local relative-link check across all edited README / whitepaper entry files -> `badCount=0`
+  - per-file UTF-8 without BOM / no NUL validation across all edited files -> `encodingBadCount=0`
+- Key decisions:
+  - GitHub Markdown language switching must be described honestly as static navigation, not runtime whole-site auto-translation.
+  - the existence of `README.xx.md` or `docs/whitepaper/xx/WHITEPAPER.xx.md` alone does not count as a completed global language switch.
+- Current blocker:
+  - no blocker remains for the honesty repair itself.
+  - the real remaining gap is content coverage: languages other than English and Simplified Chinese still do not have full same-language public doc trees.
+- Exact next action:
+  1. if the user wants more true language coverage, extend one concrete language tree end-to-end, for example `zh-TW`, `ru`, or `es`;
+  2. if the user wants GitHub-side switching to stay strict, keep future language bars aligned with actual coverage and do not reintroduce placeholder wording.
+
+## 2026-06-14 frontend true sitewide i18n locale switch
+
+- Last completed step:
+  - finished the real frontend locale-switch path so app navigation, wallet shell, route titles, action buttons, and core business-page copy now follow the selected locale instead of only switching README/docs placeholders.
+  - repaired the corrupted wallet-panel strings in:
+    - `frontend/src/components/layout/AppShell.tsx`
+  - completed route/shared-component locale coverage in:
+    - `frontend/src/components/dashboard/DashboardSwapPanel.tsx`
+    - `frontend/src/components/wallet/SignSummaryDialog.tsx`
+    - `frontend/src/wallet/signSummary.ts`
+    - `frontend/src/pages/SwapPage.tsx`
+    - `frontend/src/pages/PoolPage.tsx`
+    - `frontend/src/pages/StakePage.tsx`
+    - `frontend/src/pages/BridgePage.tsx`
+    - `frontend/src/pages/TradeProPage.tsx`
+    - `frontend/src/pages/BusinessPages.tsx`
+- Verification evidence:
+  - `node scripts/dev-preflight.mjs` -> `OK - development preflight completed.`
+  - `cd frontend && npm run build` -> PASS
+  - `cd frontend && npm run audit:high` -> PASS, `found 0 vulnerabilities`
+  - `cd frontend && powershell -NoProfile -ExecutionPolicy Bypass -File ..\scripts\check-encoding.ps1 -Path .\src` -> PASS
+  - `cd frontend && npm run verify` -> PASS
+    - result: `35 passed`, `2 skipped`
+    - includes `settings.spec.ts` locale regression:
+      - `switches locale across navigation and trade page copy`
+  - manual browser verification on local preview:
+    - settings page locale `en-US` -> title `System settings`
+    - sidebar `nav-trade` -> `Trade`
+    - trade page title -> `ION spot order desk`
+    - trade submit CTA -> `Preview order (no chain submit)`
+- Key decisions:
+  - keep the existing lightweight global locale provider and expand actual page coverage instead of introducing a second i18n layer.
+  - prioritize routed, user-visible surfaces first; do not churn unrelated dirty files in the existing worktree.
+- Current blocker:
+  - no blocker remains for the frontend locale-switch task itself.
+  - repository-level guarded commit/push still remains blocked on the separate fresh `verify-100` proof workflow.
+- Exact next action:
+  1. if the user wants broader language coverage, continue sweeping remaining non-routed or lower-priority English-only helper surfaces such as `ProfileHub.tsx` and bridge helper components.
+  2. if the user wants this work shipped, resume the guarded repository workflow:
+     - `node scripts/install-git-hooks.mjs`
+     - `node scripts/verify-100-gate.mjs assert-commit`
+     - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-100.ps1`
+  3. only after a fresh `PASSED=100 FAILED=0 RESULT=GREEN` proof exists, proceed to commit/push.
+
+## 2026-06-14 frontend verify stabilization + verify-100 resume
+
+- Last completed step:
+  - stabilized the frontend verification path so the autonomous gate can resume from a real green baseline.
+  - repaired the recent Playwright regressions in:
+    - `frontend/e2e/helpers.ts`
+    - `frontend/e2e/domain-manage.spec.ts`
+    - `frontend/e2e/smoke.spec.ts`
+    - `frontend/scripts/verify-e2e.mjs`
+- Verification evidence:
+  - targeted E2E recovery passed for:
+    - `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/domain-manage.spec.ts'; node scripts/verify-e2e.mjs`
+    - `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; node scripts/verify-e2e.mjs`
+  - full frontend verify recovered:
+    - `cd frontend && npm run verify`
+    - result: `34 passed`, `2 skipped`
+  - full repository verify recovered:
+    - `scripts\verify-full-save-log.cmd --no-pause`
+    - latest log: `%TEMP%\ion-verify-full.txt`
+    - result: `OK - verify-full completed.`
+- Key decisions:
+  - do not change the product default language just to satisfy E2E.
+  - keep the English test baseline inside the E2E helper layer instead.
+  - treat the stale `verify-100` state from 2026-06-13 as invalid because no active lock file remains and the watchdog PID is no longer live.
+- Current blocker:
+  - no active `verify-100` process is running now, so the queue must be resumed from a fresh guarded run.
+  - commit/push still must wait for a new `PASSED=100 FAILED=0 RESULT=GREEN` proof generated after the current worktree state.
+- Exact next action:
+  1. install versioned hooks with `node scripts/install-git-hooks.mjs`
+  2. run guarded gate smoke:
+     - `node scripts/verify-100-gate.mjs assert-commit`
+  3. start a fresh full gate:
+     - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-100.ps1`
+  4. only after a fresh GREEN proof exists, continue guarded commit/push
+
+## 2026-06-14 autonomous workflow hard-gate upgrade
+
+- Last completed step:
+  - implemented the repository-wide guarded workflow baseline for staged work orders:
+    - `verify-full` remains the fast development loop
+    - every stage exit must now pass `verify-100`
+    - `verify-100` now records a fresh proof via `scripts/verify-100-gate.mjs`
+    - commit is blocked unless proof still matches current `HEAD` + working tree
+    - push is blocked unless each outgoing commit has a valid `Verify-100-Proof` trailer and local ledger record
+- Key decisions:
+  - removed direct auto `git commit` / `git push` behavior from legacy watch scripts
+  - removed `--skip-verify-100` as a valid UI batch bypass
+  - changed automatic stage commit paths from `git add -A` to scoped staging so unrelated dirty changes are not swept into autonomous commits
+  - chose versioned `.githooks/` plus `scripts/install-git-hooks.mjs` instead of mutating only `.git/hooks`
+- Current blocker:
+  - the new hooks are versioned but each clone still needs `node scripts/install-git-hooks.mjs` once to point `core.hooksPath` at `.githooks`
+  - workflow verification still needs to be run after the script changes land
+- Exact next action:
+  1. run `node scripts/install-git-hooks.mjs`
+  2. run script-level syntax and smoke verification for:
+     - `scripts/verify-100-gate.mjs`
+     - `scripts/autonomous-git-commit-push.mjs`
+     - `scripts/ui-design-phase-pipeline.mjs`
+  3. run at least one guarded proof smoke:
+     - `node scripts/verify-100-gate.mjs assert-commit` should fail before a fresh proof / staged scope
+  4. update any remaining workflow docs if a legacy commit path is still documented
+
+## 2026-06-14 README / Whitepaper language-switch repair
+
+- User clarified that the real problem was **placeholder language switching**, not just documentation wording.
+- GitHub Markdown cannot do runtime whole-site auto-translation; the practical repository-side fix is a **static same-language public document tree**.
+- Implemented:
+  - full Chinese flagship `README.zh-CN.md`
+  - `docs/README.md` language-aware docs hub
+  - new `docs/zh-CN/` tree with Chinese public entry pages:
+    - `index.md`
+    - `whitepaper-index.md`
+    - `developer-index.md`
+    - `api-overview.md`
+    - `contracts-overview.md`
+    - `sdk-overview.md`
+    - `quick-start.md`
+    - `merchant-onboarding.md`
+    - `payment-access.md`
+    - `settlement-integration.md`
+    - `ecosystem-entry.md`
+    - `public-structure.md`
+    - `roadmap-guide.md`
+  - upgraded `docs/whitepaper/zh/WHITEPAPER.zh-CN.md` into a Chinese whitepaper entry that routes readers into the Chinese doc tree
+  - updated `docs/whitepaper-index.md` to explicitly state the true support boundary: **English + Simplified Chinese** are the currently continuous language paths
+- Verification completed:
+  - local link check across edited language-switch files and `docs/zh-CN/*`: `badCount=0`
+  - encoding check: `docs/zh-CN` scanned `13 files`, all UTF-8 without BOM, no NUL bytes
+- Important decision:
+  - do **not** claim “all languages auto-translate all pages” on GitHub docs
+  - instead, describe the implemented behavior honestly as a static same-language navigation tree
+- Next sensible follow-up if requested:
+  1. extend the same-language public doc tree to `zh-TW`
+  2. extend it to one more major language such as `ru` or `es`
+  3. separately implement true frontend app i18n inside `frontend/` if the user wants in-product language switching rather than GitHub docs switching
+
 ## 🤖 全自动工单 W 系列 — 2026-05-25（当前执行队列）
 
 **主文档**：[`docs/cursor-autonomous-work-order-2026-05-25.md`](docs/cursor-autonomous-work-order-2026-05-25.md)  
@@ -400,27 +560,136 @@ ION DEX: an engineering-grade OKX Web3 wallet style DEX for the ION ecosystem.
   - Independent read-only review found mock-data mislabeling risk, stress-smoke scope limits, error-code drift, and OPTIONS tracing gaps; code now fixes the contract/tracing/provenance findings, while production-grade k6/wrk load remains a future task.
   - Verification evidence: direct `scripts\verify-full.cmd` exited `0`; expanded 100-pass gate completed `PASS 100/100`, `RESULT=GREEN`, exit code `0` after 3,899,653 ms.
 
+## 2026-06-14 Daily security loop unblock
+
+- Last completed step:
+  - Unblocked the new daily defensive security automation path for this repository.
+  - Confirmed the three active Codex automations:
+    - `ion-dex`: weekday 09:00 project monitor
+    - `ion-dex-2`: every 30 minutes high-frequency monitor
+    - `ion-dex-3`: daily 09:00 security closed loop
+- What changed:
+  - Added `## Hard Data Rules` to `.memory-bank/live-data-reference.md` so `node scripts/security-preflight.mjs` can pass.
+  - Hardened `docker/security-sandbox/docker-compose.yml`:
+    - removed obsolete compose `version`
+    - set `network_mode: bridge` for `sast-audit`, `scraping-lab`, and `sentinel-lab`
+    - redirected Python user/cache paths into `/tmp`
+    - changed `sast-audit` to `python -m semgrep ...` and `python -m bandit ...`
+  - Updated `docs/99-current-progress.md` with the daily security loop unblock evidence.
+- Verification evidence:
+  - `node scripts/security-preflight.mjs` -> `OK - security preflight completed.`
+  - `node scripts/verify-security-1000.mjs` -> `OK - SecurityMatrix: 10 test functions x 100 iterations = 1000 checks (Foundry).`
+  - `docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --rm sast-audit` -> completed successfully.
+- Important decision:
+  - The automation remains strictly defensive and scoped to this repository, local test services, and Docker security sandbox only.
+  - No confirmed repo-local `PENTAGI` entrypoint was found yet; `ion-dex-3` is therefore correctly configured to prefer a pre-existing Docker PENTAGI entry if present on the machine, and otherwise fall back to the verified local security path.
+- Current blocker:
+  - No repository-level blocker remains for the daily security loop.
+  - The main residual issue is performance: `sast-audit` installs tooling on each run, so it is functional but slower than a prebuilt image.
+- Exact next action:
+  1. Let `ion-dex-3` continue using:
+     - `node scripts/security-preflight.mjs`
+     - `docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --rm sast-audit`
+     - `node scripts/verify-security-1000.mjs`
+  2. If a future run makes safe repository changes, then run:
+     - `scripts\verify-full-save-log.cmd --no-pause`
+     - `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-100-until-green.ps1 -Iterations 100`
+  3. If startup time becomes a practical problem, build a preloaded SAST image instead of pip-installing tools on every cron run.
+
+## 2026-06-14 Daily security loop acceleration
+
+- Last completed step:
+  - Tightened automation `ion-dex-3` to the one confirmed Docker entry instead of searching for alternative security runners.
+  - Replaced per-run SAST tool installation with a local prebuilt Docker image for `sast-audit`.
+- What changed:
+  - Added `docker/security-sandbox/Dockerfile.sast-audit`.
+  - Updated `docker/security-sandbox/docker-compose.yml` so `sast-audit` now uses:
+    - `build:`
+    - local image `ion-dex/sast-audit:local`
+    - preinstalled `semgrep` and `bandit`
+  - Removed the runtime `pip install` step from the `sast-audit` command.
+  - Updated `docker/security-sandbox/README.md` to use `docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --build --rm sast-audit`.
+  - Updated automation `ion-dex-3` so its daily closed loop now explicitly runs:
+    - `node scripts/security-preflight.mjs`
+    - `docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --build --rm sast-audit`
+    - `node scripts/verify-security-1000.mjs`
+- Verification evidence:
+  - `node scripts/security-preflight.mjs` -> `OK - security preflight completed.`
+  - `docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --build --rm sast-audit` -> image built successfully and SAST run completed.
+  - `node scripts/verify-security-1000.mjs` -> `OK - SecurityMatrix: 10 test functions x 100 iterations = 1000 checks (Foundry).`
+- Current blocker:
+  - No functional blocker remains on the confirmed Docker SAST path.
+  - Residual noise remains:
+    - `bandit` is still low-value for this mostly TypeScript/FunC/Solidity repository and reports `Total lines of code: 0`
+    - Semgrep currently prints a deprecation notice for `python -m semgrep`; it is non-blocking but should be normalized later.
+- Exact next action:
+  1. Keep `ion-dex-3` on the confirmed Docker path only.
+  2. If desired later, simplify the command from `python -m semgrep` to `semgrep` after validating the container PATH remains stable in this environment.
+  3. If SAST signal quality needs improvement, consider reducing Bandit emphasis and tuning Semgrep rules/output for this repository.
+
 ## Current Blocker
 
-Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official source path is confirmed. No blocker for the automation YAML import; only the pre-existing `package-lock.json` name change remains outside this task.
+Reliable shell execution is confirmed. Memory Bank MCP is loaded. ION official source path is confirmed. The project monitor automations (`ion-dex`, `ion-dex-2`) and the daily defensive security loop (`ion-dex-3`) are active. There is no repository-level blocker for the security automation path. The remaining follow-up is signal hygiene, not execution: `bandit` is low-value for this repository and Semgrep still prints a non-blocking module-invocation deprecation notice.
 
 ## Next Action
 
-1. If needed, open/import the automation manually in Cursor Automations using `.cursor/automations/ion-dex-autonomous-build.yml` as the source of truth.
-2. Use `cd frontend && npm run dev:local` for frontend runtime verification on `http://localhost:3001/`.
-3. Use `D:/openclaw-tools/ion` as the official ION reference source for FunC style, DNS, wallet, multisig, tonlib, lite-client, and API schemes.
-4. Use the relevant project skill before each domain task: official source, UI, contract audit, or data backend.
-5. Run Agent Review (`/agent-review`) after meaningful diffs and before final verification when available.
-6. For every development task, proactively load `.cursor/skills/cursor-engineering-workflow/SKILL.md` and `.cursor/skills/ion-dev-accelerators/SKILL.md` as needed; use `docs/cursor-docs-feature-memory.md` and `docs/development-accelerators-memory.md` as local references.
-7. Do not wait for the user to request worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy when they would improve the task.
-8. Phase 5 八页业务表单草稿 + E2E：2026-05-18，`scripts/check-encoding.ps1` 已排除本地官方 ION 参考树 `/ion/`（该目录被 `.gitignore` 忽略，不属于本仓源码）；`scripts\verify-100.ps1` 完成 **100-pass**：`PASS 100 OK`，`PASSED=100`，`FAILED=0`，`RESULT=GREEN`。`frontend` `npm run verify` 使用 `start-server-and-test` + **`tcp:127.0.0.1:59333`**，Playwright **`12 passed`**；`audit:high` **`0`**。顶栏导航改为横向滚动可视，修补生产样式下 `hidden lg:flex` 永久隐藏问题。
-9. Wallet/Profile shell：2026-05-18，`AppShell` wallet button now opens a local provider picker (Online+ Wallet / ION Browser Wallet / WalletConnect + OKX), drafts a profile session, and supports disconnect without private keys, RPC calls, or signatures. Single full verification after the change: encoding OK, frontend `npm run verify` **13 passed**, `audit:high` **0**. 100-pass gate completed: `PASS 100 OK`, `PASSED=100`, `FAILED=0`, `RESULT=GREEN`.
-10. External reference architecture：2026-05-18，`docs/09-reference-architecture.md` added to map the user's reference repositories into ION DEX phases. Key decision: use backend gateway repositories (`tyk`, `shenyu`, `ocelot`) as pattern references only, and start Phase 3 with a minimal typed API gateway/BFF rather than vendoring a full gateway product.
-11. Agent capability Skills：2026-05-18，installed project-local Skills `skill-vetter`, `self-evolving`, `tavily`, `find-skill`, `luke-agent-browser-clawdbot`, and `summarize-pro`; registered them in `AGENTS.md` with trigger guidance.
-12. Workflow preference：2026-05-18，user explicitly requested making strong use of `self-evolving` and automatic workflow because they help development. Treat `cursor-engineering-workflow` as the pre/during-work operating loop and `self-evolving` as the post-work memory improvement loop.
-13. Accelerator/review preference：2026-05-18，user explicitly emphasized that other capabilities are also important, especially parallel development worktrees and code audit/review. For non-trivial work, evaluate worktree isolation and review/audit paths before implementation and before accepting diffs.
-14. Claude-Flow/RuFlo：2026-05-18，user required Claude-Flow `3.7.0-alpha.35` / 98-agent capability as installed ability. Package is installed/pinned and CLI works, but RuFlo is not initialized in main, Claude-Flow MCP is not configured in main, WASM agent runtime is missing, and root audit has high/critical findings. Treat as controlled local accelerator, not unrestricted daemon. Project verification after installation passed through `scripts\verify-full-save-log.cmd --no-pause`; root Claude-Flow audit risk remains separate. A sandbox worktree validated minimal init and MCP diagnostics, but showed generated configs require pinning and security review before any main-repo adoption.
-15. Phase 3 adapter/cache + partial frontend read wiring done: backend adapter/cache layer (19 tests), Stake/Burn metrics from API with fallback, full verify green. 100-pass gate re-running. Next: Bridge/Domain frontend read paths, upstream timeout/retry contracts, Redis cache, then PostgreSQL scaffolding.
+1. Let the active automations keep running on their current schedules:
+   - `ion-dex`: workdays 09:00
+   - `ion-dex-2`: every 30 minutes
+   - `ion-dex-3`: daily 09:00
+2. For the daily security loop, keep the verified fallback chain as the operational baseline:
+   - `node scripts/security-preflight.mjs`
+   - `docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --build --rm sast-audit`
+   - `node scripts/verify-security-1000.mjs`
+3. If a future automation run makes repository changes, require:
+   - `scripts\verify-full-save-log.cmd --no-pause`
+   - `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-100-until-green.ps1 -Iterations 100`
+4. If better performance is needed later, keep the prebuilt `sast-audit` image path and avoid returning to per-run package installation.
+5. Use `D:/openclaw-tools/ion` as the official local ION source of truth whenever future automation touches ION-native contracts, DNS, wallets, tonlib, lite-client, or official references.
+6. Use the relevant project Skills before future work, especially `ion-dex-memory`, `ion-official-source`, `ion-contract-audit`, `ion-web3-ui`, and `self-evolving` when the scope requires them.
+7. Run Agent Review (`/agent-review`) after meaningful diffs and before final verification when available.
+8. For every development task, proactively load `.cursor/skills/cursor-engineering-workflow/SKILL.md` and `.cursor/skills/ion-dev-accelerators/SKILL.md`; use `docs/cursor-docs-feature-memory.md` and `docs/development-accelerators-memory.md` as local references.
+9. Do not wait for the user to request worktrees, Agent Review, Bugbot, Hooks, MCP, Cloud Agents, CLI automation, Rules, Skills, or verification strategy when they would improve the task.
+
+## 2026-06-14 FunC Bridge Batch 1
+
+- Last completed step:
+  - Implemented the first FunC/ION remediation batch for bridge/common layers:
+    - `contracts/ion/common/common.fc`
+    - `contracts/ion/common/gas.fc`
+    - `contracts/ion/BridgeInbox.fc`
+    - `contracts/ion/router.fc` (minimal bridge execute/ack support)
+- Key decisions:
+  - `ctx::body()` now means payload-after-opcode; `ctx::raw_body()` retains the original full body.
+  - `BridgeInbox` no longer consumes replay protection before downstream success; replay is finalized only after router ack.
+  - Router storage compatibility was preserved by appending `bridge_inbox_address` after the legacy fields instead of inserting it earlier in the layout.
+- Verification evidence:
+  - `node scripts/verify-func-ion.mjs` with `ION_FUNC_COMPILE_PASSES=1` -> GREEN
+  - `node scripts/verify-func-ion.mjs` with `ION_FUNC_COMPILE_PASSES=5` -> GREEN
+  - `node scripts/verify-contracts.mjs` -> GREEN
+    - backend minimum-output tests passed
+    - FunC compile 100x per contract passed
+    - deploy phase-2 readiness passed
+    - fift dry-run skipped because `fift` is missing
+- Current blocker:
+  - No dedicated bridge integration/fuzz harness exists yet, so quorum/retry/ack-loss behavior is only compile-verified, not runtime-verified.
+  - `scripts/check-encoding.sh` is currently unusable in this workspace because the script itself has CRLF issues.
+- Exact next action:
+  1. Add tests for `BridgeInbox`:
+     - duplicate relayer approval
+     - quorum not reached
+     - ack after forward
+     - retry after failed forward / missing ack
+     - replay after executed
+  2. Normalize line endings for modified FunC files if the repository wants LF-only enforcement restored:
+     - `contracts/ion/common/common.fc`
+     - `contracts/ion/common/gas.fc`
+     - `contracts/ion/router.fc`
+  3. Continue Batch 2:
+     - `pool.fc`
+     - `lp_wallet.fc`
+     - `lp_account.fc`
+     - `vault.fc`
 
 ## Memory MCP Candidates
 
