@@ -24,5 +24,12 @@
 - [ION Official DEX Core Logic Deep Dive](./ion-dex-core-logic-deep-dive.md)
 - [ION Testnet Deploy Checklist](./26-ion-testnet-deploy-checklist.md)
 
+
+## Extended Reading
+
+- [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
+- [Development Roadmap](./04-development-roadmap.md)
+- [Reference Architecture And External Patterns](./09-reference-architecture.md)
+
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
 

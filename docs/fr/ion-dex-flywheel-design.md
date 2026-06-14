@@ -31,5 +31,12 @@ Built on: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-
 - [Technical Architecture](./03-technical-architecture.md)
 - [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
 
+
+## Extended Reading
+
+- [Product Requirements Document](./05-product-prd.md)
+- [Development Roadmap](./04-development-roadmap.md)
+- [Public Development Scope](./28-public-development-scope.md)
+
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
 

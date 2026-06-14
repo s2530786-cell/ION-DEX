@@ -31,5 +31,12 @@ Built on: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-
 - [Technical Architecture](./03-technical-architecture.md)
 - [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
 
+
+## Extended Reading
+
+- [Product Requirements Document](./05-product-prd.md)
+- [Development Roadmap](./04-development-roadmap.md)
+- [Public Development Scope](./28-public-development-scope.md)
+
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
 

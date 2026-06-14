@@ -26,5 +26,12 @@ This matrix defines executable and auditable tests for sandbox-only security too
 - [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
 - [Technical Architecture](./03-technical-architecture.md)
 
+
+## Extended Reading
+
+- [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
+- [Public Development Scope](./28-public-development-scope.md)
+- [Reference Architecture And External Patterns](./09-reference-architecture.md)
+
 > หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
 

@@ -25,5 +25,12 @@ This document lists the external facts that must be confirmed before production 
 - [Tokenomics And Fee Blueprint](./02-tokenomics-and-fees.md)
 - [ION Testnet Deploy Checklist](./26-ion-testnet-deploy-checklist.md)
 
+
+## Extended Reading
+
+- [Public Development Scope](./28-public-development-scope.md)
+- [Ice Open Network Official Ecosystem Panorama](./ion-official-ecosystem-panorama.md)
+- [ION DEX Official Ecosystem Access Architecture](./ion-ecosystem-access-architecture.md)
+
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
 

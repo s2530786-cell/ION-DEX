@@ -29,5 +29,12 @@
 - [Technical Architecture](./03-technical-architecture.md)
 - [Swap Router Minimum Output Enforcement](./24-swap-router-minimum-output.md)
 
+
+## Extended Reading
+
+- [Development Roadmap](./04-development-roadmap.md)
+- [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
+- [Product Requirements Document](./05-product-prd.md)
+
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
 

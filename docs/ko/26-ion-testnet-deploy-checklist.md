@@ -29,5 +29,12 @@
 - [Technical Architecture](./03-technical-architecture.md)
 - [Swap Router Minimum Output Enforcement](./24-swap-router-minimum-output.md)
 
+
+## Extended Reading
+
+- [Development Roadmap](./04-development-roadmap.md)
+- [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
+- [Product Requirements Document](./05-product-prd.md)
+
 > 참고: 이 언어 경로는 안정적인 공개 읽기 입구를 제공합니다. 최종 정본은 여전히 영어 공개 문서입니다.
 

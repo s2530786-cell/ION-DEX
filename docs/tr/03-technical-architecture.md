@@ -31,5 +31,12 @@ ION DEX is designed as a multi-layer system. Contracts hold and settle assets. B
 - [Swap Router Minimum Output Enforcement](./24-swap-router-minimum-output.md)
 - [ION Official DEX Core Logic Deep Dive](./ion-dex-core-logic-deep-dive.md)
 
+
+## Extended Reading
+
+- [Development Roadmap](./04-development-roadmap.md)
+- [Reference Architecture And External Patterns](./09-reference-architecture.md)
+- [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
+
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
 

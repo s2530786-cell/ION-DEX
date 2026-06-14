@@ -31,5 +31,12 @@ Source: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-05
 - [Swap Router Minimum Output Enforcement](./24-swap-router-minimum-output.md)
 - [Official Addresses And Open Assumptions](./01-official-addresses-and-assumptions.md)
 
+
+## Extended Reading
+
+- [Reference Architecture And External Patterns](./09-reference-architecture.md)
+- [Development Roadmap](./04-development-roadmap.md)
+- [Product Requirements Document](./05-product-prd.md)
+
 > 说明：这条中文路径提供稳定的公开阅读入口；涉及最终措辞、经济参数、安全边界与发布状态时，仍以英文公共文档为准。
 

@@ -2,7 +2,7 @@
 
 # AI Sentinel And Gateway Contract
 
-仅 **schema、路由与不变量**；战略级 AI 架构、完整白名单与供应商细节 **不在公开仓**。 产品范围概要：[`28-public-development-scope.md`](../28-public-development-scope.md)
+仅 **schema、路由与不变量**；战略级 AI 架构、完整白名单与供应商细节 **不在公开仓**。 产品范围概要：[`28-public-development-scope.md`](./28-public-development-scope.md)
 
 
 ## ここから開始
@@ -30,6 +30,13 @@
 - [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
 - [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
 - [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
+
+
+## Extended Reading
+
+- [Public Development Scope](./28-public-development-scope.md)
+- [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
+- [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
 

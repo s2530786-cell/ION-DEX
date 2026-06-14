@@ -29,5 +29,12 @@ This document defines the initial fee, burn, treasury, team, staking, keeper, an
 - [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
 - [ION Testnet Deploy Checklist](./26-ion-testnet-deploy-checklist.md)
 
+
+## Extended Reading
+
+- [Development Roadmap](./04-development-roadmap.md)
+- [Product Requirements Document](./05-product-prd.md)
+- [Public Development Scope](./28-public-development-scope.md)
+
 > 说明：这条中文路径提供稳定的公开阅读入口；涉及最终措辞、经济参数、安全边界与发布状态时，仍以英文公共文档为准。
 

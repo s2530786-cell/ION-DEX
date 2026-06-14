@@ -31,5 +31,12 @@ Built on: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-
 - [Technical Architecture](./03-technical-architecture.md)
 - [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
 
+
+## Extended Reading
+
+- [Product Requirements Document](./05-product-prd.md)
+- [Development Roadmap](./04-development-roadmap.md)
+- [Public Development Scope](./28-public-development-scope.md)
+
 > 说明：这条中文路径提供稳定的公开阅读入口；涉及最终措辞、经济参数、安全边界与发布状态时，仍以英文公共文档为准。
 

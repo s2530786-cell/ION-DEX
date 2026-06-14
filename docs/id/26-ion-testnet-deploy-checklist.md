@@ -29,5 +29,12 @@
 - [Technical Architecture](./03-technical-architecture.md)
 - [Swap Router Minimum Output Enforcement](./24-swap-router-minimum-output.md)
 
+
+## Extended Reading
+
+- [Development Roadmap](./04-development-roadmap.md)
+- [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
+- [Product Requirements Document](./05-product-prd.md)
+
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
 

@@ -1111,60 +1111,115 @@ const localizedDeepPages = [
     title: "Official Addresses And Open Assumptions",
     parent: "developer-index.md",
     related: ["03-technical-architecture.md", "02-tokenomics-and-fees.md", "26-ion-testnet-deploy-checklist.md"],
+    extendedDocs: ["28-public-development-scope.md", "ion-official-ecosystem-panorama.md", "ion-ecosystem-access-architecture.md"],
   },
   {
     slug: "02-tokenomics-and-fees.md",
     title: "Tokenomics And Fee Blueprint",
     parent: "public-structure.md",
     related: ["03-technical-architecture.md", "ion-dex-flywheel-design.md", "26-ion-testnet-deploy-checklist.md"],
+    extendedDocs: ["04-development-roadmap.md", "05-product-prd.md", "28-public-development-scope.md"],
   },
   {
     slug: "03-technical-architecture.md",
     title: "Technical Architecture",
     parent: "developer-index.md",
     related: ["01-official-addresses-and-assumptions.md", "24-swap-router-minimum-output.md", "ion-dex-core-logic-deep-dive.md"],
+    extendedDocs: ["04-development-roadmap.md", "09-reference-architecture.md", "23-security-audit-and-stress-sandbox.md"],
   },
   {
     slug: "24-swap-router-minimum-output.md",
     title: "Swap Router Minimum Output Enforcement",
     parent: "contracts-overview.md",
     related: ["03-technical-architecture.md", "ion-dex-core-logic-deep-dive.md", "26-ion-testnet-deploy-checklist.md"],
+    extendedDocs: ["23-security-audit-and-stress-sandbox.md", "04-development-roadmap.md", "09-reference-architecture.md"],
   },
   {
     slug: "26-ion-testnet-deploy-checklist.md",
     title: "ION Testnet Deploy Checklist",
     parent: "quick-start.md",
     related: ["01-official-addresses-and-assumptions.md", "03-technical-architecture.md", "24-swap-router-minimum-output.md"],
+    extendedDocs: ["04-development-roadmap.md", "23-security-audit-and-stress-sandbox.md", "05-product-prd.md"],
   },
   {
     slug: "27-ion-dex-scraping-security-integration-v1.md",
     title: "ION DEX Scraping Security Integration Checklist",
     parent: "api-overview.md",
     related: ["28-ai-sentinel-security-test-matrix-v1.md", "ai-sentinel-gateway-contract.md", "03-technical-architecture.md"],
+    extendedDocs: ["23-security-audit-and-stress-sandbox.md", "09-reference-architecture.md", "28-public-development-scope.md"],
   },
   {
     slug: "28-ai-sentinel-security-test-matrix-v1.md",
     title: "AI Sentinel Security Test Matrix",
     parent: "public-structure.md",
     related: ["27-ion-dex-scraping-security-integration-v1.md", "ai-sentinel-gateway-contract.md", "03-technical-architecture.md"],
+    extendedDocs: ["23-security-audit-and-stress-sandbox.md", "28-public-development-scope.md", "09-reference-architecture.md"],
   },
   {
     slug: "ai-sentinel-gateway-contract.md",
     title: "AI Sentinel And Gateway Contract",
     parent: "public-structure.md",
     related: ["28-ai-sentinel-security-test-matrix-v1.md", "27-ion-dex-scraping-security-integration-v1.md", "ion-dex-flywheel-design.md"],
+    extendedDocs: ["28-public-development-scope.md", "23-security-audit-and-stress-sandbox.md", "09-reference-architecture.md"],
   },
   {
     slug: "ion-dex-core-logic-deep-dive.md",
     title: "ION Official DEX Core Logic Deep Dive",
     parent: "contracts-overview.md",
     related: ["03-technical-architecture.md", "24-swap-router-minimum-output.md", "01-official-addresses-and-assumptions.md"],
+    extendedDocs: ["09-reference-architecture.md", "04-development-roadmap.md", "05-product-prd.md"],
   },
   {
     slug: "ion-dex-flywheel-design.md",
     title: "ION DEX Flywheel Design",
     parent: "public-structure.md",
     related: ["02-tokenomics-and-fees.md", "03-technical-architecture.md", "ai-sentinel-gateway-contract.md"],
+    extendedDocs: ["05-product-prd.md", "04-development-roadmap.md", "28-public-development-scope.md"],
+  },
+];
+
+const localizedFourthPages = [
+  {
+    slug: "04-development-roadmap.md",
+    title: "Development Roadmap",
+    parent: "03-technical-architecture.md",
+    related: ["05-product-prd.md", "09-reference-architecture.md", "23-security-audit-and-stress-sandbox.md"],
+  },
+  {
+    slug: "05-product-prd.md",
+    title: "Product Requirements Document",
+    parent: "ion-dex-flywheel-design.md",
+    related: ["04-development-roadmap.md", "09-reference-architecture.md", "28-public-development-scope.md"],
+  },
+  {
+    slug: "09-reference-architecture.md",
+    title: "Reference Architecture And External Patterns",
+    parent: "03-technical-architecture.md",
+    related: ["04-development-roadmap.md", "23-security-audit-and-stress-sandbox.md", "ion-official-ecosystem-panorama.md"],
+  },
+  {
+    slug: "23-security-audit-and-stress-sandbox.md",
+    title: "Security Audit And Stress Sandbox",
+    parent: "28-ai-sentinel-security-test-matrix-v1.md",
+    related: ["09-reference-architecture.md", "28-public-development-scope.md", "04-development-roadmap.md"],
+  },
+  {
+    slug: "28-public-development-scope.md",
+    title: "Public Development Scope",
+    parent: "01-official-addresses-and-assumptions.md",
+    related: ["04-development-roadmap.md", "05-product-prd.md", "23-security-audit-and-stress-sandbox.md"],
+  },
+  {
+    slug: "ion-ecosystem-access-architecture.md",
+    title: "ION DEX Official Ecosystem Access Architecture",
+    parent: "01-official-addresses-and-assumptions.md",
+    related: ["ion-official-ecosystem-panorama.md", "28-public-development-scope.md", "09-reference-architecture.md"],
+  },
+  {
+    slug: "ion-official-ecosystem-panorama.md",
+    title: "Ice Open Network Official Ecosystem Panorama",
+    parent: "01-official-addresses-and-assumptions.md",
+    related: ["ion-ecosystem-access-architecture.md", "28-public-development-scope.md", "09-reference-architecture.md"],
   },
 ];
 
@@ -1182,6 +1237,14 @@ function findLeafPage(slug) {
 
 function findDeepPage(slug) {
   return localizedDeepPages.find((item) => item.slug === slug);
+}
+
+function findFourthPage(slug) {
+  return localizedFourthPages.find((item) => item.slug === slug);
+}
+
+function findLocalizedPage(slug) {
+  return findLeafPage(slug) || findDeepPage(slug) || findFourthPage(slug);
 }
 
 function parseMarkdownDoc(markdown, fallbackTitle) {
@@ -1224,7 +1287,15 @@ function parseMarkdownDoc(markdown, fallbackTitle) {
   };
 }
 
-function rewriteDeepLeadLinks(markdown, currentSlug) {
+const localizedDocSlugs = new Set([
+  ...localizedLeafPages.map((page) => page.slug),
+  ...localizedDeepPages.map((page) => page.slug),
+  ...localizedFourthPages.map((page) => page.slug),
+  "index.md",
+  "whitepaper-index.md",
+]);
+
+function rewriteLocalizedLeadLinks(markdown, currentSlug) {
   return markdown.replace(/(\[[^\]]+\])\(([^)]+)\)/gu, (full, label, href) => {
     if (!href || href.startsWith("http://") || href.startsWith("https://") || href.startsWith("#") || href.startsWith("mailto:")) {
       return full;
@@ -1232,8 +1303,12 @@ function rewriteDeepLeadLinks(markdown, currentSlug) {
     if (href === currentSlug) {
       return full;
     }
-    if (localizedDeepPages.some((page) => page.slug === href) || href === "28-public-development-scope.md") {
-      return `${label}(../${href})`;
+    const [pathname, suffix = ""] = href.split(/([?#].*)/u);
+    if (localizedDocSlugs.has(pathname)) {
+      return `${label}(./${pathname}${suffix})`;
+    }
+    if (/^[^/]+\.md$/u.test(pathname)) {
+      return `${label}(../${pathname}${suffix})`;
     }
     return full;
   });
@@ -1470,7 +1545,7 @@ function renderDeepDoc(language, page, doc) {
 
 # ${page.title}
 
-${doc.lead ? `${rewriteDeepLeadLinks(doc.lead, page.slug)}\n` : ""}
+${doc.lead ? `${rewriteLocalizedLeadLinks(doc.lead, page.slug)}\n` : ""}
 
 ## ${copy.startHeading}
 
@@ -1487,6 +1562,42 @@ ${doc.headings.length ? doc.headings.map((heading) => `- ${heading}`).join("\n")
 
 ${page.related.map((related) => {
   const relatedPage = findDeepPage(related);
+  return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
+}).join("\n")}
+
+${page.extendedDocs && page.extendedDocs.length ? `\n## Extended Reading\n\n${page.extendedDocs.map((extendedSlug) => {
+  const extendedPage = findFourthPage(extendedSlug);
+  return `- [${extendedPage ? extendedPage.title : extendedSlug}](./${extendedSlug})`;
+}).join("\n")}` : ""}
+
+> ${copy.canonicalNote}
+`;
+}
+
+function renderFourthDoc(language, page, doc) {
+  const copy = language.copy;
+  const parent = findDeepPage(page.parent);
+  return `${buildDocsLeafNav(language, page.slug)}
+
+# ${page.title}
+
+${doc.lead ? `${rewriteLocalizedLeadLinks(doc.lead, page.slug)}\n` : ""}
+
+## ${copy.startHeading}
+
+- [${page.title} (English)](../${page.slug})
+- [${parent ? parent.title : page.parent}](./${page.parent})
+- [${copy.docsHubLabel}](./index.md)
+- [${copy.whitepaperIndexLabel}](./whitepaper-index.md)
+
+## Key Sections
+
+${doc.headings.length ? doc.headings.map((heading) => `- ${heading}`).join("\n") : "- See the English canonical document for the full section structure."}
+
+## ${copy.nextHeading}
+
+${page.related.map((related) => {
+  const relatedPage = findLocalizedPage(related);
   return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
 }).join("\n")}
 
@@ -1538,6 +1649,12 @@ async function main() {
     deepDocContent.set(page.slug, parseMarkdownDoc(source, page.title));
   }
 
+  const fourthDocContent = new Map();
+  for (const page of localizedFourthPages) {
+    const source = await readFile(path.join(root, "docs", page.slug), "utf8");
+    fourthDocContent.set(page.slug, parseMarkdownDoc(source, page.title));
+  }
+
   for (const language of languages.filter((item) => item.key !== "en")) {
     await write(language.readmeFile, `${renderReadme(language)}\n`);
     await write(`docs/${language.docsDir}/index.md`, `${renderDocsHub(language)}\n`);
@@ -1553,6 +1670,9 @@ async function main() {
     }
     for (const page of localizedDeepPages) {
       await write(`docs/${language.docsDir}/${page.slug}`, `${renderDeepDoc(language, page, deepDocContent.get(page.slug))}\n`);
+    }
+    for (const page of localizedFourthPages) {
+      await write(`docs/${language.docsDir}/${page.slug}`, `${renderFourthDoc(language, page, fourthDocContent.get(page.slug))}\n`);
     }
   }
 }

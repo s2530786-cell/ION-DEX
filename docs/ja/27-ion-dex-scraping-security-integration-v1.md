@@ -31,5 +31,12 @@ This checklist defines how to integrate the scraping stack into ION DEX and how 
 - [AI Sentinel And Gateway Contract](./ai-sentinel-gateway-contract.md)
 - [Technical Architecture](./03-technical-architecture.md)
 
+
+## Extended Reading
+
+- [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
+- [Reference Architecture And External Patterns](./09-reference-architecture.md)
+- [Public Development Scope](./28-public-development-scope.md)
+
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
 
