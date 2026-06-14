@@ -1,34 +1,30 @@
-# ION DEX Whitepaper (Korean)
+**Languages:** [English](../../WHITEPAPER.md) | [简体中文](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](./WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md) | [Tiếng Việt](../vi/WHITEPAPER.vi.md) | [ไทย](../th/WHITEPAPER.th.md) | [Polski](../pl/WHITEPAPER.pl.md)
 
-**Language navigation:** Canonical source: [English](../../WHITEPAPER.md) | Continuous public docs: [简体中文文档树](../../zh-CN/whitepaper-index.md) · Whitepaper entry editions: [简体中文入口](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](./WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md)
+# ION DEX whitepaper (한국어 요약판)
 
-> Status: whitepaper entry page
-> Canonical source: ../../WHITEPAPER.md
-> Language: ko
-> Translation scope: entry edition for GitHub/docs language navigation, not a full same-language public document tree
+**Version:** 2.0  
+**Date:** June 2026  
+**Status:** Public Draft
 
-## Translation Notice
+ION DEX는 long-horizon infrastructure로 제시됩니다. 28-chain DEX에서 시작해 payments, identity, proof, arbitration, coordination, AI Sentinel defense로 확장됩니다.
 
-This document is the Korean language edition entry for the ION DEX whitepaper.
+## 이 whitepaper가 다루는 내용
 
-The authoritative source text remains the canonical English whitepaper:
+- DEX, liquidity, routing, settlement의 장기적 위치.
+- payments, merchants, cross-border e-commerce로의 확장 방향.
+- identity, proof, reputation, civil layer 설계.
+- AI arbitration, Sentinel defense, governance의 경계.
+- burn, staking, treasury, roadmap 프레임워크.
 
-- docs/WHITEPAPER.md
+## 현재 경계
 
-If any ambiguity, wording drift, or numeric conflict appears between editions, the English source text controls.
+최종 wording, economics, security boundaries, release status에 대해서는 영어 whitepaper가 여전히 정본입니다. 언어판 사이에 모호성이 생기면 영어 원문과 공개된 audited on-chain / contract 자료가 우선합니다.
 
-## Purpose of This Edition
+## 계속 읽기
 
-- Provide a Korean-language entry point from GitHub and docs navigation.
-- Support language switching without creating an independent competing source text.
-- Preserve structure and publication continuity while the translated content is expanded and reviewed.
+- [문서 허브](../../ko/index.md)
+- [whitepaper 인덱스](../../ko/whitepaper-index.md)
+- [영문 전체 whitepaper](../../WHITEPAPER.md)
 
-## Publication Rule
+> 참고: 이 언어 경로는 안정적인 공개 읽기 입구를 제공합니다. 최종 정본은 여전히 영어 공개 문서입니다.
 
-This edition is part of the language-switching layer, not a separate constitutional source document.
-
-## Current Status
-
-- Language switch entry: complete
-- Canonical source link: complete
-- Full synchronized translation: in progress

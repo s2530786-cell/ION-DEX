@@ -1,34 +1,30 @@
-# ION DEX Whitepaper (Hindi)
+**Languages:** [English](../../WHITEPAPER.md) | [简体中文](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](./WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md) | [Tiếng Việt](../vi/WHITEPAPER.vi.md) | [ไทย](../th/WHITEPAPER.th.md) | [Polski](../pl/WHITEPAPER.pl.md)
 
-**Language navigation:** Canonical source: [English](../../WHITEPAPER.md) | Continuous public docs: [简体中文文档树](../../zh-CN/whitepaper-index.md) · Whitepaper entry editions: [简体中文入口](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](./WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md)
+# ION DEX whitepaper (हिन्दी सार संस्करण)
 
-> Status: whitepaper entry page
-> Canonical source: ../../WHITEPAPER.md
-> Language: hi
-> Translation scope: entry edition for GitHub/docs language navigation, not a full same-language public document tree
+**Version:** 2.0  
+**Date:** June 2026  
+**Status:** Public Draft
 
-## Translation Notice
+ION DEX को long-horizon infrastructure के रूप में प्रस्तुत किया गया है: 28-chain DEX से शुरू होकर यह payments, identity, proof, arbitration, coordination और AI Sentinel defense तक फैलता है।
 
-This document is the Hindi language edition entry for the ION DEX whitepaper.
+## यह whitepaper क्या कवर करती है
 
-The authoritative source text remains the canonical English whitepaper:
+- DEX, liquidity, routing और settlement की long-term position.
+- payments, merchants और cross-border e-commerce की expansion direction.
+- identity, proof, reputation और civil layer design.
+- AI arbitration, Sentinel defense और governance boundaries.
+- burn, staking, treasury और roadmap framework.
 
-- docs/WHITEPAPER.md
+## वर्तमान सीमा
 
-If any ambiguity, wording drift, or numeric conflict appears between editions, the English source text controls.
+final wording, economics, security boundaries और release status के लिए English whitepaper अभी भी canonical source है। अगर language versions के बीच ambiguity आती है, तो English text और published audited on-chain / contract materials को प्राथमिकता मिलेगी।
 
-## Purpose of This Edition
+## पढ़ना जारी रखें
 
-- Provide a Hindi-language entry point from GitHub and docs navigation.
-- Support language switching without creating an independent competing source text.
-- Preserve structure and publication continuity while the translated content is expanded and reviewed.
+- [Documentation Hub](../../hi/index.md)
+- [whitepaper index](../../hi/whitepaper-index.md)
+- [अंग्रेज़ी पूर्ण whitepaper](../../WHITEPAPER.md)
 
-## Publication Rule
+> नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
 
-This edition is part of the language-switching layer, not a separate constitutional source document.
-
-## Current Status
-
-- Language switch entry: complete
-- Canonical source link: complete
-- Full synchronized translation: in progress

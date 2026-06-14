@@ -1,3 +1,24 @@
+# 2026-06-14 frontend smoke locale fix + verify-e2e backend exit investigation
+
+- Last completed step:
+  - confirmed the remaining smoke language assumptions are no longer the bottleneck:
+    - `frontend/e2e/smoke.spec.ts` runs with explicit `zh-CN` E2E session flags
+    - the smoke suite passes end-to-end when run alone
+  - traced the `verify-e2e` backend `code=1` exit to external process contention rather than a backend logic crash.
+- Verification evidence:
+  - `node scripts/dev-preflight.mjs` -> `OK - development preflight completed.`
+  - `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; node scripts/verify-e2e.mjs` -> `17 passed`
+  - trace run with `ION_BACKEND_EXIT_TRACE=1` and `ION_BACKEND_TRACE_REQUESTS=1` showed normal backend request handling until an external cleanup path terminated the backend process
+- Key decisions:
+  - do not keep chasing `settings` copy while the active `verify-100.ps1` run is cleaning ports used by `verify-e2e`
+  - treat the current `code=1` as a concurrency/port isolation issue unless `verify-e2e` is rerun with `verify-100` paused
+- Current blocker:
+  - `verify-e2e` still needs a quiet window free from the active `verify-100` watchdog/port cleanup path before we can rule out any remaining backend exit cause
+- Exact next action:
+  1. pause or finish the active `verify-100` run
+  2. rerun `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; node scripts/verify-e2e.mjs` in isolation
+  3. if the backend still exits early after isolation, inspect the new backend trace before changing product code
+
 # Current Session State
 
 ## 2026-06-14 README language-switch entry honesty repair
@@ -19,6 +40,36 @@
 - Exact next action:
   1. if the user wants more true language coverage, extend one concrete language tree end-to-end, for example `zh-TW`, `ru`, or `es`;
   2. if the user wants GitHub-side switching to stay strict, keep future language bars aligned with actual coverage and do not reintroduce placeholder wording.
+
+## 2026-06-14 README / docs / whitepaper 18-language static switch completion
+
+- Last completed step:
+  - completed the repository-side 18-language public document switch so every language shown in the root README navigation now lands on a real same-language path:
+    - `README.<lang>.md`
+    - `docs/<lang>/index.md`
+    - `docs/<lang>/whitepaper-index.md`
+    - `docs/whitepaper/<lang>/WHITEPAPER.<lang>.md`
+  - added the previously missing `vi`, `th`, and `pl` language file sets.
+  - repaired the generator `scripts/generate-doc-language-editions.mjs` so future regeneration keeps the full 18-language path aligned.
+  - fixed the English public docs layer so its language switching points to real generated targets:
+    - `docs/README.md`
+    - `docs/whitepaper-index.md`
+    - `docs/WHITEPAPER.md`
+- Verification evidence:
+  - relative-link scan across all generated language-switch files -> `count=0`
+  - path existence check for all generated README/docs/whitepaper targets -> all present
+  - broken HTML / suspicious-link scan -> `bad=[]`
+  - UTF-8 without BOM / no NUL scan across 73 edited language-switch files -> `bad=[]`
+- Key decisions:
+  - the GitHub-side language switch is now treated as a static same-language public document tree, not a runtime translator and not a placeholder layer.
+  - public English documents remain canonical when wording, economics, security boundaries, or release status diverge across editions.
+- Current blocker:
+  - no blocker remains for the 18-language public switch layer itself.
+  - repository-wide `verify-100` gate remains separately outstanding for unrelated broader worktree changes, but the user explicitly requested direct push to `main` for this scoped docs fix.
+- Exact next action:
+  1. stage only the documentation language-switch files changed in this fix;
+  2. commit directly on `main`;
+  3. push `origin main`.
 
 ## 2026-06-14 frontend true sitewide i18n locale switch
 

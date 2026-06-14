@@ -1,34 +1,30 @@
-# ION DEX Whitepaper (Russian)
+**Languages:** [English](../../WHITEPAPER.md) | [简体中文](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](./WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md) | [Tiếng Việt](../vi/WHITEPAPER.vi.md) | [ไทย](../th/WHITEPAPER.th.md) | [Polski](../pl/WHITEPAPER.pl.md)
 
-**Language navigation:** Canonical source: [English](../../WHITEPAPER.md) | Continuous public docs: [简体中文文档树](../../zh-CN/whitepaper-index.md) · Whitepaper entry editions: [简体中文入口](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](./WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md)
+# Whitepaper ION DEX (русскоязычная обзорная версия)
 
-> Status: whitepaper entry page
-> Canonical source: `../../WHITEPAPER.md`
-> Language: ru
-> Translation scope: entry edition for GitHub/docs language navigation, not a full same-language public document tree
+**Version:** 2.0  
+**Date:** June 2026  
+**Status:** Public Draft
 
-## Translation Notice
+ION DEX описывается как долгосрочная инфраструктура: старт от 28-chain DEX с расширением в платежи, идентичность, доказательства, арбитраж, координацию и AI Sentinel defense.
 
-This document is the Russian language edition entry for the ION DEX whitepaper.
+## Что покрывает этот whitepaper
 
-The authoritative source text remains the canonical English whitepaper:
+- Долгосрочную роль DEX, liquidity, routing и settlement.
+- Направление расширения в payments, merchants и cross-border e-commerce.
+- Identity, proof, reputation и civil layer design.
+- AI arbitration, Sentinel defense и governance boundaries.
+- Burn, staking, treasury и roadmap framework.
 
-- `docs/WHITEPAPER.md`
+## Текущая граница
 
-If any ambiguity, wording drift, or numeric conflict appears between editions, the English source text controls.
+Английский whitepaper остается каноническим источником для финальных формулировок, economics, security boundaries и release status. Если между языковыми версиями возникает неоднозначность, приоритет имеют английский текст и опубликованные audited on-chain / contract материалы.
 
-## Purpose of This Edition
+## Продолжить чтение
 
-- Provide a Russian-language entry point from GitHub and docs navigation.
-- Support language switching without creating an independent competing source text.
-- Preserve structure and publication continuity while the translated content is expanded and reviewed.
+- [Центр документации](../../ru/index.md)
+- [Индекс whitepaper](../../ru/whitepaper-index.md)
+- [Полный whitepaper на английском](../../WHITEPAPER.md)
 
-## Publication Rule
+> Примечание: эта языковая ветка дает стабильный публичный вход для чтения; английские публичные документы остаются финальным каноническим источником.
 
-This edition is part of the language-switching layer, not a separate constitutional source document.
-
-## Current Status
-
-- Language switch entry: complete
-- Canonical source link: complete
-- Full synchronized translation: in progress

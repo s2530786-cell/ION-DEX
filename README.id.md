@@ -1,23 +1,33 @@
-**Language navigation:** Full public docs: [English](./README.md) | [简体中文](./README.zh-CN.md) · Entry pages: [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
+**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
 
 # ION — Sistem operasi untuk peradaban digital super
 
-Gerbang berbahasa Indonesia menuju halaman utama ION di GitHub.
-
-ION bukan repositori DEX biasa. Ini adalah sistem digital jangka panjang yang tumbuh dari infrastruktur pertukaran lalu meluas ke pembayaran, identitas, pembuktian, reputasi, koordinasi, dan evolusi mandiri.
-
----
+Ini adalah halaman ringkasan publik ION DEX dalam Bahasa Indonesia. Halaman ini memberi jalur masuk berbahasa sama menuju proyek, dokumentasi, dan whitepaper overview.
 
 ## Mulai dari sini
 
-- [English README](./README.md)
-- [Docs](./docs)
-- [White Paper](./docs/WHITEPAPER.md)
+- [Pusat dokumentasi](./docs/id/index.md)
+- [Ringkasan whitepaper](./docs/whitepaper/id/WHITEPAPER.id.md)
+- [Indeks whitepaper](./docs/id/whitepaper-index.md)
 - [Explorer](https://explorer.ice.io/)
 
----
+## ION DEX secara ringkas
 
-## Status saat ini
+- DEX 28-chain dan permukaan agregasi untuk trading serta infrastruktur.
+- Pembayaran multi-chain dengan friksi rendah untuk pengguna, merchant, dan platform.
+- Lapisan terpadu untuk identity, proof, reputation, dan riwayat yang dapat diverifikasi.
+- Arsitektur jangka panjang untuk AI Sentinel, defense, arbitration, dan coordination.
+- Value flywheel jangka panjang berbasis fee burn, staking, dan treasury.
 
-Halaman ini menyediakan pintu masuk berbahasa Indonesia yang jelas, stabil, dan siap digunakan.
-Konten lengkapnya akan terus disempurnakan bersama materi publik proyek.
+## Status publik saat ini
+
+Repository publik saat ini membuktikan: materi publik README / docs / whitepaper, UI foundations, typed backend/data routes, verification tooling, dan contract scaffolding. Banyak modul masih berada pada tahap roadmap atau draft design.
+
+## Bacaan berikutnya
+
+- [Pusat dokumentasi](./docs/id/index.md)
+- [Ringkasan whitepaper](./docs/whitepaper/id/WHITEPAPER.id.md)
+- [Whitepaper lengkap bahasa Inggris](./docs/WHITEPAPER.md)
+
+> Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
+

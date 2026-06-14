@@ -1,42 +1,30 @@
-# ION DEX 白皮书（简体中文入口）
+**Languages:** [English](../../WHITEPAPER.md) | [简体中文](./WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md) | [Tiếng Việt](../vi/WHITEPAPER.vi.md) | [ไทย](../th/WHITEPAPER.th.md) | [Polski](../pl/WHITEPAPER.pl.md)
 
-**Language navigation:** Canonical source: [English](../../WHITEPAPER.md) | Continuous public docs: [简体中文文档树](../../zh-CN/whitepaper-index.md) · Whitepaper entry editions: [简体中文入口](./WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md)
+# ION DEX 白皮书（简体中文概览版）
 
-> 状态：中文白皮书入口页
-> 规范性源文本：`../../WHITEPAPER.md`
-> 语言：zh-CN
-> 作用：为 GitHub / docs 语言切换提供中文白皮书入口，并把中文读者继续引导到同语言公开文档链路
+**Version:** 2.0  
+**Date:** June 2026  
+**Status:** Public Draft
 
-## 当前说明
+ION DEX 被描述为一套长期基础设施：从 28 链 DEX 出发，逐步延伸到支付、身份、证明、仲裁、协同与 AI Sentinel defense。
 
-本文件当前仍然是**中文白皮书入口页**，不是完整同步译本。
+## 这份白皮书概览覆盖什么
 
-它的职责是：
+- DEX、liquidity、routing 与 settlement 的长期定位。
+- 向 payments、merchants 与 cross-border e-commerce 的扩展方向。
+- identity、proof、reputation 与 civil layer 的设计。
+- AI arbitration、Sentinel defense 与 governance 的边界。
+- burn、staking、treasury 与 roadmap 的框架。
 
-- 提供白皮书中文入口；
-- 明确英文白皮书仍是规范性公开源文本；
-- 把中文读者导向已经补齐的中文公开文档树，而不是一跳回英文页面。
+## 当前边界
 
-## 推荐继续阅读
+英文白皮书仍然是 final wording、economics、security boundaries 与 release status 的 canonical source。若不同语言版本之间存在歧义，以英文原文和已发布的 audited on-chain / contract materials 为准。
 
-- [中文白皮书索引](../../zh-CN/whitepaper-index.md)
+## 继续阅读
+
 - [中文文档中心](../../zh-CN/index.md)
-- [中文 README](../../../README.zh-CN.md)
-- [英文白皮书原文](../../WHITEPAPER.md)
+- [中文白皮书索引](../../zh-CN/whitepaper-index.md)
+- [英文完整白皮书](../../WHITEPAPER.md)
 
-## 解释规则
+> 说明：这条中文路径提供稳定的公开阅读入口；涉及最终措辞、经济参数、安全边界与发布状态时，仍以英文公共文档为准。
 
-如果不同语言版本之间出现：
-
-- 措辞歧义
-- 数值漂移
-- 结构冲突
-- 经济模型描述不一致
-
-则仍以英文白皮书原文与最终已审计、已发布的链上 / 合约资料为准。
-
-## 后续方向
-
-- 中文入口链路：已补齐
-- 中文公开文档树：已补齐主要入口页
-- 全量白皮书同步翻译：仍在后续计划中

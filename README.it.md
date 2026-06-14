@@ -1,23 +1,33 @@
-**Language navigation:** Full public docs: [English](./README.md) | [简体中文](./README.zh-CN.md) · Entry pages: [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md)
+**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
 
-# ION — Il sistema operativo di una super civiltà digitale
+# ION — Il sistema operativo per una super civiltà digitale
 
-La porta d’ingresso in italiano alla pagina principale di ION su GitHub.
-
-ION non è un normale repository DEX. È un sistema digitale di lungo orizzonte che nasce dall’infrastruttura di scambio e si estende verso pagamenti, identità, prova, reputazione, coordinamento ed evoluzione autonoma.
-
----
+Questa è la pagina pubblica di panoramica in italiano per ION DEX. Fornisce un ingresso continuo nella stessa lingua verso il progetto, la documentazione e il whitepaper overview.
 
 ## Inizia da qui
 
-- [English README](./README.md)
-- [Docs](./docs)
-- [White Paper](./docs/WHITEPAPER.md)
+- [Centro documentazione](./docs/it/index.md)
+- [Panoramica whitepaper](./docs/whitepaper/it/WHITEPAPER.it.md)
+- [Indice whitepaper](./docs/it/whitepaper-index.md)
 - [Explorer](https://explorer.ice.io/)
 
----
+## ION DEX in breve
 
-## Stato attuale
+- Un DEX a 28 chain e una superficie aggregata per trading e infrastruttura.
+- Pagamenti multi-chain a bassa frizione per utenti, merchant e piattaforme.
+- Un layer unificato per identity, proof, reputation e storia verificabile.
+- Un'architettura di lungo periodo per AI Sentinel, difesa, arbitraggio e coordinamento.
+- Un value flywheel di lungo periodo basato su fee burn, staking e treasury.
 
-Questa pagina offre un ingresso in italiano chiaro, stabile e immediatamente utilizzabile.
-Il contenuto completo continuerà a essere affinato insieme ai materiali pubblici del progetto.
+## Stato pubblico attuale
+
+Il repository pubblico oggi dimostra: materiali pubblici README / docs / whitepaper, UI foundations, typed backend/data routes, verification tooling e contract scaffolding. Molti moduli restano ancora roadmap o draft design.
+
+## Letture successive
+
+- [Centro documentazione](./docs/it/index.md)
+- [Panoramica whitepaper](./docs/whitepaper/it/WHITEPAPER.it.md)
+- [Whitepaper completa in inglese](./docs/WHITEPAPER.md)
+
+> Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
+

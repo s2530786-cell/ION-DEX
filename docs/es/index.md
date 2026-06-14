@@ -1,0 +1,22 @@
+**Languages:** [English](../README.md) | [简体中文](../zh-CN/index.md) | [繁體中文](../zh-TW/index.md) | [Русский](../ru/index.md) | [Español](./index.md) | [Português](../pt/index.md) | [العربية](../ar/index.md) | [Français](../fr/index.md) | [Deutsch](../de/index.md) | [日本語](../ja/index.md) | [한국어](../ko/index.md) | [हिन्दी](../hi/index.md) | [Türkçe](../tr/index.md) | [Italiano](../it/index.md) | [Bahasa Indonesia](../id/index.md) | [Tiếng Việt](../vi/index.md) | [ไทย](../th/index.md) | [Polski](../pl/index.md)
+
+# Centro de documentación de ION DEX
+
+Esta página sirve como puerta de entrada en español a la documentación de ION DEX y conecta el README local, la guía del whitepaper y los documentos técnicos canónicos en inglés.
+
+## Empieza aquí
+
+- [README en este idioma](../../README.es.md)
+- [Resumen del whitepaper](../whitepaper/es/WHITEPAPER.es.md)
+- [Índice del whitepaper](./whitepaper-index.md)
+- [Whitepaper completo en inglés](../WHITEPAPER.md)
+- [English Developer Index](../developer-index.md)
+
+## Qué leer después
+
+- [Índice del whitepaper](./whitepaper-index.md)
+- [Resumen del whitepaper](../whitepaper/es/WHITEPAPER.es.md)
+- [English Developer Index](../developer-index.md)
+
+> Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
+

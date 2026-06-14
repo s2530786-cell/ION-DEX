@@ -1,34 +1,30 @@
-# ION DEX Whitepaper (Arabic)
+**Languages:** [English](../../WHITEPAPER.md) | [简体中文](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](./WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md) | [Tiếng Việt](../vi/WHITEPAPER.vi.md) | [ไทย](../th/WHITEPAPER.th.md) | [Polski](../pl/WHITEPAPER.pl.md)
 
-**Language navigation:** Canonical source: [English](../../WHITEPAPER.md) | Continuous public docs: [简体中文文档树](../../zh-CN/whitepaper-index.md) · Whitepaper entry editions: [简体中文入口](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](./WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](../it/WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md)
+# Whitepaper ION DEX (نسخة موجزة بالعربية)
 
-> Status: whitepaper entry page
-> Canonical source: `../../WHITEPAPER.md`
-> Language: ar
-> Translation scope: entry edition for GitHub/docs language navigation, not a full same-language public document tree
+**Version:** 2.0  
+**Date:** June 2026  
+**Status:** Public Draft
 
-## Translation Notice
+يُعرض ION DEX كبنية تحتية طويلة الأفق: يبدأ من DEX عبر 28 سلسلة ثم يمتد إلى المدفوعات والهوية والإثبات والتحكيم والتنسيق ودفاع AI Sentinel.
 
-This document is the Arabic language edition entry for the ION DEX whitepaper.
+## ما الذي تغطيه هذه الـ whitepaper
 
-The authoritative source text remains the canonical English whitepaper:
+- الموقع طويل الأمد لـ DEX والسيولة والتوجيه والتسوية.
+- التوسع نحو payments وmerchants وcross-border e-commerce.
+- تصميم identity وproof وreputation وcivil layer.
+- حدود AI arbitration وSentinel defense وgovernance.
+- إطار burn وstaking وtreasury وroadmap.
 
-- `docs/WHITEPAPER.md`
+## الحد الحالي
 
-If any ambiguity, wording drift, or numeric conflict appears between editions, the English source text controls.
+تبقى الـ whitepaper الإنجليزية هي المصدر المعياري النهائي للصياغة والاقتصاديات والحدود الأمنية وحالة الإصدار. وعند وجود غموض بين اللغات، تكون الأولوية للنص الإنجليزي وللمواد audited on-chain / contract المنشورة.
 
-## Purpose of This Edition
+## تابع القراءة
 
-- Provide an Arabic-language entry point from GitHub and docs navigation.
-- Support language switching without creating an independent competing source text.
-- Preserve structure and publication continuity while the translated content is expanded and reviewed.
+- [مركز الوثائق](../../ar/index.md)
+- [فهرس whitepaper](../../ar/whitepaper-index.md)
+- [الـ whitepaper الكاملة بالإنجليزية](../../WHITEPAPER.md)
 
-## Publication Rule
+> ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.
 
-This edition is part of the language-switching layer, not a separate constitutional source document.
-
-## Current Status
-
-- Language switch entry: complete
-- Canonical source link: complete
-- Full synchronized translation: in progress

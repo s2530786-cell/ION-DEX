@@ -1,34 +1,30 @@
-# ION DEX Whitepaper (Italian)
+**Languages:** [English](../../WHITEPAPER.md) | [简体中文](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](./WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md) | [Tiếng Việt](../vi/WHITEPAPER.vi.md) | [ไทย](../th/WHITEPAPER.th.md) | [Polski](../pl/WHITEPAPER.pl.md)
 
-**Language navigation:** Canonical source: [English](../../WHITEPAPER.md) | Continuous public docs: [简体中文文档树](../../zh-CN/whitepaper-index.md) · Whitepaper entry editions: [简体中文入口](../zh/WHITEPAPER.zh-CN.md) | [繁體中文](../zh-TW/WHITEPAPER.zh-TW.md) | [Русский](../ru/WHITEPAPER.ru.md) | [Español](../es/WHITEPAPER.es.md) | [Português](../pt/WHITEPAPER.pt.md) | [العربية](../ar/WHITEPAPER.ar.md) | [Français](../fr/WHITEPAPER.fr.md) | [Deutsch](../de/WHITEPAPER.de.md) | [日本語](../ja/WHITEPAPER.ja.md) | [한국어](../ko/WHITEPAPER.ko.md) | [हिन्दी](../hi/WHITEPAPER.hi.md) | [Türkçe](../tr/WHITEPAPER.tr.md) | [Italiano](./WHITEPAPER.it.md) | [Bahasa Indonesia](../id/WHITEPAPER.id.md)
+# Whitepaper ION DEX (edizione sintetica in italiano)
 
-> Status: whitepaper entry page
-> Canonical source: ../../WHITEPAPER.md
-> Language: it
-> Translation scope: entry edition for GitHub/docs language navigation, not a full same-language public document tree
+**Version:** 2.0  
+**Date:** June 2026  
+**Status:** Public Draft
 
-## Translation Notice
+ION DEX viene descritto come un'infrastruttura di lungo orizzonte: parte da un 28-chain DEX e si espande verso payments, identity, proof, arbitration, coordination e AI Sentinel defense.
 
-This document is the Italian language edition entry for the ION DEX whitepaper.
+## Cosa copre questo whitepaper
 
-The authoritative source text remains the canonical English whitepaper:
+- Il posizionamento di lungo periodo di DEX, liquidity, routing e settlement.
+- L'espansione verso payments, merchants e cross-border e-commerce.
+- Il design di identity, proof, reputation e civil layer.
+- I confini di AI arbitration, Sentinel defense e governance.
+- Il framework di burn, staking, treasury e roadmap.
 
-- docs/WHITEPAPER.md
+## Confine attuale
 
-If any ambiguity, wording drift, or numeric conflict appears between editions, the English source text controls.
+Il whitepaper inglese resta la fonte canonica per wording finale, economics, security boundaries e release status. Se tra le versioni linguistiche emerge ambiguità, prevalgono il testo inglese e i materiali audited on-chain / contract già pubblicati.
 
-## Purpose of This Edition
+## Continua a leggere
 
-- Provide a Italian-language entry point from GitHub and docs navigation.
-- Support language switching without creating an independent competing source text.
-- Preserve structure and publication continuity while the translated content is expanded and reviewed.
+- [Centro documentazione](../../it/index.md)
+- [Indice whitepaper](../../it/whitepaper-index.md)
+- [Whitepaper completa in inglese](../../WHITEPAPER.md)
 
-## Publication Rule
+> Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
 
-This edition is part of the language-switching layer, not a separate constitutional source document.
-
-## Current Status
-
-- Language switch entry: complete
-- Canonical source link: complete
-- Full synchronized translation: in progress

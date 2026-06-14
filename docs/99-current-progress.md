@@ -1,3 +1,123 @@
+# 2026-06-14 Frontend smoke locale fix + verify-e2e exit cause
+
+- **Scope**: verified the remaining frontend smoke language assumptions and chased the `verify-e2e` backend `code=1` exit.
+- **What changed**:
+  - confirmed `frontend/e2e/smoke.spec.ts` now runs with an explicit `zh-CN` session locale and its remaining assertions are aligned to real Chinese copy or locale-agnostic `data-testid` checks;
+  - re-ran `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; node scripts/verify-e2e.mjs` and observed all 17 smoke tests pass when run in isolation;
+  - traced the backend `code=1` path during `verify-e2e` to external process/port contention, not a product crash:
+    - the workspace had an active `verify-100.ps1` run (`StartAt=21`) at the same time;
+    - `scripts/verify-100.ps1` uses `node scripts\\free-ion-ports.mjs`, which can terminate the dedicated verify backend on `8788`;
+    - `verify-e2e` logs the backend exit as `code=1` when that external cleanup kills the process before its own shutdown path runs.
+- **Files inspected**:
+  - `frontend/e2e/smoke.spec.ts`
+  - `frontend/e2e/helpers.ts`
+  - `frontend/scripts/verify-e2e.mjs`
+  - `backend/src/server.ts`
+  - `scripts/verify-100.ps1`
+  - `scripts/verify-100-until-green.ps1`
+  - `scripts/free-ion-ports.mjs`
+- **Verification**:
+  - `node scripts/dev-preflight.mjs` -> `OK - development preflight completed.`
+  - `cd frontend && $env:PLAYWRIGHT_TEST_PATH='e2e/smoke.spec.ts'; node scripts/verify-e2e.mjs` -> `17 passed`
+  - `ION_BACKEND_EXIT_TRACE=1 ION_BACKEND_TRACE_REQUESTS=1 ... verify-e2e.mjs` -> backend request trace stayed healthy until external port cleanup; no uncaught backend exception stack appeared
+- **Important decision**:
+  - do not keep chasing `settings` copy while `verify-e2e` is contending with the active `verify-100` workflow;
+  - treat the current backend `code=1` as an operational isolation issue unless a run is executed with `verify-100` paused.
+- **Residual gap**:
+  - `verify-e2e` still needs a quiet window to prove whether any backend exit remains after removing concurrent port cleanup.
+- if the user wants a follow-up, the next step is to rerun `verify-e2e` in isolation after pausing or finishing `verify-100`.
+
+# 2026-06-14 README / docs / whitepaper 18-language static switch completion
+
+- **Scope**: completed the repository-side public language-switch layer so all 18 advertised README languages now resolve to real same-language document paths instead of placeholder entry links.
+- **What changed**:
+  - repaired the multilingual doc generator at `scripts/generate-doc-language-editions.mjs` so it now emits a consistent 18-language static document tree;
+  - regenerated real language pages for:
+    - root `README.*.md`
+    - `docs/<lang>/index.md`
+    - `docs/<lang>/whitepaper-index.md`
+    - `docs/whitepaper/<lang>/WHITEPAPER.<lang>.md`
+  - added the previously missing three language sets:
+    - `vi`
+    - `th`
+    - `pl`
+  - fixed the English cross-language navigation in:
+    - `docs/README.md`
+    - `docs/whitepaper-index.md`
+    - `docs/WHITEPAPER.md`
+  - removed the broken generated patterns that made the previous attempt visibly fake or invalid:
+    - localized HTML tag/attribute corruption such as `<p 정렬="중앙">`
+    - bad relative links such as `./docs/pay-access.md`
+    - language nav links pointing to files that did not exist
+- **Files touched**:
+  - `README.md`
+  - `README.zh-CN.md`
+  - `README.zh-TW.md`
+  - `README.ru.md`
+  - `README.es.md`
+  - `README.pt.md`
+  - `README.ar.md`
+  - `README.fr.md`
+  - `README.de.md`
+  - `README.ja.md`
+  - `README.ko.md`
+  - `README.hi.md`
+  - `README.tr.md`
+  - `README.it.md`
+  - `README.id.md`
+  - `README.vi.md`
+  - `README.th.md`
+  - `README.pl.md`
+  - `docs/README.md`
+  - `docs/whitepaper-index.md`
+  - `docs/WHITEPAPER.md`
+  - `docs/zh-CN/*`
+  - `docs/zh-TW/*`
+  - `docs/ru/*`
+  - `docs/es/*`
+  - `docs/pt/*`
+  - `docs/ar/*`
+  - `docs/fr/*`
+  - `docs/de/*`
+  - `docs/ja/*`
+  - `docs/ko/*`
+  - `docs/hi/*`
+  - `docs/tr/*`
+  - `docs/it/*`
+  - `docs/id/*`
+  - `docs/vi/*`
+  - `docs/th/*`
+  - `docs/pl/*`
+  - `docs/whitepaper/zh/WHITEPAPER.zh-CN.md`
+  - `docs/whitepaper/zh-TW/WHITEPAPER.zh-TW.md`
+  - `docs/whitepaper/ru/WHITEPAPER.ru.md`
+  - `docs/whitepaper/es/WHITEPAPER.es.md`
+  - `docs/whitepaper/pt/WHITEPAPER.pt.md`
+  - `docs/whitepaper/ar/WHITEPAPER.ar.md`
+  - `docs/whitepaper/fr/WHITEPAPER.fr.md`
+  - `docs/whitepaper/de/WHITEPAPER.de.md`
+  - `docs/whitepaper/ja/WHITEPAPER.ja.md`
+  - `docs/whitepaper/ko/WHITEPAPER.ko.md`
+  - `docs/whitepaper/hi/WHITEPAPER.hi.md`
+  - `docs/whitepaper/tr/WHITEPAPER.tr.md`
+  - `docs/whitepaper/it/WHITEPAPER.it.md`
+  - `docs/whitepaper/id/WHITEPAPER.id.md`
+  - `docs/whitepaper/vi/WHITEPAPER.vi.md`
+  - `docs/whitepaper/th/WHITEPAPER.th.md`
+  - `docs/whitepaper/pl/WHITEPAPER.pl.md`
+  - `scripts/generate-doc-language-editions.mjs`
+- **Verification**:
+  - custom relative-link scan across all 72 generated README/docs/whitepaper language files -> `count=0`
+  - generated-path existence check -> all 18 README files and all target docs/whitepaper files exist
+  - localized-tag / suspicious-link scan -> `bad=[]`
+  - UTF-8 without BOM / no NUL check across 73 edited language-switch files -> `bad=[]`
+- **Important decision**:
+  - GitHub-side language switching is implemented as a real static same-language public document tree, not as runtime translation and not as placeholder entry stubs.
+  - the public English docs remain the canonical source for final wording, economics, security boundaries, and release status when editions diverge.
+- **Residual gap**:
+  - the 18-language layer now covers the public README / docs hub / whitepaper index / whitepaper path consistently;
+  - deeper technical docs outside that public path are not yet fully translated into all 18 languages.
+
 # Current Progress
 
 ## 2026-06-14 README / whitepaper language-switch honesty repair
