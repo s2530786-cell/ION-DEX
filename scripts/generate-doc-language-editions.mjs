@@ -983,8 +983,36 @@ function whitepaperPath(language) {
   return language.key === "en" ? "./docs/WHITEPAPER.md" : `./${language.whitepaperFile}`;
 }
 
+function docsSiteUrl(language, logicalPath = "readme") {
+  const base = "https://s2530786-cell.github.io/ION-DEX/";
+  if (logicalPath === "whitepaper") {
+    return `${base}#/${encodeURIComponent(language.key)}/whitepaper`;
+  }
+  if (logicalPath.startsWith("docs/")) {
+    return `${base}#/${encodeURIComponent(language.key)}/docs/${encodeURIComponent(logicalPath.replace(/^docs\//u, ""))}`;
+  }
+  return `${base}#/${encodeURIComponent(language.key)}/readme`;
+}
+
+function repositoryTranslateUrl(language, pageUrl = "https://github.com/s2530786-cell/ION-DEX") {
+  const translateCode = language.key === "en" ? "en" : language.key;
+  const params = new URLSearchParams({
+    sl: "auto",
+    tl: translateCode,
+    u: pageUrl,
+  });
+  return `https://translate.google.com/translate?${params.toString()}`;
+}
+
 function buildReadmeNav(current) {
   return `**Languages:** ${languages.map((language) => `[${language.label}](${language.key === current.key ? readmeLink(language) : readmeLink(language)})`).join(" | ")}`;
+}
+
+function buildReadmeSiteLinks(language) {
+  return [
+    `> **18-language docs site:** [Open ${language.label} site view](${docsSiteUrl(language)})`,
+    `> **Auto-translate repository:** [Open GitHub repository in ${language.label}](${repositoryTranslateUrl(language)})`,
+  ].join("\n");
 }
 
 function buildDocsNav(current) {
@@ -1534,6 +1562,8 @@ function renderReadme(language) {
   const copy = language.copy;
   return `${buildReadmeNav(language)}
 
+${buildReadmeSiteLinks(language)}
+
 # ${copy.title}
 
 ${copy.intro}
@@ -1890,6 +1920,34 @@ async function updateEnglishWhitepaper() {
   console.log(relativePath);
 }
 
+async function updateRootReadmeEntry() {
+  const relativePath = "README.md";
+  const target = path.join(root, relativePath);
+  const original = await readFile(target, "utf8");
+  const navBlock = [
+    "<!-- AUTO-LANGUAGE-NAV START -->",
+    buildReadmeNav(languages[0]),
+    "<!-- AUTO-LANGUAGE-NAV END -->",
+    "",
+  ].join("\n");
+  const noteBlock = [
+    "<!-- AUTO-TRANSLATION-NOTE START -->",
+    `> **18-language docs site:** [Open global docs site](${docsSiteUrl(languages[0])})`,
+    `> **Auto-translate repository:** [Open the GitHub repository in your language](${repositoryTranslateUrl(languages[0])})`,
+    "> The GitHub README itself cannot run JavaScript to translate the whole repository page inline, so the real global language switch now lives in the docs site and this repository-translate handoff.",
+    "<!-- AUTO-TRANSLATION-NOTE END -->",
+    "",
+  ].join("\n");
+  let updated = original.includes("<!-- AUTO-LANGUAGE-NAV START -->")
+    ? original.replace(/<!-- AUTO-LANGUAGE-NAV START -->[\s\S]*?<!-- AUTO-LANGUAGE-NAV END -->\s*/u, navBlock)
+    : `${navBlock}${original}`;
+  updated = updated.includes("<!-- AUTO-TRANSLATION-NOTE START -->")
+    ? updated.replace(/<!-- AUTO-TRANSLATION-NOTE START -->[\s\S]*?<!-- AUTO-TRANSLATION-NOTE END -->\s*/u, noteBlock)
+    : `${navBlock}${noteBlock}${updated}`;
+  await writeFileWithRetry(target, updated.replace(/\r\n/g, "\n"));
+  console.log(relativePath);
+}
+
 async function writeFileWithRetry(target, content, attempts = 5) {
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
@@ -1914,6 +1972,7 @@ async function write(relativePath, content) {
 }
 
 async function main() {
+  await updateRootReadmeEntry();
   await write("docs/README.md", englishDocsHub());
   await write("docs/whitepaper-index.md", englishWhitepaperIndex());
   await updateEnglishWhitepaper();

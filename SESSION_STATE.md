@@ -1,3 +1,42 @@
+# 2026-06-14 OPENAI Machine 环境变量同步脚本落库
+
+- Last completed step:
+  - added `scripts/sync-openai-env-to-machine.ps1` as an admin-friendly helper to promote:
+    - `OPENAI_API_KEY`
+    - `OPENAI_API_BASE`
+    - `MODEL`
+    from `User` scope into real Windows `Machine` scope.
+  - the script supports three value sources in order:
+    - explicit parameters
+    - existing `User` environment variables
+    - interactive prompt when `User` values are missing
+  - the script can optionally remove duplicate `User` values after a successful sync via `-RemoveUserAfterSync`.
+  - the script never prints the API key in clear text and broadcasts `WM_SETTINGCHANGE` after write so new processes can pick up the new machine-level values.
+- Verification evidence:
+  - `node scripts/security-preflight.mjs` -> `OK - security preflight completed.`
+  - PowerShell parser check:
+    - `[System.Management.Automation.Language.Parser]::ParseFile(...)` -> `PARSE_OK`
+  - preview validation:
+    - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-openai-env-to-machine.ps1 -Preview`
+      -> reports `missing` sources without blocking for input
+    - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-openai-env-to-machine.ps1 -Preview -OpenAiApiKey 'dummy-key' -OpenAiApiBase 'https://apinebula.com/v1' -ModelName 'gpt-5.4'`
+      -> renders the expected preview table and hides the API key
+  - byte-level encoding checks:
+    - `scripts/sync-openai-env-to-machine.ps1` -> `BOM=False`, `NUL=False`
+    - `SESSION_STATE.md` -> `BOM=False`, `NUL=False`
+    - `docs/99-current-progress.md` -> `BOM=False`, `NUL=False`
+- Key decisions:
+  - do not hardcode or commit any real API secret into the repository; the script only reads from parameters, existing `User` variables, or secure interactive input.
+  - keep admin enforcement at runtime instead of `#Requires -RunAsAdministrator` so `-Preview` and parser-level validation can still run from a non-elevated shell.
+- Current blocker:
+  - actual `Machine` writes still require the user to run the script in an elevated PowerShell on this host.
+- Exact next action:
+  1. if the user wants the actual machine-level write now, run:
+     - `Set-ExecutionPolicy -Scope Process Bypass -Force`
+     - `& "D:\openclaw-tools\ion-dex-nuke\scripts\sync-openai-env-to-machine.ps1" -RemoveUserAfterSync`
+  2. if the user wants to inspect values first, run:
+     - `& "D:\openclaw-tools\ion-dex-nuke\scripts\sync-openai-env-to-machine.ps1" -Preview`
+
 # 2026-06-14 preview cleanup complete, verify-100 restarted
 
 - Last completed step:
@@ -248,6 +287,40 @@
   - unrelated repository-wide dirty changes still exist and must remain outside this scoped docs commit.
 - Exact next action:
   1. stage only the generator, docs index updates, generated deeper technical files, and progress/state docs for this task;
+  2. commit directly on `main`;
+  3. push `origin main`.
+
+## 2026-06-14 README / docs 18-language fourth-layer technical long-form completion
+
+- Last completed step:
+  - extended the GitHub-side 18-language docs tree from the third-layer deep technical pages into a fourth layer of longer technical reference documents.
+  - generated 7 additional long-form documents under every public language tree:
+    - `04-development-roadmap.md`
+    - `05-product-prd.md`
+    - `09-reference-architecture.md`
+    - `23-security-audit-and-stress-sandbox.md`
+    - `28-public-development-scope.md`
+    - `ion-ecosystem-access-architecture.md`
+    - `ion-official-ecosystem-panorama.md`
+  - updated the existing deep technical pages so they now route into this new fourth layer through same-language `Extended Reading` links.
+  - fixed localized deep-page lead-link rewriting so same-language relative links remain inside the current language subtree instead of falling back to English.
+- Verification evidence:
+  - `node --check scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node scripts/generate-doc-language-editions.mjs` -> PASS
+  - custom scan across `510` localized multilingual docs markdown files -> `brokenCount=0`
+  - custom relative-link scan across `14014` local markdown links -> `0` missing targets
+  - UTF-8 without BOM / no NUL validation across generated multilingual docs + generator -> `encodingBadCount=0`
+  - targeted chain checks all passed:
+    - `README.zh-CN.md -> docs/zh-CN/index.md -> docs/zh-CN/03-technical-architecture.md -> docs/zh-CN/04-development-roadmap.md`
+    - `README.ko.md -> docs/ko/index.md -> docs/ko/01-official-addresses-and-assumptions.md -> docs/ko/ion-ecosystem-access-architecture.md`
+- Key decisions:
+  - the public 18-language docs switch is now treated as a four-layer static same-language tree for curated public documentation, not just entry pages plus a handful of leaf pages.
+  - operational logs, work-order records, and internal-facing engineering notes remain intentionally outside the multilingual public path.
+- Current blocker:
+  - no blocker remains for the fourth-layer multilingual technical document expansion itself.
+  - unrelated repository-wide dirty changes still exist and must remain outside this scoped docs commit.
+- Exact next action:
+  1. stage only the generator, generated fourth-layer docs, updated third-layer localized docs, and progress/state docs for this task;
   2. commit directly on `main`;
   3. push `origin main`.
 
@@ -1032,3 +1105,86 @@ Full spec at: `docs/phase2-agent-task.md`
 - Each task = one commit with clear message.
 - 100-round stress: ZERO failures tolerated.
 - 旺财 monitors via git log + file timestamps.
+# 2026-06-14 PentAGI Docker Ollama context window repair + assistant live verification
+
+- Last completed step:
+  - updated the local PentAGI Docker runtime under `D:\openclaw-tools\pentagi` so Ollama no longer runs the `qwen2.5:3b` assistant path at the default `4096` context window.
+  - changed:
+    - `D:\openclaw-tools\pentagi\.env`
+      - added `OLLAMA_CONTEXT_LENGTH=32768`
+    - `D:\openclaw-tools\pentagi\docker-compose.yml`
+      - passed `OLLAMA_CONTEXT_LENGTH` into the `pentagi-ollama` container
+    - `D:\openclaw-tools\pentagi\example.ollama.provider.yml`
+      - switched the local template models from `llama3.1:8b` to `qwen2.5:3b`
+  - recreated `pentagi-ollama` and `pentagi` with `docker compose up -d --force-recreate pentagi-ollama pentagi`.
+- Verification evidence:
+  - runtime env check:
+    - `docker inspect pentagi-ollama --format "{{range .Config.Env}}{{println .}}{{end}}" | findstr OLLAMA_CONTEXT_LENGTH`
+      -> `OLLAMA_CONTEXT_LENGTH=32768`
+  - live Ollama slot check after restart:
+    - `docker logs pentagi-ollama --since 40m`
+      -> multiple entries with `n_ctx_slot = 32768`
+      -> no new `truncating input prompt ... limit=4096` after the restart window
+  - local model metadata check:
+    - `ollama show qwen2.5:3b`
+      -> model `context length 32768`
+  - provider / template checks:
+    - DB provider `ollama-local-verify` remains on `qwen2.5:3b`
+    - local `example.ollama.provider.yml` now also defaults to `qwen2.5:3b`
+  - product-chain evidence:
+    - existing `flow 13 / assistant 1` continued beyond the old 4k truncation regime
+    - `assistantlogs` increased from `2` to `5`
+    - `searchlogs` increased from `1` to `2`
+    - Ollama shows repeated real `/api/chat` calls under `n_ctx_slot = 32768`
+- Key decisions:
+  - the highest-yield fix was not rolling back to `llama3.1:8b`; it was keeping the faster `qwen2.5:3b` path and fixing the effective runtime context window first.
+  - current evidence shows the bottleneck moved from `4096` prompt truncation to slower multi-step assistant reasoning and weak task discipline inside PentAGI.
+- Current blocker:
+  - PentAGI is still not fully "green" for autonomous security auditing.
+  - after the context repair, the assistant chain is healthier, but it still drifts into web search / long multi-step reasoning and has not yet produced a stable non-empty final security-audit answer.
+  - the new `flow 14` only reached `flow created in DB`; no new assistant row was created for it before the client-side verification script timed out.
+- Exact next action:
+  1. create a tighter real-task assistant validation that forbids external search and forces knowledge-base-only answering;
+  2. if assistant creation still stalls for new flows, inspect the exact `createAssistant` request / server path for `flow 14`;
+  3. if the chain still wanders after assistant creation, move from generic `qwen2.5:3b` to a more PentAGI-compatible tool-calling / instruct model while keeping the `32768` context repair.
+
+# 2026-06-14 README real entry + GitHub Pages whole-site language switch
+
+- Last completed step:
+  - converted the README language-switch surface from a misleading static-only impression into a real two-entry handoff:
+    - GitHub Pages 18-language docs site
+    - repository auto-translate entry
+  - built a standalone `docs-site/` static documentation site with:
+    - 18-language global switching
+    - route-preserving language changes
+    - `localStorage` language persistence
+    - GitHub source links
+    - fallback-to-English page serving when a logical page has no localized public source file yet
+  - added GitHub Pages deployment workflow:
+    - `.github/workflows/deploy-docs-site.yml`
+- Verification evidence:
+  - `node --check scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node --check scripts/build-docs-site.mjs` -> PASS
+  - `node --check docs-site/build.mjs` -> PASS
+  - `node scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node scripts/build-docs-site.mjs` -> PASS
+    - `Built docs-site/dist with 880 page variants and 68 logical routes.`
+  - README language-line parse checks:
+    - root `README.md` -> `matches=18`
+    - `README.es.md` -> `matches=18`
+  - in-app browser check on `http://127.0.0.1:4319/`:
+    - default route -> `#/zh-CN/readme`
+    - route-preserving switch -> `#/ja/docs/index`
+    - fallback route -> `#/fr/docs/github-daily-discovery` with visible fallback banner and French page-translate link
+  - byte-level UTF-8 / no NUL checks across the new docs-site + workflow + script files -> `bad=0`
+- Key decisions:
+  - stop implying that the GitHub repository page itself can be runtime-translated inline from the README.
+  - use GitHub Pages as the true controlled whole-site language surface, and keep README as an honest launcher into that surface.
+- Current blocker:
+  - no blocker remains for the implementation itself.
+  - push/deploy to `main` is still pending for this scoped batch.
+- Exact next action:
+  1. stage only the scoped README / docs-site / workflow / builder files for this batch;
+  2. commit directly on `main`;
+  3. push to `origin main`;
+  4. after GitHub Pages deploys, verify the public Pages URL resolves and the route-preserving language switch works there too.

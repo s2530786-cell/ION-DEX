@@ -1,0 +1,11 @@
+{
+  "name": "ion-dex-docs-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "marked": "^16.4.1"
+  }
+}

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ION DEX Docs Site</title>
+    <meta
+      name="description"
+      content="ION DEX 18-language docs site with global language switching, GitHub page translation handoff, and repository-backed public documentation."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <div class="site-background" aria-hidden="true"></div>
+      <header class="topbar">
+        <a class="brand" href="#/en/readme">
+          <span class="brand-mark">ION</span>
+          <span class="brand-copy">
+            <strong>ION DEX Docs</strong>
+            <small>18-language global switch</small>
+          </span>
+        </a>
+        <div class="topbar-actions">
+          <label class="language-control">
+            <span>Language</span>
+            <select id="language-switcher" aria-label="Switch language"></select>
+          </label>
+          <a id="github-repo-link" class="action-chip" href="#" target="_blank" rel="noreferrer">GitHub</a>
+          <a id="translate-repo-link" class="action-chip action-chip-accent" href="#" target="_blank" rel="noreferrer">Translate Repo</a>
+        </div>
+      </header>
+
+      <main class="layout">
+        <aside class="sidebar glass-panel">
+          <div class="sidebar-head">
+            <p class="eyebrow">Navigator</p>
+            <h2>All public pages</h2>
+            <p class="muted">Switch language once and keep reading on the same logical route.</p>
+          </div>
+          <label class="search-box">
+            <span class="sr-only">Search pages</span>
+            <input id="page-search" type="search" placeholder="Search title or slug" />
+          </label>
+          <nav id="page-nav" class="page-nav" aria-label="Documentation pages"></nav>
+        </aside>
+
+        <section class="content-column">
+          <div class="hero glass-panel">
+            <div class="hero-copy">
+              <p id="page-kicker" class="eyebrow">Repository-backed docs</p>
+              <h1 id="page-title">Loading…</h1>
+              <p id="page-summary" class="muted">
+                Preparing the current page and its language coverage.
+              </p>
+            </div>
+            <div class="hero-actions">
+              <a id="github-page-link" class="action-button" href="#" target="_blank" rel="noreferrer">View on GitHub</a>
+              <a id="translate-page-link" class="action-button action-button-accent" href="#" target="_blank" rel="noreferrer">Translate This Page</a>
+            </div>
+          </div>
+
+          <div id="fallback-banner" class="fallback-banner" hidden></div>
+
+          <div class="language-strip glass-panel">
+            <div>
+              <p class="eyebrow">Current coverage</p>
+              <h2>Available page languages</h2>
+            </div>
+            <div id="language-pills" class="language-pills"></div>
+          </div>
+
+          <article id="doc-content" class="doc-content glass-panel" aria-live="polite"></article>
+        </section>
+
+        <aside class="outline glass-panel">
+          <div class="outline-block">
+            <p class="eyebrow">Current route</p>
+            <code id="route-display" class="route-display">#/en/readme</code>
+          </div>
+          <div class="outline-block">
+            <p class="eyebrow">Source file</p>
+            <a id="source-path-link" class="source-path" href="#" target="_blank" rel="noreferrer">README.md</a>
+          </div>
+          <div class="outline-block">
+            <p class="eyebrow">Outline</p>
+            <nav id="page-outline" class="page-outline" aria-label="Page outline"></nav>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

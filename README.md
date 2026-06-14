@@ -1,11 +1,11 @@
 <!-- AUTO-LANGUAGE-NAV START -->
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
 <!-- AUTO-LANGUAGE-NAV END -->
-
 <!-- AUTO-TRANSLATION-NOTE START -->
-> This repository publishes 18 public language editions generated from the English source so GitHub readers can stay in one language across the README, documentation hub, whitepaper index, and whitepaper.
+> **18-language docs site:** [Open global docs site](https://s2530786-cell.github.io/ION-DEX/#/en/readme)
+> **Auto-translate repository:** [Open the GitHub repository in your language](https://translate.google.com/translate?sl=auto&tl=en&u=https%3A%2F%2Fgithub.com%2Fs2530786-cell%2FION-DEX)
+> The GitHub README itself cannot run JavaScript to translate the whole repository page inline, so the real global language switch now lives in the docs site and this repository-translate handoff.
 <!-- AUTO-TRANSLATION-NOTE END -->
-
 <p align="center">
   <img src="./assets/banner/ion-banner-dark.png" alt="ION Banner" width="100%" />
 </p>

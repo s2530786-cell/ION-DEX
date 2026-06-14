@@ -1,5 +1,8 @@
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
 
+> **18-language docs site:** [Open العربية site view](https://s2530786-cell.github.io/ION-DEX/#/ar/readme)
+> **Auto-translate repository:** [Open GitHub repository in العربية](https://translate.google.com/translate?sl=auto&tl=ar&u=https%3A%2F%2Fgithub.com%2Fs2530786-cell%2FION-DEX)
+
 # ION — نظام التشغيل لحضارة رقمية فائقة
 
 هذه صفحة النظرة العامة العامة باللغة العربية لـ ION DEX. وهي تمنح القارئ مدخلاً ثابتاً باللغة نفسها إلى المشروع والوثائق ونظرة whitepaper.
@@ -30,4 +33,3 @@
 - [الـ whitepaper الكاملة بالإنجليزية](./docs/WHITEPAPER.md)
 
 > ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.
-

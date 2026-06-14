@@ -1,5 +1,8 @@
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
 
+> **18-language docs site:** [Open Italiano site view](https://s2530786-cell.github.io/ION-DEX/#/it/readme)
+> **Auto-translate repository:** [Open GitHub repository in Italiano](https://translate.google.com/translate?sl=auto&tl=it&u=https%3A%2F%2Fgithub.com%2Fs2530786-cell%2FION-DEX)
+
 # ION — Il sistema operativo per una super civiltà digitale
 
 Questa è la pagina pubblica di panoramica in italiano per ION DEX. Fornisce un ingresso continuo nella stessa lingua verso il progetto, la documentazione e il whitepaper overview.
@@ -30,4 +33,3 @@ Il repository pubblico oggi dimostra: materiali pubblici README / docs / whitepa
 - [Whitepaper completa in inglese](./docs/WHITEPAPER.md)
 
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
-

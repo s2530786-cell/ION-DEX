@@ -1,5 +1,8 @@
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
 
+> **18-language docs site:** [Open 한국어 site view](https://s2530786-cell.github.io/ION-DEX/#/ko/readme)
+> **Auto-translate repository:** [Open GitHub repository in 한국어](https://translate.google.com/translate?sl=auto&tl=ko&u=https%3A%2F%2Fgithub.com%2Fs2530786-cell%2FION-DEX)
+
 # ION — 초디지털 문명을 위한 운영체제
 
 이 페이지는 ION DEX의 한국어 공개 개요입니다. 프로젝트, 문서, whitepaper 개요로 이어지는 동일 언어 진입 경로를 제공합니다.
@@ -30,4 +33,3 @@
 - [영문 전체 whitepaper](./docs/WHITEPAPER.md)
 
 > 참고: 이 언어 경로는 안정적인 공개 읽기 입구를 제공합니다. 최종 정본은 여전히 영어 공개 문서입니다.
-

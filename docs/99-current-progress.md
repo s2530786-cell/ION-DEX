@@ -1,3 +1,49 @@
+# 2026-06-14 OPENAI Machine 环境变量同步脚本
+
+- **Scope**: added a reusable repository-local PowerShell helper so this Windows host can promote the existing OpenAI-related `User` environment variables into true `Machine` scope without re-pasting secrets each time.
+- **What changed**:
+  - added [scripts/sync-openai-env-to-machine.ps1](/D:/openclaw-tools/ion-dex-nuke/scripts/sync-openai-env-to-machine.ps1)
+  - the script syncs:
+    - `OPENAI_API_KEY`
+    - `OPENAI_API_BASE`
+    - `MODEL`
+  - value resolution order is:
+    - explicit parameters
+    - current `User` environment variables
+    - interactive prompt when a value is missing
+  - the script supports:
+    - `-Preview` for non-destructive source/target inspection
+    - `-RemoveUserAfterSync` to clean duplicate `User` values after a successful machine-level write
+  - the script hides `OPENAI_API_KEY` in output and broadcasts `WM_SETTINGCHANGE` so newly launched processes can see the updated environment.
+- **Files touched**:
+  - `scripts/sync-openai-env-to-machine.ps1`
+  - `SESSION_STATE.md`
+  - `docs/99-current-progress.md`
+- **Verification**:
+  - `node scripts/security-preflight.mjs` -> `OK - security preflight completed.`
+  - PowerShell parser check for the new script:
+    - `[System.Management.Automation.Language.Parser]::ParseFile(...)` -> `PARSE_OK`
+  - preview checks:
+    - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-openai-env-to-machine.ps1 -Preview`
+      -> reports `missing` sources without blocking for input
+    - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-openai-env-to-machine.ps1 -Preview -OpenAiApiKey 'dummy-key' -OpenAiApiBase 'https://apinebula.com/v1' -ModelName 'gpt-5.4'`
+      -> prints the expected preview table and masks `OPENAI_API_KEY`
+  - byte-level encoding checks:
+    - `scripts/sync-openai-env-to-machine.ps1` -> `BOM=False`, `NUL=False`
+    - `SESSION_STATE.md` -> `BOM=False`, `NUL=False`
+    - `docs/99-current-progress.md` -> `BOM=False`, `NUL=False`
+- **Important decision**:
+  - no real API secret is stored in source, progress docs, or session state; the script is secret-agnostic and only consumes local environment values or secure interactive input at runtime.
+- **Residual gap**:
+  - the actual `Machine` write still requires an elevated PowerShell session on the user's machine.
+  - repository-wide `verify-full` / `verify-100` is not yet tied to this tiny local-ops script change and must be evaluated separately from the currently dirty workspace.
+- **Next step**:
+  1. run in elevated PowerShell:
+     - `Set-ExecutionPolicy -Scope Process Bypass -Force`
+     - `& "D:\openclaw-tools\ion-dex-nuke\scripts\sync-openai-env-to-machine.ps1" -RemoveUserAfterSync`
+  2. if the user wants a dry run first, use:
+     - `& "D:\openclaw-tools\ion-dex-nuke\scripts\sync-openai-env-to-machine.ps1" -Preview`
+
 # 2026-06-14 preview cleanup complete, verify-100 restarted
 
 - **Scope**: removed the lingering frontend preview tree, confirmed `4173` and `8788` were free of live listeners, and relaunched the guarded `verify-100` gate from the existing resume point.
@@ -907,3 +953,125 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-full.ps1
 - Known residual issues:
   - some older non-routed draft/profile helper surfaces still contain English-only copy and were not needed for the current user-facing route chain.
   - Vite still warns about large chunks and the ineffective dynamic import around `ionExtension.ts`; this is unrelated to locale switching and was not changed here.
+
+## 2026-06-14 README / docs 18-language fourth-layer technical long-form completion
+
+- **Scope**: extended the GitHub-side 18-language docs tree beyond the current deep technical layer into a fourth layer of longer engineering and ecosystem reference documents.
+- **What changed**:
+  - extended `scripts/generate-doc-language-editions.mjs` with a new localized fourth-layer document map and generation path.
+  - generated these additional long-form technical pages for every public language tree under `docs/<lang>/`:
+    - `04-development-roadmap.md`
+    - `05-product-prd.md`
+    - `09-reference-architecture.md`
+    - `23-security-audit-and-stress-sandbox.md`
+    - `28-public-development-scope.md`
+    - `ion-ecosystem-access-architecture.md`
+    - `ion-official-ecosystem-panorama.md`
+  - updated the existing third-layer deep technical pages so they now include same-language `Extended Reading` links into the new fourth layer.
+  - fixed localized deep-page lead links so same-language references such as `28-public-development-scope.md` and other localized `.md` siblings stay inside the current language tree instead of dropping back to English.
+- **Files touched**:
+  - `scripts/generate-doc-language-editions.mjs`
+  - `docs/<lang>/{01-official-addresses-and-assumptions,02-tokenomics-and-fees,03-technical-architecture,24-swap-router-minimum-output,26-ion-testnet-deploy-checklist,27-ion-dex-scraping-security-integration-v1,28-ai-sentinel-security-test-matrix-v1,ai-sentinel-gateway-contract,ion-dex-core-logic-deep-dive,ion-dex-flywheel-design}.md` across `zh-CN`, `zh-TW`, `ru`, `es`, `pt`, `ar`, `fr`, `de`, `ja`, `ko`, `hi`, `tr`, `it`, `id`, `vi`, `th`, and `pl`
+  - `docs/<lang>/{04-development-roadmap,05-product-prd,09-reference-architecture,23-security-audit-and-stress-sandbox,28-public-development-scope,ion-ecosystem-access-architecture,ion-official-ecosystem-panorama}.md` across the same 17 language trees
+- **Verification**:
+  - `node --check scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node scripts/generate-doc-language-editions.mjs` -> PASS
+  - custom scan across `510` localized docs markdown files in the generated language trees -> `brokenCount=0`
+  - custom relative-link scan across `14014` local markdown links -> `0` missing targets
+  - UTF-8 without BOM / no NUL validation across generated multilingual docs + generator -> `encodingBadCount=0`
+  - targeted chain checks -> PASS:
+    - `README.zh-CN.md -> docs/zh-CN/index.md -> docs/zh-CN/03-technical-architecture.md -> docs/zh-CN/04-development-roadmap.md`
+    - `README.ko.md -> docs/ko/index.md -> docs/ko/01-official-addresses-and-assumptions.md -> docs/ko/ion-ecosystem-access-architecture.md`
+- **Important decision**:
+  - the repository-side 18-language public docs switch now spans four layers: README -> docs hub / whitepaper -> public leaf pages -> deep technical pages -> longer technical long-form references.
+  - English remains the canonical source whenever long-form localized editions diverge on wording, economics, security boundaries, or release status.
+- **Residual gap**:
+  - the multilingual tree now covers another curated layer of long-form public engineering documents;
+  - additional English-only operational logs, work orders, and internal-facing docs still remain outside the multilingual public reading path by design.
+
+## 2026-06-14 README real switch entry + GitHub Pages 18-language docs site
+
+- **Scope**:
+  - `scripts/generate-doc-language-editions.mjs`
+  - `scripts/build-docs-site.mjs`
+  - `.github/workflows/deploy-docs-site.yml`
+  - `docs-site/`
+  - regenerated `README.md` and `README.*.md`
+- **What changed**:
+  - upgraded the root `README.md` auto-generated header so it no longer pretends the GitHub repository page itself can run an inline whole-repo translator.
+  - the README header now exposes two real entry points:
+    - `18-language docs site`
+    - `Auto-translate repository`
+  - extended the non-English `README.*.md` entry pages with the same real docs-site and repository-translate links.
+  - added a dedicated low-dependency static site under `docs-site/`:
+    - global 18-language switch
+    - same logical route preserved across language changes
+    - language persistence through `localStorage`
+    - `View on GitHub` and page-level auto-translate handoff
+    - fallback behavior when a page does not yet have a localized public source file:
+      - keep the requested language route
+      - serve the English source page
+      - surface a visible fallback banner
+  - added `scripts/build-docs-site.mjs` to install docs-site dependencies if needed and build `docs-site/dist`.
+  - added `.github/workflows/deploy-docs-site.yml` so pushes to `main` deploy the generated docs site through GitHub Pages.
+- **Files touched**:
+  - `README.md`
+  - `README.ar.md`
+  - `README.de.md`
+  - `README.es.md`
+  - `README.fr.md`
+  - `README.hi.md`
+  - `README.id.md`
+  - `README.it.md`
+  - `README.ja.md`
+  - `README.ko.md`
+  - `README.pl.md`
+  - `README.pt.md`
+  - `README.ru.md`
+  - `README.th.md`
+  - `README.tr.md`
+  - `README.vi.md`
+  - `README.zh-CN.md`
+  - `README.zh-TW.md`
+  - `scripts/generate-doc-language-editions.mjs`
+  - `scripts/build-docs-site.mjs`
+  - `.github/workflows/deploy-docs-site.yml`
+  - `docs-site/package.json`
+  - `docs-site/package-lock.json`
+  - `docs-site/build.mjs`
+  - `docs-site/src/index.html`
+  - `docs-site/src/app.js`
+  - `docs-site/src/styles.css`
+- **Verification**:
+  - `node --check scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node --check scripts/build-docs-site.mjs` -> PASS
+  - `node --check docs-site/build.mjs` -> PASS
+  - `node scripts/generate-doc-language-editions.mjs` -> PASS
+  - `node scripts/build-docs-site.mjs` -> PASS
+    - `Built docs-site/dist with 880 page variants and 68 logical routes.`
+  - UTF-8 without BOM / no NUL check across the new scripts, workflow, docs-site files, and updated README files -> `bad=0`
+  - README language bar parse check:
+    - root `README.md` language line -> `matches=18`
+    - `README.es.md` language line -> `matches=18`
+  - docs-site index check:
+    - `logicalPages=68`
+    - `languages=18`
+  - route-resolution spot checks:
+    - `readme | zh-CN | README.zh-CN.md`
+    - `docs/index | es | docs/es/index.md`
+    - `docs/contracts-layout | ja | docs/ja/contracts-layout.md`
+    - `whitepaper | pl | docs/whitepaper/pl/WHITEPAPER.pl.md`
+    - `docs/08-ci-agent-automation | tr | docs/tr/08-ci-agent-automation.md`
+    - `docs/github-daily-discovery | fr | docs/github-daily-discovery.md` (fallback-to-English case)
+  - in-app browser verification on local docs site `http://127.0.0.1:4319/`:
+    - default load followed browser locale and opened `#/zh-CN/readme`
+    - switching from `#/es/docs/index` to `ja` preserved the logical route and landed on `#/ja/docs/index`
+    - fallback route `#/fr/docs/github-daily-discovery` kept the requested French route, served `docs/github-daily-discovery.md`, showed the fallback banner, and exposed a French auto-translate page link
+- **Important decision**:
+  - GitHub README cannot perform a true inline whole-repository runtime translation because GitHub sanitizes executable content in Markdown.
+  - the real solution is now explicit and honest:
+    - README provides real handoff links
+    - GitHub Pages provides the controllable 18-language whole-site switch
+- **Residual gap**:
+  - the docs site currently covers all generated public logical routes and gracefully falls back for English-only pages.
+  - fallback pages are still English-source content until additional localized source files are created for those deeper English-only documents.

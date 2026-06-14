@@ -1,5 +1,8 @@
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
 
+> **18-language docs site:** [Open Bahasa Indonesia site view](https://s2530786-cell.github.io/ION-DEX/#/id/readme)
+> **Auto-translate repository:** [Open GitHub repository in Bahasa Indonesia](https://translate.google.com/translate?sl=auto&tl=id&u=https%3A%2F%2Fgithub.com%2Fs2530786-cell%2FION-DEX)
+
 # ION — Sistem operasi untuk peradaban digital super
 
 Ini adalah halaman ringkasan publik ION DEX dalam Bahasa Indonesia. Halaman ini memberi jalur masuk berbahasa sama menuju proyek, dokumentasi, dan whitepaper overview.
@@ -30,4 +33,3 @@ Repository publik saat ini membuktikan: materi publik README / docs / whitepaper
 - [Whitepaper lengkap bahasa Inggris](./docs/WHITEPAPER.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

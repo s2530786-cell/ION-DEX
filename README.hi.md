@@ -1,5 +1,8 @@
 **Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
 
+> **18-language docs site:** [Open हिन्दी site view](https://s2530786-cell.github.io/ION-DEX/#/hi/readme)
+> **Auto-translate repository:** [Open GitHub repository in हिन्दी](https://translate.google.com/translate?sl=auto&tl=hi&u=https%3A%2F%2Fgithub.com%2Fs2530786-cell%2FION-DEX)
+
 # ION — एक सुपर डिजिटल सभ्यता के लिए ऑपरेटिंग सिस्टम
 
 यह ION DEX का हिन्दी सार्वजनिक अवलोकन पृष्ठ है। यह परियोजना, दस्तावेज़ और whitepaper overview तक एक ही भाषा में लगातार प्रवेश देता है।
@@ -30,4 +33,3 @@
 - [अंग्रेज़ी पूर्ण whitepaper](./docs/WHITEPAPER.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-
