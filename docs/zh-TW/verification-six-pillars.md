@@ -24,5 +24,11 @@ This document tracks the current verification baseline for ION DEX.
 - [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
-> 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。
 
+## Extended Reading
+
+- [Verification Checklist](./07-verification-six-pillars.md)
+- [Six-Pillar Verification Quickstart](./07-verification-README.md)
+- [E2E Status And Evidence Boundaries](./e2e-status.md)
+
+> 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。

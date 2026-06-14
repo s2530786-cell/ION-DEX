@@ -24,5 +24,11 @@ _Last updated: 2026-06-04_
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
-> Примечание: эта языковая ветка дает стабильный публичный вход для чтения; английские публичные документы остаются финальным каноническим источником.
 
+## Extended Reading
+
+- [E2E Status And Evidence Boundaries](./e2e-status.md)
+- [Contracts Test Cases](./contracts-test-cases.md)
+- [Verification Checklist](./07-verification-six-pillars.md)
+
+> Примечание: эта языковая ветка дает стабильный публичный вход для чтения; английские публичные документы остаются финальным каноническим источником.

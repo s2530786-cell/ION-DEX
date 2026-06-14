@@ -2,6 +2,7 @@
 
 # CI And Agent Automation
 
+Run the same verification humans use, **without** interactive `pause`, so agents and CI do not block waiting for keyboard input.
 
 
 ## यहाँ से शुरू करें
@@ -30,5 +31,11 @@
 - [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
-> नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
 
+## Extended Reading
+
+- [Cursor Docs Feature Memory](./cursor-docs-feature-memory.md)
+- [Development Accelerators Memory](./development-accelerators-memory.md)
+- [Compile And Deploy Commands](./ion-compile-and-deploy-commands.md)
+
+> नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।

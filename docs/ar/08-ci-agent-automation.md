@@ -2,6 +2,7 @@
 
 # CI And Agent Automation
 
+Run the same verification humans use, **without** interactive `pause`, so agents and CI do not block waiting for keyboard input.
 
 
 ## ابدأ من هنا
@@ -30,5 +31,11 @@
 - [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
-> ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.
 
+## Extended Reading
+
+- [Cursor Docs Feature Memory](./cursor-docs-feature-memory.md)
+- [Development Accelerators Memory](./development-accelerators-memory.md)
+- [Compile And Deploy Commands](./ion-compile-and-deploy-commands.md)
+
+> ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.

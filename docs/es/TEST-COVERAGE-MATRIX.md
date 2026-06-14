@@ -24,5 +24,11 @@ _Last updated: 2026-06-04_
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
-> Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
 
+## Extended Reading
+
+- [E2E Status And Evidence Boundaries](./e2e-status.md)
+- [Contracts Test Cases](./contracts-test-cases.md)
+- [Verification Checklist](./07-verification-six-pillars.md)
+
+> Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.

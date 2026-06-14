@@ -24,5 +24,11 @@ _Last updated: 2026-06-04_
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
-> หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
 
+## Extended Reading
+
+- [E2E Status And Evidence Boundaries](./e2e-status.md)
+- [Contracts Test Cases](./contracts-test-cases.md)
+- [Verification Checklist](./07-verification-six-pillars.md)
+
+> หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย

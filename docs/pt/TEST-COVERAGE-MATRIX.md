@@ -24,5 +24,11 @@ _Last updated: 2026-06-04_
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
-> Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.
 
+## Extended Reading
+
+- [E2E Status And Evidence Boundaries](./e2e-status.md)
+- [Contracts Test Cases](./contracts-test-cases.md)
+- [Verification Checklist](./07-verification-six-pillars.md)
+
+> Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.

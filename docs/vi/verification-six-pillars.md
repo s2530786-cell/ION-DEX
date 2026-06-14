@@ -24,5 +24,11 @@ This document tracks the current verification baseline for ION DEX.
 - [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
-> Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
 
+## Extended Reading
+
+- [Verification Checklist](./07-verification-six-pillars.md)
+- [Six-Pillar Verification Quickstart](./07-verification-README.md)
+- [E2E Status And Evidence Boundaries](./e2e-status.md)
+
+> Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.

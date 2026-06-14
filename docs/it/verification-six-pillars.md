@@ -24,5 +24,11 @@ This document tracks the current verification baseline for ION DEX.
 - [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
-> Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
 
+## Extended Reading
+
+- [Verification Checklist](./07-verification-six-pillars.md)
+- [Six-Pillar Verification Quickstart](./07-verification-README.md)
+- [E2E Status And Evidence Boundaries](./e2e-status.md)
+
+> Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.

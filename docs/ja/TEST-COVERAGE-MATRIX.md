@@ -24,5 +24,11 @@ _Last updated: 2026-06-04_
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
-> 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
 
+## Extended Reading
+
+- [E2E Status And Evidence Boundaries](./e2e-status.md)
+- [Contracts Test Cases](./contracts-test-cases.md)
+- [Verification Checklist](./07-verification-six-pillars.md)
+
+> 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
