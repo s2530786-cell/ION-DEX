@@ -27,5 +27,12 @@
 - [Product Requirements Document](./05-product-prd.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
+
+## Extended Reading
+
+- [Project Overview](./00-project-overview.md)
+- [Verification Six Pillars](./verification-six-pillars.md)
+- [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
+
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
 

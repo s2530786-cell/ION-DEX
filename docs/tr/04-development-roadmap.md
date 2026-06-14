@@ -31,5 +31,12 @@ This roadmap defines the build order. Each phase depends on the phase before it 
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
+
+## Extended Reading
+
+- [Project Overview](./00-project-overview.md)
+- [Page Flow And User Journeys](./06-page-flow-and-user-journeys.md)
+- [Verification Six Pillars](./verification-six-pillars.md)
+
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
 

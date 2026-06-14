@@ -31,5 +31,12 @@ This document turns the security framework into an execution plan.
 - [Public Development Scope](./28-public-development-scope.md)
 - [Development Roadmap](./04-development-roadmap.md)
 
+
+## Extended Reading
+
+- [Verification Six Pillars](./verification-six-pillars.md)
+- [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
+- [CI And Agent Automation](./08-ci-agent-automation.md)
+
 > 참고: 이 언어 경로는 안정적인 공개 읽기 입구를 제공합니다. 최종 정본은 여전히 영어 공개 문서입니다.
 

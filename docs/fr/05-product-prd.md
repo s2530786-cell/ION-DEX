@@ -30,5 +30,12 @@
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 - [Public Development Scope](./28-public-development-scope.md)
 
+
+## Extended Reading
+
+- [Project Overview](./00-project-overview.md)
+- [Page Flow And User Journeys](./06-page-flow-and-user-journeys.md)
+- [UI Design Route Lock](./10-ui-design-route.md)
+
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
 

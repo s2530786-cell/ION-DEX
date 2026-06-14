@@ -31,5 +31,12 @@
 - [Public Development Scope](./28-public-development-scope.md)
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
+
+## Extended Reading
+
+- [Project Overview](./00-project-overview.md)
+- [Page Flow And User Journeys](./06-page-flow-and-user-journeys.md)
+- [Verification Six Pillars](./verification-six-pillars.md)
+
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
 

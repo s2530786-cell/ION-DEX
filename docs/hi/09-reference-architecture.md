@@ -31,5 +31,12 @@ This document maps selected external repositories to ION DEX architecture decisi
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 - [Ice Open Network Official Ecosystem Panorama](./ion-official-ecosystem-panorama.md)
 
+
+## Extended Reading
+
+- [UI Design Route Lock](./10-ui-design-route.md)
+- [CI And Agent Automation](./08-ci-agent-automation.md)
+- [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
+
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
 

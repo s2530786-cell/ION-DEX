@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { setTimeout as sleep } from "node:timers/promises";
 
 const root = process.cwd();
 
@@ -1184,42 +1185,94 @@ const localizedFourthPages = [
     title: "Development Roadmap",
     parent: "03-technical-architecture.md",
     related: ["05-product-prd.md", "09-reference-architecture.md", "23-security-audit-and-stress-sandbox.md"],
+    extendedDocs: ["00-project-overview.md", "06-page-flow-and-user-journeys.md", "verification-six-pillars.md"],
   },
   {
     slug: "05-product-prd.md",
     title: "Product Requirements Document",
     parent: "ion-dex-flywheel-design.md",
     related: ["04-development-roadmap.md", "09-reference-architecture.md", "28-public-development-scope.md"],
+    extendedDocs: ["00-project-overview.md", "06-page-flow-and-user-journeys.md", "10-ui-design-route.md"],
   },
   {
     slug: "09-reference-architecture.md",
     title: "Reference Architecture And External Patterns",
     parent: "03-technical-architecture.md",
     related: ["04-development-roadmap.md", "23-security-audit-and-stress-sandbox.md", "ion-official-ecosystem-panorama.md"],
+    extendedDocs: ["10-ui-design-route.md", "08-ci-agent-automation.md", "visual-acceptance-workflow-plan.md"],
   },
   {
     slug: "23-security-audit-and-stress-sandbox.md",
     title: "Security Audit And Stress Sandbox",
     parent: "28-ai-sentinel-security-test-matrix-v1.md",
     related: ["09-reference-architecture.md", "28-public-development-scope.md", "04-development-roadmap.md"],
+    extendedDocs: ["verification-six-pillars.md", "TEST-COVERAGE-MATRIX.md", "08-ci-agent-automation.md"],
   },
   {
     slug: "28-public-development-scope.md",
     title: "Public Development Scope",
     parent: "01-official-addresses-and-assumptions.md",
     related: ["04-development-roadmap.md", "05-product-prd.md", "23-security-audit-and-stress-sandbox.md"],
+    extendedDocs: ["00-project-overview.md", "verification-six-pillars.md", "TEST-COVERAGE-MATRIX.md"],
   },
   {
     slug: "ion-ecosystem-access-architecture.md",
     title: "ION DEX Official Ecosystem Access Architecture",
     parent: "01-official-addresses-and-assumptions.md",
     related: ["ion-official-ecosystem-panorama.md", "28-public-development-scope.md", "09-reference-architecture.md"],
+    extendedDocs: ["00-project-overview.md", "06-page-flow-and-user-journeys.md", "verification-six-pillars.md"],
   },
   {
     slug: "ion-official-ecosystem-panorama.md",
     title: "Ice Open Network Official Ecosystem Panorama",
     parent: "01-official-addresses-and-assumptions.md",
     related: ["ion-ecosystem-access-architecture.md", "28-public-development-scope.md", "09-reference-architecture.md"],
+    extendedDocs: ["00-project-overview.md", "06-page-flow-and-user-journeys.md", "10-ui-design-route.md"],
+  },
+];
+
+const localizedFifthPages = [
+  {
+    slug: "00-project-overview.md",
+    title: "Project Overview",
+    parent: "05-product-prd.md",
+    related: ["06-page-flow-and-user-journeys.md", "verification-six-pillars.md", "10-ui-design-route.md"],
+  },
+  {
+    slug: "06-page-flow-and-user-journeys.md",
+    title: "Page Flow And User Journeys",
+    parent: "05-product-prd.md",
+    related: ["00-project-overview.md", "10-ui-design-route.md", "visual-acceptance-workflow-plan.md"],
+  },
+  {
+    slug: "verification-six-pillars.md",
+    title: "Verification Six Pillars",
+    parent: "23-security-audit-and-stress-sandbox.md",
+    related: ["08-ci-agent-automation.md", "TEST-COVERAGE-MATRIX.md", "23-security-audit-and-stress-sandbox.md"],
+  },
+  {
+    slug: "08-ci-agent-automation.md",
+    title: "CI And Agent Automation",
+    parent: "verification-six-pillars.md",
+    related: ["verification-six-pillars.md", "TEST-COVERAGE-MATRIX.md", "visual-acceptance-workflow-plan.md"],
+  },
+  {
+    slug: "10-ui-design-route.md",
+    title: "UI Design Route Lock",
+    parent: "09-reference-architecture.md",
+    related: ["06-page-flow-and-user-journeys.md", "visual-acceptance-workflow-plan.md", "05-product-prd.md"],
+  },
+  {
+    slug: "TEST-COVERAGE-MATRIX.md",
+    title: "Test Coverage Matrix",
+    parent: "verification-six-pillars.md",
+    related: ["verification-six-pillars.md", "08-ci-agent-automation.md", "23-security-audit-and-stress-sandbox.md"],
+  },
+  {
+    slug: "visual-acceptance-workflow-plan.md",
+    title: "Visual Acceptance Workflow Plan",
+    parent: "10-ui-design-route.md",
+    related: ["10-ui-design-route.md", "06-page-flow-and-user-journeys.md", "TEST-COVERAGE-MATRIX.md"],
   },
 ];
 
@@ -1243,8 +1296,12 @@ function findFourthPage(slug) {
   return localizedFourthPages.find((item) => item.slug === slug);
 }
 
+function findFifthPage(slug) {
+  return localizedFifthPages.find((item) => item.slug === slug);
+}
+
 function findLocalizedPage(slug) {
-  return findLeafPage(slug) || findDeepPage(slug) || findFourthPage(slug);
+  return findLeafPage(slug) || findDeepPage(slug) || findFourthPage(slug) || findFifthPage(slug);
 }
 
 function parseMarkdownDoc(markdown, fallbackTitle) {
@@ -1291,6 +1348,7 @@ const localizedDocSlugs = new Set([
   ...localizedLeafPages.map((page) => page.slug),
   ...localizedDeepPages.map((page) => page.slug),
   ...localizedFourthPages.map((page) => page.slug),
+  ...localizedFifthPages.map((page) => page.slug),
   "index.md",
   "whitepaper-index.md",
 ]);
@@ -1601,6 +1659,42 @@ ${page.related.map((related) => {
   return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
 }).join("\n")}
 
+${page.extendedDocs && page.extendedDocs.length ? `\n## Extended Reading\n\n${page.extendedDocs.map((extendedSlug) => {
+  const extendedPage = findFifthPage(extendedSlug);
+  return `- [${extendedPage ? extendedPage.title : extendedSlug}](./${extendedSlug})`;
+}).join("\n")}` : ""}
+
+> ${copy.canonicalNote}
+`;
+}
+
+function renderFifthDoc(language, page, doc) {
+  const copy = language.copy;
+  const parent = findLocalizedPage(page.parent);
+  return `${buildDocsLeafNav(language, page.slug)}
+
+# ${page.title}
+
+${doc.lead ? `${rewriteLocalizedLeadLinks(doc.lead, page.slug)}\n` : ""}
+
+## ${copy.startHeading}
+
+- [${page.title} (English)](../${page.slug})
+- [${parent ? parent.title : page.parent}](./${page.parent})
+- [${copy.docsHubLabel}](./index.md)
+- [${copy.whitepaperIndexLabel}](./whitepaper-index.md)
+
+## Key Sections
+
+${doc.headings.length ? doc.headings.map((heading) => `- ${heading}`).join("\n") : "- See the English canonical document for the full section structure."}
+
+## ${copy.nextHeading}
+
+${page.related.map((related) => {
+  const relatedPage = findLocalizedPage(related);
+  return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
+}).join("\n")}
+
 > ${copy.canonicalNote}
 `;
 }
@@ -1627,14 +1721,29 @@ async function updateEnglishWhitepaper() {
   const updated = original.includes("<!-- AUTO-LANGUAGE-NAV START -->")
     ? original.replace(/<!-- AUTO-LANGUAGE-NAV START -->[\s\S]*?<!-- AUTO-LANGUAGE-NAV END -->\s*/u, navBlock)
     : `${navBlock}${original}`;
-  await writeFile(target, updated, "utf8");
+  await writeFileWithRetry(target, updated);
   console.log(relativePath);
+}
+
+async function writeFileWithRetry(target, content, attempts = 5) {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      await writeFile(target, content, "utf8");
+      return;
+    } catch (error) {
+      const transient = error && ["UNKNOWN", "EBUSY", "EPERM"].includes(error.code);
+      if (!transient || attempt === attempts) {
+        throw error;
+      }
+      await sleep(50 * attempt);
+    }
+  }
 }
 
 async function write(relativePath, content) {
   const target = path.join(root, relativePath);
   await mkdir(path.dirname(target), { recursive: true });
-  await writeFile(target, content.replace(/\n/g, "\n"), "utf8");
+  await writeFileWithRetry(target, content.replace(/\n/g, "\n"));
   console.log(relativePath);
 }
 
@@ -1655,6 +1764,12 @@ async function main() {
     fourthDocContent.set(page.slug, parseMarkdownDoc(source, page.title));
   }
 
+  const fifthDocContent = new Map();
+  for (const page of localizedFifthPages) {
+    const source = await readFile(path.join(root, "docs", page.slug), "utf8");
+    fifthDocContent.set(page.slug, parseMarkdownDoc(source, page.title));
+  }
+
   for (const language of languages.filter((item) => item.key !== "en")) {
     await write(language.readmeFile, `${renderReadme(language)}\n`);
     await write(`docs/${language.docsDir}/index.md`, `${renderDocsHub(language)}\n`);
@@ -1673,6 +1788,9 @@ async function main() {
     }
     for (const page of localizedFourthPages) {
       await write(`docs/${language.docsDir}/${page.slug}`, `${renderFourthDoc(language, page, fourthDocContent.get(page.slug))}\n`);
+    }
+    for (const page of localizedFifthPages) {
+      await write(`docs/${language.docsDir}/${page.slug}`, `${renderFifthDoc(language, page, fifthDocContent.get(page.slug))}\n`);
     }
   }
 }

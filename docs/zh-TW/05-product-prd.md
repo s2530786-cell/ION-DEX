@@ -30,5 +30,12 @@
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 - [Public Development Scope](./28-public-development-scope.md)
 
+
+## Extended Reading
+
+- [Project Overview](./00-project-overview.md)
+- [Page Flow And User Journeys](./06-page-flow-and-user-journeys.md)
+- [UI Design Route Lock](./10-ui-design-route.md)
+
 > 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。
 

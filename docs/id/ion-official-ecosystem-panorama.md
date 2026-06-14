@@ -31,5 +31,12 @@ Last updated: 2026-05-30 Source: https://ice.io deep scan Purpose: Complete refe
 - [Public Development Scope](./28-public-development-scope.md)
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
+
+## Extended Reading
+
+- [Project Overview](./00-project-overview.md)
+- [Page Flow And User Journeys](./06-page-flow-and-user-journeys.md)
+- [UI Design Route Lock](./10-ui-design-route.md)
+
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
 

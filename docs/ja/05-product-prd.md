@@ -30,5 +30,12 @@
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 - [Public Development Scope](./28-public-development-scope.md)
 
+
+## Extended Reading
+
+- [Project Overview](./00-project-overview.md)
+- [Page Flow And User Journeys](./06-page-flow-and-user-journeys.md)
+- [UI Design Route Lock](./10-ui-design-route.md)
+
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
 
