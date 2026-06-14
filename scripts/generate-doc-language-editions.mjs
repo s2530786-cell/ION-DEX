@@ -1318,6 +1318,7 @@ const localizedSixthPages = [
     title: "Contracts Test Cases",
     parent: "07-verification-six-pillars.md",
     related: ["e2e-status.md", "07-verification-README.md", "ion-compile-and-deploy-commands.md"],
+    extendedDocs: ["contracts-layout.md"],
   },
   {
     slug: "ion-compile-and-deploy-commands.md",
@@ -1325,6 +1326,7 @@ const localizedSixthPages = [
     title: "Compile And Deploy Commands",
     parent: "08-ci-agent-automation.md",
     related: ["ion-live-deploy-operator-manual.md", "contracts-test-cases.md", "07-verification-README.md"],
+    extendedDocs: ["contracts-layout.md"],
   },
   {
     slug: "ion-live-deploy-operator-manual.md",
@@ -1332,6 +1334,17 @@ const localizedSixthPages = [
     title: "Live Deploy Operator Manual",
     parent: "ion-compile-and-deploy-commands.md",
     related: ["ion-compile-and-deploy-commands.md", "contracts-test-cases.md", "07-verification-six-pillars.md"],
+    extendedDocs: ["contracts-layout.md"],
+  },
+];
+
+const localizedSeventhPages = [
+  {
+    slug: "contracts-layout.md",
+    sourcePath: "contracts/README.md",
+    title: "Contracts Layout",
+    parent: "ion-compile-and-deploy-commands.md",
+    related: ["contracts-test-cases.md", "ion-live-deploy-operator-manual.md", "contracts-overview.md"],
   },
 ];
 
@@ -1363,8 +1376,12 @@ function findSixthPage(slug) {
   return localizedSixthPages.find((item) => item.slug === slug);
 }
 
+function findSeventhPage(slug) {
+  return localizedSeventhPages.find((item) => item.slug === slug);
+}
+
 function findLocalizedPage(slug) {
-  return findLeafPage(slug) || findDeepPage(slug) || findFourthPage(slug) || findFifthPage(slug) || findSixthPage(slug);
+  return findLeafPage(slug) || findDeepPage(slug) || findFourthPage(slug) || findFifthPage(slug) || findSixthPage(slug) || findSeventhPage(slug);
 }
 
 function parseMarkdownDoc(markdown, fallbackTitle) {
@@ -1416,6 +1433,7 @@ const localizedDocSlugs = new Set([
   ...localizedFourthPages.map((page) => page.slug),
   ...localizedFifthPages.map((page) => page.slug),
   ...localizedSixthPages.map((page) => page.slug),
+  ...localizedSeventhPages.map((page) => page.slug),
   "index.md",
   "whitepaper-index.md",
 ]);
@@ -1806,6 +1824,42 @@ ${page.related.map((related) => {
   return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
 }).join("\n")}
 
+${page.extendedDocs && page.extendedDocs.length ? `\n## Extended Reading\n\n${page.extendedDocs.map((extendedSlug) => {
+  const extendedPage = findSeventhPage(extendedSlug);
+  return `- [${extendedPage ? extendedPage.title : extendedSlug}](./${extendedSlug})`;
+}).join("\n")}` : ""}
+
+> ${copy.canonicalNote}
+`;
+}
+
+function renderSeventhDoc(language, page, doc) {
+  const copy = language.copy;
+  const parent = findLocalizedPage(page.parent);
+  return `${buildDocsLeafNav(language, page.slug, page)}
+
+# ${page.title}
+
+${doc.lead ? `${rewriteLocalizedLeadLinks(doc.lead, page.slug)}\n` : ""}
+
+## ${copy.startHeading}
+
+- [${page.title} (English)](${englishCanonicalHref(language, page)})
+- [${parent ? parent.title : page.parent}](./${page.parent})
+- [${copy.docsHubLabel}](./index.md)
+- [${copy.whitepaperIndexLabel}](./whitepaper-index.md)
+
+## Key Sections
+
+${doc.headings.length ? doc.headings.map((heading) => `- ${heading}`).join("\n") : "- See the English canonical document for the full section structure."}
+
+## ${copy.nextHeading}
+
+${page.related.map((related) => {
+  const relatedPage = findLocalizedPage(related);
+  return `- [${relatedPage ? relatedPage.title : related}](./${related})`;
+}).join("\n")}
+
 > ${copy.canonicalNote}
 `;
 }
@@ -1888,6 +1942,12 @@ async function main() {
     sixthDocContent.set(page.slug, parseMarkdownDoc(source, page.title));
   }
 
+  const seventhDocContent = new Map();
+  for (const page of localizedSeventhPages) {
+    const source = await readFile(path.join(root, ...englishSourceRelativePath(page).split("/")), "utf8");
+    seventhDocContent.set(page.slug, parseMarkdownDoc(source, page.title));
+  }
+
   for (const language of languages.filter((item) => item.key !== "en")) {
     await write(language.readmeFile, `${renderReadme(language)}\n`);
     await write(`docs/${language.docsDir}/index.md`, `${renderDocsHub(language)}\n`);
@@ -1912,6 +1972,9 @@ async function main() {
     }
     for (const page of localizedSixthPages) {
       await write(`docs/${language.docsDir}/${page.slug}`, `${renderSixthDoc(language, page, sixthDocContent.get(page.slug))}\n`);
+    }
+    for (const page of localizedSeventhPages) {
+      await write(`docs/${language.docsDir}/${page.slug}`, `${renderSeventhDoc(language, page, seventhDocContent.get(page.slug))}\n`);
     }
   }
 }

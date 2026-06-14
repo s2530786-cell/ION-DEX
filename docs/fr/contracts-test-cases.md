@@ -30,4 +30,9 @@
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 - [Compile And Deploy Commands](./ion-compile-and-deploy-commands.md)
 
+
+## Extended Reading
+
+- [Contracts Layout](./contracts-layout.md)
+
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.

@@ -30,4 +30,9 @@
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 - [Compile And Deploy Commands](./ion-compile-and-deploy-commands.md)
 
+
+## Extended Reading
+
+- [Contracts Layout](./contracts-layout.md)
+
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.

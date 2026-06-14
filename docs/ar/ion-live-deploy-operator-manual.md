@@ -31,4 +31,9 @@ CI **never** broadcasts transactions or submits RPC. Use this flow on a trusted 
 - [Contracts Test Cases](./contracts-test-cases.md)
 - [Verification Checklist](./07-verification-six-pillars.md)
 
+
+## Extended Reading
+
+- [Contracts Layout](./contracts-layout.md)
+
 > ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.

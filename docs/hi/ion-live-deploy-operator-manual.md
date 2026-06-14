@@ -31,4 +31,9 @@ CI **never** broadcasts transactions or submits RPC. Use this flow on a trusted 
 - [Contracts Test Cases](./contracts-test-cases.md)
 - [Verification Checklist](./07-verification-six-pillars.md)
 
+
+## Extended Reading
+
+- [Contracts Layout](./contracts-layout.md)
+
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।

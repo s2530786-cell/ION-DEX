@@ -31,4 +31,9 @@ STDLIB="D:/openclaw-data/workspace/ion-official/ion/crypto/smartcont/stdlib.fc" 
 - [Contracts Test Cases](./contracts-test-cases.md)
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 
+
+## Extended Reading
+
+- [Contracts Layout](./contracts-layout.md)
+
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।

@@ -30,4 +30,9 @@
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 - [Compile And Deploy Commands](./ion-compile-and-deploy-commands.md)
 
+
+## Extended Reading
+
+- [Contracts Layout](./contracts-layout.md)
+
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
