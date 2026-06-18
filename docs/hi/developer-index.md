@@ -24,4 +24,3 @@
 - [ION Official DEX Core Logic Deep Dive](./ion-dex-core-logic-deep-dive.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-

@@ -37,4 +37,3 @@
 - [Product Requirements Document](./05-product-prd.md)
 
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.
-

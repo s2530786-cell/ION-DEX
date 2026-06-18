@@ -39,4 +39,3 @@ This document maps selected external repositories to ION DEX architecture decisi
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
-

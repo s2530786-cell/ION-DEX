@@ -24,4 +24,3 @@
 - [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
 
 > หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
-

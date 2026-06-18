@@ -71,6 +71,14 @@
 | `/api/wallet/nonce?address=0x...` | GET | `{nonce}` | 登录签名用 |
 | `/api/wallet/verify` | POST | `{token}` | JWT签发 |
 
+## Hard Data Rules
+
+- Frontend must not call third-party market or chain APIs directly; all product data goes through typed backend adapters.
+- No mock market prices, fake balances, pseudo pool rows, or fabricated profile/domain/staking data may be presented as live product state.
+- Every important value must carry provenance, timestamp, and stale-state semantics through the backend response contract.
+- Secrets such as API keys, RPC credentials, and vendor tokens must stay in environment variables and never appear in source, logs, or snapshots.
+- If a source is unavailable, the product must show a real loading/error/stale state instead of pretending the integration is complete.
+
 ## Seven EVM wallet detectors
 
 EVM钱包检测覆盖7种注入提供商，优先使用EIP-6963多钱包发现：

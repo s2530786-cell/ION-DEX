@@ -39,4 +39,3 @@ Source: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-05
 - [Product Requirements Document](./05-product-prd.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

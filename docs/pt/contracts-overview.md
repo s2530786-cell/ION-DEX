@@ -24,4 +24,3 @@
 - [ION Official DEX Core Logic Deep Dive](./ion-dex-core-logic-deep-dive.md)
 
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.
-

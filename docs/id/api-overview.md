@@ -24,4 +24,3 @@
 - [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

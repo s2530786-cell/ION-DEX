@@ -2,6 +2,7 @@
 
 # Visual Acceptance Workflow Plan
 
+This work plan turns Master's visual signoff requirement into an executable workflow:
 
 
 ## यहाँ से शुरू करें
@@ -30,5 +31,6 @@
 - [Page Flow And User Journeys](./06-page-flow-and-user-journeys.md)
 - [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
 
-> नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
 
+
+> नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।

@@ -39,4 +39,3 @@ This roadmap defines the build order. Each phase depends on the phase before it 
 - [Verification Six Pillars](./verification-six-pillars.md)
 
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
-

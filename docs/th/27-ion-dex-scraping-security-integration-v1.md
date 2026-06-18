@@ -39,4 +39,3 @@ This checklist defines how to integrate the scraping stack into ION DEX and how 
 - [Public Development Scope](./28-public-development-scope.md)
 
 > หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
-

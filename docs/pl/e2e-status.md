@@ -31,4 +31,6 @@ _Last updated: 2026-06-04_
 - [Verification Checklist](./07-verification-six-pillars.md)
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 
+
+
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.

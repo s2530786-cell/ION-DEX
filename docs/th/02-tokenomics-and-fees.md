@@ -37,4 +37,3 @@ This document defines the initial fee, burn, treasury, team, staking, keeper, an
 - [Public Development Scope](./28-public-development-scope.md)
 
 > หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
-

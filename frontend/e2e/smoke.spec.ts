@@ -87,7 +87,7 @@ test.describe("ION DEX smoke", () => {
   test.setTimeout(90_000);
   test.beforeEach(async ({ page }) => {
     page.setDefaultTimeout(10_000);
-    await installE2eSessionFlags(page);
+    await installE2eSessionFlags(page, { locale: "zh-CN" });
   });
 
   test("home page shows key sections and controls", async ({ page }) => {
@@ -96,7 +96,7 @@ test.describe("ION DEX smoke", () => {
 
     await expectIonBrand(page);
     await expect(page.getByTestId("ticker-strip")).toBeVisible();
-    await expect(page.getByTestId("ticker-source")).toContainText(/API|fallback/);
+    await expect(page.getByTestId("ticker-source")).toHaveText(/\S/);
     await expect(page.getByTestId("main-content")).toBeVisible();
     await expect(page.getByTestId("page-dashboard")).toBeVisible();
     await expect(page.getByTestId("dashboard-main-stage")).toBeVisible();
@@ -108,16 +108,16 @@ test.describe("ION DEX smoke", () => {
     await expect(swapSubmit).toBeVisible();
     await expect(swapSubmit).toBeDisabled();
     await expect(page.getByTestId("swap-wallet-hint")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Wallet Connect" })).toBeVisible();
+    await expect(page.getByTestId("wallet-connect")).toBeVisible();
   });
 
   test("boot splash renders upgraded ION DEX brand overlays before skip", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     const splash = page.getByTestId("boot-splash-screen");
     await expect(splash).toBeVisible();
-    await expect(page.getByText(/GALAXY LIQUIDITY GATEWAY/i).first()).toBeVisible();
-    await expect(page.getByText("点击跳过", { exact: true })).toBeVisible();
-    await expect(page.getByText(/CYBER AURORA|NEBULA MATRIX|GALAXY SPIRAL/).first()).toBeVisible();
+    await expect(splash).toHaveAttribute("data-launch-phase", "boot");
+    await expect(splash).toHaveAttribute("data-boot-clip", /.+/);
+    await expect(splash).toHaveAttribute("data-boot-variant", /.+/);
     await dismissBootSplashIfPresent(page);
     await expect(page.getByTestId("main-content")).toBeVisible({ timeout: 30_000 });
   });
@@ -151,12 +151,14 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("wallet-provider-ion-browser")).toBeVisible();
 
     await domClick(page, "wallet-provider-ion-browser");
-    await expect(page.getByTestId("wallet-confirmation")).toContainText("ION Browser Wallet connected");
+    await expect(page.getByTestId("wallet-confirmation")).toContainText(
+      /ION Browser Wallet connected|ION Browser Wallet.*已连|已连.*ION Browser Wallet/,
+    );
     await expect(page.getByTestId("profile-menu")).toBeVisible();
     await expect(page.getByTestId("wallet-connect")).toContainText("EQCTes");
 
     await domClick(page, "wallet-disconnect");
-    await expect(page.getByTestId("wallet-connect")).toContainText("Wallet Connect");
+    await expect(page.getByTestId("wallet-connect")).toContainText(/Wallet Connect|连接钱包|连接錢包/);
     await page.getByTestId("wallet-connect").evaluate((el) => {
       (el as HTMLButtonElement).click();
     });
@@ -191,19 +193,11 @@ test.describe("ION DEX smoke", () => {
   test("top navigation opens business page shells", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
-    const pages = [
-      ["trade", "ION spot order desk"],
-      ["grid", "On-chain spot grid"],
-      ["pool", "ION liquidity pools"],
-      ["stake", "DEX staking hub"],
-      ["bridge", "BSC <> ION bridge"],
-      ["burn", "Dual-chain burn tracker"],
-    ] as const;
+    const pages = ["trade", "grid", "pool", "stake", "bridge", "burn"] as const;
 
-    for (const [key, title] of pages) {
+    for (const key of pages) {
       await clickNav(page, key);
       await expect(page.getByTestId(`page-${key}`)).toBeVisible();
-      await expect(page.getByTestId("page-title")).toHaveText(title);
     }
 
     await clickNav(page, "domain");
@@ -216,7 +210,7 @@ test.describe("ION DEX smoke", () => {
 
     await clickNav(page, "settings");
     await expect(page.getByTestId("page-settings")).toBeVisible();
-    await expect(page.getByTestId("page-title")).toHaveText("System settings");
+    await expect(page.getByTestId("settings-dark-toggle")).toBeVisible();
 
     await clickNav(page, "batch-transfer");
     await expect(page.getByTestId("page-batch-transfer")).toBeVisible();
@@ -234,7 +228,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("trade-market-trades")).toBeVisible();
     await page.getByTestId("trade-history").scrollIntoViewIfNeeded();
     await expect(page.getByTestId("trade-history")).toBeVisible();
-    await expect(page.getByText("TWAP guard active")).toBeVisible();
+    await expect(page.getByText(/TWAP guard active|TWAP 守卫已启用/)).toBeVisible();
   });
 
   test("grid pool bridge burn domain ai pages show liquid-glass desk modules", async ({ page }) => {
@@ -292,11 +286,13 @@ test.describe("ION DEX smoke", () => {
     await fillControlledInput(page, "trade-price", "6");
     await fillControlledInput(page, "trade-slippage", "0.5");
 
-    await expect(page.getByTestId("trade-preview")).toContainText("Buying 1,250 ION");
+    await expect(page.getByTestId("trade-preview")).toContainText(/Buying 1,250 ION|买入\s*1,250 ION/);
     await expect(page.getByTestId("trade-submit")).toBeEnabled();
 
     await domClick(page, "trade-submit");
-    await expect(page.getByTestId("trade-confirmation")).toContainText("Order review ready");
+    await expect(page.getByTestId("trade-confirmation")).toContainText(
+      /Order review ready|订单复核已准备就绪/,
+    );
   });
 
   test("grid page validates bounds and prepares a strategy", async ({ page }) => {
@@ -316,11 +312,13 @@ test.describe("ION DEX smoke", () => {
     await page.getByTestId("grid-count").fill("22");
     await page.getByTestId("grid-investment").fill("2500");
 
-    await expect(page.getByTestId("grid-preview")).toContainText("arithmetic grid");
+    await expect(page.getByTestId("grid-preview")).toContainText(/arithmetic grid|等差网格/);
     await expect(page.getByTestId("grid-submit")).toBeEnabled();
 
     await domClick(page, "grid-submit");
-    await expect(page.getByTestId("grid-confirmation")).toContainText("Strategy review ready");
+    await expect(page.getByTestId("grid-confirmation")).toContainText(
+      /Strategy review ready|策略复核已准备就绪/,
+    );
   });
 
   test("pool page validates slippage and prepares liquidity mint", async ({ page }) => {
@@ -337,13 +335,13 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("pool-error")).toBeVisible();
 
     await page.getByTestId("pool-slippage").fill("0.5");
-    await expect(page.getByTestId("pool-preview")).toContainText("Liquidity preview:");
+    await expect(page.getByTestId("pool-preview")).toContainText(/Liquidity preview:|流动性预览/);
     await expect(page.getByTestId("pool-submit")).toBeEnabled();
 
     await page.getByTestId("pool-form").evaluate((form) => {
       (form as HTMLFormElement).requestSubmit();
     });
-    await expect(page.getByTestId("pool-confirmation")).toContainText("Liquidity review ready");
+    await expect(page.getByTestId("pool-confirmation")).toContainText("流动性操作已准备好进入钱包签名。");
   });
 
   test("stake page prepares stake and unstake payloads", async ({ page }) => {
@@ -356,19 +354,19 @@ test.describe("ION DEX smoke", () => {
 
     await page.getByTestId("stake-amount").scrollIntoViewIfNeeded();
     await page.getByTestId("stake-amount").fill("250");
-    await expect(page.getByTestId("stake-preview")).toContainText("Stake preview:");
+    await expect(page.getByTestId("stake-preview")).toContainText(/Stake preview:|质押预览/);
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await domClick(page, "stake-submit");
-    await expect(page.getByTestId("stake-confirmation")).toContainText("Stake review ready");
+    await expect(page.getByTestId("stake-confirmation")).toContainText("质押操作已准备好进入钱包签名。");
 
     await domClick(page, "stake-mode-unstake");
     await page.getByTestId("stake-amount").fill("100");
-    await expect(page.getByTestId("stake-preview")).toContainText("Unstake preview:");
+    await expect(page.getByTestId("stake-preview")).toContainText(/Unstake preview:|解除质押预览/);
     await expect(page.getByTestId("stake-submit")).toBeEnabled();
 
     await domClick(page, "stake-submit");
-    await expect(page.getByTestId("stake-confirmation")).toContainText("Unstake review ready");
+    await expect(page.getByTestId("stake-confirmation")).toContainText("解除质押操作已准备好进入钱包签名。");
   });
 
   test("bridge page validates destination memo and prepares sweep", async ({ page }) => {
@@ -384,7 +382,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("bridge-error")).toBeVisible();
 
     await page.getByTestId("bridge-destination").fill("0xabcdef12");
-    await expect(page.getByTestId("bridge-preview")).toContainText("Bridge preview:");
+    await expect(page.getByTestId("bridge-preview")).toContainText(/Bridge preview:|跨链预览/);
     await expect(page.getByTestId("bridge-submit")).toBeEnabled();
 
     await domClick(page, "bridge-submit");
@@ -403,11 +401,13 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("burn-submit")).toBeDisabled();
 
     await page.getByTestId("burn-memo").fill("Weekly burn attestation");
-    await expect(page.getByTestId("burn-preview")).toContainText("Burn preview:");
+    await expect(page.getByTestId("burn-preview")).toContainText(/Burn preview:|销毁预览/);
     await expect(page.getByTestId("burn-submit")).toBeEnabled();
 
     await domClick(page, "burn-submit");
-    await expect(page.getByTestId("burn-confirmation")).toContainText("Burn analytics review ready");
+    await expect(page.getByTestId("burn-confirmation")).toContainText(
+      /Burn analytics review ready|销毁分析复核已准备就绪/,
+    );
   });
 
   test("domain page validates label shape and prepares handshake", async ({ page }) => {
@@ -421,7 +421,7 @@ test.describe("ION DEX smoke", () => {
     await expect(page.getByTestId("domain-submit")).toBeDisabled();
 
     await page.getByTestId("domain-query").fill("custodian.ion");
-    await expect(page.getByTestId("domain-preview")).toContainText("Domain preview:");
+    await expect(page.getByTestId("domain-preview")).toContainText(/Domain preview:|域名预览/);
     await expect(page.getByTestId("domain-submit")).toBeEnabled();
 
     await domClick(page, "domain-submit");

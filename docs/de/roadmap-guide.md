@@ -23,4 +23,3 @@
 - [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
 
 > Hinweis: Dieser Sprachpfad bietet einen stabilen öffentlichen Leseeinstieg; die englischen öffentlichen Dokumente bleiben die endgültige kanonische Quelle.
-

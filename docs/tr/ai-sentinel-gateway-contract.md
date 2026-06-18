@@ -39,4 +39,3 @@
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

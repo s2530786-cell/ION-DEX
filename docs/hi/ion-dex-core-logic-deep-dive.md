@@ -39,4 +39,3 @@ Source: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-05
 - [Product Requirements Document](./05-product-prd.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-

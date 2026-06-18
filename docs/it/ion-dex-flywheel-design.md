@@ -39,4 +39,3 @@ Built on: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-
 - [Public Development Scope](./28-public-development-scope.md)
 
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
-

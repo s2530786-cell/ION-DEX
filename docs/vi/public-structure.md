@@ -24,4 +24,3 @@
 - [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
 
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
-

@@ -39,4 +39,3 @@ Last updated: 2026-05-30 Source: https://ice.io deep scan Purpose: Complete refe
 - [UI Design Route Lock](./10-ui-design-route.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

@@ -39,4 +39,3 @@ Last updated: 2026-05-30 Source: https://ice.io deep scan Purpose: Complete refe
 - [UI Design Route Lock](./10-ui-design-route.md)
 
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
-

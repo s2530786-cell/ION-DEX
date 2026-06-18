@@ -4,6 +4,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useApiResource } from "@/hooks/useApiResource";
+import { useI18n } from "@/i18n/I18nProvider";
 import { fetchStakingSummary, type StakingSummary } from "@/lib/ionApi";
 
 const UNLOCK_SECONDS = 7 * 24 * 60 * 60;
@@ -24,6 +25,7 @@ function formatCountdown(seconds: number) {
 }
 
 export function StakePage() {
+  const { isZh } = useI18n();
   const fetchStaking = useCallback((signal: AbortSignal) => fetchStakingSummary(signal), []);
   const staking = useApiResource(fetchStaking, fallbackStaking);
 
@@ -54,9 +56,9 @@ export function StakePage() {
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_22rem]" data-testid="page-stake">
       <NeonCard variant="mixed" className="min-h-[31rem]">
-        <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">Yield</p>
+        <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">{isZh ? "收益" : "Yield"}</p>
         <h1 className="mt-2 text-4xl font-black text-white sm:text-5xl" data-testid="page-title">
-          DEX staking hub
+          {isZh ? "DEX 质押中心" : "DEX staking hub"}
         </h1>
 
         <DataSourceBadge meta={staking.meta} testId="stake-metrics-source" />
@@ -68,9 +70,9 @@ export function StakePage() {
           testId="stake-metrics"
         >
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <Metric label="DEX APR" value={`${staking.data.apr.dexPct}%`} />
-            <Metric label="Official stake" value={`${Number(staking.data.officialStakedIon).toLocaleString()} ION`} />
-            <Metric label="DEX stake" value={`${Number(staking.data.dexStakedIon).toLocaleString()} ION`} />
+            <Metric label={isZh ? "DEX 年化" : "DEX APR"} value={`${staking.data.apr.dexPct}%`} />
+            <Metric label={isZh ? "官方质押" : "Official stake"} value={`${Number(staking.data.officialStakedIon).toLocaleString()} ION`} />
+            <Metric label={isZh ? "DEX 质押" : "DEX stake"} value={`${Number(staking.data.dexStakedIon).toLocaleString()} ION`} />
           </div>
         </AsyncState>
 
@@ -85,7 +87,7 @@ export function StakePage() {
               }}
               type="button"
             >
-              Stake ION
+              {isZh ? "质押 ION" : "Stake ION"}
             </button>
             <button
               className={`rounded-full px-4 py-2 text-xs font-black ${mode === "unstake" ? "bg-white/15 text-white" : "text-cyan-100/60"}`}
@@ -96,13 +98,13 @@ export function StakePage() {
               }}
               type="button"
             >
-              Unstake ION
+              {isZh ? "解除质押 ION" : "Unstake ION"}
             </button>
           </div>
 
           <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
             <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-              Amount ION
+              {isZh ? "数量 ION" : "Amount ION"}
             </span>
             <input
               className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
@@ -123,11 +125,12 @@ export function StakePage() {
           >
             {validation.isValid ? (
               <span>
-                {mode === "stake" ? "Stake" : "Unstake"} preview: {amount} ION · advertised DEX APR{" "}
-                {staking.data.apr.dexPct}% · unlock queue {formatCountdown(unlockLeft)}
+                {isZh
+                  ? `${mode === "stake" ? "质押" : "解除质押"}预览：${amount} ION · 当前 DEX APR ${staking.data.apr.dexPct}% · 解锁队列 ${formatCountdown(unlockLeft)}`
+                  : `${mode === "stake" ? "Stake" : "Unstake"} preview: ${amount} ION · advertised DEX APR ${staking.data.apr.dexPct}% · unlock queue ${formatCountdown(unlockLeft)}`}
               </span>
             ) : (
-              <span>Enter an amount to preview staking payloads and unlock timing.</span>
+              <span>{isZh ? "输入数量以预览质押载荷和解锁时间。" : "Enter an amount to preview staking payloads and unlock timing."}</span>
             )}
           </div>
 
@@ -137,7 +140,7 @@ export function StakePage() {
             disabled={!validation.isValid}
             type="submit"
           >
-            {mode === "stake" ? "Stake ION" : "Unstake ION"}
+            {mode === "stake" ? (isZh ? "质押 ION" : "Stake ION") : isZh ? "解除质押 ION" : "Unstake ION"}
           </NeonButton>
 
           {submitted ? (
@@ -146,20 +149,24 @@ export function StakePage() {
               data-testid="stake-confirmation"
             >
               {mode === "stake"
-                ? "Stake review ready for wallet signing."
-                : "Unstake review ready for wallet signing."}
+                ? isZh
+                  ? "质押操作已准备好进入钱包签名。"
+                  : "Stake review ready for wallet signing."
+                : isZh
+                  ? "解除质押操作已准备好进入钱包签名。"
+                  : "Unstake review ready for wallet signing."}
             </p>
           ) : null}
         </form>
       </NeonCard>
 
       <NeonCard variant="cyan">
-        <p className="text-sm text-cyan-100/55">Unlock countdown</p>
+        <p className="text-sm text-cyan-100/55">{isZh ? "解锁倒计时" : "Unlock countdown"}</p>
         <p className="mt-2 text-3xl font-black" data-testid="stake-unlock-countdown">
           {formatCountdown(unlockLeft)}
         </p>
         <p className="mt-2 text-xs text-cyan-100/60">
-          Mock unstake cooldown for testnet staking hub UX.
+          {isZh ? "用于测试网质押中心体验的模拟解除质押冷却时间。" : "Mock unstake cooldown for testnet staking hub UX."}
         </p>
       </NeonCard>
     </div>

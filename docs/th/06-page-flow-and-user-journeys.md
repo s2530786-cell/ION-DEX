@@ -30,5 +30,6 @@
 - [UI Design Route Lock](./10-ui-design-route.md)
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
-> หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
 
+
+> หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย

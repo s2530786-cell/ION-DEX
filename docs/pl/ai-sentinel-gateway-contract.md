@@ -39,4 +39,3 @@
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
-

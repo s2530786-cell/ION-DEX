@@ -39,4 +39,3 @@ Source: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-05
 - [Product Requirements Document](./05-product-prd.md)
 
 > หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
-

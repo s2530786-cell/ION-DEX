@@ -24,4 +24,3 @@
 - [Official Addresses And Open Assumptions](./01-official-addresses-and-assumptions.md)
 
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
-

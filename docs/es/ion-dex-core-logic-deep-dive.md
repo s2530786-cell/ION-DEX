@@ -39,4 +39,3 @@ Source: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-05
 - [Product Requirements Document](./05-product-prd.md)
 
 > Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
-

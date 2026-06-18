@@ -23,4 +23,3 @@
 - [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
 
 > Примечание: эта языковая ветка дает стабильный публичный вход для чтения; английские публичные документы остаются финальным каноническим источником.
-

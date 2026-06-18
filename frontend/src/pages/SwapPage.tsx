@@ -8,6 +8,7 @@ import { NeonCard } from "@/components/ui/NeonCard";
 import { useIonWallet } from "@/context/IonWalletContext";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useApiResource } from "@/hooks/useApiResource";
+import { useI18n } from "@/i18n/I18nProvider";
 import {
   BSC_CHAIN_ID,
   DEMO_TICKER_FALLBACK,
@@ -47,6 +48,7 @@ function swapNeedsEvmWallet(fromToken: SwapToken): boolean {
 }
 
 export function SwapPage() {
+  const { isZh } = useI18n();
   const ionWallet = useIonWallet();
   const evmWallet = useEvmWallet();
   const fetchTickers = useCallback(
@@ -95,11 +97,17 @@ export function SwapPage() {
 
     let walletBlock: string | null = null;
     if (needsIon && !ionReady) {
-      walletBlock = "连接 ION 钱包（扩展 / Online+ / TonConnect QR）以签名 swap。";
+      walletBlock = isZh
+        ? "请连接 ION 钱包（扩展 / Online+ / TonConnect 二维码）后再签名兑换。"
+        : "Connect an ION wallet (extension / Online+ / TonConnect QR) to sign the swap.";
     } else if (needsEvm && !needsIon && !evmReady) {
-      walletBlock = "连接 MetaMask / Injected 以在 BSC 上支付。";
+      walletBlock = isZh
+        ? "请连接 MetaMask / Injected 钱包，以便在 BSC 上支付。"
+        : "Connect MetaMask / an injected wallet to pay on BSC.";
     } else if (needsIon && needsEvm && !ionReady) {
-      walletBlock = "跨链报价需要 ION 钱包签名 swap intent。";
+      walletBlock = isZh
+        ? "跨链报价需要 ION 钱包先签名 swap intent。"
+        : "Cross-chain quoting requires an ION wallet to sign the swap intent.";
     }
 
     return {
@@ -124,6 +132,7 @@ export function SwapPage() {
     rates,
     slippage,
     toToken,
+    isZh,
   ]);
 
   function flipPair() {
@@ -140,7 +149,7 @@ export function SwapPage() {
     }
 
     setPendingSummary({
-      action: "Swap intent",
+      action: isZh ? "兑换意图" : "Swap intent",
       token: `${fromToken} → ${toToken}`,
       amount: payAmount,
       fee: `${(CONTRACTS.fee.swapFee * 100).toFixed(2)}% ${CONTRACTS.fee.currency}`,
@@ -171,15 +180,23 @@ export function SwapPage() {
         const proof =
           result.kind === "tonconnect-sdk"
             ? `TonConnect BOC ${result.proof.slice(0, 18)}…`
-            : "扩展已确认 ton_sendTransaction";
+            : isZh
+              ? "扩展已确认 ton_sendTransaction"
+              : "Extension confirmed ton_sendTransaction";
         setConfirmation(
-          `Swap intent 已通过 ION 钱包签名上链（${proof}）。AMM 路由合约接入后将把同一 intent 路由到池子。`,
+          isZh
+            ? `兑换意图已通过 ION 钱包签名上链（${proof}）。AMM 路由合约接入后，会将同一意图路由到目标池。`
+            : `The swap intent was signed and sent through the ION wallet (${proof}). Once AMM routing is wired, the same intent will route into the target pool.`,
         );
       } else {
-        setSubmitError("当前交易对需要 ION 链签名；请将 ION 加入交易对并连接 ION 钱包。");
+        setSubmitError(
+          isZh
+            ? "当前交易对需要 ION 链签名；请把 ION 加入交易对并连接 ION 钱包。"
+            : "This trading pair requires an ION-chain signature. Add ION to the pair and connect an ION wallet.",
+        );
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Swap 签名失败。";
+      const message = error instanceof Error ? error.message : isZh ? "兑换签名失败。" : "Swap signature failed.";
       setSubmitError(message);
     } finally {
       setSubmitting(false);
@@ -200,8 +217,10 @@ export function SwapPage() {
         <form className="grid gap-4" onSubmit={(event) => void submitSwap(event)}>
           <div className="mb-1 flex items-center justify-between">
             <div>
-              <p className="text-2xl font-black">Swap</p>
-              <p className="text-sm text-cyan-100/55">BNB / ION market buy and pair routes</p>
+              <p className="text-2xl font-black">{isZh ? "兑换" : "Swap"}</p>
+              <p className="text-sm text-cyan-100/55">
+                {isZh ? "BNB / ION 市价买入与交易对路由" : "BNB / ION market buy and pair routes"}
+              </p>
             </div>
             <ArrowDownUp className="text-cyan-200" />
           </div>
@@ -209,13 +228,13 @@ export function SwapPage() {
           <DataSourceBadge meta={tickers.meta} testId="swap-quote-source" />
 
           <AsyncState
-            emptyMessage="Market prices unavailable."
+            emptyMessage={isZh ? "市场价格暂不可用。" : "Market prices unavailable."}
             error={tickers.error}
             onRetry={tickers.reload}
             state={tickers.state}
             testId="swap-tickers"
           >
-            <span className="sr-only">Ticker feed loaded</span>
+            <span className="sr-only">{isZh ? "行情数据已加载" : "Ticker feed loaded"}</span>
           </AsyncState>
 
           {validation.walletBlock ? (
@@ -228,7 +247,7 @@ export function SwapPage() {
           ) : null}
 
           <TokenRow
-            label="From"
+            label={isZh ? "支付" : "From"}
             onSelect={(token) => {
               setFromToken(token);
               setConfirmation(null);
@@ -250,7 +269,7 @@ export function SwapPage() {
           </div>
 
           <TokenRow
-            label="To"
+            label={isZh ? "接收" : "To"}
             onSelect={(token) => {
               setToToken(token);
               setConfirmation(null);
@@ -262,7 +281,7 @@ export function SwapPage() {
 
           <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
             <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-              Pay amount
+              {isZh ? "支付数量" : "Pay amount"}
             </span>
             <input
               className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
@@ -280,7 +299,7 @@ export function SwapPage() {
 
           <label className="block rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
             <span className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-              Slippage %
+              {isZh ? "滑点 %" : "Slippage %"}
             </span>
             <input
               className="mt-1 w-full bg-transparent text-lg font-black text-white outline-none"
@@ -300,7 +319,7 @@ export function SwapPage() {
               className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
               data-testid="swap-error"
             >
-              Pick two different tokens before requesting a quote.
+              {isZh ? "请求报价前请选择两个不同的代币。" : "Pick two different tokens before requesting a quote."}
             </p>
           ) : null}
 
@@ -309,7 +328,7 @@ export function SwapPage() {
               className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
               data-testid="swap-error"
             >
-              Slippage must stay between 0.1% and 5%.
+              {isZh ? "滑点必须保持在 0.1% 到 5% 之间。" : "Slippage must stay between 0.1% and 5%."}
             </p>
           ) : null}
 
@@ -328,19 +347,35 @@ export function SwapPage() {
           >
             {validation.isValid && validation.quote !== null ? (
               <span>
-                Quote: gross ~{validation.quote.grossOut.toFixed(4)} {toToken} · protocol fee ~
-                {(validation.quote.protocolFee * rates[toToken] / rates.ION).toFixed(6)} ION (
-                {(CONTRACTS.fee.swapFee * 100).toFixed(2)}% {CONTRACTS.fee.currency}) · min received ~
-                <span data-testid="swap-min-received">
-                  {validation.quote.minReceived.toFixed(6)}
-                </span>{" "}
-                {toToken} (after {slippage}% slip) · impact ~{validation.quote.priceImpactPct.toFixed(2)}
-                % · source {tickers.meta?.source ?? "offline"}
+                {isZh ? (
+                  <>
+                    报价：预计获得 {validation.quote.grossOut.toFixed(4)} {toToken} · 协议费约{" "}
+                    {(validation.quote.protocolFee * rates[toToken] / rates.ION).toFixed(6)} ION（
+                    {(CONTRACTS.fee.swapFee * 100).toFixed(2)}% {CONTRACTS.fee.currency}）· 最少到账约
+                    <span data-testid="swap-min-received">
+                      {validation.quote.minReceived.toFixed(6)}
+                    </span>{" "}
+                    {toToken}（滑点 {slippage}% 后）· 价格影响约{" "}
+                    {validation.quote.priceImpactPct.toFixed(2)}% · 来源 {tickers.meta?.source ?? "offline"}
+                  </>
+                ) : (
+                  <>
+                    Quote: gross ~{validation.quote.grossOut.toFixed(4)} {toToken} · protocol fee ~
+                    {(validation.quote.protocolFee * rates[toToken] / rates.ION).toFixed(6)} ION (
+                    {(CONTRACTS.fee.swapFee * 100).toFixed(2)}% {CONTRACTS.fee.currency}) · min received ~
+                    <span data-testid="swap-min-received">
+                      {validation.quote.minReceived.toFixed(6)}
+                    </span>{" "}
+                    {toToken} (after {slippage}% slip) · impact ~{validation.quote.priceImpactPct.toFixed(2)}
+                    % · source {tickers.meta?.source ?? "offline"}
+                  </>
+                )}
               </span>
             ) : (
               <span>
-                Enter amount and slippage to preview minimum received, impact, and protocol fee (
-                {CONTRACTS.fee.currency}).
+                {isZh
+                  ? `输入数量和滑点后，可预览最少到账、价格影响与协议费（${CONTRACTS.fee.currency}）。`
+                  : `Enter amount and slippage to preview minimum received, impact, and protocol fee (${CONTRACTS.fee.currency}).`}
               </span>
             )}
           </div>
@@ -351,7 +386,7 @@ export function SwapPage() {
             disabled={!validation.isValid || submitting}
             type="submit"
           >
-            {submitting ? "等待钱包签名…" : "Swap"}
+            {submitting ? (isZh ? "等待钱包签名…" : "Waiting for wallet signature…") : isZh ? "提交兑换" : "Swap"}
           </NeonButton>
 
           {confirmation ? (

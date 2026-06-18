@@ -4,6 +4,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { useApiResource } from "@/hooks/useApiResource";
+import { useI18n } from "@/i18n/I18nProvider";
 import { DEMO_TICKER_FALLBACK, demoTickerPrice } from "@/lib/integrationConfig";
 import {
   fetchMarketTickers,
@@ -63,6 +64,7 @@ const fallbackStaking: StakingSummary = {
 };
 
 export function PoolPage() {
+  const { isZh } = useI18n();
   const fetchStaking = useCallback((signal: AbortSignal) => fetchStakingSummary(signal), []);
   const fetchTickers = useCallback((signal: AbortSignal) => fetchMarketTickers(signal), []);
   const staking = useApiResource(fetchStaking, fallbackStaking);
@@ -119,9 +121,9 @@ export function PoolPage() {
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_22rem]" data-testid="page-pool">
       <NeonCard variant="mixed" className="min-h-[31rem]">
-        <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">Liquidity</p>
+        <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">{isZh ? "流动性" : "Liquidity"}</p>
         <h1 className="mt-2 text-4xl font-black text-white sm:text-5xl" data-testid="page-title">
-          ION liquidity pools
+          {isZh ? "ION 流动性资金池" : "ION liquidity pools"}
         </h1>
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -130,7 +132,7 @@ export function PoolPage() {
         </div>
 
         <AsyncState
-          emptyMessage="Pool metrics unavailable."
+          emptyMessage={isZh ? "资金池指标暂不可用。" : "Pool metrics unavailable."}
           error={staking.error ?? tickers.error}
           onRetry={() => {
             staking.reload();
@@ -151,9 +153,9 @@ export function PoolPage() {
           <table className="min-w-full text-left text-sm" data-testid="pool-list">
             <thead className="bg-white/[0.04] text-cyan-100/55">
               <tr>
-                <th className="px-4 py-3">Pool</th>
+                <th className="px-4 py-3">{isZh ? "池子" : "Pool"}</th>
                 <th className="px-4 py-3">TVL</th>
-                <th className="px-4 py-3">24h Vol</th>
+                <th className="px-4 py-3">{isZh ? "24h 交易量" : "24h Vol"}</th>
                 <th className="px-4 py-3">APR</th>
               </tr>
             </thead>
@@ -203,42 +205,42 @@ export function PoolPage() {
                 }}
                 type="button"
               >
-                {value === "add" ? "Add LP" : "Remove LP"}
+                {value === "add" ? (isZh ? "添加 LP" : "Add LP") : isZh ? "移除 LP" : "Remove LP"}
               </button>
             ))}
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <PoolField label="BNB" testId="pool-bnb" value={bnbAmount} onChange={setBnbAmount} />
-            <PoolField label="ION" testId="pool-ion" value={ionAmount} onChange={setIonAmount} />
-            <PoolField label="Slippage %" testId="pool-slippage" value={slippage} onChange={setSlippage} />
+            <PoolField label={isZh ? "BNB 数量" : "BNB Amount"} testId="pool-bnb" value={bnbAmount} onChange={setBnbAmount} />
+            <PoolField label={isZh ? "ION 数量" : "ION Amount"} testId="pool-ion" value={ionAmount} onChange={setIonAmount} />
+            <PoolField label={isZh ? "滑点 %" : "Slippage %"} testId="pool-slippage" value={slippage} onChange={setSlippage} />
           </div>
 
           {!validation.slippageValid ? (
             <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="pool-error">
-              Slippage must stay between 0.1% and 5%.
+              {isZh ? "滑点必须保持在 0.1% 到 5% 之间。" : "Slippage must stay between 0.1% and 5%."}
             </p>
           ) : null}
 
           <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75" data-testid="pool-preview">
             {validation.isValid && pool ? (
               <span>
-                Liquidity preview: {mode === "add" ? "add" : "remove"} on {pool.pair}: {bnbAmount} BNB +{" "}
-                {ionAmount} ION · est. daily yield ~{validation.yieldIon?.toFixed(2)} USD · slip{" "}
-                {slippage}%
+                {isZh
+                  ? `流动性预览：在 ${pool.pair} 中${mode === "add" ? "添加" : "移除"}仓位，${bnbAmount} BNB + ${ionAmount} ION · 预计日收益约 ${validation.yieldIon?.toFixed(2)} USD · 滑点 ${slippage}%`
+                  : `Liquidity preview: ${mode === "add" ? "add" : "remove"} on ${pool.pair}: ${bnbAmount} BNB + ${ionAmount} ION · est. daily yield ~${validation.yieldIon?.toFixed(2)} USD · slip ${slippage}%`}
               </span>
             ) : (
-              <span>Select a pool and enter paired amounts to preview LP mint/burn parameters.</span>
+              <span>{isZh ? "请选择资金池并输入配对数量，以预览 LP 铸造 / 销毁参数。" : "Select a pool and enter paired amounts to preview LP mint/burn parameters."}</span>
             )}
           </div>
 
           <NeonButton className="w-full sm:w-fit" data-testid="pool-submit" disabled={!validation.isValid} type="submit">
-            {mode === "add" ? "Add Liquidity" : "Remove Liquidity"}
+            {mode === "add" ? (isZh ? "添加流动性" : "Add Liquidity") : isZh ? "移除流动性" : "Remove Liquidity"}
           </NeonButton>
 
           {submitted ? (
             <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="pool-confirmation">
-              Liquidity review ready for wallet signing.
+              {isZh ? "流动性操作已准备好进入钱包签名。" : "Liquidity review ready for wallet signing."}
             </p>
           ) : null}
         </form>
@@ -247,9 +249,11 @@ export function PoolPage() {
       <NeonCard variant="cyan">
         <DataSourceBadge meta={staking.meta} testId="stake-metrics-source" />
         <AsyncState error={staking.error} onRetry={staking.reload} state={staking.state} testId="pool-yield">
-          <p className="text-sm text-cyan-100/55">LP mining APR</p>
+          <p className="text-sm text-cyan-100/55">{isZh ? "LP 挖矿 APR" : "LP mining APR"}</p>
           <p className="mt-2 text-3xl font-black">{staking.data.apr.lpMiningPct}%</p>
-          <p className="mt-2 text-xs text-cyan-100/60">TVL reference ${Number(staking.data.lpStakedUsd).toLocaleString()}</p>
+          <p className="mt-2 text-xs text-cyan-100/60">
+            {isZh ? "TVL 参考值" : "TVL reference"} ${Number(staking.data.lpStakedUsd).toLocaleString()}
+          </p>
         </AsyncState>
       </NeonCard>
     </div>

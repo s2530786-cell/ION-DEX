@@ -39,4 +39,3 @@ ION DEX is designed as a multi-layer system. Contracts hold and settle assets. B
 - [Security Audit And Stress Sandbox](./23-security-audit-and-stress-sandbox.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-

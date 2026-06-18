@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { ApiLoadState } from "@/hooks/useApiResource";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export function AsyncState({
   state,
@@ -16,6 +17,8 @@ export function AsyncState({
   children: ReactNode;
   testId?: string;
 }) {
+  const { isZh } = useI18n();
+
   if (state === "loading") {
     return (
       <LoadingSkeleton testId={testId ? `${testId}-loading` : "async-loading"} />
@@ -28,15 +31,15 @@ export function AsyncState({
         className="rounded-2xl border border-rose-300/25 bg-rose-400/[0.08] p-4 text-sm text-rose-100"
         data-testid={testId ? `${testId}-error` : "async-error"}
       >
-        <p className="font-bold">Unable to load live data</p>
-        <p className="mt-1 text-rose-100/75">{error ?? "Unknown error"}</p>
+        <p className="font-bold">{isZh ? "实时数据加载失败" : "Unable to load live data"}</p>
+        <p className="mt-1 text-rose-100/75">{error ?? (isZh ? "未知错误" : "Unknown error")}</p>
         {onRetry ? (
           <button
             className="mt-3 rounded-full border border-rose-200/30 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em]"
             onClick={onRetry}
             type="button"
           >
-            Retry
+            {isZh ? "重试" : "Retry"}
           </button>
         ) : null}
       </div>
@@ -49,7 +52,11 @@ export function AsyncState({
         className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-cyan-100/70"
         data-testid={testId ? `${testId}-empty` : "async-empty"}
       >
-        {emptyMessage}
+        {state === "empty" && emptyMessage === "No data available yet."
+          ? isZh
+            ? "暂无可用数据。"
+            : emptyMessage
+          : emptyMessage}
       </div>
     );
   }

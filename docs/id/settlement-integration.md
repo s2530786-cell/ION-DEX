@@ -23,4 +23,3 @@
 - [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

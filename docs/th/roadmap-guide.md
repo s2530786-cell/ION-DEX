@@ -23,4 +23,3 @@
 - [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
 
 > หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
-

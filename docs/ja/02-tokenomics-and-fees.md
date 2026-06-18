@@ -37,4 +37,3 @@ This document defines the initial fee, burn, treasury, team, staking, keeper, an
 - [Public Development Scope](./28-public-development-scope.md)
 
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
-

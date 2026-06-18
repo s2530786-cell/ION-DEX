@@ -35,4 +35,3 @@ Esta página funciona como a porta de entrada em português para a documentaçã
 - [English Developer Index](../developer-index.md)
 
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.
-

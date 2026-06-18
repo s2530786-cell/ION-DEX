@@ -23,4 +23,3 @@
 - [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
 
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.
-

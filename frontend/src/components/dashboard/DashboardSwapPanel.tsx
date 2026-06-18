@@ -4,6 +4,7 @@ import { buildP1QuoteSummary } from "@/hooks/useDashboardMarket";
 import { useSwapTradeQuote } from "@/hooks/useSwapTradeQuote";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonGlassCard } from "@/components/ui/NeonGlassCard";
+import { useI18n } from "@/i18n/I18nProvider";
 import { formatDataSourceLabel } from "@/lib/ionApi";
 
 type SwapToken = "BNB" | "ION" | "USDT";
@@ -18,6 +19,7 @@ type DashboardSwapPanelProps = {
  * Dashboard left rail — compact swap surface aligned with design reference (token pair + amount + CTA).
  */
 export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) {
+  const { isZh } = useI18n();
   const [fromToken, setFromToken] = useState<SwapToken>("BNB");
   const [toToken, setToToken] = useState<SwapToken>("ION");
   const [payAmount, setPayAmount] = useState("");
@@ -33,12 +35,12 @@ export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) 
 
   const quotePreview = useMemo(() => {
     if (tradeQuote.state === "loading") {
-      return { kind: "loading" as const, text: "Loading P1 quote…" };
+      return { kind: "loading" as const, text: isZh ? "正在加载 P1 报价…" : "Loading P1 quote…" };
     }
     if (tradeQuote.state === "error") {
       return {
         kind: "error" as const,
-        text: tradeQuote.error ?? "Quote unavailable",
+        text: tradeQuote.error ?? (isZh ? "报价暂不可用" : "Quote unavailable"),
       };
     }
     if (tradeQuote.state === "ready" && tradeQuote.request) {
@@ -50,9 +52,9 @@ export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) 
     }
     return {
       kind: "fallback" as const,
-      text: `Route preview: ${pairLabel}${payAmount ? ` · ${payAmount}` : ""}`,
+      text: isZh ? `路由预览：${pairLabel}${payAmount ? ` · ${payAmount}` : ""}` : `Route preview: ${pairLabel}${payAmount ? ` · ${payAmount}` : ""}`,
     };
-  }, [pairLabel, payAmount, tradeQuote.data, tradeQuote.error, tradeQuote.meta, tradeQuote.request, tradeQuote.state]);
+  }, [isZh, pairLabel, payAmount, tradeQuote.data, tradeQuote.error, tradeQuote.meta, tradeQuote.request, tradeQuote.state]);
 
   function flipPair() {
     setFromToken(toToken);
@@ -64,14 +66,14 @@ export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) 
       <div className="flex h-full flex-col gap-3">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">Swap</p>
-            <p className="mt-1 text-xl font-black text-white">Token pair</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">{isZh ? "兑换" : "Swap"}</p>
+            <p className="mt-1 text-xl font-black text-white">{isZh ? "币种组合" : "Token pair"}</p>
           </div>
           <ArrowDownUp aria-hidden className="shrink-0 text-cyan-200/80" size={20} />
         </div>
 
         <CompactTokenRow
-          label="From"
+          label={isZh ? "支付" : "From"}
           onSelect={setFromToken}
           selected={fromToken}
           testId="dashboard-swap-from"
@@ -89,7 +91,7 @@ export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) 
         </div>
 
         <CompactTokenRow
-          label="To"
+          label={isZh ? "接收" : "To"}
           onSelect={setToToken}
           selected={toToken}
           testId="dashboard-swap-to"
@@ -97,7 +99,7 @@ export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) 
 
         <label className="block rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2.5">
           <span className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-cyan-100/45">
-            Amount
+            {isZh ? "数量" : "Amount"}
           </span>
           <input
             className="mt-0.5 w-full bg-transparent text-base font-black text-white outline-none"
@@ -123,7 +125,7 @@ export function DashboardSwapPanel({ onOpenFullSwap }: DashboardSwapPanelProps) 
           onClick={onOpenFullSwap}
           type="button"
         >
-          Swap
+          {isZh ? "前往兑换" : "Swap"}
         </NeonButton>
       </div>
     </NeonGlassCard>

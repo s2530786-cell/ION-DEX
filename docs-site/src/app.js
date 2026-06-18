@@ -40,7 +40,7 @@ function bindEvents() {
   window.addEventListener("hashchange", navigate);
   elements.languageSwitcher.addEventListener("change", () => {
     const route = parseRoute();
-    updateHash(route.logicalId, elements.languageSwitcher.value, route.anchor);
+    openRoute(route.logicalId, elements.languageSwitcher.value, route.anchor);
   });
   elements.pageSearch.addEventListener("input", () => {
     renderNavigation();
@@ -81,23 +81,37 @@ function navigate() {
 }
 
 function parseRoute() {
-  const rawHash = window.location.hash.startsWith("#")
-    ? window.location.hash.slice(1)
-    : "";
-  const [pathPart, queryPart = ""] = rawHash.split("?");
-  const parts = pathPart.replace(/^\/+/, "").split("/").filter(Boolean);
+  const queryParams = new URLSearchParams(window.location.search);
+  const queryRoute = queryParams.get("route");
+  if (queryRoute) {
+    return parseRouteString(queryRoute, queryParams.get("anchor") || "");
+  }
+  return parseRouteString(window.location.hash);
+}
+
+function parseRouteString(rawRoute, fallbackAnchor = "") {
+  const normalizedRoute = rawRoute.startsWith("#")
+    ? rawRoute.slice(1)
+    : rawRoute;
+  const [pathPart, queryPart = ""] = normalizedRoute.split("?");
+  const parts = pathPart
+    .replace(/^\/+/, "")
+    .split("/")
+    .filter(Boolean)
+    .map((part) => decodeURIComponent(part));
   const language = normalizeLanguage(parts[0]) || detectPreferredLanguage();
   const section = parts[1];
   let logicalId = "readme";
   if (section === "docs") {
-    const slug = decodeURIComponent(parts.slice(2).join("/")) || "index";
+    const slug = parts.slice(2).join("/") || "index";
     logicalId = `docs/${slug}`;
   } else if (section === "whitepaper") {
     logicalId = "whitepaper";
   } else if (section === "readme" || !section) {
     logicalId = "readme";
   }
-  const anchor = new URLSearchParams(queryPart).get("anchor") || "";
+  const anchor =
+    new URLSearchParams(queryPart).get("anchor") || fallbackAnchor || "";
   return { language, logicalId, anchor };
 }
 
@@ -147,17 +161,19 @@ function detectPreferredLanguage() {
 }
 
 async function renderResolvedRoute(route, logicalPage) {
-  const sourceId =
-    logicalPage.translations[route.language] ||
-    logicalPage.translations.en ||
-    Object.values(logicalPage.translations)[0];
+  const sourceId = selectSourceId(logicalPage, route.language);
   const page = await loadPage(sourceId);
-  const fallback = !logicalPage.translations[route.language];
+  const fallback = route.language !== page.sourceLanguage;
   state.current = { route, logicalPage, page, fallback };
+  const translatedRouteUrl = buildTranslatedRouteUrl(
+    logicalPage.id,
+    route.language,
+    route.anchor,
+  );
 
   window.localStorage.setItem(STORAGE_KEY, route.language);
   document.documentElement.lang = route.language;
-  document.title = `${titleFor(logicalPage, route.language)} | ION DEX Docs`;
+  document.title = `${displayTitleFor(logicalPage)} | ION DEX Docs`;
 
   elements.languageSwitcher.value = route.language;
   elements.translateRepoLink.href = buildTranslateUrl(
@@ -165,19 +181,14 @@ async function renderResolvedRoute(route, logicalPage) {
     state.index.repoUrl,
   );
   elements.pageKicker.textContent = fallback
-    ? `Fallback source: ${page.sourceLanguage}`
+    ? `Auto-translated from ${page.sourceLanguage}`
     : `Localised source: ${route.language}`;
-  elements.pageTitle.textContent = titleFor(logicalPage, route.language);
+  elements.pageTitle.textContent = displayTitleFor(logicalPage);
   elements.pageSummary.textContent =
-    fallback && route.language !== page.sourceLanguage
-      ? `This logical page is opened in ${route.language}, but its public content currently falls back to the ${page.sourceLanguage} source page.`
-      : page.excerpt || "Repository-backed public documentation page.";
+    page.excerpt || "Repository-backed public documentation page.";
   elements.githubPageLink.href = page.githubUrl;
-  elements.translatePageLink.href = buildTranslateUrl(
-    route.language,
-    page.githubUrl,
-  );
-  elements.routeDisplay.textContent = buildRouteHash(
+  elements.translatePageLink.href = translatedRouteUrl;
+  elements.routeDisplay.textContent = buildRouteQuery(
     logicalPage.id,
     route.language,
     route.anchor,
@@ -187,7 +198,7 @@ async function renderResolvedRoute(route, logicalPage) {
 
   elements.fallbackBanner.hidden = !fallback;
   elements.fallbackBanner.textContent = fallback
-    ? `This page does not yet have a dedicated ${route.language} source file in the public repository. The docs site keeps the current language route and serves the ${page.sourceLanguage} source page instead.`
+    ? `This route is being rendered through the ${page.sourceLanguage} canonical source and translated in place to ${route.language}.`
     : "";
 
   elements.docContent.innerHTML = page.html;
@@ -216,13 +227,11 @@ function hydrateArticle(language) {
   for (const link of links) {
     const rawHref = link.getAttribute("href") || "";
     if (rawHref.includes(LANGUAGE_PLACEHOLDER)) {
-      link.setAttribute(
-        "href",
-        rawHref.replaceAll(
-          LANGUAGE_PLACEHOLDER,
-          encodeURIComponent(language),
-        ),
+      const routeHref = rawHref.replaceAll(
+        LANGUAGE_PLACEHOLDER,
+        encodeURIComponent(language),
       );
+      link.setAttribute("href", buildResolvedDocsHref(routeHref, language));
     }
     if (/^https?:\/\//u.test(link.href)) {
       link.target = "_blank";
@@ -239,17 +248,16 @@ function hydrateArticle(language) {
 function renderLanguagePills(logicalPage, currentLanguage) {
   elements.languagePills.innerHTML = state.index.languages
     .map((language) => {
-      const available = Boolean(logicalPage.translations[language.key]);
       const active = language.key === currentLanguage;
       const classes = [
         "language-pill",
-        available ? "is-available" : "is-fallback",
+        logicalPage.translations[language.key] ? "is-available" : "is-fallback",
         active ? "is-active" : "",
       ]
         .filter(Boolean)
         .join(" ");
       return `<a class="${classes}" href="${escapeHtml(
-        buildRouteHash(logicalPage.id, language.key),
+        buildNavigationHref(logicalPage.id, language.key),
       )}">${escapeHtml(language.label)}</a>`;
     })
     .join("");
@@ -265,7 +273,7 @@ function renderOutline(headings, logicalPage, language) {
     .map(
       (heading) => `
         <a class="outline-link outline-level-${heading.level}" href="${escapeHtml(
-          buildRouteHash(logicalPage.id, language, heading.id),
+          buildNavigationHref(logicalPage.id, language, heading.id),
         )}">
           ${escapeHtml(heading.text)}
         </a>`,
@@ -285,7 +293,7 @@ function renderNavigation() {
         if (!needle) {
           return true;
         }
-        const title = titleFor(page, route.language).toLowerCase();
+        const title = displayTitleFor(page).toLowerCase();
         return (
           title.includes(needle) ||
           page.slug.toLowerCase().includes(needle) ||
@@ -304,9 +312,9 @@ function renderNavigation() {
             return `<a class="nav-link ${
               active ? "is-active" : ""
             }" href="${escapeHtml(
-              buildRouteHash(page.id, route.language),
+              buildNavigationHref(page.id, route.language),
             )}">
-              <span>${escapeHtml(titleFor(page, route.language))}</span>
+              <span>${escapeHtml(displayTitleFor(page))}</span>
               <small>${escapeHtml(page.slug)}</small>
             </a>`;
           })
@@ -327,10 +335,10 @@ function renderMissingRoute(route) {
   elements.docContent.innerHTML = `
     <div class="empty-state">
       <p>The route <code>${escapeHtml(
-        buildRouteHash(route.logicalId, route.language, route.anchor),
+        buildRouteQuery(route.logicalId, route.language, route.anchor),
       )}</code> does not exist in the generated docs map.</p>
       <a class="action-button" href="${escapeHtml(
-        buildRouteHash("readme", route.language),
+        buildNavigationHref("readme", route.language),
       )}">Open the docs site home</a>
     </div>`;
   elements.fallbackBanner.hidden = true;
@@ -373,19 +381,99 @@ function titleFor(logicalPage, language) {
   );
 }
 
-function buildRouteHash(logicalId, language, anchor = "") {
-  let path = `#/${encodeURIComponent(language)}/readme`;
+function displayTitleFor(logicalPage) {
+  return titleFor(logicalPage, "en");
+}
+
+function selectSourceId(logicalPage, language) {
+  if (language === "en" && logicalPage.translations.en) {
+    return logicalPage.translations.en;
+  }
+  return (
+    logicalPage.translations.en ||
+    logicalPage.translations[language] ||
+    Object.values(logicalPage.translations)[0]
+  );
+}
+
+function buildRoutePath(logicalId, language) {
+  let path = `/${encodeURIComponent(language)}/readme`;
   if (logicalId === "whitepaper") {
-    path = `#/${encodeURIComponent(language)}/whitepaper`;
+    path = `/${encodeURIComponent(language)}/whitepaper`;
   } else if (logicalId !== "readme") {
-    path = `#/${encodeURIComponent(language)}/docs/${encodeURIComponent(
+    path = `/${encodeURIComponent(language)}/docs/${encodeURIComponent(
       logicalId.replace(/^docs\//u, ""),
     )}`;
   }
+  return path;
+}
+
+function buildRouteHash(logicalId, language, anchor = "") {
+  const path = `#${buildRoutePath(logicalId, language)}`;
   if (anchor) {
     return `${path}?anchor=${encodeURIComponent(anchor)}`;
   }
   return path;
+}
+
+function buildRouteQuery(logicalId, language, anchor = "") {
+  const params = new URLSearchParams({
+    route: buildRoutePath(logicalId, language),
+  });
+  if (anchor) {
+    params.set("anchor", anchor);
+  }
+  return `?${params.toString()}`;
+}
+
+function resolveCanonicalSiteBaseUrl() {
+  const canonical = new URL(state.index.siteUrl);
+  const currentHost = window.location.hostname;
+  const isLocal =
+    currentHost === "127.0.0.1" ||
+    currentHost === "localhost" ||
+    currentHost === "::1";
+  if (isLocal || window.location.host === canonical.host) {
+    return `${window.location.origin}${window.location.pathname}`;
+  }
+  return state.index.siteUrl;
+}
+
+function buildEnglishRouteUrl(logicalId, anchor = "") {
+  return `${resolveCanonicalSiteBaseUrl()}${buildRouteHash(
+    logicalId,
+    "en",
+    anchor,
+  )}`;
+}
+
+function buildCanonicalRouteUrl(logicalId, language, anchor = "") {
+  return `${state.index.siteUrl}${buildRouteQuery(
+    logicalId,
+    language,
+    anchor,
+  )}`;
+}
+
+function buildTranslatedRouteUrl(logicalId, language, anchor = "") {
+  if (language === "en") {
+    return `${state.index.siteUrl}${buildRouteHash(
+      logicalId,
+      language,
+      anchor,
+    )}`;
+  }
+  return buildTranslatedUrl(
+    language,
+    buildCanonicalRouteUrl(logicalId, language, anchor),
+  );
+}
+
+function buildNavigationHref(logicalId, language, anchor = "") {
+  if (language === "en") {
+    return buildEnglishRouteUrl(logicalId, anchor);
+  }
+  return buildTranslatedRouteUrl(logicalId, language, anchor);
 }
 
 function buildTranslateUrl(language, url) {
@@ -400,12 +488,31 @@ function buildTranslateUrl(language, url) {
   return `${state.index.translateBase}?${params.toString()}`;
 }
 
-function updateHash(logicalId, language, anchor = "") {
-  const nextHash = buildRouteHash(logicalId, language, anchor);
-  if (window.location.hash === nextHash) {
+function buildTranslatedUrl(language, url) {
+  return language === "en" ? url : buildTranslateUrl(language, url);
+}
+
+function buildResolvedDocsHref(href, language) {
+  if (!href.startsWith("#/")) {
+    return href;
+  }
+  const route = parseRouteString(href);
+  if (language === "en") {
+    return buildEnglishRouteUrl(route.logicalId, route.anchor);
+  }
+  return buildTranslatedRouteUrl(route.logicalId, language, route.anchor);
+}
+
+function openRoute(logicalId, language, anchor = "") {
+  if (language === "en") {
+    const nextUrl = buildEnglishRouteUrl(logicalId, anchor);
+    if (window.location.href === nextUrl) {
+      return;
+    }
+    window.location.href = nextUrl;
     return;
   }
-  window.location.hash = nextHash;
+  window.location.href = buildTranslatedRouteUrl(logicalId, language, anchor);
 }
 
 function escapeHtml(value) {
@@ -415,4 +522,11 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function translateCodeFor(language) {
+  return (
+    state.index.languages.find((item) => item.key === language)?.translateCode ||
+    language
+  );
 }

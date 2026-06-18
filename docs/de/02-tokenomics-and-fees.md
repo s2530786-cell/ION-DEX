@@ -37,4 +37,3 @@ This document defines the initial fee, burn, treasury, team, staking, keeper, an
 - [Public Development Scope](./28-public-development-scope.md)
 
 > Hinweis: Dieser Sprachpfad bietet einen stabilen öffentlichen Leseeinstieg; die englischen öffentlichen Dokumente bleiben die endgültige kanonische Quelle.
-

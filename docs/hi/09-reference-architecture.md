@@ -39,4 +39,3 @@ This document maps selected external repositories to ION DEX architecture decisi
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-

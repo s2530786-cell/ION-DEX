@@ -16,8 +16,21 @@
 | 人工确认 | **禁止** 每步「继续吗」；禁止等待 Review/Keep All（自动接受自有 diff） |
 | 阻塞时暂停 | 仅当：缺密钥（主网/测试网私钥、CMC API、Pinata）、需求歧义、不可逆删除 |
 | 修复循环 | 实现 → 快验 → 失败则读日志 → 根因修复 → 重验，**直到本阶段出口门禁 100 绿** |
-| 提交 | 每阶段 **出口 100 绿后** `git commit` 一次（消息含阶段号）；不 amend 除非 hook 改文件 |
+| 提交 | 每阶段 **出口 100 绿后** 才能 `git commit`；必须经过 `scripts/verify-100-gate.mjs` proof + `.githooks` 守门 |
 | 进度 | 每阶段结束更新 `SESSION_STATE.md`、`docs/99-current-progress.md`、`.memory-bank/SESSION_STATE.md` |
+
+### 新的硬门禁
+
+```text
+verify-full 通过
+  -> stress / 功能子门禁通过
+  -> verify-100 = PASSED=100 FAILED=0 RESULT=GREEN
+  -> verify-100-gate 记录 fresh proof
+  -> pre-commit 验 proof 仍匹配当前 HEAD + working tree
+  -> post-commit 记账
+  -> pre-push 验每个待推 commit 都有 proof trailer + ledger
+  -> 才允许 push
+```
 
 ### 门禁双层模型
 
@@ -264,7 +277,7 @@ node scripts/autonomous-phase-gate.mjs --gate verify-100
 | stress 100 | stress 脚本 stdout |  flaky E2E | 稳定选择器；禁止降断言 |
 | verify-100 | `%TEMP%\ion-verify-100*.txt` | 任一轮子步失败 | 按 PASS n FAILED 行拆因 |
 
-**禁止**：为绿而跳过测试、删断言、`--no-verify` commit、伪造 `RESULT=GREEN`。
+**禁止**：为绿而跳过测试、删断言、`--no-verify` commit、`--skip-verify-100`、伪造 `RESULT=GREEN`、伪造 `Verify-100-Proof` trailer。
 
 ---
 

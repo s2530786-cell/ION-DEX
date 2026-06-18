@@ -23,4 +23,3 @@
 - [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
 
 > 참고: 이 언어 경로는 안정적인 공개 읽기 입구를 제공합니다. 최종 정본은 여전히 영어 공개 문서입니다.
-

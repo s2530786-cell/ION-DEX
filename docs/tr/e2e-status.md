@@ -31,4 +31,6 @@ _Last updated: 2026-06-04_
 - [Verification Checklist](./07-verification-six-pillars.md)
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 
+
+
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.

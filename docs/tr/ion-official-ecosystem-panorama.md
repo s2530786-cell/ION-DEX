@@ -39,4 +39,3 @@ Last updated: 2026-05-30 Source: https://ice.io deep scan Purpose: Complete refe
 - [UI Design Route Lock](./10-ui-design-route.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

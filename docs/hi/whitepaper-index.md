@@ -19,4 +19,3 @@
 - [अंग्रेज़ी पूर्ण whitepaper](../WHITEPAPER.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-

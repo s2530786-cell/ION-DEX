@@ -39,4 +39,3 @@ Built on: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-
 - [Public Development Scope](./28-public-development-scope.md)
 
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.
-

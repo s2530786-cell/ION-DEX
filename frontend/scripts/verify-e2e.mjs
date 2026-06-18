@@ -70,6 +70,17 @@ async function isTcpOpen(port) {
   });
 }
 
+async function waitForPortClosed(port, timeoutMs = 10_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (!(await isTcpOpen(port))) {
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error(`Port ${port} did not close within ${timeoutMs}ms`);
+}
+
 function run(command, args, options = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
@@ -244,7 +255,7 @@ const backend = spawn(process.execPath, ["dist/src/server.js"], {
     ION_DATA_MODE: "test-mock",
   },
   stdio: "inherit",
-  shell: useShell,
+  shell: false,
 });
 
 backend.once("exit", (code, signal) => {
@@ -267,7 +278,7 @@ const preview = spawn(
       ION_VERIFY_BACKEND_URL: verifyBackendUrl,
     },
     stdio: "inherit",
-    shell: useShell,
+    shell: false,
   },
 );
 
@@ -293,6 +304,7 @@ function stopPreview() {
 
 function stopBackend() {
   if (backend && !backend.killed) {
+    shuttingDown = true;
     if (process.platform === "win32" && backend.pid) {
       spawnSync(taskkillExe, ["/pid", String(backend.pid), "/T", "/F"], { stdio: "ignore" });
       return;
@@ -319,6 +331,10 @@ try {
 } finally {
   stopPreview();
   stopBackend();
+  if (backendPort !== DEFAULT_BACKEND_PORT) {
+    await tryRecyclePort(backendPort, 12);
+    await waitForPortClosed(backendPort, 8_000).catch(() => undefined);
+  }
   if (backendPort !== DEFAULT_BACKEND_PORT) {
     killListenPort(backendPort);
   }

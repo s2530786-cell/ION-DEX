@@ -24,4 +24,3 @@
 - [Official Addresses And Open Assumptions](./01-official-addresses-and-assumptions.md)
 
 > Hinweis: Dieser Sprachpfad bietet einen stabilen öffentlichen Leseeinstieg; die englischen öffentlichen Dokumente bleiben die endgültige kanonische Quelle.
-

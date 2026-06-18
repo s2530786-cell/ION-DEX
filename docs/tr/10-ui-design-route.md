@@ -2,6 +2,7 @@
 
 # UI Design Route Lock
 
+This document locks the UI route before further frontend development. It converts the user's design requirement into an executable engineering workflow.
 
 
 ## Buradan başlayın
@@ -30,5 +31,6 @@
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 - [Product Requirements Document](./05-product-prd.md)
 
-> Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
 
+
+> Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.

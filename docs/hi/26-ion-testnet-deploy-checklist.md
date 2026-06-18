@@ -37,4 +37,3 @@
 - [Product Requirements Document](./05-product-prd.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-

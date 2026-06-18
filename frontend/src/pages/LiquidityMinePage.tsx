@@ -5,6 +5,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { GlassPanel } from "@/components/ui/glass/GlassPanel";
 import { MetricTile } from "@/components/ui/glass/MetricTile";
+import { useI18n } from "@/i18n/I18nProvider";
 import {
   claimLiquidityMineReward,
   fetchLiquidityMinePools,
@@ -55,7 +56,7 @@ const fallbackSummary: LiquidityMineSummary = {
   },
 };
 
-function liquidityProvenanceToMeta(provenance: LiquidityMineSummary["provenance"]): ApiMeta {
+function liquidityProvenanceToMeta(_provenance: LiquidityMineSummary["provenance"]): ApiMeta {
   return {
     source: "indexer",
     updatedAt: new Date().toISOString(),
@@ -65,6 +66,7 @@ function liquidityProvenanceToMeta(provenance: LiquidityMineSummary["provenance"
 }
 
 export function LiquidityMinePage() {
+  const { isZh } = useI18n();
   const [summary, setSummary] = useState<LiquidityMineSummary>(fallbackSummary);
   const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -102,33 +104,43 @@ export function LiquidityMinePage() {
           const amount = stakeAmounts[poolId] ?? "0";
           const response = await stakeLiquidityMine({ poolId, amount });
           setSummary(response.data);
-          setMessage(`已质押 ${amount} LP 到 ${summary.pools.find((p) => p.id === poolId)?.name ?? "pool"}.`);
+          setMessage(
+            isZh
+              ? `已向 ${summary.pools.find((p) => p.id === poolId)?.name ?? "矿池"} 提交 ${amount} LP 的质押意图。`
+              : `Submitted stake intent for ${amount} LP into ${summary.pools.find((p) => p.id === poolId)?.name ?? "pool"}.`,
+          );
         } else if (action === "unstake") {
           const pool = summary.pools.find((p) => p.id === poolId);
           const amount = pool?.userStaked ?? "0";
           const response = await unstakeLiquidityMine({ poolId, amount });
           setSummary(response.data);
-          setMessage(`已从 ${pool?.name ?? "pool"} 解除质押。`);
+          setMessage(isZh ? `已从 ${pool?.name ?? "矿池"} 提交解除质押意图。` : `Submitted unstake intent from ${pool?.name ?? "pool"}.`);
         } else {
           const response = await claimLiquidityMineReward(poolId);
           setSummary(response.data);
-          setMessage("挖矿奖励已领取。");
+          setMessage(isZh ? "挖矿奖励领取意图已提交。" : "Reward claim intent submitted.");
         }
         setLoadState("ready");
       } catch (error) {
-        setMessage(error instanceof Error ? error.message : "操作失败，请稍后重试。");
+        setMessage(error instanceof Error ? error.message : isZh ? "操作失败，请稍后重试。" : "Action failed. Please try again later.");
       } finally {
         setBusyPoolId(null);
       }
     },
-    [stakeAmounts, summary.pools],
+    [isZh, stakeAmounts, summary.pools],
   );
 
   return (
     <motion.div className="grid gap-5" data-testid="page-liquidity-mine">
-      <GlassPanel eyebrow="Liquidity mining" testId="liquidity-mine-hero" title="Liquidity Mine">
+      <GlassPanel
+        eyebrow={isZh ? "流动性挖矿" : "Liquidity Mining"}
+        testId="liquidity-mine-hero"
+        title={isZh ? "流动性挖矿" : "Liquidity Mine"}
+      >
         <p className="text-sm text-white/70">
-          质押 ION 流动性池 LP 份额，按区块领取 ION 挖矿奖励。锁定期内可紧急退出，但未领奖励将被清零。
+          {isZh
+            ? "质押 ION 流动性池 LP 份额，并按区块领取 ION 挖矿奖励。锁仓期内可紧急退出，但未领取奖励会被清零。"
+            : "Stake LP shares from ION liquidity pools and accrue ION rewards by block. You can exit early during lockup, but any unclaimed rewards are reset."}
         </p>
         <DataSourceBadge meta={meta} testId="liquidity-mine-source" />
       </GlassPanel>
@@ -136,13 +148,13 @@ export function LiquidityMinePage() {
       <AsyncState error={loadError} onRetry={reload} state={loadState} testId="liquidity-mine-stats">
         <motion.div className="grid gap-4 sm:grid-cols-2">
           <MetricTile
-            label="我的 LP 份额"
+            label={isZh ? "我的 LP 份额" : "My LP Shares"}
             testId="liquidity-mine-stat-lp-shares"
             tone="cyan"
             value={`${summary.myLpShares} LP`}
           />
           <MetricTile
-            label="待领取挖矿收益"
+            label={isZh ? "待领取奖励" : "Pending Reward"}
             testId="liquidity-mine-stat-pending-reward"
             tone="emerald"
             value={`${summary.pendingReward} ION`}
@@ -150,7 +162,7 @@ export function LiquidityMinePage() {
         </motion.div>
       </AsyncState>
 
-      <GlassPanel testId="liquidity-mine-pools" title="可参与资金池">
+      <GlassPanel testId="liquidity-mine-pools" title={isZh ? "可参与矿池" : "Available Pools"}>
         <div className="grid gap-3">
           {summary.pools.map((pool) => (
             <div
@@ -161,20 +173,24 @@ export function LiquidityMinePage() {
               <motion.div>
                 <p className="font-semibold text-white">{pool.name}</p>
                 <p className="text-sm text-white/55">
-                  年化 {pool.aprPct}% · 锁仓 {pool.lockupDays} 天 · 已质押 {pool.userStaked} LP
+                  {isZh
+                    ? `年化 ${pool.aprPct}% · 锁仓 ${pool.lockupDays} 天 · 已质押 ${pool.userStaked} LP`
+                    : `APR ${pool.aprPct}% · lockup ${pool.lockupDays}d · staked ${pool.userStaked} LP`}
                 </p>
                 {pool.pendingReward !== "0" && (
-                  <p className="text-xs text-emerald-300/90">待领 {pool.pendingReward} ION</p>
+                  <p className="text-xs text-emerald-300/90">
+                    {isZh ? `待领 ${pool.pendingReward} ION` : `Pending ${pool.pendingReward} ION`}
+                  </p>
                 )}
                 {pool.lockupActive && (
                   <p className="text-xs text-amber-300/90" data-testid={`liquidity-mine-lockup-${pool.id}`}>
-                    锁定期进行中
+                    {isZh ? "锁定期进行中" : "Lockup Active"}
                   </p>
                 )}
               </motion.div>
               <div className="flex flex-wrap items-center gap-2">
                 <input
-                  aria-label={`Stake amount for ${pool.name}`}
+                  aria-label={isZh ? `${pool.name} 的质押数量` : `Stake amount for ${pool.name}`}
                   className="w-24 rounded-lg border border-white/15 bg-black/30 px-2 py-1.5 text-sm text-white"
                   data-testid={`liquidity-mine-stake-amount-${pool.id}`}
                   inputMode="decimal"
@@ -189,7 +205,7 @@ export function LiquidityMinePage() {
                   onClick={() => void runAction(pool.id, "stake")}
                   type="button"
                 >
-                  加入质押
+                  {isZh ? "加入质押" : "Stake"}
                 </NeonButton>
                 <NeonButton
                   className="!bg-white/10 !shadow-none"
@@ -198,7 +214,7 @@ export function LiquidityMinePage() {
                   onClick={() => void runAction(pool.id, "unstake")}
                   type="button"
                 >
-                  解除质押
+                  {isZh ? "解除质押" : "Unstake"}
                 </NeonButton>
                 <NeonButton
                   className="!bg-emerald-500/20 !shadow-[0_0_20px_rgba(16,185,129,0.35)]"
@@ -207,7 +223,7 @@ export function LiquidityMinePage() {
                   onClick={() => void runAction(pool.id, "claim")}
                   type="button"
                 >
-                  领取奖励
+                  {isZh ? "领取奖励" : "Claim"}
                 </NeonButton>
               </div>
             </div>
@@ -215,11 +231,11 @@ export function LiquidityMinePage() {
         </div>
       </GlassPanel>
 
-      {message && (
+      {message ? (
         <p className="text-sm text-cyan-200/90" data-testid="liquidity-mine-confirmation">
           {message}
         </p>
-      )}
+      ) : null}
     </motion.div>
   );
 }

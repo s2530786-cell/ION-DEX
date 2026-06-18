@@ -25,5 +25,6 @@ ION DEX is planned as a full-stack Web3 trading and ecosystem portal for Ice Ope
 - [Verification Six Pillars](./verification-six-pillars.md)
 - [UI Design Route Lock](./10-ui-design-route.md)
 
-> Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
 
+
+> Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.

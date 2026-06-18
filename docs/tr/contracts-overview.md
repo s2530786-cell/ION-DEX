@@ -24,4 +24,3 @@
 - [ION Official DEX Core Logic Deep Dive](./ion-dex-core-logic-deep-dive.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

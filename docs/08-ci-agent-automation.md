@@ -16,6 +16,8 @@ Run the same verification humans use, **without** interactive `pause`, so agents
 | POSIX Cloud Agent (no pause) | `bash scripts/agent-verify.sh` |
 | Save full log to `%TEMP%\ion-verify-full.txt`, optional pause at end | `scripts\verify-full-save-log.cmd` |
 | Save log, never pause | `scripts\verify-full-save-log.cmd --no-pause` |
+| 100-green stage gate | `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-100.ps1` |
+| Install repository Git hooks | `node scripts/install-git-hooks.mjs` |
 | Interactive debugging with pause on failure | `scripts\verify-full.cmd` (no `CI` / no `ION_VERIFY_NONINTERACTIVE`) |
 | POSIX Cloud Agent full verification | `bash scripts/verify-full.sh` |
 
@@ -26,6 +28,27 @@ Environment variables recognised by `scripts\verify-full.cmd`:
 - `ION_UI_STRICT=1` — turns current unfinished UI copy warnings from `scripts/dev-preflight.mjs` into failures.
 
 `scripts\verify-full.cmd`, `scripts\verify-full.ps1`, `scripts\verify-full.sh`, `scripts\agent-verify.cmd`, and `scripts\verify-full-save-log.cmd --no-pause` run `node scripts/dev-preflight.mjs` before the encoding check.
+
+## Guarded commit and push
+
+All autonomous and human commit/push paths must now pass the same guard:
+
+1. `verify-full` is the development loop gate.
+2. `verify-100` is the stage exit gate.
+3. `scripts/verify-100.ps1` records a fresh proof through `scripts/verify-100-gate.mjs record`.
+4. `.githooks/pre-commit` blocks commit unless the fresh proof still matches:
+   - current `HEAD`
+   - current working tree snapshot
+   - current stage window / activation time when provided
+5. `.githooks/pre-push` blocks push unless every outgoing commit has a recorded `Verify-100-Proof` trailer and local ledger entry.
+
+Enable the versioned hooks in each clone:
+
+```powershell
+node scripts/install-git-hooks.mjs
+```
+
+Do not bypass this flow with `--no-verify`, manual trailer edits, or ad hoc commit scripts.
 
 ## GitHub Actions
 

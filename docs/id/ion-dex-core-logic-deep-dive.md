@@ -39,4 +39,3 @@ Source: ice-blockchain/dex-core-v2 + ice-swap + infinity-periphery Date: 2026-05
 - [Product Requirements Document](./05-product-prd.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

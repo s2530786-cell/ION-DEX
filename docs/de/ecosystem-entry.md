@@ -24,4 +24,3 @@
 - [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
 
 > Hinweis: Dieser Sprachpfad bietet einen stabilen öffentlichen Leseeinstieg; die englischen öffentlichen Dokumente bleiben die endgültige kanonische Quelle.
-

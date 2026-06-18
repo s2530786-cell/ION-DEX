@@ -37,4 +37,3 @@
 - [Product Requirements Document](./05-product-prd.md)
 
 > Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
-

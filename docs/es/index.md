@@ -35,4 +35,3 @@ Esta página sirve como puerta de entrada en español a la documentación de ION
 - [English Developer Index](../developer-index.md)
 
 > Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
-

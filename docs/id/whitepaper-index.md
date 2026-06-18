@@ -19,4 +19,3 @@ Halaman ini adalah jalur baca whitepaper dalam Bahasa Indonesia untuk memahami v
 - [Whitepaper lengkap bahasa Inggris](../WHITEPAPER.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

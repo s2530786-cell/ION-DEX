@@ -37,4 +37,3 @@
 - [Product Requirements Document](./05-product-prd.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

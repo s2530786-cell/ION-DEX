@@ -2,7 +2,7 @@
 
 # ION DEX Official Ecosystem Access Architecture
 
-# ION DEX 官方生态入口总设计 1.0
+Last updated: 2026-05-30 Foundation: `docs/ion-official-ecosystem-panorama.md` Design horizon: 50+ years Standard: Lead the blockchain/Web3 industry by decades, not margins
 
 
 ## Bắt đầu từ đây
@@ -39,4 +39,3 @@
 - [Verification Six Pillars](./verification-six-pillars.md)
 
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
-

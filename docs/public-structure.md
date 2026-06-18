@@ -38,7 +38,7 @@ This separation allows transparent public development while protecting competiti
 ION DEX is currently in **Phase 0–1** (Brand & Infrastructure). During this stage:
 - **Master** makes all strategic decisions.
 - **Development direction** follows the P0–P10 roadmap.
-- **Contract upgrades** require Master signature + timelock.
+- **Contract upgrades** are intended to require explicit authorization and timelock/multisig controls before real-fund deployment.
 
 This is intentional. A civilization-scale project needs coherent direction during foundation-building. Committee governance at this stage would dilute the long-horizon vision.
 
@@ -76,16 +76,14 @@ Before any contract handles real funds:
 
 ## Revenue Distribution
 
-All revenue is distributed according to the structure in README:
+Public revenue documents should be read as **draft economics until audited contracts and deployment docs are published**.
 
-| Allocation | Share | Priority |
-|------------|-------|----------|
-| Master | 25% | First (paid before any other allocation) |
-| Fee Burn | Dynamic | Bear: high / Bull: moderate |
-| Staking Rewards | Dynamic | Bear: high / Bull: high |
-| Treasury | Dynamic | Remaining |
+The repository currently contains:
+- fee and tokenomics blueprints,
+- draft burn / staking / treasury / builder allocation narratives,
+- and engineering notes that are **not yet fully canonical across all public docs**.
 
-This distribution is **non-negotiable and permanent**. Master's 25% ensures the builder profits only when the platform profits.
+The current public baseline is [`02-tokenomics-and-fees.md`](./02-tokenomics-and-fees.md), which explicitly states that final values must be reviewed before mainnet.
 
 ---
 
@@ -94,10 +92,10 @@ This distribution is **non-negotiable and permanent**. Master's 25% ensures the 
 ### What is Verifiable
 
 All of the following can be verified on [ION Explorer](https://explorer.ice.io/):
-- **Transaction history** — Every trade, payment, and transfer.
-- **Fee burn events** — ION sent to burn address `0x000...dEaD`.
-- **Staking positions** — Lock-up amounts, durations, rewards.
-- **Contract deployments** — Transaction hash, bytecode, audit reports.
+- **Transaction history** — for modules that are actually deployed on-chain.
+- **Fee burn events** — once burn contracts/addresses are published and active.
+- **Staking positions** — once staking contracts are deployed and publicly documented.
+- **Contract deployments** — transaction hash, bytecode, and audit reports for published contracts.
 
 ### What is Published
 

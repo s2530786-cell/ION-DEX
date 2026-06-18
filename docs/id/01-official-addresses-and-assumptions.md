@@ -33,4 +33,3 @@ This document lists the external facts that must be confirmed before production 
 - [ION DEX Official Ecosystem Access Architecture](./ion-ecosystem-access-architecture.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

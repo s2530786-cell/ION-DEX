@@ -24,4 +24,3 @@
 - [AI Sentinel Security Test Matrix](./28-ai-sentinel-security-test-matrix-v1.md)
 
 > Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
-

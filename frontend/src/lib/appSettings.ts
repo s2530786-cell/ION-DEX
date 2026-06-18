@@ -1,3 +1,5 @@
+import { DEFAULT_APP_LOCALE, isAppLocale, type AppLocale } from "@/i18n/types";
+
 export const APP_SETTINGS_STORAGE_KEY = "ion-dex-app-settings";
 
 /** Keys cleared by “Clear local cache”; wallet session keys are never removed. */
@@ -7,12 +9,14 @@ export type AppSettings = {
   darkMode: boolean;
   defaultSlippagePct: string;
   pushNotifications: boolean;
+  locale: AppLocale;
 };
 
 const DEFAULT_SETTINGS: AppSettings = {
   darkMode: true,
   defaultSlippagePct: "0.5",
   pushNotifications: true,
+  locale: DEFAULT_APP_LOCALE,
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -47,7 +51,8 @@ export function loadAppSettings(): AppSettings {
       parseSlippagePct(slippageCandidate) !== null ? slippageCandidate : DEFAULT_SETTINGS.defaultSlippagePct;
     const pushNotifications =
       typeof parsed.pushNotifications === "boolean" ? parsed.pushNotifications : DEFAULT_SETTINGS.pushNotifications;
-    return { darkMode, defaultSlippagePct, pushNotifications };
+    const locale = isAppLocale(parsed.locale) ? parsed.locale : DEFAULT_SETTINGS.locale;
+    return { darkMode, defaultSlippagePct, pushNotifications, locale };
   } catch {
     return { ...DEFAULT_SETTINGS };
   }
@@ -66,6 +71,8 @@ export function applyAppSettingsToDocument(settings: AppSettings): void {
   }
   document.documentElement.dataset.ionDarkMode = settings.darkMode ? "1" : "0";
   document.documentElement.dataset.ionSlippage = settings.defaultSlippagePct;
+  document.documentElement.dataset.ionLocale = settings.locale;
+  document.documentElement.lang = settings.locale;
 }
 
 export function clearAppLocalCache(): number {

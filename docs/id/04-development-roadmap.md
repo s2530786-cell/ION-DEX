@@ -39,4 +39,3 @@ This roadmap defines the build order. Each phase depends on the phase before it 
 - [Verification Six Pillars](./verification-six-pillars.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

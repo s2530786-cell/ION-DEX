@@ -39,4 +39,3 @@ This checklist defines how to integrate the scraping stack into ION DEX and how 
 - [Public Development Scope](./28-public-development-scope.md)
 
 > Примечание: эта языковая ветка дает стабильный публичный вход для чтения; английские публичные документы остаются финальным каноническим источником.
-

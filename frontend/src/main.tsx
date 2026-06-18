@@ -6,6 +6,7 @@ import { applyAppSettingsToDocument, loadAppSettings } from "@/lib/appSettings";
 import { IonConnectUiProvider } from "@/components/wallet/IonConnectUiProvider";
 import { EvmWalletProvider } from "@/wallet/EvmWalletProvider";
 import { IonWalletProvider } from "@/wallet/IonWalletProvider";
+import { I18nProvider } from "@/i18n/I18nProvider";
 import { startEip6963Discovery } from "@/wallet/eip6963";
 import "./styles/global.css";
 
@@ -19,17 +20,21 @@ try {
   /* private mode */
 }
 
-applyAppSettingsToDocument(loadAppSettings());
+const initialSettings = loadAppSettings();
+
+applyAppSettingsToDocument(initialSettings);
 startEip6963Discovery();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <IonConnectUiProvider>
-      <IonWalletProvider>
-        <EvmWalletProvider>
-          <App />
-        </EvmWalletProvider>
-      </IonWalletProvider>
-    </IonConnectUiProvider>
+    <I18nProvider initialLocale={initialSettings.locale}>
+      <IonConnectUiProvider>
+        <IonWalletProvider>
+          <EvmWalletProvider>
+            <App />
+          </EvmWalletProvider>
+        </IonWalletProvider>
+      </IonConnectUiProvider>
+    </I18nProvider>
   </React.StrictMode>,
 );

@@ -19,4 +19,3 @@ Esta página es la ruta de lectura en español del whitepaper para entender ráp
 - [Whitepaper completo en inglés](../WHITEPAPER.md)
 
 > Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
-

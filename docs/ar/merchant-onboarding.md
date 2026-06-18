@@ -23,4 +23,3 @@
 - [ION DEX Scraping Security Integration Checklist](./27-ion-dex-scraping-security-integration-v1.md)
 
 > ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.
-

@@ -24,4 +24,3 @@
 - [Official Addresses And Open Assumptions](./01-official-addresses-and-assumptions.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-

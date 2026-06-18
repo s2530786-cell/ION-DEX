@@ -24,4 +24,3 @@
 - [ION Official DEX Core Logic Deep Dive](./ion-dex-core-logic-deep-dive.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

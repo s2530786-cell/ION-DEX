@@ -31,4 +31,6 @@ _Last updated: 2026-06-04_
 - [Verification Checklist](./07-verification-six-pillars.md)
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 
+
+
 > ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.

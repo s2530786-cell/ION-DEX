@@ -30,5 +30,6 @@
 - [UI Design Route Lock](./10-ui-design-route.md)
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
-> 참고: 이 언어 경로는 안정적인 공개 읽기 입구를 제공합니다. 최종 정본은 여전히 영어 공개 문서입니다.
 
+
+> 참고: 이 언어 경로는 안정적인 공개 읽기 입구를 제공합니다. 최종 정본은 여전히 영어 공개 문서입니다.

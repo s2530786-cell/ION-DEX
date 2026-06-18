@@ -33,4 +33,3 @@ This document lists the external facts that must be confirmed before production 
 - [ION DEX Official Ecosystem Access Architecture](./ion-ecosystem-access-architecture.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

@@ -31,4 +31,6 @@ _Last updated: 2026-06-04_
 - [Verification Checklist](./07-verification-six-pillars.md)
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 
+
+
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.

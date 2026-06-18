@@ -37,4 +37,3 @@
 - [Product Requirements Document](./05-product-prd.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

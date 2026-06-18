@@ -2,6 +2,7 @@
 
 # Visual Acceptance Workflow Plan
 
+This work plan turns Master's visual signoff requirement into an executable workflow:
 
 
 ## เริ่มที่นี่
@@ -30,5 +31,6 @@
 - [Page Flow And User Journeys](./06-page-flow-and-user-journeys.md)
 - [Test Coverage Matrix](./TEST-COVERAGE-MATRIX.md)
 
-> หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
 
+
+> หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย

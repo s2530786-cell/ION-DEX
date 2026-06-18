@@ -37,4 +37,3 @@ This document defines the initial fee, burn, treasury, team, staking, keeper, an
 - [Public Development Scope](./28-public-development-scope.md)
 
 > ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.
-

@@ -39,4 +39,3 @@ This roadmap defines the build order. Each phase depends on the phase before it 
 - [Verification Six Pillars](./verification-six-pillars.md)
 
 > नोट: यह भाषा-पथ स्थिर public reading entry देता है; अंतिम canonical source अब भी English public documents हैं।
-

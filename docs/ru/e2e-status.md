@@ -31,4 +31,6 @@ _Last updated: 2026-06-04_
 - [Verification Checklist](./07-verification-six-pillars.md)
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 
+
+
 > Примечание: эта языковая ветка дает стабильный публичный вход для чтения; английские публичные документы остаются финальным каноническим источником.

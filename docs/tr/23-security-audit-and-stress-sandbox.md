@@ -39,4 +39,3 @@ This document turns the security framework into an execution plan.
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

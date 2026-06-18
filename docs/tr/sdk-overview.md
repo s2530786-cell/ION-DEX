@@ -24,4 +24,3 @@
 - [Official Addresses And Open Assumptions](./01-official-addresses-and-assumptions.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

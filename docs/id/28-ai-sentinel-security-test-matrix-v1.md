@@ -34,4 +34,3 @@ This matrix defines executable and auditable tests for sandbox-only security too
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

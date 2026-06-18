@@ -6,6 +6,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { SignSummaryDialog } from "@/components/wallet/SignSummaryDialog";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
+import { useI18n } from "@/i18n/I18nProvider";
 import { BSC_CHAIN_ID, ION_CHAIN_ID_SCAFFOLD } from "@/lib/integrationConfig";
 import type { AssetSignSummary } from "@/wallet/signSummary";
 import { useEvmWallet } from "@/wallet/EvmWalletProvider";
@@ -41,6 +42,7 @@ function toPositiveNumber(value: string): number | null {
 }
 
 export function BridgePage() {
+  const { isZh } = useI18n();
   const evmWallet = useEvmWallet();
   const ionWallet = useIonWallet();
   const { data: walletClient } = useWalletClient();
@@ -70,13 +72,13 @@ export function BridgePage() {
         setRoutesError(null);
       })
       .catch((error: unknown) => {
-        setRoutesError(error instanceof Error ? error.message : "Bridge routes unavailable.");
+        setRoutesError(error instanceof Error ? error.message : isZh ? "跨链路由暂不可用。" : "Bridge routes unavailable.");
         setRoutesPayload(null);
         setRoutesMeta(null);
       })
       .finally(() => setRoutesLoading(false));
     return () => controller.abort();
-  }, []);
+  }, [isZh]);
 
   const validation = useMemo(() => {
     const parsedAmount = toPositiveNumber(amount);
@@ -108,16 +110,22 @@ export function BridgePage() {
       }
 
       setPendingSummary({
-        action: "Bridge transfer",
+        action: isZh ? "跨链转移" : "Bridge transfer",
         token: asset.toUpperCase(),
         amount: String(validation.parsedAmount),
-        fee: activeRoute ? `~${activeRoute.estimatedMinutes} min relay` : "relayer fee TBD",
+        fee: activeRoute
+          ? isZh
+            ? `约 ${activeRoute.estimatedMinutes} 分钟中继`
+            : `~${activeRoute.estimatedMinutes} min relay`
+          : isZh
+            ? "中继费用待定"
+            : "relayer fee TBD",
         chainId: direction === "bsc-ion" ? BSC_CHAIN_ID : ION_CHAIN_ID_SCAFFOLD,
         destination: destination.trim() || undefined,
       });
       setSummaryOpen(true);
     },
-    [activeRoute, asset, destination, direction, validation.isValid, validation.parsedAmount],
+    [activeRoute, asset, destination, direction, isZh, validation.isValid, validation.parsedAmount],
   );
 
   const executeBridgeAfterSummary = useCallback(
@@ -133,11 +141,13 @@ export function BridgePage() {
       try {
         if (direction === "bsc-ion") {
           if (evmWallet.status !== "connected" || !evmWallet.snapshot?.address) {
-            throw new Error("Connect a BSC wallet (MetaMask, OKX, Binance Web3, etc.) first.");
+            throw new Error(isZh ? "请先连接 BSC 钱包（MetaMask、OKX、Binance Web3 等）。" : "Connect a BSC wallet (MetaMask, OKX, Binance Web3, etc.) first.");
           }
           if (!bridgeContractsConfigured() || !evmWallet.publicClient || !walletClient) {
             throw new Error(
-              "Set VITE_BSC_VAULT_ADDRESS and VITE_ION_WRAPPER_ADDRESS in frontend .env to enable on-chain bridge calls.",
+              isZh
+                ? "请在 frontend .env 中设置 VITE_BSC_VAULT_ADDRESS 和 VITE_ION_WRAPPER_ADDRESS，以启用链上跨链调用。"
+                : "Set VITE_BSC_VAULT_ADDRESS and VITE_ION_WRAPPER_ADDRESS in frontend .env to enable on-chain bridge calls.",
             );
           }
 
@@ -146,7 +156,7 @@ export function BridgePage() {
 
           if (asset === "bnb") {
             if (!BSC_BRIDGE_NATIVE_RECEIVER) {
-              throw new Error("Set VITE_BSC_BRIDGE_NATIVE_RECEIVER for native BNB bridge deposits.");
+              throw new Error(isZh ? "原生 BNB 跨链充值需要设置 VITE_BSC_BRIDGE_NATIVE_RECEIVER。" : "Set VITE_BSC_BRIDGE_NATIVE_RECEIVER for native BNB bridge deposits.");
             }
             const hash = await walletClient.sendTransaction({
               account,
@@ -196,7 +206,7 @@ export function BridgePage() {
         }
 
         if (ionWallet.status !== "connected" || !ionWallet.snapshot) {
-          throw new Error("Connect an ION wallet for ION Chain to BSC transfers.");
+          throw new Error(isZh ? "ION Chain → BSC 转移需要先连接 ION 钱包。" : "Connect an ION wallet for ION Chain to BSC transfers.");
         }
 
         if (
@@ -237,7 +247,7 @@ export function BridgePage() {
         });
         setTxHash(result.proof);
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Bridge transaction failed.";
+        const message = error instanceof Error ? error.message : isZh ? "跨链交易失败。" : "Bridge transaction failed.";
         setFormError(message);
       } finally {
         setSubmitting(false);
@@ -256,6 +266,7 @@ export function BridgePage() {
       validation.isValid,
       validation.parsedAmount,
       walletClient,
+      isZh,
     ],
   );
 
@@ -270,13 +281,14 @@ export function BridgePage() {
       />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-200/55">Cross-chain</p>
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-200/55">{isZh ? "跨链" : "Cross-chain"}</p>
           <h1 className="mt-2 text-3xl font-black text-white" data-testid="page-title">
-            BSC &lt;&gt; ION bridge
+            {isZh ? "BSC <> ION 跨链桥" : "BSC <> ION bridge"}
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-cyan-100/60">
-            USDT (BSC) and BNB (BSC) to ION (ION Chain), and ION back to BSC via vault deposit, wION burn, or native ION
-            transfer.
+            {isZh
+              ? "支持 USDT（BSC）和 BNB（BSC）跨到 ION（ION Chain），也支持通过金库充值、wION 销毁或原生 ION 转账从 ION 回到 BSC。"
+              : "USDT (BSC) and BNB (BSC) to ION (ION Chain), and ION back to BSC via vault deposit, wION burn, or native ION transfer."}
           </p>
         </div>
         <DataSourceBadge meta={routesMeta} testId="bridge-metrics-source" />
@@ -290,13 +302,13 @@ export function BridgePage() {
         {routesPayload ? (
           <NeonCard className="p-4">
             <p className="text-sm text-cyan-100/70">
-              Relayer: {routesPayload.relayerStatus} · Verifier threshold: {routesPayload.verifier.threshold} · Replay
-              guard: {routesPayload.verifier.replayProtection ? "on" : "off"}
+              {isZh ? "中继器" : "Relayer"}: {routesPayload.relayerStatus} · {isZh ? "验证阈值" : "Verifier threshold"}: {routesPayload.verifier.threshold} · {isZh ? "重放保护" : "Replay guard"}: {routesPayload.verifier.replayProtection ? (isZh ? "开启" : "on") : isZh ? "关闭" : "off"}
             </p>
             {activeRoute ? (
               <p className="mt-2 text-xs text-cyan-100/50">
-                Active route {activeRoute.routeId}: {activeRoute.minAmountIon}–{activeRoute.maxAmountIon} ION · ~
-                {activeRoute.estimatedMinutes} min · {activeRoute.confirmationsRequired} confirmations
+                {isZh
+                  ? `当前路线 ${activeRoute.routeId}：${activeRoute.minAmountIon}–${activeRoute.maxAmountIon} ION · 约 ${activeRoute.estimatedMinutes} 分钟 · ${activeRoute.confirmationsRequired} 次确认`
+                  : `Active route ${activeRoute.routeId}: ${activeRoute.minAmountIon}–${activeRoute.maxAmountIon} ION · ~${activeRoute.estimatedMinutes} min · ${activeRoute.confirmationsRequired} confirmations`}
               </p>
             ) : null}
           </NeonCard>
@@ -307,7 +319,7 @@ export function BridgePage() {
         <form className="grid gap-4" data-testid="bridge-form" onSubmit={(event) => submitBridge(event)}>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="grid gap-2 text-sm">
-              <span className="font-bold text-cyan-100/70">Route</span>
+              <span className="font-bold text-cyan-100/70">{isZh ? "路线" : "Route"}</span>
               <select
                 className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-white"
                 data-testid="bridge-direction"
@@ -317,12 +329,12 @@ export function BridgePage() {
                 }}
                 value={direction}
               >
-                <option value="bsc-ion">BSC → ION Chain</option>
-                <option value="ion-bsc">ION Chain → BSC</option>
+                <option value="bsc-ion">{isZh ? "BSC → ION 链" : "BSC → ION Chain"}</option>
+                <option value="ion-bsc">{isZh ? "ION 链 → BSC" : "ION Chain → BSC"}</option>
               </select>
             </label>
             <label className="grid gap-2 text-sm">
-              <span className="font-bold text-cyan-100/70">Asset</span>
+              <span className="font-bold text-cyan-100/70">{isZh ? "资产" : "Asset"}</span>
               <select
                 className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-white"
                 data-testid="bridge-asset"
@@ -341,7 +353,7 @@ export function BridgePage() {
 
           <div className="grid gap-3 md:grid-cols-2">
             <label className="grid gap-2 text-sm">
-              <span className="font-bold text-cyan-100/70">Amount</span>
+              <span className="font-bold text-cyan-100/70">{isZh ? "数量" : "Amount"}</span>
               <input
                 className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-white"
                 data-testid="bridge-amount"
@@ -356,7 +368,7 @@ export function BridgePage() {
               />
             </label>
             <label className="grid gap-2 text-sm">
-              <span className="font-bold text-cyan-100/70">Destination address / memo</span>
+              <span className="font-bold text-cyan-100/70">{isZh ? "目标地址 / 备注" : "Destination address / memo"}</span>
               <input
                 className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-white"
                 data-testid="bridge-destination"
@@ -376,7 +388,7 @@ export function BridgePage() {
               className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
               data-testid="bridge-error"
             >
-              Destination must be at least 8 characters.
+              {isZh ? "目标地址或备注至少需要 8 个字符。" : "Destination must be at least 8 characters."}
             </p>
           ) : null}
 
@@ -392,14 +404,12 @@ export function BridgePage() {
           >
             {validation.isValid ? (
               <span>
-                Bridge preview: {direction === "bsc-ion" ? "BSC → ION Chain" : "ION Chain → BSC"} · {asset.toUpperCase()}{" "}
-                {validation.parsedAmount?.toLocaleString()} · destination {destination.trim().slice(0, 12)}…
-                {bridgeContractsConfigured()
-                  ? " · on-chain vault/wrapper configured"
-                  : " · configure VITE_BSC_VAULT_ADDRESS / VITE_ION_WRAPPER_ADDRESS for contract calls"}
+                {isZh
+                  ? `跨链预览：${direction === "bsc-ion" ? "BSC → ION Chain" : "ION Chain → BSC"} · ${asset.toUpperCase()} ${validation.parsedAmount?.toLocaleString()} · 目标 ${destination.trim().slice(0, 12)}…${bridgeContractsConfigured() ? " · 已配置链上金库 / 包装器" : " · 需配置 VITE_BSC_VAULT_ADDRESS / VITE_ION_WRAPPER_ADDRESS 才能调用合约"}`
+                  : `Bridge preview: ${direction === "bsc-ion" ? "BSC → ION Chain" : "ION Chain → BSC"} · ${asset.toUpperCase()} ${validation.parsedAmount?.toLocaleString()} · destination ${destination.trim().slice(0, 12)}…${bridgeContractsConfigured() ? " · on-chain vault/wrapper configured" : " · configure VITE_BSC_VAULT_ADDRESS / VITE_ION_WRAPPER_ADDRESS for contract calls"}`}
               </span>
             ) : (
-              <span>Enter a positive amount and a valid destination to continue.</span>
+              <span>{isZh ? "请输入有效数量和目标地址后继续。" : "Enter a positive amount and a valid destination to continue."}</span>
             )}
           </div>
 
@@ -409,7 +419,7 @@ export function BridgePage() {
             disabled={!validation.isValid || submitting}
             type="submit"
           >
-            {submitting ? "Submitting…" : "Submit Bridge Transfer"}
+            {submitting ? (isZh ? "提交中…" : "Submitting…") : isZh ? "提交跨链转移" : "Submit Bridge Transfer"}
           </NeonButton>
 
           {txHash ? (
@@ -417,7 +427,7 @@ export function BridgePage() {
               className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100 break-all"
               data-testid="bridge-confirmation"
             >
-              Bridge transaction submitted. Proof: {txHash}
+              {isZh ? `跨链交易已提交。凭证：${txHash}` : `Bridge transaction submitted. Proof: ${txHash}`}
             </p>
           ) : null}
         </form>

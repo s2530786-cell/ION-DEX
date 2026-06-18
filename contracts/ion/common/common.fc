@@ -53,7 +53,12 @@ const op::distribute_fees = 4444444444;         ;; 0x1092A6AC
 const op::set_recipients = 5555555555;          ;; 0x14FAE6EB
 
 ;; Bridge inbox
-const op::bridge_message = 6666666666;          ;; 0x18D0E6EA
+const op::bridge_submit = 6666666666;           ;; 0x18D0E6EA
+const op::bridge_execute = 6666666667;          ;; 0x18D0E6EB
+const op::bridge_ack = 6666666668;              ;; 0x18D0E6EC
+const op::bridge_retry = 6666666669;            ;; 0x18D0E6ED
+const op::set_bridge_quorum = 6666666670;       ;; 0x18D0E6EE
+const op::bridge_message = 6666666666;          ;; backward-compatible alias
 const op::set_relayer = 7777777777;             ;; 0x1D1CFF31
 const op::revoke_relayer = 8888888888;          ;; 0x34F74978
 
@@ -101,6 +106,11 @@ const error::insufficient_stake = 119;
 const error::invalid_path = 120;
 const error::fee_bps_invalid = 121;
 const error::reentrancy = 122;
+const error::quorum_not_reached = 123;
+const error::already_approved = 124;
+const error::bridge_pending = 125;
+const error::bridge_not_found = 126;
+const error::bridge_bad_state = 127;
 const error::expired = 402;
 const error::invalid_seqno = 403;
 const error::wrong_router = 404;
@@ -126,6 +136,7 @@ const DESTROY_IF_ZERO = 32;
 ;; int and slice from the same function.
 
 global slice ctx::body_slice;       ;; BODY  - message body as slice
+global slice ctx::raw_body_slice;   ;; RAW BODY - original body including opcode
 global slice ctx::sender_slice;     ;; SENDER - sender address
 global int ctx::opcode_val;         ;; OPCODE - 32-bit operation code
 global int ctx::is_bounced;         ;; IS_BOUNCED - bounce flag
@@ -145,8 +156,14 @@ const FWD_FEE = 6;
     ;; Store raw slices/values into typed globals
     ctx::msg_value_val = msg_value;
     ctx::balance_val = my_balance;
-    ctx::body_slice = in_msg_body;
-    ctx::opcode_val = in_msg_body.preload_uint(32);
+    ctx::raw_body_slice = in_msg_body;
+    if in_msg_body.slice_bits() >= 32 {
+        ctx::opcode_val = in_msg_body.preload_uint(32);
+        ctx::body_slice = in_msg_body.skip_bits(32);
+    } else {
+        ctx::opcode_val = 0;
+        ctx::body_slice = in_msg_body;
+    }
 
     ;; Extract sender address
     slice cs = in_msg_full.begin_parse();
@@ -165,6 +182,7 @@ const FWD_FEE = 6;
 ;; ── Typed context accessors (use these instead of ctx.at) ────────
 
 slice ctx::body() inline { return ctx::body_slice; }
+slice ctx::raw_body() inline { return ctx::raw_body_slice; }
 slice ctx::sender() inline { return ctx::sender_slice; }
 int   ctx::opcode() inline { return ctx::opcode_val; }
 int   ctx::isBounced() inline { return ctx::is_bounced; }
@@ -175,8 +193,16 @@ int   ctx::value() inline { return ctx::msg_value_val; }
 ;; ── Address Utilities ────────────────────────────────────────────
 
 int address::check_workchain(slice addr, int expected_workchain) inline {
-    int wc = addr.preload_int(8);
+    (int wc, int _hash) = parse_std_addr(addr);
     return wc == expected_workchain ? -1 : 0;
+}
+
+int address::is_none(slice addr) inline {
+    return addr.preload_uint(2) == 0;
+}
+
+slice address::none() inline {
+    return begin_cell().store_uint(0, 2).end_cell().begin_parse();
 }
 
 ;; ── Reserve Utilities ────────────────────────────────────────────
@@ -222,16 +248,32 @@ int amm::get_amount_out(int amount_in, int reserve_in, int reserve_out, int fee_
     return numerator / denominator;
 }
 
-() msgs::send_simple(int mode, slice to, cell body, int send_mode) impure inline {
-    send_raw_message(
-        begin_cell()
-            .store_uint(send_mode, 8)
-            .store_slice(to)
-            .store_coins(mode)
-            .store_uint(1, 1)   ;; bounceable
-            .store_uint(0, 1)   ;; body as ref
-            .store_ref(body)
-        .end_cell(),
-        2  ;; send_message_ignore_errors
-    );
+() msgs::send_internal(int value, slice to, cell body, int bounce, int mode) impure inline {
+    builder msg = begin_cell()
+        .store_uint(bounce ? 0x18 : 0x10, 6)
+        .store_slice(to)
+        .store_coins(value)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32)
+        .store_uint(0, 1);  ;; no StateInit
+
+    if cell_null?(body) {
+        msg~store_uint(0, 1);  ;; empty body, inline
+    } else {
+        msg~store_uint(1, 1);  ;; body as ref
+        msg = msg.store_ref(body);
+    }
+
+    send_raw_message(msg.end_cell(), mode);
+}
+
+() msgs::send_simple(int value, slice to, cell body, int mode) impure inline {
+    msgs::send_internal(value, to, body, -1, mode);
+}
+
+() msgs::send_value(int value, slice to, cell body, int mode) impure inline {
+    msgs::send_internal(value, to, body, -1, mode);
+}
+
+() msgs::send_nobounce(int value, slice to, cell body, int mode) impure inline {
+    msgs::send_internal(value, to, body, 0, mode);
 }

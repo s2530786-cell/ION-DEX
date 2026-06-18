@@ -19,4 +19,3 @@ Questa pagina è il percorso di lettura italiano del whitepaper per comprendere 
 - [Whitepaper completa in inglese](../WHITEPAPER.md)
 
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
-

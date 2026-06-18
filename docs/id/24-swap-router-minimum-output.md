@@ -2,6 +2,7 @@
 
 # Swap Router Minimum Output Enforcement
 
+`backend/src/lib/minimum-output.ts` defines the canonical formula:
 
 
 ## Mulai dari sini
@@ -32,4 +33,3 @@
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

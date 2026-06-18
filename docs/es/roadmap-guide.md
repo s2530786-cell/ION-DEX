@@ -23,4 +23,3 @@
 - [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
 
 > Nota: esta ruta en el idioma ofrece una entrada pública estable para leer; los documentos públicos en inglés siguen siendo la fuente canónica final.
-

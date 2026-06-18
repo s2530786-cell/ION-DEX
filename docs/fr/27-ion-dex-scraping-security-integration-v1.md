@@ -39,4 +39,3 @@ This checklist defines how to integrate the scraping stack into ION DEX and how 
 - [Public Development Scope](./28-public-development-scope.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

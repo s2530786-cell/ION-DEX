@@ -31,4 +31,6 @@ _Last updated: 2026-06-04_
 - [Verification Checklist](./07-verification-six-pillars.md)
 - [Six-Pillar Verification Quickstart](./07-verification-README.md)
 
+
+
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。

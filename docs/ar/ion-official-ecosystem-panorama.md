@@ -39,4 +39,3 @@ Last updated: 2026-05-30 Source: https://ice.io deep scan Purpose: Complete refe
 - [UI Design Route Lock](./10-ui-design-route.md)
 
 > ملاحظة: هذه السلسلة اللغوية توفّر مدخلاً عاماً ثابتاً للقراءة، بينما تبقى الوثائق العامة الإنجليزية هي المصدر المعياري النهائي.
-

@@ -30,5 +30,6 @@
 - [UI Design Route Lock](./10-ui-design-route.md)
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
-> Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
 
+
+> Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.

@@ -39,4 +39,3 @@ This document maps selected external repositories to ION DEX architecture decisi
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
-

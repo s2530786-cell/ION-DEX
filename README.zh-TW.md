@@ -1,6 +1,6 @@
-**Languages:** [English](./README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [Русский](./README.ru.md) | [Español](./README.es.md) | [Português](./README.pt.md) | [العربية](./README.ar.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [हिन्दी](./README.hi.md) | [Türkçe](./README.tr.md) | [Italiano](./README.it.md) | [Bahasa Indonesia](./README.id.md) | [Tiếng Việt](./README.vi.md) | [ไทย](./README.th.md) | [Polski](./README.pl.md)
+**Languages:** [English](https://s2530786-cell.github.io/ION-DEX/#/en/readme) | [简体中文](https://translate.google.com/translate?sl=auto&tl=zh-CN&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fzh-CN%252Freadme) | [繁體中文](https://translate.google.com/translate?sl=auto&tl=zh-TW&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fzh-TW%252Freadme) | [Русский](https://translate.google.com/translate?sl=auto&tl=ru&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fru%252Freadme) | [Español](https://translate.google.com/translate?sl=auto&tl=es&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fes%252Freadme) | [Português](https://translate.google.com/translate?sl=auto&tl=pt&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fpt%252Freadme) | [العربية](https://translate.google.com/translate?sl=auto&tl=ar&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Far%252Freadme) | [Français](https://translate.google.com/translate?sl=auto&tl=fr&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Ffr%252Freadme) | [Deutsch](https://translate.google.com/translate?sl=auto&tl=de&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fde%252Freadme) | [日本語](https://translate.google.com/translate?sl=auto&tl=ja&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fja%252Freadme) | [한국어](https://translate.google.com/translate?sl=auto&tl=ko&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fko%252Freadme) | [हिन्दी](https://translate.google.com/translate?sl=auto&tl=hi&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fhi%252Freadme) | [Türkçe](https://translate.google.com/translate?sl=auto&tl=tr&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Ftr%252Freadme) | [Italiano](https://translate.google.com/translate?sl=auto&tl=it&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fit%252Freadme) | [Bahasa Indonesia](https://translate.google.com/translate?sl=auto&tl=id&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fid%252Freadme) | [Tiếng Việt](https://translate.google.com/translate?sl=auto&tl=vi&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fvi%252Freadme) | [ไทย](https://translate.google.com/translate?sl=auto&tl=th&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fth%252Freadme) | [Polski](https://translate.google.com/translate?sl=auto&tl=pl&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fpl%252Freadme)
 
-> **18-language docs site:** [Open 繁體中文 site view](https://s2530786-cell.github.io/ION-DEX/#/zh-TW/readme)
+> **18-language docs site:** [Open 繁體中文 site view](https://translate.google.com/translate?sl=auto&tl=zh-TW&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fzh-TW%252Freadme)
 > **Auto-translate repository:** [Open GitHub repository in 繁體中文](https://translate.google.com/translate?sl=auto&tl=zh-TW&u=https%3A%2F%2Fgithub.com%2Fs2530786-cell%2FION-DEX)
 
 # ION — 超級數位文明的作業系統
@@ -9,9 +9,9 @@
 
 ## 從這裡開始
 
-- [文件中心](./docs/zh-TW/index.md)
-- [白皮書導覽](./docs/whitepaper/zh-TW/WHITEPAPER.zh-TW.md)
-- [白皮書索引](./docs/zh-TW/whitepaper-index.md)
+- [文件中心](https://translate.google.com/translate?sl=auto&tl=zh-TW&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fzh-TW%252Fdocs%252Findex)
+- [白皮書導覽](https://translate.google.com/translate?sl=auto&tl=zh-TW&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fzh-TW%252Fwhitepaper)
+- [白皮書索引](https://translate.google.com/translate?sl=auto&tl=zh-TW&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fzh-TW%252Fdocs%252Fwhitepaper-index)
 - [瀏覽器](https://explorer.ice.io/)
 
 ## ION DEX 簡介
@@ -28,8 +28,8 @@
 
 ## 下一步閱讀
 
-- [文件中心](./docs/zh-TW/index.md)
-- [白皮書導覽](./docs/whitepaper/zh-TW/WHITEPAPER.zh-TW.md)
+- [文件中心](https://translate.google.com/translate?sl=auto&tl=zh-TW&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fzh-TW%252Fdocs%252Findex)
+- [白皮書導覽](https://translate.google.com/translate?sl=auto&tl=zh-TW&u=https%3A%2F%2Fs2530786-cell.github.io%2FION-DEX%2F%3Froute%3D%252Fzh-TW%252Fwhitepaper)
 - [英文完整白皮書](./docs/WHITEPAPER.md)
 
 > 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。

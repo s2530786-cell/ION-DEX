@@ -23,4 +23,3 @@
 - [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
 
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
-

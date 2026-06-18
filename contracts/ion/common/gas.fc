@@ -25,6 +25,12 @@ const gas::pool::internal_update_pool_code = 22000000;
 const gas::vault::deposit_ref_fee = 11000000;
 const gas::vault::withdraw_fee = 11000000;
 
+const gas::bridge_inbox::submit = 12000000;
+const gas::bridge_inbox::forward_execute = 24000000;
+const gas::bridge_inbox::ack = 12000000;
+const gas::bridge_inbox::retry = 12000000;
+const gas::bridge_inbox::admin = 10000000;
+
 const gas::lp_account::refund = 11000000;
 const gas::lp_account::direct_add_liquidity = 11000000;
 const gas::lp_account::add_liquidity = 11000000;
@@ -41,3 +47,4 @@ const storage_fee::lp_account = 1000000;  ;; 0.001 ION
 const storage_fee::lp_wallet = 1000000;   ;; 0.001 ION
 const storage_fee::est_jetton_wallet = 10000000; ;; 0.010 ION
 const storage_fee::vault = 1000000;  ;; 0.001 ION
+const storage_fee::bridge_inbox = 10000000;  ;; 0.010 ION

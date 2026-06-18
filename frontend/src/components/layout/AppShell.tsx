@@ -14,12 +14,13 @@ import {
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
-import { navGroups, navLabelForPage } from "@/components/layout/appNav";
+import { getNavGroups, navLabelForPage } from "@/components/layout/appNav";
 import { FooterLegal } from "@/components/layout/FooterLegal";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { IonConnectModalBridge } from "@/components/wallet/IonConnectModalBridge";
 import { useEvmWallet } from "@/context/EvmWalletContext";
 import { useIonWallet } from "@/context/IonWalletContext";
+import { useI18n } from "@/i18n/I18nProvider";
 import { fetchMarketTickers, type MarketTicker } from "@/lib/ionApi";
 import { BSC_CHAIN_ID, DEMO_TICKER_FALLBACK, ION_CHAIN_ID_SCAFFOLD } from "@/lib/integrationConfig";
 import { evmChainLabel } from "@/wallet/evmChains";
@@ -70,11 +71,14 @@ function shortenIonAddress(address: string): string {
 const ION_PROVIDER_KEYS: IonWalletKind[] = ["ion-browser", "online", "walletconnect"];
 
 export function AppShell({ activePage, children, onPageChange }: AppShellProps) {
+  const { locale, isZh, toggleLocale } = useI18n();
   const evmWallet = useEvmWallet();
   const ionWallet = useIonWallet();
   const [walletPanelOpen, setWalletPanelOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [connectedProvider, setConnectedProvider] = useState<WalletProviderKey | null>(null);
+  const navGroups = useMemo(() => getNavGroups(locale), [locale]);
+  const activePageLabel = useMemo(() => navLabelForPage(activePage, locale), [activePage, locale]);
   const selectedProvider = useMemo(
     () => walletProviders.find((provider) => provider.key === connectedProvider) ?? null,
     [connectedProvider],
@@ -92,8 +96,8 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     if (ionSessionActive && ionWallet.snapshot) {
       return shortenIonAddress(ionWallet.snapshot.address);
     }
-    return "Wallet Connect";
-  }, [evmWallet.snapshot, evmWallet.status, ionSessionActive, ionWallet.snapshot]);
+    return isZh ? "连接钱包" : "Wallet Connect";
+  }, [evmWallet.snapshot, evmWallet.status, ionSessionActive, ionWallet.snapshot, isZh]);
 
   useEffect(() => {
     if (
@@ -139,14 +143,20 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
       <AuroraGalaxyBackground />
       <div className="relative z-0 mx-auto flex min-h-[100dvh] min-h-[100svh] w-full max-w-[1440px] flex-col md:flex-row md:px-4 md:py-4 lg:px-6">
         <aside
-          aria-label="Sidebar"
+          aria-label={isZh ? "侧边栏" : "Sidebar"}
           className="hidden min-h-0 w-[15.5rem] shrink-0 flex-col border-white/10 bg-slate-950/55 md:flex md:rounded-l-[1.75rem] md:border md:border-r-0"
           data-testid="app-sidebar"
         >
           <div className="shrink-0 p-4 pb-2">
-            <SidebarBrand />
+            <SidebarBrand isZh={isZh} />
           </div>
-          <NavList activePage={activePage} className="min-h-0 flex-1 overflow-y-auto px-3 pb-4" onSelect={selectPage} />
+          <NavList
+            activePage={activePage}
+            className="min-h-0 flex-1 overflow-y-auto px-3 pb-4"
+            groups={navGroups}
+            isZh={isZh}
+            onSelect={selectPage}
+          />
         </aside>
 
         <AnimatePresence>
@@ -154,7 +164,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
             <>
               <motion.button
                 animate={{ opacity: 1 }}
-                aria-label="Close navigation menu"
+                aria-label={isZh ? "关闭导航菜单" : "Close navigation menu"}
                 className="fixed inset-0 z-40 bg-black/60 md:hidden"
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
@@ -163,7 +173,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               />
               <motion.aside
                 animate={{ x: 0 }}
-                aria-label="Mobile navigation"
+                aria-label={isZh ? "移动端导航" : "Mobile navigation"}
                 className="fixed inset-y-0 left-0 z-50 flex w-[min(18rem,86vw)] min-h-0 flex-col border-r border-white/10 bg-slate-950/95 shadow-[0_0_40px_rgba(36,247,255,0.2)] backdrop-blur-xl md:hidden"
                 data-testid="app-mobile-nav"
                 exit={{ x: "-100%" }}
@@ -171,9 +181,9 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 transition={{ type: "spring", stiffness: 360, damping: 32 }}
               >
                 <div className="flex shrink-0 items-center justify-between gap-3 p-4 pb-2">
-                  <SidebarBrand />
+                  <SidebarBrand isZh={isZh} />
                   <button
-                    aria-label="Close menu"
+                    aria-label={isZh ? "关闭菜单" : "Close menu"}
                     className="rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80"
                     data-testid="nav-close"
                     onClick={() => setMobileNavOpen(false)}
@@ -185,6 +195,8 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                 <NavList
                   activePage={activePage}
                   className="min-h-0 flex-1 overflow-y-auto"
+                  groups={navGroups}
+                  isZh={isZh}
                   onSelect={selectPage}
                 />
               </motion.aside>
@@ -198,7 +210,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
             <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
               <button
                 aria-expanded={mobileNavOpen}
-                aria-label="Open navigation menu"
+                aria-label={isZh ? "打开导航菜单" : "Open navigation menu"}
                 className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 md:hidden"
                 data-testid="nav-menu"
                 onClick={() => setMobileNavOpen(true)}
@@ -213,13 +225,13 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
                     ION DEX
                   </p>
                   <p className="truncate text-[11px] text-cyan-100/55 sm:text-xs">
-                    {navLabelForPage(activePage)}
+                    {activePageLabel}
                   </p>
                 </div>
               </div>
               <div className="hidden min-w-0 md:block">
-                <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/55">当前页面</p>
-                <p className="truncate text-sm font-bold text-white">{navLabelForPage(activePage)}</p>
+                <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/55">{isZh ? "当前页面" : "Current page"}</p>
+                <p className="truncate text-sm font-bold text-white">{activePageLabel}</p>
               </div>
             </div>
 
@@ -227,14 +239,17 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               <button
                 type="button"
                 className="hidden rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 sm:block"
-                aria-label="Language"
+                aria-label={isZh ? "切换语言" : "Switch language"}
+                data-testid="locale-toggle"
+                onClick={toggleLocale}
+                title={isZh ? "切换到 English" : "Switch to 简体中文"}
               >
                 <Globe2 size={18} />
               </button>
               <button
                 type="button"
                 className="hidden rounded-full border border-white/10 bg-white/[0.04] p-2 text-cyan-100/80 sm:block"
-                aria-label="Notifications"
+                aria-label={isZh ? "通知" : "Notifications"}
               >
                 <Bell size={18} />
               </button>
@@ -269,6 +284,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               evmWallet={evmWallet}
               ionWallet={ionWallet}
               ionSessionActive={ionSessionActive}
+              isZh={isZh}
               onClose={() => setWalletPanelOpen(false)}
               onConnect={(provider) => setConnectedProvider(provider)}
               onDisconnect={() => {
@@ -308,7 +324,7 @@ function BrandMark({ size = "md" }: { size?: "sm" | "md" }) {
   );
 }
 
-function SidebarBrand() {
+function SidebarBrand({ isZh }: { isZh: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
       <BrandMark />
@@ -316,7 +332,7 @@ function SidebarBrand() {
         <p className="text-base font-black tracking-wide text-white" data-testid="brand-title">
           ION DEX
         </p>
-        <p className="truncate text-[11px] text-cyan-100/50">Web3 Trading</p>
+        <p className="truncate text-[11px] text-cyan-100/50">{isZh ? "Web3 交易" : "Web3 Trading"}</p>
       </div>
     </div>
   );
@@ -325,15 +341,19 @@ function SidebarBrand() {
 function NavList({
   activePage,
   className = "",
+  groups,
+  isZh,
   onSelect,
 }: {
   activePage: PageKey;
   className?: string;
+  groups: ReturnType<typeof getNavGroups>;
+  isZh: boolean;
   onSelect: (page: PageKey) => void;
 }) {
   return (
-    <nav aria-label="Sidebar navigation" className={`grid gap-4 ${className}`}>
-      {navGroups.map((group) => (
+    <nav aria-label={isZh ? "侧边栏导航" : "Sidebar navigation"} className={`grid gap-4 ${className}`}>
+      {groups.map((group) => (
         <div key={group.id}>
           <p className="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.32em] text-cyan-200/40">
             {group.label}
@@ -366,7 +386,7 @@ function NavList({
                   <span className="truncate">{item.label}</span>
                   {item.preview ? (
                     <span className="ml-auto shrink-0 rounded-md border border-amber-300/25 bg-amber-300/[0.08] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-100/90">
-                      预览
+                      {isZh ? "预览" : "Preview"}
                     </span>
                   ) : null}
                 </button>
@@ -415,11 +435,29 @@ const walletProviders: WalletProvider[] = [
   },
 ];
 
+function walletProviderLabel(provider: WalletProvider, isZh: boolean): string {
+  if (!isZh) {
+    return provider.label;
+  }
+
+    switch (provider.key) {
+      case "online":
+        return "wallet.ice.io · postMessage（Phase 2+，每次会话需重新连接）";
+      case "ion-browser":
+        return "window.ton · 官方扩展";
+      case "walletconnect":
+        return "TonConnect SDK · WalletConnect v2 脚手架（配置后可用二维码）";
+      default:
+        return "BSC / ION 脚手架 · EIP-1193 · EIP-6963";
+    }
+  }
+
 function WalletConnectOverlay({
   connectedProvider,
   evmWallet,
   ionWallet,
   ionSessionActive,
+  isZh,
   onClose,
   onConnect,
   onDisconnect,
@@ -428,6 +466,7 @@ function WalletConnectOverlay({
   evmWallet: ReturnType<typeof useEvmWallet>;
   ionWallet: ReturnType<typeof useIonWallet>;
   ionSessionActive: boolean;
+  isZh: boolean;
   onClose: () => void;
   onConnect: (provider: WalletProviderKey) => void;
   onDisconnect: () => void;
@@ -450,7 +489,7 @@ function WalletConnectOverlay({
   return createPortal(
     <>
       <button
-        aria-label="关闭钱包面板"
+        aria-label={isZh ? "关闭钱包面板" : "Close wallet panel"}
         className="fixed inset-0 z-[65] bg-[#030818]/80 backdrop-blur-sm"
         onClick={onClose}
         type="button"
@@ -462,6 +501,7 @@ function WalletConnectOverlay({
             evmWallet={evmWallet}
             ionWallet={ionWallet}
             ionSessionActive={ionSessionActive}
+            isZh={isZh}
             onConnect={onConnect}
             onDisconnect={onDisconnect}
           />
@@ -477,6 +517,7 @@ function WalletConnectPanel({
   evmWallet,
   ionWallet,
   ionSessionActive,
+  isZh,
   onConnect,
   onDisconnect,
 }: {
@@ -484,6 +525,7 @@ function WalletConnectPanel({
   evmWallet: ReturnType<typeof useEvmWallet>;
   ionWallet: ReturnType<typeof useIonWallet>;
   ionSessionActive: boolean;
+  isZh: boolean;
   onConnect: (provider: WalletProviderKey) => void;
   onDisconnect: () => void;
 }) {
@@ -493,6 +535,12 @@ function WalletConnectPanel({
     evmConnected &&
     EVM_WALLET_KIND_ORDER.includes(connectedProvider.key as EvmWalletKind);
   const showIonSession = ionSessionActive && ionWallet.snapshot && connectedProvider;
+  const shellLabel = isZh ? "钱包面板" : "Wallet panel";
+  const evmWalletLabel = isZh ? "EVM 钱包" : "EVM wallet";
+  const ionWalletLabel = isZh ? "ION 钱包" : "ION wallet";
+  const chooseProviderLabel = isZh ? "选择钱包" : "Choose wallet";
+  const refreshBalanceLabel = isZh ? "刷新余额" : "Refresh balance";
+  const disconnectLabel = isZh ? "断开连接" : "Disconnect";
 
   return (
     <div
@@ -505,7 +553,7 @@ function WalletConnectPanel({
         </div>
         <div>
           <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-100/50">
-            {showInjectedSession ? "EVM Wallet" : showIonSession ? "ION Wallet" : "Wallet Shell"}
+            {showInjectedSession ? evmWalletLabel : showIonSession ? ionWalletLabel : shellLabel}
           </p>
           <p className="mt-1 text-lg font-black text-white">
             {showInjectedSession
@@ -514,7 +562,7 @@ function WalletConnectPanel({
                 ? shortenIonAddress(ionWallet.snapshot!.address)
                 : connectedProvider
                   ? connectedProvider.name
-                  : "Choose provider"}
+                  : chooseProviderLabel}
           </p>
         </div>
       </div>
@@ -523,15 +571,19 @@ function WalletConnectPanel({
         <motion.div className="grid gap-3" data-testid="profile-menu">
           <motion.div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-3 text-sm text-emerald-100">
             <p className="font-black" data-testid="wallet-confirmation">
-              {connectedProvider!.name} connected on chain {evmWallet.snapshot!.chainId}
+              {isZh
+                ? `${connectedProvider!.name} 已连接到链 ${evmWallet.snapshot!.chainId}`
+                : `${connectedProvider!.name} connected on chain ${evmWallet.snapshot!.chainId}`}
             </p>
             <p className="mt-1 font-mono text-xs text-emerald-100/80">{evmWallet.snapshot!.address}</p>
             <p className="mt-2 text-emerald-100/70">
-              BNB balance:{" "}
+              {isZh ? "BNB 余额: " : "BNB balance: "}
               {evmWallet.snapshot!.balanceBnb
                 ? `${evmWallet.snapshot!.balanceBnb} BNB`
-                : "unavailable (start backend on :8788 or check RPC)"}{" "}
-              · source: {evmWallet.snapshot!.balanceSource}
+                : isZh
+                  ? "暂不可用（请启动 :8788 backend 或检查 RPC）"
+                  : "unavailable (start backend on :8788 or check RPC)"}{" "}
+              · {isZh ? "来源" : "source"}: {evmWallet.snapshot!.balanceSource}
             </p>
           </motion.div>
           <div className="flex flex-wrap gap-2" data-testid="evm-chain-switch">
@@ -563,7 +615,7 @@ function WalletConnectPanel({
             onClick={() => void evmWallet.refreshBalance()}
             type="button"
           >
-            Refresh balance
+            {refreshBalanceLabel}
           </button>
           <button
             className="flex items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
@@ -572,22 +624,24 @@ function WalletConnectPanel({
             type="button"
           >
             <LogOut size={16} />
-            Disconnect
+            {disconnectLabel}
           </button>
         </motion.div>
       ) : showIonSession ? (
         <motion.div className="grid gap-3" data-testid="profile-menu">
           <motion.div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-3 text-sm text-emerald-100">
             <p className="font-black" data-testid="wallet-confirmation">
-              {connectedProvider!.name} connected · {ionWallet.snapshot!.network}
+              {isZh
+                ? `${connectedProvider!.name} 已连接 · ${ionWallet.snapshot!.network}`
+                : `${connectedProvider!.name} connected · ${ionWallet.snapshot!.network}`}
             </p>
             <p className="mt-1 font-mono text-xs text-emerald-100/80">{ionWallet.snapshot!.address}</p>
             <p className="mt-2 text-emerald-100/70">
-              ION balance:{" "}
+              {isZh ? "ION 余额: " : "ION balance: "}
               {ionWallet.snapshot!.balanceIon
                 ? `${ionWallet.snapshot!.balanceIon} ION`
-                : "unavailable (RPC or extension)"}{" "}
-              · source: {ionWallet.snapshot!.balanceSource}
+                : isZh ? "暂不可用（RPC 或扩展未就绪）" : "unavailable (RPC or extension)"}{" "}
+              · {isZh ? "来源" : "source"}: {ionWallet.snapshot!.balanceSource}
             </p>
           </motion.div>
           <button
@@ -595,7 +649,7 @@ function WalletConnectPanel({
             onClick={() => void ionWallet.refreshBalance()}
             type="button"
           >
-            Refresh balance
+            {refreshBalanceLabel}
           </button>
           <button
             className="flex items-center justify-center gap-2 rounded-full border border-rose-300/25 bg-rose-300/[0.08] px-4 py-2 text-sm font-black text-rose-100 transition hover:bg-rose-300/[0.14]"
@@ -604,7 +658,7 @@ function WalletConnectPanel({
             type="button"
           >
             <LogOut size={16} />
-            Disconnect
+            {disconnectLabel}
           </button>
         </motion.div>
       ) : (
@@ -640,20 +694,21 @@ function WalletConnectPanel({
               type="button"
             >
               <span className="block text-sm font-black text-white">{provider.name}</span>
-              <span className="mt-1 block text-xs text-cyan-100/55">{provider.label}</span>
+              <span className="mt-1 block text-xs text-cyan-100/55">{walletProviderLabel(provider, isZh)}</span>
               {provider.family === "evm" && !isEvmWalletAvailable(provider.key as EvmWalletKind) ? (
-                <span className="mt-1 block text-xs text-amber-200/80">Wallet extension not detected</span>
+                <span className="mt-1 block text-xs text-amber-200/80">{isZh ? "未检测到钱包扩展" : "Wallet extension not detected"}</span>
               ) : null}
               {provider.key === "ion-browser" && !isIonExtensionInstalled() ? (
                 <span className="mt-1 block text-xs text-amber-200/80">
-                  Install ION browser wallet extension
+                  {isZh ? "请安装 ION Browser Wallet 扩展" : "Install ION browser wallet extension"}
                 </span>
               ) : null}
             </button>
           ))}
           <p className="mt-2 rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-3 py-2 text-xs text-amber-100/75">
-            ION 钱包逻辑来自官方仓库：ion-browser-wallet（window.ton）、wallet.ice.io（Online+）、扩展内
-            TonConnect 桥。BSC 用 MetaMask / Injected + 后端 RPC。
+            {isZh
+              ? "ION 钱包逻辑来自官方仓库：ion-browser-wallet（window.ton）、wallet.ice.io（Online+）和扩展内 TonConnect 桥。BSC 侧使用 MetaMask / Injected + 后端 RPC。"
+              : "ION wallet flows follow the official repos: ion-browser-wallet (window.ton), wallet.ice.io (Online+), and the embedded TonConnect bridge. The BSC side uses MetaMask / injected providers with backend RPC."}
           </p>
         </motion.div>
       )}
@@ -662,9 +717,10 @@ function WalletConnectPanel({
 }
 
 function TickerStrip() {
-  const [privacyMode, setPrivacyMode] = useState(false);
+  const { isZh } = useI18n();
+  const [privacyMode] = useState(false);
   const [tickers, setTickers] = useState<MarketTicker[]>(fallbackTickers);
-  const [sourceLabel, setSourceLabel] = useState("offline fallback");
+  const [sourceLabel, setSourceLabel] = useState(isZh ? "离线回退" : "offline fallback");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -677,7 +733,7 @@ function TickerStrip() {
       })
       .catch(() => {
         setTickers(fallbackTickers);
-        setSourceLabel("offline fallback");
+        setSourceLabel(isZh ? "离线回退" : "offline fallback");
       })
       .finally(() => window.clearTimeout(timeout));
 
@@ -685,7 +741,7 @@ function TickerStrip() {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, []);
+  }, [isZh]);
 
   return (
     <div
@@ -693,7 +749,7 @@ function TickerStrip() {
       data-testid="ticker-strip"
     >
       <span className="sr-only" data-testid="ticker-source">
-        Ticker source: {sourceLabel}
+        {isZh ? "行情来源" : "Ticker source"}: {sourceLabel}
       </span>
       <div className="flex min-w-max animate-[ticker_36s_linear_infinite] gap-4">
         {[...tickers, ...tickers].map((ticker, index) => (

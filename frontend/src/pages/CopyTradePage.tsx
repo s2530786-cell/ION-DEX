@@ -4,6 +4,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { GlassPanel } from "@/components/ui/glass/GlassPanel";
 import { MetricTile } from "@/components/ui/glass/MetricTile";
+import { useI18n } from "@/i18n/I18nProvider";
 import {
   fetchCopyTradeStats,
   formatIonAmount,
@@ -80,6 +81,7 @@ function copyProvenanceToMeta(_provenance: CopyTradeStats["provenance"], stale: 
 }
 
 export function CopyTradePage() {
+  const { isZh } = useI18n();
   const [stats, setStats] = useState<CopyTradeStats>(fallbackStats);
   const [meta, setMeta] = useState(fallbackStats.provenance);
   const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
@@ -176,9 +178,15 @@ export function CopyTradePage() {
 
   return (
     <div className="grid gap-5" data-testid="page-copy-trade">
-      <GlassPanel eyebrow="Social trading" testId="copy-trade-hero" title="Copy Trade desk">
+      <GlassPanel
+        eyebrow={isZh ? "社交交易" : "Social Trading"}
+        testId="copy-trade-hero"
+        title={isZh ? "跟单工作台" : "Copy Trade Desk"}
+      >
         <p className="text-sm text-cyan-100/60">
-          Mirror curated leader wallets with bounded slippage, profit targets, and stop-loss guardrails.
+          {isZh
+            ? "镜像优选交易员的钱包动作，并用滑点上限、止盈和止损参数约束跟单风险。"
+            : "Mirror curated leader wallets with bounded slippage, profit targets, and stop-loss guardrails."}
         </p>
         <DataSourceBadge
           meta={copyProvenanceToMeta(meta, loadState === "error")}
@@ -189,25 +197,25 @@ export function CopyTradePage() {
       <AsyncState error={loadError} onRetry={reload} state={loadState} testId="copy-trade-stats">
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <MetricTile
-            label="Online traders"
+            label={isZh ? "在线交易员" : "Online Traders"}
             testId="copy-trade-stat-online-traders"
             tone="cyan"
             value={String(stats.onlineTraders)}
           />
           <MetricTile
-            label="Today copied total"
+            label={isZh ? "今日跟单总量" : "Today Copied Total"}
             testId="copy-trade-stat-today-total"
             tone="magenta"
             value={`${formatWeiIon(stats.todayCopiedTotal)} ION`}
           />
           <MetricTile
-            label="Avg return rate"
+            label={isZh ? "平均回报率" : "Avg Return Rate"}
             testId="copy-trade-stat-avg-return"
             tone="emerald"
             value={stats.avgReturnRate}
           />
           <MetricTile
-            label="My copy positions"
+            label={isZh ? "我的跟单数" : "My Copy Positions"}
             testId="copy-trade-stat-my-count"
             tone="gold"
             value={`${stats.myCopyCount}`}
@@ -215,7 +223,7 @@ export function CopyTradePage() {
         </div>
       </AsyncState>
 
-      <GlassPanel testId="copy-trade-trader-list" title="Featured leaders">
+      <GlassPanel testId="copy-trade-trader-list" title={isZh ? "推荐交易员" : "Featured Leaders"}>
         <div className="grid gap-3">
           {stats.leaders.map((leader, index) => (
             <div
@@ -227,7 +235,9 @@ export function CopyTradePage() {
                 <div className={`h-10 w-10 rounded-full ${gradientClass[leader.avatarGradient]}`} />
                 <div>
                   <p className="font-semibold text-white">{leader.name}</p>
-                  <p className="text-xs text-cyan-100/55">Monthly +{leader.monthlyReturnPct}%</p>
+                  <p className="text-xs text-cyan-100/55">
+                    {isZh ? "近 30 日" : "Monthly"} +{leader.monthlyReturnPct}%
+                  </p>
                 </div>
               </div>
               <NeonButton
@@ -236,14 +246,14 @@ export function CopyTradePage() {
                 onClick={() => selectLeader(leader.address)}
                 type="button"
               >
-                Copy
+                {isZh ? "选择跟单" : "Copy"}
               </NeonButton>
             </div>
           ))}
         </div>
       </GlassPanel>
 
-      <GlassPanel testId="copy-trade-form-panel" title="Copy configuration">
+      <GlassPanel testId="copy-trade-form-panel" title={isZh ? "跟单配置" : "Copy Configuration"}>
         <form
           className="grid gap-4 md:grid-cols-2"
           data-testid="copy-trade-form"
@@ -253,7 +263,7 @@ export function CopyTradePage() {
           }}
         >
           <label className="grid gap-1 text-sm text-cyan-100/70">
-            Leader address
+            {isZh ? "主交易员地址" : "Leader Address"}
             <input
               className="rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white"
               data-testid="copy-trade-leader-address"
@@ -262,7 +272,7 @@ export function CopyTradePage() {
             />
           </label>
           <label className="grid gap-1 text-sm text-cyan-100/70">
-            Max copy amount (wei)
+            {isZh ? "最大跟单金额（wei）" : "Max Copy Amount (wei)"}
             <input
               className="rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white"
               data-testid="copy-trade-max-amount"
@@ -277,7 +287,7 @@ export function CopyTradePage() {
             />
           </label>
           <label className="grid gap-1 text-sm text-cyan-100/70">
-            Min profit (bps)
+            {isZh ? "最小止盈（bps）" : "Min Profit (bps)"}
             <input
               className="rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white"
               data-testid="copy-trade-min-profit-bps"
@@ -289,7 +299,7 @@ export function CopyTradePage() {
             />
           </label>
           <label className="grid gap-1 text-sm text-cyan-100/70">
-            Stop loss (bps)
+            {isZh ? "止损（bps）" : "Stop Loss (bps)"}
             <input
               className="rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white"
               data-testid="copy-trade-stop-loss-bps"
@@ -301,7 +311,7 @@ export function CopyTradePage() {
             />
           </label>
           <label className="grid gap-1 text-sm text-cyan-100/70">
-            Slippage (bps)
+            {isZh ? "滑点（bps）" : "Slippage (bps)"}
             <input
               className="rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white"
               data-testid="copy-trade-slippage-bps"
@@ -313,7 +323,7 @@ export function CopyTradePage() {
             />
           </label>
           <div className="grid gap-2 text-sm text-cyan-100/70">
-            Direction
+            {isZh ? "方向" : "Direction"}
             <div className="flex flex-wrap gap-2">
               <button
                 className={`rounded-full px-4 py-2 text-xs font-black ${copyDirection === "same" ? "bg-white/15 text-white" : "text-cyan-100/60"}`}
@@ -321,7 +331,7 @@ export function CopyTradePage() {
                 onClick={() => setCopyDirection("same")}
                 type="button"
               >
-                Same side
+                {isZh ? "同向" : "Same Side"}
               </button>
               <button
                 className={`rounded-full px-4 py-2 text-xs font-black ${copyDirection === "reverse" ? "bg-white/15 text-white" : "text-cyan-100/60"}`}
@@ -329,13 +339,13 @@ export function CopyTradePage() {
                 onClick={() => setCopyDirection("reverse")}
                 type="button"
               >
-                Reverse
+                {isZh ? "反向" : "Reverse"}
               </button>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3 md:col-span-2">
             <NeonButton data-testid="copy-trade-start-btn" disabled={!formValid || busy || isActive} type="submit">
-              Start copy
+              {isZh ? "开始跟单" : "Start Copy"}
             </NeonButton>
             <NeonButton
               className="bg-white/10 shadow-none"
@@ -344,14 +354,14 @@ export function CopyTradePage() {
               onClick={() => void handleStop()}
               type="button"
             >
-              Stop copy
+              {isZh ? "停止跟单" : "Stop Copy"}
             </NeonButton>
             <span
               className={`rounded-full px-3 py-1 text-xs font-black ${isActive ? "bg-emerald-500/20 text-emerald-200" : "bg-white/10 text-cyan-100/60"}`}
               data-active={isActive ? "true" : "false"}
               data-testid="copy-trade-toggle-active"
             >
-              {isActive ? "Active" : "Inactive"}
+              {isActive ? (isZh ? "运行中" : "Active") : isZh ? "未启动" : "Inactive"}
             </span>
           </div>
         </form>
@@ -361,15 +371,18 @@ export function CopyTradePage() {
             className="mt-4 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100"
             data-testid="copy-trade-confirmation"
           >
-            Copy session live for {stats.leaderAddress?.slice(0, 10)}… — direction {copyDirection}, cap{" "}
-            {formatWeiIon(maxCopyAmount.toString())} ION.
+            {isZh
+              ? `跟单会话已启动，目标 ${stats.leaderAddress?.slice(0, 10)}...，方向 ${copyDirection === "same" ? "同向" : "反向"}，上限 ${formatWeiIon(maxCopyAmount.toString())} ION。`
+              : `Copy session live for ${stats.leaderAddress?.slice(0, 10)}... - direction ${copyDirection}, cap ${formatWeiIon(maxCopyAmount.toString())} ION.`}
           </p>
         ) : null}
       </GlassPanel>
 
-      <GlassPanel testId="copy-trade-history" title="Trade history">
+      <GlassPanel testId="copy-trade-history" title={isZh ? "跟单历史" : "Trade History"}>
         {stats.history.length === 0 ? (
-          <p className="text-sm text-cyan-100/55">No mirrored trades yet. Start a copy session to populate history.</p>
+          <p className="text-sm text-cyan-100/55">
+            {isZh ? "还没有跟单成交记录。启动一次跟单会话后，这里会出现历史数据。" : "No mirrored trades yet. Start a copy session to populate history."}
+          </p>
         ) : (
           <div className="grid gap-2">
             {stats.history.map((row) => (

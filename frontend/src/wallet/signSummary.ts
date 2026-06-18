@@ -9,6 +9,8 @@ export type SignSummaryPayload = {
   raw?: unknown;
 };
 
+export type SignSummaryLocale = "zh-CN" | "en-US";
+
 export type AssetSignSummary = {
   action: string;
   token: string;
@@ -19,26 +21,34 @@ export type AssetSignSummary = {
   slippage?: string;
 };
 
-export function assetSignSummaryToPayload(summary: AssetSignSummary): SignSummaryPayload {
+export function assetSignSummaryToPayload(
+  summary: AssetSignSummary,
+  locale: SignSummaryLocale = "en-US",
+): SignSummaryPayload {
+  const isZh = locale === "zh-CN";
   const items: SignSummaryItem[] = [
-    { label: "Token", value: summary.token },
-    { label: "Amount", value: summary.amount },
-    { label: "Fee", value: summary.fee },
-    { label: "Chain", value: String(summary.chainId) },
+    { label: isZh ? "代币" : "Token", value: summary.token },
+    { label: isZh ? "数量" : "Amount", value: summary.amount },
+    { label: isZh ? "费用" : "Fee", value: summary.fee },
+    { label: isZh ? "链" : "Chain", value: String(summary.chainId) },
   ];
   if (summary.slippage) {
-    items.push({ label: "Slippage", value: summary.slippage });
+    items.push({ label: isZh ? "滑点" : "Slippage", value: summary.slippage });
   }
   if (summary.destination) {
-    items.push({ label: "Destination", value: summary.destination });
+    items.push({ label: isZh ? "目标地址" : "Destination", value: summary.destination });
   }
   return { title: summary.action, items, raw: summary };
 }
 
-export function buildSignSummaryPayload(raw: unknown): SignSummaryPayload {
+export function buildSignSummaryPayload(
+  raw: unknown,
+  locale: SignSummaryLocale = "en-US",
+): SignSummaryPayload {
+  const fallbackTitle = locale === "zh-CN" ? "签名请求" : "Signature request";
   if (raw && typeof raw === "object" && "title" in raw) {
     const record = raw as Record<string, unknown>;
-    const title = String(record.title ?? "Signature request");
+    const title = String(record.title ?? fallbackTitle);
     const items = Array.isArray(record.items)
       ? (record.items as Array<{ label: unknown; value: unknown }>).map((row) => ({
           label: String(row.label),
@@ -48,7 +58,7 @@ export function buildSignSummaryPayload(raw: unknown): SignSummaryPayload {
     return { title, items, raw };
   }
   return {
-    title: "Signature request",
+    title: fallbackTitle,
     items: [],
     raw,
   };

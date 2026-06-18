@@ -34,4 +34,3 @@ This matrix defines executable and auditable tests for sandbox-only security too
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

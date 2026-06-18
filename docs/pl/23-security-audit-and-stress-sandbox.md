@@ -39,4 +39,3 @@ This document turns the security framework into an execution plan.
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
-

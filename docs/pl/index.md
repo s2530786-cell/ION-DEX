@@ -35,4 +35,3 @@ Ta strona jest polskojęzyczną bramą do dokumentacji ION DEX i łączy lokalne
 - [English Developer Index](../developer-index.md)
 
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
-

@@ -39,4 +39,3 @@ This document turns the security framework into an execution plan.
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 
 > 說明：本語言頁面提供穩定的公開閱讀入口；英文公開文件仍是最終規範來源。
-

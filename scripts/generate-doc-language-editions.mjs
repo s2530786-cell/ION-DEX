@@ -985,13 +985,19 @@ function whitepaperPath(language) {
 
 function docsSiteUrl(language, logicalPath = "readme") {
   const base = "https://s2530786-cell.github.io/ION-DEX/";
+  let route = `/${encodeURIComponent(language.key)}/readme`;
   if (logicalPath === "whitepaper") {
-    return `${base}#/${encodeURIComponent(language.key)}/whitepaper`;
+    route = `/${encodeURIComponent(language.key)}/whitepaper`;
+  } else if (logicalPath.startsWith("docs/")) {
+    route = `/${encodeURIComponent(language.key)}/docs/${encodeURIComponent(
+      logicalPath.replace(/^docs\//u, ""),
+    )}`;
   }
-  if (logicalPath.startsWith("docs/")) {
-    return `${base}#/${encodeURIComponent(language.key)}/docs/${encodeURIComponent(logicalPath.replace(/^docs\//u, ""))}`;
+  if (language.key === "en") {
+    return `${base}#${route}`;
   }
-  return `${base}#/${encodeURIComponent(language.key)}/readme`;
+  const publicUrl = `${base}?${new URLSearchParams({ route }).toString()}`;
+  return repositoryTranslateUrl(language, publicUrl);
 }
 
 function repositoryTranslateUrl(language, pageUrl = "https://github.com/s2530786-cell/ION-DEX") {
@@ -1005,7 +1011,7 @@ function repositoryTranslateUrl(language, pageUrl = "https://github.com/s2530786
 }
 
 function buildReadmeNav(current) {
-  return `**Languages:** ${languages.map((language) => `[${language.label}](${language.key === current.key ? readmeLink(language) : readmeLink(language)})`).join(" | ")}`;
+  return `**Languages:** ${languages.map((language) => `[${language.label}](${docsSiteUrl(language)})`).join(" | ")}`;
 }
 
 function buildReadmeSiteLinks(language) {
@@ -1570,9 +1576,9 @@ ${copy.intro}
 
 ## ${copy.startHeading}
 
-- [${copy.docsHubLabel}](${docsHubPath(language)})
-- [${copy.whitepaperOverviewLabel}](${whitepaperPath(language)})
-- [${copy.whitepaperIndexLabel}](${whitepaperIndexPath(language)})
+- [${copy.docsHubLabel}](${docsSiteUrl(language, "docs/index")})
+- [${copy.whitepaperOverviewLabel}](${docsSiteUrl(language, "whitepaper")})
+- [${copy.whitepaperIndexLabel}](${docsSiteUrl(language, "docs/whitepaper-index")})
 - [${copy.explorerLabel}](https://explorer.ice.io/)
 
 ## ${copy.briefHeading}
@@ -1585,8 +1591,8 @@ ${copy.status}
 
 ## ${copy.nextHeading}
 
-- [${copy.docsHubLabel}](${docsHubPath(language)})
-- [${copy.whitepaperOverviewLabel}](${whitepaperPath(language)})
+- [${copy.docsHubLabel}](${docsSiteUrl(language, "docs/index")})
+- [${copy.whitepaperOverviewLabel}](${docsSiteUrl(language, "whitepaper")})
 - [${copy.englishWhitepaperLabel}](./docs/WHITEPAPER.md)
 
 > ${copy.canonicalNote}

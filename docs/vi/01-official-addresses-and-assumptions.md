@@ -33,4 +33,3 @@ This document lists the external facts that must be confirmed before production 
 - [ION DEX Official Ecosystem Access Architecture](./ion-ecosystem-access-architecture.md)
 
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
-

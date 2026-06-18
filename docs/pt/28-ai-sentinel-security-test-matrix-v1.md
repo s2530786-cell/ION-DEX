@@ -34,4 +34,3 @@ This matrix defines executable and auditable tests for sandbox-only security too
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.
-

@@ -4,11 +4,11 @@
 
 ## Why Build Here
 
-- **28-chain aggregation surface** — build once, reach users across 28 chains.
-- **Payment rails** — not just swap, a full settlement infrastructure.
-- **Identity layer** — ION Identity runs across the entire ecosystem.
-- **AI modules** — arbitration, sentinel defense, market analysis.
-- **Still expanding** — early builders get leverage and visibility before the ecosystem crowds.
+- **Multi-chain product direction** — the project is aiming toward a 28-chain aggregation surface, with public groundwork already visible in docs, APIs, and product shells.
+- **Payment and settlement ambition** — the repository documents a broader settlement architecture beyond swaps alone.
+- **Identity-aware design** — ION-facing identity and domain integration are part of the product direction.
+- **AI-aware safety boundaries** — market analysis, arbitration, and sentinel concepts are documented with explicit public limits.
+- **Still expanding** — early builders can work against a public engineering base while major protocol capabilities are still taking shape.
 
 ---
 
@@ -62,15 +62,13 @@ See [Technical Architecture](./03-technical-architecture.md) for full details.
 
 ## Economic Guardrails
 
-Developers integrating with ION DEX need to understand the platform's non-negotiable economic rules:
+Developers integrating with ION DEX need to understand that the public economics are **draft constraints, not finalized mainnet constants**.
 
-- **DEX swap fee:** `0.3%`
-- **Pool creation fee:** `0.1%`
-- **Platform transaction fee:** `0.5%` for commerce, delivery, and similar settlement flows
-- **Burn rule:** `50%` of applicable platform fees are permanently burned to the public burn address
-- **Master allocation:** `25%` of platform revenue is reserved as a permanent first-priority builder allocation
+- **Draft fee classes currently referenced:** `0.3%` swap, `0.1%` pool creation, `0.5%` for selected commerce/service flows.
+- **Draft burn / builder / staking / treasury logic:** documented publicly, but not yet canonical until audited contracts and deployment documents are published.
+- **Public burn reference:** the BSC dead address is public; the ION mainnet burn destination is still pending official confirmation.
 
-These values are not UI copy. They are platform-level constraints that affect settlement logic, fee routing, treasury accounting, analytics, and SDK/API expectations.
+These values affect settlement logic, fee routing, treasury accounting, analytics, and SDK/API expectations, but integrations should treat them as **configuration-backed** until mainnet specifications are frozen.
 
 ---
 
@@ -78,10 +76,10 @@ These values are not UI copy. They are platform-level constraints that affect se
 
 When building on ION DEX:
 
-- **Do not hardcode alternative fee assumptions.** Integrations should respect the canonical `0.3%`, `0.1%`, and `0.5%` platform rules.
+- **Do not hardcode final fee assumptions.** Integrations should read configurable fee data and stay aligned with the latest audited/public specification.
 - **Burn-aware accounting is required.** Fee reporting, treasury views, and settlement callbacks should treat the burn path as first-class logic.
 - **Revenue logic must stay privacy-safe.** Public docs and developer integrations may describe fee routing and permanent allocation rules, but must not expose private beneficiary identity details, wallet ownership, or sensitive payout metadata.
-- **Explorer-verifiable outcomes matter.** If an integration reports settlement, burn, or payout state, it should map back to auditable system records or chain-visible proof.
+- **Explorer-verifiable outcomes matter.** If an integration reports settlement, burn, or payout state, it should map back to auditable system records or chain-visible proof once the relevant module is deployed.
 
 ---
 

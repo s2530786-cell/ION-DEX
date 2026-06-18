@@ -35,4 +35,3 @@ Halaman ini adalah gerbang dokumentasi ION DEX dalam Bahasa Indonesia dan menghu
 - [English Developer Index](../developer-index.md)
 
 > Catatan: jalur bahasa ini menyediakan pintu baca publik yang stabil; dokumen publik berbahasa Inggris tetap menjadi sumber kanonis final.
-

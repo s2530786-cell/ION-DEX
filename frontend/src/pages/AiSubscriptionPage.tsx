@@ -8,6 +8,7 @@ import { NeonButton } from "@/components/ui/NeonButton";
 import { GlassPanel } from "@/components/ui/glass/GlassPanel";
 import { MetricTile } from "@/components/ui/glass/MetricTile";
 import { useWalletAggregator } from "@/hooks/useWalletAggregator";
+import { useI18n } from "@/i18n/I18nProvider";
 import {
   fetchAiSubscriptionPrice,
   fetchAiSubscriptionRights,
@@ -39,35 +40,45 @@ const ERC20_TRANSFER_ABI = [
 
 type TierCatalog = {
   key: AiSubscriptionTierKey;
-  name: string;
+  nameZh: string;
+  nameEn: string;
   usd: Record<AiSubscriptionPeriod, number>;
-  rights: string[];
+  rightsZh: string[];
+  rightsEn: string[];
 };
 
 const tierCatalog: TierCatalog[] = [
   {
     key: "Basic",
-    name: "基础版",
+    nameZh: "基础版",
+    nameEn: "Basic",
     usd: { monthly: 99, quarterly: 247.5, yearly: 1089 },
-    rights: ["基础行情", "AI 基础问答", "每日情绪播报"],
+    rightsZh: ["基础行情", "AI 基础问答", "每日情绪播报"],
+    rightsEn: ["Basic market feed", "AI Q&A", "Daily sentiment briefing"],
   },
   {
     key: "Premium",
-    name: "高级版",
+    nameZh: "高级版",
+    nameEn: "Premium",
     usd: { monthly: 499, quarterly: 1247.5, yearly: 5489 },
-    rights: ["基础量化", "手动触发交易", "7 日预测"],
+    rightsZh: ["基础量化", "手动触发交易", "7 日预测"],
+    rightsEn: ["Starter quant tools", "Manual trade triggers", "7-day forecasts"],
   },
   {
     key: "King",
-    name: "王者版",
+    nameZh: "王者版",
+    nameEn: "King",
     usd: { monthly: 2999, quarterly: 7497.5, yearly: 32989 },
-    rights: ["全自动量化", "AI 自我进化", "滑点优化"],
+    rightsZh: ["全自动量化", "AI 自我进化", "滑点优化"],
+    rightsEn: ["Full auto quant", "Self-evolving AI", "Slippage optimization"],
   },
   {
     key: "Institutional",
-    name: "机构版",
+    nameZh: "机构版",
+    nameEn: "Institutional",
     usd: { monthly: 19999, quarterly: 49997.5, yearly: 219989 },
-    rights: ["机构 API", "私有集群", "专属 AI 节点"],
+    rightsZh: ["机构 API", "私有集群", "专属 AI 节点"],
+    rightsEn: ["Institutional API", "Private cluster", "Dedicated AI node"],
   },
 ];
 
@@ -88,6 +99,7 @@ function priceMeta(source: "live" | "fallback"): ApiMeta {
 }
 
 export function AiSubscriptionPage() {
+  const { isZh } = useI18n();
   const { address, connect, evmWallet } = useWalletAggregator();
   const walletClient = evmWallet.walletClient;
   const [period, setPeriod] = useState<AiSubscriptionPeriod>("monthly");
@@ -154,7 +166,11 @@ export function AiSubscriptionPage() {
         return;
       }
       if (!walletClient || !address || !chainReady || !ionToken || !feeReceiver) {
-        setMessage("链上收款地址未配置，当前仅可预览价格。请在环境变量中设置 VITE_AI_FEE_RECEIVER。");
+        setMessage(
+          isZh
+            ? "链上收款地址未配置，当前只能预览价格。请在环境变量中设置 VITE_AI_FEE_RECEIVER。"
+            : "Fee receiver is not configured, so this page can only preview pricing. Set VITE_AI_FEE_RECEIVER in the environment.",
+        );
         return;
       }
       setBusyTier(tier);
@@ -175,31 +191,43 @@ export function AiSubscriptionPage() {
           tx_hash: hash,
           auto_renew: autoRenew,
         });
-        setMessage(`订阅成功 · ${tier} · tx ${hash.slice(0, 10)}…`);
+        setMessage(
+          isZh
+            ? `订阅成功 · ${tier} · tx ${hash.slice(0, 10)}...`
+            : `Subscription successful · ${tier} · tx ${hash.slice(0, 10)}...`,
+        );
         await reloadRights();
       } catch (error) {
-        setMessage(error instanceof Error ? error.message : "订阅失败，请检查钱包余额与网络。");
+        setMessage(
+          error instanceof Error
+            ? error.message
+            : isZh
+              ? "订阅失败，请检查钱包余额与网络。"
+              : "Subscription failed. Please check wallet balance and network.",
+        );
       } finally {
         setBusyTier(null);
       }
     },
-    [address, autoRenew, chainReady, connect, feeReceiver, ionToken, period, reloadRights, walletClient],
+    [address, autoRenew, chainReady, connect, feeReceiver, ionToken, isZh, period, reloadRights, walletClient],
   );
 
   const onToggleAutoRenew = useCallback(async () => {
     if (!address) {
-      setMessage("请先连接钱包再切换自动续费。");
+      setMessage(isZh ? "请先连接钱包再切换自动续费。" : "Connect a wallet before changing auto-renewal.");
       return;
     }
     const next = !autoRenew;
     try {
       await toggleAiAutoRenewal(address, next);
       setAutoRenew(next);
-      setMessage(next ? "已开启自动续费。" : "已关闭自动续费。");
+      setMessage(next ? (isZh ? "已开启自动续费。" : "Auto-renewal enabled.") : isZh ? "已关闭自动续费。" : "Auto-renewal disabled.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "自动续费开关更新失败。");
+      setMessage(
+        error instanceof Error ? error.message : isZh ? "自动续费开关更新失败。" : "Failed to update auto-renewal setting.",
+      );
     }
-  }, [address, autoRenew]);
+  }, [address, autoRenew, isZh]);
 
   const onWalletAction = useCallback(async () => {
     if (address) {
@@ -212,15 +240,19 @@ export function AiSubscriptionPage() {
   return (
     <div className="grid gap-5" data-testid="page-ai-subscription">
       <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300/70">AI analyst</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300/70">
+          {isZh ? "AI 分析师" : "AI Analyst"}
+        </p>
         <h1 className="mt-2 text-4xl font-black text-white sm:text-5xl" data-testid="page-title">
-          On-chain AI market analyst
+          {isZh ? "链上 AI 市场分析师" : "On-Chain AI Market Analyst"}
         </h1>
       </header>
 
-      <GlassPanel eyebrow="AI Subscription" testId="ai-subscription-hero" title="ION‑DEX AI 量化订阅">
+      <GlassPanel eyebrow="AI Subscription" testId="ai-subscription-hero" title={isZh ? "ION-DEX AI 量化订阅" : "ION-DEX AI Quant Subscription"}>
         <p className="text-sm text-white/70">
-          四档 AI 量化会员，ION 浮动扣费（0.3×–3.0×），链上真实转账 + 合约记账。
+          {isZh
+            ? "四档 AI 量化会员，采用 ION 浮动扣费（0.3x - 3.0x），链上真实转账并同步合约记账。"
+            : "Four AI quant tiers with floating ION billing (0.3x - 3.0x), backed by real on-chain transfers and contract-side accounting."}
         </p>
       </GlassPanel>
 
@@ -235,7 +267,7 @@ export function AiSubscriptionPage() {
               onClick={() => setPeriod(p)}
               type="button"
             >
-              {p === "monthly" ? "月付" : p === "quarterly" ? "季付" : "年付"}
+              {p === "monthly" ? (isZh ? "月付" : "Monthly") : p === "quarterly" ? (isZh ? "季付" : "Quarterly") : isZh ? "年付" : "Yearly"}
             </button>
           ))}
         </div>
@@ -244,14 +276,18 @@ export function AiSubscriptionPage() {
       <AsyncState error={null} state={loadState} testId="ai-subscription-loading">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {tierCatalog.map((tier) => (
-            <GlassPanel key={tier.key} testId={`ai-subscription-tier-${tier.key.toLowerCase()}`} title={tier.name}>
+            <GlassPanel
+              key={tier.key}
+              testId={`ai-subscription-tier-${tier.key.toLowerCase()}`}
+              title={isZh ? tier.nameZh : tier.nameEn}
+            >
               <p className="text-2xl font-semibold text-cyan-50">${tier.usd[period].toLocaleString()}</p>
               <p className="mt-1 text-sm text-cyan-100/60" data-testid={`ai-subscription-ion-${tier.key.toLowerCase()}`}>
-                预估 ION · {ionEstimates[tier.key]?.toFixed(2) ?? "—"}
+                {isZh ? "预计 ION" : "Est. ION"} · {ionEstimates[tier.key]?.toFixed(2) ?? "..."}
               </p>
               <ul className="mt-4 space-y-1 text-sm text-cyan-100/75">
-                {tier.rights.map((r) => (
-                  <li key={r}>✓ {r}</li>
+                {(isZh ? tier.rightsZh : tier.rightsEn).map((right) => (
+                  <li key={right}>• {right}</li>
                 ))}
               </ul>
               <NeonButton
@@ -260,7 +296,7 @@ export function AiSubscriptionPage() {
                 disabled={busyTier !== null}
                 onClick={() => void subscribe(tier.key)}
               >
-                {busyTier === tier.key ? "处理中…" : "立即订阅"}
+                {busyTier === tier.key ? (isZh ? "处理中…" : "Processing…") : isZh ? "立即订阅" : "Subscribe Now"}
               </NeonButton>
             </GlassPanel>
           ))}
@@ -269,32 +305,38 @@ export function AiSubscriptionPage() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <MetricTile
-          label="当前会员"
+          label={isZh ? "当前会员" : "Current Tier"}
           testId="ai-subscription-member-tier"
           tone="magenta"
-          value={rights?.tier ?? (address ? "Free" : "未连接")}
+          value={rights?.tier ?? (address ? "Free" : isZh ? "未连接" : "Not Connected")}
         />
         <MetricTile
-          label="到期时间"
+          label={isZh ? "到期时间" : "Expires At"}
           testId="ai-subscription-expires"
           tone="cyan"
-          value={rights?.expires_at ? new Date(rights.expires_at).toLocaleString() : "—"}
+          value={rights?.expires_at ? new Date(rights.expires_at).toLocaleString() : "-"}
         />
         <MetricTile
-          label="权限项"
+          label={isZh ? "权限项" : "Rights Count"}
           testId="ai-subscription-rights-count"
           tone="gold"
           value={String(rights?.rights.length ?? 0)}
         />
       </div>
 
-      <GlassPanel testId="ai-subscription-wallet-panel" title="钱包与自动续费">
+      <GlassPanel testId="ai-subscription-wallet-panel" title={isZh ? "钱包与自动续费" : "Wallet and Auto-Renewal"}>
         <p className="text-sm text-cyan-100/70">
-          {address ? `已连接 · ${address.slice(0, 6)}…${address.slice(-4)}` : "连接钱包后可查询权限并发起链上 ION 转账。"}
+          {address
+            ? isZh
+              ? `已连接 · ${address.slice(0, 6)}...${address.slice(-4)}`
+              : `Connected · ${address.slice(0, 6)}...${address.slice(-4)}`
+            : isZh
+              ? "连接钱包后可查询订阅权益并发起链上 ION 转账。"
+              : "Connect a wallet to inspect subscription rights and send on-chain ION payments."}
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <NeonButton data-testid="ai-subscription-connect" onClick={() => void onWalletAction()} type="button">
-            {address ? "刷新权限" : "连接 MetaMask"}
+            {address ? (isZh ? "刷新权益" : "Refresh Rights") : isZh ? "连接 MetaMask" : "Connect MetaMask"}
           </NeonButton>
           <NeonButton
             className="opacity-90"
@@ -303,7 +345,7 @@ export function AiSubscriptionPage() {
             onClick={() => void onToggleAutoRenew()}
             type="button"
           >
-            自动续费：{autoRenew ? "开" : "关"}
+            {isZh ? `自动续费：${autoRenew ? "开" : "关"}` : `Auto Renew: ${autoRenew ? "On" : "Off"}`}
           </NeonButton>
         </div>
         {message ? (

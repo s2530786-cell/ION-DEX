@@ -34,4 +34,3 @@ This matrix defines executable and auditable tests for sandbox-only security too
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Примечание: эта языковая ветка дает стабильный публичный вход для чтения; английские публичные документы остаются финальным каноническим источником.
-

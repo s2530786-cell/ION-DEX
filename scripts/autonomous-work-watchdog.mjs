@@ -237,6 +237,16 @@ function syncVerify100Step(step, queue, state) {
     }
     return;
   }
+  if (step.status === "failed") {
+    if (!prepareVerify100Resume(step, queue)) {
+      step.status = "pending";
+      step.external = false;
+      step.managedPid = undefined;
+      step.error = undefined;
+      log("REQUEUE verify-100 from failed -> pending");
+    }
+    return;
+  }
   if (step.status === "running" && step.managedPid && !isAlive(step.managedPid)) {
     prepareVerify100Resume(step, queue);
     return;
@@ -280,7 +290,15 @@ function runGitCommitPushStep(step, queue, state) {
       cwd: root,
       shell: false,
       stdio: "inherit",
-      env: { ...process.env, ION_VERIFY_NONINTERACTIVE: "1", ION_AGENT_AUTONOMOUS: "1" },
+      env: {
+        ...process.env,
+        ION_VERIFY_NONINTERACTIVE: "1",
+        ION_AGENT_AUTONOMOUS: "1",
+        ION_WORKFLOW_QUEUE_ID: queue.id,
+        ION_WORKFLOW_STEP_ID: step.id,
+        ION_WORKFLOW_STAGE: step.title ?? step.id,
+        ION_WORKFLOW_ACTIVATED_AT: queue.activatedAt ?? "",
+      },
     },
   );
   step.status = "running";
@@ -413,7 +431,15 @@ function runVerify100Step(step, queue, state) {
       cwd: root,
       shell: false,
       stdio: "inherit",
-      env: { ...process.env, ION_VERIFY_NONINTERACTIVE: "1", ION_AGENT_AUTONOMOUS: "1" },
+      env: {
+        ...process.env,
+        ION_VERIFY_NONINTERACTIVE: "1",
+        ION_AGENT_AUTONOMOUS: "1",
+        ION_WORKFLOW_QUEUE_ID: queue.id,
+        ION_WORKFLOW_STEP_ID: step.id,
+        ION_WORKFLOW_STAGE: step.title ?? step.id,
+        ION_WORKFLOW_ACTIVATED_AT: queue.activatedAt ?? "",
+      },
     },
   );
   step.status = "running";

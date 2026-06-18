@@ -14,6 +14,7 @@ import {
 import { DashboardSwapPanel } from "@/components/dashboard/DashboardSwapPanel";
 import { FeatureTile } from "@/components/dashboard/FeatureTile";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
+import { useI18n } from "@/i18n/I18nProvider";
 import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonCard } from "@/components/ui/NeonCard";
 import type { PageKey } from "@/components/layout/AppShell";
@@ -94,6 +95,7 @@ const fallbackIonPrice: IonPricePayload = {
 };
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
+  const { isZh } = useI18n();
   const fetchTickers = useCallback(
     (signal: AbortSignal) => fetchMarketTickers(signal),
     [],
@@ -163,13 +165,14 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           chartPoints={chartPoints}
           ionPrice={ionPrice}
           ionTicker={ionTicker}
+          isZh={isZh}
           klines={klines}
           tickers={tickers}
         />
-        <RightStats burn={burn} burnProgress={burnProgress} staking={staking} tvlLabel={tvlLabel} />
+        <RightStats burn={burn} burnProgress={burnProgress} isZh={isZh} staking={staking} tvlLabel={tvlLabel} />
       </section>
 
-      <FeatureGrid onNavigate={onNavigate} />
+      <FeatureGrid isZh={isZh} onNavigate={onNavigate} />
     </div>
   );
 }
@@ -178,12 +181,14 @@ function MarketStage({
   tickers,
   ionPrice,
   ionTicker,
+  isZh,
   chartPoints,
   klines,
 }: {
   tickers: ReturnType<typeof useApiResource<MarketTicker[]>>;
   ionPrice: ReturnType<typeof useApiResource<IonPricePayload>>;
   ionTicker: MarketTicker | undefined;
+  isZh: boolean;
   chartPoints: ReturnType<typeof buildSyntheticSeries>;
   klines: ReturnType<typeof useApiResource<IonKlinesPayload>>;
 }) {
@@ -193,7 +198,7 @@ function MarketStage({
         <div className="flex h-full min-h-0 flex-col">
           <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
             <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">Market</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">{isZh ? "市场" : "Market"}</p>
               <h2 className="mt-1 text-xl font-black text-white sm:text-2xl">
                 ION <span className="text-fuchsia-300">/ USDT</span>
               </h2>
@@ -212,7 +217,7 @@ function MarketStage({
           <DataSourceBadge meta={klines.meta ?? tickers.meta} testId="dashboard-chart-source" />
 
           <AsyncState
-            emptyMessage="Market tickers are not available."
+            emptyMessage={isZh ? "暂无可用行情。" : "Market tickers are not available."}
             error={tickers.error}
             onRetry={tickers.reload}
             state={tickers.state}
@@ -229,19 +234,19 @@ function MarketStage({
 
           <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.05] p-3" data-testid="dashboard-oracle-diagnostics">
             <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-cyan-100/60">
-              <span>Oracle Diagnostics</span>
+              <span>{isZh ? "预言机诊断" : "Oracle Diagnostics"}</span>
               <span>{ionPrice.data.oracleMethod ?? "n/a"}</span>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs text-cyan-100/80">
               <p>
-                spread: <span className="font-bold text-white">{ionPrice.data.oracleSpreadBps ?? 0} bps</span>
+                {isZh ? "价差" : "spread"}: <span className="font-bold text-white">{ionPrice.data.oracleSpreadBps ?? 0} bps</span>
               </p>
               <p>
-                used quotes: <span className="font-bold text-white">{ionPrice.data.oracleUsedQuotes ?? 0}</span>
+                {isZh ? "采纳报价" : "used quotes"}: <span className="font-bold text-white">{ionPrice.data.oracleUsedQuotes ?? 0}</span>
               </p>
             </div>
             <div className="mt-2 text-xs text-cyan-100/75">
-              <p className="mb-1 font-semibold text-cyan-50">used feeds</p>
+              <p className="mb-1 font-semibold text-cyan-50">{isZh ? "采纳源" : "used feeds"}</p>
               <div className="flex flex-wrap gap-1.5" data-testid="dashboard-oracle-used-feeds">
                 {(ionPrice.data.oracleUsedFeeds ?? []).slice(0, 4).map((feed) => (
                   <span className="rounded-full border border-emerald-300/35 bg-emerald-300/10 px-2 py-0.5" key={feed.platformId}>
@@ -251,7 +256,7 @@ function MarketStage({
               </div>
             </div>
             <div className="mt-2 text-xs text-cyan-100/75">
-              <p className="mb-1 font-semibold text-cyan-50">rejected feeds</p>
+              <p className="mb-1 font-semibold text-cyan-50">{isZh ? "剔除源" : "rejected feeds"}</p>
               <div className="flex flex-wrap gap-1.5" data-testid="dashboard-oracle-rejected-feeds">
                 {(ionPrice.data.oracleRejectedFeeds ?? []).slice(0, 4).map((feed) => (
                   <span className="rounded-full border border-rose-300/35 bg-rose-300/10 px-2 py-0.5" key={`${feed.platformId}-${feed.rejectReason}`}>
@@ -259,7 +264,7 @@ function MarketStage({
                   </span>
                 ))}
                 {(ionPrice.data.oracleRejectedFeeds ?? []).length === 0 ? (
-                  <span className="rounded-full border border-cyan-300/35 bg-cyan-300/10 px-2 py-0.5">none</span>
+                  <span className="rounded-full border border-cyan-300/35 bg-cyan-300/10 px-2 py-0.5">{isZh ? "无" : "none"}</span>
                 ) : null}
               </div>
             </div>
@@ -271,9 +276,11 @@ function MarketStage({
 }
 
 function ChartPlaceholder() {
+  const { isZh } = useI18n();
+
   return (
     <div className="grid h-full min-h-[14rem] place-items-center rounded-[1.25rem] border border-white/10 bg-black/30 text-sm text-cyan-100/60">
-      Waiting for ticker data
+      {isZh ? "等待行情数据…" : "Waiting for ticker data"}
     </div>
   );
 }
@@ -283,11 +290,13 @@ function RightStats({
   burn,
   tvlLabel,
   burnProgress,
+  isZh,
 }: {
   staking: ReturnType<typeof useApiResource<StakingSummary>>;
   burn: ReturnType<typeof useApiResource<BurnSummary>>;
   tvlLabel: string;
   burnProgress: number;
+  isZh: boolean;
 }) {
   return (
     <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
@@ -321,7 +330,7 @@ function RightStats({
           <p className="mt-1 text-2xl font-black text-glow-magenta" data-testid="dashboard-apr-value">
             {staking.data.apr.dexPct}%
           </p>
-          <p className="mt-1 text-[0.7rem] text-cyan-200/80">DEX staking</p>
+          <p className="mt-1 text-[0.7rem] text-cyan-200/80">{isZh ? "DEX 质押" : "DEX staking"}</p>
         </AsyncState>
       </NeonCard>
 
@@ -333,7 +342,7 @@ function RightStats({
           state={burn.state}
           testId="dashboard-burn"
         >
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/55">Burn</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/55">{isZh ? "销毁" : "Burn"}</p>
           <p className="mt-1 text-2xl font-black" data-testid="dashboard-burn-value">
             {formatIonAmount(burn.data.totalBurnedIon)}
           </p>
@@ -349,12 +358,22 @@ function RightStats({
   );
 }
 
-function FeatureGrid({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
+function FeatureGrid({ onNavigate, isZh }: { onNavigate: (page: PageKey) => void; isZh: boolean }) {
+  const cards: FeatureCard[] = isZh
+    ? [
+        { title: "资金池", label: "流动性", target: "pool", icon: Layers3, color: "cyan" },
+        { title: "跟单", label: "社交交易", target: "copy-trade", icon: Bot, color: "magenta" },
+        { title: "跨链桥", label: "ION / BSC", target: "bridge", icon: ArrowLeftRight, color: "cyan" },
+        { title: "销毁", label: "双链", target: "burn", icon: Flame, color: "magenta" },
+        { title: "域名", label: "ION DNS", target: "domain", icon: ShieldCheck, color: "gold" },
+      ]
+    : featureCards;
+
   return (
     <section data-testid="dashboard-feature-grid">
-      <p className="mb-3 text-xs uppercase tracking-[0.28em] text-cyan-100/45">Modules</p>
+      <p className="mb-3 text-xs uppercase tracking-[0.28em] text-cyan-100/45">{isZh ? "模块" : "Modules"}</p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {featureCards.map((card) => (
+        {cards.map((card) => (
           <FeatureTile
             icon={card.icon}
             key={card.target}

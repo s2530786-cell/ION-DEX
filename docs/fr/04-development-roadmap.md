@@ -39,4 +39,3 @@ This roadmap defines the build order. Each phase depends on the phase before it 
 - [Verification Six Pillars](./verification-six-pillars.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

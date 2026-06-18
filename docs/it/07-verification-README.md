@@ -22,4 +22,6 @@ Full checklist: `docs/verification-six-pillars.md`
 - [E2E Status And Evidence Boundaries](./e2e-status.md)
 - [Compile And Deploy Commands](./ion-compile-and-deploy-commands.md)
 
+
+
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.

@@ -1,5 +1,5 @@
 {
-  "lastTickAt": "2026-06-04T04:57:06.972Z",
+  "lastTickAt": "2026-06-14T15:59:45.102Z",
   "activeQueueId": "p1-dashboard-w6-pipeline",
   "steps": [
     {
@@ -14,7 +14,8 @@
       "id": "verify-100",
       "status": "running",
       "external": true,
-      "managedPid": 61448
+      "managedPid": 107152,
+      "error": "interrupted at 24/100; auto-resume from 25"
     },
     {
       "id": "w6-agent-kickoff",

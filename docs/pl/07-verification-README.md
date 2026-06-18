@@ -22,4 +22,6 @@ Full checklist: `docs/verification-six-pillars.md`
 - [E2E Status And Evidence Boundaries](./e2e-status.md)
 - [Compile And Deploy Commands](./ion-compile-and-deploy-commands.md)
 
+
+
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.

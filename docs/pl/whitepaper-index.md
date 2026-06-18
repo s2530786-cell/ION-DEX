@@ -19,4 +19,3 @@ Ta strona jest polskojęzyczną ścieżką czytania whitepaper, aby szybko zrozu
 - [Pełne whitepaper po angielsku](../WHITEPAPER.md)
 
 > Uwaga: ta ścieżka językowa zapewnia stabilne publiczne wejście do czytania; angielskie publiczne dokumenty pozostają ostatecznym kanonicznym źródłem.
-

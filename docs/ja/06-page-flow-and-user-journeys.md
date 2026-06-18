@@ -30,5 +30,6 @@
 - [UI Design Route Lock](./10-ui-design-route.md)
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
-> 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
 
+
+> 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。

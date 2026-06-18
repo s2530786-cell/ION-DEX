@@ -24,4 +24,3 @@
 - [Official Addresses And Open Assumptions](./01-official-addresses-and-assumptions.md)
 
 > 注記：この言語ルートは安定した公開読書入口を提供します。最終的な正準ソースは引き続き英語の公開文書です。
-

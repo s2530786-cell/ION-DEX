@@ -27,4 +27,3 @@ Das englische Whitepaper bleibt die kanonische Quelle für finale Formulierungen
 - [Vollständiges englisches Whitepaper](../../WHITEPAPER.md)
 
 > Hinweis: Dieser Sprachpfad bietet einen stabilen öffentlichen Leseeinstieg; die englischen öffentlichen Dokumente bleiben die endgültige kanonische Quelle.
-

@@ -22,4 +22,6 @@ Full checklist: `docs/verification-six-pillars.md`
 - [E2E Status And Evidence Boundaries](./e2e-status.md)
 - [Compile And Deploy Commands](./ion-compile-and-deploy-commands.md)
 
+
+
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.

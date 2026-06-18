@@ -27,4 +27,3 @@ O whitepaper em inglês continua sendo a fonte canônica para wording final, eco
 - [Whitepaper completo em inglês](../../WHITEPAPER.md)
 
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.
-

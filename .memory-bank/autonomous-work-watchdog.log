@@ -33,3 +33,32 @@
 [2026-06-04T04:48:01.882Z] START step=verify-100 (spawn verify-100.ps1)
 [2026-06-04T04:57:06.961Z] watchdog once (auto-advance on step OK)
 [2026-06-04T08:35:38.815Z] FAIL step=verify-100 exit=1
+[2026-06-13T01:07:36.868Z] watchdog once (auto-advance on step OK)
+[2026-06-13T01:09:20.501Z] watchdog once (auto-advance on step OK)
+[2026-06-13T01:09:20.512Z] REQUEUE verify-100 from failed -> pending
+[2026-06-13T01:09:20.516Z] START step=verify-100 (spawn verify-100.ps1)
+[2026-06-13T01:24:46.356Z] FAIL step=verify-100 exit=1
+[2026-06-14T09:17:23.767Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-14T09:17:23.987Z] START step=verify-100 (spawn verify-100.ps1)
+[2026-06-14T11:26:29.057Z] FAIL step=verify-100 exit=1
+[2026-06-14T11:27:26.618Z] REQUEUE verify-100 resume startAt=21 initialPassed=20
+[2026-06-14T11:27:26.621Z] START step=verify-100 RESUME from 21 (passed=20)
+[2026-06-14T11:43:31.495Z] FAIL step=verify-100 exit=1
+[2026-06-14T11:44:26.807Z] REQUEUE verify-100 resume startAt=21 initialPassed=20
+[2026-06-14T11:44:26.811Z] START step=verify-100 RESUME from 21 (passed=20)
+[2026-06-14T11:49:51.724Z] FAIL step=verify-100 exit=1
+[2026-06-14T11:50:26.869Z] REQUEUE verify-100 resume startAt=21 initialPassed=20
+[2026-06-14T11:50:26.872Z] START step=verify-100 RESUME from 21 (passed=20)
+[2026-06-14T12:11:38.599Z] FAIL step=verify-100 exit=1
+[2026-06-14T12:17:01.527Z] watchdog once (auto-advance on step OK)
+[2026-06-14T12:17:01.566Z] REQUEUE verify-100 from failed -> pending
+[2026-06-14T12:17:01.573Z] WAIT step=verify-100 external run active (lock + fresh log)
+[2026-06-14T12:18:01.108Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-14T12:21:34.357Z] watchdog once (auto-advance on step OK)
+[2026-06-14T12:21:34.375Z] REQUEUE verify-100 resume startAt=24 initialPassed=23
+[2026-06-14T12:21:34.380Z] START step=verify-100 RESUME from 24 (passed=23)
+[2026-06-14T12:28:22.903Z] FAIL step=verify-100 exit=1
+[2026-06-14T12:31:36.256Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-14T12:31:36.271Z] REQUEUE verify-100 resume startAt=25 initialPassed=24
+[2026-06-14T12:31:36.276Z] START step=verify-100 RESUME from 25 (passed=24)
+[2026-06-14T12:31:36.529Z] watchdog once (auto-advance on step OK)

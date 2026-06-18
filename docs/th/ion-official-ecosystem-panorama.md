@@ -39,4 +39,3 @@ Last updated: 2026-05-30 Source: https://ice.io deep scan Purpose: Complete refe
 - [UI Design Route Lock](./10-ui-design-route.md)
 
 > หมายเหตุ: เส้นทางภาษานี้ให้จุดเริ่มอ่านสาธารณะที่เสถียร แต่เอกสารสาธารณะภาษาอังกฤษยังคงเป็น canonical source ขั้นสุดท้าย
-

@@ -40,6 +40,9 @@ contracts/ion/deploy/deploy-live.generated.fif
 contracts/ion/deploy/deploy-live-params.generated.fif
 contracts/ion/deploy/out/
 
+# Secrets / tokens (local-only)
+scripts/.github-token.local
+
 # OS / editor
 Thumbs.db
 .DS_Store

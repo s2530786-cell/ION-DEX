@@ -39,4 +39,3 @@ This document turns the security framework into an execution plan.
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
-

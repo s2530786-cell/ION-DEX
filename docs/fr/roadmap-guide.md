@@ -23,4 +23,3 @@
 - [ION DEX Flywheel Design](./ion-dex-flywheel-design.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

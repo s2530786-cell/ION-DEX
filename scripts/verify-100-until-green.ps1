@@ -19,7 +19,7 @@ function Write-RunnerLog {
 
 Write-Host ""
 Write-Host "============================================================"
-Write-Host " verify-100-until-green (FOREGROUND — output in this window)"
+Write-Host " verify-100-until-green (FOREGROUND - output in this window)"
 Write-Host " Target: PASSED=100 FAILED=0 RESULT=GREEN"
 Write-Host " Runner log also: $runnerLog"
 Write-Host "============================================================"
@@ -44,9 +44,11 @@ while ($true) {
   }
 
   if ($exitCode -eq 0) {
-    Write-RunnerLog "RESULT=GREEN — verify-100 gate satisfied"
+    Write-RunnerLog "RESULT=GREEN - verify-100 gate satisfied"
     Write-RunnerLog ("RUNNER_LOG=" + $runnerLog)
-    Write-RunnerLog ("SUMMARY_FILE=" + $latestSummary.FullName)
+    if ($latestSummary) {
+      Write-RunnerLog ("SUMMARY_FILE=" + $latestSummary.FullName)
+    }
 
     $sessionPath = Join-Path $root "SESSION_STATE.md"
     if ((Test-Path $sessionPath) -and $latestSummary) {
@@ -60,43 +62,7 @@ while ($true) {
       Write-RunnerLog "SESSION_STATE.md updated (W2 -> W3)"
     }
 
-    $gitCandidates = @(
-      (Join-Path ${env:ProgramFiles} "Git\cmd\git.exe"),
-      (Join-Path ${env:ProgramFiles(x86)} "Git\cmd\git.exe")
-    )
-    $gitExe = $gitCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-    if ($gitExe) {
-      Write-RunnerLog "git commit + push (W2 verify-100 gate)"
-      $paths = @(
-        "scripts/verify-100.ps1",
-        "scripts/verify-100-until-green.ps1",
-        "scripts/verify-100-until-green.cmd",
-        "scripts/verify-100-watch-and-ship.ps1",
-        "scripts/verify-100-watch-and-ship.cmd",
-        "SESSION_STATE.md"
-      )
-      foreach ($p in $paths) {
-        & $gitExe -C $root add -- $p 2>> $runnerLog
-      }
-      $msg = @"
-fix(verify): W2 verify-100 gate green — System32 cmd/powershell paths
-
-- verify-100.ps1: resolve cmd/powershell under %SystemRoot%\System32 for agent shells
-- until-green runner: loop until PASSED=100 RESULT=GREEN
-- SESSION_STATE: W2 stress 100/100 + verify-100 evidence
-"@
-      & $gitExe -C $root commit -m $msg 2>> $runnerLog
-      if ($LASTEXITCODE -eq 0) {
-        & $gitExe -C $root push -u origin HEAD 2>> $runnerLog
-        Write-RunnerLog ("git push exit=" + $LASTEXITCODE)
-      }
-      else {
-        Write-RunnerLog "git commit skipped or failed (nothing to commit?)"
-      }
-    }
-    else {
-      Write-RunnerLog "WARN: git.exe not found; commit/push skipped"
-    }
+    Write-RunnerLog "Auto git commit/push removed. Use the guarded workflow commit path after verify-100 GREEN."
     exit 0
   }
 

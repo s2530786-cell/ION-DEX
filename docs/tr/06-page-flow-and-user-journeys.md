@@ -30,5 +30,6 @@
 - [UI Design Route Lock](./10-ui-design-route.md)
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 
-> Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
 
+
+> Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.

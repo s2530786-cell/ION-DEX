@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 /**
- * UI design phase pipeline — functional gate, visual captures, gap report, stress×100, verify×100, commit, auto-next.
- *
- * Usage:
- *   node scripts/ui-design-phase-pipeline.mjs --batch B
- *   node scripts/ui-design-phase-pipeline.mjs --batch B --commit-push --auto-next
- *   scripts\run-ui-design-phase-batch.cmd --batch B --commit-push --auto-next
+ * UI design phase pipeline: preflight, verify-full, screenshots, stress x100,
+ * verify-100, guarded commit/push, optional auto-next.
  */
 
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { assertStageScope, stagePaths } from "./lib/git-stage-scope.mjs";
 
 const root = process.cwd();
 const isWin = process.platform === "win32";
@@ -23,10 +20,19 @@ const psExe = join(
   "powershell.exe",
 );
 const tempDir = process.env.TEMP || process.env.TMP || root;
+const COMMON_STAGE_PATHS = [
+  "scripts/ui-design-phase-pipeline.mjs",
+  "scripts/capture-ui-signoff-screenshots.mjs",
+  "scripts/stress-playwright-100.mjs",
+  "scripts/lib/git-stage-scope.mjs",
+  "docs/ui-round2-visual-alignment.md",
+  "docs/99-current-progress.md",
+  "SESSION_STATE.md",
+];
 
 const BATCHES = {
   B: {
-    title: "Dashboard 像素级",
+    title: "Dashboard design signoff",
     designRefs: [
       ".memory-bank/design-refs/screens/04-dashboard-galaxy-spiral.png",
       ".memory-bank/design-refs/screens/01-glass-panel-wave-border.png",
@@ -35,17 +41,35 @@ const BATCHES = {
     gapReport: "docs/ui-gap-analysis-batch-b-2026-05-26.md",
     stressSpec: "e2e/smoke.spec.ts",
     next: "C",
+    stagePaths: [
+      "frontend/src/pages/DashboardPage.tsx",
+      "frontend/src/components",
+      "frontend/src/styles",
+      "frontend/e2e",
+      "docs/ui-gap-analysis-batch-b-2026-05-26.md",
+      "docs/screenshots/ui-signoff/batch-b",
+      ...COMMON_STAGE_PATHS,
+    ],
   },
   C: {
-    title: "Trade / Swap 专业面",
+    title: "Trade / Swap visual closure",
     designRefs: [".memory-bank/design-refs/screens/04-dashboard-galaxy-spiral.png"],
     screenshotDir: "docs/screenshots/ui-signoff/batch-c",
     gapReport: "docs/ui-gap-analysis-batch-c-2026-05-26.md",
     stressSpec: "e2e/smoke.spec.ts",
     next: "D",
+    stagePaths: [
+      "frontend/src/pages",
+      "frontend/src/components",
+      "frontend/src/styles",
+      "frontend/e2e",
+      "docs/ui-gap-analysis-batch-c-2026-05-26.md",
+      "docs/screenshots/ui-signoff/batch-c",
+      ...COMMON_STAGE_PATHS,
+    ],
   },
   D: {
-    title: "Pool / Stake / Burn / Bridge / Domain",
+    title: "Pool / Stake / Burn / Bridge / Domain visual closure",
     designRefs: [
       ".memory-bank/design-refs/screens/05-modal-pool-liquidity.png",
       ".memory-bank/design-refs/screens/06-modal-bridge-crosschain.png",
@@ -55,6 +79,15 @@ const BATCHES = {
     gapReport: "docs/ui-gap-analysis-batch-d-2026-05-26.md",
     stressSpec: "e2e/smoke.spec.ts",
     next: null,
+    stagePaths: [
+      "frontend/src/pages",
+      "frontend/src/components",
+      "frontend/src/styles",
+      "frontend/e2e",
+      "docs/ui-gap-analysis-batch-d-2026-05-26.md",
+      "docs/screenshots/ui-signoff/batch-d",
+      ...COMMON_STAGE_PATHS,
+    ],
   },
 };
 
@@ -62,7 +95,6 @@ function parseArgs(argv) {
   let batch = "B";
   let commitPush = false;
   let autoNext = false;
-  let skipVerify100 = false;
   let skipGates = false;
   for (let i = 2; i < argv.length; i += 1) {
     const a = argv[i];
@@ -83,15 +115,14 @@ function parseArgs(argv) {
       continue;
     }
     if (a === "--skip-verify-100") {
-      skipVerify100 = true;
-      continue;
+      throw new Error("--skip-verify-100 is forbidden. Every stage must pass verify-100 GREEN.");
     }
     if (a === "--skip-gates") {
       skipGates = true;
       continue;
     }
   }
-  return { batch, commitPush, autoNext, skipVerify100, skipGates };
+  return { batch, commitPush, autoNext, skipGates };
 }
 
 function run(cmd, args, opts = {}) {
@@ -144,42 +175,46 @@ function assertVerify100Green(summaryText) {
 function writeGapReportBatchB(cfg) {
   const reportPath = join(root, cfg.gapReport);
   const shotBase = cfg.screenshotDir.replace(/\\/g, "/");
-  const body = `# UI 差距分析 — Dashboard — Batch B — 2026-05-26
+  const body = `# UI gap analysis - Dashboard - Batch B - 2026-05-26
 
-**设计图**：
+**Design refs**
 - \`.memory-bank/design-refs/screens/04-dashboard-galaxy-spiral.png\`
 - \`.memory-bank/design-refs/screens/01-glass-panel-wave-border.png\`
 
-**实现截图**（自动化采集）：
+**Captured screenshots**
 - \`${shotBase}/dashboard-1440.png\`
 - \`${shotBase}/dashboard-768.png\`
 - \`${shotBase}/dashboard-375.png\`
 
-**对照方式**：1440 宽并排肉眼对比 + Playwright testId 功能门禁；无像素级 diff 工具。
+**Comparison method**
+- side-by-side review at 1440 width
+- Playwright test ids keep the functional gate stable
+- pixel-perfect visual parity is still iterative, not claimed complete in this batch
 
-| # | 维度 | 设计图要求 | 当前实现 | 等级 | 根因 | 修复计划 |
-|---|------|------------|----------|------|------|----------|
-| 1 | 玻璃舞台 | 厚霓虹波浪描边 + 内层极光雾 | \`ChartStage\` + \`flow-border-hero\` 已套 Market 区 | P1 | C | Batch A/B 已落地；需 1440 并排确认发光强度 |
-| 2 | 色彩 | Master 青/紫/金三色 | \`:root\` token + Feature 五色 variant | P1 | A | 扫尾残留 hex（Trade/旧组件）→ Batch C |
-| 3 | 布局 | 三栏比例 + 底栏五钮等高 | \`lg:grid-cols-[…]\` + \`gap-4 items-stretch auto-rows-fr\` | P1 | D | 375 两列已测；微调 tile 内 padding 可排 P2 |
-| 4 | 图标 | 3D/等距霓虹图标 | Lucide 扁平 + CSS 光晕 | P2 | F | 可选 GLB/插画资产，不阻塞 Batch B |
-| 5 | 文案 | 无工程味副标题 | 已移除「Modules」；数据源 badge 为 \`sr-only\` | — | — | B2 完成 |
-| 6 | 背景 | 星系/极光全局明显 | \`AuroraGalaxyBackground\` 开启 | P1 | E | K 线区内层对比已加强；全页星点密度可再调 P2 |
+| # | Dimension | Target | Current state | Severity | Root cause | Next fix |
+|---|---|---|---|---|---|---|
+| 1 | Glass stage | Thick neon wave edge + inner glow | ChartStage plus flow-border-hero already applied to market stage | P1 | needs 1440 desktop visual tuning | continue in later UI batch |
+| 2 | Color system | Master cyan / purple / magenta | global tokens and feature variants are in place | P1 | legacy hex values still exist in old modules | continue in Batch C |
+| 3 | Layout | three-column ratio + equal-height lower cards | gap-4 items-stretch auto-rows-fr is live | P1 | minor mobile padding drift | backlog P2 |
+| 4 | Icons | richer 3D treatment | currently flat Lucide plus glow | P2 | asset backlog | not a release blocker for Batch B |
+| 5 | Copy | no engineering-sounding subheaders | removed Modules; source badge is sr-only | pass | complete for this batch | none |
+| 6 | Background | strong galaxy / aurora presence | AuroraGalaxyBackground active | P1 | density and contrast can still be tuned | backlog P2 |
 
-**P0 计数**：0（无阻塞项：色值灾难/布局错位/无玻璃/错 Logo）
+**P0 count**
+- 0
 
-**功能验收**：\`scripts/verify-full-save-log.cmd --no-pause\`（编码 + 合约 + backend + Playwright 全量）
+**Functional evidence**
+- \`scripts/verify-full-save-log.cmd --no-pause\`
 
-**压力验收**：\`stress-playwright-100.mjs --spec e2e/smoke.spec.ts --rounds 100\`
+**Stress evidence**
+- \`stress-playwright-100.mjs --spec e2e/smoke.spec.ts --rounds 100\`
 
-**工程门禁**：\`scripts/verify-100.ps1\` → 须 \`PASSED=100 FAILED=0 RESULT=GREEN\`
+**Engineering gate**
+- \`scripts/verify-100.ps1\` -> \`PASSED=100 FAILED=0 RESULT=GREEN\`
 
-**改进计划（下一批）**：
-1. **Batch C**：Trade 图表区改 \`ChartStage\`；Swap 字段与 Dashboard 左栏 token 对齐（对照 dydx / Jupiter 密度）。
-2. **P2 资产**：五宫格 3D 图标占位 → 设计导出或轻量 CSS 等距，不抄 OKX 素材。
-3. **自动化**：本流水线 \`ui-design-phase-pipeline.mjs\` 已串联；每批更新本表与 \`docs/ui-round2-visual-alignment.md\` §5。
-
-**签收结论**：Batch B **代码与门禁可合并**；视觉 1:1 仍属迭代（P1/P2 已登记），禁止声称「像素级完成」。
+**Conclusion**
+- Batch B is mergeable only after verify-100 GREEN.
+- Visual parity is improved, but not claimed as final pixel-perfect closure yet.
 `;
   mkdirSync(join(root, "docs"), { recursive: true });
   writeFileSync(reportPath, body, "utf8");
@@ -190,28 +225,32 @@ function updateRound2Table(batch, verifyNote) {
   const path = join(root, "docs/ui-round2-visual-alignment.md");
   if (!existsSync(path)) return;
   let text = readFileSync(path, "utf8");
-  const row = `| 2026-05-26 | ${batch} | ChartStage 舞台、去 Modules、FeatureGrid gap-4 等高；差距报告 \`ui-gap-analysis-batch-b-2026-05-26.md\` | ${verifyNote} |`;
-  if (text.includes("| 2026-05-26 | B |")) {
-    text = text.replace(/\| 2026-05-26 \| B \|[^\n]+\n/, `${row}\n`);
+  const row = `| 2026-05-26 | ${batch} | ChartStage stage, removed Modules subheader, equal-height feature grid, gap report refreshed | ${verifyNote} |`;
+  if (text.includes(`| 2026-05-26 | ${batch} |`)) {
+    text = text.replace(new RegExp(`\\| 2026-05-26 \\| ${batch} \\|[^\\n]+\\n`), `${row}\n`);
   } else {
     text = text.replace(
-      "| — | — | （待填） | — |",
-      `${row}\n| — | — | （待填） | — |`,
+      "| 鈥?| 鈥?| 锛堝緟濉級 | 鈥?|",
+      `${row}\n| 鈥?| 鈥?| 锛堝緟濉級 | 鈥?|`,
     );
   }
   writeFileSync(path, text, "utf8");
 }
 
 function gitCommitPush(batch, cfg) {
+  let code = run(process.execPath, [join(root, "scripts/verify-100-gate.mjs"), "assert-commit"]);
+  if (code !== 0) return code;
+
+  stagePaths(root, cfg.stagePaths);
+  assertStageScope(root, cfg.stagePaths);
+
   const msg = `ui(design-phase): Batch ${batch} dashboard signoff pipeline
 
 - Batch ${batch}: ${cfg.title}
 - Gap report: ${cfg.gapReport}
 - Screenshots: ${cfg.screenshotDir}
-- Gates: verify-full, stress×100, verify-100 GREEN`;
+- Gates: verify-full, stress x100, verify-100 GREEN`;
 
-  let code = run("git", ["add", "-A"]);
-  if (code !== 0) return code;
   const commit = spawnSync("git", ["commit", "-m", msg], { cwd: root, encoding: "utf8", shell });
   if (commit.status !== 0) {
     if ((commit.stdout || "").includes("nothing to commit")) {
@@ -224,14 +263,14 @@ function gitCommitPush(batch, cfg) {
   return run("git", ["push"]);
 }
 
-const { batch, commitPush, autoNext, skipVerify100, skipGates } = parseArgs(process.argv);
+const { batch, commitPush, autoNext, skipGates } = parseArgs(process.argv);
 const cfg = BATCHES[batch];
 if (!cfg) {
   console.error(`Unknown batch: ${batch}`);
   process.exit(1);
 }
 
-console.log(`=== UI design phase pipeline: Batch ${batch} — ${cfg.title} ===`);
+console.log(`=== UI design phase pipeline: Batch ${batch} - ${cfg.title} ===`);
 
 let code = 0;
 if (!skipGates) {
@@ -257,7 +296,7 @@ if (batch === "B") {
   if (!existsSync(stub)) {
     writeFileSync(
       stub,
-      `# UI 差距分析 — Batch ${batch} — 2026-05-26\n\n（待 Agent 填写；见 Batch B 报告模板）\n`,
+      `# UI gap analysis - Batch ${batch} - 2026-05-26\n\nPending agent write-up. Follow the Batch B report shape.\n`,
       "utf8",
     );
   }
@@ -274,23 +313,20 @@ if (!skipGates) {
   if (code !== 0) process.exit(code);
 }
 
-let verify100Note = "verify-100 SKIPPED";
-if (!skipVerify100) {
-  code = run(psExe, [
-    "-NoProfile",
-    "-ExecutionPolicy",
-    "Bypass",
-    "-File",
-    join(root, "scripts/verify-100.ps1"),
-  ]);
-  const summary = readLatestVerify100SummarySync();
-  if (code !== 0 || !assertVerify100Green(summary.text)) {
-    console.error("verify-100 not GREEN");
-    if (summary.path) console.error(`See ${summary.path}`);
-    process.exit(1);
-  }
-  verify100Note = `verify-100 GREEN (${summary.path})`;
+code = run(psExe, [
+  "-NoProfile",
+  "-ExecutionPolicy",
+  "Bypass",
+  "-File",
+  join(root, "scripts/verify-100.ps1"),
+]);
+const summary = readLatestVerify100SummarySync();
+if (code !== 0 || !assertVerify100Green(summary.text)) {
+  console.error("verify-100 not GREEN");
+  if (summary.path) console.error(`See ${summary.path}`);
+  process.exit(1);
 }
+const verify100Note = `verify-100 GREEN (${summary.path})`;
 
 updateRound2Table(batch, verify100Note);
 
@@ -311,7 +347,6 @@ if (autoNext && cfg.next) {
     "--commit-push",
     "--auto-next",
   ];
-  if (skipVerify100) nextArgs.push("--skip-verify-100");
   console.log(`\n>> auto-next Batch ${cfg.next}`);
   const child = spawnSync(process.execPath, nextArgs, {
     cwd: root,

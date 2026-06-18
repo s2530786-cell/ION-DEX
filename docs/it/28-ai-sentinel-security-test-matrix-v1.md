@@ -34,4 +34,3 @@ This matrix defines executable and auditable tests for sandbox-only security too
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
-

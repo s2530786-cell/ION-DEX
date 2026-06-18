@@ -14,11 +14,13 @@ Isolated Docker profiles for ION DEX scraping/security testing.
 From repo root:
 
 ```powershell
-docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --rm sast-audit
+docker compose -f docker/security-sandbox/docker-compose.yml --profile sast-audit run --build --rm sast-audit
 docker compose -f docker/security-sandbox/docker-compose.yml --profile scraping-lab run --rm scraping-lab
 docker compose -f docker/security-sandbox/docker-compose.yml --profile offsec-lab up -d offsec-lab
 docker compose -f docker/security-sandbox/docker-compose.yml --profile sentinel-lab run --rm sentinel-lab bash /scripts/run-sublist3r.sh example.com
 ```
+
+`sast-audit` now uses a local prebuilt image (`ion-dex/sast-audit:local`) so Semgrep and Bandit do not need to be reinstalled on every run. Keep `--build` in automation/CI commands so the image is refreshed when the Dockerfile changes.
 
 Enable backend docker runners:
 

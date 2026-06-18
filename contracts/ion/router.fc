@@ -7,6 +7,7 @@ global slice storage::fee_distributor_address;
 global slice storage::sandwich_guard_address;
 global cell storage::pool_dict;
 global int storage::protocol_fee_bps;
+global slice storage::bridge_inbox_address;
 
 () storage::load() impure inline {
     slice ds = get_data().begin_parse();
@@ -15,6 +16,11 @@ global int storage::protocol_fee_bps;
     storage::sandwich_guard_address = ds~load_msg_addr();
     storage::pool_dict = ds~load_dict();
     storage::protocol_fee_bps = ds~load_uint(16);
+    if ds.slice_empty?() {
+        storage::bridge_inbox_address = address::none();
+    } else {
+        storage::bridge_inbox_address = ds~load_msg_addr();
+    }
     ds.end_parse();
 }
 
@@ -25,6 +31,7 @@ global int storage::protocol_fee_bps;
         .store_slice(storage::sandwich_guard_address)
         .store_dict(storage::pool_dict)
         .store_uint(storage::protocol_fee_bps, 16)
+        .store_slice(storage::bridge_inbox_address)
     .end_cell());
 }
 
@@ -142,6 +149,45 @@ slice router::pool_key(slice token0, slice token1) inline {
     storage::save();
 }
 
+() handle_bridge_execute() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::bridge_inbox_address));
+
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int message_id = body~load_uint(256);
+    int source_chain_id = body~load_uint(32);
+    int source_nonce = body~load_uint(256);
+    int amount = body~load_coins();
+    slice token = body~load_msg_addr();
+    slice recipient = body~load_msg_addr();
+
+    source_chain_id~touch();
+    source_nonce~touch();
+    throw_unless(error::invalid_amount, amount > 0);
+
+    msgs::send_value(
+        0,
+        recipient,
+        begin_cell()
+            .store_uint(op::bridge_execute, 32)
+            .store_uint(query_id, 64)
+            .store_uint(message_id, 256)
+            .store_coins(amount)
+            .store_slice(token)
+        .end_cell(),
+        0);
+
+    msgs::send_value(
+        0,
+        storage::bridge_inbox_address,
+        begin_cell()
+            .store_uint(op::bridge_ack, 32)
+            .store_uint(query_id, 64)
+            .store_uint(message_id, 256)
+        .end_cell(),
+        1);
+}
+
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
     throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
 
@@ -178,10 +224,18 @@ slice router::pool_key(slice token0, slice token1) inline {
         return ();
     }
 
+    if ctx::opcode() == op::bridge_execute {
+        handle_bridge_execute();
+        return ();
+    }
+
     if ctx::opcode() == op::set_params {
         throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
         slice body = ctx::body();
         storage::protocol_fee_bps = body~load_uint(16);
+        if body.slice_bits() >= 2 {
+            storage::bridge_inbox_address = body~load_msg_addr();
+        }
         throw_unless(error::fee_bps_invalid, storage::protocol_fee_bps <= params::fee_denominator);
         storage::save();
         return ();
@@ -196,6 +250,7 @@ _ get_router_data() method_id {
         storage::owner_address,
         storage::fee_distributor_address,
         storage::sandwich_guard_address,
+        storage::bridge_inbox_address,
         storage::protocol_fee_bps
     );
 }

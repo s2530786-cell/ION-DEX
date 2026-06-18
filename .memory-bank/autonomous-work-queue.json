@@ -1,17 +1,17 @@
 {
   "version": 1,
-  "description": "ION DEX 自动工单队列 — P1 Dashboard quote 收口 → verify-100 → W6",
+  "description": "ION DEX autonomous work queues",
   "queues": [
     {
       "id": "p1-dashboard-w6-pipeline",
-      "title": "P1 Dashboard quote → verify-full → verify-100 → W6 启动",
+      "title": "P1 Dashboard quote -> verify-full -> verify-100 -> W6 kickoff",
       "status": "active",
       "autoAdvance": true,
-      "activatedAt": "2026-05-29T00:00:00.000Z",
+      "activatedAt": "2026-06-14T00:00:00.000Z",
       "steps": [
         {
           "id": "dashboard-p1-quote-ui",
-          "title": "Dashboard P1 quoteLine 展示（Agent）",
+          "title": "Dashboard P1 quote line delivery",
           "status": "completed",
           "kind": "shell",
           "command": "echo dashboard-p1-quote-ui-done",
@@ -20,7 +20,7 @@
         },
         {
           "id": "verify-full",
-          "title": "P1 Dashboard quote 门禁 verify-full",
+          "title": "P1 Dashboard quote gate verify-full",
           "status": "completed",
           "kind": "verify-full",
           "requires": [
@@ -29,58 +29,64 @@
         },
         {
           "id": "verify-100",
-          "title": "P1 Swap/Dashboard 前端收口 verify-100",
-          "status": "failed",
+          "title": "P1 Swap/Dashboard frontend gate verify-100",
+          "status": "running",
           "kind": "verify-100",
           "allowExternal": true,
           "requires": [
             "verify-full"
           ],
-          "note": "新 activatedAt；100/100 GREEN 后进入 W6 Agent 阶段",
-          "managedPid": 61448,
-          "external": false,
-          "error": "verify-100 exit 1"
+          "note": "stale 2026-06-13 run cleared after 2026-06-14 frontend verify recovery; rerun with a fresh guarded proof before W6",
+          "external": true,
+          "resume": {
+            "startAt": 25,
+            "initialPassed": 24,
+            "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260614-171724.txt",
+            "logPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-20260614-171724.log"
+          },
+          "managedPid": 107152,
+          "error": "interrupted at 24/100; auto-resume from 25"
         },
         {
           "id": "w6-agent-kickoff",
-          "title": "W6 Sandwich + Bridge 双重签（Agent 续跑）",
+          "title": "W6 Sandwich + Bridge agent kickoff",
           "status": "pending",
           "kind": "shell",
           "command": "echo w6-sandwich-bridge-agent-phase",
           "requires": [
             "verify-100"
           ],
-          "note": "看门狗标记完成；实际 W6 由 Agent 在 SESSION_STATE 推进"
+          "note": "actual W6 progress continues through SESSION_STATE and guarded workflow"
         }
       ]
     },
     {
       "id": "ui-design-phase-b",
-      "title": "UI Batch B → verify-100 GREEN → commit+push → Batch C/D",
+      "title": "UI Batch B -> verify-100 GREEN -> commit+push -> Batch C/D",
       "status": "paused",
       "autoAdvance": true,
       "activatedAt": "2026-05-28T06:40:00.000Z",
       "steps": [
         {
           "id": "verify-full",
-          "title": "功能门禁 verify-full",
+          "title": "feature gate verify-full",
           "status": "completed",
           "kind": "verify-full"
         },
         {
           "id": "screenshots",
-          "title": "375/768/1440 截图",
+          "title": "375/768/1440 screenshots",
           "status": "completed",
           "kind": "shell",
           "command": "node scripts/capture-ui-signoff-screenshots.mjs --batch B"
         },
         {
           "id": "verify-100",
-          "title": "工程门禁 verify-100 ×100",
+          "title": "engineering gate verify-100 x100",
           "status": "completed",
           "kind": "verify-100",
           "allowExternal": true,
-          "note": "外部 verify 续跑；当前摘要 114641",
+          "note": "historical GREEN proof preserved for batch B",
           "resume": {
             "startAt": 96,
             "initialPassed": 95,
@@ -93,20 +99,18 @@
         },
         {
           "id": "git-commit-push-b",
-          "title": "Batch B 自动 commit + push（verify-100 GREEN 后）",
+          "title": "Batch B guarded commit + push after verify-100 GREEN",
           "status": "failed",
           "kind": "git-commit-push",
           "batch": "B",
           "requires": [
             "verify-100"
           ],
-          "managedPid": 52556,
-          "startedAt": "2026-05-28T07:34:17.840Z",
           "error": "git-commit-push exit 1"
         },
         {
           "id": "batch-c-auto",
-          "title": "Batch C 全自动流水线（含 commit+push + auto-next D）",
+          "title": "Batch C full autonomous pipeline",
           "status": "pending",
           "kind": "shell",
           "command": "node scripts/ui-design-phase-pipeline.mjs --batch C --commit-push --auto-next",
@@ -116,14 +120,14 @@
         },
         {
           "id": "stress-smoke-100",
-          "title": "Batch B smoke stress ×100（不阻塞下一阶段）",
+          "title": "Batch B smoke stress x100",
           "status": "pending",
           "kind": "shell",
           "command": "node scripts/stress-playwright-100.mjs --spec e2e/smoke.spec.ts --rounds 100",
           "requires": [
             "git-commit-push-b"
           ],
-          "note": "与 Batch C 串行由看门狗调度；verify-100 已绿"
+          "note": "scheduled after guarded commit when the historical batch is resumed"
         }
       ]
     }

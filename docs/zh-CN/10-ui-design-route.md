@@ -2,6 +2,7 @@
 
 # UI Design Route Lock
 
+This document locks the UI route before further frontend development. It converts the user's design requirement into an executable engineering workflow.
 
 
 ## 从这里开始
@@ -30,5 +31,6 @@
 - [Visual Acceptance Workflow Plan](./visual-acceptance-workflow-plan.md)
 - [Product Requirements Document](./05-product-prd.md)
 
-> 说明：这条中文路径提供稳定的公开阅读入口；涉及最终措辞、经济参数、安全边界与发布状态时，仍以英文公共文档为准。
 
+
+> 说明：这条中文路径提供稳定的公开阅读入口；涉及最终措辞、经济参数、安全边界与发布状态时，仍以英文公共文档为准。

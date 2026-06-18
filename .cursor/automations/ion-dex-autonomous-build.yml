@@ -5,7 +5,7 @@
 # source of truth for the trigger, repository target, tools, and prompt.
 
 name: "ION DEX Autonomous Build Pipeline"
-description: "Autonomous ION DEX build loop: read project memory, implement one scoped task, verify, commit, and push."
+description: "Autonomous ION DEX build loop: read project memory, implement one scoped task, enforce verify-100 GREEN, then guarded commit and push."
 
 trigger:
   type: schedule
@@ -63,11 +63,14 @@ instructions: |
   After edits, run the strongest available verification from repository root:
   1. `bash scripts/check-encoding.sh`
   2. `bash scripts/verify-full.sh`
+  3. On Windows or the guarded workflow runner, `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-100.ps1`
 
   If a Windows runner is used instead of Ubuntu, run:
   - `scripts\verify-full-save-log.cmd --no-pause`
+  - `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-100.ps1`
 
   If verification fails, analyze the failure, fix it, and repeat verification.
+  Commit and push are forbidden until `verify-100` produces `PASSED=100 FAILED=0 RESULT=GREEN`.
   Do not claim completion without command evidence.
 
   ## Step 4: Review, Record, Commit, Push
@@ -77,10 +80,14 @@ instructions: |
   - Update `SESSION_STATE.md` with last completed step, blocker, exact next action, and decisions.
   - For meaningful diffs, run the available Agent Review or PR review path using `BUGBOT.md` as review focus when the environment supports it.
 
-  Commit only files changed for this task:
+  Commit only files changed for this task, and only after `verify-100` GREEN proof is fresh for the current HEAD and working tree:
+  - `node scripts/install-git-hooks.mjs`
   - `git add <changed files>`
   - `git commit -m "chore(automation): import autonomous build workflow"`
   - `git push -u origin cursor/ion-dex-yaml-cfd8`
+
+  The repository hooks and `scripts/verify-100-gate.mjs` are the source of truth.
+  If commit or push is blocked, do not bypass the guard. Re-run `verify-100` for the current stage, then retry.
 
   ## Stop Conditions
   Stop immediately and report clearly if:

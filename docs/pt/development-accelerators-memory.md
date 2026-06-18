@@ -31,4 +31,6 @@ Snapshot date: 2026-05-17
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 - [Live Deploy Operator Manual](./ion-live-deploy-operator-manual.md)
 
+
+
 > Nota: esta trilha em português oferece uma entrada pública estável de leitura; os documentos públicos em inglês continuam sendo a fonte canônica final.

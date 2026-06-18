@@ -4,6 +4,7 @@ import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { GlassPanel } from "@/components/ui/glass/GlassPanel";
 import { MetricTile } from "@/components/ui/glass/MetricTile";
+import { useI18n } from "@/i18n/I18nProvider";
 import { parseAddressLines, parseTransferCsv, type ParsedRecipientRow } from "@/lib/batchTransferCsv";
 import {
   fetchBatchTransferConfig,
@@ -23,7 +24,7 @@ const fallbackConfig: BatchTransferConfig = {
   contractDeployed: false,
   provenance: {
     source: "local-fallback",
-    note: "Batch-transfer config API unavailable; showing placeholder limits.",
+    note: "Batch-transfer config API unavailable; showing fallback limits.",
   },
 };
 
@@ -44,6 +45,7 @@ function configToMeta(config: BatchTransferConfig, stale: boolean): ApiMeta {
 }
 
 export function BatchTransferPage() {
+  const { isZh } = useI18n();
   const [tab, setTab] = useState<TabMode>("transfer");
   const [config, setConfig] = useState<BatchTransferConfig>(fallbackConfig);
   const [meta, setMeta] = useState<ApiMeta>(configToMeta(fallbackConfig, true));
@@ -121,11 +123,15 @@ export function BatchTransferPage() {
       if (tab === "transfer") {
         const payloadText = rows.map((row) => `${row.address},${row.amount}`).join("\n");
         const response = await validateBatchTransfer(payloadText);
-        summary = `Validated ${response.data.recipientCount} recipients, total ${response.data.totalAmount} ION. On-chain execution waits for BatchTransfer.sol deployment.`;
+        summary = isZh
+          ? `已校验 ${response.data.recipientCount} 个收款地址，总额 ${response.data.totalAmount} ION。链上执行仍等待 BatchTransfer.sol 部署。`
+          : `Validated ${response.data.recipientCount} recipients, total ${response.data.totalAmount} ION. On-chain execution waits for BatchTransfer.sol deployment.`;
       } else {
         const payloadText = collectAddresses.join("\n");
         const response = await validateBatchCollect({ mainAddress: mainAddress.trim(), text: payloadText });
-        summary = `Validated collect list with ${response.data.fromCount} source addresses targeting ${response.data.mainAddress.slice(0, 10)}….`;
+        summary = isZh
+          ? `已校验归集列表，共 ${response.data.fromCount} 个来源地址，目标为 ${response.data.mainAddress.slice(0, 10)}...`
+          : `Validated collect list with ${response.data.fromCount} source addresses targeting ${response.data.mainAddress.slice(0, 10)}...`;
       }
       setLastResult(summary);
     } catch (error) {
@@ -140,13 +146,24 @@ export function BatchTransferPage() {
     setLastResult(null);
   }
 
+  const provenanceNote =
+    config.provenance.source === "local-fallback"
+      ? isZh
+        ? "批量转账配置接口当前不可用，页面展示的是回退限制。"
+        : "Batch-transfer config API is currently unavailable, so the page is showing fallback limits."
+      : config.provenance.note;
+
   return (
     <div className="grid gap-5" data-testid="page-batch-transfer">
-      <GlassPanel eyebrow="Treasury ops" testId="batch-transfer-hero" title="Batch transfer desk">
+      <GlassPanel
+        eyebrow={isZh ? "资金操作" : "Treasury Ops"}
+        testId="batch-transfer-hero"
+        title={isZh ? "批量转账工作台" : "Batch Transfer Desk"}
+      >
         <p className="text-sm text-slate-300/90">
-          Transfer or collect up to {config.maxRecipients} addresses per batch. Payload validation runs
-          through the gateway today; wallet signing and BatchTransfer.sol execution ship after contract
-          deployment.
+          {isZh
+            ? `单批最多可处理 ${config.maxRecipients} 个地址。当前支持通过网关做载荷校验；钱包签名与 BatchTransfer.sol 的真实执行会在合约部署后启用。`
+            : `Transfer or collect up to ${config.maxRecipients} addresses per batch. Payload validation runs through the gateway today; wallet signing and BatchTransfer.sol execution ship after contract deployment.`}
         </p>
         <div className="mt-3">
           <DataSourceBadge meta={meta} testId="batch-transfer-source" />
@@ -161,7 +178,7 @@ export function BatchTransferPage() {
           type="button"
           onClick={() => setTab("transfer")}
         >
-          Transfer
+          {isZh ? "批量发送" : "Transfer"}
         </NeonButton>
         <NeonButton
           className={tab === "collect" ? "" : "opacity-70"}
@@ -170,51 +187,66 @@ export function BatchTransferPage() {
           type="button"
           onClick={() => setTab("collect")}
         >
-          Collect
+          {isZh ? "批量归集" : "Collect"}
         </NeonButton>
       </div>
 
       <AsyncState error={loadError} onRetry={reload} state={loadState} testId="batch-transfer-config">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <MetricTile
-            label="Max recipients"
+            label={isZh ? "最大地址数" : "Max Recipients"}
             testId="batch-transfer-stat-max-recipients"
             value={String(config.maxRecipients)}
           />
-          <MetricTile label="Fee currency" testId="batch-transfer-stat-fee" value={config.feeCurrency} />
           <MetricTile
-            label="Contract"
-            testId="batch-transfer-stat-contract"
-            value={config.contractDeployed ? "Deployed" : "Pending"}
+            label={isZh ? "手续费币种" : "Fee Currency"}
+            testId="batch-transfer-stat-fee"
+            value={config.feeCurrency}
           />
           <MetricTile
-            label="Token preset"
+            label={isZh ? "合约状态" : "Contract"}
+            testId="batch-transfer-stat-contract"
+            value={config.contractDeployed ? (isZh ? "已部署" : "Deployed") : isZh ? "待部署" : "Pending"}
+          />
+          <MetricTile
+            label={isZh ? "代币预设" : "Token Preset"}
             testId="batch-transfer-stat-token"
-            value={tokenAddress === "native" ? "BNB" : tokenAddress === ION_TOKEN_BSC ? "ION" : "Custom"}
+            value={
+              tokenAddress === "native"
+                ? "BNB"
+                : tokenAddress === ION_TOKEN_BSC
+                  ? "ION"
+                  : isZh
+                    ? "自定义"
+                    : "Custom"
+            }
           />
         </div>
       </AsyncState>
 
-      <GlassPanel testId="batch-transfer-form-panel" title={tab === "transfer" ? "Batch send" : "Batch collect"}>
+      <GlassPanel
+        testId="batch-transfer-form-panel"
+        title={tab === "transfer" ? (isZh ? "批量发送" : "Batch Send") : isZh ? "批量归集" : "Batch Collect"}
+      >
         <div className="grid gap-4">
           <label className="grid gap-1 text-sm text-slate-300">
-            Token
+            {isZh ? "代币" : "Token"}
             <select
               className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2"
               data-testid="batch-transfer-token-select"
               value={tokenPreset}
               onChange={(event) => setTokenPreset(event.target.value as typeof tokenPreset)}
             >
-              <option value="native">BNB (native)</option>
-              <option value="ion">ION (BSC)</option>
-              <option value="custom">Custom ERC-20</option>
+              <option value="native">{isZh ? "BNB（原生）" : "BNB (native)"}</option>
+              <option value="ion">{isZh ? "ION（BSC）" : "ION (BSC)"}</option>
+              <option value="custom">{isZh ? "自定义 ERC-20" : "Custom ERC-20"}</option>
             </select>
           </label>
           {tokenPreset === "custom" ? (
             <input
               className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm"
               data-testid="batch-transfer-token-custom"
-              aria-label="Custom token contract address"
+              aria-label={isZh ? "自定义代币合约地址" : "Custom token contract address"}
               value={customToken}
               onChange={(event) => setCustomToken(event.target.value)}
             />
@@ -223,7 +255,7 @@ export function BatchTransferPage() {
           {tab === "transfer" ? (
             <>
               <label className="grid gap-1 text-sm text-slate-300">
-                Recipients (address,amount per line)
+                {isZh ? "收款列表（每行 address,amount）" : "Recipients (address,amount per line)"}
                 <textarea
                   className="min-h-[120px] rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 font-mono text-xs"
                   data-testid="batch-transfer-csv-input"
@@ -238,7 +270,7 @@ export function BatchTransferPage() {
                   type="button"
                   onClick={() => setCsvText(sampleCsv)}
                 >
-                  Paste sample
+                  {isZh ? "填入示例" : "Paste Sample"}
                 </NeonButton>
                 <NeonButton
                   className="!bg-white/10 !shadow-none"
@@ -246,7 +278,7 @@ export function BatchTransferPage() {
                   type="button"
                   onClick={applyCsv}
                 >
-                  Parse list
+                  {isZh ? "解析列表" : "Parse List"}
                 </NeonButton>
                 <NeonButton
                   className="!bg-white/10 !shadow-none"
@@ -259,24 +291,24 @@ export function BatchTransferPage() {
                     setLastResult(null);
                   }}
                 >
-                  Clear
+                  {isZh ? "清空" : "Clear"}
                 </NeonButton>
               </div>
             </>
           ) : (
             <>
               <label className="grid gap-1 text-sm text-slate-300">
-                Main wallet
+                {isZh ? "主钱包地址" : "Main Wallet"}
                 <input
                   className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 font-mono text-xs"
                   data-testid="batch-transfer-main-address"
-                  aria-label="Main wallet address"
+                  aria-label={isZh ? "主钱包地址" : "Main wallet address"}
                   value={mainAddress}
                   onChange={(event) => setMainAddress(event.target.value)}
                 />
               </label>
               <label className="grid gap-1 text-sm text-slate-300">
-                Source addresses (one per line)
+                {isZh ? "来源地址（每行一个）" : "Source Addresses (one per line)"}
                 <textarea
                   className="min-h-[120px] rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 font-mono text-xs"
                   data-testid="batch-transfer-collect-input"
@@ -290,7 +322,7 @@ export function BatchTransferPage() {
                 type="button"
                 onClick={applyCsv}
               >
-                Validate addresses
+                {isZh ? "校验地址" : "Validate Addresses"}
               </NeonButton>
             </>
           )}
@@ -309,8 +341,8 @@ export function BatchTransferPage() {
                 <thead className="text-slate-400">
                   <tr>
                     <th className="px-3 py-2">#</th>
-                    <th className="px-3 py-2">Address</th>
-                    <th className="px-3 py-2">Amount</th>
+                    <th className="px-3 py-2">{isZh ? "地址" : "Address"}</th>
+                    <th className="px-3 py-2">{isZh ? "数量" : "Amount"}</th>
                     <th className="px-3 py-2" />
                   </tr>
                 </thead>
@@ -327,7 +359,7 @@ export function BatchTransferPage() {
                           type="button"
                           onClick={() => removeRow(index)}
                         >
-                          Remove
+                          {isZh ? "移除" : "Remove"}
                         </NeonButton>
                       </td>
                     </tr>
@@ -343,7 +375,17 @@ export function BatchTransferPage() {
             type="button"
             onClick={() => void submitValidation()}
           >
-            {busy ? "Validating…" : tab === "transfer" ? "Validate batch send" : "Validate batch collect"}
+            {busy
+              ? isZh
+                ? "校验中…"
+                : "Validating..."
+              : tab === "transfer"
+                ? isZh
+                  ? "校验批量发送"
+                  : "Validate Batch Send"
+                : isZh
+                  ? "校验批量归集"
+                  : "Validate Batch Collect"}
           </NeonButton>
 
           {lastResult ? (
@@ -359,7 +401,7 @@ export function BatchTransferPage() {
           ) : null}
 
           <p className="text-xs text-slate-400/90" data-testid="batch-transfer-note">
-            {config.provenance.note}
+            {provenanceNote}
           </p>
         </div>
       </GlassPanel>

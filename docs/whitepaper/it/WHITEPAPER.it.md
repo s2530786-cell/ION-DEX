@@ -27,4 +27,3 @@ Il whitepaper inglese resta la fonte canonica per wording finale, economics, sec
 - [Whitepaper completa in inglese](../../WHITEPAPER.md)
 
 > Nota: questo percorso linguistico offre un ingresso pubblico stabile di lettura; i documenti pubblici in inglese restano la fonte canonica finale.
-

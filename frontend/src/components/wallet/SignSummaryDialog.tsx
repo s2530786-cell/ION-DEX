@@ -6,6 +6,7 @@ import {
 } from "@/wallet/signSummary";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { NeonButton } from "@/components/ui/NeonButton";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export function SignSummaryDialog({
   open,
@@ -24,12 +25,13 @@ export function SignSummaryDialog({
   summary?: AssetSignSummary | null;
   busy?: boolean;
 }) {
+  const { isZh } = useI18n();
   const built = useMemo(() => {
     if (summary) {
-      return assetSignSummaryToPayload(summary);
+      return assetSignSummaryToPayload(summary, isZh ? "zh-CN" : "en-US");
     }
-    return buildSignSummaryPayload(payload);
-  }, [payload, summary]);
+    return buildSignSummaryPayload(payload, isZh ? "zh-CN" : "en-US");
+  }, [isZh, payload, summary]);
 
   if (!open) {
     return null;
@@ -47,7 +49,7 @@ export function SignSummaryDialog({
         <NeonCard variant="mixed">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">Wallet</p>
+              <p className="text-sm uppercase tracking-[0.36em] text-cyan-200/70">{isZh ? "钱包" : "Wallet"}</p>
               <h2 className="mt-2 text-2xl font-black text-white">{built.title}</h2>
             </div>
             <button
@@ -55,7 +57,7 @@ export function SignSummaryDialog({
               onClick={dismiss}
               type="button"
             >
-              Close
+              {isZh ? "关闭" : "Close"}
             </button>
           </div>
 
@@ -73,7 +75,7 @@ export function SignSummaryDialog({
             </div>
           ) : (
             <p className="mt-6 text-sm text-cyan-100/60">
-              This signature request did not include a structured summary.
+              {isZh ? "这次签名请求没有提供结构化摘要。" : "This signature request did not include a structured summary."}
             </p>
           )}
 
@@ -85,10 +87,10 @@ export function SignSummaryDialog({
                 onClick={dismiss}
                 type="button"
               >
-                Cancel
+                {isZh ? "取消" : "Cancel"}
               </NeonButton>
               <NeonButton data-testid="sign-summary-confirm" disabled={busy} onClick={confirm} type="button">
-                {busy ? "Signing…" : "Confirm"}
+                {busy ? (isZh ? "签名中…" : "Signing…") : isZh ? "确认" : "Confirm"}
               </NeonButton>
             </div>
           ) : null}

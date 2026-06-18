@@ -26,6 +26,7 @@ import { PageHero } from "@/components/ui/glass/PageHero";
 import { RiskNotice } from "@/components/ui/glass/RiskNotice";
 import { StatusPill } from "@/components/ui/glass/StatusPill";
 import { useApiResource } from "@/hooks/useApiResource";
+import { useI18n } from "@/i18n/I18nProvider";
 import {
   fetchBridgeRoutes,
   fetchBurnSummary,
@@ -70,92 +71,100 @@ export type BusinessPageKey = Exclude<
   | "ai-trading"
 >;
 
-const pageConfigs: Record<BusinessPageKey, BusinessPageConfig> = {
-  trade: {
-    eyebrow: "Professional Trading",
-    title: "ION spot order desk",
-    description:
-      "Market and limit order desk for BNB / ION trading with order book, fee preview, and wallet signing surfaces.",
-    icon: BarChart3,
-    primaryAction: "Create Limit Order",
-    metrics: [
-      { label: "Pair", value: "BNB / ION", tone: "gold" },
-      { label: "Order Types", value: "Market + Limit", tone: "cyan" },
-      { label: "Fee Asset", value: "ION", tone: "magenta" },
-    ],
-    checklist: ["Order book panel", "Market depth chart", "ION fee quote", "Wallet-safe payload"],
-  },
-  grid: {
-    eyebrow: "Strategy Automation",
-    title: "On-chain spot grid",
-    description:
-      "Strategy desk for neutral, arithmetic, geometric, trailing, and stop-grid modes inspired by OKX Web3 flows.",
-    icon: LayoutGrid,
-    primaryAction: "Create Grid Strategy",
-    metrics: [
-      { label: "Strategies", value: "5 modes", tone: "cyan" },
-      { label: "Risk Guard", value: "AI Sentinel", tone: "magenta" },
-      { label: "Settlement", value: "ION fees", tone: "gold" },
-    ],
-    checklist: ["Grid bounds", "Take-profit / stop-loss", "Bot defense", "Strategy history"],
-  },
-  bridge: {
-    eyebrow: "Cross-chain",
-    title: "BSC <> ION bridge",
-    description:
-      "Bridge command surface for BSC vault deposits, ION-side release tracking, relayer health, and consistency checks.",
-    icon: ArrowLeftRight,
-    primaryAction: "Start Bridge",
-    metrics: [
-      { label: "Route", value: "BSC <> ION", tone: "cyan" },
-      { label: "Relayers", value: "Multisig", tone: "gold" },
-      { label: "Status", value: "Design", tone: "magenta" },
-    ],
-    checklist: ["Vault events", "Relayer quorum", "Replay protection", "Bridge audit trail"],
-  },
-  burn: {
-    eyebrow: "Supply",
-    title: "Dual-chain burn tracker",
-    description:
-      "Burn dashboard for BSC burn address, ION mainnet burn source, total burned, and remaining supply.",
-    icon: Flame,
-    primaryAction: "View Burn Chart",
-    metrics: [
-      { label: "BSC Burn", value: "0x...dEaD", tone: "magenta" },
-      { label: "ION Burn", value: "Official source", tone: "cyan" },
-      { label: "Trend", value: "Hourly / Daily", tone: "gold" },
-    ],
-    checklist: ["BSC burn index", "ION burn source", "Trend charts", "Remaining supply"],
-  },
-  domain: {
-    eyebrow: "ION DNS",
-    title: "Domain trading and binding",
-    description:
-      "ION DNS surface based on official DNS FunC references and the community dns.ice.io ecosystem.",
-    icon: Globe2,
-    primaryAction: "Search Domain",
-    metrics: [
-      { label: "Source", value: "dns.ice.io", tone: "cyan" },
-      { label: "Binding", value: "Wallet transfer", tone: "gold" },
-      { label: "Contracts", value: "Official DNS refs", tone: "magenta" },
-    ],
-    checklist: ["Domain search API", "Wallet binding", "Domain transfer", "DNS contract review"],
-  },
-  ai: {
-    eyebrow: "AI Signals",
-    title: "On-chain AI market analyst",
-    description:
-      "AI analysis surface for market signals, anomaly detection, anti-bot scoring, and strategy risk alerts.",
-    icon: Bot,
-    primaryAction: "Run AI Analysis",
-    metrics: [
-      { label: "Signal", value: "Bullish 63%", tone: "cyan" },
-      { label: "Risk", value: "Medium", tone: "magenta" },
-      { label: "Sentinel", value: "Armed", tone: "gold" },
-    ],
-    checklist: ["Price prediction", "MEV alerts", "Anomaly detection", "Strategy recommendations"],
-  },
-};
+function getPageConfigs(isZh: boolean): Record<BusinessPageKey, BusinessPageConfig> {
+  return {
+    trade: {
+      eyebrow: isZh ? "专业交易" : "Professional Trading",
+      title: isZh ? "ION 现货订单台" : "ION spot order desk",
+      description: isZh
+        ? "面向 BNB / ION 交易的市价与限价订单工作台，包含订单簿、费用预览和钱包签名面板。"
+        : "Market and limit order desk for BNB / ION trading with order book, fee preview, and wallet signing surfaces.",
+      icon: BarChart3,
+      primaryAction: isZh ? "创建限价单" : "Create Limit Order",
+      metrics: [
+        { label: isZh ? "交易对" : "Pair", value: "BNB / ION", tone: "gold" },
+        { label: isZh ? "订单类型" : "Order Types", value: isZh ? "市价 + 限价" : "Market + Limit", tone: "cyan" },
+        { label: isZh ? "手续费资产" : "Fee Asset", value: "ION", tone: "magenta" },
+      ],
+      checklist: isZh ? ["订单簿面板", "市场深度图", "ION 费用报价", "钱包安全载荷"] : ["Order book panel", "Market depth chart", "ION fee quote", "Wallet-safe payload"],
+    },
+    grid: {
+      eyebrow: isZh ? "策略自动化" : "Strategy Automation",
+      title: isZh ? "链上现货网格" : "On-chain spot grid",
+      description: isZh
+        ? "提供中性、等差、等比、追踪和止损网格等模式的策略工作台，体验参考 OKX Web3 流程。"
+        : "Strategy desk for neutral, arithmetic, geometric, trailing, and stop-grid modes inspired by OKX Web3 flows.",
+      icon: LayoutGrid,
+      primaryAction: isZh ? "创建网格策略" : "Create Grid Strategy",
+      metrics: [
+        { label: isZh ? "策略模式" : "Strategies", value: isZh ? "5 种模式" : "5 modes", tone: "cyan" },
+        { label: isZh ? "风控守卫" : "Risk Guard", value: "AI Sentinel", tone: "magenta" },
+        { label: isZh ? "结算方式" : "Settlement", value: isZh ? "ION 手续费" : "ION fees", tone: "gold" },
+      ],
+      checklist: isZh ? ["网格边界", "止盈 / 止损", "机器人防护", "策略历史"] : ["Grid bounds", "Take-profit / stop-loss", "Bot defense", "Strategy history"],
+    },
+    bridge: {
+      eyebrow: isZh ? "跨链" : "Cross-chain",
+      title: isZh ? "BSC <> ION 跨链桥" : "BSC <> ION bridge",
+      description: isZh
+        ? "跨链工作台，覆盖 BSC 金库充值、ION 侧释放追踪、中继器健康度和一致性校验。"
+        : "Bridge command surface for BSC vault deposits, ION-side release tracking, relayer health, and consistency checks.",
+      icon: ArrowLeftRight,
+      primaryAction: isZh ? "开始跨链" : "Start Bridge",
+      metrics: [
+        { label: isZh ? "路线" : "Route", value: "BSC <> ION", tone: "cyan" },
+        { label: isZh ? "中继器" : "Relayers", value: isZh ? "多签" : "Multisig", tone: "gold" },
+        { label: isZh ? "状态" : "Status", value: isZh ? "设计中" : "Design", tone: "magenta" },
+      ],
+      checklist: isZh ? ["金库事件", "中继签名阈值", "重放保护", "桥接审计轨迹"] : ["Vault events", "Relayer quorum", "Replay protection", "Bridge audit trail"],
+    },
+    burn: {
+      eyebrow: isZh ? "供应量" : "Supply",
+      title: isZh ? "双链销毁追踪" : "Dual-chain burn tracker",
+      description: isZh
+        ? "销毁看板，聚合 BSC 销毁地址、ION 主网销毁来源、累计销毁量和剩余供应。"
+        : "Burn dashboard for BSC burn address, ION mainnet burn source, total burned, and remaining supply.",
+      icon: Flame,
+      primaryAction: isZh ? "查看销毁图表" : "View Burn Chart",
+      metrics: [
+        { label: isZh ? "BSC 销毁" : "BSC Burn", value: "0x...dEaD", tone: "magenta" },
+        { label: isZh ? "ION 销毁" : "ION Burn", value: isZh ? "官方来源" : "Official source", tone: "cyan" },
+        { label: isZh ? "趋势" : "Trend", value: isZh ? "小时 / 日线" : "Hourly / Daily", tone: "gold" },
+      ],
+      checklist: isZh ? ["BSC 销毁索引", "ION 销毁来源", "趋势图表", "剩余供应"] : ["BSC burn index", "ION burn source", "Trend charts", "Remaining supply"],
+    },
+    domain: {
+      eyebrow: "ION DNS",
+      title: isZh ? "域名交易与绑定" : "Domain trading and binding",
+      description: isZh
+        ? "ION DNS 页面基于官方 DNS FunC 参考实现，并对接 dns.ice.io 社区生态。"
+        : "ION DNS surface based on official DNS FunC references and the community dns.ice.io ecosystem.",
+      icon: Globe2,
+      primaryAction: isZh ? "搜索域名" : "Search Domain",
+      metrics: [
+        { label: isZh ? "来源" : "Source", value: "dns.ice.io", tone: "cyan" },
+        { label: isZh ? "绑定" : "Binding", value: isZh ? "钱包转移" : "Wallet transfer", tone: "gold" },
+        { label: isZh ? "合约" : "Contracts", value: isZh ? "官方 DNS 参考" : "Official DNS refs", tone: "magenta" },
+      ],
+      checklist: isZh ? ["域名搜索 API", "钱包绑定", "域名转移", "DNS 合约审查"] : ["Domain search API", "Wallet binding", "Domain transfer", "DNS contract review"],
+    },
+    ai: {
+      eyebrow: isZh ? "AI 信号" : "AI Signals",
+      title: isZh ? "链上 AI 市场分析师" : "On-chain AI market analyst",
+      description: isZh
+        ? "AI 分析面板用于展示市场信号、异常检测、反机器人评分和策略风险告警。"
+        : "AI analysis surface for market signals, anomaly detection, anti-bot scoring, and strategy risk alerts.",
+      icon: Bot,
+      primaryAction: isZh ? "运行 AI 分析" : "Run AI Analysis",
+      metrics: [
+        { label: isZh ? "信号" : "Signal", value: isZh ? "看涨 63%" : "Bullish 63%", tone: "cyan" },
+        { label: isZh ? "风险" : "Risk", value: isZh ? "中等" : "Medium", tone: "magenta" },
+        { label: "Sentinel", value: isZh ? "已武装" : "Armed", tone: "gold" },
+      ],
+      checklist: isZh ? ["价格预测", "MEV 告警", "异常检测", "策略建议"] : ["Price prediction", "MEV alerts", "Anomaly detection", "Strategy recommendations"],
+    },
+  };
+}
 
 const toneClass: Record<BusinessPageConfig["metrics"][number]["tone"], string> = {
   cyan: "text-cyan-200 shadow-neonCyan",
@@ -265,6 +274,7 @@ function formatTitleCase(word: string) {
 }
 
 function BurnMetricsRow() {
+  const { isZh } = useI18n();
   const [summary, setSummary] = useState<BurnSummary>(fallbackBurnSummary);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
 
@@ -290,15 +300,16 @@ function BurnMetricsRow() {
   }, []);
 
   const metrics: MetricCard[] = [
-    { label: "Total Burned", value: `${formatIonAmount(summary.totalBurnedIon)} ION`, tone: "gold" },
-    { label: "BSC Burn", value: `${formatIonAmount(summary.bscBurnedIon)} ION`, tone: "magenta" },
-    { label: "Remaining", value: `${formatIonAmount(summary.remainingSupplyIon)} ION`, tone: "cyan" },
+    { label: isZh ? "累计销毁" : "Total Burned", value: `${formatIonAmount(summary.totalBurnedIon)} ION`, tone: "gold" },
+    { label: isZh ? "BSC 销毁" : "BSC Burn", value: `${formatIonAmount(summary.bscBurnedIon)} ION`, tone: "magenta" },
+    { label: isZh ? "剩余供应" : "Remaining", value: `${formatIonAmount(summary.remainingSupplyIon)} ION`, tone: "cyan" },
   ];
 
   return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="burn-metrics-source" />;
 }
 
 function StakeMetricsRow() {
+  const { isZh } = useI18n();
   const [summary, setSummary] = useState<StakingSummary>(fallbackStakingSummary);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
 
@@ -324,15 +335,16 @@ function StakeMetricsRow() {
   }, []);
 
   const metrics: MetricCard[] = [
-    { label: "DEX APR", value: `${summary.apr.dexPct}%`, tone: "gold" },
-    { label: "Official Stake", value: `${formatIonAmount(summary.officialStakedIon)} ION`, tone: "cyan" },
-    { label: "DEX Stake", value: `${formatIonAmount(summary.dexStakedIon)} ION`, tone: "magenta" },
+    { label: isZh ? "DEX APR" : "DEX APR", value: `${summary.apr.dexPct}%`, tone: "gold" },
+    { label: isZh ? "官方质押" : "Official Stake", value: `${formatIonAmount(summary.officialStakedIon)} ION`, tone: "cyan" },
+    { label: isZh ? "DEX 质押" : "DEX Stake", value: `${formatIonAmount(summary.dexStakedIon)} ION`, tone: "magenta" },
   ];
 
   return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="stake-metrics-source" />;
 }
 
 function BridgeMetricsRow() {
+  const { isZh } = useI18n();
   const [payload, setPayload] = useState<BridgeRoutesPayload>(fallbackBridgePayload);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
 
@@ -360,15 +372,16 @@ function BridgeMetricsRow() {
   const primary = payload.routes[0];
   const primaryLeg = primary ? `${primary.fromChain} → ${primary.toChain}` : "—";
   const metrics: MetricCard[] = [
-    { label: "Primary Route", value: primaryLeg, tone: "cyan" },
-    { label: "Relayers", value: formatTitleCase(payload.relayerStatus), tone: "gold" },
-    { label: "Verifier", value: payload.verifier.threshold, tone: "magenta" },
+    { label: isZh ? "主路线" : "Primary Route", value: primaryLeg, tone: "cyan" },
+    { label: isZh ? "中继器" : "Relayers", value: formatTitleCase(payload.relayerStatus), tone: "gold" },
+    { label: isZh ? "验证阈值" : "Verifier", value: payload.verifier.threshold, tone: "magenta" },
   ];
 
   return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="bridge-metrics-source" />;
 }
 
 function DomainMetricsRow() {
+  const { isZh } = useI18n();
   const previewName = "custodian.ion";
   const [resolution, setResolution] = useState<DomainResolution>(fallbackDomainCustodian);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
@@ -394,11 +407,11 @@ function DomainMetricsRow() {
     };
   }, []);
 
-  const listingLabel = resolution.available ? "On market" : "Registered";
+  const listingLabel = resolution.available ? (isZh ? "在售" : "On market") : isZh ? "已注册" : "Registered";
   const metrics: MetricCard[] = [
-    { label: "Resolver Preview", value: resolution.name, tone: "cyan" },
-    { label: "Registry", value: listingLabel, tone: "gold" },
-    { label: "Floor (mock)", value: `${resolution.marketplace.floorIon} ION`, tone: "magenta" },
+    { label: isZh ? "解析预览" : "Resolver Preview", value: resolution.name, tone: "cyan" },
+    { label: isZh ? "注册状态" : "Registry", value: listingLabel, tone: "gold" },
+    { label: isZh ? "起售价（模拟）" : "Floor (mock)", value: `${resolution.marketplace.floorIon} ION`, tone: "magenta" },
   ];
 
   return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="domain-metrics-source" />;
@@ -484,6 +497,7 @@ function SegmentedControl<T extends string>({
 }
 
 function TradeOrderPanel() {
+  const { isZh } = useI18n();
   const [side, setSide] = useState<"buy" | "sell">("buy");
   const [orderType, setOrderType] = useState<"limit" | "market">("limit");
   const [amount, setAmount] = useState("");
@@ -517,21 +531,21 @@ function TradeOrderPanel() {
     <form className="grid gap-4" data-testid="trade-form" onSubmit={submitTrade}>
       <div className="grid gap-3 md:grid-cols-2">
         <SegmentedControl
-          label="Side"
+          label={isZh ? "方向" : "Side"}
           onChange={setSide}
           options={[
-            { label: "Buy ION", value: "buy" },
-            { label: "Sell ION", value: "sell" },
+            { label: isZh ? "买入 ION" : "Buy ION", value: "buy" },
+            { label: isZh ? "卖出 ION" : "Sell ION", value: "sell" },
           ]}
           testId="trade-side"
           value={side}
         />
         <SegmentedControl
-          label="Order"
+          label={isZh ? "订单" : "Order"}
           onChange={setOrderType}
           options={[
-            { label: "Limit", value: "limit" },
-            { label: "Market", value: "market" },
+            { label: isZh ? "限价" : "Limit", value: "limit" },
+            { label: isZh ? "市价" : "Market", value: "market" },
           ]}
           testId="trade-order-type"
           value={orderType}
@@ -540,34 +554,42 @@ function TradeOrderPanel() {
 
       <div className="grid gap-3 md:grid-cols-3">
         <FormField
-          label="Amount ION"
+          label={isZh ? "数量 ION" : "Amount ION"}
           onChange={(value) => {
             setAmount(value);
             setSubmitted(false);
           }}
-          hint="Example 1250"
+          hint={isZh ? "示例 1250" : "Example 1250"}
           testId="trade-amount"
           type="number"
           value={amount}
         />
         <FormField
-          label={orderType === "market" ? "Market price" : "Limit price"}
+          label={orderType === "market" ? (isZh ? "市价参考" : "Market price") : isZh ? "限价价格" : "Limit price"}
           onChange={(value) => {
             setPrice(value);
             setSubmitted(false);
           }}
-          hint={orderType === "market" ? `Demo market ref ${TRADE_DESK_DEMO_MARKET_REF}` : "Limit reference 6.00"}
+          hint={
+            orderType === "market"
+              ? isZh
+                ? `演示市价参考 ${TRADE_DESK_DEMO_MARKET_REF}`
+                : `Demo market ref ${TRADE_DESK_DEMO_MARKET_REF}`
+              : isZh
+                ? "限价参考 6.00"
+                : "Limit reference 6.00"
+          }
           testId="trade-price"
           type="number"
           value={orderType === "market" ? "" : price}
         />
         <FormField
-          label="Slippage %"
+          label={isZh ? "滑点 %" : "Slippage %"}
           onChange={(value) => {
             setSlippage(value);
             setSubmitted(false);
           }}
-          hint="Allowed 0.1 to 5"
+          hint={isZh ? "允许范围 0.1 到 5" : "Allowed 0.1 to 5"}
           testId="trade-slippage"
           type="number"
           value={slippage}
@@ -576,27 +598,37 @@ function TradeOrderPanel() {
 
       {!validation.slippageValid ? (
         <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="trade-error">
-          Slippage must stay between 0.1% and 5% for wallet-safe execution.
+          {isZh
+            ? "为了确保钱包签名安全，滑点必须保持在 0.1% 到 5% 之间。"
+            : "Slippage must stay between 0.1% and 5% for wallet-safe execution."}
         </p>
       ) : null}
 
       <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-4 text-sm text-cyan-100/75" data-testid="trade-preview">
         {validation.isValid ? (
           <span>
-            {side === "buy" ? "Buying" : "Selling"} {validation.parsedAmount?.toLocaleString()} ION via {orderType} order. Estimated notional: ${validation.notional.toLocaleString(undefined, { maximumFractionDigits: 2 })}.
+            {isZh
+              ? `正在预览${side === "buy" ? "买入" : "卖出"} ${validation.parsedAmount?.toLocaleString()} ION，订单类型为${orderType === "limit" ? "限价" : "市价"}。预计名义价值：$${validation.notional.toLocaleString(undefined, { maximumFractionDigits: 2 })}。`
+              : `${side === "buy" ? "Buying" : "Selling"} ${validation.parsedAmount?.toLocaleString()} ION via ${orderType} order. Estimated notional: $${validation.notional.toLocaleString(undefined, { maximumFractionDigits: 2 })}.`}
           </span>
         ) : (
-          <span>Enter amount, price, and slippage to preview the wallet-safe order payload.</span>
+          <span>
+            {isZh
+              ? "输入数量、价格和滑点后，可预览适合钱包签名的订单载荷。"
+              : "Enter amount, price, and slippage to preview the wallet-safe order payload."}
+          </span>
         )}
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="trade-submit" disabled={!validation.isValid} type="submit">
-        Preview order (no chain submit)
+        {isZh ? "预览订单（不提交链上）" : "Preview order (no chain submit)"}
       </NeonButton>
 
       {submitted ? (
         <p className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-4 py-3 text-sm font-bold text-amber-100" data-testid="trade-confirmation">
-          Order review ready — pending wallet signature and MM API submission.
+          {isZh
+            ? "订单复核已准备就绪，等待钱包签名与 MM API 提交。"
+            : "Order review ready — pending wallet signature and MM API submission."}
         </p>
       ) : null}
     </form>
@@ -604,6 +636,7 @@ function TradeOrderPanel() {
 }
 
 function GridStrategyPanel() {
+  const { isZh } = useI18n();
   const [mode, setMode] = useState<"arithmetic" | "geometric">("arithmetic");
   const [lowerPrice, setLowerPrice] = useState("");
   const [upperPrice, setUpperPrice] = useState("");
@@ -641,11 +674,11 @@ function GridStrategyPanel() {
   return (
     <form className="grid gap-4" data-testid="grid-form" onSubmit={submitGrid}>
       <SegmentedControl
-        label="Grid Mode"
+        label={isZh ? "网格模式" : "Grid Mode"}
         onChange={setMode}
         options={[
-          { label: "Arithmetic", value: "arithmetic" },
-          { label: "Geometric", value: "geometric" },
+          { label: isZh ? "等差" : "Arithmetic", value: "arithmetic" },
+          { label: isZh ? "等比" : "Geometric", value: "geometric" },
         ]}
         testId="grid-mode"
         value={mode}
@@ -653,45 +686,45 @@ function GridStrategyPanel() {
 
       <div className="grid gap-3 md:grid-cols-4">
         <FormField
-          label="Lower"
+          label={isZh ? "下限" : "Lower"}
           onChange={(value) => {
             setLowerPrice(value);
             setSubmitted(false);
           }}
-          hint="Lower range reference 5.20"
+          hint={isZh ? "下限参考 5.20" : "Lower range reference 5.20"}
           testId="grid-lower"
           type="number"
           value={lowerPrice}
         />
         <FormField
-          label="Upper"
+          label={isZh ? "上限" : "Upper"}
           onChange={(value) => {
             setUpperPrice(value);
             setSubmitted(false);
           }}
-          hint="Upper range reference 7.40"
+          hint={isZh ? "上限参考 7.40" : "Upper range reference 7.40"}
           testId="grid-upper"
           type="number"
           value={upperPrice}
         />
         <FormField
-          label="Grids"
+          label={isZh ? "网格数" : "Grids"}
           onChange={(value) => {
             setGridCount(value);
             setSubmitted(false);
           }}
-          hint="Allowed 2 to 100"
+          hint={isZh ? "允许范围 2 到 100" : "Allowed 2 to 100"}
           testId="grid-count"
           type="number"
           value={gridCount}
         />
         <FormField
-          label="Investment USDT"
+          label={isZh ? "投入 USDT" : "Investment USDT"}
           onChange={(value) => {
             setInvestment(value);
             setSubmitted(false);
           }}
-          hint="Strategy capital reference 2500"
+          hint={isZh ? "策略资金参考 2500" : "Strategy capital reference 2500"}
           testId="grid-investment"
           type="number"
           value={investment}
@@ -700,27 +733,37 @@ function GridStrategyPanel() {
 
       {!validation.boundsValid && lowerPrice && upperPrice ? (
         <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="grid-error">
-          Upper price must be greater than lower price before the strategy can be armed.
+          {isZh
+            ? "策略启用前，上限价格必须大于下限价格。"
+            : "Upper price must be greater than lower price before the strategy can be armed."}
         </p>
       ) : null}
 
       <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/[0.05] p-4 text-sm text-fuchsia-100/75" data-testid="grid-preview">
         {validation.isValid ? (
           <span>
-            {mode} grid from ${validation.lower?.toLocaleString()} to ${validation.upper?.toLocaleString()} with {gridCount} levels. Approx step: ${validation.step.toLocaleString(undefined, { maximumFractionDigits: 4 })}.
+            {isZh
+              ? `${mode === "arithmetic" ? "等差" : "等比"}网格区间：$${validation.lower?.toLocaleString()} 到 $${validation.upper?.toLocaleString()}，共 ${gridCount} 层。预估步长：$${validation.step.toLocaleString(undefined, { maximumFractionDigits: 4 })}。`
+              : `${mode} grid from $${validation.lower?.toLocaleString()} to $${validation.upper?.toLocaleString()} with ${gridCount} levels. Approx step: $${validation.step.toLocaleString(undefined, { maximumFractionDigits: 4 })}.`}
           </span>
         ) : (
-          <span>Set bounds, grid count, and investment to preview AI Sentinel guarded strategy parameters.</span>
+          <span>
+            {isZh
+              ? "设置区间、网格数和投入金额后，可预览受 AI Sentinel 保护的策略参数。"
+              : "Set bounds, grid count, and investment to preview AI Sentinel guarded strategy parameters."}
+          </span>
         )}
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="grid-submit" disabled={!validation.isValid} type="submit">
-        Create Grid Strategy
+        {isZh ? "创建网格策略" : "Create Grid Strategy"}
       </NeonButton>
 
       {submitted ? (
         <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="grid-confirmation">
-          Strategy review ready. AI Sentinel checks and wallet execution stay gated for contract integration.
+          {isZh
+            ? "策略复核已准备就绪。AI Sentinel 检查和钱包执行仍保持在合约接入前的门控状态。"
+            : "Strategy review ready. AI Sentinel checks and wallet execution stay gated for contract integration."}
         </p>
       ) : null}
     </form>
@@ -730,6 +773,7 @@ function GridStrategyPanel() {
 const DEX_ADVERTISED_APR_PERCENT = 25.5;
 
 function PoolLiquidityPanel() {
+  const { isZh } = useI18n();
   const [bnbAmount, setBnbAmount] = useState("");
   const [ionAmount, setIonAmount] = useState("");
   const [slippage, setSlippage] = useState("0.5");
@@ -763,34 +807,34 @@ function PoolLiquidityPanel() {
     <form className="grid gap-4" data-testid="pool-form" onSubmit={submitPool}>
       <div className="grid gap-3 md:grid-cols-3">
         <FormField
-          label="Deposit BNB"
+          label={isZh ? "存入 BNB" : "Deposit BNB"}
           onChange={(value) => {
             setBnbAmount(value);
             setSubmitted(false);
           }}
-          hint="BNB side amount"
+          hint={isZh ? "BNB 侧数量" : "BNB side amount"}
           testId="pool-bnb"
           type="number"
           value={bnbAmount}
         />
         <FormField
-          label="Deposit ION"
+          label={isZh ? "存入 ION" : "Deposit ION"}
           onChange={(value) => {
             setIonAmount(value);
             setSubmitted(false);
           }}
-          hint="ION side amount"
+          hint={isZh ? "ION 侧数量" : "ION side amount"}
           testId="pool-ion"
           type="number"
           value={ionAmount}
         />
         <FormField
-          label="Slippage %"
+          label={isZh ? "滑点 %" : "Slippage %"}
           onChange={(value) => {
             setSlippage(value);
             setSubmitted(false);
           }}
-          hint="Allowed 0.1 to 5"
+          hint={isZh ? "允许范围 0.1 到 5" : "Allowed 0.1 to 5"}
           testId="pool-slippage"
           type="number"
           value={slippage}
@@ -802,7 +846,9 @@ function PoolLiquidityPanel() {
           className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100"
           data-testid="pool-error"
         >
-          Slippage must stay between 0.1% and 5% before minting LP shares on-chain.
+          {isZh
+            ? "在链上铸造 LP 份额前，滑点必须保持在 0.1% 到 5% 之间。"
+            : "Slippage must stay between 0.1% and 5% before minting LP shares on-chain."}
         </p>
       ) : null}
 
@@ -812,21 +858,29 @@ function PoolLiquidityPanel() {
       >
         {validation.isValid ? (
           <span>
-            Liquidity preview: {bnbAmount} BNB + {ionAmount} ION · ratio{" "}
-            {validation.ratio !== null
-              ? validation.ratio.toFixed(6)
-              : "—"}{" "}
-            BNB per ION · max slip {slippage}%
+            {isZh ? (
+              <>
+                流动性预览：{bnbAmount} BNB + {ionAmount} ION · 配比{" "}
+                {validation.ratio !== null ? validation.ratio.toFixed(6) : "—"} BNB / ION · 最大滑点 {slippage}%
+              </>
+            ) : (
+              <>
+                Liquidity preview: {bnbAmount} BNB + {ionAmount} ION · ratio{" "}
+                {validation.ratio !== null ? validation.ratio.toFixed(6) : "—"} BNB per ION · max slip {slippage}%
+              </>
+            )}
           </span>
         ) : (
           <span>
-            Enter paired deposits and slippage to preview wallet-safe mint parameters for BNB / ION.
+            {isZh
+              ? "输入成对的存入数量和滑点后，可预览适合钱包签名的 BNB / ION 铸造参数。"
+              : "Enter paired deposits and slippage to preview wallet-safe mint parameters for BNB / ION."}
           </span>
         )}
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="pool-submit" disabled={!validation.isValid} type="submit">
-        Add Liquidity
+        {isZh ? "添加流动性" : "Add Liquidity"}
       </NeonButton>
 
       {submitted ? (
@@ -834,7 +888,9 @@ function PoolLiquidityPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="pool-confirmation"
         >
-          Liquidity review ready for wallet signing. Mint and LP oracle hooks stay gated behind contract integration.
+          {isZh
+            ? "流动性复核已准备好进入钱包签名。铸造与 LP 预言机钩子仍受合约集成进度控制。"
+            : "Liquidity review ready for wallet signing. Mint and LP oracle hooks stay gated behind contract integration."}
         </p>
       ) : null}
     </form>
@@ -842,6 +898,7 @@ function PoolLiquidityPanel() {
 }
 
 function StakeHubPanel() {
+  const { isZh } = useI18n();
   const [mode, setMode] = useState<"stake" | "unstake">("stake");
   const [amount, setAmount] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -864,26 +921,26 @@ function StakeHubPanel() {
   return (
     <form className="grid gap-4" data-testid="stake-form" onSubmit={submitStake}>
       <SegmentedControl
-        label="Action"
+        label={isZh ? "操作" : "Action"}
         onChange={(next) => {
           setMode(next);
           setSubmitted(false);
         }}
         options={[
-          { label: "Stake ION", value: "stake" },
-          { label: "Unstake ION", value: "unstake" },
+          { label: isZh ? "质押 ION" : "Stake ION", value: "stake" },
+          { label: isZh ? "解除质押 ION" : "Unstake ION", value: "unstake" },
         ]}
         testId="stake-mode"
         value={mode}
       />
 
       <FormField
-        label="Amount ION"
+        label={isZh ? "数量 ION" : "Amount ION"}
         onChange={(value) => {
           setAmount(value);
           setSubmitted(false);
         }}
-        hint="Stake amount reference 500"
+        hint={isZh ? "参考数量 500" : "Stake amount reference 500"}
         testId="stake-amount"
         type="number"
         value={amount}
@@ -895,18 +952,21 @@ function StakeHubPanel() {
       >
         {validation.isValid ? (
           <span>
-            {mode === "stake" ? "Stake" : "Unstake"} preview: {amount} ION · advertised DEX APR{" "}
-            {DEX_ADVERTISED_APR_PERCENT}% · vesting and unstake queue enforced by contracts later.
+            {isZh
+              ? `${mode === "stake" ? "质押" : "解除质押"}预览：${amount} ION · 当前展示 DEX 年化 ${DEX_ADVERTISED_APR_PERCENT}% · 归属与解除质押队列将在后续由合约执行。`
+              : `${mode === "stake" ? "Stake" : "Unstake"} preview: ${amount} ION · advertised DEX APR ${DEX_ADVERTISED_APR_PERCENT}% · vesting and unstake queue enforced by contracts later.`}
           </span>
         ) : (
           <span>
-            Enter an amount to preview treasury-safe staking payloads and APR assumptions from the hub metrics card.
+            {isZh
+              ? "输入数量后，可预览资金安全的质押载荷，以及指标卡展示的 APR 假设。"
+              : "Enter an amount to preview treasury-safe staking payloads and APR assumptions from the hub metrics card."}
           </span>
         )}
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="stake-submit" disabled={!validation.isValid} type="submit">
-        {mode === "stake" ? "Stake ION" : "Unstake ION"}
+        {mode === "stake" ? (isZh ? "质押 ION" : "Stake ION") : isZh ? "解除质押 ION" : "Unstake ION"}
       </NeonButton>
 
       {submitted ? (
@@ -915,8 +975,12 @@ function StakeHubPanel() {
           data-testid="stake-confirmation"
         >
           {mode === "stake"
-            ? "Stake review ready for wallet signing. Reward streams stay gated behind staking contract wiring."
-            : "Unstake review ready for wallet signing. Cooldown rules stay gated behind staking contract wiring."}
+            ? isZh
+              ? "质押复核已准备好进入钱包签名。奖励流仍受质押合约接线进度控制。"
+              : "Stake review ready for wallet signing. Reward streams stay gated behind staking contract wiring."
+            : isZh
+              ? "解除质押复核已准备好进入钱包签名。冷却规则仍受质押合约接线进度控制。"
+              : "Unstake review ready for wallet signing. Cooldown rules stay gated behind staking contract wiring."}
         </p>
       ) : null}
     </form>
@@ -935,6 +999,7 @@ function isDomainLikeLabel(value: string) {
 }
 
 function BridgeTransferPanel() {
+  const { isZh } = useI18n();
   const [direction, setDirection] = useState<"bsc-ion" | "ion-bsc">("bsc-ion");
   const [amount, setAmount] = useState("");
   const [destination, setDestination] = useState("");
@@ -961,14 +1026,14 @@ function BridgeTransferPanel() {
   return (
     <form className="grid gap-4" data-testid="bridge-form" onSubmit={submitBridge}>
       <SegmentedControl
-        label="Route"
+        label={isZh ? "路线" : "Route"}
         onChange={(next) => {
           setDirection(next);
           setSubmitted(false);
         }}
         options={[
-          { label: "BSC → ION", value: "bsc-ion" },
-          { label: "ION → BSC", value: "ion-bsc" },
+          { label: isZh ? "BSC → ION 链" : "BSC → ION", value: "bsc-ion" },
+          { label: isZh ? "ION 链 → BSC" : "ION → BSC", value: "ion-bsc" },
         ]}
         testId="bridge-direction"
         value={direction}
@@ -976,23 +1041,23 @@ function BridgeTransferPanel() {
 
       <div className="grid gap-3 md:grid-cols-2">
         <FormField
-          label="Amount ION"
+          label={isZh ? "数量 ION" : "Amount ION"}
           onChange={(value) => {
             setAmount(value);
             setSubmitted(false);
           }}
-          hint="Bridge amount reference 950"
+          hint={isZh ? "跨链数量参考 950" : "Bridge amount reference 950"}
           testId="bridge-amount"
           type="number"
           value={amount}
         />
         <FormField
-          label="Destination address / memo"
+          label={isZh ? "目标地址 / 备注" : "Destination address / memo"}
           onChange={(value) => {
             setDestination(value);
             setSubmitted(false);
           }}
-          hint="ION or EVM destination"
+          hint={isZh ? "ION 或 EVM 目标地址" : "ION or EVM destination"}
           testId="bridge-destination"
           type="text"
           value={destination}
@@ -1001,7 +1066,9 @@ function BridgeTransferPanel() {
 
       {!validation.destinationValid && destination.trim().length > 0 ? (
         <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="bridge-error">
-          Destination memo must stay at least 8 characters until wallet resolution maps it to canonical addresses.
+          {isZh
+            ? "在钱包解析为标准地址前，目标备注至少需要保持 8 个字符。"
+            : "Destination memo must stay at least 8 characters until wallet resolution maps it to canonical addresses."}
         </p>
       ) : null}
 
@@ -1011,16 +1078,21 @@ function BridgeTransferPanel() {
       >
         {validation.isValid ? (
           <span>
-            Bridge preview: route {direction === "bsc-ion" ? "BSC → ION Chain" : "ION Chain → BSC"} · sweep{" "}
-            {validation.parsedAmount?.toLocaleString()} ION · relayer quorum and replay guards remain contract gated.
+            {isZh
+              ? `跨链预览：路线 ${direction === "bsc-ion" ? "BSC → ION 链" : "ION 链 → BSC"} · 归集 ${validation.parsedAmount?.toLocaleString()} ION · 中继器法定人数与重放保护仍受合约控制。`
+              : `Bridge preview: route ${direction === "bsc-ion" ? "BSC → ION Chain" : "ION Chain → BSC"} · sweep ${validation.parsedAmount?.toLocaleString()} ION · relayer quorum and replay guards remain contract gated.`}
           </span>
         ) : (
-          <span>Set a positive sweep amount and resilient destination memo to simulate vault attestations offline.</span>
+          <span>
+            {isZh
+              ? "设置正数归集数量和可靠的目标备注后，可离线模拟金库证明。"
+              : "Set a positive sweep amount and resilient destination memo to simulate vault attestations offline."}
+          </span>
         )}
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="bridge-submit" disabled={!validation.isValid} type="submit">
-        Stage Bridge Sweep
+        {isZh ? "预演跨链归集" : "Stage Bridge Sweep"}
       </NeonButton>
 
       {submitted ? (
@@ -1028,7 +1100,9 @@ function BridgeTransferPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="bridge-confirmation"
         >
-          Bridge transfer review ready for relayer quorum and wallet proofs. Custody signatures stay offline until final approval.
+          {isZh
+            ? "跨链转移复核已准备好进入中继器法定人数与钱包证明阶段。托管签名在最终批准前仍保持离线。"
+            : "Bridge transfer review ready for relayer quorum and wallet proofs. Custody signatures stay offline until final approval."}
         </p>
       ) : null}
     </form>
@@ -1036,6 +1110,7 @@ function BridgeTransferPanel() {
 }
 
 function BurnAnalyticsPanel() {
+  const { isZh } = useI18n();
   const [chain, setChain] = useState<"bsc" | "ion">("bsc");
   const [amount, setAmount] = useState("");
   const [memo, setMemo] = useState("");
@@ -1062,14 +1137,14 @@ function BurnAnalyticsPanel() {
   return (
     <form className="grid gap-4" data-testid="burn-form" onSubmit={submitBurn}>
       <SegmentedControl
-        label="Chain Lens"
+        label={isZh ? "链路视角" : "Chain Lens"}
         onChange={(next) => {
           setChain(next);
           setSubmitted(false);
         }}
         options={[
-          { label: "BSC burn ledger", value: "bsc" },
-          { label: "ION burn ledger", value: "ion" },
+          { label: isZh ? "BSC 销毁台账" : "BSC burn ledger", value: "bsc" },
+          { label: isZh ? "ION 销毁台账" : "ION burn ledger", value: "ion" },
         ]}
         testId="burn-chain"
         value={chain}
@@ -1077,23 +1152,23 @@ function BurnAnalyticsPanel() {
 
       <div className="grid gap-3 md:grid-cols-2">
         <FormField
-          label="Observed burn (ION)"
+          label={isZh ? "观测销毁量（ION）" : "Observed burn (ION)"}
           onChange={(value) => {
             setAmount(value);
             setSubmitted(false);
           }}
-          hint="Burn amount reference 125000"
+          hint={isZh ? "销毁量参考 125000" : "Burn amount reference 125000"}
           testId="burn-amount"
           type="number"
           value={amount}
         />
         <FormField
-          label="Attestation memo"
+          label={isZh ? "佐证备注" : "Attestation memo"}
           onChange={(value) => {
             setMemo(value);
             setSubmitted(false);
           }}
-          hint="Audit note for treasury review"
+          hint={isZh ? "供金库审计复核的备注" : "Audit note for treasury review"}
           testId="burn-memo"
           type="text"
           value={memo}
@@ -1102,7 +1177,9 @@ function BurnAnalyticsPanel() {
 
       {!validation.memoValid ? (
         <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="burn-error">
-          Memo must stay ≤ 120 chars for sentinel-safe logging overlays.
+          {isZh
+            ? "为保证 Sentinel 日志安全叠加，备注长度必须不超过 120 个字符。"
+            : "Memo must stay ≤ 120 chars for sentinel-safe logging overlays."}
         </p>
       ) : null}
 
@@ -1112,15 +1189,21 @@ function BurnAnalyticsPanel() {
       >
         {validation.isValid ? (
           <span>
-            Burn preview: {validation.parsedAmount?.toLocaleString()} ION on {chain.toUpperCase()} · dual-chain indexer will reconcile treasury splits once workers land.
+            {isZh
+              ? `销毁预览：${chain.toUpperCase()} 链上 ${validation.parsedAmount?.toLocaleString()} ION · 双链索引器上线后会自动对账金库分账。`
+              : `Burn preview: ${validation.parsedAmount?.toLocaleString()} ION on ${chain.toUpperCase()} · dual-chain indexer will reconcile treasury splits once workers land.`}
           </span>
         ) : (
-          <span>Provide a tracked burn magnitude plus optional memo hooks for treasury transparency rails.</span>
+          <span>
+            {isZh
+              ? "输入需要追踪的销毁规模，并可附加备注，用于金库透明化轨道。"
+              : "Provide a tracked burn magnitude plus optional memo hooks for treasury transparency rails."}
+          </span>
         )}
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="burn-submit" disabled={!validation.isValid} type="submit">
-        Review Burn Narrative
+        {isZh ? "复核销毁说明" : "Review Burn Narrative"}
       </NeonButton>
 
       {submitted ? (
@@ -1128,7 +1211,9 @@ function BurnAnalyticsPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="burn-confirmation"
         >
-          Burn analytics review ready for dual-chain sentinel playback. No on-chain transaction is sent from this page.
+          {isZh
+            ? "销毁分析复核已准备就绪，可进入双链 Sentinel 回放。本页不会发送任何链上交易。"
+            : "Burn analytics review ready for dual-chain sentinel playback. No on-chain transaction is sent from this page."}
         </p>
       ) : null}
     </form>
@@ -1136,6 +1221,7 @@ function BurnAnalyticsPanel() {
 }
 
 function DomainTradingPanel() {
+  const { isZh } = useI18n();
   const [mode, setMode] = useState<"search" | "bind">("search");
   const [query, setQuery] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -1158,26 +1244,26 @@ function DomainTradingPanel() {
   return (
     <form className="grid gap-4" data-testid="domain-form" onSubmit={submitDomain}>
       <SegmentedControl
-        label="Flow"
+        label={isZh ? "流程" : "Flow"}
         onChange={(next) => {
           setMode(next);
           setSubmitted(false);
         }}
         options={[
-          { label: "Search label", value: "search" },
-          { label: "Bind alias", value: "bind" },
+          { label: isZh ? "搜索域名" : "Search label", value: "search" },
+          { label: isZh ? "绑定别名" : "Bind alias", value: "bind" },
         ]}
         testId="domain-mode"
         value={mode}
       />
 
       <FormField
-        label="DNS / .ion label"
+        label={isZh ? "DNS / .ion 标签" : "DNS / .ion label"}
         onChange={(value) => {
           setQuery(value);
           setSubmitted(false);
         }}
-        hint="Domain reference custodian.ion"
+        hint={isZh ? "参考域名 custodian.ion" : "Domain reference custodian.ion"}
         testId="domain-query"
         type="text"
         value={query}
@@ -1185,7 +1271,9 @@ function DomainTradingPanel() {
 
       {query.trim().length > 0 && !validation.labelValid ? (
         <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-sm text-rose-100" data-testid="domain-error">
-          Enter a lowercase label with dotted segments (dns.ice.io compatible) before_FUN wiring.
+          {isZh
+            ? "请输入带点分段的小写标签（兼容 dns.ice.io），再进入 FunC 接线阶段。"
+            : "Enter a lowercase label with dotted segments (dns.ice.io compatible) before FUN wiring."}
         </p>
       ) : null}
 
@@ -1195,17 +1283,30 @@ function DomainTradingPanel() {
       >
         {validation.isValid ? (
           <span>
-            Domain preview: {mode === "search" ? "Lookup" : "Bind"}{" "}
-            <span className="font-mono text-white">{query.trim().toLowerCase()}</span> using official DNS FunC schemas + wallet-signed
-            payloads for wallet review.
+            {isZh ? (
+              <>
+                域名预览：{mode === "search" ? "查询" : "绑定"}{" "}
+                <span className="font-mono text-white">{query.trim().toLowerCase()}</span>，使用官方 DNS FunC 结构和钱包签名载荷进入复核。
+              </>
+            ) : (
+              <>
+                Domain preview: {mode === "search" ? "Lookup" : "Bind"}{" "}
+                <span className="font-mono text-white">{query.trim().toLowerCase()}</span> using official DNS FunC schemas + wallet-signed
+                payloads for wallet review.
+              </>
+            )}
           </span>
         ) : (
-          <span>Use dns.ice.io compatible labels to rehearsal wallet proofs without touching validators.</span>
+          <span>
+            {isZh
+              ? "使用兼容 dns.ice.io 的标签，可在不触碰验证器的前提下预演钱包证明。"
+              : "Use dns.ice.io compatible labels to rehearsal wallet proofs without touching validators."}
+          </span>
         )}
       </div>
 
       <NeonButton className="w-full sm:w-fit" data-testid="domain-submit" disabled={!validation.isValid} type="submit">
-        Compose DNS Payload
+        {isZh ? "生成 DNS 载荷" : "Compose DNS Payload"}
       </NeonButton>
 
       {submitted ? (
@@ -1213,7 +1314,9 @@ function DomainTradingPanel() {
           className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100"
           data-testid="domain-confirmation"
         >
-          Domain handshake ready. Resolver transactions stay blocked until DNS contracts are reachable from this wallet.
+          {isZh
+            ? "域名握手已准备就绪。解析器交易会在该钱包可访问 DNS 合约前继续保持阻塞。"
+            : "Domain handshake ready. Resolver transactions stay blocked until DNS contracts are reachable from this wallet."}
         </p>
       ) : null}
     </form>
@@ -1221,6 +1324,7 @@ function DomainTradingPanel() {
 }
 
 function AIMarketPanel() {
+  const { isZh } = useI18n();
   const [symbol, setSymbol] = useState("ION");
   const [horizon, setHorizon] = useState<"1h" | "4h" | "1d">("4h");
   const [depth, setDepth] = useState<"quick" | "standard" | "deep">("standard");
@@ -1248,12 +1352,12 @@ function AIMarketPanel() {
   return (
     <form className="grid gap-4" data-testid="ai-form" onSubmit={submitAi}>
       <FormField
-        label="Symbol"
+        label={isZh ? "交易符号" : "Symbol"}
         onChange={(value) => {
           setSymbol(value);
           setSubmitted(false);
         }}
-        hint="Ticker reference ION"
+        hint={isZh ? "参考代码 ION" : "Ticker reference ION"}
         testId="ai-symbol"
         type="text"
         value={symbol}
@@ -1261,21 +1365,21 @@ function AIMarketPanel() {
 
       <div className="grid gap-3 md:grid-cols-2">
         <SegmentedControl
-          label="Horizon"
+          label={isZh ? "时间范围" : "Horizon"}
           onChange={(next) => {
             setHorizon(next);
             setSubmitted(false);
           }}
           options={[
-            { label: "Pulse 1h", value: "1h" },
-            { label: "Core 4h", value: "4h" },
-            { label: "Macro 1d", value: "1d" },
+            { label: isZh ? "脉冲 1h" : "Pulse 1h", value: "1h" },
+            { label: isZh ? "核心 4h" : "Core 4h", value: "4h" },
+            { label: isZh ? "宏观 1d" : "Macro 1d", value: "1d" },
           ]}
           testId="ai-horizon"
           value={horizon}
         />
         <SegmentedControl
-          label="Depth"
+          label={isZh ? "分析深度" : "Depth"}
           onChange={(next) => {
             setDepth(next);
             setSubmitted(false);
@@ -1350,7 +1454,8 @@ const orderHistory = [
 ] as const;
 
 function TradeDeskPage() {
-  const config = pageConfigs.trade;
+  const { isZh } = useI18n();
+  const config = getPageConfigs(isZh).trade;
   const fetchKlines = useCallback(
     (signal: AbortSignal) => fetchIonKlines(64, signal),
     [],
@@ -1383,7 +1488,11 @@ function TradeDeskPage() {
   return (
     <div className="grid min-w-0 gap-5" data-testid="page-trade">
       <ScaffoldNotice
-        detail="Trade K 线经后端 /api/klines/ion（GeckoTerminal OHLCV）；盘口与成交流仍为演示数据。Swap 在后端在线时可走 GeckoTerminal 报价。"
+        detail={
+          isZh
+            ? "Trade K 线经后端 /api/klines/ion（GeckoTerminal OHLCV）；盘口与成交流仍为演示数据。Swap 在后端在线时可走 GeckoTerminal 报价。"
+            : "Trade K-lines come from backend /api/klines/ion via GeckoTerminal OHLCV. Order book and market tape are still demo data. Swap can use GeckoTerminal-backed quotes when the backend is online."
+        }
         testId="trade-desk-scaffold-notice"
       />
       <NeonCard variant="mixed">
@@ -1412,7 +1521,7 @@ function TradeDeskPage() {
               <div className="relative z-10 flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">
-                    BNB / ION {liveKlines ? "(live klines)" : "(synthetic fallback)"}
+                    BNB / ION {liveKlines ? (isZh ? "（实时 K 线）" : "(live klines)") : isZh ? "（合成回退）" : "(synthetic fallback)"}
                   </p>
                   <p className="mt-1 text-3xl font-black text-white" data-testid="trade-ion-price">
                     {displayPrice}
@@ -1438,7 +1547,7 @@ function TradeDeskPage() {
 
         <div className="grid gap-5">
           <NeonCard variant="magenta">
-            <p className="mb-4 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">Limit order</p>
+            <p className="mb-4 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">{isZh ? "限价订单" : "Limit order"}</p>
             <TradeOrderPanel />
           </NeonCard>
           <OrderBookPanel />
@@ -1449,9 +1558,10 @@ function TradeDeskPage() {
 }
 
 function OrderBookPanel() {
+  const { isZh } = useI18n();
   return (
     <NeonCard variant="cyan">
-      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Order book</p>
+      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">{isZh ? "订单簿" : "Order book"}</p>
       <div className="mt-4 grid gap-2" data-testid="trade-orderbook">
         {tradeOrderBook.map((row) => (
           <div key={`${row.side}-${row.price}`} className="relative overflow-hidden rounded-2xl bg-white/[0.04] px-4 py-3">
@@ -1472,15 +1582,16 @@ function OrderBookPanel() {
 }
 
 function MarketTape() {
+  const { isZh } = useI18n();
   return (
     <NeonCard variant="cyan">
-      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">Market trades</p>
+      <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/70">{isZh ? "市场成交" : "Market trades"}</p>
       <div className="mt-4 grid gap-3" data-testid="trade-market-trades">
         {marketTrades.map(([price, amount, side]) => (
           <div key={`${price}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">
             <span className={side === "Buy" ? "font-black text-emerald-200" : "font-black text-rose-200"}>{price}</span>
             <span className="text-cyan-100/70">{amount}</span>
-            <span className="text-right text-cyan-100/50">{side}</span>
+            <span className="text-right text-cyan-100/50">{side === "Buy" ? (isZh ? "买入" : "Buy") : isZh ? "卖出" : "Sell"}</span>
           </div>
         ))}
       </div>
@@ -1494,16 +1605,17 @@ const openOrders = [
 ] as const;
 
 function OpenOrdersPanel() {
+  const { isZh } = useI18n();
   return (
     <NeonCard variant="magenta">
-      <p className="text-sm uppercase tracking-[0.28em] text-violet-200/70">Open orders</p>
+      <p className="text-sm uppercase tracking-[0.28em] text-violet-200/70">{isZh ? "当前挂单" : "Open orders"}</p>
       <div className="mt-4 grid gap-2" data-testid="trade-open-orders">
         {openOrders.map((row) => (
           <div key={row.id} className="glass-surface grid grid-cols-4 gap-2 rounded-2xl px-4 py-3 text-sm">
-            <span className="font-black text-white">{row.side}</span>
+            <span className="font-black text-white">{row.side === "Buy" ? (isZh ? "买入" : "Buy") : isZh ? "卖出" : "Sell"}</span>
             <span className="text-cyan-100/70">{row.price}</span>
             <span className="text-cyan-100/70">{row.amount}</span>
-            <span className="text-right text-violet-200">{row.status}</span>
+            <span className="text-right text-violet-200">{row.status === "Open" ? (isZh ? "挂单中" : "Open") : isZh ? "部分成交" : "Partial"}</span>
           </div>
         ))}
       </div>
@@ -1512,6 +1624,7 @@ function OpenOrdersPanel() {
 }
 
 function CopyTradePanel() {
+  const { isZh } = useI18n();
   const [leader, setLeader] = useState("");
   const [ratio, setRatio] = useState("25");
   const [maxSlippage, setMaxSlippage] = useState("0.8");
@@ -1523,7 +1636,7 @@ function CopyTradePanel() {
     toPositiveNumber(maxSlippage) !== null;
 
   return (
-    <GlassPanel eyebrow="Social trading" testId="trade-copy-trade" title="Copy trading desk">
+    <GlassPanel eyebrow={isZh ? "社交交易" : "Social trading"} testId="trade-copy-trade" title={isZh ? "跟单交易台" : "Copy trading desk"}>
       <form
         className="grid gap-3"
         onSubmit={(event) => {
@@ -1534,45 +1647,47 @@ function CopyTradePanel() {
         }}
       >
         <FormField
-          label="Leader wallet / .ion"
+          label={isZh ? "带单地址 / .ion" : "Leader wallet / .ion"}
           onChange={(value) => {
             setLeader(value);
             setArmed(false);
           }}
-          hint="Example trader.ion"
+          hint={isZh ? "示例 trader.ion" : "Example trader.ion"}
           testId="copy-leader"
           value={leader}
         />
         <div className="grid gap-3 sm:grid-cols-2">
           <FormField
-            label="Copy ratio %"
+            label={isZh ? "跟单比例 %" : "Copy ratio %"}
             onChange={(value) => {
               setRatio(value);
               setArmed(false);
             }}
-            hint="5 — 100"
+            hint={isZh ? "范围 5 到 100" : "5 — 100"}
             testId="copy-ratio"
             type="number"
             value={ratio}
           />
           <FormField
-            label="Max slippage %"
+            label={isZh ? "最大滑点 %" : "Max slippage %"}
             onChange={(value) => {
               setMaxSlippage(value);
               setArmed(false);
             }}
-            hint="0.1 — 2"
+            hint={isZh ? "范围 0.1 到 2" : "0.1 — 2"}
             testId="copy-slippage"
             type="number"
             value={maxSlippage}
           />
         </div>
         <NeonButton className="w-full sm:w-fit" data-testid="copy-arm" disabled={!valid} type="submit">
-          Arm copy strategy
+          {isZh ? "启用跟单策略" : "Arm copy strategy"}
         </NeonButton>
         {armed ? (
           <p className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] px-4 py-3 text-sm font-bold text-emerald-100" data-testid="copy-confirmation">
-            Copy-trading review ready. Execution routes through ION limit-order keeper when wallet signs.
+            {isZh
+              ? "跟单复核已准备就绪。钱包签名后会通过 ION 限价单 keeper 执行。"
+              : "Copy-trading review ready. Execution routes through ION limit-order keeper when wallet signs."}
           </p>
         ) : null}
       </form>
@@ -1581,20 +1696,23 @@ function CopyTradePanel() {
 }
 
 function OrderHistoryPanel() {
+  const { isZh } = useI18n();
   return (
     <NeonCard variant="gold">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm uppercase tracking-[0.28em] text-amber-200/70">Orders and risk</p>
+        <p className="text-sm uppercase tracking-[0.28em] text-amber-200/70">{isZh ? "订单与风险" : "Orders and risk"}</p>
         <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.08] px-3 py-1 text-xs font-black text-emerald-100">
-          TWAP guard active
+          {isZh ? "TWAP 守卫已启用" : "TWAP guard active"}
         </span>
       </div>
       <div className="mt-4 grid gap-3" data-testid="trade-history">
         {orderHistory.map(([kind, amount, status]) => (
           <div key={`${kind}-${amount}`} className="glass-surface grid grid-cols-3 rounded-2xl px-4 py-3 text-sm">
-            <span className="font-black text-white">{kind}</span>
+            <span className="font-black text-white">
+              {kind === "Limit buy" ? (isZh ? "限价买入" : "Limit buy") : kind === "TWAP sell" ? (isZh ? "TWAP 卖出" : "TWAP sell") : isZh ? "止损守卫" : "Stop guard"}
+            </span>
             <span className="text-cyan-100/70">{amount}</span>
-            <span className="text-right text-amber-100/80">{status}</span>
+            <span className="text-right text-amber-100/80">{status === "Open" ? (isZh ? "进行中" : "Open") : status === "Partial" ? (isZh ? "部分成交" : "Partial") : isZh ? "已武装" : "Armed"}</span>
           </div>
         ))}
       </div>
@@ -1641,7 +1759,8 @@ const aiSignals = [
 ] as const;
 
 function GridDeskPage() {
-  const config = pageConfigs.grid;
+  const { isZh } = useI18n();
+  const config = getPageConfigs(isZh).grid;
   return (
     <div className="grid gap-5" data-testid="page-grid">
       <PageHero
@@ -1654,10 +1773,10 @@ function GridDeskPage() {
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <div className="grid gap-5">
           <ChartFrame
-            badge={<StatusPill label="AI Sentinel armed" testId="grid-sentinel" tone="emerald" />}
+            badge={<StatusPill label={isZh ? "AI Sentinel 已武装" : "AI Sentinel armed"} testId="grid-sentinel" tone="emerald" />}
             subtitle="5.20 — 7.40 ION"
             testId="grid-range-chart"
-            title="Range visualization"
+            title={isZh ? "区间可视化" : "Range visualization"}
           >
             <div className="float-3d flex h-48 items-end gap-2 rounded-[1.4rem] border border-fuchsia-200/15 bg-[#03050f]/55 p-4">
               {burnBars.map((h, i) => (
@@ -1669,16 +1788,16 @@ function GridDeskPage() {
               ))}
             </div>
             <p className="mt-3 text-xs text-cyan-100/55" data-testid="grid-backtest">
-              Backtest preview · local-seed replay · 30d neutral grid +0.8% net of ION fees
+              {isZh ? "回测预览 · 本地种子回放 · 30 天中性网格，扣除 ION 手续费后净收益 +0.8%" : "Backtest preview · local-seed replay · 30d neutral grid +0.8% net of ION fees"}
             </p>
           </ChartFrame>
-          <GlassPanel eyebrow="Strategy log" testId="grid-strategy-log" title="Live bot timeline">
+          <GlassPanel eyebrow={isZh ? "策略日志" : "Strategy log"} testId="grid-strategy-log" title={isZh ? "机器人时间线" : "Live bot timeline"}>
             <div className="grid gap-2">
               {gridLogs.map(([title, detail, time]) => (
                 <div key={title} className="grid grid-cols-3 gap-2 rounded-2xl bg-white/[0.04] px-3 py-2 text-sm">
-                  <span className="font-black text-white">{title}</span>
-                  <span className="text-cyan-100/70">{detail}</span>
-                  <span className="text-right text-cyan-100/45">{time}</span>
+                  <span className="font-black text-white">{title === "Rebalance #42" ? (isZh ? "再平衡 #42" : "Rebalance #42") : title === "TP guard" ? (isZh ? "止盈守卫" : "TP guard") : "Sentinel"}</span>
+                  <span className="text-cyan-100/70">{detail === "Filled · 420 ION" ? (isZh ? "已成交 · 420 ION" : "Filled · 420 ION") : detail === "Held · range intact" ? (isZh ? "持仓中 · 区间完好" : "Held · range intact") : isZh ? "未发现 MEV 异常" : "No MEV flag"}</span>
+                  <span className="text-right text-cyan-100/45">{time === "2m ago" ? (isZh ? "2 分钟前" : "2m ago") : time === "14m ago" ? (isZh ? "14 分钟前" : "14m ago") : isZh ? "1 小时前" : "1h ago"}</span>
                 </div>
               ))}
             </div>
@@ -1686,22 +1805,22 @@ function GridDeskPage() {
         </div>
         <div className="grid gap-5">
           <NeonCard variant="magenta">
-            <p className="mb-3 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">Strategy templates</p>
+            <p className="mb-3 text-sm uppercase tracking-[0.28em] text-fuchsia-200/70">{isZh ? "策略模板" : "Strategy templates"}</p>
             <div className="grid gap-2" data-testid="grid-templates">
               {gridTemplates.map((t) => (
                 <GlassPanel key={t.name} className="!p-3">
-                  <p className="font-black text-white">{t.name}</p>
+                  <p className="font-black text-white">{t.name === "Neutral grid" ? (isZh ? "中性网格" : "Neutral grid") : t.name === "Arithmetic" ? (isZh ? "等差网格" : "Arithmetic") : isZh ? "追踪网格" : "Trailing grid"}</p>
                   <p className="text-xs text-cyan-100/60">
-                    APR {t.apr} · {t.status}
+                    APR {t.apr} · {t.status === "Armed" ? (isZh ? "已武装" : "Armed") : t.status === "Preview" ? (isZh ? "预览中" : "Preview") : isZh ? "AI 守卫中" : "AI guarded"}
                   </p>
                 </GlassPanel>
               ))}
             </div>
           </NeonCard>
           <RiskNotice
-            body="Grid bounds, investment, and slippage must pass Sentinel before wallet signing. Quotes use backend bigint-floor math."
+            body={isZh ? "网格区间、投入金额和滑点都必须先通过 Sentinel 审核，才会进入钱包签名。报价采用后端 bigint-floor 数学。" : "Grid bounds, investment, and slippage must pass Sentinel before wallet signing. Quotes use backend bigint-floor math."}
             testId="grid-ai-suggestion"
-            title="AI suggestion"
+            title={isZh ? "AI 建议" : "AI suggestion"}
             tone="fuchsia"
           />
           <NeonCard variant="cyan">
@@ -1714,7 +1833,8 @@ function GridDeskPage() {
 }
 
 function BridgeDeskPage() {
-  const config = pageConfigs.bridge;
+  const { isZh } = useI18n();
+  const config = getPageConfigs(isZh).bridge;
   return (
     <div className="grid gap-5" data-testid="page-bridge">
       <PageHero
@@ -1726,10 +1846,10 @@ function BridgeDeskPage() {
       />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <ChartFrame
-          badge={<StatusPill label="Route risk: low" testId="bridge-risk" tone="amber" />}
-          subtitle="Est. 8–14 min"
+          badge={<StatusPill label={isZh ? "路线风险：低" : "Route risk: low"} testId="bridge-risk" tone="amber" />}
+          subtitle={isZh ? "预计 8–14 分钟" : "Est. 8–14 min"}
           testId="bridge-status-tracker"
-          title="Cross-chain status"
+          title={isZh ? "跨链状态" : "Cross-chain status"}
         >
           <div className="grid gap-3" data-testid="bridge-steps">
             {bridgeSteps.map((s) => (
@@ -1741,7 +1861,9 @@ function BridgeDeskPage() {
             ))}
           </div>
           <p className="mt-4 text-xs text-cyan-100/50">
-            Source tx · BSC vault · Target release · Proof links from bridge-status-service (wired next)
+            {isZh
+              ? "源链交易 · BSC 金库 · 目标链释放 · 证明链接来自 bridge-status-service（下一步接线）"
+              : "Source tx · BSC vault · Target release · Proof links from bridge-status-service (wired next)"}
           </p>
         </ChartFrame>
         <NeonCard variant="cyan">
@@ -1753,7 +1875,8 @@ function BridgeDeskPage() {
 }
 
 function BurnDeskPage() {
-  const config = pageConfigs.burn;
+  const { isZh } = useI18n();
+  const config = getPageConfigs(isZh).burn;
   return (
     <div className="grid gap-5" data-testid="page-burn">
       <PageHero
@@ -1765,7 +1888,7 @@ function BurnDeskPage() {
       />
       <BurnMetricsRow />
       <div className="grid gap-5 lg:grid-cols-2">
-        <ChartFrame subtitle="Dual-chain trend" testId="burn-trend-chart" title="Burn analytics">
+        <ChartFrame subtitle={isZh ? "双链趋势" : "Dual-chain trend"} testId="burn-trend-chart" title={isZh ? "销毁分析" : "Burn analytics"}>
           <div className="flex h-44 items-end gap-2">
             {burnBars.map((h, i) => (
               <span
@@ -1776,11 +1899,11 @@ function BurnDeskPage() {
             ))}
           </div>
           <p className="mt-3 text-xs text-cyan-100/55" data-testid="burn-chain-split">
-            Chain split · BSC 58% · ION 42% · remaining supply 97.59M ION · local-seed
+            {isZh ? "链路拆分 · BSC 58% · ION 42% · 剩余供应 97.59M ION · 本地种子" : "Chain split · BSC 58% · ION 42% · remaining supply 97.59M ION · local-seed"}
           </p>
         </ChartFrame>
         <div className="grid gap-5">
-          <GlassPanel testId="burn-proof-links" title="Proof links">
+          <GlassPanel testId="burn-proof-links" title={isZh ? "证明链接" : "Proof links"}>
             <p className="font-mono text-xs text-cyan-100/70">BSC: 0x000000000000000000000000000000000000dEaD</p>
             <p className="mt-2 font-mono text-xs text-cyan-100/70">ION: api.mainnet.ice.io/indexer/v3/</p>
           </GlassPanel>
@@ -1794,7 +1917,8 @@ function BurnDeskPage() {
 }
 
 function DomainDeskPage() {
-  const config = pageConfigs.domain;
+  const { isZh } = useI18n();
+  const config = getPageConfigs(isZh).domain;
   return (
     <div className="grid gap-5" data-testid="page-domain">
       <PageHero
@@ -1806,7 +1930,11 @@ function DomainDeskPage() {
       />
       <DomainMetricsRow />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
-        <GlassPanel eyebrow="My domains" testId="domain-marketplace" title="Marketplace · dns.ice.io seed">
+        <GlassPanel
+          eyebrow={isZh ? "我的域名" : "My domains"}
+          testId="domain-marketplace"
+          title={isZh ? "市场 · dns.ice.io 种子数据" : "Marketplace · dns.ice.io seed"}
+        >
           <div className="grid gap-2">
             {domainListings.map((d) => (
               <div key={d.name} className="flex justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
@@ -1819,16 +1947,22 @@ function DomainDeskPage() {
         </GlassPanel>
         <div className="grid gap-5">
           <RiskNotice
-            body="Homoglyph and phishing checks run before send-to-domain signing. Resolver must match wallet-bound .ion record."
+            body={
+              isZh
+                ? "发起向域名转账前会先做同形字和钓鱼检查，解析结果必须与钱包绑定的 .ion 记录一致。"
+                : "Homoglyph and phishing checks run before send-to-domain signing. Resolver must match wallet-bound .ion record."
+            }
             testId="domain-phishing-warn"
-            title="Phishing guard"
+            title={isZh ? "钓鱼防护" : "Phishing guard"}
             tone="amber"
           />
           <NeonCard variant="cyan">
             <DomainTradingPanel />
           </NeonCard>
           <GlassPanel testId="domain-ion-id" title="ION ID / KYC">
-            <p className="text-sm text-cyan-100/75">KYC Pass L2 · expires 2026-11-30 · profile hub linked</p>
+            <p className="text-sm text-cyan-100/75">
+              {isZh ? "KYC Pass L2 · 到期 2026-11-30 · 已绑定到 Profile Hub" : "KYC Pass L2 · expires 2026-11-30 · profile hub linked"}
+            </p>
           </GlassPanel>
         </div>
       </div>
@@ -1837,7 +1971,8 @@ function DomainDeskPage() {
 }
 
 function AIDeskPage() {
-  const config = pageConfigs.ai;
+  const { isZh } = useI18n();
+  const config = getPageConfigs(isZh).ai;
   return (
     <div className="grid gap-5" data-testid="page-ai">
       <PageHero
@@ -1849,10 +1984,10 @@ function AIDeskPage() {
       />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <ChartFrame
-          badge={<StatusPill label="Risk: medium" testId="ai-risk-score" tone="amber" />}
-          subtitle="ION · 4h horizon"
+          badge={<StatusPill label={isZh ? "风险：中等" : "Risk: medium"} testId="ai-risk-score" tone="amber" />}
+          subtitle={isZh ? "ION · 4 小时时间窗" : "ION · 4h horizon"}
           testId="ai-market-summary"
-          title="Market summary"
+          title={isZh ? "市场摘要" : "Market summary"}
         >
           <div className="grid gap-3 sm:grid-cols-2" data-testid="ai-signals">
             {aiSignals.map((s) => (
@@ -1860,15 +1995,21 @@ function AIDeskPage() {
             ))}
           </div>
           <p className="mt-4 text-[11px] text-cyan-100/45" data-testid="ai-disclaimer">
-            Not investment advice · offline heuristics until ai-market-service streams live inference.
+            {isZh
+              ? "这不是投资建议 · 在 ai-market-service 接入实时推理前，当前结果基于离线启发式。"
+              : "Not investment advice · offline heuristics until ai-market-service streams live inference."}
           </p>
         </ChartFrame>
         <div className="grid gap-5">
-          <GlassPanel testId="ai-grid-suggestion" title="Grid suggestion">
-            <p className="text-sm text-cyan-100/75">Suggested neutral grid 5.6–6.5 ION · 18 levels · Sentinel confidence 71%</p>
+          <GlassPanel testId="ai-grid-suggestion" title={isZh ? "网格建议" : "Grid suggestion"}>
+            <p className="text-sm text-cyan-100/75">
+              {isZh ? "建议中性网格 5.6–6.5 ION · 18 层 · Sentinel 置信度 71%" : "Suggested neutral grid 5.6–6.5 ION · 18 levels · Sentinel confidence 71%"}
+            </p>
           </GlassPanel>
-          <GlassPanel testId="ai-prediction-history" title="Prediction history">
-            <p className="text-sm text-cyan-100/75">Last 7 calls · 5 aligned · 2 drift · accuracy 71% (local-seed)</p>
+          <GlassPanel testId="ai-prediction-history" title={isZh ? "预测历史" : "Prediction history"}>
+            <p className="text-sm text-cyan-100/75">
+              {isZh ? "最近 7 次判断 · 5 次一致 · 2 次偏移 · 准确率 71%（本地种子）" : "Last 7 calls · 5 aligned · 2 drift · accuracy 71% (local-seed)"}
+            </p>
           </GlassPanel>
           <NeonCard variant="mixed" className="!shadow-neonCyan">
             <AIMarketPanel />

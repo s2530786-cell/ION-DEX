@@ -39,4 +39,3 @@
 - [Reference Architecture And External Patterns](./09-reference-architecture.md)
 
 > Hinweis: Dieser Sprachpfad bietet einen stabilen öffentlichen Leseeinstieg; die englischen öffentlichen Dokumente bleiben die endgültige kanonische Quelle.
-

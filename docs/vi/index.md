@@ -35,4 +35,3 @@ Trang này là cổng tài liệu Tiếng Việt cho ION DEX, kết nối README
 - [English Developer Index](../developer-index.md)
 
 > Ghi chú: nhánh ngôn ngữ này cung cấp một lối vào đọc công khai ổn định; các tài liệu công khai tiếng Anh vẫn là nguồn canonical cuối cùng.
-

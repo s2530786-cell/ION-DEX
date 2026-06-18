@@ -27,4 +27,3 @@ Final wording, economics, security boundaries ve release status için English wh
 - [İngilizce tam whitepaper](../../WHITEPAPER.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

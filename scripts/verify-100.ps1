@@ -224,6 +224,31 @@ Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
 if ($failed -eq 0 -and $passed -eq $Iterations) {
   Add-Content -Path $summary -Value "RESULT=GREEN" -Encoding utf8
   Write-Log "RESULT=GREEN"
+  Set-Location $root
+  $recordArgs = @(
+    (Join-Path $root "scripts\verify-100-gate.mjs"),
+    "record",
+    "--summary",
+    $summary
+  )
+  if ($env:ION_WORKFLOW_STAGE) {
+    $recordArgs += @("--stage", $env:ION_WORKFLOW_STAGE)
+  }
+  if ($env:ION_WORKFLOW_QUEUE_ID) {
+    $recordArgs += @("--queue", $env:ION_WORKFLOW_QUEUE_ID)
+  }
+  if ($env:ION_WORKFLOW_STEP_ID) {
+    $recordArgs += @("--step", $env:ION_WORKFLOW_STEP_ID)
+  }
+  if ($env:ION_WORKFLOW_ACTIVATED_AT) {
+    $recordArgs += @("--activated-at", $env:ION_WORKFLOW_ACTIVATED_AT)
+  }
+  & node $recordArgs
+  if ($LASTEXITCODE -ne 0) {
+    Write-Log ("ERROR verify-100-gate record failed exit=" + $LASTEXITCODE)
+    Add-Content -Path $summary -Value "RESULT=FAILED" -Encoding utf8
+    exit 1
+  }
   if ($env:ION_AGENT_AUTONOMOUS -eq "1") {
     Write-Log "AUTO-ADVANCE: trigger watchdog (commit+push -> Batch C/D -> stress)"
     Set-Location $root

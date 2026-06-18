@@ -10,6 +10,7 @@ const distDir = path.join(currentDir, "dist");
 
 const repoUrl = "https://github.com/s2530786-cell/ION-DEX";
 const repoBranch = "main";
+const siteUrl = "https://s2530786-cell.github.io/ION-DEX/";
 const translateBase = "https://translate.google.com/translate";
 const rawBase = `https://raw.githubusercontent.com/s2530786-cell/ION-DEX/${repoBranch}`;
 const blobBase = `${repoUrl}/blob/${repoBranch}`;
@@ -49,6 +50,37 @@ const groupOrder = [
   "More",
 ];
 
+const extraEnglishPages = [
+  {
+    repoPath: "contracts/README.md",
+    logicalId: "docs/contracts-layout",
+    section: "docs",
+    slug: "contracts-layout",
+    order: 66,
+  },
+  {
+    repoPath: "contracts/ion/test/test-cases.md",
+    logicalId: "docs/contracts-test-cases",
+    section: "docs",
+    slug: "contracts-test-cases",
+    order: 67,
+  },
+  {
+    repoPath: "contracts/ion/deploy/compile-and-deploy.md",
+    logicalId: "docs/ion-compile-and-deploy-commands",
+    section: "docs",
+    slug: "ion-compile-and-deploy-commands",
+    order: 68,
+  },
+  {
+    repoPath: "contracts/ion/deploy/LIVE-DEPLOY.md",
+    logicalId: "docs/ion-live-deploy-operator-manual",
+    section: "docs",
+    slug: "ion-live-deploy-operator-manual",
+    order: 69,
+  },
+];
+
 const actualPages = new Map();
 const logicalPages = new Map();
 
@@ -75,6 +107,7 @@ async function build() {
   const siteIndex = {
     generatedAt: new Date().toISOString(),
     repoUrl,
+    siteUrl,
     translateBase,
     languages,
     groupOrder,
@@ -132,6 +165,13 @@ async function collectPageMetas() {
       section,
       slug: logicalId === "docs/index" ? "index" : slug,
       order: rootDocs.indexOf(fileName) + 10,
+    });
+  }
+
+  for (const page of extraEnglishPages) {
+    metas.push({
+      ...page,
+      sourceLanguage: "en",
     });
   }
 
@@ -259,13 +299,29 @@ function resolveHref(rawHref, pageMeta, assetOnly) {
   if (isImagePath(pathPart) || assetOnly) {
     return `${rawBase}/${encodeRepoPath(resolvedPath)}`;
   }
-  if (resolvedPath.startsWith("docs/") || resolvedPath.startsWith("assets/")) {
+  if (
+    resolvedPath.startsWith("docs/") ||
+    resolvedPath.startsWith("assets/") ||
+    resolvedPath.startsWith("contracts/")
+  ) {
     return `${blobBase}/${encodeRepoPath(resolvedPath)}`;
   }
   return href;
 }
 
 function findLogicalTarget(repoPath) {
+  if (repoPath === "contracts/README.md") {
+    return { logicalId: "docs/contracts-layout" };
+  }
+  if (repoPath === "contracts/ion/test/test-cases.md") {
+    return { logicalId: "docs/contracts-test-cases" };
+  }
+  if (repoPath === "contracts/ion/deploy/compile-and-deploy.md") {
+    return { logicalId: "docs/ion-compile-and-deploy-commands" };
+  }
+  if (repoPath === "contracts/ion/deploy/LIVE-DEPLOY.md") {
+    return { logicalId: "docs/ion-live-deploy-operator-manual" };
+  }
   if (repoPath === "docs/WHITEPAPER.md") {
     return { logicalId: "whitepaper" };
   }

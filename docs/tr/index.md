@@ -35,4 +35,3 @@ Bu sayfa ION DEX dokümantasyonu için Türkçe giriş kapısıdır ve yerel REA
 - [English Developer Index](../developer-index.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

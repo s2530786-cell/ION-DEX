@@ -27,4 +27,3 @@ Le whitepaper anglais reste la source canonique pour la formulation finale, les 
 - [Whitepaper complète en anglais](../../WHITEPAPER.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

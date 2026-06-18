@@ -35,4 +35,3 @@ Cette page sert de porte d’entrée française à la documentation ION DEX et r
 - [English Developer Index](../developer-index.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

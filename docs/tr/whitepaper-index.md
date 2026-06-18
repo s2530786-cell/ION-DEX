@@ -19,4 +19,3 @@ Bu sayfa uzun vadeli vizyonu, ana modülleri ve önerilen okuma sırasını hız
 - [İngilizce tam whitepaper](../WHITEPAPER.md)
 
 > Not: Bu dil yolu istikrarlı bir public reading entry sağlar; nihai canonical source İngilizce public documents olmaya devam eder.
-

@@ -20,9 +20,31 @@ test.describe("Domain Manage", () => {
   test("can lookup and register a domain", async ({ page }) => {
     const label = `e2e${Date.now().toString(36).slice(-8)}.ion`;
     await fillControlledInput(page, "domain-query", label);
-    await domClick(page, "domain-submit");
+    await expect(page.getByTestId("domain-submit")).toBeEnabled();
+    await Promise.all([
+      page.waitForResponse((response) => {
+        return (
+          response.url().includes("/api/domain-manage/lookup") &&
+          response.request().method() === "POST" &&
+          response.status() === 200
+        );
+      }),
+      page.getByTestId("domain-submit").click(),
+    ]);
     await expect(page.getByTestId("domain-preview")).toContainText(label);
-    await domClick(page, "domain-manage-register-btn");
+    await expect(page.getByTestId("domain-preview")).toContainText("Available");
+
+    await expect(page.getByTestId("domain-manage-register-btn")).toBeEnabled();
+    await Promise.all([
+      page.waitForResponse((response) => {
+        return (
+          response.url().includes("/api/domain-manage/register") &&
+          response.request().method() === "POST" &&
+          response.status() === 200
+        );
+      }),
+      page.getByTestId("domain-manage-register-btn").click(),
+    ]);
     await expect(page.getByTestId("domain-confirmation")).toContainText("Register intent recorded", {
       timeout: 10_000,
     });

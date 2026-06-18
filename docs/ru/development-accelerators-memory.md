@@ -31,4 +31,6 @@ Snapshot date: 2026-05-17
 - [CI And Agent Automation](./08-ci-agent-automation.md)
 - [Live Deploy Operator Manual](./ion-live-deploy-operator-manual.md)
 
+
+
 > Примечание: эта языковая ветка дает стабильный публичный вход для чтения; английские публичные документы остаются финальным каноническим источником.

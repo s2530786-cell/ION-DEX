@@ -1,16 +1,60 @@
 import { expect, type Page } from "@playwright/test";
 import { dismissBootSplashIfPresent } from "./boot-splash";
+import type { AppLocale } from "@/i18n/types";
 
 /** Skips boot splash + risk modal for automated UI tests. */
-export async function installE2eSessionFlags(page: Page) {
-  await page.addInitScript(() => {
+export async function installE2eSessionFlags(page: Page, options: { locale?: AppLocale } = {}) {
+  const locale = options.locale ?? "en-US";
+  await page.addInitScript((nextLocale) => {
     try {
+      const e2eSettings = {
+        darkMode: true,
+        defaultSlippagePct: "0.5",
+        pushNotifications: true,
+        locale: nextLocale,
+      };
+      const settingsKey = "ion-dex-app-settings";
+      const originalGetItem = Storage.prototype.getItem;
+      const originalSetItem = Storage.prototype.setItem;
+      const originalRemoveItem = Storage.prototype.removeItem;
+
+      // Keep a deterministic settings baseline across reloads and test-local clears.
+      Storage.prototype.getItem = function getItemPatched(key: string) {
+        if (key === settingsKey) {
+          return originalGetItem.call(this, key) ?? JSON.stringify(e2eSettings);
+        }
+        return originalGetItem.call(this, key);
+      };
+
+      Storage.prototype.setItem = function setItemPatched(key: string, value: string) {
+        if (key === settingsKey) {
+          try {
+            const parsed = JSON.parse(value) as Record<string, unknown>;
+            if (typeof parsed.locale !== "string") {
+              parsed.locale = nextLocale;
+            }
+            return originalSetItem.call(this, key, JSON.stringify(parsed));
+          } catch {
+            return originalSetItem.call(this, key, JSON.stringify({ ...e2eSettings, locale: nextLocale }));
+          }
+        }
+        return originalSetItem.call(this, key, value);
+      };
+
+      Storage.prototype.removeItem = function removeItemPatched(key: string) {
+        if (key === settingsKey) {
+          return originalSetItem.call(this, key, JSON.stringify({ ...e2eSettings, locale: nextLocale }));
+        }
+        return originalRemoveItem.call(this, key);
+      };
+
       document.documentElement.dataset.ionE2eStable = "1";
       window.localStorage.setItem("ion-dex-risk-ack-v1", "1");
+      originalSetItem.call(window.localStorage, settingsKey, JSON.stringify({ ...e2eSettings, locale: nextLocale }));
     } catch {
       // private mode / quota
     }
-  });
+  }, locale);
 }
 
 /** Bypasses TonConnect / wallet overlay pointer interception during E2E. */

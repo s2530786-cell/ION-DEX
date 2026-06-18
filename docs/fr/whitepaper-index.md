@@ -19,4 +19,3 @@ Cette page est le parcours de lecture français du whitepaper pour comprendre ra
 - [Whitepaper complète en anglais](../WHITEPAPER.md)
 
 > Note : cette branche linguistique offre une entrée publique stable de lecture ; les documents publics anglais restent la source canonique finale.
-

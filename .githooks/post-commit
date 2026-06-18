@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+if command -v git-lfs >/dev/null 2>&1; then
+  git lfs post-commit "$@"
+fi
+
+node scripts/verify-100-gate.mjs post-commit
