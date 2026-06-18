@@ -1,9 +1,11 @@
 // Strict UI Engineering Constants
 // ION-DEX Design Token Protocol — Single Source of Truth for all visual attributes
 // If UI looks wrong, fix THIS file, NOT component code.
+// Design System v3.0 — 新 token 已合并，现有 token 完整保留。
 export const DesignTokens = {
   // ── Color Palette (Deep Space + Neon Glow + Glassmorphism) ──
   colors: {
+    // 现有基础色值
     background: '#000000',
     panelBg: 'rgba(20, 25, 45, 0.4)',
     glassBase: 'rgba(20, 25, 45, 0.4)',
@@ -22,22 +24,42 @@ export const DesignTokens = {
     cyanBorder: 'rgba(0, 255, 255, 0.3)',
     surfaceOverlay: 'rgba(255, 255, 255, 0.05)',
     surfaceBorder: 'rgba(255, 255, 255, 0.1)',
+    // v3.0 追加色值
+    cyanDark: '#003344',
+    magentaDark: '#330033',
+    violetDark: '#1a0033',
+    disabledBg: 'rgba(255,255,255,0.03)',
+    disabledText: 'rgba(255,255,255,0.2)',
+    hoverBg: 'rgba(255,255,255,0.08)',
   } as const,
 
   // ── Borders ──
   borders: {
+    // 现有基础描边
     thin: '1px',
     thick: '2px',
+    // v3.0 追加霓虹发光描边
+    glowCyan: '1px solid #00ffff',
+    glowMagenta: '1px solid #ff00ff',
+    glowViolet: '1px solid #8d4dff',
+    cardBorder: '1px solid rgba(255,255,255,0.08)',
   } as const,
 
   // ── Typography ──
   typography: {
+    // 现有 6 级基础排版
     heading: { fontSize: '24px', fontWeight: '700', lineHeight: '1.3' },
     subheading: { fontSize: '18px', fontWeight: '600', lineHeight: '1.4' },
     body: { fontSize: '14px', fontWeight: '400', lineHeight: '1.5' },
     caption: { fontSize: '12px', fontWeight: '400', lineHeight: '1.5' },
     dataValue: { fontSize: '20px', fontWeight: '700', lineHeight: '1.2', fontFamily: "'JetBrains Mono', monospace" },
     dataLabel: { fontSize: '12px', fontWeight: '500', lineHeight: '1.5', letterSpacing: '0.05em' },
+    // v3.0 追加流动性精算排版
+    poolTitle: { fontSize: '14px', fontWeight: '600', lineHeight: '1.4', letterSpacing: '0.05em' },
+    poolStat: { fontSize: '28px', fontWeight: '700', lineHeight: '1.2', fontFamily: "'JetBrains Mono', monospace" },
+    poolLabel: { fontSize: '11px', fontWeight: '500', lineHeight: '1.4', letterSpacing: '0.08em', textTransform: 'uppercase' as const },
+    buttonLabel: { fontSize: '13px', fontWeight: '600', lineHeight: '1.2', letterSpacing: '0.1em', textTransform: 'uppercase' as const },
+    badgeLabel: { fontSize: '10px', fontWeight: '600', lineHeight: '1.3', letterSpacing: '0.12em', textTransform: 'uppercase' as const },
   } as const,
 
   // ── Spacing & Dimensions ──
@@ -66,6 +88,7 @@ export const DesignTokens = {
 
   // ── Effects ──
   effects: {
+    // 现有基础特效
     glassBlur: 'blur(20px)',
     backdropBlur: 'blur(20px)',
     cardGlow: '0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.2)',
@@ -76,6 +99,30 @@ export const DesignTokens = {
     neonShadow: (color: string) => `0 0 15px ${color}66, inset 0 0 10px ${color}33`,
     neonGlow: (color: string) => `0 0 20px ${color}40, 0 0 40px ${color}20`,
     cardHover: 'transform: scale(1.01); box-shadow: 0 0 30px rgba(0,255,255,0.2)',
+    // v3.0 追加复合阴影及滤镜
+    poolCard: '0 4px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,255,255,0.15)',
+    poolCardHover: '0 8px 32px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,255,255,0.35)',
+    buttonGlow: '0 0 20px rgba(0,255,255,0.3)',
+    insetGlow: 'inset 0 0 40px rgba(0,255,255,0.05)',
+  } as const,
+
+  // ── Gradients (v3.0 全新模块) ──
+  gradients: {
+    poolCardBg: 'linear-gradient(180deg, rgba(0,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%)',
+    poolCardBgHover: 'linear-gradient(180deg, rgba(0,255,255,0.1) 0%, rgba(0,0,0,0.5) 100%)',
+    buttonPrimary: 'linear-gradient(180deg, #00ffff 0%, #00bcd4 100%)',
+    dividerGlow: 'linear-gradient(90deg, transparent, #00ffff, transparent)',
+    glassPanel: 'linear-gradient(135deg, rgba(20,25,45,0.6) 0%, rgba(20,25,45,0.2) 100%)',
+  } as const,
+
+  // ── Animation Curves (v3.0 全新模块) ──
+  animation: {
+    durationFast: '150ms',
+    durationNormal: '300ms',
+    durationSlow: '500ms',
+    easeOut: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    easeInOut: 'cubic-bezier(0.65, 0, 0.35, 1)',
+    spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
   } as const,
 
   // ── Buttons ──
