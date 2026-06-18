@@ -26,3 +26,8 @@
 - Icon padding must be uniform at export time. Do NOT use code to stretch/scale as compensation.
 - If uploaded icon is not HD transparent, AI MUST alert immediately. Do NOT hack around it in CSS.
 - Jagged edges or non-transparent background = UNUSABLE. Must re-export.
+
+## 6. ZERO-MANUAL-LABOR PROTOCOL (Non-Technical User Automation)
+- **AI VISUAL ANALYSIS**: When user uploads a design image, AI MUST perform reverse visual engineering: auto-extract colors, spacing, and update `src/lib/design-tokens.ts`. If AI cannot determine exact values from screenshot, it MUST present a numeric-choice list — NEVER ask user to measure manually.
+- **AUTO ASSET GENERATION**: If icon assets are missing, AI MUST either generate SVG/WebP placeholders, or provide direct download URLs from free resource sites (e.g. Lucide, Phosphor, Flaticon). NEVER require user to do complex image processing.
+- **VISUAL DEBUG OVERLAY**: After writing UI code, AI MUST render a VisualAuditor debug overlay (dev mode only) showing the current component's referenced Token values, so user can compare against design without reading code.

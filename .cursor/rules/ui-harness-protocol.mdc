@@ -1,33 +1,38 @@
-# ION-DEX UI Engineering Harness Protocol v3.0
+# ION-DEX UI Engineering Harness Protocol v3.1
 # Auto-loaded by Cursor — DO NOT MODIFY without Master approval
 
 ## Architecture
-- DesignTokens: Single source of truth for all visual attributes
+- DesignTokens v4.0: 13 colors, 6 typography levels, 3 button variants, input fields, grid
 - DEXGridHarness: 12-col grid, repeat(12, 1fr)
-- NeonCard: Foundation component for all modules
+- NeonCard v2.0: Foundation with subtitle + footer + violet variant
+- VisualAuditor: Dev-mode debug overlay showing live Token values
 - agent_harness.py: Contract compile/test/audit gateway
 
 ## 1. Vision Protocol
-- NO HARDCODING: Never use hex/rgba colors, pixel margins, or padding directly
+- NO HARDCODING: Never use hex/rgba colors or pixel values directly
 - TOKEN USAGE: All visual attributes from `src/lib/design-tokens.ts`
 - GRID ENFORCEMENT: All layouts use DEXGridHarness, grid-column: span X
-- ASSET INTEGRITY: .webp assets from /public/assets/icons/, no CSS-drawn graphics
 
 ## 2. Backend Protocol
 - AGENT HARNESS: All contract ops through agent_harness.py
-- NO MOCKS: Real Blueprint test suite, no mocked blockchain states
-- SECURITY FIRST: Gas-limit checks + consistent error handling
+- NO MOCKS: Real Blueprint test suite
+- SECURITY FIRST: Gas-limit checks + error handling
 
 ## 3. Workflow (3-Step)
-1. ANALYSIS: State Grid coordinates and tokens before coding
-2. EXECUTION: Reference only provided architectural components
+1. ANALYSIS: State Grid coordinates + tokens before coding
+2. EXECUTION: Reference only architectural components
 3. VERIFICATION: Self-check against protocol
 
 ## 4. Visual Red Line
-- AI MUST proactively flag visible deviations BEFORE user points them out
-- "Close enough" = NOT acceptable. Every pixel deviation is a bug.
+- AI MUST proactively flag visible deviations
+- "Close enough" = NOT acceptable
 
 ## 5. Asset Quality Gate
-- HD WebP, transparent background, uniform padding at export
-- Jagged edges / non-transparent = UNUSABLE, must re-export
-- AI MUST alert immediately if icon quality is insufficient
+- HD WebP, transparent background, uniform padding
+- Jagged edges / non-transparent = UNUSABLE
+
+## 6. Zero Manual Labor
+- AI performs reverse visual engineering on design images
+- No manual measurement ever required from user
+- Missing icons: AI generates placeholders or provides download URLs
+- VisualAuditor debug overlay must be included in dev builds
