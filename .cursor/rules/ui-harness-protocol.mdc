@@ -1,52 +1,33 @@
-# UI Engineering Harness Protocol (ION-DEX) v2.0
-# Auto-generated 2026-06-19 — Master 钦定的前端工程铁律
-# Cursor 写任何前端代码前必须读取此文件
+# ION-DEX UI Engineering Harness Protocol v3.0
+# Auto-loaded by Cursor — DO NOT MODIFY without Master approval
 
-## 核心架构
-- DesignTokens v2.0：12 列标准栅格 + neonShadow() 函数式令牌
-- DEXGridHarness v2.0：repeat(12, 1fr) 强制栅格
-- NeonCard：所有模块的基石组件（Pool/Swap/Bridge/Stake 均以此为基准）
+## Architecture
+- DesignTokens: Single source of truth for all visual attributes
+- DEXGridHarness: 12-col grid, repeat(12, 1fr)
+- NeonCard: Foundation component for all modules
+- agent_harness.py: Contract compile/test/audit gateway
 
-## 1. Zero-Visual-Discretion (视觉决策禁止)
-- AI 禁止自行决定颜色、阴影或间距。必须从 `src/lib/design-tokens.ts` 引用 `DesignTokens` 对象。
-- 如果设计图中的某个视觉属性在 DesignTokens 中缺失，AI 必须停止编写并提示用户更新 Token，严禁自行补全。
-- 禁止在 CSS/Tailwind 中直接编写 hex/rgba 值。
+## 1. Vision Protocol
+- NO HARDCODING: Never use hex/rgba colors, pixel margins, or padding directly
+- TOKEN USAGE: All visual attributes from `src/lib/design-tokens.ts`
+- GRID ENFORCEMENT: All layouts use DEXGridHarness, grid-column: span X
+- ASSET INTEGRITY: .webp assets from /public/assets/icons/, no CSS-drawn graphics
 
-## 2. Image-Asset-Strict (素材物理分离)
-- 设计图中的 3D 悬浮图标必须使用 `<img>` 标签加载 `/public/assets/icons/xxx.webp`。
-- 严禁使用 CSS 绘制复杂图形，严禁使用 SVG 路径硬编码复杂的图形元素。
-- 禁止缩放比例不明的 SVG。
+## 2. Backend Protocol
+- AGENT HARNESS: All contract ops through agent_harness.py
+- NO MOCKS: Real Blueprint test suite, no mocked blockchain states
+- SECURITY FIRST: Gas-limit checks + consistent error handling
 
-## 3. Pixel-Perfection-Layout (像素级对齐)
-- 所有组件必须包裹在 `DEXGridHarness` 组件中，遵循 `repeat(12, 1fr)` 栅格。
-- 组件的尺寸和位置必须使用 `grid-column: span X` 定义。
-- 严禁使用 `fixed` 或 `absolute` 进行页面排版。
-- 严禁使用 `margin` 进行手动对齐。
-- 所有间距必须通过 DesignTokens.spacing 控制。
+## 3. Workflow (3-Step)
+1. ANALYSIS: State Grid coordinates and tokens before coding
+2. EXECUTION: Reference only provided architectural components
+3. VERIFICATION: Self-check against protocol
 
-## 4. NeonCard 基石组件
-- 所有后续模块（Pool, Swap, Bridge, Stake 等）必须以 NeonCard 为基准。
-- NeonCard variants: 'cyan' | 'magenta' 切换霓虹光晕
-- columnSpan 参数控制 Grid 列跨度，默认 4
-- 所有视觉值从 DesignTokens 引用，零硬编码
+## 4. Visual Red Line
+- AI MUST proactively flag visible deviations BEFORE user points them out
+- "Close enough" = NOT acceptable. Every pixel deviation is a bug.
 
-## 5. Verification Workflow
-- 在输出代码前，AI 需先输出代码的"布局意图说明"。
-- 示例："此组件将占据 Grid 的 4 列(grid-column: span 4)，Padding 调用 DesignTokens.spacing.cardPadding，背景使用 DesignTokens.colors.panelBg。"
-- 写完后自我审查是否符合上述协议。
-
-## 6. Visual Red Line
-- AI must proactively flag visible deviations from design specs (spacing, alignment, colors)
-- If UI looks "almost right but off by a few pixels" — it's a BUG, not acceptable
-- AI must say "This deviates from design spec, I will adjust" BEFORE user points it out
-
-## 7. Asset Quality Gate
-- All UI icons MUST be HD WebP, transparent background
-- Icon padding must be uniform at export time — no code-based stretching/compensation
-- If uploaded icon is not HD transparent, AI MUST alert immediately, DO NOT hack around it in CSS
-- Jagged edges, non-transparent background = UNUSABLE, must re-export
-
-## 8. Contract Security Protocol
-- 所有合约编译、测试任务必须通过 `agent_harness.py` 调度。
-- 禁止 mock 数据，必须对接真实开发环境。
-- FunC 代码必须包含 Gas 边界检查和 bounce 消息处理。
+## 5. Asset Quality Gate
+- HD WebP, transparent background, uniform padding at export
+- Jagged edges / non-transparent = UNUSABLE, must re-export
+- AI MUST alert immediately if icon quality is insufficient
