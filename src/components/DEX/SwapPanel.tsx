@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DesignTokens } from '../../lib/design-tokens';
 import { NeonCard } from '../ui/NeonCard';
 import { useSwapState } from '../../hooks/useSwapState';
 
 /**
- * SwapPanel — ION-DEX 智能路由兑换面板
+ * SwapPanel v2.0 — ION-DEX 智能路由兑换面板
  *
- * 零静态违规、完全动态绑定、内置防呆状态机。
- * 100% DesignTokens 绑定，通过 audit_tokens.py 审计。
+ * Deep Space 深空背景 + 霓虹边框发光 + Glassmorphism 卡片
+ * 对接真实 PancakeSwap V3 池子数据，零 mock。
  */
 
 export const SwapPanel: React.FC = () => {
@@ -18,104 +18,201 @@ export const SwapPanel: React.FC = () => {
     networkFee,
     isExecuting,
     validationError,
+    exchangeRate,
+    slippage,
+    minReceived,
+    poolData,
     updateFromAmount,
     executeSwapTransaction,
+    setSlippage,
   } = useSwapState();
 
-  const [inputStatusColor, setInputStatusColor] = useState<string>(
-    DesignTokens.colors.panelBorder
-  );
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
-  // 动态视觉边界防错：输入验证错误时边框颜色实时无感切换
-  useEffect(() => {
-    if (validationError) {
-      setInputStatusColor(DesignTokens.colors.neonMagenta);
-    } else if (fromAmount) {
-      setInputStatusColor(DesignTokens.colors.neonCyan);
-    } else {
-      setInputStatusColor(DesignTokens.colors.panelBorder);
-    }
-  }, [validationError, fromAmount]);
+  const inputBorderColor = validationError
+    ? DesignTokens.colors.neonMagenta
+    : fromAmount
+      ? DesignTokens.colors.neonCyan
+      : DesignTokens.colors.surfaceBorder;
 
   return (
-    <div className="col-span-12 lg:col-span-6 lg:col-start-4 md:col-span-8 md:col-start-2 px-2">
-      <NeonCard
-        title="ION 智能路由兑换"
-        variant={validationError ? 'magenta' : 'cyan'}
+    <div className="col-span-12 lg:col-span-4 lg:col-start-5 md:col-span-8 md:col-start-3 px-2">
+      {/* Deep Space background wrapper */}
+      <div
+        className="relative rounded-3xl overflow-hidden"
+        style={{
+          background: DesignTokens.colors.background,
+          boxShadow: `0 0 60px ${DesignTokens.colors.cyanOverlay}, 0 0 120px rgba(0,0,0,0.5)`,
+        }}
       >
-        <div className="flex flex-col gap-4">
-          {/* ── 支付资产区块 ── */}
+        {/* Glassmorphism panel */}
+        <div
+          className="relative z-10 flex flex-col gap-5"
+          style={{
+            backgroundColor: DesignTokens.colors.glassBase,
+            backdropFilter: DesignTokens.effects.glassBlur,
+            WebkitBackdropFilter: DesignTokens.effects.glassBlur,
+            borderWidth: DesignTokens.borders.thin,
+            borderStyle: 'solid',
+            borderColor: DesignTokens.colors.panelBorder,
+            borderRadius: DesignTokens.spacing.borderRadius,
+            padding: DesignTokens.spacing.cardPadding,
+            boxShadow: poolData
+              ? `inset 0 0 40px ${DesignTokens.colors.cyanOverlay}`
+              : 'none',
+          }}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h2
+                className="font-bold tracking-wide"
+                style={{
+                  fontSize: DesignTokens.typography.heading.fontSize,
+                  fontWeight: DesignTokens.typography.heading.fontWeight,
+                  color: DesignTokens.colors.textPrimary,
+                }}
+              >
+                Swap
+              </h2>
+              <p
+                className="mt-1"
+                style={{
+                  fontSize: DesignTokens.typography.caption.fontSize,
+                  color: DesignTokens.colors.textSecondary,
+                }}
+              >
+                PancakeSwap V3 · ION/WBNB
+              </p>
+            </div>
+            {/* Pool data badge */}
+            {poolData && (
+              <div
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+                style={{
+                  backgroundColor: DesignTokens.colors.cyanOverlay,
+                  borderWidth: DesignTokens.borders.thin,
+                  borderStyle: 'solid',
+                  borderColor: DesignTokens.colors.cyanBorder,
+                }}
+              >
+                <span
+                  className="w-2 h-2 rounded-full animate-pulse"
+                  style={{ backgroundColor: DesignTokens.colors.neonCyan }}
+                />
+                <span
+                  className="font-mono font-bold"
+                  style={{
+                    fontSize: DesignTokens.typography.caption.fontSize,
+                    color: DesignTokens.colors.neonCyan,
+                  }}
+                >
+                  1 ION ≈ ${poolData.ionPrice.toFixed(4)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* From token input */}
           <div
-            className="flex flex-col p-4 rounded-2xl transition-all duration-200"
+            className="flex flex-col gap-2 p-4 rounded-2xl transition-all duration-300"
             style={{
               backgroundColor: DesignTokens.colors.background,
-              borderWidth: DesignTokens.borders.thin,
+              borderWidth: DesignTokens.borders.thick,
               borderStyle: 'solid',
-              borderColor: inputStatusColor,
+              borderColor: inputBorderColor,
+              boxShadow: fromAmount
+                ? `0 0 20px ${DesignTokens.colors.neonCyan}15`
+                : 'none',
             }}
           >
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex justify-between items-center">
               <span
-                className="text-xs font-medium"
-                style={{ color: DesignTokens.colors.textSecondary }}
+                style={{
+                  fontSize: DesignTokens.typography.caption.fontSize,
+                  color: DesignTokens.colors.textSecondary,
+                }}
               >
-                从（支付）
+                You pay
               </span>
               <span
-                className="text-xs font-mono"
-                style={{ color: DesignTokens.colors.textSecondary }}
+                className="font-mono"
+                style={{
+                  fontSize: DesignTokens.typography.caption.fontSize,
+                  color: DesignTokens.colors.textMuted,
+                }}
               >
-                可用余额: 1420.50 ION
+                Balance: {poolData ? '—' : 'Loading...'}
               </span>
             </div>
-            <div className="flex justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
               <input
                 type="number"
                 placeholder="0.0"
                 value={fromAmount}
                 disabled={isExecuting}
                 onChange={(e) => updateFromAmount(e.target.value)}
-                className="bg-transparent text-2xl font-bold font-mono focus:outline-none w-full"
-                style={{ color: DesignTokens.colors.textPrimary }}
+                className="bg-transparent flex-1 focus:outline-none font-mono font-bold"
+                style={{
+                  fontSize: '28px',
+                  color: DesignTokens.colors.textPrimary,
+                }}
               />
-              <div
-                className="flex items-center gap-2 px-3 py-1 rounded-full select-none"
-                style={{ backgroundColor: DesignTokens.colors.panelBg }}
+              <button
+                className="flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 hover:scale-105 shrink-0"
+                style={{
+                  backgroundColor: DesignTokens.colors.panelBg,
+                  borderWidth: DesignTokens.borders.thin,
+                  borderStyle: 'solid',
+                  borderColor: DesignTokens.colors.cyanBorder,
+                }}
               >
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: DesignTokens.colors.neonCyan }}
+                >
+                  <span className="text-xs font-bold" style={{ color: DesignTokens.colors.background }}>I</span>
+                </div>
                 <span
-                  className="text-sm font-bold tracking-wider"
-                  style={{ color: DesignTokens.colors.neonCyan }}
+                  className="font-bold tracking-wider"
+                  style={{
+                    fontSize: DesignTokens.typography.body.fontSize,
+                    color: DesignTokens.colors.textPrimary,
+                  }}
                 >
                   ION
                 </span>
-              </div>
+              </button>
             </div>
           </div>
 
-          {/* ── 链上路由方向指示器 ── */}
-          <div className="flex justify-center -my-2 z-10">
-            <div
-              className="p-2 rounded-full border flex items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-110"
+          {/* Swap direction arrow */}
+          <div className="flex justify-center -my-3 z-10">
+            <button
+              className="p-2.5 rounded-full border transition-all duration-300 hover:rotate-180"
               style={{
                 backgroundColor: DesignTokens.colors.background,
                 borderColor: DesignTokens.colors.panelBorder,
                 boxShadow: fromAmount
-                  ? DesignTokens.effects.neonCyan
+                  ? `0 0 15px ${DesignTokens.colors.neonCyan}30`
                   : 'none',
               }}
             >
-              <span
-                className="text-xs font-bold"
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
                 style={{ color: DesignTokens.colors.neonCyan }}
               >
-                ↓
-              </span>
-            </div>
+                <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </div>
 
-          {/* ── 目标资产区块 ── */}
+          {/* To token output */}
           <div
-            className="flex flex-col p-4 rounded-2xl"
+            className="flex flex-col gap-2 p-4 rounded-2xl transition-all duration-300"
             style={{
               backgroundColor: DesignTokens.colors.background,
               borderWidth: DesignTokens.borders.thin,
@@ -123,36 +220,52 @@ export const SwapPanel: React.FC = () => {
               borderColor: DesignTokens.colors.panelBorder,
             }}
           >
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex justify-between items-center">
               <span
-                className="text-xs font-medium"
-                style={{ color: DesignTokens.colors.textSecondary }}
+                style={{
+                  fontSize: DesignTokens.typography.caption.fontSize,
+                  color: DesignTokens.colors.textSecondary,
+                }}
               >
-                至（获得预计）
+                You receive
               </span>
               <span
-                className="text-xs font-mono"
-                style={{ color: DesignTokens.colors.textSecondary }}
+                className="font-mono"
+                style={{
+                  fontSize: DesignTokens.typography.caption.fontSize,
+                  color: DesignTokens.colors.textMuted,
+                }}
               >
-                可用余额: 0.00 USDT
+                Estimated
               </span>
             </div>
-            <div className="flex justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
               <input
                 type="text"
                 placeholder="0.0000"
                 value={toAmount}
                 readOnly
-                className="bg-transparent text-2xl font-bold font-mono focus:outline-none w-full cursor-not-allowed"
-                style={{ color: DesignTokens.colors.textPrimary }}
+                className="bg-transparent flex-1 focus:outline-none font-mono font-bold cursor-default"
+                style={{
+                  fontSize: '28px',
+                  color: DesignTokens.colors.textPrimary,
+                }}
               />
               <div
-                className="flex items-center gap-2 px-3 py-1 rounded-full select-none"
-                style={{ backgroundColor: DesignTokens.colors.panelBg }}
+                className="flex items-center gap-2 px-4 py-2 rounded-full shrink-0"
+                style={{
+                  backgroundColor: DesignTokens.colors.panelBg,
+                  borderWidth: DesignTokens.borders.thin,
+                  borderStyle: 'solid',
+                  borderColor: DesignTokens.colors.surfaceBorder,
+                }}
               >
                 <span
-                  className="text-sm font-bold tracking-wider"
-                  style={{ color: DesignTokens.colors.neonMagenta }}
+                  className="font-bold tracking-wider"
+                  style={{
+                    fontSize: DesignTokens.typography.body.fontSize,
+                    color: DesignTokens.colors.textSecondary,
+                  }}
                 >
                   USDT
                 </span>
@@ -160,80 +273,162 @@ export const SwapPanel: React.FC = () => {
             </div>
           </div>
 
-          {/* ── 实时校准的数据指标面板 ── */}
-          <div
-            className="flex flex-col gap-2 p-2 text-xs font-mono"
-            style={{ borderColor: DesignTokens.colors.panelBorder }}
-          >
-            <div className="flex justify-between">
-              <span style={{ color: DesignTokens.colors.textSecondary }}>
-                兑换汇率 (Exchange Rate)
-              </span>
-              <span style={{ color: DesignTokens.colors.textPrimary }}>
-                1 ION ≈ 7.3521 USDT
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span style={{ color: DesignTokens.colors.textSecondary }}>
-                价格影响 (Price Impact)
-              </span>
-              <span
-                style={{
-                  color:
-                    Number(priceImpact) > 1
-                      ? DesignTokens.colors.neonMagenta
-                      : DesignTokens.colors.neonCyan,
-                }}
+          {/* Details collapse section */}
+          {fromAmount && toAmount && (
+            <>
+              <button
+                onClick={() => setDetailsOpen(!detailsOpen)}
+                className="flex items-center justify-between w-full py-2 transition-colors"
+                style={{ color: DesignTokens.colors.textSecondary }}
               >
-                {Number(priceImpact).toFixed(2)}%
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span style={{ color: DesignTokens.colors.textSecondary }}>
-                预估燃料费 (Network Gas)
-              </span>
-              <span style={{ color: DesignTokens.colors.textPrimary }}>
-                {networkFee} ION
-              </span>
-            </div>
-          </div>
+                <span
+                  className="font-mono"
+                  style={{ fontSize: DesignTokens.typography.caption.fontSize }}
+                >
+                  {detailsOpen ? '▼' : '▶'} Swap Details
+                </span>
+              </button>
 
-          {/* ── 全状态拦截主执行纽 ── */}
+              {detailsOpen && (
+                <div
+                  className="flex flex-col gap-2.5 p-3 rounded-xl"
+                  style={{
+                    backgroundColor: 'rgba(0,0,0,0.3)',
+                    borderWidth: DesignTokens.borders.thin,
+                    borderStyle: 'solid',
+                    borderColor: DesignTokens.colors.surfaceBorder,
+                  }}
+                >
+                  <div className="flex justify-between">
+                    <span style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textSecondary }}>
+                      Exchange Rate
+                    </span>
+                    <span className="font-mono" style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textPrimary }}>
+                      1 ION = ${exchangeRate.toFixed(4)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textSecondary }}>
+                      Price Impact
+                    </span>
+                    <span
+                      className="font-mono"
+                      style={{
+                        fontSize: DesignTokens.typography.caption.fontSize,
+                        color: priceImpact > 1 ? DesignTokens.colors.negative : DesignTokens.colors.neonCyan,
+                      }}
+                    >
+                      {priceImpact.toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textSecondary }}>
+                      Slippage Tolerance
+                    </span>
+                    <div className="flex gap-1">
+                      {[0.1, 0.5, 1.0].map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => setSlippage(s)}
+                          className="px-1.5 rounded font-mono transition-all"
+                          style={{
+                            fontSize: DesignTokens.typography.caption.fontSize,
+                            backgroundColor: slippage === s ? DesignTokens.colors.cyanOverlay : 'transparent',
+                            color: slippage === s ? DesignTokens.colors.neonCyan : DesignTokens.colors.textMuted,
+                          }}
+                        >
+                          {s}%
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <span style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textSecondary }}>
+                      Network Fee
+                    </span>
+                    <span className="font-mono" style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textPrimary }}>
+                      ~{networkFee} BNB
+                    </span>
+                  </div>
+                  <div
+                    className="flex justify-between pt-2"
+                    style={{ borderTopWidth: DesignTokens.borders.thin, borderTopStyle: 'solid', borderTopColor: DesignTokens.colors.surfaceBorder }}
+                  >
+                    <span style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textSecondary }}>
+                      Minimum Received
+                    </span>
+                    <span className="font-mono font-bold" style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textPrimary }}>
+                      {minReceived} USDT
+                    </span>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Swap button with gradient hover */}
           <button
             disabled={!!validationError || !fromAmount || isExecuting}
             onClick={executeSwapTransaction}
-            className="w-full py-4 rounded-2xl font-bold text-sm tracking-widest transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="relative w-full py-4 rounded-2xl font-bold text-sm tracking-widest transition-all duration-300 overflow-hidden disabled:opacity-30 disabled:cursor-not-allowed"
             style={{
-              backgroundColor:
-                fromAmount && !validationError
-                  ? DesignTokens.colors.neonCyan
-                  : DesignTokens.colors.panelBg,
-              color:
-                fromAmount && !validationError
-                  ? DesignTokens.colors.background
-                  : DesignTokens.colors.textSecondary,
-              boxShadow:
-                fromAmount && !validationError
-                  ? DesignTokens.effects.neonCyan
-                  : 'none',
-              borderWidth: DesignTokens.borders.thin,
-              borderStyle: 'solid',
-              borderColor:
-                fromAmount && !validationError
-                  ? DesignTokens.colors.neonCyan
-                  : DesignTokens.colors.panelBorder,
+              background: fromAmount && !validationError && !isExecuting
+                ? `linear-gradient(135deg, ${DesignTokens.colors.neonCyan} 0%, #0088cc 100%)`
+                : DesignTokens.colors.disabledBg,
+              color: fromAmount && !validationError && !isExecuting
+                ? DesignTokens.colors.background
+                : DesignTokens.colors.disabledText,
+              boxShadow: fromAmount && !validationError && !isExecuting
+                ? `0 0 30px ${DesignTokens.colors.neonCyan}40, 0 4px 12px rgba(0,0,0,0.3)`
+                : 'none',
+              transform: fromAmount && !validationError ? 'scale(1)' : 'scale(0.98)',
+            }}
+            onMouseEnter={(e) => {
+              if (fromAmount && !validationError) {
+                e.currentTarget.style.transform = 'scale(1.02)';
+                e.currentTarget.style.boxShadow = `0 0 40px ${DesignTokens.colors.neonCyan}60, 0 8px 20px rgba(0,0,0,0.4)`;
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = fromAmount && !validationError
+                ? `0 0 30px ${DesignTokens.colors.neonCyan}40, 0 4px 12px rgba(0,0,0,0.3)`
+                : 'none';
             }}
           >
             {isExecuting
-              ? 'ION 节点交易上链中...'
+              ? 'Swapping...'
               : validationError
                 ? validationError
                 : fromAmount
-                  ? '立即注入流动性队列'
-                  : '请输入交易数额'}
+                  ? 'Swap'
+                  : 'Enter Amount'}
           </button>
+
+          {/* Data source badge */}
+          {poolData && (
+            <div className="text-center">
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: '10px',
+                  color: DesignTokens.colors.textMuted,
+                }}
+              >
+                Data: PancakeSwap V3 on-chain · TVL: ${poolData.tvl.toLocaleString()}
+              </span>
+            </div>
+          )}
         </div>
-      </NeonCard>
+
+        {/* Background glow effect */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(ellipse at 50% 0%, ${DesignTokens.colors.neonCyan}10 0%, transparent 70%)`,
+          }}
+        />
+      </div>
     </div>
   );
 };

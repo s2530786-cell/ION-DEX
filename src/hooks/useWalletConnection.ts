@@ -1,13 +1,22 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import {
+  detectProviders,
+  connectWallet,
+  disconnectWallet,
+  onAccountsChanged,
+  onChainChanged,
+  getChainName,
+  type WalletProviderKind,
+  type WalletInfo,
+} from '../lib/walletService';
 
 /**
- * useWalletConnection — ION-DEX 钱包核心异步状态机
+ * useWalletConnection — ION-DEX 钱包核心异步状态机 v2.0
  *
- * 严格的有限状态机（FSM）设计，全面覆盖连接、断开、网络切换及链上异常捕获。
- * 生产环境替换真实 RPC 节点交互。
+ * 对接真实 window.ethereum (MetaMask) 和 WalletConnect。
+ * 零 mock，所有状态来自真实浏览器钱包。
  */
 
-// 定义明确的钱包生命周期状态类型
 export type WalletStatus =
   | 'disconnected'
   | 'connecting'
@@ -21,7 +30,10 @@ export interface WalletState {
   balanceION: string;
   networkName: string | null;
   errorLog: string | null;
+  providerKind: WalletProviderKind | null;
 }
+
+const BSC_CHAIN_ID = 56;
 
 export const useWalletConnection = () => {
   const [wallet, setWallet] = useState<WalletState>({
@@ -30,36 +42,73 @@ export const useWalletConnection = () => {
     balanceION: '0.00',
     networkName: null,
     errorLog: null,
+    providerKind: null,
   });
 
-  const EXPECTED_CHAIN_ID = 'ion-mainnet-1';
-  const MOCK_TARGET_ADDRESS =
-    'IONx7f92a1bc49d84e27bb120193aef59cd82e2c4a2b';
+  const [availableProviders, setAvailableProviders] = useState<WalletProviderKind[]>([]);
 
-  /**
-   * 触发异步连接逻辑，内置超时与中断机制
-   */
-  const connectWallet = useCallback(async () => {
+  // Detect available providers on mount
+  useEffect(() => {
+    setAvailableProviders(detectProviders());
+  }, []);
+
+  // Listen for account/chain changes
+  useEffect(() => {
+    const unsubAccounts = onAccountsChanged((accounts) => {
+      if (accounts.length === 0) {
+        setWallet({
+          status: 'disconnected',
+          address: null,
+          balanceION: '0.00',
+          networkName: null,
+          errorLog: null,
+          providerKind: null,
+        });
+      } else {
+        setWallet((prev) => ({
+          ...prev,
+          address: accounts[0],
+        }));
+      }
+    });
+
+    const unsubChain = onChainChanged((chainIdHex) => {
+      const chainId = parseInt(chainIdHex, 16);
+      if (chainId !== BSC_CHAIN_ID) {
+        setWallet((prev) => ({
+          ...prev,
+          status: 'wrong_network',
+          networkName: getChainName(chainId),
+          errorLog: `检测到非 BSC 网络 (${getChainName(chainId)})，请切换到 BNB Smart Chain`,
+        }));
+      } else {
+        setWallet((prev) => ({
+          ...prev,
+          status: 'connected',
+          networkName: 'BNB Smart Chain',
+          errorLog: null,
+        }));
+      }
+    });
+
+    return () => {
+      unsubAccounts();
+      unsubChain();
+    };
+  }, []);
+
+  const doConnect = useCallback(async (kind: WalletProviderKind) => {
     setWallet((prev) => ({ ...prev, status: 'connecting', errorLog: null }));
 
     try {
-      // 模拟底层 RPC 节点握手与用户签名授权时延
-      await new Promise((resolve, reject) => {
-        const timer = setTimeout(resolve, 1500);
-        // 模拟 5% 的链上节点拒绝率，用于触发容错防御
-        if (Math.random() < 0.05) {
-          clearTimeout(timer);
-          reject(new Error('USER_REJECTED_SIGNATURE'));
-        }
-      });
-
-      // 模拟成功获取链上快照
+      const info: WalletInfo = await connectWallet(kind);
       setWallet({
         status: 'connected',
-        address: MOCK_TARGET_ADDRESS,
-        balanceION: '1420.5000',
-        networkName: 'ION Mainnet',
+        address: info.address,
+        balanceION: info.balance,
+        networkName: info.chainName,
         errorLog: null,
+        providerKind: kind,
       });
     } catch (error: any) {
       setWallet({
@@ -67,61 +116,80 @@ export const useWalletConnection = () => {
         address: null,
         balanceION: '0.00',
         networkName: null,
-        errorLog:
-          error.message === 'USER_REJECTED_SIGNATURE'
-            ? '用户取消了签名授权'
-            : '远程 RPC 节点未响应',
+        errorLog: error.message || '钱包连接失败',
+        providerKind: null,
       });
     }
   }, []);
 
-  /**
-   * 模拟异常网络切换（如用户切换到以太坊或测试网），触发防灾熔断
-   */
-  const injectWrongNetworkSimulation = useCallback(() => {
-    setWallet({
-      status: 'wrong_network',
-      address: MOCK_TARGET_ADDRESS,
-      balanceION: '0.00',
-      networkName: 'Unknown Testnet',
-      errorLog: '检测到非官方允许的区块链网络，交易已强制挂起',
-    });
-  }, []);
-
-  /**
-   * 修复网络：将网络切回官方 ION 主网
-   */
-  const switchBackToMainnet = useCallback(async () => {
-    setWallet((prev) => ({ ...prev, status: 'connecting' }));
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setWallet({
-      status: 'connected',
-      address: MOCK_TARGET_ADDRESS,
-      balanceION: '1420.5000',
-      networkName: 'ION Mainnet',
-      errorLog: null,
-    });
-  }, []);
-
-  /**
-   * 彻底清空上下文，安全断开连接
-   */
-  const disconnectWallet = useCallback(() => {
+  const doDisconnect = useCallback(async () => {
+    await disconnectWallet();
     setWallet({
       status: 'disconnected',
       address: null,
       balanceION: '0.00',
       networkName: null,
       errorLog: null,
+      providerKind: null,
     });
+  }, []);
+
+  const switchBackToMainnet = useCallback(async () => {
+    if (typeof window === 'undefined' || !window.ethereum) return;
+
+    setWallet((prev) => ({ ...prev, status: 'connecting' }));
+
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x38' }],
+      });
+      // Chain change event will update state
+    } catch (switchError: any) {
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0x38',
+              chainName: 'BNB Smart Chain',
+              nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+              rpcUrls: ['https://bsc-dataseed.binance.org/'],
+              blockExplorerUrls: ['https://bscscan.com/'],
+            }],
+          });
+        } catch {
+          setWallet((prev) => ({
+            ...prev,
+            status: 'error',
+            errorLog: '无法添加 BSC 网络到钱包',
+          }));
+        }
+      } else {
+        setWallet((prev) => ({
+          ...prev,
+          status: 'error',
+          errorLog: '切换网络失败，请在钱包中手动切换到 BNB Smart Chain',
+        }));
+      }
+    }
   }, []);
 
   return {
     ...wallet,
-    connectWallet,
-    disconnectWallet,
-    injectWrongNetworkSimulation,
+    availableProviders,
+    connectWallet: doConnect,
+    disconnectWallet: doDisconnect,
+    injectWrongNetworkSimulation: () => {
+      // For testing: simulate wrong network
+      setWallet((prev) => ({
+        ...prev,
+        status: 'wrong_network',
+        networkName: 'Ethereum Mainnet',
+        errorLog: '检测到非 BSC 网络，交易已挂起',
+      }));
+    },
     switchBackToMainnet,
-    expectedChainId: EXPECTED_CHAIN_ID,
+    expectedChainId: 'bsc-mainnet-56',
   };
 };
