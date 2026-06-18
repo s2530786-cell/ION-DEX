@@ -1,0 +1,71 @@
+{
+  "editor.folding": false,
+  "editor.foldingImportsByDefault": false,
+  "editor.showFoldingControls": "never",
+  "editor.unfoldOnClickAfterEndOfLine": true,
+  "workbench.editor.restoreViewState": false,
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+  "explorer.compactFolders": false,
+  "explorer.autoReveal": true,
+  "[typescript]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[typescriptreact]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[javascript]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[javascriptreact]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[json]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[jsonc]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[markdown]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[css]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[scss]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[html]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[powershell]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  },
+  "[shellscript]": {
+    "editor.folding": false,
+    "editor.foldingImportsByDefault": false,
+    "editor.showFoldingControls": "never"
+  }
+}

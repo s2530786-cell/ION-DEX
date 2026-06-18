@@ -130,11 +130,14 @@ function workspaceEntries() {
     .map(normalizeRepoPath)
     .filter((path) => !isIgnoredWorkspacePath(path))
     .sort();
-  return paths.map((path) => {
+  return paths.flatMap((path) => {
     const abs = join(root, path);
     const kind = untracked.includes(path) ? "untracked" : "tracked";
+    if (existsSync(abs) && statSync(abs).isDirectory()) {
+      return [{ path, kind, digest: "DIRECTORY" }];
+    }
     const digest = existsSync(abs) ? sha256(readFileSync(abs)) : "DELETED";
-    return { path, kind, digest };
+    return [{ path, kind, digest }];
   });
 }
 

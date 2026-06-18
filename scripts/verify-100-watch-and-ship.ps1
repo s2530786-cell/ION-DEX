@@ -29,18 +29,48 @@ function Update-SessionStateOnGreen([string]$evidence) {
 
 Log "watch-and-ship started (poll ${PollSeconds}s)"
 
+function Get-ActiveQueueActivatedAtMs {
+  $queuePath = Join-Path $root ".memory-bank\autonomous-work-queue.json"
+  if (-not (Test-Path $queuePath)) {
+    return 0
+  }
+  try {
+    $queueDoc = Get-Content $queuePath -Raw -Encoding utf8 | ConvertFrom-Json
+    $active = $queueDoc.queues | Where-Object { $_.status -eq "active" } | Select-Object -First 1
+    if (-not $active -or -not $active.activatedAt) {
+      return 0
+    }
+    return [DateTimeOffset]::Parse([string]$active.activatedAt).ToUnixTimeMilliseconds()
+  } catch {
+    return 0
+  }
+}
+
+function Test-SummaryFreshEnough($item, [Int64]$activatedAtMs) {
+  if ($activatedAtMs -le 0) {
+    return $true
+  }
+  $mtimeMs = [Int64]([DateTimeOffset]$item.LastWriteTimeUtc).ToUnixTimeMilliseconds()
+  return $mtimeMs -ge ($activatedAtMs - 60000)
+}
+
 function Get-GateSummary {
-  $all = Get-ChildItem (Join-Path $env:TEMP "ion-verify-100-summary-*.txt") -ErrorAction SilentlyContinue
+  $all = Get-ChildItem (Join-Path $env:TEMP "ion-verify-100-summary-*.txt") -File -ErrorAction SilentlyContinue
   if (-not $all) {
     return $null
   }
-  foreach ($item in ($all | Sort-Object LastWriteTime -Descending)) {
+  $activatedAtMs = Get-ActiveQueueActivatedAtMs
+  $fresh = $all | Where-Object { Test-SummaryFreshEnough $_ $activatedAtMs } | Sort-Object LastWriteTime -Descending
+  if (-not $fresh) {
+    return $all | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  }
+  foreach ($item in $fresh) {
     $lines = Get-Content $item.FullName -ErrorAction SilentlyContinue
-    if ($lines -match "^RESULT=GREEN$" -and ($lines -match "^PASSED=100$")) {
+    if ($lines -match "^RESULT=GREEN$" -and ($lines -match "^PASSED=100$") -and ($lines -match "^FAILED=0$")) {
       return $item
     }
   }
-  return $all | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  return $fresh | Select-Object -First 1
 }
 
 while ($true) {

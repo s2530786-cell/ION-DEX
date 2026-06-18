@@ -1,5 +1,29 @@
 # Current Progress
 
+## 2026-06-19 W6 Sandwich + Bridge 双重签安全验证完成
+
+- **范围**：W6 Sandwich 防护 + Bridge 双重签/relayer quorum/replay/nonce/payload 绑定验证。
+- **安全预检**：`node scripts/security-preflight.mjs` ✅。
+- **SecurityMatrix 1000 gate**：`node scripts/verify-security-1000.mjs` ✅；日志 `%TEMP%\ion-w6-security-1000-current.log`；Foundry `SecurityMatrixTest` **10/10** passed，覆盖 10 类 × 100 轮 = **1000 checks**，`0 failed`。
+- **后端专项回归**：`cd backend && node --test dist/tests/security-w6-sandwich-bridge.test.js` ✅ **11/11**；`node --test dist/tests/bridge-e2e.test.js` ✅ **3/3**。
+- **说明**：组合命令 `node --test ... && node --test ...` 曾返回 exit 1 但无失败细节；拆分复跑两个测试均为绿色，未发现可复现测试失败。
+- **阶段状态**：W6 ✅；下一步进入 W7（CI/CD + 测试网脚本；无密钥则按 W7-SKIP 处理）。
+
+## 2026-06-19 backend dependency audit — undici high CVE 修复
+
+- **问题**：后端 `npm audit --audit-level=high` 报告直接依赖 `undici 8.3.0` 存在 high severity 漏洞（TLS certificate validation bypass、shared cache disclosure、WebSocket DoS）。
+- **修复**：将 `backend/package.json` 的 `undici` 约束从 `^8.3.0` 提升到 `^8.5.0`，并同步 `backend/package-lock.json`，锁定 `node_modules/undici` 到 `8.5.0`。
+- **验证**：`npm install --package-lock-only` ✅；`npm audit --audit-level=high` ✅ `found 0 vulnerabilities`；`npm run build` ✅；`npm run test` ✅ backend **101/101**；`node scripts/security-preflight.mjs` ✅；`node scripts/dev-preflight.mjs` ✅（仅既有 UI debt warnings，未触碰）；`powershell -ExecutionPolicy Bypass -File scripts\check-encoding.ps1` ✅ 扫描 **39686** files，UTF-8 without BOM / no NUL。
+- **安全扫描补充**：Aikido MCP `aikido_full_scan` 已按规则重试扫描本轮修改文件；当前返回需要用户登录 Aikido，未作为仓库缺陷计入。
+- **范围控制**：本轮仅修改 `backend/package.json` 与 `backend/package-lock.json`；工作区其它大量既有改动未触碰。
+
+## 2026-06-18 verify-100 auto workflow 守护修复
+
+- **问题**：`verify-100-watch-and-ship.ps1` 会优先读取任意历史 `RESULT=GREEN` 摘要，导致当前 P1 Dashboard 队列误命中 2026-05-28 旧 GREEN；同时 `verify-100-gate.mjs` 对未跟踪目录执行 `readFileSync`，触发 `EISDIR: illegal operation on a directory, read`。
+- **修复**：watch-and-ship 按当前 active queue 的 `activatedAt` 过滤新鲜摘要，只在新鲜摘要中选择 `PASSED=100 FAILED=0 RESULT=GREEN`；gate workspace snapshot 遇到目录时记录 `DIRECTORY` digest，不再按文件读取。
+- **验证**：摘要选择 smoke 现在选择 `%TEMP%\ion-verify-100-summary-20260618-222338.txt`，不再选择旧 `%TEMP%\ion-verify-100-summary-20260528-114641.txt`；临时未跟踪目录触发 `verify-100-gate.mjs record` 不再 EISDIR；`node --check scripts/verify-100-gate.mjs` exit 0；PowerShell parser `POWERSHELL_PARSE_OK`；ReadLints 两个脚本无 linter errors；字节级检查两个编辑文件均无 BOM、无 NUL。
+- **当前状态**：当前摘要仍是 10/100 续跑中断状态，watcher 会等待/续跑当前队列，不会用历史 GREEN 提前记录 proof。
+
 ## 2026-05-29 AI Gateway — Phase C draft stub + 公开范围文档
 
 - **Phase C**：AI Gateway 增加 design / video brief 类 **draft stub**（经 Sentinel + deny-by-default allowlist）；详见 `docs/ai-sentinel-gateway-contract.md`。

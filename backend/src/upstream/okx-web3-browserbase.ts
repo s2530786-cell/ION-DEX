@@ -33,21 +33,8 @@ export type OkxWeb3FunctionResult = {
 
 type FetchLike = typeof fetch;
 
-export function normalizeOkxWeb3TokenUrl(input: string): string {
-  let parsed: URL;
-  try {
-    parsed = new URL(input);
-  } catch {
-    return OFFICIAL_ION_OKX_WEB3_URL;
-  }
-
-  const official = new URL(OFFICIAL_ION_OKX_WEB3_URL);
-  const isAllowed =
-    parsed.protocol === "https:" &&
-    parsed.hostname === official.hostname &&
-    parsed.pathname.toLowerCase() === official.pathname.toLowerCase();
-
-  return isAllowed ? parsed.toString() : OFFICIAL_ION_OKX_WEB3_URL;
+export function normalizeOkxWeb3TokenUrl(_input: string): string {
+  return OFFICIAL_ION_OKX_WEB3_URL;
 }
 
 export function loadOkxWeb3BrowserbaseConfig(

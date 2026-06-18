@@ -1,9 +1,10 @@
-# ION-DEX 工程开发铁律 (System Instructions)
+# ION-DEX 工程开发铁律 (System Instructions) — v2.0
 
 ## 1. 视觉像素级对齐协议
 - **严禁视觉幻觉**：禁止自行设定任何颜色、间距、圆角。必须读取 `/src/lib/design-tokens.ts`。
-- **布局强制栅格化**：所有页面必须包裹在 `DEXGridHarness` 组件中，使用 Grid 布局。禁止使用随意定位。
-- **素材物理约束**：设计图中的 3D 图标必须调用 `/public/assets/icons/` 下的静态文件，禁止用 CSS 绘制。
+- **严禁硬编码**：禁止在组件 CSS 中直接输入 Hex/RGBA 值。所有视觉属性（颜色、间距、圆角）必须导入并引用 DesignTokens 对象。
+- **布局强制栅格化**：所有页面主体必须包裹在 `DEXGridHarness` 组件中。组件的尺寸和位置必须使用 `grid-column: span X` 定义，严禁使用 margin 进行手动对齐。
+- **素材物理约束**：设计图中的 3D 图标必须调用 `/public/assets/icons/` 下的静态文件，禁止用 CSS 绘制。禁止缩放比例不明的 SVG。
 
 ## 2. 合约安全与确定性协议
 - **后端执行隔离**：所有合约编译、测试任务必须通过 `agent_harness.py` 调度。
@@ -11,6 +12,10 @@
 - **防御性编程**：在编写 FunC 代码时，必须包含 Gas 边界检查和 bounce 消息处理。
 
 ## 3. 开发工作流 (强制执行)
-- **第一步：分析**。在写代码前，先陈述布局意图（例如：组件放在 Grid 的 (1,1) 位置，使用 Token.colors.glassBg）。
+- **第一步：分析**。在写代码前，先陈述布局意图（例如：组件将占据 Grid 的 4 列，Padding 调用 spacing.cardPadding）。
 - **第二步：编码**。必须引用定义好的 Token 和组件，确保代码结构高度可预测。
 - **第三步：验证**。写完后自我审查是否符合《视觉对齐协议》。
+
+## 4. 像素级校验
+- 在代码生成前，必须输出一份"布局意图说明"。
+- 示例："此组件将占据 Grid 的 4 列，Padding 调用 DesignTokens.spacing.cardPadding，背景使用 DesignTokens.colors.panelBg。"

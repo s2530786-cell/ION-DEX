@@ -1,6 +1,11 @@
-# UI Engineering Harness Protocol (ION-DEX)
+# UI Engineering Harness Protocol (ION-DEX) v2.0
 # Auto-generated 2026-06-19 — Master 钦定的前端工程铁律
 # Cursor 写任何前端代码前必须读取此文件
+
+## 核心架构
+- DesignTokens v2.0：12 列标准栅格 + neonShadow() 函数式令牌
+- DEXGridHarness v2.0：repeat(12, 1fr) 强制栅格
+- NeonCard：所有模块的基石组件（Pool/Swap/Bridge/Stake 均以此为基准）
 
 ## 1. Zero-Visual-Discretion (视觉决策禁止)
 - AI 禁止自行决定颜色、阴影或间距。必须从 `src/lib/design-tokens.ts` 引用 `DesignTokens` 对象。
@@ -8,21 +13,29 @@
 - 禁止在 CSS/Tailwind 中直接编写 hex/rgba 值。
 
 ## 2. Image-Asset-Strict (素材物理分离)
-- 设计图中的 3D 悬浮图标（Pool, Copy Trade, Bridge 等）必须使用 `<img>` 标签加载 `/public/assets/icons/xxx.webp`。
+- 设计图中的 3D 悬浮图标必须使用 `<img>` 标签加载 `/public/assets/icons/xxx.webp`。
 - 严禁使用 CSS 绘制复杂图形，严禁使用 SVG 路径硬编码复杂的图形元素。
+- 禁止缩放比例不明的 SVG。
 
 ## 3. Pixel-Perfection-Layout (像素级对齐)
-- 所有组件必须包裹在 `DEXGridHarness` 组件中，遵循 `gridTemplateColumns: 350px 1fr 300px`。
+- 所有组件必须包裹在 `DEXGridHarness` 组件中，遵循 `repeat(12, 1fr)` 栅格。
+- 组件的尺寸和位置必须使用 `grid-column: span X` 定义。
 - 严禁使用 `fixed` 或 `absolute` 进行页面排版。
-- 严禁使用 `relative` 进行微调布局，所有间距必须通过父容器的 `gap` 属性或 `padding` 统一控制。
-- 所有颜色、间距、圆角必须从 DesignTokens 引用。
+- 严禁使用 `margin` 进行手动对齐。
+- 所有间距必须通过 DesignTokens.spacing 控制。
 
-## 4. Verification Workflow
-- 在输出代码前，AI 需先输出代码的"布局意图分析"（例如：此 PoolCard 将放置在 Grid 第 2 列第 1 行，使用 DesignTokens.colors.glassBase 作为背景）。
-- 确认布局意图符合协议后，开始编写代码。
+## 4. NeonCard 基石组件
+- 所有后续模块（Pool, Swap, Bridge, Stake 等）必须以 NeonCard 为基准。
+- NeonCard variants: 'cyan' | 'magenta' 切换霓虹光晕
+- columnSpan 参数控制 Grid 列跨度，默认 4
+- 所有视觉值从 DesignTokens 引用，零硬编码
+
+## 5. Verification Workflow
+- 在输出代码前，AI 需先输出代码的"布局意图说明"。
+- 示例："此组件将占据 Grid 的 4 列(grid-column: span 4)，Padding 调用 DesignTokens.spacing.cardPadding，背景使用 DesignTokens.colors.panelBg。"
 - 写完后自我审查是否符合上述协议。
 
-## 5. Contract Security Protocol
+## 6. Contract Security Protocol
 - 所有合约编译、测试任务必须通过 `agent_harness.py` 调度。
 - 禁止 mock 数据，必须对接真实开发环境。
 - FunC 代码必须包含 Gas 边界检查和 bounce 消息处理。

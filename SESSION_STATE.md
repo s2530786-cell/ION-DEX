@@ -14,11 +14,17 @@
 | **W3** | UI Pixel Correction（仅 CSS） | ✅ |
 | **W4** | 链上接线（Copy/Batch/Domain） | ✅ verify-full · stress×3 · verify-100 GREEN（2026-05-27 续跑完成） |
 | **W5** | Indexer 骨架 + burn/staking 读路径 | ✅ 已 push `a80534dd` · verify-100 GREEN（2026-05-28） |
-| **W6** | Sandwich + Bridge 双重签功能测 | ⏳ 待启动 |
+| **W6** | Sandwich + Bridge 双重签功能测 | ✅ 安全矩阵 1000 checks + 后端回归通过（2026-06-19） |
 | **W7** | CI/CD + 测试网脚本（无密钥则 W7-SKIP） | ⏳ |
 | **W8** | 全仓收口 verify-100 | ⏳ |
 
-**CURRENT_PHASE=W6**（W5 出口 verify-100：`%TEMP%\ion-verify-100-summary-20260528-114641.txt` · PASSED=100 FAILED=0 RESULT=GREEN）
+**CURRENT_PHASE=W7**（W6 出口：`%TEMP%\ion-w6-security-1000-current.log` · SecurityMatrix 10 tests passed / 1000 checks；`backend/dist/tests/security-w6-sandwich-bridge.test.js` 11/11；`backend/dist/tests/bridge-e2e.test.js` 3/3）
+
+**Backend dependency audit hotfix（2026-06-19）**：
+- 修复：`backend/package.json` / `backend/package-lock.json` 将直接依赖 `undici` 从 `^8.3.0` 提升并锁定到安全路径 `^8.5.0` / `8.5.0`。
+- 验证：`npm install --package-lock-only` ✅；`npm audit --audit-level=high` ✅ `found 0 vulnerabilities`；`npm run build` ✅；`npm run test` ✅ backend **101/101**；`node scripts/security-preflight.mjs` ✅；`node scripts/dev-preflight.mjs` ✅（仅既有 UI debt warnings，未触碰）；编码扫描 ✅ **39686** files。
+- Aikido：MCP `aikido_full_scan` 已重试扫描本轮修改文件，返回需要用户登录 Aikido；如需完成该额外扫描，先运行 Aikido 登录流。
+- 注意：工作区存在大量既有改动；本轮仅触碰 backend 两个依赖文件与进度状态文档。
 
 **P1 Dashboard quote 收口流水线（2026-05-29）**：
 - 队列：`p1-dashboard-w6-pipeline`（active）· 旧 `ui-design-phase-b` → **paused**
