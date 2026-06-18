@@ -2,23 +2,27 @@ import React from 'react';
 import { DesignTokens } from '../../lib/design-tokens';
 
 /**
- * NeonCard — ION-DEX 基石组件
- * 所有后续模块（Pool, Swap, Bridge, Stake）均以此组件为基准
+ * NeonCard — ION-DEX Foundation Component v2.0
+ * All future modules (Pool, Swap, Bridge, Stake) extend this.
  * 
- * 铁律：禁止硬编码颜色，所有视觉属性引用 DesignTokens
+ * Zero hardcoded colors. All visual values from DesignTokens.
  * 
- * @param variant - 'cyan' | 'magenta' 切换霓虹光晕颜色
- * @param columnSpan - Grid 列跨度，默认 4
- * @param icon - 3D 图标路径，例如 "/public/assets/icons/pool-cube.webp"
- * @param title - 卡片标题
- * @param children - 卡片内容
+ * @param variant - 'cyan' | 'magenta' | 'violet' — neon glow color
+ * @param columnSpan - Grid column span, default 4
+ * @param icon - 3D icon path, e.g. "/public/assets/icons/pool-cube.webp"
+ * @param title - Card heading
+ * @param subtitle - Optional subheading
+ * @param children - Card body content
+ * @param footer - Optional footer (buttons, links)
  */
 interface NeonCardProps {
-  variant?: 'cyan' | 'magenta';
+  variant?: 'cyan' | 'magenta' | 'violet';
   columnSpan?: number;
   icon?: string;
   title: string;
+  subtitle?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 export const NeonCard: React.FC<NeonCardProps> = ({
@@ -26,11 +30,16 @@ export const NeonCard: React.FC<NeonCardProps> = ({
   columnSpan = 4,
   icon,
   title,
+  subtitle,
   children,
+  footer,
 }) => {
-  const neonColor = variant === 'cyan'
-    ? DesignTokens.colors.neonCyan
-    : DesignTokens.colors.neonMagenta;
+  const neonColor =
+    variant === 'cyan'
+      ? DesignTokens.colors.neonCyan
+      : variant === 'magenta'
+        ? DesignTokens.colors.neonMagenta
+        : DesignTokens.colors.neonViolet;
 
   return (
     <div
@@ -38,7 +47,8 @@ export const NeonCard: React.FC<NeonCardProps> = ({
       style={{
         gridColumn: DesignTokens.grid.columnSpan(columnSpan),
         backgroundColor: DesignTokens.colors.panelBg,
-        backdropFilter: DesignTokens.effects.glassBlur,
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         border: `1px solid ${DesignTokens.colors.panelBorder}`,
         borderRadius: DesignTokens.spacing.borderRadius,
         boxShadow: DesignTokens.effects.neonShadow(neonColor),
@@ -48,29 +58,53 @@ export const NeonCard: React.FC<NeonCardProps> = ({
       {/* Header */}
       <div
         className="flex items-center"
-        style={{ gap: '16px', marginBottom: '24px' }}
+        style={{ gap: '16px', marginBottom: subtitle ? '8px' : '24px' }}
       >
         {icon && (
           <img
             src={icon}
             alt={title}
-            className="object-contain"
-            style={{ width: '64px', height: '64px' }}
+            className="object-contain shrink-0"
+            style={{
+              width: DesignTokens.spacing.iconSize,
+              height: DesignTokens.spacing.iconSize,
+            }}
           />
         )}
-        <h2
-          className="font-bold"
-          style={{
-            color: DesignTokens.colors.textPrimary,
-            fontSize: '24px',
-          }}
-        >
-          {title}
-        </h2>
+        <div>
+          <h2
+            style={{
+              color: DesignTokens.colors.textPrimary,
+              fontSize: DesignTokens.typography.heading.fontSize,
+              fontWeight: DesignTokens.typography.heading.fontWeight,
+              lineHeight: DesignTokens.typography.heading.lineHeight,
+            }}
+          >
+            {title}
+          </h2>
+          {subtitle && (
+            <p
+              style={{
+                color: DesignTokens.colors.textSecondary,
+                fontSize: DesignTokens.typography.caption.fontSize,
+                marginTop: '4px',
+              }}
+            >
+              {subtitle}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Content */}
-      {children}
+      <div className="flex-1">{children}</div>
+
+      {/* Footer */}
+      {footer && (
+        <div style={{ marginTop: DesignTokens.spacing.sectionGap }}>
+          {footer}
+        </div>
+      )}
     </div>
   );
 };
