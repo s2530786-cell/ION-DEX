@@ -2,29 +2,29 @@
 
 #include "common/common.fc";
 
-;; ION DEX fee distributor — all protocol fees settled in native ION.
-;; Split (bps, sum = 10000): 35% burn / 25% team / 20% staking / 15% treasury / 5% operations
+;; ── ION DEX Fee Distributor (v2) ─────────────────────────────────
+;; All protocol fees settled in native ION tokens.
 ;;
-;; Burn: ION chain uses addr_none (TVM type 00, 2-bit prefix "00").
-;; When coins sent to addr_none, they are permanently removed from total supply.
-;; This is different from EVM's 0x000...dEaD address.
+;; Split (bps, sum = 10000):
+;;   50% burn  → black hole (addr_none — TVM type 00, permanently destroyed)
+;;   25% master → 0x8ff2e1210434495c4f5629bd9d8bd4965a67b84c (protocol operator)
+;;   25% rewards+treasury → staking reward pool + protocol treasury
+;;
+;; Burn: On ION/TON, addr_none removes coins from total supply forever.
+;; This is not EVM 0x000...dEaD — no address, no recovery.
 
-const fee::bps_burn = 3500;
-const fee::bps_team = 2500;
-const fee::bps_staking = 2000;
-const fee::bps_treasury = 1500;
-const fee::bps_ops = 500;
+const fee::bps_burn = 5000;          ;; 50% burn
+const fee::bps_master = 2500;        ;; 25% protocol master
+const fee::bps_rewards_treasury = 2500;  ;; 25% staking rewards + treasury
 
-;; Opcodes derived from hash of operation string & 0x7fffffff (as per TON convention)
+;; Opcodes derived per TON convention
 const op::deposit_ion_fee = "deposit_ion_fee query_id:uint64 amount:Coins = InternalMsgBody"c & 0x7fffffff;
 const op::distribute_ion_fee = "distribute_ion_fee query_id:uint64 = InternalMsgBody"c & 0x7fffffff;
 
 global slice storage::owner_address;
 global slice storage::router_address;
-global slice storage::team_address;
-global slice storage::staking_address;
-global slice storage::treasury_address;
-global slice storage::operations_address;
+global slice storage::master_address;        ;; 25% protocol operator
+global slice storage::rewards_treasury_address;  ;; 25% staking+treasury
 global int storage::accrued_fees;
 global int storage::total_distributed;
 
@@ -32,10 +32,8 @@ global int storage::total_distributed;
     slice ds = get_data().begin_parse();
     storage::owner_address = ds~load_msg_addr();
     storage::router_address = ds~load_msg_addr();
-    storage::team_address = ds~load_msg_addr();
-    storage::staking_address = ds~load_msg_addr();
-    storage::treasury_address = ds~load_msg_addr();
-    storage::operations_address = ds~load_msg_addr();
+    storage::master_address = ds~load_msg_addr();
+    storage::rewards_treasury_address = ds~load_msg_addr();
     storage::accrued_fees = ds~load_coins();
     storage::total_distributed = ds~load_coins();
     ds.end_parse();
@@ -45,16 +43,15 @@ global int storage::total_distributed;
     set_data(begin_cell()
         .store_slice(storage::owner_address)
         .store_slice(storage::router_address)
-        .store_slice(storage::team_address)
-        .store_slice(storage::staking_address)
-        .store_slice(storage::treasury_address)
-        .store_slice(storage::operations_address)
+        .store_slice(storage::master_address)
+        .store_slice(storage::rewards_treasury_address)
         .store_coins(storage::accrued_fees)
         .store_coins(storage::total_distributed)
     .end_cell());
 }
 
-;; Send native ION coins to dest address
+;; ── Send native ION coins to dest address ────────────────────────
+
 () fee::send_native(slice dest, int amount, int mode) impure inline {
     if (amount <= 0) {
         return ();
@@ -68,8 +65,10 @@ global int storage::total_distributed;
     send_raw_message(msg, mode);
 }
 
-;; Burn coins by sending to addr_none (TVM address type 00).
-;; On TON/ION, addr_none is the 2-bit prefix "00" — no human-readable address.
+;; ── Burn coins via addr_none (TVM address type 00) ───────────────
+;; 50% of all fees are permanently destroyed.
+;; No human-readable address, no recovery possible.
+
 () fee::burn_coins(int amount) impure inline {
     if (amount <= 0) {
         return ();
@@ -83,6 +82,15 @@ global int storage::total_distributed;
     send_raw_message(msg, 1);  ;; mode=1: carry message value only
 }
 
+;; ── Validate split sums to 10000 bps ─────────────────────────────
+
+() fee_dist::validate_bps() impure inline {
+    int total = fee::bps_burn + fee::bps_master + fee::bps_rewards_treasury;
+    throw_unless(error::fee_bps_invalid, total == params::fee_denominator);
+}
+
+;; ── Handlers ─────────────────────────────────────────────────────
+
 () handle_deposit_ion_fee(int amount) impure {
     throw_unless(error::invalid_amount, amount > 0);
     storage::accrued_fees += amount;
@@ -95,22 +103,38 @@ global int storage::total_distributed;
     int reserve = gas::vault::withdraw_fee + storage_fee::vault * 3;
     throw_unless(error::insufficient_gas, ctx::balance() > reserve);
 
+    fee_dist::validate_bps();
+
     int distributable = storage::accrued_fees;
     int burn_amt = math::mul_div(distributable, fee::bps_burn, params::fee_denominator);
-    int team_amt = math::mul_div(distributable, fee::bps_team, params::fee_denominator);
-    int staking_amt = math::mul_div(distributable, fee::bps_staking, params::fee_denominator);
-    int treasury_amt = math::mul_div(distributable, fee::bps_treasury, params::fee_denominator);
-    int ops_amt = distributable - burn_amt - team_amt - staking_amt - treasury_amt;
+    int master_amt = math::mul_div(distributable, fee::bps_master, params::fee_denominator);
+    ;; Remaining 25% goes to staking rewards + treasury
+    int rwt_amt = distributable - burn_amt - master_amt;
 
-    ;; Distribute: 35% burn / 25% team / 20% staking / 15% treasury / 5% ops
+    ;; 50% burn → black hole (permanent destruction)
     fee::burn_coins(burn_amt);
-    fee::send_native(storage::team_address, team_amt, 1);
-    fee::send_native(storage::staking_address, staking_amt, 1);
-    fee::send_native(storage::treasury_address, treasury_amt, 1);
-    fee::send_native(storage::operations_address, ops_amt, 1);
+
+    ;; 25% → protocol master (0x8ff2e1210434495c4f5629bd9d8bd4965a67b84c)
+    fee::send_native(storage::master_address, master_amt, 1);
+
+    ;; 25% → staking rewards + treasury
+    fee::send_native(storage::rewards_treasury_address, rwt_amt, 1);
 
     storage::total_distributed += distributable;
     storage::accrued_fees = 0;
+    storage::save();
+}
+
+() handle_set_recipients() impure {
+    throw_unless(error::not_owner, equal_slices(ctx::sender(), storage::owner_address));
+
+    slice body = ctx::body();
+    storage::owner_address = body~load_msg_addr();
+    storage::router_address = body~load_msg_addr();
+    storage::master_address = body~load_msg_addr();
+    storage::rewards_treasury_address = body~load_msg_addr();
+
+    fee_dist::validate_bps();
     storage::save();
 }
 
@@ -131,7 +155,6 @@ global int storage::total_distributed;
             equal_slices(ctx::sender(), storage::router_address)
             | equal_slices(ctx::sender(), storage::owner_address)
         );
-        ;; Parse amount from body after op + query_id
         slice body = ctx::body();
         body~load_uint(64);  ;; query_id
         int amount = body~load_coins();
@@ -149,8 +172,15 @@ global int storage::total_distributed;
         return ();
     }
 
+    if ctx::opcode() == op::set_recipients {
+        handle_set_recipients();
+        return ();
+    }
+
     throw(error::wrong_op);
 }
+
+;; ── Getters ──────────────────────────────────────────────────────
 
 int get_accrued_fees() method_id {
     storage::load();
@@ -163,7 +193,7 @@ int get_total_distributed() method_id {
 }
 
 int get_burn_ratio() method_id {
-    return math::mul_div(fee::bps_burn, 10000, params::fee_denominator);  ;; 3500 / 10000 = 35%
+    return math::mul_div(fee::bps_burn, 10000, params::fee_denominator);  ;; 50%
 }
 
 _ get_distributor_data() method_id {
@@ -171,10 +201,8 @@ _ get_distributor_data() method_id {
     return (
         storage::owner_address,
         storage::router_address,
-        storage::team_address,
-        storage::staking_address,
-        storage::treasury_address,
-        storage::operations_address,
+        storage::master_address,
+        storage::rewards_treasury_address,
         storage::accrued_fees,
         storage::total_distributed
     );

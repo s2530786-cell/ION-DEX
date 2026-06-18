@@ -182,17 +182,19 @@ int pool::mint_lp(int amount0, int amount1) inline {
     throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::router_address));
     throw_unless(error::invalid_caller, storage::fee_distributor_address.slice_empty?() == 0);
 
+    ;; Protocol fee: 5 bps of total reserves (0.05%), settled in native ION
     int protocol_fee = math::mul_div(storage::reserve0 + storage::reserve1, 5, 10000);
     if protocol_fee > 0 {
+        ;; Send ION fee to FeeDistributor for 50% burn / 25% master / 25% rewards+treasury split
         msgs::send_simple(
-            0,
+            protocol_fee,  ;; carry fee amount as ION value
             storage::fee_distributor_address,
             begin_cell()
                 .store_uint(op::distribute_fees, 32)
                 .store_uint(0, 64)
                 .store_coins(protocol_fee)
             .end_cell(),
-            QCARRY_ALL_BALANCE);
+            1);  ;; mode=1: send message value only (ION coins)
     }
 }
 

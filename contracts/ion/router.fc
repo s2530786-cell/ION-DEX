@@ -140,6 +140,30 @@ slice router::pool_key(slice token0, slice token1) inline {
         QCARRY_ALL_BALANCE);
 }
 
+() handle_collect_fees() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    slice token0 = body~load_msg_addr();
+    slice token1 = body~load_msg_addr();
+
+    ;; Look up pool by token pair key
+    slice pool_key = router::pool_key(token0, token1);
+    (slice pool_val, int found) = storage::pool_dict.udict_get?(256, pool_key.slice_hash());
+    throw_unless(error::invalid_path, found);
+
+    ;; Forward collect_fees to pool — pool sends ION to FeeDistributor
+    msgs::send_simple(
+        0,
+        pool_val,
+        begin_cell()
+            .store_uint(op::collect_fees, 32)
+            .store_uint(query_id, 64)
+        .end_cell(),
+        CARRY_ALL_BALANCE);
+}
+
 () handle_register_pool() impure {
     throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
     slice body = ctx::body();
@@ -216,6 +240,11 @@ slice router::pool_key(slice token0, slice token1) inline {
 
     if ctx::opcode() == op::vault_pay_to {
         handle_vault_pay_to();
+        return ();
+    }
+
+    if ctx::opcode() == op::collect_fees {
+        handle_collect_fees();
         return ();
     }
 

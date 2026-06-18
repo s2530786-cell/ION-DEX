@@ -3,6 +3,7 @@
 PROGRAM{
   DECLPROC ctx::init
   DECLPROC ctx::body
+  DECLPROC ctx::raw_body
   DECLPROC ctx::sender
   DECLPROC ctx::opcode
   DECLPROC ctx::isBounced
@@ -10,12 +11,17 @@ PROGRAM{
   DECLPROC ctx::fwdFee
   DECLPROC ctx::value
   DECLPROC address::check_workchain
+  DECLPROC address::is_none
+  DECLPROC address::none
   DECLPROC reserves::max_balance
   DECLPROC equal_slices
   DECLPROC sqrt
   DECLPROC math::mul_div
   DECLPROC amm::get_amount_out
+  DECLPROC msgs::send_internal
   DECLPROC msgs::send_simple
+  DECLPROC msgs::send_value
+  DECLPROC msgs::send_nobounce
   DECLPROC storage::load
   DECLPROC storage::save
   DECLPROC handle_transfer
@@ -24,6 +30,7 @@ PROGRAM{
   97026 DECLMETHOD get_wallet_data
   87744 DECLMETHOD get_jetton_balance
   DECLGLOBVAR ctx::body_slice
+  DECLGLOBVAR ctx::raw_body_slice
   DECLGLOBVAR ctx::sender_slice
   DECLGLOBVAR ctx::opcode_val
   DECLGLOBVAR ctx::is_bounced
@@ -43,33 +50,50 @@ PROGRAM{
     s0 s2 XCHG	//  in_msg_full in_msg_body _5
     ctx::balance_val SETGLOB
     DUP	//  in_msg_full in_msg_body _6
-    ctx::body_slice SETGLOB
-    32 PLDU	//  in_msg_full _9
-    ctx::opcode_val SETGLOB
+    ctx::raw_body_slice SETGLOB
+    DUP	//  in_msg_full in_msg_body in_msg_body
+    SBITS	//  in_msg_full in_msg_body _7
+    31 GTINT	//  in_msg_full in_msg_body _9
+    IF:<{	//  in_msg_full in_msg_body
+      DUP	//  in_msg_full in_msg_body in_msg_body
+      32 PLDU	//  in_msg_full in_msg_body _12
+      ctx::opcode_val SETGLOB
+      32 PUSHINT	//  in_msg_full in_msg_body _13=32
+      SDSKIPFIRST	//  in_msg_full _15
+      ctx::body_slice SETGLOB
+    }>ELSE<{	//  in_msg_full in_msg_body
+      0 PUSHINT	//  in_msg_full in_msg_body _17=0
+      ctx::opcode_val SETGLOB	//  in_msg_full _18
+      ctx::body_slice SETGLOB
+    }>
     CTOS	//  cs
     4 LDU	//  flags cs
     SWAP
-    1 PUSHINT	//  cs flags _16=1
-    AND	//  cs _18
+    1 PUSHINT	//  cs flags _25=1
+    AND	//  cs _27
     ctx::is_bounced SETGLOB
-    LDMSGADDR	//  _21 cs
-    SWAP	//  cs _21
+    LDMSGADDR	//  _30 cs
+    SWAP	//  cs _30
     ctx::sender_slice SETGLOB
-    LDMSGADDR	//  _39 _38
+    LDMSGADDR	//  _48 _47
     NIP	//  cs
-    LDGRAMS	//  _41 _40
+    LDGRAMS	//  _50 _49
     NIP	//  cs
-    1 LDU	//  _43 _42
+    1 LDU	//  _52 _51
     NIP	//  cs
-    LDGRAMS	//  _45 _44
+    LDGRAMS	//  _54 _53
     NIP	//  cs
-    LDGRAMS	//  _47 _46
-    DROP	//  _33
+    LDGRAMS	//  _56 _55
+    DROP	//  _42
     ctx::fwd_fee_val SETGLOB
   }>
   ctx::body PROCINLINE:<{
     // 
     ctx::body_slice GETGLOB	//  _0
+  }>
+  ctx::raw_body PROCINLINE:<{
+    // 
+    ctx::raw_body_slice GETGLOB	//  _0
   }>
   ctx::sender PROCINLINE:<{
     // 
@@ -98,7 +122,8 @@ PROGRAM{
   address::check_workchain PROCINLINE:<{
     //  addr expected_workchain
     SWAP	//  expected_workchain addr
-    8 PLDI	//  expected_workchain wc
+    REWRITESTDADDR	//  expected_workchain _9 _10
+    DROP	//  expected_workchain wc
     SWAP	//  wc expected_workchain
     EQUAL	//  _5
     IF:<{	// 
@@ -106,6 +131,19 @@ PROGRAM{
     }>ELSE<{	// 
       0 PUSHINT	//  _6=0
     }>
+  }>
+  address::is_none PROCINLINE:<{
+    //  addr
+    2 PLDU	//  _2
+    0 EQINT	//  _4
+  }>
+  address::none PROCINLINE:<{
+    // 
+    0 PUSHINT	//  _0=0
+    NEWC	//  _0=0 _1
+    2 STU	//  _3
+    ENDC	//  _4
+    CTOS	//  _5
   }>
   reserves::max_balance PROCINLINE:<{
     //  amount
@@ -171,24 +209,57 @@ PROGRAM{
     106 THROWIFNOT
     DIV	//  _26
   }>
-  msgs::send_simple PROCINLINE:<{
-    //  mode to body send_mode
-    0 PUSHINT	//  mode to body send_mode _4=0
-    1 PUSHINT	//  mode to body send_mode _4=0 _5=1
-    s0 s2 XCHG
-    NEWC	//  mode to body _5=1 _4=0 send_mode _6
-    8 STU	//  mode to body _5=1 _4=0 _8
-    s0 s4 XCHG2	//  mode _4=0 body _5=1 _8 to
-    STSLICER	//  mode _4=0 body _5=1 _9
-    s0 s4 XCHG2	//  _5=1 _4=0 body _9 mode
-    STGRAMS	//  _5=1 _4=0 body _10
-    s1 s3 XCHG	//  body _4=0 _5=1 _10
-    1 STU	//  body _4=0 _12
-    1 STU	//  body _14
-    STREF	//  _15
-    ENDC	//  _16
-    2 PUSHINT	//  _16 _17=2
+  msgs::send_internal PROCINLINE:<{
+    //  value to body bounce mode
+    0 PUSHINT	//  value to body bounce mode _6=0
+    s0 s2 PUXC	//  value to body _7=0 mode _6=0 bounce
+    IF:<{	//  value to body _7=0 mode _6=0
+      24 PUSHINT	//  value to body _7=0 mode _6=0 _8=24
+    }>ELSE<{	//  value to body _7=0 mode _6=0
+      16 PUSHINT	//  value to body _7=0 mode _6=0 _8=16
+    }>
+    NEWC	//  value to body _7=0 mode _6=0 _8 _11
+    6 STU	//  value to body _7=0 mode _6=0 _13
+    s0 s5 XCHG2	//  value _6=0 body _7=0 mode _13 to
+    STSLICER	//  value _6=0 body _7=0 mode _14
+    s0 s5 XCHG2	//  mode _6=0 body _7=0 _14 value
+    STGRAMS	//  mode _6=0 body _7=0 _15
+    105 STU	//  mode _6=0 body _25
+    s1 s2 XCHG	//  mode body _6=0 _25
+    1 STU	//  mode body msg
+    OVER	//  mode body msg body
+    ISNULL	//  mode body msg _28
+    IF:<{	//  mode body msg
+      0 PUSHINT
+      s2 POP	//  mode _30=0 msg
+      1 STU	//  mode msg
+    }>ELSE<{	//  mode body msg
+      1 PUSHINT	//  mode body msg _34=1
+      SWAP	//  mode body _34=1 msg
+      1 STU	//  mode body msg
+      STREF	//  mode msg
+    }>
+    ENDC	//  mode _38
+    SWAP	//  _38 mode
     SENDRAWMSG
+  }>
+  msgs::send_simple PROCINLINE:<{
+    //  value to body mode
+    -1 PUSHINT	//  value to body mode _4=-1
+    SWAP	//  value to body _4=-1 mode
+    msgs::send_internal INLINECALLDICT
+  }>
+  msgs::send_value PROCINLINE:<{
+    //  value to body mode
+    -1 PUSHINT	//  value to body mode _4=-1
+    SWAP	//  value to body _4=-1 mode
+    msgs::send_internal INLINECALLDICT
+  }>
+  msgs::send_nobounce PROCINLINE:<{
+    //  value to body mode
+    0 PUSHINT	//  value to body mode _4=0
+    SWAP	//  value to body _4=0 mode
+    msgs::send_internal INLINECALLDICT
   }>
   storage::load PROCINLINE:<{
     // 
@@ -226,109 +297,101 @@ PROGRAM{
   }>
   handle_transfer PROC:<{
     // 
-    ctx::sender INLINECALLDICT	//  _1
-    storage::owner_address GETGLOB	//  _1 _2
-    equal_slices INLINECALLDICT	//  _3
-    108 THROWIFNOT
-    ctx::body INLINECALLDICT	//  body
+    ctx::body_slice GETGLOB	//  body
     64 LDU	//  query_id body
     LDGRAMS	//  query_id amount body
-    LDMSGADDR	//  query_id amount _82 _81
+    LDMSGADDR	//  query_id amount _77 _76
     NIP	//  query_id amount body
     LDMSGADDR	//  query_id amount response_destination body
     1 LDU	//  query_id amount response_destination has_custom_payload body
     SWAP	//  query_id amount response_destination body has_custom_payload
     IF:<{	//  query_id amount response_destination body
-      LDREF	//  query_id amount response_destination _88 _87
+      LDREF	//  query_id amount response_destination _83 _82
       NIP	//  query_id amount response_destination body
     }>ELSE<{	//  query_id amount response_destination body
     }>
-    LDGRAMS	//  query_id amount response_destination _90 _89
+    LDGRAMS	//  query_id amount response_destination _85 _84
     NIP	//  query_id amount response_destination body
     1 LDU	//  query_id amount response_destination has_fwd_payload body
     OVER	//  query_id amount response_destination has_fwd_payload body has_fwd_payload
     IF:<{	//  query_id amount response_destination has_fwd_payload body
-      LDREF	//  query_id amount response_destination has_fwd_payload _94 _93
-      DROP	//  query_id amount response_destination has_fwd_payload _37
+      LDREF	//  query_id amount response_destination has_fwd_payload _89 _88
+      DROP	//  query_id amount response_destination has_fwd_payload _32
     }>ELSE<{	//  query_id amount response_destination has_fwd_payload body
       DROP	//  query_id amount response_destination has_fwd_payload
-      PUSHNULL	//  query_id amount response_destination has_fwd_payload _37
+      PUSHNULL	//  query_id amount response_destination has_fwd_payload _32
     }>	//  query_id amount response_destination has_fwd_payload fwd_payload
     s3 PUSH	//  query_id amount response_destination has_fwd_payload fwd_payload amount
-    0 GTINT	//  query_id amount response_destination has_fwd_payload fwd_payload _43
+    0 GTINT	//  query_id amount response_destination has_fwd_payload fwd_payload _38
     101 THROWIFNOT
-    ctx::balance INLINECALLDICT	//  query_id amount response_destination has_fwd_payload fwd_payload _46
-    77000000 PUSHINT	//  query_id amount response_destination has_fwd_payload fwd_payload _46 _47=77000000
-    GREATER	//  query_id amount response_destination has_fwd_payload fwd_payload _48
+    ctx::balance_val GETGLOB	//  query_id amount response_destination has_fwd_payload fwd_payload _41
+    77000000 PUSHINT	//  query_id amount response_destination has_fwd_payload fwd_payload _41 _42=77000000
+    GREATER	//  query_id amount response_destination has_fwd_payload fwd_payload _43
     102 THROWIFNOT
-    storage::total_supply GETGLOB	//  query_id amount response_destination has_fwd_payload fwd_payload _51
-    s4 PUSH	//  query_id amount response_destination has_fwd_payload fwd_payload _51 amount
+    storage::total_supply GETGLOB	//  query_id amount response_destination has_fwd_payload fwd_payload _46
+    s4 PUSH	//  query_id amount response_destination has_fwd_payload fwd_payload _46 amount
     SUB	//  query_id amount response_destination has_fwd_payload fwd_payload new_balance
     DUP	//  query_id amount response_destination has_fwd_payload fwd_payload new_balance new_balance
-    -1 GTINT	//  query_id amount response_destination has_fwd_payload fwd_payload new_balance _55
-    101 THROWIFNOT	//  query_id amount response_destination has_fwd_payload fwd_payload _57
+    -1 GTINT	//  query_id amount response_destination has_fwd_payload fwd_payload new_balance _50
+    101 THROWIFNOT	//  query_id amount response_destination has_fwd_payload fwd_payload _52
     storage::total_supply SETGLOB
     storage::save INLINECALLDICT
-    0 PUSHINT	//  query_id amount response_destination has_fwd_payload fwd_payload _59=0
-    storage::owner_address GETGLOB	//  query_id amount response_destination has_fwd_payload fwd_payload _59=0 _60
-    432984364 PUSHINT	//  query_id amount response_destination has_fwd_payload fwd_payload _59=0 _60 _61=432984364
-    NEWC	//  query_id amount response_destination has_fwd_payload fwd_payload _59=0 _60 _61=432984364 _62
-    32 STU	//  query_id amount response_destination has_fwd_payload fwd_payload _59=0 _60 _64
-    s1 s7 XCHG	//  _60 amount response_destination has_fwd_payload fwd_payload _59=0 query_id _64
-    64 STU	//  _60 amount response_destination has_fwd_payload fwd_payload _59=0 _66
-    s0 s5 XCHG2	//  _60 _59=0 response_destination has_fwd_payload fwd_payload _66 amount
-    STGRAMS	//  _60 _59=0 response_destination has_fwd_payload fwd_payload _67
-    ctx::sender INLINECALLDICT	//  _60 _59=0 response_destination has_fwd_payload fwd_payload _67 _68
-    STSLICER	//  _60 _59=0 response_destination has_fwd_payload fwd_payload _69
-    s0 s3 XCHG2	//  _60 _59=0 fwd_payload has_fwd_payload _69 response_destination
-    STSLICER	//  _60 _59=0 fwd_payload has_fwd_payload _70
-    1 STU	//  _60 _59=0 fwd_payload _72
-    STREF	//  _60 _59=0 _73
-    ENDC	//  _60 _59=0 _74
+    0 PUSHINT	//  query_id amount response_destination has_fwd_payload fwd_payload _54=0
+    storage::owner_address GETGLOB	//  query_id amount response_destination has_fwd_payload fwd_payload _54=0 _55
+    432984364 PUSHINT	//  query_id amount response_destination has_fwd_payload fwd_payload _54=0 _55 _56=432984364
+    NEWC	//  query_id amount response_destination has_fwd_payload fwd_payload _54=0 _55 _56=432984364 _57
+    32 STU	//  query_id amount response_destination has_fwd_payload fwd_payload _54=0 _55 _59
+    s1 s7 XCHG	//  _55 amount response_destination has_fwd_payload fwd_payload _54=0 query_id _59
+    64 STU	//  _55 amount response_destination has_fwd_payload fwd_payload _54=0 _61
+    s0 s5 XCHG2	//  _55 _54=0 response_destination has_fwd_payload fwd_payload _61 amount
+    STGRAMS	//  _55 _54=0 response_destination has_fwd_payload fwd_payload _62
+    ctx::sender_slice GETGLOB	//  _55 _54=0 response_destination has_fwd_payload fwd_payload _62 _63
+    STSLICER	//  _55 _54=0 response_destination has_fwd_payload fwd_payload _64
+    s0 s3 XCHG2	//  _55 _54=0 fwd_payload has_fwd_payload _64 response_destination
+    STSLICER	//  _55 _54=0 fwd_payload has_fwd_payload _65
+    1 STU	//  _55 _54=0 fwd_payload _67
+    STREF	//  _55 _54=0 _68
+    ENDC	//  _55 _54=0 _69
     s1 s2 XCHG
-    7 PUSHPOW2	//  _59=0 _60 _74 _75=128
+    7 PUSHPOW2	//  _54=0 _55 _69 _70=128
     msgs::send_simple INLINECALLDICT
   }>
   handle_burn PROC:<{
     // 
-    ctx::sender INLINECALLDICT	//  _1
-    storage::owner_address GETGLOB	//  _1 _2
-    equal_slices INLINECALLDICT	//  _3
-    108 THROWIFNOT
-    ctx::body INLINECALLDICT	//  body
+    ctx::body_slice GETGLOB	//  body
     64 LDU	//  query_id body
     LDGRAMS	//  query_id amount body
-    LDMSGADDR	//  query_id amount _52 _51
+    LDMSGADDR	//  query_id amount _47 _46
     DROP	//  query_id amount response_destination
     OVER	//  query_id amount response_destination amount
-    0 GTINT	//  query_id amount response_destination _19
+    0 GTINT	//  query_id amount response_destination _14
     101 THROWIFNOT
-    storage::total_supply GETGLOB	//  query_id amount response_destination _22
-    s2 PUSH	//  query_id amount response_destination _22 amount
+    storage::total_supply GETGLOB	//  query_id amount response_destination _17
+    s2 PUSH	//  query_id amount response_destination _17 amount
     SUB	//  query_id amount response_destination new_balance
     DUP	//  query_id amount response_destination new_balance new_balance
-    -1 GTINT	//  query_id amount response_destination new_balance _26
-    101 THROWIFNOT	//  query_id amount response_destination _28
+    -1 GTINT	//  query_id amount response_destination new_balance _21
+    101 THROWIFNOT	//  query_id amount response_destination _23
     storage::total_supply SETGLOB
     storage::save INLINECALLDICT
-    0 PUSHINT	//  query_id amount response_destination _30=0
-    DUP	//  query_id amount response_destination _30=0 _31=0
-    3256584228 PUSHINT	//  query_id amount response_destination _30=0 _31=0 _32=3256584228
-    NEWC	//  query_id amount response_destination _30=0 _31=0 _32=3256584228 _33
-    32 STU	//  query_id amount response_destination _30=0 _31=0 _35
-    s1 s5 XCHG	//  _31=0 amount response_destination _30=0 query_id _35
-    64 STU	//  _31=0 amount response_destination _30=0 _37
-    s0 s3 XCHG2	//  _31=0 _30=0 response_destination _37 amount
-    STGRAMS	//  _31=0 _30=0 response_destination _38
-    ctx::sender INLINECALLDICT	//  _31=0 _30=0 response_destination _38 _39
-    STSLICER	//  _31=0 _30=0 response_destination _40
-    OVER	//  _31=0 _30=0 response_destination _40 response_destination
-    STSLICER	//  _31=0 _30=0 response_destination _41
-    s1 s3 XCHG	//  response_destination _30=0 _31=0 _41
-    1 STU	//  response_destination _30=0 _43
-    ENDC	//  response_destination _30=0 _44
+    0 PUSHINT	//  query_id amount response_destination _25=0
+    DUP	//  query_id amount response_destination _25=0 _26=0
+    3256584228 PUSHINT	//  query_id amount response_destination _25=0 _26=0 _27=3256584228
+    NEWC	//  query_id amount response_destination _25=0 _26=0 _27=3256584228 _28
+    32 STU	//  query_id amount response_destination _25=0 _26=0 _30
+    s1 s5 XCHG	//  _26=0 amount response_destination _25=0 query_id _30
+    64 STU	//  _26=0 amount response_destination _25=0 _32
+    s0 s3 XCHG2	//  _26=0 _25=0 response_destination _32 amount
+    STGRAMS	//  _26=0 _25=0 response_destination _33
+    ctx::sender_slice GETGLOB	//  _26=0 _25=0 response_destination _33 _34
+    STSLICER	//  _26=0 _25=0 response_destination _35
+    OVER	//  _26=0 _25=0 response_destination _35 response_destination
+    STSLICER	//  _26=0 _25=0 response_destination _36
+    s1 s3 XCHG	//  response_destination _25=0 _26=0 _36
+    1 STU	//  response_destination _25=0 _38
+    ENDC	//  response_destination _25=0 _39
     s1 s2 XCHG
-    7 PUSHPOW2	//  _30=0 response_destination _44 _45=128
+    7 PUSHPOW2	//  _25=0 response_destination _39 _40=128
     msgs::send_simple INLINECALLDICT
   }>
   recv_internal PROC:<{
@@ -337,21 +400,21 @@ PROGRAM{
     SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
     103 THROWIF
     ctx::init INLINECALLDICT
-    ctx::isBounced INLINECALLDICT	//  _8
+    ctx::is_bounced GETGLOB	//  _8
     IFJMP:<{	// 
     }>	// 
-    ctx::sender INLINECALLDICT	//  _10
+    ctx::sender_slice GETGLOB	//  _10
     0 PUSHINT	//  _10 _11=0
     address::check_workchain INLINECALLDICT	//  _12
     104 THROWIFNOT
     storage::load INLINECALLDICT
-    ctx::opcode INLINECALLDICT	//  _15
+    ctx::opcode_val GETGLOB	//  _15
     432984364 PUSHINT	//  _15 _16=432984364
     EQUAL	//  _17
     IFJMP:<{	// 
       handle_transfer CALLDICT
     }>	// 
-    ctx::opcode INLINECALLDICT	//  _19
+    ctx::opcode_val GETGLOB	//  _19
     3256584228 PUSHINT	//  _19 _20=3256584228
     EQUAL	//  _21
     IFJMP:<{	// 
