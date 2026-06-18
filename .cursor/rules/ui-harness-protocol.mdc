@@ -35,7 +35,18 @@
 - 示例："此组件将占据 Grid 的 4 列(grid-column: span 4)，Padding 调用 DesignTokens.spacing.cardPadding，背景使用 DesignTokens.colors.panelBg。"
 - 写完后自我审查是否符合上述协议。
 
-## 6. Contract Security Protocol
+## 6. Visual Red Line
+- AI must proactively flag visible deviations from design specs (spacing, alignment, colors)
+- If UI looks "almost right but off by a few pixels" — it's a BUG, not acceptable
+- AI must say "This deviates from design spec, I will adjust" BEFORE user points it out
+
+## 7. Asset Quality Gate
+- All UI icons MUST be HD WebP, transparent background
+- Icon padding must be uniform at export time — no code-based stretching/compensation
+- If uploaded icon is not HD transparent, AI MUST alert immediately, DO NOT hack around it in CSS
+- Jagged edges, non-transparent background = UNUSABLE, must re-export
+
+## 8. Contract Security Protocol
 - 所有合约编译、测试任务必须通过 `agent_harness.py` 调度。
 - 禁止 mock 数据，必须对接真实开发环境。
 - FunC 代码必须包含 Gas 边界检查和 bounce 消息处理。
