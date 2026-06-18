@@ -27,5 +27,12 @@ export const DesignTokens = {
     borderRadius: '28px',
     panelGap: '20px',
     panelPadding: '24px',
+    buttonHeight: '48px',
+    buttonRadius: '12px',
+    cardMinHeight: '200px',
+    iconSize: '64px',
+    titleSize: '24px',
+    dataLabelSize: '14px',
+    dataValueSize: '20px',
   },
 } as const;
