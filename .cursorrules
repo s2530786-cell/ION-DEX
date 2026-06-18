@@ -31,3 +31,10 @@
 - **AI VISUAL ANALYSIS**: When user uploads a design image, AI MUST perform reverse visual engineering: auto-extract colors, spacing, and update `src/lib/design-tokens.ts`. If AI cannot determine exact values from screenshot, it MUST present a numeric-choice list — NEVER ask user to measure manually.
 - **AUTO ASSET GENERATION**: If icon assets are missing, AI MUST either generate SVG/WebP placeholders, or provide direct download URLs from free resource sites (e.g. Lucide, Phosphor, Flaticon). NEVER require user to do complex image processing.
 - **VISUAL DEBUG OVERLAY**: After writing UI code, AI MUST render a VisualAuditor debug overlay (dev mode only) showing the current component's referenced Token values, so user can compare against design without reading code.
+
+## 7. PIXEL-PERFECT AUDIT (像素纠察)
+- When user reports visual mismatch, AI MUST:
+  1. Check current Token values via `VisualAuditor` overlay.
+  2. Compare with user's design screenshot.
+  3. Calculate deviation and state: "This component's Padding deviates by 4px. I will adjust the parameter in `design-tokens.ts`."
+  4. NEVER modify inline component styles. ALL adjustments MUST be made by updating Token values.

@@ -6,6 +6,7 @@ export const DesignTokens = {
   colors: {
     background: '#000000',
     panelBg: 'rgba(20, 25, 45, 0.4)',
+    glassBase: 'rgba(20, 25, 45, 0.4)',
     panelBorder: 'rgba(255, 255, 255, 0.15)',
     neonCyan: '#00ffff',
     neonMagenta: '#ff00ff',
@@ -40,9 +41,25 @@ export const DesignTokens = {
     smallIconSize: '32px',
   } as const,
 
+  dimensions: {
+    borderRadius: '28px',
+    panelGap: '20px',
+    panelPadding: '24px',
+    iconSize: '64px',
+    buttonRadius: '12px',
+    buttonHeight: '40px',
+    titleSize: '24px',
+    dataLabelSize: '12px',
+    dataValueSize: '20px',
+  } as const,
+
   // ── Effects ──
   effects: {
     glassBlur: 'backdrop-filter: blur(20px)',
+    backdropBlur: '20px',
+    cardGlow: '0 0 15px #00ffff66, inset 0 0 10px #00ffff33',
+    neonCyan: '0 0 15px #00ffff66, inset 0 0 10px #00ffff33',
+    neonMagenta: '0 0 15px #ff00ff66, inset 0 0 10px #ff00ff33',
     neonShadow: (color: string) => `0 0 15px ${color}66, inset 0 0 10px ${color}33`,
     neonGlow: (color: string) => `0 0 20px ${color}40, 0 0 40px ${color}20`,
     cardHover: 'transform: scale(1.01); box-shadow: 0 0 30px rgba(0,255,255,0.2)',
