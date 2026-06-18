@@ -17,6 +17,17 @@ export const DesignTokens = {
     positive: '#00ff88',
     negative: '#ff4466',
     warning: '#ffd166',
+    // 交互层透明叠加（用于选中态/悬停态）
+    cyanOverlay: 'rgba(0, 255, 255, 0.15)',
+    cyanBorder: 'rgba(0, 255, 255, 0.3)',
+    surfaceOverlay: 'rgba(255, 255, 255, 0.05)',
+    surfaceBorder: 'rgba(255, 255, 255, 0.1)',
+  } as const,
+
+  // ── Borders ──
+  borders: {
+    thin: '1px',
+    thick: '2px',
   } as const,
 
   // ── Typography ──
@@ -55,11 +66,13 @@ export const DesignTokens = {
 
   // ── Effects ──
   effects: {
-    glassBlur: 'backdrop-filter: blur(20px)',
-    backdropBlur: '20px',
-    cardGlow: '0 0 15px #00ffff66, inset 0 0 10px #00ffff33',
-    neonCyan: '0 0 15px #00ffff66, inset 0 0 10px #00ffff33',
-    neonMagenta: '0 0 15px #ff00ff66, inset 0 0 10px #ff00ff33',
+    glassBlur: 'blur(20px)',
+    backdropBlur: 'blur(20px)',
+    cardGlow: '0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.2)',
+    neonCyan: '0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.2)',
+    neonShadowCyan: '0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.2)',
+    neonShadowMagenta: '0 0 15px rgba(255, 0, 255, 0.4), inset 0 0 10px rgba(255, 0, 255, 0.2)',
+    neonMagenta: '0 0 15px rgba(255, 0, 255, 0.4), inset 0 0 10px rgba(255, 0, 255, 0.2)',
     neonShadow: (color: string) => `0 0 15px ${color}66, inset 0 0 10px ${color}33`,
     neonGlow: (color: string) => `0 0 20px ${color}40, 0 0 40px ${color}20`,
     cardHover: 'transform: scale(1.01); box-shadow: 0 0 30px rgba(0,255,255,0.2)',

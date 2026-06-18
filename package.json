@@ -1,6 +1,23 @@
 {
+  "name": "ion-dex",
+  "version": "1.0.0",
+  "description": "ION DEX — Future Digital Civilization Entry Point",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "audit": "python3 scripts/audit_tokens.py",
+    "lint": "echo '[lint] 待配置 ESLint/Prettier'",
+    "test": "node agent_harness.py",
+    "validate": "npm run audit && npm run test",
+    "clean": "rm -rf dist build .next"
+  },
   "devDependencies": {
-    "claude-flow": "3.7.0-alpha.35"
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^6.0.2",
+    "claude-flow": "3.7.0-alpha.35",
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.9"
   },
   "overrides": {
     "protobufjs": "7.5.9",

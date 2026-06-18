@@ -47,9 +47,11 @@ export const NeonCard: React.FC<NeonCardProps> = ({
       style={{
         gridColumn: DesignTokens.grid.columnSpan(columnSpan),
         backgroundColor: DesignTokens.colors.panelBg,
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: `1px solid ${DesignTokens.colors.panelBorder}`,
+        backdropFilter: DesignTokens.effects.glassBlur,
+        WebkitBackdropFilter: DesignTokens.effects.glassBlur,
+        borderWidth: DesignTokens.borders.thin,
+        borderStyle: 'solid',
+        borderColor: DesignTokens.colors.panelBorder,
         borderRadius: DesignTokens.spacing.borderRadius,
         boxShadow: DesignTokens.effects.neonShadow(neonColor),
         padding: DesignTokens.spacing.cardPadding,
@@ -58,7 +60,7 @@ export const NeonCard: React.FC<NeonCardProps> = ({
       {/* Header */}
       <div
         className="flex items-center"
-        style={{ gap: '16px', marginBottom: subtitle ? '8px' : '24px' }}
+        style={{ gap: DesignTokens.spacing.elementGap, marginBottom: subtitle ? DesignTokens.spacing.elementGap : DesignTokens.spacing.cardPadding }}
       >
         {icon && (
           <img
@@ -87,7 +89,7 @@ export const NeonCard: React.FC<NeonCardProps> = ({
               style={{
                 color: DesignTokens.colors.textSecondary,
                 fontSize: DesignTokens.typography.caption.fontSize,
-                marginTop: '4px',
+                marginTop: DesignTokens.spacing.elementGap,
               }}
             >
               {subtitle}

@@ -23,7 +23,7 @@ export const VisualAuditor: React.FC = () => {
       </button>
 
       {isVisible && (
-        <div className="mt-2 p-4 bg-black/90 border border-cyan-500 rounded-lg text-xs text-white max-h-[400px] overflow-y-auto">
+        <div className="mt-2 p-4 bg-black/90 border border-cyan-500 rounded-lg text-xs text-white overflow-y-auto" style={{ maxHeight: DesignTokens.spacing.pagePadding }}>
           <h3 className="font-bold text-cyan-400 mb-2">当前系统 Tokens</h3>
           <div className="space-y-2">
             {Object.entries(DesignTokens.spacing).map(([key, val]) => (

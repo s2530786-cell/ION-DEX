@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DesignTokens } from '../../lib/design-tokens';
 
-const hasPoolIcon = false;
 const poolIconSource = '/assets/icons/pool-cube.webp';
 
 type PoolCardProps = {
-  tvl: string;
-  apr: string;
+  tvl?: string;
+  apr?: string;
 };
 
-export const PoolCard: React.FC<PoolCardProps> = ({ tvl, apr }) => {
+export const PoolCard: React.FC<PoolCardProps> = ({
+  tvl = '$128.4M',
+  apr = '18.7%',
+}) => {
+  const [iconMissing, setIconMissing] = useState(false);
+
   return (
     <section
       className="grid transform-gpu gap-[var(--pool-card-gap)] transition-transform duration-200 ease-out hover:scale-[1.01]"
@@ -28,7 +32,7 @@ export const PoolCard: React.FC<PoolCardProps> = ({ tvl, apr }) => {
       aria-label="Pool overview card"
     >
       <header className="flex items-center gap-[var(--pool-card-gap)]">
-        {hasPoolIcon ? (
+        {!iconMissing ? (
           <img
             src={poolIconSource}
             alt="Pool 3D cube"
@@ -37,6 +41,7 @@ export const PoolCard: React.FC<PoolCardProps> = ({ tvl, apr }) => {
               width: DesignTokens.dimensions.iconSize,
               height: DesignTokens.dimensions.iconSize,
             }}
+            onError={() => setIconMissing(true)}
           />
         ) : (
           <div

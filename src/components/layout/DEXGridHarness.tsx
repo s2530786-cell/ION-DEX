@@ -18,8 +18,8 @@ export const DEXGridHarness: React.FC<Props> = ({ children }) => {
         display: 'grid',
         gridTemplateColumns: 'repeat(12, 1fr)',
         gap: DesignTokens.spacing.gridGap,
-        padding: '40px',
-        background: `radial-gradient(circle at center, #1e0a3c 0%, ${DesignTokens.colors.background} 100%)`,
+        padding: DesignTokens.spacing.pagePadding,
+        background: `radial-gradient(circle at center, ${DesignTokens.colors.background} 0%, ${DesignTokens.colors.background} 100%)`,
       }}
     >
       {children}

@@ -1,40 +1,44 @@
-# ION-DEX ENGINEERING PROTOCOL
-# Strictly enforce these rules for all code generation.
+# ION-DEX 工程铁律 (Production Level)
+# TEMPERATURE 0.1: Deterministic & Strict
+# 最后通牒 — AI 必须遵守，不可绕过
 
-## 1. VISION & UI PROTOCOL (Pixel Perfection)
-- NO HARDCODING: Never use hex/rgba colors, pixel margins, or padding directly in CSS/Tailwind.
-- TOKEN USAGE: All visual attributes MUST be pulled from `src/lib/design-tokens.ts`.
-- GRID ENFORCEMENT: All layouts MUST use `DEXGridHarness`. Do not use arbitrary absolute/fixed positioning.
-- ASSET INTEGRITY: Do not use CSS to draw complex shapes. Use optimized .webp assets from `/public/assets/icons/`.
+## 1. 强制工程工作流 (Mandatory Workflow)
+- 严禁直接提交代码。任何改动必须先通过 `make audit`。
+- 如果 AI 生成的代码导致 `make audit` 失败，AI 必须自动解析报错日志，进行自我修复，直到 `make audit` 返回 `SUCCESS` 为止。
+- 禁止使用任何非确定性逻辑。所有合约调用必须具备 Gas 边界处理。
+- ALL code must pass `npm run validate` before being committed or presented to the user.
 
-## 2. BACKEND & SECURITY (Zero-Mock Policy)
-- AGENT HARNESS: All contract operations (compile/test/audit) MUST be routed through `agent_harness.py`.
-- NO MOCKS: Avoid mocking blockchain states in tests. Use the actual Blueprint test suite.
-- SECURITY FIRST: Every contract function must implement gas-limit checks and consistent error handling.
+## 2. 视觉防错协议 (Visual Protocol)
+- 所有 UI 元素必须具备单元测试（Snapshot Testing）。
+- 严禁任何硬编码像素值，必须引用 `src/lib/design-tokens.ts`。
+- 若 UI 设计图发生变更，必须先更新 Token 定义，严禁修改组件内部 CSS。
+- Layouts MUST use `DEXGridHarness`. No arbitrary absolute/fixed positioning.
 
-## 3. WORKFLOW (The 3-Step Process)
-1. ANALYSIS: Before coding, state the intended Grid coordinates and which tokens will be used.
-2. EXECUTION: Generate code referencing only the provided architectural components.
-3. VERIFICATION: Self-check against this protocol. If in doubt, query the user rather than guessing.
+## 3. 自动纠错闭环 (Self-Healing Loop)
+- 当且仅当 AI 无法通过 `make audit` 时，才允许向用户寻求干预。
+- 用户介入时，AI 必须提供：
+  1. 当前报错日志
+  2. 导致报错的根源代码
+  3. 修复方案
+- AI 自愈流程：
+  1. Analyze the specific violation line and the matched pattern.
+  2. Map the violation to a DesignToken key.
+  3. Replace the violation with the Token reference.
+  4. Re-run `make audit` to confirm `SUCCESS`.
 
-## 4. VISUAL RED LINE
-- If UI spacing, alignment, or color visibly deviates from design spec, the AI MUST proactively flag: "This deviates from design spec, I will adjust" — BEFORE the user points it out.
-- "Close enough" is NOT acceptable. Every pixel deviation is a bug.
+## 4. 后端安全协议 (Backend Security)
+- All contract operations MUST be routed through `agent_harness.py --audit`.
+- NO MOCKS: Use actual Blueprint test suite, not mock blockchain states.
+- Every contract function must implement gas-limit checks and consistent error handling.
+- Write Test Case BEFORE writing contract code.
 
-## 5. ASSET QUALITY GATE
-- All UI icons MUST be HD WebP format with transparent background.
-- Icon padding must be uniform at export time. Do NOT use code to stretch/scale as compensation.
-- If uploaded icon is not HD transparent, AI MUST alert immediately. Do NOT hack around it in CSS.
-- Jagged edges or non-transparent background = UNUSABLE. Must re-export.
+## 5. 三层防线 (Three-Layer Defense)
+1. **Compile-time**: `audit_tokens.py` blocks hardcoded values
+2. **Render-time**: `Guarded` component detects DOM violations
+3. **Run-time**: Contract test suite blocks logic errors
+4. **CI/CD**: `.github/workflows/production.yml` runs on every push
 
-## 6. ZERO-MANUAL-LABOR PROTOCOL (Non-Technical User Automation)
-- **AI VISUAL ANALYSIS**: When user uploads a design image, AI MUST perform reverse visual engineering: auto-extract colors, spacing, and update `src/lib/design-tokens.ts`. If AI cannot determine exact values from screenshot, it MUST present a numeric-choice list — NEVER ask user to measure manually.
-- **AUTO ASSET GENERATION**: If icon assets are missing, AI MUST either generate SVG/WebP placeholders, or provide direct download URLs from free resource sites (e.g. Lucide, Phosphor, Flaticon). NEVER require user to do complex image processing.
-- **VISUAL DEBUG OVERLAY**: After writing UI code, AI MUST render a VisualAuditor debug overlay (dev mode only) showing the current component's referenced Token values, so user can compare against design without reading code.
-
-## 7. PIXEL-PERFECT AUDIT (像素纠察)
-- When user reports visual mismatch, AI MUST:
-  1. Check current Token values via `VisualAuditor` overlay.
-  2. Compare with user's design screenshot.
-  3. Calculate deviation and state: "This component's Padding deviates by 4px. I will adjust the parameter in `design-tokens.ts`."
-  4. NEVER modify inline component styles. ALL adjustments MUST be made by updating Token values.
+## 6. 零容忍 (Zero Tolerance)
+- Any layer alert = AI MUST auto-rewrite. No skipping.
+- `make audit` failure = code is NOT deliverable.
+- The pipeline is the gatekeeper. AI cannot bypass it.

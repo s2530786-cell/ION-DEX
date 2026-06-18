@@ -1,40 +1,118 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-ION-DEX Agent Harness — Backend Security & Compilation Engine
-All contract operations (compile/test/audit) MUST be routed through this module.
+ION-DEX 生产级合约审计器 — 后端防错核心
+集成到 CI/CD 流水线中，发现漏洞立即阻断构建。
 """
-import subprocess
-import json
-import logging
+
+import sys
+import argparse
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("ION_Harness")
 
+class IONContractAuditor:
+    """ION DEX 合约安全审计引擎"""
 
-class IONHarness:
-    """Production-grade contract execution harness for ION DEX."""
+    # 高危模式：任何合约代码中出现以下模式，立即阻断
+    CRITICAL_PATTERNS = [
+        "exec(",
+        "eval(",
+        "unsafe_op",
+        "send_raw_message",  # 需人工审查
+        "raw_reserve",       # 需人工审查
+    ]
 
-    def __init__(self, root: str = "."):
-        self.root = Path(root)
+    # 警告模式：需标记但不阻断
+    WARNING_PATTERNS = [
+        "now()",           # 时间戳可被矿工操控
+        "block_lt(",       # 区块哈希不可靠
+        "rand(",           # 链上随机数不安全
+    ]
 
-    def run_audit(self, contract_path: str):
-        """Perform security check on FunC code before compilation."""
-        code = (self.root / contract_path).read_text()
-        if "eval(" in code or "exec(" in code:
-            return {"status": "FAILED", "reason": "Insecure code pattern detected"}
-        return {"status": "PASSED"}
+    def __init__(self, contracts_dir: str = "./contracts"):
+        self.contracts_dir = Path(contracts_dir)
 
-    def compile(self, contract_name: str):
-        """Compile FunC contract via func CLI."""
-        try:
-            cmd = ["func", "-o", "build/out.boc", "contracts/" + contract_name]
-            subprocess.run(cmd, check=True)
-            return {"status": "SUCCESS"}
-        except Exception as e:
-            return {"status": "FAILED", "message": str(e)}
+    def check_security_vulnerabilities(self) -> bool:
+        """扫描合约常见漏洞模式"""
+        if not self.contracts_dir.exists():
+            print(f"[INFO] 合约目录 {self.contracts_dir} 不存在，跳过合约审计")
+            return True
+
+        fc_files = list(self.contracts_dir.glob("*.fc")) + list(self.contracts_dir.glob("*.func"))
+        if not fc_files:
+            print(f"[INFO] 未找到 FunC 合约文件，跳过合约审计")
+            return True
+
+        has_critical = False
+        for file in fc_files:
+            content = file.read_text(encoding='utf-8')
+            lines = content.split('\n')
+
+            # 检查高危模式
+            for pattern in self.CRITICAL_PATTERNS:
+                for lineno, line in enumerate(lines, 1):
+                    if pattern in line:
+                        print(f"[SECURITY ALERT] {file}:{lineno} 包含禁止模式: {pattern}")
+                        print(f"  → {line.strip()[:120]}")
+                        has_critical = True
+
+            # 检查警告模式
+            for pattern in self.WARNING_PATTERNS:
+                for lineno, line in enumerate(lines, 1):
+                    if pattern in line:
+                        print(f"[SECURITY WARN] {file}:{lineno} 包含需审查模式: {pattern}")
+                        print(f"  → {line.strip()[:120]}")
+
+        if has_critical:
+            print("\n[SECURITY FAILED] 发现高危安全漏洞，禁止构建！")
+            return False
+
+        return True
+
+    def check_gas_limits(self) -> bool:
+        """检查合约是否包含 gas 边界处理"""
+        if not self.contracts_dir.exists():
+            return True
+
+        fc_files = list(self.contracts_dir.glob("*.fc")) + list(self.contracts_dir.glob("*.func"))
+        if not fc_files:
+            return True
+
+        for file in fc_files:
+            content = file.read_text(encoding='utf-8')
+            if 'throw_if' not in content and 'require(' not in content:
+                print(f"[GAS WARN] {file} 未检测到 gas 边界检查 (throw_if/require)")
+                # 不阻断，仅警告
+
+        return True
+
+    def run(self, mode: str) -> int:
+        """执行审计，返回 exit code"""
+        if mode == "audit":
+            print("[Audit] 开始合约安全审计...")
+            security_ok = self.check_security_vulnerabilities()
+            self.check_gas_limits()
+
+            if not security_ok:
+                return 1
+
+            print("[AUDIT PASSED] 合约安全审计通过 ✓")
+            return 0
+
+        print(f"[ERROR] 未知模式: {mode}")
+        return 1
 
 
 if __name__ == "__main__":
-    # Interface for Cursor to call programmatically
-    pass
+    parser = argparse.ArgumentParser(description="ION DEX 合约审计器")
+    parser.add_argument("--audit", action="store_true", help="运行安全审计")
+    parser.add_argument("--contracts", default="./contracts", help="合约目录路径")
+    args = parser.parse_args()
+
+    auditor = IONContractAuditor(contracts_dir=args.contracts)
+
+    if args.audit:
+        sys.exit(auditor.run("audit"))
+    else:
+        print("用法: python3 agent_harness.py --audit")
+        sys.exit(0)
