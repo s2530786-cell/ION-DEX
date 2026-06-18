@@ -1,5 +1,5 @@
 {
-  "lastTickAt": "2026-06-14T15:59:45.102Z",
+  "lastTickAt": "2026-06-18T15:06:48.353Z",
   "activeQueueId": "p1-dashboard-w6-pipeline",
   "steps": [
     {
@@ -13,9 +13,13 @@
     {
       "id": "verify-100",
       "status": "running",
-      "external": true,
-      "managedPid": 107152,
-      "error": "interrupted at 24/100; auto-resume from 25"
+      "external": false,
+      "managedPid": 49164,
+      "error": "interrupted at 46/100; auto-resume from 47"
+    },
+    {
+      "id": "git-commit-push-p1-dashboard",
+      "status": "pending"
     },
     {
       "id": "w6-agent-kickoff",

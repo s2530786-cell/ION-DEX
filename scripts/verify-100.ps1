@@ -133,6 +133,11 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
     & $script:PsExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts\check-encoding.ps1")
   }
 
+  Set-Location $root
+  $ipLeakExit = Run-Step "public-ip-leak" {
+    & $script:CmdExe /d /c "node scripts\check-public-ip-leak.mjs --all & exit /b %ERRORLEVEL%"
+  }
+
   Set-Location $backend
   $backendVerifyExit = Run-Step "backend-verify" {
     Invoke-NpmVerify -WorkingDirectory $backend
@@ -200,14 +205,14 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
     $auditExit = 1
   }
 
-  if ($encodingExit -eq 0 -and $backendVerifyExit -eq 0 -and $backendAuditExit -eq 0 -and $backendStressExit -eq 0 -and $verifyExit -eq 0 -and $auditExit -eq 0) {
+  if ($encodingExit -eq 0 -and $ipLeakExit -eq 0 -and $backendVerifyExit -eq 0 -and $backendAuditExit -eq 0 -and $backendStressExit -eq 0 -and $verifyExit -eq 0 -and $auditExit -eq 0) {
     $passed++
     Add-Content -Path $summary -Value ("PASS " + $i + " OK") -Encoding utf8
     Write-Host ("*** PASS " + $i + " OK (" + $passed + "/" + $Iterations + " green) ***")
   }
   else {
     $failed++
-    $failureLine = "PASS " + $i + " FAILED encoding=" + $encodingExit + " backendVerify=" + $backendVerifyExit + " backendAudit=" + $backendAuditExit + " backendStress=" + $backendStressExit + " frontendVerify=" + $verifyExit + " frontendAudit=" + $auditExit
+    $failureLine = "PASS " + $i + " FAILED encoding=" + $encodingExit + " ipLeak=" + $ipLeakExit + " backendVerify=" + $backendVerifyExit + " backendAudit=" + $backendAuditExit + " backendStress=" + $backendStressExit + " frontendVerify=" + $verifyExit + " frontendAudit=" + $auditExit
     Add-Content -Path $summary -Value $failureLine -Encoding utf8
     Write-Log $failureLine
     if (-not $ContinueOnFailure) {

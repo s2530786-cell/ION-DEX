@@ -48,6 +48,18 @@ Thumbs.db
 .DS_Store
 NUL  
 
+# FunC verify build artifacts (intermediate)
+contracts/ion/build/_verify_*
+
+# Autonomous runtime state (machine-local, not source)
+.memory-bank/autonomous-work-queue.json
+.memory-bank/autonomous-work-watchdog-state.json
+.memory-bank/autonomous-work-watchdog.log
+
+# Temp verify/build logs
+frontend/tmp_verify_i18n.log
+**/tmp_*.log
+
 # FunC probe outputs
 contracts/ion/build/_probe_*
 

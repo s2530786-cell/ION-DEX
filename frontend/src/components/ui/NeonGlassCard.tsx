@@ -24,8 +24,8 @@ export function NeonGlassCard({
         "neon-glass-card",
         rim === "hero" ? "neon-rim-hero" : "",
         "float-3d",
-        "drop-shadow-[0_0_32px_rgba(36,247,255,0.35)]",
-        "drop-shadow-[0_0_48px_rgba(255,59,212,0.22)]",
+        "drop-shadow-[0_0_32px_rgba(0,255,255,0.45)]",
+        "drop-shadow-[0_0_48px_rgba(255,0,255,0.28)]",
         className,
       ]
         .filter(Boolean)

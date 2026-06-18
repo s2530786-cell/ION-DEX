@@ -14,6 +14,7 @@ const WHITELIST = new Set([
   ".memory-bank/ai-civilization-kernel/README.md",
   ".cursor/skills/ion-ai-civilization-kernel/SKILL.md",
   "scripts/check-public-ip-leak.mjs",
+  ".gitignore",
 ]);
 
 const FORBIDDEN_PATTERNS = [

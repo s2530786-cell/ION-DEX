@@ -58,9 +58,28 @@ while ($true) {
   Log ("watch " + $summary.Name + " passes_ok=" + $passOk + " tail=" + ($tail -join " | "))
 
   if ($lines -match "^RESULT=GREEN$") {
-    Log "RESULT=GREEN detected - state sync only"
+    Log "RESULT=GREEN detected - recording guarded proof"
+    $nodeExe = "node"
+    $gateScript = Join-Path $root "scripts\verify-100-gate.mjs"
+    & $nodeExe $gateScript record --summary $summary.FullName --note "watch-and-ship auto flow" 2>&1 | ForEach-Object {
+      Log ("gate-record> " + $_)
+    }
+    if ($LASTEXITCODE -ne 0) {
+      Log ("verify-100 gate record failed exit=" + $LASTEXITCODE)
+      exit $LASTEXITCODE
+    }
+
     Update-SessionStateOnGreen $summary.Name
-    Log "Auto git commit/push removed. Use guarded workflow commit path after a fresh verify-100 proof."
+
+    Log "Launching watchdog once to auto-advance guarded commit/push"
+    & $nodeExe (Join-Path $root "scripts\autonomous-work-watchdog.mjs") --once 2>&1 | ForEach-Object {
+      Log ("watchdog> " + $_)
+    }
+    if ($LASTEXITCODE -ne 0) {
+      Log ("watchdog auto-advance failed exit=" + $LASTEXITCODE)
+      exit $LASTEXITCODE
+    }
+
     Log ("DONE watch_log=" + $watchLog)
     exit 0
   }

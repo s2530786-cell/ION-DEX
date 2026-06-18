@@ -17,6 +17,10 @@ echo "=== 0) Development preflight ==="
 node scripts/dev-preflight.mjs
 
 echo
+echo "=== 0b) Public IP leak gate (all tracked files) ==="
+node scripts/check-public-ip-leak.mjs --all
+
+echo
 echo "=== 1) Encoding check ==="
 bash scripts/check-encoding.sh
 

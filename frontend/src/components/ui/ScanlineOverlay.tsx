@@ -26,7 +26,7 @@ export function ScanlineOverlay({
 
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-[9999]"
+      className="pointer-events-none fixed inset-0 z-[3]"
       aria-hidden="true"
     >
       <div

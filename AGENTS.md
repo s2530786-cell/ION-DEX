@@ -130,3 +130,15 @@ No Docker, PostgreSQL, Redis, or external services required at this stage.
 - The root `package.json` only contains `claude-flow` as a devDependency (AI orchestration tool with known audit findings). It is not needed for running the app or tests.
 - `frontend/package.json` uses `latest` tags for many dependencies. `npm install` may resolve different versions across sessions; if E2E tests break after a fresh install, check for breaking upstream changes.
 - The backend must be built (`npm run build`) before it can be started or tested — there is no `ts-node` or similar dev runner.
+
+## Learned User Preferences
+
+- Overall ION DEX UI should follow a black cyber-neon aesthetic (deep black base, stronger neon glow, scanlines and cyber grid), not blue-tinted slate themes.
+- Frontend visual changes must preserve the Master-locked aurora tricolor: cyan `#00FFFF`, purple `#6020FF`, magenta `#FF00FF` (see `ui-cyber-glass-iron-law.md`).
+- Production paths must not use fake code, mock implementations, or placeholder stubs; ship real, verifiable implementations.
+
+## Learned Workspace Facts
+
+- Cyber-neon base tokens: `--ion-ink` is `#010104`; elevated surfaces use `--ion-ink-elevated` `#06060f`.
+- App shell panels use deep black glass (`bg-black/70`–`bg-black/92`), cyan neon borders, and `shadow-cyberPanel` instead of `slate-950`.
+- Global cyber layers include `ScanlineOverlay` in AppShell, `neon-glass-card` styles in `global.css`, and a subtle body cyber-grid texture.

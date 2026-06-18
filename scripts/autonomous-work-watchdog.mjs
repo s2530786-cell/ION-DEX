@@ -519,6 +519,11 @@ function tick(state) {
 
   if (!managedRunning) {
     for (const step of active.steps) {
+      if (step.kind === "git-commit-push" && step.status === "failed" && allRequiredDone(active, step)) {
+        step.status = "pending";
+        step.error = undefined;
+        log(`REQUEUE step=${step.id} failed git-commit-push -> pending`);
+      }
       if (step.status !== "pending") continue;
       if (!allRequiredDone(active, step)) continue;
 

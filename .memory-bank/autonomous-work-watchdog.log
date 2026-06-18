@@ -62,3 +62,11 @@
 [2026-06-14T12:31:36.271Z] REQUEUE verify-100 resume startAt=25 initialPassed=24
 [2026-06-14T12:31:36.276Z] START step=verify-100 RESUME from 25 (passed=24)
 [2026-06-14T12:31:36.529Z] watchdog once (auto-advance on step OK)
+[2026-06-18T14:58:55.437Z] watchdog once (auto-advance on step OK)
+[2026-06-18T15:06:48.307Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-18T15:06:48.314Z] watchdog once (auto-advance on step OK)
+[2026-06-18T15:06:48.328Z] REQUEUE verify-100 resume startAt=47 initialPassed=46
+[2026-06-18T15:06:48.333Z] START step=verify-100 RESUME from 47 (passed=46)
+[2026-06-18T15:06:48.334Z] REQUEUE verify-100 resume startAt=47 initialPassed=46
+[2026-06-18T15:06:48.339Z] START step=verify-100 RESUME from 47 (passed=46)
+[2026-06-18T15:06:48.964Z] FAIL step=verify-100 exit=1

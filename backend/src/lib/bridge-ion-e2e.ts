@@ -87,3 +87,118 @@ export function simulateBscToIonRound(
   simulator.creditFromBscLock(relayer, credit);
   return credit;
 }
+
+/** ION → BSC release message awaiting a relayer quorum (dual-sign). */
+export type BridgeReleaseMessage = {
+  /** Unique release nonce (idempotency key). */
+  nonce: string;
+  token: string;
+  user: string;
+  amount: bigint;
+};
+
+export type BridgeReleaseResult = {
+  nonce: string;
+  released: boolean;
+  signatures: number;
+};
+
+/**
+ * BSC-side dual-sign release relay (off-chain mirror of `BridgeRelay.attestInbound`).
+ * A release only executes after `quorum` DISTINCT authorized relayers attest the same
+ * nonce-bound message; below quorum it stays pending, and a consumed nonce can never be replayed.
+ */
+export class BridgeQuorumRelay {
+  private readonly relayers = new Set<string>();
+  private readonly quorum: number;
+  private readonly attestations = new Map<string, Set<string>>();
+  private readonly attestedMessages = new Map<string, string>();
+  private readonly consumed = new Set<string>();
+  private readonly released = new Map<string, bigint>();
+
+  constructor(quorum: number) {
+    if (!Number.isInteger(quorum) || quorum < 1) {
+      throw new Error("ION_BRIDGE_INVALID_QUORUM");
+    }
+    this.quorum = quorum;
+  }
+
+  addRelayer(address: string): void {
+    this.relayers.add(address.toLowerCase());
+  }
+
+  relayerCount(): number {
+    return this.relayers.size;
+  }
+
+  isReleased(nonce: string): boolean {
+    return this.consumed.has(nonce.toLowerCase());
+  }
+
+  signatureCount(nonce: string): number {
+    return this.attestations.get(nonce.toLowerCase())?.size ?? 0;
+  }
+
+  releasedAmount(nonce: string): bigint {
+    return this.released.get(nonce.toLowerCase()) ?? 0n;
+  }
+
+  private messageFingerprint(message: BridgeReleaseMessage): string {
+    return [
+      message.nonce.toLowerCase(),
+      message.token.toLowerCase(),
+      message.user.toLowerCase(),
+      message.amount.toString(),
+    ].join("|");
+  }
+
+  /**
+   * Record one relayer attestation. Returns the release result; `released` is true
+   * only on the call that reaches quorum.
+   */
+  attest(relayer: string, message: BridgeReleaseMessage): BridgeReleaseResult {
+    const signer = relayer.toLowerCase();
+    if (!this.relayers.has(signer)) {
+      throw new Error("ION_BRIDGE_UNAUTHORIZED_RELAYER");
+    }
+    if (message.token === "" || message.user === "") {
+      throw new Error("ION_BRIDGE_ZERO_ADDRESS");
+    }
+    if (message.amount <= 0n) {
+      throw new Error("ION_BRIDGE_ZERO_AMOUNT");
+    }
+    const nonce = message.nonce.toLowerCase();
+    if (nonce === "" || nonce === "0x") {
+      throw new Error("ION_BRIDGE_ZERO_NONCE");
+    }
+    if (this.consumed.has(nonce)) {
+      throw new Error("ION_BRIDGE_DUPLICATE_NONCE");
+    }
+
+    const fingerprint = this.messageFingerprint(message);
+    const attestedMessage = this.attestedMessages.get(nonce);
+    if (attestedMessage && attestedMessage !== fingerprint) {
+      throw new Error("ION_BRIDGE_MESSAGE_MISMATCH");
+    }
+
+    let signers = this.attestations.get(nonce);
+    if (!signers) {
+      signers = new Set<string>();
+      this.attestations.set(nonce, signers);
+      this.attestedMessages.set(nonce, fingerprint);
+    }
+    if (signers.has(signer)) {
+      throw new Error("ION_BRIDGE_DOUBLE_VOTE");
+    }
+    signers.add(signer);
+
+    if (signers.size >= this.quorum) {
+      this.consumed.add(nonce);
+      this.released.set(nonce, message.amount);
+      this.attestations.delete(nonce);
+      this.attestedMessages.delete(nonce);
+      return { nonce: message.nonce, released: true, signatures: this.quorum };
+    }
+    return { nonce: message.nonce, released: false, signatures: signers.size };
+  }
+}

@@ -30,22 +30,32 @@
         {
           "id": "verify-100",
           "title": "P1 Swap/Dashboard frontend gate verify-100",
-          "status": "running",
+          "status": "failed",
           "kind": "verify-100",
           "allowExternal": true,
           "requires": [
             "verify-full"
           ],
           "note": "stale 2026-06-13 run cleared after 2026-06-14 frontend verify recovery; rerun with a fresh guarded proof before W6",
-          "external": true,
+          "external": false,
           "resume": {
-            "startAt": 25,
-            "initialPassed": 24,
-            "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260614-171724.txt",
-            "logPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-20260614-171724.log"
+            "startAt": 47,
+            "initialPassed": 46,
+            "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260618-190510.txt",
+            "logPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-20260618-190510.log"
           },
-          "managedPid": 107152,
-          "error": "interrupted at 24/100; auto-resume from 25"
+          "managedPid": 49164,
+          "error": "verify-100 exit 1"
+        },
+        {
+          "id": "git-commit-push-p1-dashboard",
+          "title": "P1 Dashboard guarded commit + push after verify-100 GREEN",
+          "status": "pending",
+          "kind": "git-commit-push",
+          "batch": "P1-DASHBOARD",
+          "requires": [
+            "verify-100"
+          ]
         },
         {
           "id": "w6-agent-kickoff",
@@ -54,7 +64,7 @@
           "kind": "shell",
           "command": "echo w6-sandwich-bridge-agent-phase",
           "requires": [
-            "verify-100"
+            "git-commit-push-p1-dashboard"
           ],
           "note": "actual W6 progress continues through SESSION_STATE and guarded workflow"
         }

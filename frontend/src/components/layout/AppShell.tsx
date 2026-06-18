@@ -14,6 +14,7 @@ import {
 import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 import { AuroraGalaxyBackground } from "@/components/background/AuroraGalaxyBackground";
+import { ScanlineOverlay } from "@/components/ui/ScanlineOverlay";
 import { getNavGroups, navLabelForPage } from "@/components/layout/appNav";
 import { FooterLegal } from "@/components/layout/FooterLegal";
 import { NeonButton } from "@/components/ui/NeonButton";
@@ -141,10 +142,11 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
     <div className="relative flex min-h-0 w-full flex-1 flex-col text-white">
       <IonConnectModalBridge />
       <AuroraGalaxyBackground />
+      <ScanlineOverlay opacity={0.025} speed={10} />
       <div className="relative z-0 mx-auto flex min-h-[100dvh] min-h-[100svh] w-full max-w-[1440px] flex-col md:flex-row md:px-4 md:py-4 lg:px-6">
         <aside
           aria-label={isZh ? "侧边栏" : "Sidebar"}
-          className="hidden min-h-0 w-[15.5rem] shrink-0 flex-col border-white/10 bg-slate-950/55 md:flex md:rounded-l-[1.75rem] md:border md:border-r-0"
+          className="hidden min-h-0 w-[15.5rem] shrink-0 flex-col border-cyan-400/10 bg-black/75 md:flex md:rounded-l-[1.75rem] md:border md:border-r-0 md:shadow-cyberPanel backdrop-blur-xl"
           data-testid="app-sidebar"
         >
           <div className="shrink-0 p-4 pb-2">
@@ -174,7 +176,7 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
               <motion.aside
                 animate={{ x: 0 }}
                 aria-label={isZh ? "移动端导航" : "Mobile navigation"}
-                className="fixed inset-y-0 left-0 z-50 flex w-[min(18rem,86vw)] min-h-0 flex-col border-r border-white/10 bg-slate-950/95 shadow-[0_0_40px_rgba(36,247,255,0.2)] backdrop-blur-xl md:hidden"
+                className="fixed inset-y-0 left-0 z-50 flex w-[min(18rem,86vw)] min-h-0 flex-col border-r border-cyan-400/15 bg-black/92 shadow-cyberPanel backdrop-blur-xl md:hidden"
                 data-testid="app-mobile-nav"
                 exit={{ x: "-100%" }}
                 initial={{ x: "-100%" }}
@@ -204,8 +206,8 @@ export function AppShell({ activePage, children, onPageChange }: AppShellProps) 
           ) : null}
         </AnimatePresence>
 
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-none border-0 border-white/10 bg-slate-950/45 shadow-[0_0_70px_rgba(36,247,255,0.14)] backdrop-blur-xl md:rounded-[1.75rem] md:border">
-          <div className="sticky top-0 z-30 shrink-0 border-b border-white/10 bg-slate-950/92 backdrop-blur-md">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-none border-0 border-cyan-400/10 bg-black/70 shadow-cyberPanel backdrop-blur-xl md:rounded-[1.75rem] md:border">
+          <div className="sticky top-0 z-30 shrink-0 border-b border-cyan-400/10 bg-black/88 backdrop-blur-md">
           <header className="flex shrink-0 flex-nowrap items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-5 sm:py-3">
             <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
               <button

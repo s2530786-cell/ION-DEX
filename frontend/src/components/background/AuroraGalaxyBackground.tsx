@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 
-const PARTICLE_COUNT = 240;
+const PARTICLE_COUNT = 280;
 
 type Particle = {
   angle: number;
@@ -37,11 +37,11 @@ export function AuroraGalaxyBackground() {
     const particles: Particle[] = Array.from({ length: PARTICLE_COUNT }, (_, index) => {
       const ring = index % 24;
       return {
-        alpha: 0.28 + (index % 9) * 0.035,
+        alpha: 0.32 + (index % 9) * 0.04,
         angle: index * 2.399963,
         distance: 90 + ring * 18 + (index % 7) * 8,
-        hue: index % 3 === 0 ? 186 : index % 3 === 1 ? 286 : 315,
-        radius: 0.7 + (index % 5) * 0.22,
+        hue: index % 3 === 0 ? 180 : index % 3 === 1 ? 270 : 300,
+        radius: 0.75 + (index % 5) * 0.24,
         speed: 0.00018 + (index % 11) * 0.000015,
       };
     });
@@ -77,8 +77,8 @@ export function AuroraGalaxyBackground() {
 
         drawingContext.beginPath();
         drawingContext.fillStyle = `hsla(${particle.hue}, 100%, 68%, ${particle.alpha * pulse})`;
-        drawingContext.shadowColor = `hsla(${particle.hue}, 100%, 62%, 0.72)`;
-        drawingContext.shadowBlur = 14;
+        drawingContext.shadowColor = `hsla(${particle.hue}, 100%, 62%, 0.82)`;
+        drawingContext.shadowBlur = 16;
         drawingContext.arc(x, y, particle.radius * (1 + pulse), 0, Math.PI * 2);
         drawingContext.fill();
       }
@@ -99,13 +99,13 @@ export function AuroraGalaxyBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-[#03050f]"
+      className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-ion-ink"
     >
-      <canvas ref={canvasRef} className="aurora-canvas absolute inset-0 opacity-80" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(37,99,255,0.22),transparent_32%),radial-gradient(circle_at_20%_85%,rgba(255,59,212,0.18),transparent_28%),linear-gradient(180deg,#03050f_0%,rgba(3,5,15,0.94)_52%,#03050f_100%)]" />
+      <canvas ref={canvasRef} className="aurora-canvas absolute inset-0 opacity-85" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(0,255,255,0.14),transparent_30%),radial-gradient(circle_at_18%_82%,rgba(255,0,255,0.12),transparent_28%),linear-gradient(180deg,#010104_0%,rgba(1,1,4,0.96)_52%,#010104_100%)]" />
       {backgroundMode === "aurora" ? <AuroraLayer /> : <GalaxyLayer />}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,5,15,0.08),rgba(3,5,15,0.74))]" />
-      <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle,rgba(255,255,255,0.85)_1px,transparent_1.2px)] [background-size:38px_38px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(1,1,4,0.12),rgba(1,1,4,0.82))]" />
+      <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle,rgba(255,255,255,0.9)_1px,transparent_1.2px)] [background-size:38px_38px]" />
     </div>
   );
 }
@@ -113,8 +113,8 @@ export function AuroraGalaxyBackground() {
 function AuroraLayer() {
   return (
     <>
-      <div className="ion-bg-aurora-anim absolute left-[-12%] top-[16%] h-[42rem] w-[92rem] rounded-[50%] bg-[linear-gradient(90deg,transparent,rgba(36,247,255,0.34),rgba(141,77,255,0.22),rgba(255,59,212,0.34),transparent)] blur-3xl [animation:ionAuroraFlow_18s_ease-in-out_infinite]" />
-      <div className="absolute right-[-22%] top-[-14%] h-[46rem] w-[70rem] rounded-[50%] bg-[radial-gradient(circle,rgba(36,247,255,0.32),rgba(141,77,255,0.18)_42%,transparent_70%)] blur-3xl" />
+      <div className="ion-bg-aurora-anim absolute left-[-12%] top-[16%] h-[42rem] w-[92rem] rounded-[50%] bg-[linear-gradient(90deg,transparent,rgba(0,255,255,0.28),rgba(96,32,255,0.18),rgba(255,0,255,0.28),transparent)] blur-3xl [animation:ionAuroraFlow_18s_ease-in-out_infinite]" />
+      <div className="absolute right-[-22%] top-[-14%] h-[46rem] w-[70rem] rounded-[50%] bg-[radial-gradient(circle,rgba(0,255,255,0.26),rgba(96,32,255,0.14)_42%,transparent_70%)] blur-3xl" />
     </>
   );
 }
@@ -122,8 +122,8 @@ function AuroraLayer() {
 function GalaxyLayer() {
   return (
     <div className="ion-bg-galaxy-anim absolute left-1/2 top-1/2 h-[64rem] w-[64rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-80 [animation:ionSpinSlow_360s_linear_infinite]">
-      <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_160deg,transparent,rgba(36,247,255,0.28),transparent_24%,rgba(255,59,212,0.3),transparent_55%,rgba(255,209,102,0.18),transparent_78%)] blur-2xl" />
-      <div className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.22),rgba(37,99,255,0.18)_22%,transparent_58%)]" />
+      <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_160deg,transparent,rgba(0,255,255,0.26),transparent_24%,rgba(255,0,255,0.28),transparent_55%,rgba(255,209,102,0.14),transparent_78%)] blur-2xl" />
+      <div className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.18),rgba(96,32,255,0.14)_22%,transparent_58%)]" />
     </div>
   );
 }
