@@ -1,31 +1,28 @@
-# ION-DEX 工程开发铁律 (System Instructions) — v2.0
+# ION-DEX ENGINEERING PROTOCOL
+# Strictly enforce these rules for all code generation.
 
-## 1. 视觉像素级对齐协议
-- **严禁视觉幻觉**：禁止自行设定任何颜色、间距、圆角。必须读取 `/src/lib/design-tokens.ts`。
-- **严禁硬编码**：禁止在组件 CSS 中直接输入 Hex/RGBA 值。所有视觉属性（颜色、间距、圆角）必须导入并引用 DesignTokens 对象。
-- **布局强制栅格化**：所有页面主体必须包裹在 `DEXGridHarness` 组件中。组件的尺寸和位置必须使用 `grid-column: span X` 定义，严禁使用 margin 进行手动对齐。
-- **素材物理约束**：设计图中的 3D 图标必须调用 `/public/assets/icons/` 下的静态文件，禁止用 CSS 绘制。禁止缩放比例不明的 SVG。
+## 1. VISION & UI PROTOCOL (Pixel Perfection)
+- NO HARDCODING: Never use hex/rgba colors, pixel margins, or padding directly in CSS/Tailwind.
+- TOKEN USAGE: All visual attributes MUST be pulled from `src/lib/design-tokens.ts`.
+- GRID ENFORCEMENT: All layouts MUST use `DEXGridHarness`. Do not use arbitrary absolute/fixed positioning.
+- ASSET INTEGRITY: Do not use CSS to draw complex shapes. Use optimized .webp assets from `/public/assets/icons/`.
 
-## 2. 合约安全与确定性协议
-- **后端执行隔离**：所有合约编译、测试任务必须通过 `agent_harness.py` 调度。
-- **零 Mock 原则**：在处理合约逻辑时，必须对接真实开发环境，禁止模拟数据。
-- **防御性编程**：在编写 FunC 代码时，必须包含 Gas 边界检查和 bounce 消息处理。
+## 2. BACKEND & SECURITY (Zero-Mock Policy)
+- AGENT HARNESS: All contract operations (compile/test/audit) MUST be routed through `agent_harness.py`.
+- NO MOCKS: Avoid mocking blockchain states in tests. Use the actual Blueprint test suite.
+- SECURITY FIRST: Every contract function must implement gas-limit checks and consistent error handling.
 
-## 3. 开发工作流 (强制执行)
-- **第一步：分析**。在写代码前，先陈述布局意图（例如：组件将占据 Grid 的 4 列，Padding 调用 spacing.cardPadding）。
-- **第二步：编码**。必须引用定义好的 Token 和组件，确保代码结构高度可预测。
-- **第三步：验证**。写完后自我审查是否符合《视觉对齐协议》。
+## 3. WORKFLOW (The 3-Step Process)
+1. ANALYSIS: Before coding, state the intended Grid coordinates and which tokens will be used.
+2. EXECUTION: Generate code referencing only the provided architectural components.
+3. VERIFICATION: Self-check against this protocol. If in doubt, query the user rather than guessing.
 
-## 4. 像素级校验
-- 在代码生成前，必须输出一份"布局意图说明"。
-- 示例："此组件将占据 Grid 的 4 列，Padding 调用 DesignTokens.spacing.cardPadding，背景使用 DesignTokens.colors.panelBg。"
+## 4. VISUAL RED LINE
+- If UI spacing, alignment, or color visibly deviates from design spec, the AI MUST proactively flag: "This deviates from design spec, I will adjust" — BEFORE the user points it out.
+- "Close enough" is NOT acceptable. Every pixel deviation is a bug.
 
-## 5. 视觉红线 (Visual Red Line)
-- **主动纠错义务**：如果 UI 的间距、对齐、或颜色与设计图存在明显肉眼可见的偏差（例如：卡片边距不对、圆角不对），AI 必须主动在对话中提出"这与设计规范不符，我将进行调整"，而不是在用户指出后才修改。
-- **差不多 = 不合格**：AI 不允许产生"差不多就行"的代码。每个像素偏差都是 Bug。
-
-## 6. 资产洁癖标准 (Asset Quality Gate)
-- 所有 UI 图标必须是高清 WebP 格式，背景必须透明。
-- 图标内边距在切图时统一，禁止用代码拉伸/缩放补偿切图误差。
-- 如果上传的图标素材不符合高清透明标准，AI 必须立即提醒，禁止强行在代码中处理。
-- 图标边缘有锯齿、背景不透明 = 不可用，必须重切。
+## 5. ASSET QUALITY GATE
+- All UI icons MUST be HD WebP format with transparent background.
+- Icon padding must be uniform at export time. Do NOT use code to stretch/scale as compensation.
+- If uploaded icon is not HD transparent, AI MUST alert immediately. Do NOT hack around it in CSS.
+- Jagged edges or non-transparent background = UNUSABLE. Must re-export.

@@ -1,12 +1,5 @@
-/**
- * ION-DEX 视觉协议令牌 (Design Tokens) — v2.0
- * 基于 DEX 设计图精确视觉参数：Deep Space + Neon Glow + Glassmorphism
- * 
- * 铁律：AI 禁止在代码中硬编码任何颜色值，必须从此文件引用。
- * 修改视觉风格只需改此文件，全项目 UI 瞬间同步。
- * 
- * Grid: 12 列标准栅格，组件用 grid-column: span X 定义位置
- */
+// Strict UI Engineering Constants
+// ION-DEX Design Token Protocol — Single Source of Truth for all visual attributes
 export const DesignTokens = {
   colors: {
     background: '#000000',
@@ -16,19 +9,14 @@ export const DesignTokens = {
     neonMagenta: '#ff00ff',
     textPrimary: '#ffffff',
     textSecondary: 'rgba(255, 255, 255, 0.6)',
-  },
+  } as const,
   spacing: {
     gridGap: '20px',
     cardPadding: '24px',
     borderRadius: '28px',
-    pagePadding: '40px',
-  },
+  } as const,
   effects: {
-    glassBlur: 'blur(20px)',
+    glassBlur: 'backdrop-filter: blur(20px)',
     neonShadow: (color: string) => `0 0 15px ${color}66, inset 0 0 10px ${color}33`,
-  },
-  grid: {
-    columns: 12,
-    columnSpan: (n: number) => `span ${n}`,
-  },
+  } as const,
 } as const;
