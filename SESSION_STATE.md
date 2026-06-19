@@ -1,12 +1,45 @@
 # Current Session State
 
-## 当前附加任务 — root validate / audit harness 收口（2026-06-19）
+## PHASE 2: AI Strategy Market - Wangcai Dispatch 2026-06-20 01:00
 
-- **问题**：当前 Windows 环境没有 `make`，`make audit` 返回 `CommandNotFoundException`；改用根项目等价门禁 `npm run validate`。首次验证中，根 `package.json` 的 `test` 脚本错误使用 `node agent_harness.py` 执行 Python 审计器，导致 `SyntaxError`。
-- **修复**：`package.json` 将 `test` 改为 `python3 agent_harness.py --audit`；`agent_harness.py` 显式配置 stdout/stderr 为 UTF-8，避免 Windows 捕获中文审计日志乱码；将 FunC/TVM 必要低层原语 `send_raw_message` / `raw_reserve` 从硬阻断 `CRITICAL_PATTERNS` 调整为非阻断 `SECURITY REVIEW`，保留 `exec(`/`eval(`/`unsafe_op` 为高危阻断。
-- **验证证据**：`node scripts/dev-preflight.mjs` ✅；`npm run validate` ✅（token audit 32 files / 0 violations；合约审计通过，FunC 出站消息/now() 以 REVIEW/WARN 输出）；`powershell -ExecutionPolicy Bypass -File scripts/check-encoding.ps1` ✅ **39757** files UTF-8 without BOM / no NUL；`node scripts/security-preflight.mjs` ✅；ReadLints `package.json` / `agent_harness.py` ✅ no errors。
-- **范围控制**：本轮明确新增修改仅 `package.json`、`agent_harness.py` 与状态记录；工作区其它大量既有改动保持原状，未 commit/push。
-- **下一步**：如需单条完整全仓日志，继续在不中断终端执行 `scripts\verify-full-save-log.cmd --no-pause`；随后进入 W8/verify-100 收口。
+**Priority: P0 - Current highest priority, supersedes all previous tasks**
+
+### Task List
+
+1. **Create AiMarketPage.tsx** (`frontend/src/pages/AiMarketPage.tsx`)
+   - Wrap in DEXGridHarness
+   - Strategy cards: name / return rate / risk level / runtime / fund size
+   - Filters: by risk level, return rate, strategy type
+   - All colors from DesignTokens (src/lib/design-tokens.ts), NO hardcoded hex/rgba
+   - Max 300 lines
+
+2. **Create AiStrategyConfig.tsx** (`frontend/src/components/ai/AiStrategyConfig.tsx`)
+   - User strategy params: fund amount / stop loss & take profit / max slippage
+   - Strategy type selector: Grid / Trend / Arbitrage / Market Making
+   - Max 200 lines
+
+3. **Create aiStrategy service** (`backend/src/services/aiStrategy.ts`)
+   - Strategy CRUD + simulation endpoint
+   - Zero Mock - real file/DB storage
+
+4. **Create aiStrategy routes** (`backend/src/api/aiStrategy.routes.ts`)
+   - REST: GET /api/ai/strategies | POST | GET/:id | PUT/:id | POST/:id/simulate
+
+### Iron Rules (Zero Tolerance)
+- UTF-8 no BOM, verify after read-back
+- tsc --noEmit = 0 errors
+- forge test = 36/36
+- All colors from DesignTokens, no hardcoded values
+- Components <= 300 lines, utils <= 200 lines
+
+### Verify Commands
+```
+npx tsc --noEmit
+D:\openclaw-tools\foundry\bin\forge.exe test --summary
+node scripts/dev-preflight.mjs
+```
+
+CURRENT_PHASE=W9_PHASE2_AI_MARKET
 
 ## 当前附加任务 — dev-preflight strict UI debt allowlist（2026-06-19）
 
