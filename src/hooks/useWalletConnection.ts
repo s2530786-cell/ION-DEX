@@ -52,7 +52,7 @@ export const useWalletConnection = () => {
     setAvailableProviders(detectProviders());
   }, []);
 
-  // Listen for account/chain changes
+  // Listen for account/chain changes from the real wallet
   useEffect(() => {
     const unsubAccounts = onAccountsChanged((accounts) => {
       if (accounts.length === 0) {
@@ -68,6 +68,7 @@ export const useWalletConnection = () => {
         setWallet((prev) => ({
           ...prev,
           address: accounts[0],
+          status: 'connected',
         }));
       }
     });
@@ -144,7 +145,7 @@ export const useWalletConnection = () => {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: '0x38' }],
       });
-      // Chain change event will update state
+      // Chain change event will update state automatically
     } catch (switchError: any) {
       if (switchError.code === 4902) {
         try {
@@ -181,7 +182,7 @@ export const useWalletConnection = () => {
     connectWallet: doConnect,
     disconnectWallet: doDisconnect,
     injectWrongNetworkSimulation: () => {
-      // For testing: simulate wrong network
+      // For dev/testing: simulate wrong network state
       setWallet((prev) => ({
         ...prev,
         status: 'wrong_network',

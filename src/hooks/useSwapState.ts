@@ -1,12 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchPoolData, subscribePoolData, type PoolData } from '../lib/pancakeSwapService';
+import {
+  fetchPoolData,
+  subscribePoolData,
+  executeSwap,
+  approveToken,
+  isWalletAvailable,
+  getWalletAddress,
+  type PoolData,
+} from '../lib/pancakeSwapService';
 
 /**
  * useSwapState — ION-DEX 兑换核心状态机 v2.0
  *
  * 对接真实 PancakeSwap V3 ION/WBNB 池子数据。
- * 零 mock，所有价格来自 BSC 链上。
+ * 零 mock，所有价格来自 BSC 链上，所有交易通过 viem writeContract 执行。
  */
+
+const ION_TOKEN = '0xe1ab61f7b093435204df32f5b3a405de55445ea8';
+const WBNB_TOKEN = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
+const PANCAKE_V3_SWAP_ROUTER = '0x13f4EA83D0bd40E75C8222255bC855a974568Dd4';
 
 export const useSwapState = () => {
   const [fromAmount, setFromAmount] = useState<string>('');
@@ -15,7 +27,7 @@ export const useSwapState = () => {
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [poolData, setPoolData] = useState<PoolData | null>(null);
-  const [slippage, setSlippage] = useState<number>(0.5); // 0.5% default slippage
+  const [slippage, setSlippage] = useState<number>(0.5);
   const [minReceived, setMinReceived] = useState<string>('0');
 
   // Subscribe to real-time pool data
@@ -27,7 +39,7 @@ export const useSwapState = () => {
   }, []);
 
   const exchangeRate = poolData?.ionPrice ?? 0;
-  const networkFee = '0.0003'; // BSC gas ~0.0003 BNB
+  const networkFee = '0.0003';
 
   const updateFromAmount = useCallback((value: string) => {
     if (!value || isNaN(Number(value))) {
@@ -58,48 +70,85 @@ export const useSwapState = () => {
 
     setValidationError(null);
 
-    // Calculate output using real pool price
     const calculatedTarget = numericValue * exchangeRate;
     setToAmount(calculatedTarget.toFixed(4));
 
-    // Calculate price impact based on pool reserves
     const impact = poolData.reserveIon > 0
       ? (numericValue / poolData.reserveIon) * 100
       : 0;
     setPriceImpact(impact);
 
-    // Calculate minimum received (after slippage)
     const minOut = calculatedTarget * (1 - slippage / 100);
     setMinReceived(minOut.toFixed(4));
   }, [exchangeRate, poolData, slippage]);
 
   const executeSwapTransaction = useCallback(async () => {
     if (validationError || !fromAmount) return;
+
+    // Check wallet availability
+    if (!isWalletAvailable()) {
+      setValidationError('请先连接 MetaMask 钱包');
+      return;
+    }
+
+    const account = await getWalletAddress();
+    if (!account) {
+      setValidationError('请先连接钱包');
+      return;
+    }
+
+    if (!poolData || poolData.ionPrice <= 0) {
+      setValidationError('链上价格数据不可用');
+      return;
+    }
+
     setIsExecuting(true);
+    setValidationError(null);
 
     try {
-      // Real swap requires connected wallet + contract interaction
-      // For now, simulate the on-chain delay (real implementation needs wagmi/viem writeContract)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const amountIn = BigInt(Math.floor(Number(fromAmount) * 1e18));
+      const expectedOut = Number(fromAmount) * exchangeRate;
+      const amountOutMin = BigInt(Math.floor(expectedOut * (1 - slippage / 100) * 1e18));
 
-      // In production, this would call:
-      // await writeContract({
-      //   address: PANCAKE_ROUTER,
-      //   abi: ROUTER_ABI,
-      //   functionName: 'exactInputSingle',
-      //   args: [...]
-      // })
+      // Approve SwapRouter to spend ION
+      await approveToken(
+        ION_TOKEN as `0x${string}`,
+        PANCAKE_V3_SWAP_ROUTER as `0x${string}`,
+        amountIn
+      );
+
+      // Execute swap via PancakeSwap V3 SwapRouter
+      await executeSwap({
+        tokenIn: ION_TOKEN as `0x${string}`,
+        tokenOut: WBNB_TOKEN as `0x${string}`,
+        fee: Math.round(poolData.fee * 1_000_000),
+        recipient: account,
+        amountIn,
+        amountOutMin,
+        deadline: BigInt(Math.floor(Date.now() / 1000) + 1800), // 30 min deadline
+      });
+
+      // Refresh pool data after swap
+      const freshData = await fetchPoolData();
+      setPoolData(freshData);
 
       setFromAmount('');
       setToAmount('');
       setPriceImpact(0);
       setMinReceived('0');
-    } catch {
-      setValidationError('链上交易失败，请检查钱包余额');
+    } catch (err: any) {
+      const msg = err?.shortMessage || err?.message || '链上交易失败';
+      if (msg.includes('user rejected') || msg.includes('User rejected')) {
+        setValidationError('用户取消了交易');
+      } else if (msg.includes('insufficient')) {
+        setValidationError('余额不足，请检查钱包余额');
+      } else {
+        setValidationError(`链上交易失败: ${msg}`);
+      }
     } finally {
       setIsExecuting(false);
     }
-  }, [validationError, fromAmount]);
+  }, [validationError, fromAmount, poolData, exchangeRate, slippage]);
 
   return {
     fromAmount,

@@ -48,7 +48,7 @@ export const NeonCard: React.FC<NeonCardProps> = ({
             borderBottomWidth: DesignTokens.borders.thin,
             borderStyle: 'solid',
             borderBottomColor: DesignTokens.colors.panelBorder,
-            paddingBottom: DesignTokens.spacing.dividerGap || DesignTokens.spacing.elementGap,
+            paddingBottom: DesignTokens.spacing.elementGap,
             marginBottom: DesignTokens.spacing.cardPadding,
           }}
         >

@@ -30,7 +30,7 @@
         {
           "id": "verify-100",
           "title": "P1 Swap/Dashboard frontend gate verify-100",
-          "status": "running",
+          "status": "failed",
           "kind": "verify-100",
           "allowExternal": true,
           "requires": [
@@ -45,7 +45,7 @@
             "logPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-20260618-222338.log"
           },
           "managedPid": 33328,
-          "error": "interrupted at 10/100; auto-resume from 11"
+          "error": "verify-100 exit 1"
         },
         {
           "id": "git-commit-push-p1-dashboard",

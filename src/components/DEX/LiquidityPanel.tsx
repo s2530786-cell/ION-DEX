@@ -3,10 +3,10 @@ import { DesignTokens } from '../../lib/design-tokens';
 import { useLiquidityState } from '../../hooks/useLiquidityState';
 
 /**
- * LiquidityPanel v2.0 — ION-DEX 恒定乘积流动性资金池管理面板
+ * LiquidityPanel v3.0 — ION-DEX 流动性资金池管理面板
  *
  * Deep Space 深空背景 + 霓虹边框发光 + Glassmorphism 卡片
- * Add/Remove Liquidity 双标签切换 + 头寸列表
+ * Add/Remove Liquidity 双标签切换 + 真实池子 TVL / 24h 交易量
  * 对接真实 PancakeSwap V3 池子数据，零 mock。
  */
 
@@ -107,6 +107,74 @@ export const LiquidityPanel: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Pool stats row: TVL + 24h Volume */}
+          {poolData && (
+            <div className="grid grid-cols-2 gap-3">
+              <div
+                className="flex flex-col gap-1 p-3 rounded-xl"
+                style={{
+                  backgroundColor: DesignTokens.colors.background,
+                  borderWidth: DesignTokens.borders.thin,
+                  borderStyle: 'solid',
+                  borderColor: DesignTokens.colors.surfaceBorder,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: DesignTokens.typography.poolLabel.fontSize,
+                    fontWeight: DesignTokens.typography.poolLabel.fontWeight,
+                    letterSpacing: DesignTokens.typography.poolLabel.letterSpacing,
+                    textTransform: 'uppercase',
+                    color: DesignTokens.colors.textMuted,
+                  }}
+                >
+                  TVL
+                </span>
+                <span
+                  className="font-mono font-bold"
+                  style={{
+                    fontSize: DesignTokens.typography.poolStat.fontSize,
+                    fontWeight: DesignTokens.typography.poolStat.fontWeight,
+                    color: DesignTokens.colors.neonCyan,
+                  }}
+                >
+                  ${poolData.tvl.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                </span>
+              </div>
+              <div
+                className="flex flex-col gap-1 p-3 rounded-xl"
+                style={{
+                  backgroundColor: DesignTokens.colors.background,
+                  borderWidth: DesignTokens.borders.thin,
+                  borderStyle: 'solid',
+                  borderColor: DesignTokens.colors.surfaceBorder,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: DesignTokens.typography.poolLabel.fontSize,
+                    fontWeight: DesignTokens.typography.poolLabel.fontWeight,
+                    letterSpacing: DesignTokens.typography.poolLabel.letterSpacing,
+                    textTransform: 'uppercase',
+                    color: DesignTokens.colors.textMuted,
+                  }}
+                >
+                  24h Volume
+                </span>
+                <span
+                  className="font-mono font-bold"
+                  style={{
+                    fontSize: DesignTokens.typography.poolStat.fontSize,
+                    fontWeight: DesignTokens.typography.poolStat.fontWeight,
+                    color: DesignTokens.colors.textPrimary,
+                  }}
+                >
+                  ${poolData.volume24h.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Add/Remove Tab switcher */}
           <div
@@ -337,7 +405,6 @@ export const LiquidityPanel: React.FC = () => {
           ) : (
             /* Remove liquidity tab */
             <>
-              {/* Position list placeholder */}
               <div
                 className="flex flex-col gap-3 p-6 rounded-2xl items-center justify-center"
                 style={{
@@ -363,7 +430,6 @@ export const LiquidityPanel: React.FC = () => {
                 </p>
               </div>
 
-              {/* Remove liquidity input (delegated) */}
               <div
                 className="flex flex-col gap-2 p-4 rounded-2xl"
                 style={{
