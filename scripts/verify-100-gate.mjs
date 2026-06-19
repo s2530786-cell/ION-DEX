@@ -132,6 +132,11 @@ function workspaceEntries() {
     .sort();
   return paths.flatMap((path) => {
     const abs = join(root, path);
+    // Skip submodule entries — they only register mode changes (e.g. 160000)
+    // and their content hash changes on every fetch without real workspace modifications.
+    if (existsSync(abs) && statSync(abs).isDirectory() && existsSync(join(abs, '.git'))) {
+      return [];
+    }
     const kind = untracked.includes(path) ? "untracked" : "tracked";
     if (existsSync(abs) && statSync(abs).isDirectory()) {
       return [{ path, kind, digest: "DIRECTORY" }];
