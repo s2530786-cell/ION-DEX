@@ -17,7 +17,7 @@ import {
 const ION_TOKEN_BSC = "0xe1ab61f7b093435204df32f5b3a405de55445ea8";
 
 const fallbackConfig: BatchTransferConfig = {
-  contractAddress: "0x0000000000000000000000000000000000000000",
+  contractAddress: ION_TOKEN_BSC,
   ionTokenAddress: ION_TOKEN_BSC,
   maxRecipients: 100,
   feeCurrency: "ION",

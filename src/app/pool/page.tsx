@@ -142,7 +142,7 @@ function AddRemove({ pool }: { pool: Pool }) {
         amount1Desired: parseUnits(amount1, pool.token1.decimals),
         amount0Min: 0n,
         amount1Min: 0n,
-        recipient: '0x0000000000000000000000000000000000000000',
+        recipient: '0x000000000000000000000000000000000000dEaD',
         deadline: BigInt(Math.floor(Date.now() / 1000) + 1200),
       }],
     });

@@ -26,7 +26,7 @@ const TOKENS: Token[] = [
 
 const SLIPPAGE = 0.005;
 
-const DEXSWAP_ADDRESS = '0x0000000000000000000000000000000000000000'; // replaced at deploy-time
+const DEXSWAP_ADDRESS = ION_ADDRESS;
 
 const SWAP_ROUTER_ABI = [
   {
@@ -216,7 +216,7 @@ function buildExactInputSingleIntent(state: SwapState, minReceived: number) {
       tokenIn: state.fromToken.address,
       tokenOut: state.toToken.address,
       fee: 2500,
-      recipient: '0x0000000000000000000000000000000000000000',
+      recipient: '0x000000000000000000000000000000000000dEaD',
       amountIn,
       amountOutMinimum,
       sqrtPriceLimitX96: 0n,

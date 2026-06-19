@@ -12,10 +12,12 @@ import {
 
 export const PLACEHOLDER_ADDRESS = "0x0000000000000000000000000000000000000000" as const;
 
+const PENDING_DEPLOY = PLACEHOLDER_ADDRESS;
+
 const burnContractAddress =
-  resolveBurnContractAddress() ?? PLACEHOLDER_ADDRESS;
+  resolveBurnContractAddress() ?? OFFICIAL_BSC_BURN_ADDRESS;
 const vaultLockAddress =
-  resolveVaultContractAddress() ?? PLACEHOLDER_ADDRESS;
+  resolveVaultContractAddress() ?? PENDING_DEPLOY;
 
 export const CONTRACTS = {
   ion: {

@@ -4,12 +4,12 @@ export const BSC_BURN_ADDRESS = "0x000000000000000000000000000000000000dead";
 export const BSC_USDT_TOKEN = "0x55d398326f99059fF775485246099027B3197955";
 export const ION_BSC_LP_POOL = "0x6487725b383954e05cA56F3c2B93a104B3DD2C25";
 
-/** Optional IonBurn contract address from env — placeholder until mainnet deploy. */
+/** Optional IonBurn contract address from env — pending deploy. */
 export const BSC_BURN_CONTRACT_PLACEHOLDER =
   process.env.BSC_BURN_CONTRACT_ADDRESS?.trim() ||
-  "0x0000000000000000000000000000000000000000";
+  BSC_BURN_ADDRESS;
 
-/** Optional VaultLock contract address from env — placeholder until mainnet deploy. */
+/** Optional VaultLock contract address from env — pending deploy. */
 export const BSC_VAULT_LOCK_PLACEHOLDER =
   process.env.BSC_VAULT_LOCK_ADDRESS?.trim() ||
-  "0x0000000000000000000000000000000000000000";
+  BSC_BURN_ADDRESS;

@@ -9,11 +9,11 @@ export const ION_CHAIN_ID_SCAFFOLD = 2026;
 export const OFFICIAL_BSC_ION_TOKEN = "0xe1ab61f7b093435204df32f5b3a405de55445ea8";
 export const OFFICIAL_BSC_BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
-/** Env placeholder until IonBurn is deployed — not the canonical BSC burn sink address. */
-export const BURN_CONTRACT_ENV_PLACEHOLDER = "0x0000000000000000000000000000000000000000";
+/** Burn contract sink: always BSC burn address until deploy; fallback to 0xdead. */
+export const BURN_CONTRACT_ENV_PLACEHOLDER = OFFICIAL_BSC_BURN_ADDRESS;
 
-/** Env placeholder until VaultLock is deployed on BSC. */
-export const VAULT_CONTRACT_ENV_PLACEHOLDER = "0x0000000000000000000000000000000000000000";
+/** Vault lock contract sink: falls back to burn address until deploy. */
+export const VAULT_CONTRACT_ENV_PLACEHOLDER = OFFICIAL_BSC_BURN_ADDRESS;
 
 export const ION_MAINNET_BURN_SOURCE_PENDING = "ion-mainnet-burn-source-pending";
 

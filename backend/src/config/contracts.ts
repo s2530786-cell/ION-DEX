@@ -7,7 +7,7 @@ import {
   BSC_VAULT_LOCK_PLACEHOLDER,
 } from "../constants/official-ion-addresses.js";
 
-export const PLACEHOLDER_ADDRESS = "0x0000000000000000000000000000000000000000";
+const PENDING_DEPLOY = "0x0000000000000000000000000000000000000000";
 
 export const CONTRACTS = {
   ion: {
@@ -20,7 +20,7 @@ export const CONTRACTS = {
     usdtToken: BSC_USDT_TOKEN,
   },
   bridge: {
-    inboxAddress: PLACEHOLDER_ADDRESS,
+    inboxAddress: PENDING_DEPLOY,
   },
   burn: {
     contractAddress: BSC_BURN_CONTRACT_PLACEHOLDER,
@@ -30,7 +30,7 @@ export const CONTRACTS = {
   },
   batchTransfer: {
     contractAddress:
-      process.env.BATCH_TRANSFER_CONTRACT_ADDRESS?.trim().toLowerCase() || PLACEHOLDER_ADDRESS,
+      process.env.BATCH_TRANSFER_CONTRACT_ADDRESS?.trim().toLowerCase() || PENDING_DEPLOY,
   },
   rpc: {
     bsc: process.env.BSC_RPC_URL ?? "https://bsc-dataseed.binance.org/",
@@ -51,5 +51,5 @@ export const CONTRACTS = {
 } as const;
 
 export function isDeployed(address: string): boolean {
-  return address.toLowerCase() !== PLACEHOLDER_ADDRESS.toLowerCase();
+  return address.toLowerCase() !== PENDING_DEPLOY.toLowerCase();
 }
