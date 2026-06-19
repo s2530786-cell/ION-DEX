@@ -1,5 +1,51 @@
 # Current Session State
 
+## 当前附加任务 — Foundry 合约 lint/security warning cleanup（2026-06-19）
+
+- **已修复**：`contracts/bsc/BSCVault.sol` 移除无效 typecast lint suppression，改用 `SafeCast`；显式拒绝 `type(int256).min` 负 delta；ERC20 lock/release 改为 optional-return 兼容调用，避免 unchecked/non-standard ERC20 transfer 风险。
+- **已修复**：`contracts/bsc/NFTAuction.sol` 删除无效 `forge-lint: disable-file(...)`，引入 `SafeERC20` 覆盖退款、收款、付款；时间比较集中到 `_currentTime()`。
+- **已修复**：`contracts/bsc/LiquidityMine.sol` 的 lockup view 时间判断集中到 `_currentTime()`；`SecurityMatrix.t.sol`、`LiquidityMine.t.sol` 不再用当前 `block.timestamp` 派生 fuzz/warp 输入。
+- **测试补充**：`contracts/test/BSCContracts.t.sol` 新增 no-return ERC20 兼容、false-return ERC20 revert、`type(int256).min` LP shares revert；`contracts/test/BSCVault.stress.t.sol` 增加极值 delta stress。
+- **验证证据**：`node scripts/security-preflight.mjs` ✅；ReadLints 编辑文件 ✅ no errors；静态搜索目标 warning 模式已清除。
+- **当前限制**：本环境 `forge` 不在 PATH，`forge build/test` 返回 `CommandNotFoundException`；多次较长验证命令被外部消息中断。下一步在可用 Foundry 终端跑：`forge build -C contracts`、`forge test -C contracts --match-contract BSCContractsTest`、`forge test -C contracts --match-contract BSCVaultStressTest`，再继续完整 `scripts\verify-full-save-log.cmd --no-pause` / 100-pass gate。
+
+## 当前附加任务 — verify-full 收口：frontend E2E 端口冲突 + audit:high 修复（2026-06-19）
+
+- **已修复**：`frontend/scripts/verify-e2e.mjs` 不再抢固定 `8788/8789`，改为动态分配 verify backend 端口，并修复 `shuttingDown` 声明顺序，解决 `EADDRINUSE 127.0.0.1:8788` 导致后端早退、Playwright 代理 `ECONNREFUSED` 的 verify-full 阻断。
+- **已修复**：前端 high audit 漏洞清零；`frontend/package.json` / `frontend/package-lock.json` 升级 `vite ^8.0.16`、`viem ^2.52.2`、`wagmi ^3.6.17`，并通过 `overrides.ws=8.21.0` 约束嵌套 `ws`；已执行 `npm install` 同步 `node_modules`。
+- **验证证据**：`frontend npm run audit:high` ✅ `found 0 vulnerabilities`；`frontend npm run build` ✅ Vite `8.0.16`；`frontend npm run verify` ✅ **35 passed / 2 skipped**；`node scripts/verify-contracts.mjs` ✅ FunC 13 contracts ×100 `RESULT=GREEN`；`backend npm run verify` ✅ **101/101**；`backend npm run audit:high` ✅；`backend npm run stress` ✅；全仓编码 ✅ **39742** files；Pentagi compose config ✅；PowerShell parser ✅；ReadLints 本轮编辑文件 ✅。
+- **当前限制**：`scripts\verify-full-save-log.cmd --no-pause` 多次被外部中断，最后一次日志停在 encoding check 开头，未能形成单条完整 verify-full 通过日志；但 verify-full 子 gate 已拆分跑完并全部通过。
+- **下一步**：若必须保留单条完整 verify-full 日志，需要在不中断的终端中重跑 `scripts\verify-full-save-log.cmd --no-pause`；否则可继续 W8/verify-100 收口。
+
+## 当前附加任务 — W7 testnet deploy preflight / W7-SKIP（2026-06-19）
+
+- **结论**：W7 测试网广播阶段按安全规则标记为 **W7-SKIP**；当前机器未设置 `ION_DEPLOY_OWNER_ADDRESS`、`ION_DEPLOY_LP_RECIPIENT`、`ION_DEPLOY_TREASURY_RECIPIENT`、`ION_DEPLOY_INSURANCE_RECIPIENT`、`ION_DEPLOY_TOKEN0_ADDRESS`、`ION_DEPLOY_TOKEN1_ADDRESS`、`ION_DEPLOY_ALLOW_LIVE`、`ION_DEPLOY_BROADCAST`、`ION_DEPLOY_WALLET_BASE`、`ION_DEPLOY_WALLET_SEQNO`、`ION_DEPLOY_CONFIRM`，未读取或输出任何密钥/地址值。
+- **已验证**：`node --check scripts/submit-ion-testnet-boc.mjs` ✅；`node --check scripts/deploy-fift-live-send.mjs` ✅；`scripts\deploy-ion-testnet.cmd` ✅，完成 FunC 13/13 编译、合约文件检查、FunC 100× 编译与 phase-2 readiness；因部署 env 缺失安全跳过 live preflight，未发送链上交易。
+- **进程整理**：发现两个 `verify-100` 并行运行，已停止后启动的重复进程，仅保留较早启动的主验证，避免端口/临时日志竞争。
+- **当前状态**：W7 已按无密钥规则 SKIP；主 `verify-100` 正在继续作为 W8/全仓收口验证链路，等待 `PASSED=100 FAILED=0 RESULT=GREEN`。
+
+## 当前附加任务 — workspace hygiene / W7 状态确认（2026-06-19）
+
+- **范围控制**：本轮只处理生成物噪音与状态记录；未修复 `frontend/` 既有 UI_DEBT_WARNINGS，且该项当前仍是 `dev-preflight` warning 级，不是根 `src` 样式审计阻断项。
+- **已清理**：恢复跟踪缓存/运行状态生成物 `.next/dev/cache/turbopack/f37fad94/{CURRENT,LOG}`、`.cursor/hooks/state/continual-learning*.json`、`next-env.d.ts`；未跟踪的 `playwright-report/index.html`、`test-results/.last-run.json`、`tsconfig.tsbuildinfo` 已不再出现在 `git status`。
+- **Git 状态**：已取消暂存 `playwright.config.ts` 与 `src/app/*/page.tsx` 等文件，避免误提交；当前没有 staged changes；本轮没有执行 commit/push。
+- **保留事项**：业务源码、Pentagi 相关脚本/文档、cursor-queue 文件、子模块/外部目录 dirty 状态保持原样，等待对应任务或 Master 指令处理。
+- **当前状态**：CURRENT_PHASE 仍为 W7；下一步继续 W7（CI/CD + 测试网脚本；无密钥则 W7-SKIP）。
+
+## 当前附加任务 — Root DEX token audit cleanup（2026-06-19）
+
+- **已修复**：根项目 `npm run audit` 的 71 处硬编码样式阻断已清零；新增/复用 `src/lib/design-tokens.ts` token，并替换 `src/components/DEX/*` 与 `src/pages/*` 中的硬编码 `px` / `rgba` / hex 样式。
+- **附带修复**：`cursor-queue/p0-visual-qa-pass.md` 去除 UTF-8 BOM，内容不变，解除全仓编码门禁阻断。
+- **验证证据**：`npm run audit` ✅ 27 files / 0 violations；ReadLints 编辑文件 ✅ no errors；`node scripts/dev-preflight.mjs; npm run audit` ✅；`npm run build` ✅ Next.js 16 production build；`powershell -File scripts/check-encoding.ps1` ✅ 39738 files UTF-8 without BOM / no NUL。
+- **当前状态**：CURRENT_PHASE 仍为 W7；`dev-preflight` 仍有既有 frontend UI_DEBT_WARNINGS（warning 级），未在本轮根 `src` token audit cleanup 范围内。
+- **下一步**：继续 W7（CI/CD + 测试网脚本；无密钥则 W7-SKIP）或按 Master 指令处理 frontend UI_DEBT_WARNINGS。
+
+## 当前附加任务 — Pentagi security sandbox profile（2026-06-19）
+
+- **决策**：官方 compose 没有独立 `pentagi-agent` 后端服务；仓库中的 `pentagi-agent` 按受控执行容器模板/默认 pentest image 占位实现，不暴露 Web/API 端口，不制造第二套 Pentagi 后端。
+- **已触碰**：`docker/security-sandbox/docker-compose.yml`、`docker/security-sandbox/README.md`、`scripts/run-pentagi-audit.cmd`、`scripts/register-pentagi-audit-task.ps1`、`docs/99-current-progress.md`。
+- **下一步**：如需实际启动，运行 `scripts\run-pentagi-audit.cmd`；如需注册每日任务，运行 `.\scripts\register-pentagi-audit-task.ps1 -Time 02:30`。
+
 ## 🤖 全自动工单 W 系列 — 2026-05-25（当前执行队列）
 
 **主文档**：[`docs/cursor-autonomous-work-order-2026-05-25.md`](docs/cursor-autonomous-work-order-2026-05-25.md)  

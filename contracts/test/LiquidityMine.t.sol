@@ -82,7 +82,7 @@ contract LiquidityMineTest is Test {
         vm.expectRevert(bytes("Lockup active"));
         mine.unstake(poolIonUsdt, 100 ether);
 
-        vm.warp(block.timestamp + 8 days);
+        vm.warp(1_900_000_000 + 8 days);
         mine.unstake(poolIonUsdt, 100 ether);
         vm.stopPrank();
 

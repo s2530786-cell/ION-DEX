@@ -49,7 +49,7 @@ export const WalletHarness: React.FC = () => {
       className="relative rounded-3xl overflow-hidden"
       style={{
         background: DesignTokens.colors.background,
-        boxShadow: `0 0 60px ${DesignTokens.colors.cyanOverlay}, 0 0 120px rgba(0,0,0,0.5)`,
+        boxShadow: DesignTokens.effects.panelOuterGlowCyan,
       }}
     >
       <div
@@ -163,7 +163,7 @@ export const WalletHarness: React.FC = () => {
                   <span
                     className="px-2 py-0.5 rounded font-bold uppercase"
                     style={{
-                      fontSize: '10px',
+                      fontSize: DesignTokens.dimensions.microTextSize,
                       backgroundColor: DesignTokens.colors.cyanOverlay,
                       color: DesignTokens.colors.neonCyan,
                     }}
@@ -213,9 +213,9 @@ export const WalletHarness: React.FC = () => {
                   onClick={() => connectWallet('metamask')}
                   className="w-full py-3 rounded-xl font-bold transition-all duration-300 hover:scale-[1.02]"
                   style={{
-                    background: `linear-gradient(135deg, ${DesignTokens.colors.neonCyan} 0%, #0088cc 100%)`,
+                    background: DesignTokens.gradients.walletPrimary,
                     color: DesignTokens.colors.background,
-                    boxShadow: `0 0 20px ${DesignTokens.colors.neonCyan}40`,
+                    boxShadow: DesignTokens.effects.walletButtonCyan,
                     fontSize: DesignTokens.typography.buttonLabel.fontSize,
                     letterSpacing: DesignTokens.typography.buttonLabel.letterSpacing,
                   }}
@@ -288,7 +288,7 @@ export const WalletHarness: React.FC = () => {
               style={{
                 backgroundColor: DesignTokens.colors.neonMagenta,
                 color: DesignTokens.colors.textPrimary,
-                boxShadow: `0 0 20px ${DesignTokens.colors.neonMagenta}40`,
+                boxShadow: DesignTokens.effects.walletButtonMagenta,
                 fontSize: DesignTokens.typography.buttonLabel.fontSize,
                 letterSpacing: DesignTokens.typography.buttonLabel.letterSpacing,
               }}

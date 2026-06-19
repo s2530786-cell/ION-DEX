@@ -1,7 +1,6 @@
-# ION DEX Visual Regression Testing Configuration
-# Based on Playwright + pixelmatch (lightweight, zero external service needed)
+// ION DEX Visual Regression Testing Configuration
+// Based on Playwright + pixelmatch (lightweight, zero external service needed)
 
-# Configuration file
 import { defineConfig } from 'playwright/test';
 
 export default defineConfig({

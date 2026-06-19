@@ -26,8 +26,10 @@ PROGRAM{
   DECLPROC storage::save
   DECLPROC fee::send_native
   DECLPROC fee::burn_coins
+  DECLPROC fee_dist::validate_bps
   DECLPROC handle_deposit_ion_fee
   DECLPROC handle_distribute_ion_fee
+  DECLPROC handle_set_recipients
   DECLPROC recv_internal
   81606 DECLMETHOD get_accrued_fees
   108451 DECLMETHOD get_total_distributed
@@ -43,10 +45,8 @@ PROGRAM{
   DECLGLOBVAR ctx::msg_value_val
   DECLGLOBVAR storage::owner_address
   DECLGLOBVAR storage::router_address
-  DECLGLOBVAR storage::team_address
-  DECLGLOBVAR storage::staking_address
-  DECLGLOBVAR storage::treasury_address
-  DECLGLOBVAR storage::operations_address
+  DECLGLOBVAR storage::master_address
+  DECLGLOBVAR storage::rewards_treasury_address
   DECLGLOBVAR storage::accrued_fees
   DECLGLOBVAR storage::total_distributed
   ctx::init PROCINLINE:<{
@@ -280,21 +280,15 @@ PROGRAM{
     storage::router_address SETGLOB
     LDMSGADDR	//  _11 ds
     SWAP	//  ds _11
-    storage::team_address SETGLOB
+    storage::master_address SETGLOB
     LDMSGADDR	//  _14 ds
     SWAP	//  ds _14
-    storage::staking_address SETGLOB
-    LDMSGADDR	//  _17 ds
+    storage::rewards_treasury_address SETGLOB
+    LDGRAMS	//  _17 ds
     SWAP	//  ds _17
-    storage::treasury_address SETGLOB
-    LDMSGADDR	//  _20 ds
-    SWAP	//  ds _20
-    storage::operations_address SETGLOB
-    LDGRAMS	//  _23 ds
-    SWAP	//  ds _23
     storage::accrued_fees SETGLOB
-    LDGRAMS	//  _26 ds
-    SWAP	//  ds _26
+    LDGRAMS	//  _20 ds
+    SWAP	//  ds _20
     storage::total_distributed SETGLOB
     ENDS
   }>
@@ -305,19 +299,15 @@ PROGRAM{
     STSLICER	//  _2
     storage::router_address GETGLOB	//  _2 _3
     STSLICER	//  _4
-    storage::team_address GETGLOB	//  _4 _5
+    storage::master_address GETGLOB	//  _4 _5
     STSLICER	//  _6
-    storage::staking_address GETGLOB	//  _6 _7
+    storage::rewards_treasury_address GETGLOB	//  _6 _7
     STSLICER	//  _8
-    storage::treasury_address GETGLOB	//  _8 _9
-    STSLICER	//  _10
-    storage::operations_address GETGLOB	//  _10 _11
-    STSLICER	//  _12
-    storage::accrued_fees GETGLOB	//  _12 _13
-    STGRAMS	//  _14
-    storage::total_distributed GETGLOB	//  _14 _15
-    STGRAMS	//  _16
-    ENDC	//  _17
+    storage::accrued_fees GETGLOB	//  _8 _9
+    STGRAMS	//  _10
+    storage::total_distributed GETGLOB	//  _10 _11
+    STGRAMS	//  _12
+    ENDC	//  _13
     c4 POP
   }>
   fee::send_native PROCINLINE:<{
@@ -363,6 +353,9 @@ PROGRAM{
       SENDRAWMSG
     }>
   }>
+  fee_dist::validate_bps PROCINLINE:<{
+    // 
+  }>
   handle_deposit_ion_fee PROC:<{
     //  amount
     DUP	//  amount amount
@@ -384,55 +377,58 @@ PROGRAM{
     SWAP	//  _12 reserve
     GREATER	//  _13
     102 THROWIFNOT
+    fee_dist::validate_bps INLINECALLDICT
     storage::accrued_fees GETGLOB	//  distributable
     DUP
-    3500 PUSHINT
-    10000 PUSHINT	//  distributable distributable _18=3500 _19=10000
+    5000 PUSHINT
+    10000 PUSHINT	//  distributable distributable _19=5000 _20=10000
     math::mul_div INLINECALLDICT	//  distributable burn_amt
     OVER
     2500 PUSHINT
-    10000 PUSHINT	//  distributable burn_amt distributable _22=2500 _23=10000
-    math::mul_div INLINECALLDICT	//  distributable burn_amt team_amt
-    s2 PUSH
-    2000 PUSHINT
-    10000 PUSHINT	//  distributable burn_amt team_amt distributable _26=2000 _27=10000
-    math::mul_div INLINECALLDICT	//  distributable burn_amt team_amt staking_amt
-    s3 PUSH
-    1500 PUSHINT
-    10000 PUSHINT	//  distributable burn_amt team_amt staking_amt distributable _30=1500 _31=10000
-    math::mul_div INLINECALLDICT	//  distributable burn_amt team_amt staking_amt treasury_amt
-    s4 s3 PUSH2	//  distributable burn_amt team_amt staking_amt treasury_amt distributable burn_amt
-    SUB	//  distributable burn_amt team_amt staking_amt treasury_amt _34
-    s3 PUSH	//  distributable burn_amt team_amt staking_amt treasury_amt _34 team_amt
-    SUB	//  distributable burn_amt team_amt staking_amt treasury_amt _35
-    s2 PUSH	//  distributable burn_amt team_amt staking_amt treasury_amt _35 staking_amt
-    SUB	//  distributable burn_amt team_amt staking_amt treasury_amt _36
-    OVER	//  distributable burn_amt team_amt staking_amt treasury_amt _36 treasury_amt
-    SUB	//  distributable burn_amt team_amt staking_amt treasury_amt ops_amt
-    s0 s4 XCHG	//  distributable ops_amt team_amt staking_amt treasury_amt burn_amt
+    10000 PUSHINT	//  distributable burn_amt distributable _23=2500 _24=10000
+    math::mul_div INLINECALLDICT	//  distributable burn_amt master_amt
+    s2 s1 PUSH2	//  distributable burn_amt master_amt distributable burn_amt
+    SUB	//  distributable burn_amt master_amt _27
+    OVER	//  distributable burn_amt master_amt _27 master_amt
+    SUB	//  distributable burn_amt master_amt rwt_amt
+    s0 s2 XCHG	//  distributable rwt_amt master_amt burn_amt
     fee::burn_coins INLINECALLDICT
-    storage::team_address GETGLOB	//  distributable ops_amt team_amt staking_amt treasury_amt _39
-    s0 s3 XCHG2
-    1 PUSHINT	//  distributable ops_amt treasury_amt staking_amt _39 team_amt _40=1
-    fee::send_native INLINECALLDICT
-    storage::staking_address GETGLOB	//  distributable ops_amt treasury_amt staking_amt _42
+    storage::master_address GETGLOB	//  distributable rwt_amt master_amt _30
     SWAP
-    1 PUSHINT	//  distributable ops_amt treasury_amt _42 staking_amt _43=1
+    1 PUSHINT	//  distributable rwt_amt _30 master_amt _31=1
     fee::send_native INLINECALLDICT
-    storage::treasury_address GETGLOB	//  distributable ops_amt treasury_amt _45
+    storage::rewards_treasury_address GETGLOB	//  distributable rwt_amt _33
     SWAP
-    1 PUSHINT	//  distributable ops_amt _45 treasury_amt _46=1
+    1 PUSHINT	//  distributable _33 rwt_amt _34=1
     fee::send_native INLINECALLDICT
-    storage::operations_address GETGLOB	//  distributable ops_amt _48
-    SWAP
-    1 PUSHINT	//  distributable _48 ops_amt _49=1
-    fee::send_native INLINECALLDICT
-    storage::total_distributed GETGLOB	//  distributable _51
-    SWAP	//  _51 distributable
-    ADD	//  _53
+    storage::total_distributed GETGLOB	//  distributable _36
+    SWAP	//  _36 distributable
+    ADD	//  _38
     storage::total_distributed SETGLOB
-    0 PUSHINT	//  _55=0
+    0 PUSHINT	//  _40=0
     storage::accrued_fees SETGLOB
+    storage::save INLINECALLDICT
+  }>
+  handle_set_recipients PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::owner_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    108 THROWIFNOT
+    ctx::body INLINECALLDICT	//  body
+    LDMSGADDR	//  _9 body
+    SWAP	//  body _9
+    storage::owner_address SETGLOB
+    LDMSGADDR	//  _12 body
+    SWAP	//  body _12
+    storage::router_address SETGLOB
+    LDMSGADDR	//  _15 body
+    SWAP	//  body _15
+    storage::master_address SETGLOB
+    LDMSGADDR	//  _28 _27
+    DROP	//  _18
+    storage::rewards_treasury_address SETGLOB
+    fee_dist::validate_bps INLINECALLDICT
     storage::save INLINECALLDICT
   }>
   recv_internal PROC:<{
@@ -462,9 +458,9 @@ PROGRAM{
       OR	//  _25
       107 THROWIFNOT
       ctx::body INLINECALLDICT	//  body
-      64 LDU	//  _52 _51
+      64 LDU	//  _56 _55
       NIP	//  body
-      LDGRAMS	//  _54 _53
+      LDGRAMS	//  _58 _57
       DROP	//  amount
       handle_deposit_ion_fee CALLDICT
     }>	// 
@@ -482,6 +478,12 @@ PROGRAM{
       107 THROWIFNOT
       handle_distribute_ion_fee CALLDICT
     }>	// 
+    ctx::opcode INLINECALLDICT	//  _49
+    5555555555 PUSHINT	//  _49 _50=5555555555
+    EQUAL	//  _51
+    IFJMP:<{	// 
+      handle_set_recipients CALLDICT
+    }>	// 
     105 THROW
   }>
   get_accrued_fees PROC:<{
@@ -496,9 +498,9 @@ PROGRAM{
   }>
   get_burn_ratio PROC:<{
     // 
-    3500 PUSHINT	//  _0=3500
-    10000 PUSHINT	//  _0=3500 _1=10000
-    DUP	//  _0=3500 _1=10000 _2=10000
+    5000 PUSHINT	//  _0=5000
+    10000 PUSHINT	//  _0=5000 _1=10000
+    DUP	//  _0=5000 _1=10000 _2=10000
     math::mul_div INLINECALLDICT	//  _3
   }>
   get_distributor_data PROC:<{
@@ -506,11 +508,9 @@ PROGRAM{
     storage::load INLINECALLDICT
     storage::owner_address GETGLOB	//  _1
     storage::router_address GETGLOB	//  _1 _2
-    storage::team_address GETGLOB	//  _1 _2 _3
-    storage::staking_address GETGLOB	//  _1 _2 _3 _4
-    storage::treasury_address GETGLOB	//  _1 _2 _3 _4 _5
-    storage::operations_address GETGLOB	//  _1 _2 _3 _4 _5 _6
-    storage::accrued_fees GETGLOB	//  _1 _2 _3 _4 _5 _6 _7
-    storage::total_distributed GETGLOB	//  _1 _2 _3 _4 _5 _6 _7 _8
+    storage::master_address GETGLOB	//  _1 _2 _3
+    storage::rewards_treasury_address GETGLOB	//  _1 _2 _3 _4
+    storage::accrued_fees GETGLOB	//  _1 _2 _3 _4 _5
+    storage::total_distributed GETGLOB	//  _1 _2 _3 _4 _5 _6
   }>
 }END>c

@@ -35,7 +35,7 @@ const StakeInput: React.FC<{ value: string; onChange: (v: string) => void; disab
           disabled={disabled}
           onChange={(e) => onChange(e.target.value)}
           className="bg-transparent flex-1 focus:outline-none font-mono font-bold"
-          style={{ fontSize: '26px', color: T.colors.textPrimary }}
+          style={{ fontSize: T.dimensions.inputValueSize, color: T.colors.textPrimary }}
         />
         <div
           className="flex items-center gap-2 px-4 py-2 rounded-full shrink-0"
@@ -58,9 +58,9 @@ const LockupCard: React.FC<{
     onClick={onClick}
     className="flex items-center justify-between w-full p-3 rounded-xl transition-all hover:scale-[1.01]"
     style={{
-      background: selected ? T.colors.cyanOverlay : 'rgba(0,0,0,0.3)',
+      background: selected ? T.colors.cyanOverlay : T.colors.blackOverlay,
       border: `${T.borders.thin} solid ${selected ? T.colors.cyanBorder : T.colors.surfaceBorder}`,
-      boxShadow: selected ? `0 0 15px ${T.colors.neonCyan}20` : 'none',
+      boxShadow: selected ? T.effects.tabGlow : 'none',
       transition: `all ${T.animation.durationNormal} ${T.animation.easeOut}`,
     }}
   >
@@ -88,7 +88,7 @@ const ProjectionCard: React.FC<{ amount: string; apy: string; days: number }> = 
   return (
     <div
       className="grid grid-cols-2 gap-3 p-3 rounded-xl"
-      style={{ backgroundColor: 'rgba(0,0,0,0.3)', border: `${T.borders.thin} solid ${T.colors.surfaceBorder}` }}
+      style={{ backgroundColor: T.colors.blackOverlay, border: `${T.borders.thin} solid ${T.colors.surfaceBorder}` }}
     >
       <div>
         <span style={{ fontSize: T.typography.caption.fontSize, color: T.colors.textMuted }}>Est. Rewards</span>
@@ -119,7 +119,7 @@ export const StakePanel: React.FC = () => {
         className="relative rounded-3xl overflow-hidden"
         style={{
           background: T.colors.background,
-          boxShadow: `0 0 60px ${T.colors.magentaDark}, 0 0 120px rgba(0,0,0,0.5)`,
+          boxShadow: T.effects.panelOuterGlowMagenta,
         }}
       >
         <div
@@ -185,17 +185,17 @@ export const StakePanel: React.FC = () => {
             className="relative w-full py-4 rounded-2xl font-bold text-sm tracking-widest uppercase transition-all overflow-hidden disabled:opacity-30 disabled:cursor-not-allowed"
             style={{
               background: valid
-                ? `linear-gradient(135deg, ${T.colors.neonViolet} 0%, #6d2fff 100%)`
+                ? T.gradients.buttonPrimaryViolet
                 : T.colors.disabledBg,
               color: valid ? T.colors.background : T.colors.disabledText,
-              boxShadow: valid ? `0 0 30px ${T.colors.neonViolet}40, 0 4px 12px rgba(0,0,0,0.3)` : 'none',
+              boxShadow: valid ? T.effects.actionShadowViolet : 'none',
               transition: `all ${T.animation.durationNormal} ${T.animation.easeOut}`,
             }}
             onMouseEnter={(e) => {
-              if (valid) { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.boxShadow = `0 0 40px ${T.colors.neonViolet}60`; }
+              if (valid) { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.boxShadow = T.effects.actionShadowVioletHover; }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = valid ? `0 0 30px ${T.colors.neonViolet}40` : 'none';
+              e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = valid ? T.effects.actionShadowViolet : 'none';
             }}
           >
             {valid ? `Stake ION · ${lp.apy} APY` : 'Enter Amount'}

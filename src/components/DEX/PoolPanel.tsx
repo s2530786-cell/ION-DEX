@@ -90,7 +90,7 @@ const PoolDetail: React.FC<{ pair: string; tvl: string; apr: string; volume24h: 
           ['Your Liquidity', '$0.00', T.colors.textMuted],
           ['Your Share', '0.00%', T.colors.textMuted],
         ].map(([label, value, color]) => (
-          <div key={label} className="p-3 rounded-xl" style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+          <div key={label} className="p-3 rounded-xl" style={{ backgroundColor: T.colors.blackOverlay }}>
             <span style={{ fontSize: T.typography.caption.fontSize, color: T.colors.textMuted }}>{label}</span>
             <p className="font-mono font-bold mt-1" style={{ fontSize: T.typography.dataValue.fontSize, color }}>{value}</p>
           </div>
@@ -102,7 +102,7 @@ const PoolDetail: React.FC<{ pair: string; tvl: string; apr: string; volume24h: 
           style={{
             background: T.gradients.buttonPrimary,
             color: T.colors.background,
-            boxShadow: `0 0 20px ${T.colors.neonCyan}30`,
+            boxShadow: T.effects.buttonGlow,
             fontSize: T.typography.buttonLabel.fontSize,
             letterSpacing: T.typography.buttonLabel.letterSpacing,
           }}
@@ -140,7 +140,7 @@ export const PoolPanel: React.FC = () => {
         className="relative rounded-3xl overflow-hidden"
         style={{
           background: T.colors.background,
-          boxShadow: `0 0 60px ${T.colors.cyanOverlay}, 0 0 120px rgba(0,0,0,0.5)`,
+          boxShadow: T.effects.panelOuterGlowCyan,
         }}
       >
         <div

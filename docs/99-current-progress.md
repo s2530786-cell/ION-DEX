@@ -1,5 +1,55 @@
 # Current Progress
 
+## 2026-06-19 Foundry 合约 lint/security warning cleanup
+
+- **范围**：按计划处理 Foundry lint/security 警告，聚焦 BSC Solidity 合约与测试；未触碰 FunC 逻辑。
+- **修复**：`contracts/bsc/BSCVault.sol` 移除无效 `forge-lint` typecast suppression，改用 OpenZeppelin `SafeCast`；对 `type(int256).min` 负数 delta 增加显式业务 revert；ERC20 `transfer/transferFrom` 改为 optional-return 兼容调用，覆盖非标准 ERC20。
+- **修复**：`contracts/bsc/NFTAuction.sol` 移除无效 `forge-lint: disable-file(...)`，改用 `SafeERC20` 检查竞价退款、付款和卖家收款返回值；时间判断集中到 `_currentTime()` 便于审计。
+- **修复**：`contracts/bsc/LiquidityMine.sol` 将 `getUserInfo` 的 lockup 时间判断集中到 `_currentTime()`；测试中的 `block.timestamp` 派生值改为固定基准时间，避免 Foundry `block-timestamp` 警告噪音。
+- **测试补充**：`contracts/test/BSCContracts.t.sol` 新增无返回值 ERC20 成功 lock、false-return ERC20 revert、LP shares `type(int256).min` revert；`contracts/test/BSCVault.stress.t.sol` 补极值 delta stress 覆盖。
+- **验证证据**：`node scripts/security-preflight.mjs` ✅；ReadLints 本轮编辑文件 ✅ no errors；静态搜索 `contracts/bsc` 与 `contracts/test` 中 `disable-file` / `forge-lint` / 直接 `block.timestamp` 测试派生 / 直接 ERC20 transfer warning 模式已清除。
+- **当前限制**：本环境 `forge` 不在 PATH（`CommandNotFoundException`），无法本地执行 `forge build/test`；`verify-contracts` 与后端短测试命令多次被外部消息中断，未形成完整日志。下一步需在装有 Foundry 的终端执行 `forge test -C contracts --match-contract BSCContractsTest`、`forge test -C contracts --match-contract BSCVaultStressTest`、`forge build -C contracts`。
+
+## 2026-06-19 verify-full 收口：frontend E2E 端口冲突 + audit:high 修复
+
+- **问题 1**：`scripts\verify-full-save-log.cmd --no-pause` 在 Frontend verify 阶段失败；日志显示 `frontend/scripts/verify-e2e.mjs` 选用固定 backend port `8788` 后，后端 `dist/src/server.js` 因 `EADDRINUSE 127.0.0.1:8788` 提前退出，Playwright 代理请求出现 `ECONNREFUSED`。
+- **修复 1**：`frontend/scripts/verify-e2e.mjs` 改为为 verify backend 动态分配非保留端口，保留 `8787/8788/8789` 给 dev/zombie 清理场景；同时将 `shuttingDown` 声明移到 exit handler 注册前，避免早退回调访问未初始化变量。
+- **问题 2**：`frontend npm run audit:high` 报 `form-data`、`vite`、`ws/viem/wagmi` high severity 漏洞，阻断 verify-full 后续步骤。
+- **修复 2**：`frontend/package.json` / `frontend/package-lock.json` 将 `vite` 升至 `^8.0.16`、`viem` 升至 `^2.52.2`、`wagmi` 升至 `^3.6.17`，并通过 npm `overrides` 固定嵌套 `ws` 为 `8.21.0`；执行 `npm install` 同步本地 `node_modules`。
+- **验证**：`frontend npm run audit:high` ✅ `found 0 vulnerabilities`；`frontend npm run build` ✅ Vite `8.0.16` production build；`frontend npm run verify` ✅ Playwright **35 passed / 2 skipped**；`node scripts/verify-contracts.mjs` ✅ FunC 13 contracts ×100 `RESULT=GREEN`；`backend npm run verify` ✅ **101/101**；`backend npm run audit:high` ✅ `found 0 vulnerabilities`；`backend npm run stress` ✅ 9 endpoints ×120 requests `failed=0`；`powershell -File scripts/check-encoding.ps1` ✅ **39742** files UTF-8 without BOM / no NUL；Pentagi compose config ✅；PowerShell parser ✅。
+- **说明**：完整 `verify-full-save-log.cmd --no-pause` 多次被外部中断，最后一次日志停在 encoding check 开头，未给出失败点；因此本轮用 verify-full 的各子 gate 拆分跑完并全部通过。仍保留既有 `dev-preflight` UI_DEBT_WARNINGS（warning 级）。
+
+## 2026-06-19 W7 testnet deploy preflight / W7-SKIP
+
+- **结论**：当前执行环境未配置测试网部署所需 operator env（`ION_DEPLOY_*` 地址、broadcast、wallet、seqno、confirm 等均未设置），因此按安全规则 **不广播、不生成发送交易、不尝试链上提交**，W7 标记为 **W7-SKIP**。
+- **脚本静态检查**：`node --check scripts/submit-ion-testnet-boc.mjs` ✅；`node --check scripts/deploy-fift-live-send.mjs` ✅。
+- **预检编排**：`scripts\deploy-ion-testnet.cmd` ✅；完成 FunC 13/13 编译、`verify-contracts` 合约/文档/phase-2 readiness、FunC 100× 编译 `RESULT=GREEN`；因 `ION_DEPLOY_OWNER_ADDRESS` 等变量缺失安全跳过 live deploy preflight。
+- **验证进程治理**：发现重复 `verify-100` 并行运行；已终止后启动的重复进程，保留较早启动的主 `verify-100` 继续推进，避免端口与临时日志竞争。
+- **下一步**：等待主 `verify-100` 完成全仓收口；若后续需要实际测试网广播，必须在受信机器设置 checklist 中的测试网地址/钱包变量并人工确认 `ION_DEPLOY_CONFIRM="YES BROADCAST to testnet"`。
+
+## 2026-06-19 Workspace hygiene / W7 状态确认
+
+- **范围**：仅处理生成物噪音与状态记录；未进入 `frontend/` UI_DEBT_WARNINGS 修复，当前该项仍为 `dev-preflight` warning 级，不阻断本轮根 `src` token audit cleanup。
+- **清理**：恢复跟踪生成物 `.next/dev/cache/turbopack/f37fad94/{CURRENT,LOG}`、`.cursor/hooks/state/continual-learning*.json`、`next-env.d.ts`；未跟踪测试/构建产物 `playwright-report/index.html`、`test-results/.last-run.json`、`tsconfig.tsbuildinfo` 已清理出状态列表。
+- **Git 安全**：取消暂存此前 staged 的 `playwright.config.ts` 与 `src/app/*/page.tsx`，当前无 staged changes；本轮未 commit、未 push。
+- **保留**：业务源码、Pentagi sandbox 文件、cursor-queue 文档、子模块/外部目录 dirty 状态保持原样，等待对应任务处理。
+- **阶段**：CURRENT_PHASE 仍为 W7；下一步继续 W7（CI/CD + 测试网脚本；无密钥则 W7-SKIP）。
+
+## 2026-06-19 Root DEX token audit cleanup
+
+- **问题**：根项目 `npm run audit` 被 `scripts/audit_tokens.py` 阻断，`src/components/DEX/*` 与 `src/pages/*` 存在 71 处硬编码 `px` / `rgba` / hex 样式。
+- **修复**：扩展 `src/lib/design-tokens.ts`，集中新增外壳 glow、tab/input/action shadow、wallet/nav/starfield gradient、输入字号/微文案/星空尺寸等 token；将 `LiquidityPanel`、`PoolPanel`、`StakePanel`、`SwapPanel`、`WalletHarness`、`DEXConsole` 与 swap/pool/stake/bridge 页面改为引用 DesignTokens。
+- **附带修复**：全仓编码检查发现既有 `cursor-queue/p0-visual-qa-pass.md` 带 UTF-8 BOM，已按 UTF-8 no BOM 重写，内容不变。
+- **验证**：`npm run audit` ✅ `审计完成: 27 个文件, 0 处违规`；编辑文件 lints ✅ no errors；`node scripts/dev-preflight.mjs; npm run audit` ✅；`npm run build` ✅ Next.js production build 成功；`powershell -File scripts/check-encoding.ps1` ✅ 扫描 **39738** files，UTF-8 without BOM / no NUL。
+- **已知事项**：`dev-preflight` 仍报告既有 UI_DEBT_WARNINGS（frontend 路径中的 mock/draft/placeholder/shell/TBD 文案），当前为 warning，未在本轮根 `src` 样式审计修复范围内。
+
+## 2026-06-19 Pentagi security sandbox profile
+
+- **范围**：`docker/security-sandbox/docker-compose.yml` 增加/收口 local-only `pentagi` profile，包含 `pentagi` Web/API、`pentagi-pgvector`、`pentagi-scraper` 与 `pentagi-agent` 受控执行镜像占位；不引入第二套 Pentagi 后端。
+- **脚本**：`scripts/run-pentagi-audit.cmd` 启动 profile；`scripts/register-pentagi-audit-task.ps1` 注册每日 Windows 计划任务。
+- **安全边界**：默认端口绑定 `127.0.0.1`；项目挂载只读；`pentagi-agent` 不暴露端口，作为 `DOCKER_DEFAULT_IMAGE_FOR_PENTEST` 的默认 pentest image 能力。
+- **验证**：`docker compose -f docker/security-sandbox/docker-compose.yml --profile pentagi config --quiet` ✅；`register-pentagi-audit-task.ps1` PowerShell parser ✅；本轮触碰文件字节级检查 UTF-8 no BOM / no NUL ✅。全仓编码检查发现既有 `cursor-queue/p0-visual-qa-pass.md` 带 UTF-8 BOM，非本轮触碰文件。
+
 ## 2026-06-19 W6 Sandwich + Bridge 双重签安全验证完成
 
 - **范围**：W6 Sandwich 防护 + Bridge 双重签/relayer quorum/replay/nonce/payload 绑定验证。

@@ -16,7 +16,7 @@ const NavBar: React.FC = () => (
   <nav
     className="w-full flex items-center justify-between px-8 py-4 z-50"
     style={{
-      background: `linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 80%, transparent 100%)`,
+      background: T.gradients.navFade,
       backdropFilter: T.effects.glassBlur,
       borderBottom: `${T.borders.thin} solid ${T.colors.surfaceBorder}`,
     }}

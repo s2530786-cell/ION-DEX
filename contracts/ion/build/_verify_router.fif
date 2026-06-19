@@ -29,6 +29,7 @@ PROGRAM{
   DECLPROC handle_route_add_liquidity
   DECLPROC handle_pay_to
   DECLPROC handle_vault_pay_to
+  DECLPROC handle_collect_fees
   DECLPROC handle_register_pool
   DECLPROC handle_bridge_execute
   DECLPROC recv_internal
@@ -474,6 +475,34 @@ PROGRAM{
     7 PUSHPOW2	//  _24=0 recipient _33 _34=128
     msgs::send_simple INLINECALLDICT
   }>
+  handle_collect_fees PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::owner_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    107 THROWIFNOT
+    ctx::body INLINECALLDICT	//  body
+    64 LDU	//  query_id body
+    LDMSGADDR	//  query_id token0 body
+    LDMSGADDR	//  query_id token0 _42 _41
+    DROP	//  query_id token0 token1
+    router::pool_key INLINECALLDICT	//  query_id pool_key
+    HASHSU	//  query_id _21
+    storage::pool_dict GETGLOB	//  query_id _21 _22
+    8 PUSHPOW2	//  query_id _21 _22 _23=256
+    DICTUGET
+    NULLSWAPIFNOT	//  query_id pool_val found
+    120 THROWIFNOT
+    0 PUSHINT	//  query_id pool_val _27=0
+    1380698740 PUSHINT	//  query_id pool_val _27=0 _28=1380698740
+    NEWC	//  query_id pool_val _27=0 _28=1380698740 _29
+    32 STU	//  query_id pool_val _27=0 _31
+    s1 s3 XCHG	//  _27=0 pool_val query_id _31
+    64 STU	//  _27=0 pool_val _33
+    ENDC	//  _27=0 pool_val _34
+    7 PUSHPOW2	//  _27=0 pool_val _34 _35=128
+    msgs::send_simple INLINECALLDICT
+  }>
   handle_register_pool PROC:<{
     // 
     ctx::sender INLINECALLDICT	//  _1
@@ -585,42 +614,48 @@ PROGRAM{
       handle_vault_pay_to CALLDICT
     }>	// 
     ctx::opcode INLINECALLDICT	//  _31
-    1263646544 PUSHINT	//  _31 _32=1263646544
+    1380698740 PUSHINT	//  _31 _32=1380698740
     EQUAL	//  _33
+    IFJMP:<{	// 
+      handle_collect_fees CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _35
+    1263646544 PUSHINT	//  _35 _36=1263646544
+    EQUAL	//  _37
     IFJMP:<{	// 
       handle_register_pool CALLDICT
     }>	// 
-    ctx::opcode INLINECALLDICT	//  _35
-    6666666667 PUSHINT	//  _35 _36=6666666667
-    EQUAL	//  _37
+    ctx::opcode INLINECALLDICT	//  _39
+    6666666667 PUSHINT	//  _39 _40=6666666667
+    EQUAL	//  _41
     IFJMP:<{	// 
       handle_bridge_execute CALLDICT
     }>	// 
-    ctx::opcode INLINECALLDICT	//  _39
-    892448914 PUSHINT	//  _39 _40=892448914
-    EQUAL	//  _41
+    ctx::opcode INLINECALLDICT	//  _43
+    892448914 PUSHINT	//  _43 _44=892448914
+    EQUAL	//  _45
     IFJMP:<{	// 
-      ctx::sender INLINECALLDICT	//  _43
-      storage::owner_address GETGLOB	//  _43 _44
-      equal_slices INLINECALLDICT	//  _45
+      ctx::sender INLINECALLDICT	//  _47
+      storage::owner_address GETGLOB	//  _47 _48
+      equal_slices INLINECALLDICT	//  _49
       107 THROWIFNOT
       ctx::body INLINECALLDICT	//  body
-      16 LDU	//  _52 body
-      SWAP	//  body _52
+      16 LDU	//  _56 body
+      SWAP	//  body _56
       storage::protocol_fee_bps SETGLOB
       DUP	//  body body
-      SBITS	//  body _53
-      1 GTINT	//  body _55
+      SBITS	//  body _57
+      1 GTINT	//  body _59
       IF:<{	//  body
-        LDMSGADDR	//  _70 _69
-        DROP	//  _58
+        LDMSGADDR	//  _74 _73
+        DROP	//  _62
         storage::bridge_inbox_address SETGLOB
       }>ELSE<{
         DROP	// 
       }>
-      storage::protocol_fee_bps GETGLOB	//  _60
-      10000 PUSHINT	//  _60 _61=10000
-      LEQ	//  _62
+      storage::protocol_fee_bps GETGLOB	//  _64
+      10000 PUSHINT	//  _64 _65=10000
+      LEQ	//  _66
       121 THROWIFNOT
       storage::save INLINECALLDICT
     }>	// 

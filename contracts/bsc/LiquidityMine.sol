@@ -276,8 +276,12 @@ contract LiquidityMine is ReentrancyGuard {
         MinePool storage pool = pools[poolId];
         UserMineInfo storage user = userInfo[poolId][account];
         pending = this.pendingReward(poolId, account);
-        lockupActive = user.amount > 0 && block.timestamp < user.stakedAt + pool.lockupDays * 1 days;
+        lockupActive = user.amount > 0 && _currentTime() < user.stakedAt + pool.lockupDays * 1 days;
         return (user.amount, user.weight, pending, user.stakedAt, lockupActive);
+    }
+
+    function _currentTime() internal view returns (uint256) {
+        return block.timestamp;
     }
 
     function setRewardPerBlock(uint256 poolId, uint256 rewardPerBlock) external updatePool(poolId, address(0)) {

@@ -16,7 +16,7 @@ const NavBar: React.FC<{ active: string; onNav: (v: string) => void }> = ({ acti
     <nav
       className="w-full flex items-center justify-between px-8 py-4 z-50"
       style={{
-        background: `linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 80%, transparent 100%)`,
+        background: T.gradients.navFade,
         backdropFilter: T.effects.glassBlur,
         borderBottom: `${T.borders.thin} solid ${T.colors.surfaceBorder}`,
       }}
@@ -37,7 +37,7 @@ const NavBar: React.FC<{ active: string; onNav: (v: string) => void }> = ({ acti
               backgroundColor: active === tab ? T.colors.cyanOverlay : 'transparent',
               color: active === tab ? T.colors.neonCyan : T.colors.textSecondary,
               border: active === tab ? `${T.borders.thin} solid ${T.colors.cyanBorder}` : `${T.borders.thin} solid transparent`,
-              boxShadow: active === tab ? `0 0 12px ${T.colors.neonCyan}20` : 'none',
+              boxShadow: active === tab ? T.effects.tabGlowSoft : 'none',
               transition: `all ${T.animation.durationNormal} ${T.animation.easeOut}`,
             }}
           >
@@ -55,32 +55,9 @@ const Starfield: React.FC = () => (
     <div
       className="absolute inset-0"
       style={{
-        background: `
-          radial-gradient(2px 2px at 20px 30px, ${T.colors.neonCyan}55, transparent),
-          radial-gradient(2px 2px at 40px 70px, ${T.colors.textPrimary}33, transparent),
-          radial-gradient(1px 1px at 90px 40px, ${T.colors.neonCyan}44, transparent),
-          radial-gradient(2px 2px at 160px 120px, ${T.colors.neonMagenta}44, transparent),
-          radial-gradient(1px 1px at 230px 50px, ${T.colors.textPrimary}22, transparent),
-          radial-gradient(2px 2px at 300px 90px, ${T.colors.neonCyan}33, transparent),
-          radial-gradient(1px 1px at 380px 20px, ${T.colors.textPrimary}33, transparent),
-          radial-gradient(2px 2px at 450px 110px, ${T.colors.neonViolet}44, transparent),
-          radial-gradient(1px 1px at 520px 60px, ${T.colors.neonCyan}44, transparent),
-          radial-gradient(2px 2px at 600px 30px, ${T.colors.textPrimary}22, transparent),
-          radial-gradient(2px 2px at 690px 100px, ${T.colors.neonMagenta}33, transparent),
-          radial-gradient(1px 1px at 760px 40px, ${T.colors.neonCyan}55, transparent),
-          radial-gradient(2px 2px at 840px 80px, ${T.colors.textPrimary}33, transparent),
-          radial-gradient(1px 1px at 920px 20px, ${T.colors.neonViolet}44, transparent),
-          radial-gradient(2px 2px at 1020px 70px, ${T.colors.neonCyan}33, transparent),
-          radial-gradient(1px 1px at 1100px 50px, ${T.colors.textPrimary}22, transparent),
-          radial-gradient(2px 2px at 1190px 90px, ${T.colors.neonMagenta}44, transparent),
-          radial-gradient(1px 1px at 1280px 30px, ${T.colors.neonCyan}55, transparent),
-          radial-gradient(2px 2px at 70px 180px, ${T.colors.textPrimary}33, transparent),
-          radial-gradient(1px 1px at 150px 220px, ${T.colors.neonCyan}44, transparent),
-          radial-gradient(2px 2px at 280px 170px, ${T.colors.neonViolet}33, transparent),
-          radial-gradient(1px 1px at 400px 240px, ${T.colors.textPrimary}22, transparent)
-        `,
+        background: T.gradients.starfield,
         backgroundRepeat: 'repeat',
-        backgroundSize: '1400px 300px',
+        backgroundSize: T.dimensions.starfieldSize,
       }}
     />
     <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 0%, ${T.colors.neonCyan}08 0%, transparent 50%)` }} />

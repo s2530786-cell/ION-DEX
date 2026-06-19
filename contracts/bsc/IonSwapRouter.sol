@@ -9,7 +9,7 @@ import {IonProtocolFeeLib} from "./IonProtocolFeeLib.sol";
  * @dev Pairs with off-chain quote math in backend/src/lib/minimum-output.ts — fee first, then slippage bps.
  */
 interface ISwapPool {
-    function swapExactIn(uint256 amountIn, uint256 amountOutMinimum) external returns (uint256 amountOut);
+    function swapExactIn(uint256 amountIn, uint256 amountOutMinimum, address recipient) external returns (uint256 amountOut);
 }
 
 interface IERC20Minimal {
@@ -44,10 +44,15 @@ contract IonSwapRouter {
     }
 
     /**
+     * @notice Swap exact input tokens for output tokens via a pool, enforcing minimum output.
+     * @dev DexSwap is the underlying AMM (constant-product, no slippage guard).
+     *      IonSwapRouter adds slippage protection (amountOutMinimum) and routes output to recipient.
+     *      This is the primary user-facing swap entry point.
      * @param pool           Reviewed AMM/pool executor (must return actual output).
      * @param amountIn       Input token amount already approved to this router.
      * @param amountOutMinimum Minimum acceptable output — MUST match off-chain quote minimumReceivedUnits.
      * @param recipient      Output token recipient.
+     * @param ionProtocolFee ION protocol fee amount (0.3% of input value).
      */
     function swapExactIn(
         ISwapPool pool,
@@ -65,13 +70,12 @@ contract IonSwapRouter {
 
         IonProtocolFeeLib.collectIonFee(feeReceiver, address(this), msg.sender, ionProtocolFee);
 
-        amountOut = pool.swapExactIn(amountIn, amountOutMinimum);
+        amountOut = pool.swapExactIn(amountIn, amountOutMinimum, recipient);
         if (amountOut < amountOutMinimum) {
             revert IonDexMinOutput(amountOut, amountOutMinimum);
         }
 
         emit SwapExactIn(msg.sender, address(pool), amountIn, amountOut, amountOutMinimum);
-        recipient;
     }
 }
 
@@ -89,7 +93,7 @@ contract IonSwapPoolMock is ISwapPool {
         fixedOutput = output_;
     }
 
-    function swapExactIn(uint256, uint256) external view returns (uint256 amountOut) {
+    function swapExactIn(uint256, uint256, address) external view returns (uint256 amountOut) {
         return fixedOutput;
     }
 }

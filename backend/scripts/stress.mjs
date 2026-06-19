@@ -46,6 +46,7 @@ const endpoints = [
 
 const requestsPerEndpoint = Number(process.env.ION_STRESS_REQUESTS ?? 120);
 const concurrency = Number(process.env.ION_STRESS_CONCURRENCY ?? 24);
+const warmupRequestsPerEndpoint = Number(process.env.ION_STRESS_WARMUP_REQUESTS ?? 8);
 
 const server = createApp();
 
@@ -78,7 +79,22 @@ async function close() {
   });
 }
 
+async function warmupEndpoint(baseUrl, endpoint) {
+  for (let i = 0; i < warmupRequestsPerEndpoint; i += 1) {
+    try {
+      const response = await fetch(`${baseUrl}${endpoint.path}`);
+      if (response.ok) {
+        await response.arrayBuffer();
+      }
+    } catch {
+      // The measured stress run below is authoritative; warmup only removes cold-start noise.
+    }
+  }
+}
+
 async function runEndpoint(baseUrl, endpoint) {
+  await warmupEndpoint(baseUrl, endpoint);
+
   const latencies = [];
   let ok = 0;
   let failed = 0;

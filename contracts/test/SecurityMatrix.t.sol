@@ -176,7 +176,7 @@ contract SecurityMatrixTest is Test {
         vm.stopPrank();
 
         for (uint256 i = 0; i < ITER; i++) {
-            vm.warp(block.timestamp + 86_400 + i * 123);
+            vm.warp(1_900_000_000 + i * 123);
             uint256 amount = 1 ether + i * 1e14;
             bytes32 nonce = keccak256(abi.encodePacked("time", i));
             vm.prank(user);
@@ -193,7 +193,7 @@ contract SecurityMatrixTest is Test {
 
         for (uint256 i = 0; i < ITER; i++) {
             uint256 amount = 1 ether;
-            bytes32 nonce = keccak256(abi.encodePacked("replay", block.timestamp, i, user));
+            bytes32 nonce = keccak256(abi.encodePacked("replay", i, user));
             vm.prank(user);
             vault.lock(address(ion), amount, bytes32(uint256(i + 1)), 0);
             relay.attestInbound(nonce, address(ion), user, amount);

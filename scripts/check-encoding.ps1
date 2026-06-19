@@ -27,7 +27,7 @@ $includeExt = @(
 # Folders to skip (build artifacts, vendored deps, reference clones)
 $excludeDirs = @(
   "node_modules", "dist", "build", ".next", ".turbo",
-  "out", "coverage", ".vite", ".cache",
+  "out", "coverage", ".vite", ".cache", ".tmp",
   "target", "artifacts", "cache",
   "__pycache__", ".venv", "venv",
   # Local official ION reference clone; ignored by git and not maintained by this repo.

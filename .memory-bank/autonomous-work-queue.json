@@ -30,22 +30,20 @@
         {
           "id": "verify-100",
           "title": "P1 Swap/Dashboard frontend gate verify-100",
-          "status": "failed",
+          "status": "running",
           "kind": "verify-100",
           "allowExternal": true,
           "requires": [
             "verify-full"
           ],
           "note": "stale 2026-06-13 run cleared after 2026-06-14 frontend verify recovery; rerun with a fresh guarded proof before W6",
-          "external": false,
+          "external": true,
           "resume": {
             "startAt": 11,
             "initialPassed": 10,
             "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260618-222338.txt",
             "logPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-20260618-222338.log"
-          },
-          "managedPid": 33328,
-          "error": "verify-100 exit 1"
+          }
         },
         {
           "id": "git-commit-push-p1-dashboard",

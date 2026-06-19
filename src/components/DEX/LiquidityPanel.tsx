@@ -42,7 +42,7 @@ export const LiquidityPanel: React.FC = () => {
         className="relative rounded-3xl overflow-hidden"
         style={{
           background: DesignTokens.colors.background,
-          boxShadow: `0 0 60px ${DesignTokens.colors.cyanOverlay}, 0 0 120px rgba(0,0,0,0.5)`,
+          boxShadow: DesignTokens.effects.panelOuterGlowCyan,
         }}
       >
         <div
@@ -57,7 +57,7 @@ export const LiquidityPanel: React.FC = () => {
             borderRadius: DesignTokens.spacing.borderRadius,
             padding: DesignTokens.spacing.cardPadding,
             boxShadow: poolData
-              ? `inset 0 0 40px ${DesignTokens.colors.cyanOverlay}`
+              ? DesignTokens.effects.insetGlow
               : 'none',
           }}
         >
@@ -197,7 +197,7 @@ export const LiquidityPanel: React.FC = () => {
                   textTransform: 'uppercase',
                   backgroundColor: activeTab === tab ? DesignTokens.colors.cyanOverlay : 'transparent',
                   color: activeTab === tab ? DesignTokens.colors.neonCyan : DesignTokens.colors.textMuted,
-                  boxShadow: activeTab === tab ? `0 0 15px ${DesignTokens.colors.neonCyan}20` : 'none',
+                  boxShadow: activeTab === tab ? DesignTokens.effects.tabGlow : 'none',
                 }}
               >
                 {tab === 'add' ? 'Add' : 'Remove'}
@@ -215,7 +215,7 @@ export const LiquidityPanel: React.FC = () => {
                   borderWidth: DesignTokens.borders.thick,
                   borderStyle: 'solid',
                   borderColor: panelBorderColor,
-                  boxShadow: ionAmount ? `0 0 20px ${DesignTokens.colors.neonCyan}15` : 'none',
+                  boxShadow: ionAmount ? DesignTokens.effects.inputGlowCyan : 'none',
                 }}
               >
                 <div className="flex justify-between items-center">
@@ -234,7 +234,7 @@ export const LiquidityPanel: React.FC = () => {
                     disabled={isProcessing}
                     onChange={(e) => updateIonAmount(e.target.value)}
                     className="bg-transparent flex-1 focus:outline-none font-mono font-bold"
-                    style={{ fontSize: '28px', color: DesignTokens.colors.textPrimary }}
+                    style={{ fontSize: DesignTokens.dimensions.poolInputValueSize, color: DesignTokens.colors.textPrimary }}
                   />
                   <button
                     className="flex items-center gap-2 px-4 py-2 rounded-full shrink-0"
@@ -268,7 +268,7 @@ export const LiquidityPanel: React.FC = () => {
                     borderColor: DesignTokens.colors.panelBorder,
                   }}
                 >
-                  <span style={{ color: DesignTokens.colors.neonCyan, fontSize: '16px' }}>+</span>
+                  <span style={{ color: DesignTokens.colors.neonCyan, fontSize: DesignTokens.dimensions.connectorSize }}>+</span>
                 </div>
               </div>
 
@@ -280,7 +280,7 @@ export const LiquidityPanel: React.FC = () => {
                   borderWidth: DesignTokens.borders.thick,
                   borderStyle: 'solid',
                   borderColor: panelBorderColor,
-                  boxShadow: usdtAmount ? `0 0 20px ${DesignTokens.colors.neonMagenta}15` : 'none',
+                  boxShadow: usdtAmount ? DesignTokens.effects.inputGlowMagenta : 'none',
                 }}
               >
                 <div className="flex justify-between items-center">
@@ -299,7 +299,7 @@ export const LiquidityPanel: React.FC = () => {
                     disabled={isProcessing}
                     onChange={(e) => updateUsdtAmount(e.target.value)}
                     className="bg-transparent flex-1 focus:outline-none font-mono font-bold"
-                    style={{ fontSize: '28px', color: DesignTokens.colors.textPrimary }}
+                    style={{ fontSize: DesignTokens.dimensions.poolInputValueSize, color: DesignTokens.colors.textPrimary }}
                   />
                   <div
                     className="flex items-center gap-2 px-4 py-2 rounded-full shrink-0"
@@ -323,7 +323,7 @@ export const LiquidityPanel: React.FC = () => {
                 <div
                   className="flex flex-col gap-2.5 p-3 rounded-xl"
                   style={{
-                    backgroundColor: 'rgba(0,0,0,0.3)',
+                    backgroundColor: DesignTokens.colors.blackOverlay,
                     borderWidth: DesignTokens.borders.thin,
                     borderStyle: 'solid',
                     borderColor: DesignTokens.colors.surfaceBorder,
@@ -383,20 +383,20 @@ export const LiquidityPanel: React.FC = () => {
                 className="relative w-full py-4 rounded-2xl font-bold text-sm tracking-widest transition-all duration-300 overflow-hidden disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{
                   background: isFormValid
-                    ? `linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)`
+                    ? DesignTokens.gradients.buttonPrimaryCyan
                     : DesignTokens.colors.disabledBg,
                   color: isFormValid ? DesignTokens.colors.background : DesignTokens.colors.disabledText,
-                  boxShadow: isFormValid ? `0 0 30px ${DesignTokens.colors.neonCyan}40, 0 4px 12px rgba(0,0,0,0.3)` : 'none',
+                  boxShadow: isFormValid ? DesignTokens.effects.actionShadowCyan : 'none',
                 }}
                 onMouseEnter={(e) => {
                   if (isFormValid) {
                     e.currentTarget.style.transform = 'scale(1.02)';
-                    e.currentTarget.style.boxShadow = `0 0 40px ${DesignTokens.colors.neonCyan}60`;
+                    e.currentTarget.style.boxShadow = DesignTokens.effects.actionShadowCyanHover;
                   }
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = isFormValid ? `0 0 30px ${DesignTokens.colors.neonCyan}40` : 'none';
+                  e.currentTarget.style.boxShadow = isFormValid ? DesignTokens.effects.actionShadowCyan : 'none';
                 }}
               >
                 {isProcessing ? 'Adding Liquidity...' : errorMessage || 'Add Liquidity'}
@@ -448,7 +448,7 @@ export const LiquidityPanel: React.FC = () => {
                     placeholder="0.0"
                     disabled
                     className="bg-transparent flex-1 focus:outline-none font-mono font-bold"
-                    style={{ fontSize: '28px', color: DesignTokens.colors.textMuted }}
+                    style={{ fontSize: DesignTokens.dimensions.poolInputValueSize, color: DesignTokens.colors.textMuted }}
                   />
                   <div
                     className="flex items-center gap-2 px-4 py-2 rounded-full shrink-0"
@@ -485,7 +485,7 @@ export const LiquidityPanel: React.FC = () => {
             <div className="text-center">
               <span
                 className="font-mono"
-                style={{ fontSize: '10px', color: DesignTokens.colors.textMuted }}
+                style={{ fontSize: DesignTokens.dimensions.microTextSize, color: DesignTokens.colors.textMuted }}
               >
                 Pool Fee: {poolData.fee}% · APR: ~{poolData.apr.toFixed(1)}% · Reserves: {poolData.reserveIon.toLocaleString()} ION
               </span>

@@ -1,5 +1,5 @@
 {
-  "lastTickAt": "2026-06-18T16:27:00.131Z",
+  "lastTickAt": "2026-06-19T05:49:25.118Z",
   "activeQueueId": "p1-dashboard-w6-pipeline",
   "steps": [
     {
@@ -13,9 +13,7 @@
     {
       "id": "verify-100",
       "status": "running",
-      "external": false,
-      "managedPid": 33328,
-      "error": "interrupted at 10/100; auto-resume from 11"
+      "external": true
     },
     {
       "id": "git-commit-push-p1-dashboard",

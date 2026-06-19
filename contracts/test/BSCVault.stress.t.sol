@@ -62,6 +62,12 @@ contract BSCVaultStressTest is Test {
         }
     }
 
+    function testStress_LpSharesRejectsMinIntDelta() public {
+        vm.prank(owner);
+        vm.expectRevert();
+        vault.adjustLpShares(user, type(int256).min);
+    }
+
     function testGasSnapshot_LockRelease() public {
         vm.startPrank(user);
         token.approve(address(vault), type(uint256).max);

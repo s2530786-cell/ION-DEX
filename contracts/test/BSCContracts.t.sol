@@ -9,6 +9,72 @@ import {BridgeRelay} from "../bsc/BridgeRelay.sol";
 import {IonOracle} from "../bsc/IonOracle.sol";
 import {MockAggregator} from "./MockAggregator.sol";
 
+contract NoReturnERC20 {
+    string public name = "NoReturn";
+    string public symbol = "NORET";
+    uint8 public immutable decimals = 18;
+    uint256 public totalSupply;
+
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    function mint(address to, uint256 amount) external {
+        totalSupply += amount;
+        balanceOf[to] += amount;
+        emit Transfer(address(0), to, amount);
+    }
+
+    function approve(address spender, uint256 amount) external {
+        allowance[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
+    }
+
+    function transfer(address to, uint256 amount) external {
+        _transfer(msg.sender, to, amount);
+    }
+
+    function transferFrom(address from, address to, uint256 amount) external {
+        uint256 allowed = allowance[from][msg.sender];
+        if (allowed != type(uint256).max) {
+            if (amount > allowed) revert();
+            allowance[from][msg.sender] = allowed - amount;
+        }
+        _transfer(from, to, amount);
+    }
+
+    function _transfer(address from, address to, uint256 amount) internal {
+        if (to == address(0) || amount == 0 || balanceOf[from] < amount) revert();
+        balanceOf[from] -= amount;
+        balanceOf[to] += amount;
+        emit Transfer(from, to, amount);
+    }
+}
+
+contract FalseReturnERC20 {
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+
+    function mint(address to, uint256 amount) external {
+        balanceOf[to] += amount;
+    }
+
+    function approve(address spender, uint256 amount) external returns (bool) {
+        allowance[msg.sender][spender] = amount;
+        return true;
+    }
+
+    function transfer(address, uint256) external pure returns (bool) {
+        return false;
+    }
+
+    function transferFrom(address, address, uint256) external pure returns (bool) {
+        return false;
+    }
+}
+
 contract BSCContractsTest is Test {
     MockERC20 internal token;
     BSCVault internal vault;
@@ -101,5 +167,35 @@ contract BSCContractsTest is Test {
         relay.attestInbound(nonce, address(token), user, 50 ether);
         vm.expectRevert(BridgeRelay.IonDexDuplicateNonce.selector);
         relay.attestInbound(nonce, address(token), user, 50 ether);
+    }
+
+    function test_vault_lock_accepts_erc20_without_return_value() public {
+        NoReturnERC20 noReturnToken = new NoReturnERC20();
+        noReturnToken.mint(user, 100 ether);
+
+        vm.startPrank(user);
+        noReturnToken.approve(address(vault), 100 ether);
+        vault.lock(address(noReturnToken), 25 ether, bytes32(uint256(0xCA11)), 0);
+        vm.stopPrank();
+
+        assertEq(noReturnToken.balanceOf(address(vault)), 25 ether);
+        assertEq(vault.lockedBalance(address(noReturnToken), user), 25 ether);
+    }
+
+    function test_vault_lock_reverts_on_false_erc20_return_value() public {
+        FalseReturnERC20 falseReturnToken = new FalseReturnERC20();
+        falseReturnToken.mint(user, 100 ether);
+
+        vm.startPrank(user);
+        falseReturnToken.approve(address(vault), 100 ether);
+        vm.expectRevert(BSCVault.IonDexTokenTransferFailed.selector);
+        vault.lock(address(falseReturnToken), 25 ether, bytes32(uint256(0xFA11)), 0);
+        vm.stopPrank();
+    }
+
+    function test_vault_adjust_lp_shares_rejects_min_int_delta() public {
+        vm.prank(owner);
+        vm.expectRevert();
+        vault.adjustLpShares(user, type(int256).min);
     }
 }

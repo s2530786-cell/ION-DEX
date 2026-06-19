@@ -82,3 +82,6 @@
 [2026-06-18T16:27:00.108Z] REQUEUE verify-100 resume startAt=11 initialPassed=10
 [2026-06-18T16:27:00.114Z] START step=verify-100 RESUME from 11 (passed=10)
 [2026-06-19T00:58:07.525Z] FAIL step=verify-100 exit=1
+[2026-06-19T05:49:25.090Z] watchdog once (auto-advance on step OK)
+[2026-06-19T05:49:25.109Z] REQUEUE verify-100 from failed -> pending
+[2026-06-19T05:49:25.118Z] WAIT step=verify-100 external run active (lock + fresh log)

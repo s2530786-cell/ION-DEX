@@ -4,8 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const host = "127.0.0.1";
 const DEFAULT_BACKEND_PORT = 8787;
-/** Prefer 8788+ during verify so a dev/zombie listener on 8787 cannot break the Vite proxy. */
-const VERIFY_BACKEND_PORTS = [8788, 8789, DEFAULT_BACKEND_PORT];
+const RESERVED_BACKEND_PORTS = new Set([DEFAULT_BACKEND_PORT, 8788, 8789]);
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";
 const useShell = process.platform === "win32";
@@ -213,19 +212,18 @@ async function waitForHealthyBackend(backendPort, timeoutMs = 30_000) {
 }
 
 async function resolveBackendPort() {
-  for (const port of VERIFY_BACKEND_PORTS) {
-    await tryRecyclePort(port);
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const port = await getFreePort();
+    if (RESERVED_BACKEND_PORTS.has(port)) {
+      continue;
+    }
     if (!(await isTcpOpen(port))) {
-      if (port !== DEFAULT_BACKEND_PORT) {
-        console.warn(`[verify-e2e] dedicated verify backend on :${port} (:${DEFAULT_BACKEND_PORT} left for dev).`);
-      }
+      console.warn(`[verify-e2e] dedicated verify backend on dynamic port :${port} (:${DEFAULT_BACKEND_PORT} left for dev).`);
       return port;
     }
   }
 
-  throw new Error(
-    `Cannot start backend: verify ports ${VERIFY_BACKEND_PORTS.join(", ")} are all busy.`,
-  );
+  throw new Error("Cannot allocate a free dynamic backend port for verify-e2e.");
 }
 
 const backendPort = await resolveBackendPort();
@@ -234,6 +232,8 @@ const verifyBackendUrl = `http://${host}:${backendPort}`;
 const previewPort = await getFreePort();
 const baseUrl = `http://${host}:${previewPort}`;
 console.log(`[verify-e2e] preview=${baseUrl} proxy=/api -> ${verifyBackendUrl}`);
+
+let shuttingDown = false;
 
 const backendBuild = spawnSync(npmCommand, ["run", "build"], {
   cwd: backendDir,
@@ -290,7 +290,6 @@ preview.once("exit", (code, signal) => {
   }
 });
 
-let shuttingDown = false;
 function stopPreview() {
   if (!shuttingDown && !preview.killed) {
     shuttingDown = true;

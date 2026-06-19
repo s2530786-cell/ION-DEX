@@ -574,18 +574,16 @@ PROGRAM{
     DUP	//  protocol_fee protocol_fee
     0 GTINT	//  protocol_fee _19
     IF:<{	//  protocol_fee
-      0 PUSHINT	//  protocol_fee _20=0
-      storage::fee_distributor_address GETGLOB	//  protocol_fee _20=0 _21
-      OVER	//  protocol_fee _20=0 _21 _22=0
-      4444444444 PUSHINT	//  protocol_fee _20=0 _21 _22=0 _23=4444444444
-      NEWC	//  protocol_fee _20=0 _21 _22=0 _23=4444444444 _24
-      32 STU	//  protocol_fee _20=0 _21 _22=0 _26
-      64 STU	//  protocol_fee _20=0 _21 _28
-      s0 s3 XCHG2	//  _21 _20=0 _28 protocol_fee
-      STGRAMS	//  _21 _20=0 _29
-      ENDC	//  _21 _20=0 _30
-      s1 s2 XCHG
-      7 PUSHPOW2	//  _20=0 _21 _30 _31=128
+      storage::fee_distributor_address GETGLOB	//  protocol_fee _20
+      0 PUSHINT	//  protocol_fee _20 _21=0
+      4444444444 PUSHINT	//  protocol_fee _20 _21=0 _22=4444444444
+      NEWC	//  protocol_fee _20 _21=0 _22=4444444444 _23
+      32 STU	//  protocol_fee _20 _21=0 _25
+      64 STU	//  protocol_fee _20 _27
+      s2 PUSH	//  protocol_fee _20 _27 protocol_fee
+      STGRAMS	//  protocol_fee _20 _28
+      ENDC	//  protocol_fee _20 _29
+      1 PUSHINT	//  protocol_fee _20 _29 _30=1
       msgs::send_simple INLINECALLDICT
     }>ELSE<{
       DROP	// 

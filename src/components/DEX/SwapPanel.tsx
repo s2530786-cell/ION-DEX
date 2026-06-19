@@ -11,7 +11,7 @@ const SwapArrow: React.FC<{ active: boolean; onClick: () => void }> = ({ active,
       style={{
         backgroundColor: T.colors.background,
         borderColor: active ? T.colors.neonCyan : T.colors.surfaceBorder,
-        boxShadow: active ? `0 0 15px ${T.colors.neonCyan}30` : 'none',
+        boxShadow: active ? T.effects.tabGlow : 'none',
         transform: active ? 'rotate(180deg)' : 'rotate(0deg)',
         transition: `transform ${T.animation.durationNormal} ${T.animation.spring}`,
       }}
@@ -46,7 +46,7 @@ const SwapDetails: React.FC<{
         <div
           className="flex flex-col gap-2 p-3 rounded-xl"
           style={{
-            backgroundColor: 'rgba(0,0,0,0.3)',
+            backgroundColor: T.colors.blackOverlay,
             border: `${T.borders.thin} solid ${T.colors.surfaceBorder}`,
             animation: `fadeIn ${T.animation.durationNormal} ${T.animation.easeOut}`,
           }}
@@ -93,7 +93,7 @@ const Row: React.FC<{ label: string; value: React.ReactNode; color?: string; bol
   );
 
 const Divider: React.FC = () => (
-  <div style={{ borderTop: `${T.borders.thin} solid ${T.colors.surfaceBorder}`, margin: '2px 0' }} />
+  <div style={{ borderTop: `${T.borders.thin} solid ${T.colors.surfaceBorder}`, margin: T.dimensions.dividerMargin }} />
 );
 
 /** Token badge — icon + symbol */
@@ -128,7 +128,7 @@ const TokenInput: React.FC<{
     style={{
       backgroundColor: T.colors.background,
       border: `${T.borders.thick} solid ${borderGlow ? color : T.colors.surfaceBorder}`,
-      boxShadow: borderGlow ? `0 0 20px ${color}15` : 'none',
+      boxShadow: borderGlow ? T.effects.inputGlowCyan : 'none',
     }}
   >
     <div className="flex justify-between items-center">
@@ -157,7 +157,7 @@ const TokenInput: React.FC<{
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
         className="bg-transparent flex-1 focus:outline-none font-mono font-bold"
-        style={{ fontSize: '26px', color: T.colors.textPrimary }}
+        style={{ fontSize: T.dimensions.inputValueSize, color: T.colors.textPrimary }}
       />
       <TokenBadge symbol={symbol} color={color} />
     </div>
@@ -186,7 +186,7 @@ export const SwapPanel: React.FC = () => {
         className="relative rounded-3xl overflow-hidden"
         style={{
           background: T.colors.background,
-          boxShadow: `0 0 60px ${T.colors.cyanOverlay}, 0 0 120px rgba(0,0,0,0.5)`,
+          boxShadow: T.effects.panelOuterGlowCyan,
         }}
       >
         {/* Glass panel */}
@@ -274,18 +274,18 @@ export const SwapPanel: React.FC = () => {
                 ? T.gradients.buttonPrimary
                 : T.colors.disabledBg,
               color: valid ? T.colors.background : T.colors.disabledText,
-              boxShadow: valid ? `0 0 30px ${T.colors.neonCyan}40, 0 4px 12px rgba(0,0,0,0.3)` : 'none',
+              boxShadow: valid ? T.effects.actionShadowCyan : 'none',
               transition: `all ${T.animation.durationNormal} ${T.animation.easeOut}`,
             }}
             onMouseEnter={(e) => {
               if (valid) {
                 e.currentTarget.style.transform = 'scale(1.02)';
-                e.currentTarget.style.boxShadow = `0 0 40px ${T.colors.neonCyan}60, 0 8px 20px rgba(0,0,0,0.4)`;
+                e.currentTarget.style.boxShadow = T.effects.actionShadowCyanHover;
               }
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = valid ? `0 0 30px ${T.colors.neonCyan}40, 0 4px 12px rgba(0,0,0,0.3)` : 'none';
+              e.currentTarget.style.boxShadow = valid ? T.effects.actionShadowCyan : 'none';
             }}
           >
             {isExecuting ? 'Swapping...' : validationError || (!fromAmount ? 'Enter Amount' : 'Swap')}
@@ -294,7 +294,7 @@ export const SwapPanel: React.FC = () => {
           {/* ── Footer badge ── */}
           {poolData && (
             <div className="text-center">
-              <span className="font-mono" style={{ fontSize: '10px', color: T.colors.textMuted }}>
+              <span className="font-mono" style={{ fontSize: T.dimensions.microTextSize, color: T.colors.textMuted }}>
                 Data: PancakeSwap V3 on-chain · TVL: ${poolData.tvl.toLocaleString()}
               </span>
             </div>
