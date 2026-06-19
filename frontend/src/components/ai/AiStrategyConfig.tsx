@@ -57,12 +57,12 @@ export default function AiStrategyConfig({ onSubmit, initial }: Props) {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    padding: `${dt.spacingSm} ${dt.spacingMd}`,
-    borderRadius: dt.borderRadius,
-    border: `1px solid ${dt.glassBorder}`,
-    background: dt.glassBg,
-    color: dt.textPrimary,
-    fontSize: dt.fontSizeSm,
+    padding: `${dt.spacing.sm} ${dt.spacing.md}`,
+    borderRadius: dt.borderRadius.md,
+    border: `1px solid ${dt.colors.surfaceBorder}`,
+    background: dt.colors.inputBg,
+    color: dt.colors.textPrimary,
+    fontSize: dt.typography.body.fontSize,
     outline: 'none',
   };
 
@@ -72,44 +72,62 @@ export default function AiStrategyConfig({ onSubmit, initial }: Props) {
   };
 
   const labelStyle: React.CSSProperties = {
-    color: dt.textSecondary,
-    fontSize: dt.fontSizeSm,
+    color: dt.colors.textSecondary,
+    fontSize: dt.typography.caption.fontSize,
     marginBottom: 4,
     display: 'block',
   };
 
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
-      <h3 style={{ color: dt.textPrimary, fontSize: dt.fontSizeLg, marginBottom: dt.spacingMd, fontWeight: 600 }}>
+      <h3 style={{
+        color: dt.colors.textPrimary,
+        fontSize: dt.typography.subheading.fontSize,
+        marginBottom: dt.spacing.cardPadding,
+        fontWeight: 600,
+      }}>
         Configure Strategy
       </h3>
 
       {errors.length > 0 && (
         <div
           style={{
-            background: `${dt.neonRed}15`,
-            border: `1px solid ${dt.neonRed}40`,
-            borderRadius: dt.borderRadius,
-            padding: dt.spacingSm,
-            marginBottom: dt.spacingMd,
+            background: dt.colors.errorBg,
+            border: `1px solid ${dt.colors.errorBorder}`,
+            borderRadius: dt.borderRadius.md,
+            padding: dt.spacing.sm,
+            marginBottom: dt.spacing.md,
           }}
         >
           {errors.map((e, i) => (
-            <div key={i} style={{ color: dt.neonRed, fontSize: dt.fontSizeXs, marginBottom: 2 }}>
+            <div key={i} style={{
+              color: dt.colors.negative,
+              fontSize: dt.typography.caption.fontSize,
+              marginBottom: 2,
+            }}>
               • {e}
             </div>
           ))}
         </div>
       )}
 
-      <div style={{ marginBottom: dt.spacingMd }}>
+      <div style={{ marginBottom: dt.spacing.md }}>
         <label style={labelStyle}>Strategy Name</label>
-        <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. My Grid Bot" />
+        <input
+          style={inputStyle}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g. My Grid Bot"
+        />
       </div>
 
-      <div style={{ marginBottom: dt.spacingMd }}>
+      <div style={{ marginBottom: dt.spacing.md }}>
         <label style={labelStyle}>Strategy Type</label>
-        <select style={selectStyle} value={type} onChange={(e) => setType(e.target.value as StrategyConfig['type'])}>
+        <select
+          style={selectStyle}
+          value={type}
+          onChange={(e) => setType(e.target.value as StrategyConfig['type'])}
+        >
           <option value="grid">Grid Trading</option>
           <option value="trend">Trend Following</option>
           <option value="arbitrage">Arbitrage</option>
@@ -117,25 +135,67 @@ export default function AiStrategyConfig({ onSubmit, initial }: Props) {
         </select>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: dt.spacingMd, marginBottom: dt.spacingMd }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: dt.spacing.md,
+        marginBottom: dt.spacing.md,
+      }}>
         <div>
           <label style={labelStyle}>Fund Amount (USDT)</label>
-          <input style={inputStyle} type="number" min="0" step="1" value={fundAmount} onChange={(e) => setFundAmount(e.target.value)} placeholder="1000" />
+          <input
+            style={inputStyle}
+            type="number"
+            min="0"
+            step="1"
+            value={fundAmount}
+            onChange={(e) => setFundAmount(e.target.value)}
+            placeholder="1000"
+          />
         </div>
         <div>
           <label style={labelStyle}>Max Slippage (%)</label>
-          <input style={inputStyle} type="number" min="0" step="0.1" value={maxSlippage} onChange={(e) => setMaxSlippage(e.target.value)} placeholder="0.5" />
+          <input
+            style={inputStyle}
+            type="number"
+            min="0"
+            step="0.1"
+            value={maxSlippage}
+            onChange={(e) => setMaxSlippage(e.target.value)}
+            placeholder="0.5"
+          />
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: dt.spacingMd, marginBottom: dt.spacingLg }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: dt.spacing.md,
+        marginBottom: dt.spacing.lg,
+      }}>
         <div>
           <label style={labelStyle}>Stop Loss (%)</label>
-          <input style={inputStyle} type="number" min="0" step="0.1" value={stopLoss} onChange={(e) => setStopLoss(e.target.value)} placeholder="5" />
+          <input
+            style={inputStyle}
+            type="number"
+            min="0"
+            step="0.1"
+            value={stopLoss}
+            onChange={(e) => setStopLoss(e.target.value)}
+            placeholder="5"
+          />
         </div>
         <div>
           <label style={labelStyle}>Take Profit (%)</label>
-          <input style={inputStyle} type="number" min="0" step="0.1" value={takeProfit} onChange={(e) => setTakeProfit(e.target.value)} placeholder="20" />
+          <input
+            style={inputStyle}
+            type="number"
+            min="0"
+            step="0.1"
+            value={takeProfit}
+            onChange={(e) => setTakeProfit(e.target.value)}
+            placeholder="20"
+          />
         </div>
       </div>
 
@@ -143,12 +203,12 @@ export default function AiStrategyConfig({ onSubmit, initial }: Props) {
         type="submit"
         style={{
           width: '100%',
-          padding: `${dt.spacingSm} ${dt.spacingLg}`,
-          borderRadius: dt.borderRadius,
+          padding: `${dt.spacing.sm} ${dt.spacing.xl}`,
+          borderRadius: dt.borderRadius.button,
           border: 'none',
-          background: dt.neonCyan,
-          color: dt.deepSpaceBg,
-          fontSize: dt.fontSizeMd,
+          background: dt.colors.neonCyan,
+          color: dt.colors.background,
+          fontSize: dt.typography.body.fontSize,
           fontWeight: 600,
           cursor: 'pointer',
           transition: 'opacity 0.2s',

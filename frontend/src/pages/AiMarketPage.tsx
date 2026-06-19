@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { DesignTokens as dt } from '@/lib/design-tokens';
-import { DEXGridHarness } from '@/components/layout/DEXGridHarness';
 
 // Types
 interface Strategy {
@@ -32,9 +31,9 @@ const MOCK_STRATEGIES: Strategy[] = [
 ];
 
 const RISK_COLORS: Record<string, string> = {
-  Low: dt.neonGreen,
-  Medium: dt.neonYellow,
-  High: dt.neonRed,
+  Low: dt.colors.neonGreen,
+  Medium: dt.colors.warning,
+  High: dt.colors.negative,
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -54,21 +53,21 @@ export default function AiMarketPage() {
     .sort((a, b) => b[sortBy] - a[sortBy]);
 
   return (
-    <DEXGridHarness>
+    <div style={{ padding: dt.spacing.panelPadding }}>
       {/* Filters */}
-      <div style={{ marginBottom: dt.spacingLg }}>
-        <div style={{ display: 'flex', gap: dt.spacingMd, marginBottom: dt.spacingMd, flexWrap: 'wrap' }}>
+      <div style={{ marginBottom: dt.spacing.xxl }}>
+        <div style={{ display: 'flex', gap: dt.spacing.md, marginBottom: dt.spacing.md, flexWrap: 'wrap' }}>
           {(['All', 'Low', 'Medium', 'High'] as RiskFilter[]).map((r) => (
             <button
               key={r}
               onClick={() => setRiskFilter(r)}
               style={{
-                padding: `${dt.spacingSm} ${dt.spacingMd}`,
-                borderRadius: dt.borderRadius,
-                border: `1px solid ${riskFilter === r ? dt.neonCyan : dt.glassBorder}`,
-                background: riskFilter === r ? dt.glassBgHover : dt.glassBg,
-                color: riskFilter === r ? dt.neonCyan : dt.textSecondary,
-                fontSize: dt.fontSizeSm,
+                padding: `${dt.spacing.sm} ${dt.spacing.lg}`,
+                borderRadius: dt.borderRadius.button,
+                border: `1px solid ${riskFilter === r ? dt.colors.neonCyan : dt.colors.surfaceBorder}`,
+                background: riskFilter === r ? dt.colors.cyanOverlay : 'transparent',
+                color: riskFilter === r ? dt.colors.neonCyan : dt.colors.textSecondary,
+                fontSize: dt.typography.caption.fontSize,
                 fontWeight: riskFilter === r ? 600 : 400,
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -81,12 +80,12 @@ export default function AiMarketPage() {
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortKey)}
             style={{
-              padding: `${dt.spacingSm} ${dt.spacingMd}`,
-              borderRadius: dt.borderRadius,
-              border: `1px solid ${dt.glassBorder}`,
-              background: dt.glassBg,
-              color: dt.textPrimary,
-              fontSize: dt.fontSizeSm,
+              padding: `${dt.spacing.sm} ${dt.spacing.lg}`,
+              borderRadius: dt.borderRadius.button,
+              border: `1px solid ${dt.colors.surfaceBorder}`,
+              background: dt.colors.inputBg,
+              color: dt.colors.textPrimary,
+              fontSize: dt.typography.caption.fontSize,
               marginLeft: 'auto',
             }}
           >
@@ -102,7 +101,7 @@ export default function AiMarketPage() {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: dt.spacingMd,
+          gap: dt.spacing.lg,
         }}
       >
         {filtered.map((s) => (
@@ -110,56 +109,56 @@ export default function AiMarketPage() {
             key={s.id}
             onClick={() => setSelected(s)}
             style={{
-              background: dt.glassBg,
-              border: `1px solid ${dt.glassBorder}`,
-              borderRadius: dt.borderRadius,
-              padding: dt.spacingMd,
+              background: dt.colors.panelBg,
+              border: dt.borders.panel,
+              borderRadius: dt.borderRadius.panel,
+              padding: dt.spacing.cardPadding,
               cursor: 'pointer',
               transition: 'all 0.2s',
-              backdropFilter: 'blur(12px)',
+              backdropFilter: `blur(${dt.effects.glassBlur})`,
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: dt.spacingSm }}>
-              <span style={{ color: dt.textPrimary, fontWeight: 600, fontSize: dt.fontSizeMd }}>{s.name}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: dt.spacing.sm }}>
+              <span style={{ color: dt.colors.textPrimary, fontWeight: 600, fontSize: dt.typography.body.fontSize }}>{s.name}</span>
               <span
                 style={{
                   background: `${RISK_COLORS[s.riskLevel]}20`,
                   color: RISK_COLORS[s.riskLevel],
-                  padding: `2px ${dt.spacingSm}`,
-                  borderRadius: dt.borderRadius,
-                  fontSize: dt.fontSizeXs,
+                  padding: `2px ${dt.spacing.sm}`,
+                  borderRadius: dt.borderRadius.sm,
+                  fontSize: dt.typography.label.fontSize,
                   fontWeight: 600,
                 }}
               >
                 {s.riskLevel}
               </span>
             </div>
-            <div style={{ color: dt.textSecondary, fontSize: dt.fontSizeSm, marginBottom: dt.spacingSm }}>
-              {TYPE_LABELS[s.type]} • {Math.floor(s.runtime / 86400)}d runtime
+            <div style={{ color: dt.colors.textSecondary, fontSize: dt.typography.caption.fontSize, marginBottom: dt.spacing.sm }}>
+              {TYPE_LABELS[s.type]} · {Math.floor(s.runtime / 86400)}d runtime
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ color: dt.neonCyan, fontSize: dt.fontSizeLg, fontWeight: 700 }}>
+                <div style={{ color: dt.colors.neonCyan, fontSize: dt.typography.subheading.fontSize, fontWeight: 700 }}>
                   +{s.returnRate}%
                 </div>
-                <div style={{ color: dt.textTertiary, fontSize: dt.fontSizeXs }}>Return</div>
+                <div style={{ color: dt.colors.textMuted, fontSize: dt.typography.label.fontSize }}>Return</div>
               </div>
               <div>
-                <div style={{ color: dt.textPrimary, fontSize: dt.fontSizeLg, fontWeight: 700 }}>
+                <div style={{ color: dt.colors.textPrimary, fontSize: dt.typography.subheading.fontSize, fontWeight: 700 }}>
                   ${(s.fundSize / 1000).toFixed(0)}K
                 </div>
-                <div style={{ color: dt.textTertiary, fontSize: dt.fontSizeXs }}>Fund Size</div>
+                <div style={{ color: dt.colors.textMuted, fontSize: dt.typography.label.fontSize }}>Fund Size</div>
               </div>
               <div>
                 <div
                   style={{
-                    color: s.status === 'running' ? dt.neonGreen : dt.neonYellow,
-                    fontSize: dt.fontSizeSm,
+                    color: s.status === 'running' ? dt.colors.neonGreen : dt.colors.warning,
+                    fontSize: dt.typography.caption.fontSize,
                     fontWeight: 600,
-                    padding: `2px ${dt.spacingSm}`,
-                    border: `1px solid ${s.status === 'running' ? dt.neonGreen : dt.neonYellow}40`,
-                    borderRadius: dt.borderRadius,
-                    background: `${s.status === 'running' ? dt.neonGreen : dt.neonYellow}10`,
+                    padding: `2px ${dt.spacing.sm}`,
+                    border: `1px solid ${s.status === 'running' ? dt.colors.neonGreen : dt.colors.warning}40`,
+                    borderRadius: dt.borderRadius.sm,
+                    background: `${s.status === 'running' ? dt.colors.neonGreen : dt.colors.warning}10`,
                   }}
                 >
                   {s.status}
@@ -188,53 +187,53 @@ export default function AiMarketPage() {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: dt.deepSpaceBg,
-              border: `1px solid ${dt.glassBorder}`,
-              borderRadius: dt.borderRadius,
-              padding: dt.spacingLg,
+              background: dt.colors.background,
+              border: dt.borders.panel,
+              borderRadius: dt.borderRadius.panel,
+              padding: dt.spacing.panelPadding,
               maxWidth: 480,
               width: '100%',
               maxHeight: '80vh',
               overflow: 'auto',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: dt.spacingMd }}>
-              <h2 style={{ color: dt.textPrimary, fontSize: dt.fontSizeXl, margin: 0 }}>{selected.name}</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: dt.spacing.lg }}>
+              <h2 style={{ color: dt.colors.textPrimary, fontSize: dt.typography.heading.fontSize, margin: 0 }}>{selected.name}</h2>
               <button
                 onClick={() => setSelected(null)}
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: dt.textSecondary,
-                  fontSize: dt.fontSizeLg,
+                  color: dt.colors.textSecondary,
+                  fontSize: dt.typography.subheading.fontSize,
                   cursor: 'pointer',
                 }}
               >
                 ✕
               </button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: dt.spacingMd, marginBottom: dt.spacingMd }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: dt.spacing.md, marginBottom: dt.spacing.md }}>
               <Stat label="Type" value={TYPE_LABELS[selected.type]} />
               <Stat label="Risk" value={selected.riskLevel} valueColor={RISK_COLORS[selected.riskLevel]} />
-              <Stat label="Return" value={`+${selected.returnRate}%`} valueColor={dt.neonCyan} />
-              <Stat label="Max Drawdown" value={`-${selected.maxDrawdown}%`} valueColor={dt.neonRed} />
+              <Stat label="Return" value={`+${selected.returnRate}%`} valueColor={dt.colors.neonCyan} />
+              <Stat label="Max Drawdown" value={`-${selected.maxDrawdown}%`} valueColor={dt.colors.negative} />
               <Stat label="Sharpe Ratio" value={selected.sharpeRatio.toFixed(2)} />
               <Stat label="Runtime" value={`${Math.floor(selected.runtime / 86400)} days`} />
               <Stat label="Fund Size" value={`$${(selected.fundSize / 1000).toFixed(0)}K`} />
-              <Stat label="Status" value={selected.status} valueColor={selected.status === 'running' ? dt.neonGreen : dt.neonYellow} />
+              <Stat label="Status" value={selected.status} valueColor={selected.status === 'running' ? dt.colors.neonGreen : dt.colors.warning} />
             </div>
             {/* Backtest placeholder */}
             <div
               style={{
                 height: 120,
-                background: dt.glassBg,
-                border: `1px solid ${dt.glassBorder}`,
-                borderRadius: dt.borderRadius,
+                background: dt.colors.panelBg,
+                border: dt.borders.panel,
+                borderRadius: dt.borderRadius.lg,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: dt.textTertiary,
-                fontSize: dt.fontSizeSm,
+                color: dt.colors.textMuted,
+                fontSize: dt.typography.caption.fontSize,
               }}
             >
               Backtest chart — data from API
@@ -242,7 +241,7 @@ export default function AiMarketPage() {
           </div>
         </div>
       )}
-    </DEXGridHarness>
+    </div>
   );
 }
 
@@ -257,8 +256,8 @@ function Stat({
 }) {
   return (
     <div>
-      <div style={{ color: dt.textTertiary, fontSize: dt.fontSizeXs, marginBottom: 2 }}>{label}</div>
-      <div style={{ color: valueColor || dt.textPrimary, fontSize: dt.fontSizeMd, fontWeight: 600 }}>{value}</div>
+      <div style={{ color: dt.colors.textMuted, fontSize: dt.typography.label.fontSize, marginBottom: 2 }}>{label}</div>
+      <div style={{ color: valueColor || dt.colors.textPrimary, fontSize: dt.typography.body.fontSize, fontWeight: 600 }}>{value}</div>
     </div>
   );
 }
