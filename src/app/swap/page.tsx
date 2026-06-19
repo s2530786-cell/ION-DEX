@@ -5,21 +5,13 @@ import { encodeFunctionData, parseUnits } from 'viem';
 import { DEXGridHarness } from '@/components/layout/DEXGridHarness';
 import { NeonCard } from '@/components/DEX/NeonCard';
 import { DesignTokens as T } from '@/lib/design-tokens';
-
 interface Token { symbol: string; address: `0x${string}`; decimals: number; logoURI: string }
 interface SwapState { fromToken: Token; toToken: Token; amount: string; quote: string | null }
 
 /**
- * ION DEX Swap Page — BSC Pooled Token Registry
- *
- * Data sources:
- * - ION: IonOracle.getPrice() + LiquidityPool.balanceOf() for reserves
- * - WBNB: Chainlink BNB/USD via IonOracle
- * - USDT: Stablecoin peg (1 USDT = 1 USD)
- *
- * DexSwap.sol (0.3% fee, constant-product AMM) is the swap executor.
- * IonSwapRouter.sol adds slippage protection (amountOutMinimum).
- * Fee split: 50% burn + 25% Master + 25% staking rewards + treasury.
+ * ION DEX Swap �?BSC Pooled Token Registry
+ * DexSwap.sol (0.3% fee, constant-product AMM) via IonSwapRouter.sol (slippage).
+ * Fee split: 50% burn �?0xDEAD | 25% Master | 25% rewards + treasury.
  */
 
 const ION_ADDRESS = '0xe1ab61f7b093435204df32f5b3a405de55445ea8';
@@ -33,6 +25,8 @@ const TOKENS: Token[] = [
 ];
 
 const SLIPPAGE = 0.005;
+
+const DEXSWAP_ADDRESS = '0x0000000000000000000000000000000000000000'; // replaced at deploy-time
 
 const SWAP_ROUTER_ABI = [
   {
@@ -81,7 +75,7 @@ function computeQuote(
   const isReverse = pairKey !== `${state.fromToken.symbol}/${state.toToken.symbol}`;
   const [rIn, rOut] = isReverse ? [reserveB, reserveA] : [reserveA, reserveB];
 
-  // constant-product: (rIn + amountIn * 0.997) * (rOut - amountOut) = rIn * rOut
+  // constant-product: (rIn + amountIn*0.997) * (rOut - amountOut) = rIn * rOut
   const amountInAfterFee = amount * 0.997;
   const amountOut = (amountInAfterFee * rOut) / (rIn + amountInAfterFee);
   const rate = rOut / rIn;
@@ -106,7 +100,7 @@ function TokenSelect({ label, token, onChange }: { label: string; token: Token; 
         aria-label={`${label} token search`}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder={`Search token · selected ${token.symbol}`}
+        placeholder={`Search · ${token.symbol}`}
         style={{
           height: T.inputs.height,
           borderRadius: T.inputs.borderRadius,
@@ -195,8 +189,9 @@ function QuoteDisplay({ quote, state }: { quote: ReturnType<typeof computeQuote>
   return (
     <div style={{ display: 'grid', gap: T.spacing.elementGap, background: T.colors.blackOverlay, border: `${T.borders.thin} solid ${T.colors.surfaceBorder}`, borderRadius: T.inputs.borderRadius, padding: T.spacing.cardPadding }}>
       <Row label="Rate" value={quote ? `1 ${state.fromToken.symbol} = ${quote.rate.toFixed(8)} ${state.toToken.symbol}` : 'Enter amount'} />
-      <Row label="Price Impact" value={quote ? `${(quote.priceImpact * 100).toFixed(3)}%` : '—'} tone={quote && quote.priceImpact > 0.01 ? 'warn' : 'ok'} />
-      <Row label="Minimum Received" value={quote ? `${quote.minReceived.toFixed(6)} ${state.toToken.symbol}` : '—'} />
+      <Row label="Price Impact" value={quote ? `${(quote.priceImpact * 100).toFixed(3)}%` : '�?} tone={quote && quote.priceImpact > 0.01 ? 'warn' : 'ok'} />
+      <Row label="Minimum Received" value={quote ? `${quote.minReceived.toFixed(6)} ${state.toToken.symbol}` : '�?} />
+      <Row label="Fee" value="0.30%" />
       <Row label="Slippage" value="0.5%" />
     </div>
   );
@@ -231,7 +226,9 @@ function buildExactInputSingleIntent(state: SwapState, minReceived: number) {
 
 export default function SwapPage() {
   const [state, setState] = useState<SwapState>({ fromToken: TOKENS[0], toToken: TOKENS[2], amount: '', quote: null });
-  // Pool reserves from LiquidityPool contract — in production, fetched via viem readContract
+  // Fee: 0.30% DexSwap (FeeReceiver enforces trade-fee split)
+
+  // Pool reserves from LiquidityPool contract �?in production, fetched via viem readContract
   const poolReserves: Record<string, { reserveA: number; reserveB: number }> = {
     'ION/WBNB': { reserveA: 22_000_000, reserveB: 68 },
     'ION/USDT': { reserveA: 116_000_000, reserveB: 2_140 },
@@ -245,12 +242,12 @@ export default function SwapPage() {
       <aside style={{ gridColumn: T.grid.leftColumn, display: 'grid', gap: T.spacing.gridGap }}>
         <NeonCard title="Token Info" subtitle="BSC verified assets" variant="cyan">
           <div style={{ display: 'grid', gap: T.spacing.elementGap, ...textStyle }}>
-            {TOKENS.map((token) => <Row key={token.address} label={token.symbol} value={`${token.address.slice(0, 10)}…${token.address.slice(-8)}`} />)}
+            {TOKENS.map((token) => <Row key={token.address} label={token.symbol} value={`${token.address.slice(0, 10)}�?{token.address.slice(-8)}`} />)}
           </div>
         </NeonCard>
         <NeonCard title="Recent Trades" subtitle="PancakeSwap V3 route" variant="violet">
           <div style={{ display: 'grid', gap: T.spacing.elementGap }}>
-            {['ION → USDT', 'WBNB → ION', 'USDT → ION'].map((trade) => <Row key={trade} label={trade} value="BSC confirmed" tone="ok" />)}
+            {['ION �?USDT', 'WBNB �?ION', 'USDT �?ION'].map((trade) => <Row key={trade} label={trade} value="BSC confirmed" tone="ok" />)}
           </div>
         </NeonCard>
       </aside>
@@ -280,7 +277,7 @@ export default function SwapPage() {
                 textTransform: T.typography.buttonLabel.textTransform,
               }}
             >
-              Swap via {PANCAKE_SWAP_V3_ROUTER.slice(0, 8)}…{PANCAKE_SWAP_V3_ROUTER.slice(-6)}
+              Swap via DexSwap (0.3% fee)
             </button>
             <span style={{ ...captionStyle, color: T.colors.textMuted, wordBreak: 'break-all' }}>
               {calldata ? `Prepared exactInputSingle calldata ${calldata.slice(0, 42)}…` : 'Quote uses pool reserve-derived human-readable pricing; connect wallet to broadcast.'}
@@ -293,7 +290,7 @@ export default function SwapPage() {
         <NeonCard title="Price Chart" subtitle="DexScreener · ION" variant="magenta">
           <div style={{ display: 'grid', gap: T.spacing.elementGap }}>
             <Row label="Source" value="DexScreener token API" />
-            <Row label="ION Price" value={`$${PRICE_MAP.ION.toFixed(4)}`} tone="ok" />
+            <Row label="ION/WBNB Reserve" value={`${poolReserves['ION/WBNB'].reserveA.toLocaleString()} ION · ${poolReserves['ION/WBNB'].reserveB} WBNB`} />
             <div style={{ minHeight: T.dimensions.starfieldSize.split(' ')[1], borderRadius: T.inputs.borderRadius, background: T.gradients.starfield, border: `${T.borders.thin} solid ${T.colors.surfaceBorder}`, boxShadow: T.effects.neonMagenta }} />
           </div>
         </NeonCard>

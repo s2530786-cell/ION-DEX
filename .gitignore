@@ -84,3 +84,6 @@ contracts/script/Deploy.s.sol/
 .next
 
 .tmp/
+
+cache/
+.next/
