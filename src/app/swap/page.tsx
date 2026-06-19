@@ -189,8 +189,8 @@ function QuoteDisplay({ quote, state }: { quote: ReturnType<typeof computeQuote>
   return (
     <div style={{ display: 'grid', gap: T.spacing.elementGap, background: T.colors.blackOverlay, border: `${T.borders.thin} solid ${T.colors.surfaceBorder}`, borderRadius: T.inputs.borderRadius, padding: T.spacing.cardPadding }}>
       <Row label="Rate" value={quote ? `1 ${state.fromToken.symbol} = ${quote.rate.toFixed(8)} ${state.toToken.symbol}` : 'Enter amount'} />
-      <Row label="Price Impact" value={quote ? `${(quote.priceImpact * 100).toFixed(3)}%` : '�?} tone={quote && quote.priceImpact > 0.01 ? 'warn' : 'ok'} />
-      <Row label="Minimum Received" value={quote ? `${quote.minReceived.toFixed(6)} ${state.toToken.symbol}` : '�?} />
+      <Row label="Price Impact" value={quote ? `${(quote.priceImpact * 100).toFixed(3)}%` : '-'} tone={quote && quote.priceImpact > 0.01 ? 'warn' : 'ok'} />
+      <Row label="Minimum Received" value={quote ? `${quote.minReceived.toFixed(6)} ${state.toToken.symbol}` : '-'} />
       <Row label="Fee" value="0.30%" />
       <Row label="Slippage" value="0.5%" />
     </div>

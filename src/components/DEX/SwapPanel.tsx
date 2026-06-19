@@ -75,6 +75,23 @@ const SwapDetails: React.FC<{
           />
           <Row label="Network Fee" value={`~${networkFee} BNB`} />
           <Divider />
+          <div
+            className="flex flex-col gap-1.5 p-3 rounded-xl"
+            style={{
+              backgroundColor: T.colors.cyanOverlay,
+              border: `${T.borders.thin} solid ${T.colors.cyanBorder}`,
+            }}
+          >
+            <span style={{ fontSize: T.typography.caption.fontSize, color: T.colors.neonCyan, fontWeight: 600 }}>
+              Swap Fee 0.3%
+            </span>
+            <div className="flex justify-between font-mono" style={{ fontSize: T.dimensions.microTextSize, color: T.colors.textSecondary }}>
+              <span>50% Burned</span>
+              <span>25% Master</span>
+              <span>25% Staking</span>
+            </div>
+          </div>
+          <Divider />
           <Row label="Minimum Received" value={`${minReceived} USDT`} bold />
         </div>
       )}
