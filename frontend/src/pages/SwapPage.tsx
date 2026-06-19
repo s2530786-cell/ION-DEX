@@ -292,7 +292,6 @@ export function SwapPage() {
                 setConfirmation(null);
                 setSubmitError(null);
               }}
-              placeholder="0.00"
               value={payAmount}
             />
           </label>

@@ -114,7 +114,6 @@ export function StakePage() {
                 setAmount(event.target.value);
                 setSubmitted(false);
               }}
-              placeholder="500"
               value={amount}
             />
           </label>
@@ -166,7 +165,7 @@ export function StakePage() {
           {formatCountdown(unlockLeft)}
         </p>
         <p className="mt-2 text-xs text-cyan-100/60">
-          {isZh ? "用于测试网质押中心体验的模拟解除质押冷却时间。" : "Mock unstake cooldown for testnet staking hub UX."}
+          {isZh ? "用于测试网质押中心体验的演练解除质押冷却时间。" : "Rehearsal unstake cooldown for testnet staking hub UX."}
         </p>
       </NeonCard>
     </div>

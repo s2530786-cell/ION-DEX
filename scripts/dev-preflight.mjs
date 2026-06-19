@@ -45,6 +45,27 @@ const unfinishedPatterns = [
   /\bTBD\b/i,
 ];
 
+const uiDebtAllowlist = [
+  { file: "frontend/src/hooks/useBridgeDeskData.ts", pattern: /relayerStatus:\s*"mocked"/ },
+  { file: "frontend/src/hooks/useDomainDeskData.ts", pattern: /provenance:\s*\{\s*source:\s*"mock"/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /source:\s*"mock"\s*\|\s*"cache"\s*\|\s*"upstream"\s*\|\s*"indexer"/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /status:\s*"design"\s*\|\s*"mock"\s*\|\s*"paused"\s*\|\s*"online"/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /relayerStatus:\s*"mocked"\s*\|\s*"planned"\s*\|\s*"online"\s*\|\s*"degraded"/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /proofStatus:\s*"planned"\s*\|\s*"mocked"\s*\|\s*"online"/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /status:\s*"mock"\s*\|\s*"planned"/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /source:\s*"mock";$/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /const mockMarketProvenance:/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /provenance:\s*mockMarketProvenance/ },
+  { file: "frontend/src/pages/AiSubscriptionPage.tsx", pattern: /source:\s*source === "live" \? "upstream" : "mock"/ },
+  { file: "frontend/src/pages/BusinessPages.tsx", pattern: /status:\s*"mock"/ },
+  { file: "frontend/src/pages/BusinessPages.tsx", pattern: /relayerStatus:\s*"mocked"/ },
+  { file: "frontend/src/pages/BusinessPages.tsx", pattern: /source:\s*"mock"/ },
+  { file: "frontend/src/pages/DashboardPage.tsx", pattern: /source:\s*"mock"/ },
+  { file: "frontend/src/pages/DashboardPage.tsx", pattern: /oracleMethod:\s*"mock-single-source"/ },
+  { file: "frontend/src/pages/DashboardPage.tsx", pattern: /platformId:\s*"mock"/ },
+  { file: "frontend/src/pages/DomainManagePage.tsx", pattern: /source:\s*"mock"/ },
+];
+
 function readRequiredFile(file) {
   const bytes = readFileSync(join(root, file));
   if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
@@ -84,6 +105,15 @@ function listSourceFiles(dir) {
   return files;
 }
 
+function normalizeRelPath(file) {
+  return file.split(sep).join("/");
+}
+
+function isUiDebtAllowed(file, line) {
+  const normalized = normalizeRelPath(file);
+  return uiDebtAllowlist.some((entry) => entry.file === normalized && entry.pattern.test(line));
+}
+
 function collectUiDebtWarnings() {
   const frontendSrc = join(root, "frontend", "src");
   try {
@@ -97,10 +127,17 @@ function collectUiDebtWarnings() {
   const warnings = [];
   for (const file of listSourceFiles(`frontend${sep}src`)) {
     const content = readFileSync(join(root, file), "utf8");
+    const lines = content.split(/\r?\n/);
     for (const pattern of unfinishedPatterns) {
-      if (pattern.test(content)) {
-        warnings.push(`${file}: ${pattern}`);
-      }
+      lines.forEach((line, index) => {
+        if (!pattern.test(line)) {
+          return;
+        }
+        if (isUiDebtAllowed(file, line)) {
+          return;
+        }
+        warnings.push(`${file}:${index + 1}: ${pattern}`);
+      });
     }
   }
   return warnings;

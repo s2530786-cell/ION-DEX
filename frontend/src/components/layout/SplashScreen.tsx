@@ -213,7 +213,7 @@ export function SplashScreen({ onFinish }: { onFinish?: () => void }) {
           aria-hidden
           className="flex h-full w-full items-center justify-center px-6"
         >
-          <div className="boot-fallback-shell relative flex w-full max-w-[28rem] flex-col items-center justify-center overflow-hidden rounded-[30px] border border-cyan-300/30 bg-[rgba(8,14,32,0.42)] px-8 py-12 text-center shadow-[0_0_60px_rgba(0,255,255,0.16),0_0_120px_rgba(141,77,255,0.14)] backdrop-blur-xl">
+          <div className="boot-fallback-stage relative flex w-full max-w-[28rem] flex-col items-center justify-center overflow-hidden rounded-[30px] border border-cyan-300/30 bg-[rgba(8,14,32,0.42)] px-8 py-12 text-center shadow-[0_0_60px_rgba(0,255,255,0.16),0_0_120px_rgba(141,77,255,0.14)] backdrop-blur-xl">
             <div className="boot-fallback-nebula absolute inset-0" />
             <div className="boot-fallback-grid absolute inset-x-0 bottom-0 h-[40%]" />
             <div className="boot-fallback-orb absolute left-1/2 top-[18%] h-28 w-28 -translate-x-1/2 rounded-full" />

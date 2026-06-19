@@ -7,7 +7,7 @@
     "build": "next build",
     "audit": "python3 scripts/audit_tokens.py",
     "lint": "echo '[lint] 待配置 ESLint/Prettier'",
-    "test": "node agent_harness.py",
+    "test": "python3 agent_harness.py --audit",
     "validate": "npm run audit && npm run test",
     "clean": "rm -rf dist build .next"
   },

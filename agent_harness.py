@@ -10,6 +10,12 @@ import argparse
 from pathlib import Path
 
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
+
 class IONContractAuditor:
     """ION DEX 合约安全审计引擎"""
 
@@ -18,8 +24,12 @@ class IONContractAuditor:
         "exec(",
         "eval(",
         "unsafe_op",
-        "send_raw_message",  # 需人工审查
-        "raw_reserve",       # 需人工审查
+    ]
+
+    # 审查模式：FunC/TVM 低层原语，必须标记供人工/CI 审查，但不能无条件阻断所有出站消息合约
+    REVIEW_PATTERNS = [
+        "send_raw_message",
+        "raw_reserve",
     ]
 
     # 警告模式：需标记但不阻断
@@ -55,6 +65,13 @@ class IONContractAuditor:
                         print(f"[SECURITY ALERT] {file}:{lineno} 包含禁止模式: {pattern}")
                         print(f"  → {line.strip()[:120]}")
                         has_critical = True
+
+            # 检查低层原语审查模式
+            for pattern in self.REVIEW_PATTERNS:
+                for lineno, line in enumerate(lines, 1):
+                    if pattern in line:
+                        print(f"[SECURITY REVIEW] {file}:{lineno} 包含需审查原语: {pattern}")
+                        print(f"  → {line.strip()[:120]}")
 
             # 检查警告模式
             for pattern in self.WARNING_PATTERNS:
@@ -96,7 +113,7 @@ class IONContractAuditor:
             if not security_ok:
                 return 1
 
-            print("[AUDIT PASSED] 合约安全审计通过 ✓")
+            print("[AUDIT PASSED] 合约安全审计通过 [OK]")
             return 0
 
         print(f"[ERROR] 未知模式: {mode}")

@@ -27,7 +27,7 @@ export function useStakeDeskData() {
       return [
         { label: "Official receipt", value: OFFICIAL_LIQUID_STAKE_RECEIPT, tone: "gold" },
         { label: "Unstake", value: `~${OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX}h`, tone: "cyan" },
-        { label: "DEX draft", value: "—", tone: "magenta" },
+        { label: "DEX integration", value: "—", tone: "magenta" },
       ];
     }
     const summary = staking.data;
@@ -40,7 +40,7 @@ export function useStakeDeskData() {
       },
       {
         label: "Official APR",
-        value: formatStakingAprLabel(summary.apr.officialPct, "Dynamic · live TBD"),
+        value: formatStakingAprLabel(summary.apr.officialPct, "Dynamic · live after validator feed"),
         tone: "cyan",
         testId: "stake-metric-official-apr",
       },
@@ -59,8 +59,8 @@ export function useStakeDeskData() {
     }
     const s = staking.data;
     const officialApr = formatStakingAprLabel(s.apr.officialPct, "dynamic (official pool)");
-    const dexApr = formatStakingAprLabel(s.apr.dexPct, "draft pool · not wired");
-    return `Official: stake ION → ${s.officialRewardAsset ?? OFFICIAL_LIQUID_STAKE_RECEIPT}, unstake ~${s.officialUnstakeRoundHoursApprox ?? OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX}h per validation round · APR ${officialApr}. DEX draft fee staking APR ${dexApr} — ${Number(s.dexStakedIon).toLocaleString()} ION (mock until contracts wired).`;
+    const dexApr = formatStakingAprLabel(s.apr.dexPct, "integration pool · not wired");
+    return `Official: stake ION → ${s.officialRewardAsset ?? OFFICIAL_LIQUID_STAKE_RECEIPT}, unstake ~${s.officialUnstakeRoundHoursApprox ?? OFFICIAL_UNSTAKE_ROUND_HOURS_APPROX}h per validation round · APR ${officialApr}. DEX integration fee staking APR ${dexApr} — ${Number(s.dexStakedIon).toLocaleString()} ION (fallback until contracts wired).`;
   }, [staking.data, staking.state]);
 
   return {

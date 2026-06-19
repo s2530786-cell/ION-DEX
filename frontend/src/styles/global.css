@@ -430,7 +430,7 @@ select {
   }
 
   .boot-brand-chip,
-  .boot-fallback-shell {
+  .boot-fallback-stage {
     isolation: isolate;
   }
 

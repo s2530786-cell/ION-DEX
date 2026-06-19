@@ -1,5 +1,22 @@
 # Current Progress
 
+## 2026-06-19 root validate / audit harness 收口
+
+- **问题**：`make audit` 在当前 Windows 环境不可用（`make` 不在 PATH）；根项目等价门禁 `npm run validate` 初次失败，因为 `package.json` 将 Python 文件 `agent_harness.py` 交给 `node` 执行。
+- **修复**：`package.json` 的 `test` 改为 `python3 agent_harness.py --audit`；`agent_harness.py` 固定 stdout/stderr UTF-8，避免 Windows PowerShell 捕获中文日志乱码；将 FunC/TVM 低层出站消息原语 `send_raw_message` / `raw_reserve` 改为 `SECURITY REVIEW` 非阻断项，继续保留 `exec(`/`eval(`/`unsafe_op` 为阻断项。
+- **验证**：`node scripts/dev-preflight.mjs` ✅；`npm run validate` ✅（`scripts/audit_tokens.py` 扫描 32 files / 0 violations；`agent_harness.py --audit` 通过，输出 REVIEW/WARN 供人工审查）；`powershell -ExecutionPolicy Bypass -File scripts/check-encoding.ps1` ✅ 扫描 **39757** files UTF-8 without BOM / no NUL；`node scripts/security-preflight.mjs` ✅；ReadLints `package.json` / `agent_harness.py` ✅ no errors。
+- **范围控制**：本轮只新增触碰 `package.json`、`agent_harness.py`、`SESSION_STATE.md`、`docs/99-current-progress.md`；没有整理其它既有 dirty 文件，未 commit/push。
+
+
+## 2026-06-19 dev-preflight strict UI debt allowlist
+
+- **范围**：继续上一轮 frontend UI debt cleanup；将 `scripts/dev-preflight.mjs` 从整文件扫描改为逐行扫描，并为无法改名的 API 协议枚举 / typed fallback source 增加精确 allowlist。
+- **修复**：补清仍残留的真实 UI debt 行：`BridgeTransferPanel` draft bridge 文案、`SplashScreen`/`global.css` fallback shell 类名、`useStakeDeskData` draft/TBD/mock 可见说明、`appSettings` local cache prefix、`BridgePage` relayer fee TBD、`BusinessPages` draft/Floor(mock)、多个页面 JSX `placeholder` 属性、`StakePage` mock cooldown 文案、`VaultStakePage` shell 文案。
+- **规则变更**：`dev-preflight` 现在输出 `file:line` warning，并只 allowlist 精确协议行（`ApiMeta.source`, bridge/domain status union, relayer/proof status, typed fallback provenance 等），避免协议枚举被误判为 UI debt。
+- **预检结果**：`ION_UI_STRICT=1 ION_SKILL_ROUTE=0 node scripts/dev-preflight.mjs` ✅；`UI_DEBT_WARNINGS` 清零。
+- **验证**：`frontend npm run build` ✅（`tsc && vite build`）；`frontend npm run audit:high` ✅ `found 0 vulnerabilities`；编码 ✅ **39757** files UTF-8 without BOM / no NUL。
+- **说明**：尝试重跑完整 `frontend npm run verify` 时 PowerShell 日志重定向文件被占用，流程在 Playwright 中段中断；此前同一批 UI 改动后完整 verify 已通过 **35 passed / 2 skipped**，本轮额外用 build/audit/strict preflight/encoding 覆盖代码正确性。未 commit/push。
+
 ## 2026-06-19 Foundry 合约 lint/security warning cleanup
 
 - **范围**：按计划处理 Foundry lint/security 警告，聚焦 BSC Solidity 合约与测试；未触碰 FunC 逻辑。

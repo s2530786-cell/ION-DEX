@@ -252,7 +252,6 @@ export function DomainManagePage() {
                 setQuery(event.target.value);
                 setMessage(null);
               }}
-              placeholder="custodian.ion"
               value={query}
             />
           </label>

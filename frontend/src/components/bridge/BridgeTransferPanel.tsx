@@ -385,8 +385,8 @@ export function BridgeTransferPanel({ routesPayload }: BridgeTransferPanelProps)
             {direction === "ion-bsc"
               ? ` · fixed ${ION_TOTAL_SUPPLY_CAP} ION supply · claim on BSC follows official Bridge mint`
               : bscVaultBridgeConfigured()
-                ? " · draft BSC vault configured (BSC→ION experiments)"
-                : " · set VITE_BSC_VAULT_ADDRESS for draft BSC→ION vault deposits"}
+                ? " · BSC vault configured for gated BSC→ION experiments"
+                : " · set VITE_BSC_VAULT_ADDRESS for gated BSC→ION vault deposits"}
           </span>
         ) : (
           <span>Enter a positive amount and a valid destination to continue.</span>

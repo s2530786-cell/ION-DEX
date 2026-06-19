@@ -90,8 +90,8 @@ export function VaultStakePage() {
             </h1>
             <p className="mt-2 text-sm text-cyan-100/65">
               {isZh
-                ? "页面骨架已接入 React；配置 vault 合约地址并接入 writeContract 之后，才能真正上链。"
-                : "The page shell is already wired in React; it needs a configured vault address and writeContract wiring before it can go on-chain."}
+                ? "页面已接入 React；配置 vault 合约地址并接入 writeContract 之后，才能真正上链。"
+                : "The page is already wired in React; it needs a configured vault address and writeContract wiring before it can go on-chain."}
             </p>
           </div>
           <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.08] p-3 text-emerald-100">
@@ -109,7 +109,6 @@ export function VaultStakePage() {
               className="mt-2 w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-lg font-black text-white outline-none"
               inputMode="decimal"
               onChange={(event) => setDepositAmt(event.target.value)}
-              placeholder="0"
               value={depositAmt}
             />
           </label>

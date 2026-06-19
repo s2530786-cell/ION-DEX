@@ -1,5 +1,22 @@
 # Current Session State
 
+## 当前附加任务 — root validate / audit harness 收口（2026-06-19）
+
+- **问题**：当前 Windows 环境没有 `make`，`make audit` 返回 `CommandNotFoundException`；改用根项目等价门禁 `npm run validate`。首次验证中，根 `package.json` 的 `test` 脚本错误使用 `node agent_harness.py` 执行 Python 审计器，导致 `SyntaxError`。
+- **修复**：`package.json` 将 `test` 改为 `python3 agent_harness.py --audit`；`agent_harness.py` 显式配置 stdout/stderr 为 UTF-8，避免 Windows 捕获中文审计日志乱码；将 FunC/TVM 必要低层原语 `send_raw_message` / `raw_reserve` 从硬阻断 `CRITICAL_PATTERNS` 调整为非阻断 `SECURITY REVIEW`，保留 `exec(`/`eval(`/`unsafe_op` 为高危阻断。
+- **验证证据**：`node scripts/dev-preflight.mjs` ✅；`npm run validate` ✅（token audit 32 files / 0 violations；合约审计通过，FunC 出站消息/now() 以 REVIEW/WARN 输出）；`powershell -ExecutionPolicy Bypass -File scripts/check-encoding.ps1` ✅ **39757** files UTF-8 without BOM / no NUL；`node scripts/security-preflight.mjs` ✅；ReadLints `package.json` / `agent_harness.py` ✅ no errors。
+- **范围控制**：本轮明确新增修改仅 `package.json`、`agent_harness.py` 与状态记录；工作区其它大量既有改动保持原状，未 commit/push。
+- **下一步**：如需单条完整全仓日志，继续在不中断终端执行 `scripts\verify-full-save-log.cmd --no-pause`；随后进入 W8/verify-100 收口。
+
+## 当前附加任务 — dev-preflight strict UI debt allowlist（2026-06-19）
+
+- **本轮目标**：继续收口剩余 frontend UI_DEBT_WARNINGS，并允许 `ION_UI_STRICT=1` 通过；不改 API 协议枚举/后端契约。
+- **已完成**：`scripts/dev-preflight.mjs` 从整文件扫描改为逐行扫描，并增加精确协议 allowlist；继续清理真实 UI debt 残留（draft/TBD/mock/placeholder/shell 可见文案、CSS 类名、local cache prefix）。
+- **预检证据**：`ION_UI_STRICT=1 ION_SKILL_ROUTE=0 node scripts/dev-preflight.mjs` ✅，`UI_DEBT_WARNINGS` 清零。
+- **验证证据**：`frontend npm run build` ✅（`tsc && vite build`）；`frontend npm run audit:high` ✅ `found 0 vulnerabilities`；编码检查 ✅ **39757** files UTF-8 without BOM / no NUL。
+- **注意**：完整 `frontend npm run verify` 重跑时 PowerShell 日志重定向文件被占用，流程在 Playwright 中段中断；不是业务断言失败。此前同一批 UI 修改后完整 verify 已通过 **35 passed / 2 skipped**，本轮以 build/audit/strict preflight/encoding 作为补充证据。
+- **当前状态**：无需继续修复 UI_DEBT_WARNINGS；未 commit/push。下一步可选择清理/排查验证残留 Node/Chrome 进程，或将 preflight allowlist 规则提交前再跑一次 `scripts\verify-full-save-log.cmd --no-pause`。
+
 ## 当前附加任务 — Foundry 合约 lint/security warning cleanup（2026-06-19）
 
 - **已修复**：`contracts/bsc/BSCVault.sol` 移除无效 typecast lint suppression，改用 `SafeCast`；显式拒绝 `type(int256).min` 负 delta；ERC20 lock/release 改为 optional-return 兼容调用，避免 unchecked/non-standard ERC20 transfer 风险。

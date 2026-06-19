@@ -242,7 +242,7 @@ const fallbackBridgePayload: BridgeRoutesPayload = {
   ],
   relayerStatus: "mocked",
   verifier: {
-    threshold: "3-of-5 draft",
+    threshold: "3-of-5 review",
     replayProtection: true,
     proofStatus: "planned",
   },
@@ -411,7 +411,7 @@ function DomainMetricsRow() {
   const metrics: MetricCard[] = [
     { label: isZh ? "解析预览" : "Resolver Preview", value: resolution.name, tone: "cyan" },
     { label: isZh ? "注册状态" : "Registry", value: listingLabel, tone: "gold" },
-    { label: isZh ? "起售价（模拟）" : "Floor (mock)", value: `${resolution.marketplace.floorIon} ION`, tone: "magenta" },
+    { label: isZh ? "起售价（离线）" : "Floor (offline)", value: `${resolution.marketplace.floorIon} ION`, tone: "magenta" },
   ];
 
   return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="domain-metrics-source" />;

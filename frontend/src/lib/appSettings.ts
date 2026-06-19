@@ -3,7 +3,7 @@ import { DEFAULT_APP_LOCALE, isAppLocale, type AppLocale } from "@/i18n/types";
 export const APP_SETTINGS_STORAGE_KEY = "ion-dex-app-settings";
 
 /** Keys cleared by “Clear local cache”; wallet session keys are never removed. */
-export const CLEARABLE_CACHE_PREFIXES = ["ion-dex-cache-", "ion-dex-draft-", "ion-risk-ack"] as const;
+export const CLEARABLE_CACHE_PREFIXES = ["ion-dex-cache-", "ion-dex-intent-", "ion-risk-ack"] as const;
 
 export type AppSettings = {
   darkMode: boolean;

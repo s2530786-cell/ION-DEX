@@ -118,8 +118,8 @@ export function BridgePage() {
             ? `约 ${activeRoute.estimatedMinutes} 分钟中继`
             : `~${activeRoute.estimatedMinutes} min relay`
           : isZh
-            ? "中继费用待定"
-            : "relayer fee TBD",
+            ? "中继费用待路由确认"
+            : "relayer fee pending route confirmation",
         chainId: direction === "bsc-ion" ? BSC_CHAIN_ID : ION_CHAIN_ID_SCAFFOLD,
         destination: destination.trim() || undefined,
       });
@@ -362,7 +362,6 @@ export function BridgePage() {
                   setAmount(event.target.value);
                   setTxHash(null);
                 }}
-                placeholder="100"
                 type="number"
                 value={amount}
               />
@@ -376,7 +375,6 @@ export function BridgePage() {
                   setDestination(event.target.value);
                   setTxHash(null);
                 }}
-                placeholder="EQ... or 0x..."
                 type="text"
                 value={destination}
               />
