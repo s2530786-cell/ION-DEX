@@ -1,3 +1,5 @@
+import type { ServerConfig } from "../config/server-config.js";
+
 export type LiquidityMinePool = {
   id: number;
   name: string;
@@ -19,7 +21,9 @@ export type LiquidityMineSummary = {
   pendingReward: string;
   pools: LiquidityMinePool[];
   provenance: {
-    source: "local-session";
+    source: "local-session" | "bsc-liquidity-mine";
+    status: "configured" | "missing-contract";
+    contractAddress: string | null;
     note: string;
   };
 };
@@ -144,7 +148,25 @@ function buildPoolView(seed: PoolSeed): LiquidityMinePool {
   };
 }
 
-export function getLiquidityMineSummary(): LiquidityMineSummary {
+function buildProvenance(config?: ServerConfig): LiquidityMineSummary["provenance"] {
+  if (config?.bscLiquidityMineAddress) {
+    return {
+      source: "bsc-liquidity-mine",
+      status: "configured",
+      contractAddress: config.bscLiquidityMineAddress,
+      note: "Liquidity mine contract address is configured; staking actions remain local until the BSC indexer/write path is enabled.",
+    };
+  }
+
+  return {
+    source: "local-session",
+    status: "missing-contract",
+    contractAddress: null,
+    note: "BSC_LIQUIDITY_MINE_ADDRESS is not configured; API uses in-memory stakes and catalog seed only.",
+  };
+}
+
+export function getLiquidityMineSummary(config?: ServerConfig): LiquidityMineSummary {
   warnSeedRegistryOnce();
   const pools = poolSeeds.map(buildPoolView);
   let myLpShares = 0n;
@@ -158,14 +180,11 @@ export function getLiquidityMineSummary(): LiquidityMineSummary {
     myLpShares: formatIonFromWei(myLpShares),
     pendingReward: formatIonFromWei(pendingReward),
     pools,
-    provenance: {
-      source: "local-session",
-      note: "Liquidity mine API uses in-memory stakes until BSC LiquidityMine contract is indexed.",
-    },
+    provenance: buildProvenance(config),
   };
 }
 
-export function stakeLiquidityMine(input: LiquidityMineStakeInput): LiquidityMineSummary {
+export function stakeLiquidityMine(input: LiquidityMineStakeInput, config?: ServerConfig): LiquidityMineSummary {
   const poolId = Number(input.poolId);
   if (!Number.isInteger(poolId) || poolId < 0 || poolId >= poolSeeds.length) {
     throw new LiquidityMineValidationError("poolId is invalid.");
@@ -178,10 +197,10 @@ export function stakeLiquidityMine(input: LiquidityMineStakeInput): LiquidityMin
     pendingRewardWei: (existing?.pendingRewardWei ?? 0n) + amountWei / 100n,
   };
   userStakes.set(poolId, next);
-  return getLiquidityMineSummary();
+  return getLiquidityMineSummary(config);
 }
 
-export function unstakeLiquidityMine(input: LiquidityMineStakeInput): LiquidityMineSummary {
+export function unstakeLiquidityMine(input: LiquidityMineStakeInput, config?: ServerConfig): LiquidityMineSummary {
   const poolId = Number(input.poolId);
   if (!Number.isInteger(poolId) || poolId < 0 || poolId >= poolSeeds.length) {
     throw new LiquidityMineValidationError("poolId is invalid.");
@@ -200,10 +219,10 @@ export function unstakeLiquidityMine(input: LiquidityMineStakeInput): LiquidityM
   } else {
     userStakes.set(poolId, { ...existing, amountWei: remaining });
   }
-  return getLiquidityMineSummary();
+  return getLiquidityMineSummary(config);
 }
 
-export function claimLiquidityMineReward(poolIdInput: number): LiquidityMineSummary {
+export function claimLiquidityMineReward(poolIdInput: number, config?: ServerConfig): LiquidityMineSummary {
   const poolId = Number(poolIdInput);
   if (!Number.isInteger(poolId) || poolId < 0 || poolId >= poolSeeds.length) {
     throw new LiquidityMineValidationError("poolId is invalid.");
@@ -213,7 +232,7 @@ export function claimLiquidityMineReward(poolIdInput: number): LiquidityMineSumm
     throw new LiquidityMineValidationError("no pending reward to claim.");
   }
   userStakes.set(poolId, { ...existing, pendingRewardWei: 0n });
-  return getLiquidityMineSummary();
+  return getLiquidityMineSummary(config);
 }
 
 /** Test helper — reset in-memory stakes between API tests. */

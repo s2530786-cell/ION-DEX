@@ -101,7 +101,7 @@ export async function routeRequest(
   }
 
   if (url.pathname.startsWith("/api/liquidity-mine/")) {
-    const handled = await handleLiquidityMineRoute(request, response, url.pathname, meta);
+    const handled = await handleLiquidityMineRoute(config, request, response, url.pathname, meta);
     if (handled) {
       return;
     }

@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import type { ServerConfig } from "../config/server-config.js";
 import { ApiErrorCodes, apiError, apiResponse, writeJson, type ApiMeta } from "../gateway/response.js";
 import {
   claimLiquidityMineReward,
@@ -35,20 +36,21 @@ function parseClaimBody(body: unknown): number {
 }
 
 export async function handleLiquidityMineRoute(
+  config: ServerConfig,
   request: IncomingMessage,
   response: ServerResponse,
   pathname: string,
   meta: ApiMeta,
 ): Promise<boolean> {
   if (pathname === "/api/liquidity-mine/pools" && request.method === "GET") {
-    writeJson(response, 200, apiResponse(getLiquidityMineSummary(), meta));
+    writeJson(response, 200, apiResponse(getLiquidityMineSummary(config), meta));
     return true;
   }
 
   if (pathname === "/api/liquidity-mine/stake" && request.method === "POST") {
     try {
       const body = await readJsonBody(request);
-      const summary = stakeLiquidityMine(parseStakeBody(body));
+      const summary = stakeLiquidityMine(parseStakeBody(body), config);
       writeJson(response, 200, apiResponse(summary, meta));
     } catch (error) {
       if (error instanceof LiquidityMineValidationError) {
@@ -67,7 +69,7 @@ export async function handleLiquidityMineRoute(
   if (pathname === "/api/liquidity-mine/unstake" && request.method === "POST") {
     try {
       const body = await readJsonBody(request);
-      const summary = unstakeLiquidityMine(parseStakeBody(body));
+      const summary = unstakeLiquidityMine(parseStakeBody(body), config);
       writeJson(response, 200, apiResponse(summary, meta));
     } catch (error) {
       if (error instanceof LiquidityMineValidationError) {
@@ -86,7 +88,7 @@ export async function handleLiquidityMineRoute(
   if (pathname === "/api/liquidity-mine/claim" && request.method === "POST") {
     try {
       const body = await readJsonBody(request);
-      const summary = claimLiquidityMineReward(parseClaimBody(body));
+      const summary = claimLiquidityMineReward(parseClaimBody(body), config);
       writeJson(response, 200, apiResponse(summary, meta));
     } catch (error) {
       if (error instanceof LiquidityMineValidationError) {

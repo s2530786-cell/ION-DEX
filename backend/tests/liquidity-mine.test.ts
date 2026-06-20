@@ -9,6 +9,10 @@ type JsonResponse = {
   data?: {
     myLpShares?: string;
     pendingReward?: string;
+    provenance?: {
+      status: string;
+      contractAddress: string | null;
+    };
     pools?: Array<{ id: number; userStaked: string; canClaim: boolean }>;
   };
   error?: {
@@ -54,6 +58,25 @@ describe("liquidity-mine API", () => {
     assert.equal(response.status, 200);
     assert.equal(response.body.data?.pools?.length, 2);
     assert.equal(response.body.data?.myLpShares, "0");
+    assert.equal(response.body.data?.provenance?.status, "missing-contract");
+  });
+
+  it("returns configured contract provenance when BSC address is set", async () => {
+    const previous = process.env.BSC_LIQUIDITY_MINE_ADDRESS;
+    process.env.BSC_LIQUIDITY_MINE_ADDRESS = "0x1111111111111111111111111111111111111111";
+    resetLiquidityMineSessionForTests();
+    try {
+      const response = await requestJson("/api/liquidity-mine/pools");
+      assert.equal(response.status, 200);
+      assert.equal(response.body.data?.provenance?.status, "configured");
+      assert.equal(response.body.data?.provenance?.contractAddress, "0x1111111111111111111111111111111111111111");
+    } finally {
+      if (previous === undefined) {
+        delete process.env.BSC_LIQUIDITY_MINE_ADDRESS;
+      } else {
+        process.env.BSC_LIQUIDITY_MINE_ADDRESS = previous;
+      }
+    }
   });
 
   it("stakes and claims rewards", async () => {

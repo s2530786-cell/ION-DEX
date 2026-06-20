@@ -134,7 +134,12 @@ select {
       var(--glow-cyber-intense),
       0 22px 70px rgba(0, 0, 0, 0.55),
       0 8px 32px rgba(var(--ion-cyan-rgb), 0.08);
-    /* Ground reflection via box-shadow faux-mirror (cross-browser) */
+    /* Ground reflection — mirror-like below cards */
+    -webkit-box-reflect: below 4px linear-gradient(transparent 60%, rgba(0,0,0,0.45));
+  }
+
+  .reflect-ground {
+    -webkit-box-reflect: below 2px linear-gradient(transparent 55%, rgba(0,0,0,0.5));
   }
 
   .glass-surface::after {

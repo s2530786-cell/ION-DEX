@@ -1,5 +1,10 @@
 # TASK: ION DEX Frontend — 5 Pages UI Polish & Navigation
 
+## Completion Mark — 2026-06-20
+- Status: COMPLETED against active Vite `frontend/src/pages/*Page.tsx` implementation.
+- Evidence: Swap/Pool/Stake/Bridge/Dashboard are routed from `frontend/src/App.tsx`; `npx tsc --noEmit` passed; `npm test` passed with 5 core page tests.
+- Note: historical lowercase page filenames and `DEXConsole.tsx` tab shell are superseded by `AppShell` + hash routing.
+
 ## Status: Pipeline READY
 - Dev server: localhost:3000 (ON)
 - Visual diff: 5/5 pages PASSING at 0.00% (baselines in .visual-screenshots/)

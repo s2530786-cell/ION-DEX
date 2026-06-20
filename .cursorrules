@@ -42,3 +42,31 @@
 - Any layer alert = AI MUST auto-rewrite. No skipping.
 - `make audit` failure = code is NOT deliverable.
 - The pipeline is the gatekeeper. AI cannot bypass it.
+
+## 7. Verify-100 Push Gate (MANDATORY — Push blocked without this)
+Every commit pushed to main MUST carry a `Verify-100-Proof` trailer in the commit message.
+
+**Before committing:**
+```powershell
+powershell -File scripts/verify-100.ps1
+```
+Wait for `RESULT=GREEN` (100/100 passes).
+
+**After commit, inject the proof trailer:**
+```powershell
+node scripts/verify-100-gate.mjs post-commit
+```
+
+**Commit message format:**
+```
+Your commit subject here
+
+Verify-100-Proof: verify100-YYYYMMDDHHMMSS-xxxxxxxx
+```
+
+**If push is blocked with "missing Verify-100-Proof trailer":**
+1. Run `powershell -File scripts/verify-100.ps1` and wait for GREEN
+2. Run `node scripts/verify-100-gate.mjs post-commit` to inject trailer
+3. `git push` again
+
+**Never skip this gate. Push will fail without it.**

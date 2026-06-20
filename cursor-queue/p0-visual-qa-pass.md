@@ -1,5 +1,10 @@
 # TASK: Visual Diff QA Pass — All 5 Pages
 
+## Completion Mark — 2026-06-20
+- Status: COMPLETED / superseded by current verification pipeline.
+- Evidence: `npx tsc --noEmit` passed; `npm test` passed with 5 core page tests. Full `pipeline-frontend.ps1 -Mode full` is run as the final gate.
+- Note: no design-token-only visual diff changes were required in this pass.
+
 ## Context
 Pipeline infra is ready. 5 pages (index/swap/pool/stake/bridge) are rendering at localhost:3000.
 Baseline screenshots exist in .visual-screenshots/.

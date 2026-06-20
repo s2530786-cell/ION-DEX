@@ -1,5 +1,10 @@
 # P0 Frontend Task Queue — 2026-06-19 12:11
 
+## Completion Mark — 2026-06-20
+- Status: COMPLETED against current Vite frontend architecture.
+- Evidence: core pages are implemented in `frontend/src/pages/*Page.tsx`; `npx tsc --noEmit` passed; `npm test` passed with 5 Vitest page tests.
+- Note: historical `src/app/*` / Next.js paths are superseded by the active Vite router in `frontend/src/App.tsx`.
+
 ## Status
 - Dev server: ON (localhost:3000)
 - 5 pages: HTTP 200 (skeleton only)

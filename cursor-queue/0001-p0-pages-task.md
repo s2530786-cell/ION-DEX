@@ -1,3 +1,9 @@
+# Completion Mark — 2026-06-20
+
+- Status: COMPLETED / superseded by active Vite architecture.
+- Evidence: standalone routed pages exist as `frontend/src/pages/SwapPage.tsx`, `PoolPage.tsx`, `StakePage.tsx`, `BridgePage.tsx`, and `DashboardPage.tsx`; `npx tsc --noEmit` passed; `npm test` passed.
+- Note: this historical Next.js task must not create `next.config.ts` in the current Vite frontend.
+
 You are working on the ION DEX project at D:\openclaw-tools\ion-dex-nuke.
 
 ## Task: Create Next.js page routes

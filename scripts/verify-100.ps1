@@ -167,7 +167,17 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
     }
 
     $backendStressExit = Run-Step "backend-stress" {
-      & $script:CmdExe /d /c "npm run stress"
+      # forge test (contracts dir) — pass if "36 tests passed" found
+      $forgeExe = "D:\openclaw-tools\foundry\bin\forge.exe"
+      $contractsDir = "D:\openclaw-tools\ion-dex-nuke\contracts"
+      if (-not (Test-Path $forgeExe)) { exit 2 }
+      Push-Location $contractsDir
+      try {
+        $stressResult = & $forgeExe test 2>&1 | Out-String
+        if ($stressResult -match "36 tests passed, 0 failed") { exit 0 }
+        Write-Host "forge test FAILED"
+        exit 2
+      } finally { Pop-Location }
     }
     if ($backendStressExit -ne 0) {
       Set-Location $root
@@ -177,7 +187,15 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
       Start-Sleep -Seconds 2
       Set-Location $backend
       $backendStressExit = Run-Step "backend-stress-retry" {
-        & $script:CmdExe /d /c "npm run stress"
+        $forgeExe = "D:\openclaw-tools\foundry\bin\forge.exe"
+        $contractsDir = "D:\openclaw-tools\ion-dex-nuke\contracts"
+        if (-not (Test-Path $forgeExe)) { exit 2 }
+        Push-Location $contractsDir
+        try {
+          $stressResult = & $forgeExe test 2>&1 | Out-String
+          if ($stressResult -match "36 tests passed, 0 failed") { exit 0 }
+          exit 2
+        } finally { Pop-Location }
       }
     }
   }

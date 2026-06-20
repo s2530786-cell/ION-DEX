@@ -16,6 +16,7 @@ export type ServerConfig = {
   bscBurnContractAddress: string | null;
   burnIndexerUrl: string | null;
   bscVaultLockAddress: string | null;
+  bscLiquidityMineAddress: string | null;
 };
 
 const DEFAULT_BSC_RPC = "https://bsc-dataseed.binance.org/";
@@ -65,6 +66,7 @@ export function loadServerConfig(env: NodeJS.ProcessEnv = process.env): ServerCo
     bscBurnContractAddress: parseOptionalAddress(env.BSC_BURN_CONTRACT_ADDRESS),
     burnIndexerUrl: env.BURN_INDEXER_URL?.trim() || null,
     bscVaultLockAddress: parseOptionalAddress(env.BSC_VAULT_LOCK_ADDRESS),
+    bscLiquidityMineAddress: parseOptionalAddress(env.BSC_LIQUIDITY_MINE_ADDRESS),
   };
 }
 

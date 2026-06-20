@@ -1,5 +1,16 @@
 # Current Progress
 
+## 2026-06-20 frontend queue closure + Vitest coverage
+
+- **范围**：执行 ION DEX 前端收口 STEP 2/3；读取 `cursor-queue` 4 个任务文件并按当前 Vite 架构标记完成，避免把历史 Next.js / `src/app` 任务错误回灌到当前 `frontend/src/pages/*Page.tsx`。
+- **测试覆盖**：`frontend/package.json` 新增 `test` 脚本；安装 `vitest`、`@testing-library/react`、`@testing-library/jest-dom`、`jsdom`；`frontend/vite.config.ts` 增加 Vitest jsdom 配置并限定只收集 `src/**/*.test.{ts,tsx}`，避免误收 Playwright E2E spec。
+- **新增测试**：`frontend/src/pages/__tests__/core-pages.test.tsx` 覆盖 Dashboard / Swap / Pool / Stake / Bridge 5 个核心页面；测试使用真实 provider、真实页面 hooks 和真实 fetch 生命周期，不 mock API 响应；离线后端情况下断言真实 loading/error lifecycle。
+- **验证**：`npx tsc --noEmit` ✅；`npm test` ✅ `1 passed` / `5 passed`；`node scripts/dev-preflight.mjs` ✅；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-encoding.ps1` ✅ 扫描 1467 files UTF-8 without BOM / no NUL；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/pipeline/pipeline-frontend.ps1 -Mode full` ✅ Build / Unit Tests / Dev Server / 5 pages HTTP 200 / Pipeline PASSED；`scripts\\verify-full-save-log.cmd --no-pause` ✅ `OK - verify-full completed`，backend **105 passed**，frontend Playwright **35 passed / 2 skipped**，frontend/backend high audit **0 vulnerabilities**；ReadLints `frontend/vite.config.ts`、`frontend/src/test/setup.ts`、`frontend/src/pages/__tests__/core-pages.test.tsx` ✅ no errors。
+- **pipeline 修复**：`scripts/pipeline/pipeline-frontend.ps1` 从历史 Next.js 根目录脚本迁移为当前 Vite `frontend/` 脚本，新增 `npm run build`、`npm test`、Vite dev server HTTP ready 探测和 hash 页面 200 验证；visual diff 保持非阻断。
+- **后端收口**：`backend` LiquidityMine API 增加 `BSC_LIQUIDITY_MINE_ADDRESS` 配置读取与 provenance 标记；未启用 BSC indexer/write path 时仍明确返回 local-session / missing-contract 状态，避免把本地 session stake 误标为链上完成。
+- **说明**：visual diff 步骤仍报告历史 baseline 差异（home/swap/pool/stake/bridge），但脚本定义为 non-blocking，full pipeline 最终 `PASSED`。
+- **待完成**：处理 verify-100 proof gate 并提交/推送；当前工程收尾已清理未跟踪日志、visual screenshot 生成物、`tsconfig.tsbuildinfo` 与 memory 注入生成物，保留真实源码/测试/文档改动。
+
 ## 2026-06-20 verify-full frontend preview proxy + high audit 收口
 
 - **问题**：`scripts\verify-full-save-log.cmd --no-pause` 的 Frontend verify 阶段仍会在 Vite preview 代理健康探测处失败；日志显示后端动态端口已启动且直连健康检查通过，但 preview 代理请求 `/api/health`、`/api/liquidity-mine/pools`、`/api/domain-manage/overview`、`/api/batch-transfer/config` 返回 502 / `socket hang up`。

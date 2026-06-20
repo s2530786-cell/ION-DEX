@@ -14,7 +14,8 @@
     "test:e2e": "playwright test",
     "verify:e2e": "playwright test",
     "verify": "node scripts/verify.mjs",
-    "audit:high": "node scripts/audit-high.mjs"
+    "audit:high": "node scripts/audit-high.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@ion-gateway/sdk": "3.1.1-beta.0",
@@ -38,15 +39,19 @@
   "devDependencies": {
     "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4.3.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "autoprefixer": "latest",
     "cross-env": "^7.0.3",
+    "jsdom": "^29.1.1",
     "postcss": "latest",
     "start-server-and-test": "^2.1.2",
     "tailwindcss": "latest",
     "typescript": "latest",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "vitest": "^4.1.9"
   }
 }

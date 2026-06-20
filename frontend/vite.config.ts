@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import react from "@vitejs/plugin-react";
 import http from "node:http";
 import path from "node:path";
@@ -6,13 +7,21 @@ import { defineConfig } from "vite";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
-const verifyBackendTarget = process.env.ION_VERIFY_BACKEND_URL ?? "http://127.0.0.1:8787";
-
-// Explicit agent that bypasses system HTTP_PROXY
+// WSL2 backend: use WSL IP with explicit agent to bypass system HTTP_PROXY
+const WSL_IP = "172.28.184.176";
+const verifyBackendTarget = process.env.ION_VERIFY_BACKEND_URL ?? `http://${WSL_IP}:8787`;
 const directAgent = new http.Agent({ keepAlive: false });
 
 export default defineConfig({
   plugins: [react()],
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/test/setup.ts",
+    include: ["src/**/*.test.{ts,tsx}"],
+    css: true,
+    testTimeout: 20_000,
+  },
   build: {
     rolldownOptions: {
       output: {
@@ -38,17 +47,6 @@ export default defineConfig({
         target: verifyBackendTarget,
         changeOrigin: true,
         agent: directAgent,
-        headers: {
-          connection: "close",
-        },
-        configure: (proxy) => {
-          proxy.on("proxyReq", (proxyReq) => {
-            // Remove proxy-related headers
-            proxyReq.removeHeader("proxy-authorization");
-            proxyReq.removeHeader("proxy-connection");
-            proxyReq.setHeader("connection", "close");
-          });
-        },
       },
     },
   },
@@ -59,16 +57,6 @@ export default defineConfig({
         target: verifyBackendTarget,
         changeOrigin: true,
         agent: directAgent,
-        headers: {
-          connection: "close",
-        },
-        configure: (proxy) => {
-          proxy.on("proxyReq", (proxyReq) => {
-            proxyReq.removeHeader("proxy-authorization");
-            proxyReq.removeHeader("proxy-connection");
-            proxyReq.setHeader("connection", "close");
-          });
-        },
       },
     },
   },
