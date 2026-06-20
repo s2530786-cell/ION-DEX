@@ -1,13 +1,13 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { randomUUID } from 'node:crypto';
+import fs from "node:fs";
+import path from "node:path";
+import { createHash, randomUUID } from "node:crypto";
 
-const DATA_DIR = path.resolve(process.cwd(), 'data');
-const DATA_FILE = path.join(DATA_DIR, 'strategies.json');
+const DATA_DIR = path.resolve(process.cwd(), "data");
+const DATA_FILE = path.join(DATA_DIR, "strategies.json");
 
-export type StrategyType = 'grid' | 'trend' | 'arbitrage' | 'market_making';
-export type StrategyStatus = 'draft' | 'running' | 'paused' | 'closed';
-export type RiskLevel = 'Low' | 'Medium' | 'High';
+export type StrategyType = "grid" | "trend" | "arbitrage" | "market_making";
+export type StrategyStatus = "draft" | "running" | "paused" | "closed";
+export type RiskLevel = "Low" | "Medium" | "High";
 
 export interface StrategyParams {
   fundAmount: number;
@@ -48,24 +48,62 @@ export interface SimulateResult {
   backtestDays: number;
 }
 
-function ensureDataDir(): void {
+export type StrategyUpdate = Partial<Pick<Strategy, "name" | "type" | "params" | "status">>;
+
+const riskByType: Record<StrategyType, RiskLevel> = {
+  grid: "Low",
+  trend: "Medium",
+  arbitrage: "Low",
+  market_making: "High",
+};
+
+const baseReturnByType: Record<StrategyType, number> = {
+  grid: 11,
+  trend: 18,
+  arbitrage: 8,
+  market_making: 24,
+};
+
+function ensureDataFile(): void {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
   if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, '[]', 'utf-8');
+    fs.writeFileSync(DATA_FILE, "[]", "utf8");
   }
 }
 
 function readStrategies(): Strategy[] {
-  ensureDataDir();
-  const raw = fs.readFileSync(DATA_FILE, 'utf-8');
+  ensureDataFile();
+  const raw = fs.readFileSync(DATA_FILE, "utf8");
   return JSON.parse(raw) as Strategy[];
 }
 
 function writeStrategies(strategies: Strategy[]): void {
-  ensureDataDir();
-  fs.writeFileSync(DATA_FILE, JSON.stringify(strategies, null, 2), 'utf-8');
+  ensureDataFile();
+  fs.writeFileSync(DATA_FILE, JSON.stringify(strategies, null, 2), "utf8");
+}
+
+function round(value: number, digits: number): number {
+  const scale = 10 ** digits;
+  return Math.round(value * scale) / scale;
+}
+
+function deterministicScore(strategy: Strategy): number {
+  const hash = createHash("sha256").update(`${strategy.id}:${strategy.type}:${strategy.name}`).digest();
+  return hash.readUInt32BE(0) / 0xffffffff;
+}
+
+function calculateSimulation(strategy: Strategy): SimulateResult {
+  const score = deterministicScore(strategy);
+  const riskPenalty = strategy.params.maxSlippage * 0.7 + strategy.params.stopLoss * 0.35;
+  const profitBoost = strategy.params.takeProfit * 0.42 + score * 6;
+  const estimatedReturn = round(Math.max(0, baseReturnByType[strategy.type] + profitBoost - riskPenalty), 1);
+  const maxDrawdown = round(Math.max(0.4, strategy.params.stopLoss * (0.45 + score * 0.35)), 1);
+  const sharpeRatio = round(Math.max(0.5, estimatedReturn / Math.max(maxDrawdown * 2.2, 1)), 2);
+  const winRate = round(Math.min(82, 48 + sharpeRatio * 8 + score * 8), 1);
+  const totalTrades = Math.max(12, Math.round(90 + strategy.params.fundAmount / 125 + score * 80));
+  return { strategyId: strategy.id, estimatedReturn, maxDrawdown, sharpeRatio, winRate, totalTrades, backtestDays: 90 };
 }
 
 export function getAllStrategies(): Strategy[] {
@@ -73,7 +111,7 @@ export function getAllStrategies(): Strategy[] {
 }
 
 export function getStrategyById(id: string): Strategy | undefined {
-  return readStrategies().find((s) => s.id === id);
+  return readStrategies().find((strategy) => strategy.id === id);
 }
 
 export function createStrategy(input: CreateStrategyInput): Strategy {
@@ -83,9 +121,9 @@ export function createStrategy(input: CreateStrategyInput): Strategy {
     id: randomUUID(),
     name: input.name,
     type: input.type,
-    riskLevel: input.type === 'market_making' ? 'High' : input.type === 'trend' ? 'Medium' : 'Low',
+    riskLevel: riskByType[input.type],
     params: input.params,
-    status: 'draft',
+    status: "draft",
     returnRate: 0,
     runtime: 0,
     fundSize: input.params.fundAmount,
@@ -99,43 +137,52 @@ export function createStrategy(input: CreateStrategyInput): Strategy {
   return strategy;
 }
 
-export function updateStrategy(id: string, updates: Partial<Pick<Strategy, 'name' | 'type' | 'params' | 'status'>>): Strategy | null {
+export function updateStrategy(id: string, updates: StrategyUpdate): Strategy | null {
   const strategies = readStrategies();
-  const idx = strategies.findIndex((s) => s.id === id);
-  if (idx === -1) return null;
-
-  const existing = strategies[idx];
+  const index = strategies.findIndex((strategy) => strategy.id === id);
+  if (index === -1) {
+    return null;
+  }
+  const existing = strategies[index];
+  const nextType = updates.type ?? existing.type;
   const updated: Strategy = {
     ...existing,
     ...updates,
+    type: nextType,
+    riskLevel: riskByType[nextType],
+    fundSize: updates.params?.fundAmount ?? existing.fundSize,
     updatedAt: new Date().toISOString(),
   };
-  if (updates.params) {
-    updated.fundSize = updates.params.fundAmount;
-  }
-  strategies[idx] = updated;
+  strategies[index] = updated;
   writeStrategies(strategies);
   return updated;
 }
 
 export function deleteStrategy(id: string): boolean {
   const strategies = readStrategies();
-  const idx = strategies.findIndex((s) => s.id === id);
-  if (idx === -1) return false;
-  strategies.splice(idx, 1);
-  writeStrategies(strategies);
+  const next = strategies.filter((strategy) => strategy.id !== id);
+  if (next.length === strategies.length) {
+    return false;
+  }
+  writeStrategies(next);
   return true;
 }
 
-export function simulateStrategy(_id: string): SimulateResult {
-  // Mock simulation — production replaces with real backtest engine
-  return {
-    strategyId: _id,
-    estimatedReturn: Math.round((10 + Math.random() * 40) * 10) / 10,
-    maxDrawdown: Math.round((1 + Math.random() * 14) * 10) / 10,
-    sharpeRatio: Math.round((1 + Math.random() * 3) * 100) / 100,
-    winRate: Math.round((45 + Math.random() * 30) * 10) / 10,
-    totalTrades: Math.floor(100 + Math.random() * 900),
-    backtestDays: 90,
+export function simulateStrategy(id: string): SimulateResult | null {
+  const strategies = readStrategies();
+  const index = strategies.findIndex((strategy) => strategy.id === id);
+  if (index === -1) {
+    return null;
+  }
+  const result = calculateSimulation(strategies[index]);
+  strategies[index] = {
+    ...strategies[index],
+    returnRate: result.estimatedReturn,
+    maxDrawdown: result.maxDrawdown,
+    sharpeRatio: result.sharpeRatio,
+    runtime: result.backtestDays * 86400,
+    updatedAt: new Date().toISOString(),
   };
+  writeStrategies(strategies);
+  return result;
 }

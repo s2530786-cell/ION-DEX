@@ -78,10 +78,17 @@ function latestSummaryPath() {
 }
 
 function parseSummaryText(text) {
-  const passed = Number((text.match(/PASSED=(\d+)/) || [])[1] || 0);
-  const failed = Number((text.match(/FAILED=(\d+)/) || [])[1] || 0);
-  const result = (text.match(/RESULT=(GREEN|FAILED)/) || [])[1] || "UNKNOWN";
-  return { passed, failed, result };
+  const blockPattern = /PASSED=(\d+)\s+FAILED=(\d+)\s+RESULT=(GREEN|FAILED)/g;
+  const matches = [...text.matchAll(blockPattern)];
+  const latest = matches.at(-1);
+  if (!latest) {
+    return { passed: 0, failed: 0, result: "UNKNOWN" };
+  }
+  return {
+    passed: Number(latest[1] || 0),
+    failed: Number(latest[2] || 0),
+    result: latest[3] || "UNKNOWN",
+  };
 }
 
 function assertGreenSummary(path) {
