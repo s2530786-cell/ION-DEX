@@ -824,6 +824,83 @@ export async function fetchProfileSession(
   return (await response.json()) as ApiResponse<ProfileSession>;
 }
 
+export type AiStrategyType = "grid" | "trend" | "arbitrage" | "market_making";
+export type AiRiskLevel = "Low" | "Medium" | "High";
+export type AiStrategyStatus = "draft" | "running" | "paused" | "closed";
+
+export type AiStrategyParams = {
+  fundAmount: number;
+  stopLoss: number;
+  takeProfit: number;
+  maxSlippage: number;
+};
+
+export type AiStrategy = {
+  id: string;
+  name: string;
+  type: AiStrategyType;
+  riskLevel: AiRiskLevel;
+  params: AiStrategyParams;
+  status: AiStrategyStatus;
+  returnRate: number;
+  runtime: number;
+  fundSize: number;
+  maxDrawdown: number;
+  sharpeRatio: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AiStrategyCreateInput = {
+  name: string;
+  type: AiStrategyType;
+  params: AiStrategyParams;
+};
+
+export type AiStrategyListPayload = {
+  data: AiStrategy[];
+  total: number;
+};
+
+export type AiStrategySimulation = {
+  strategyId: string;
+  estimatedReturn: number;
+  maxDrawdown: number;
+  sharpeRatio: number;
+  winRate: number;
+  totalTrades: number;
+  backtestDays: number;
+};
+
+async function postAiStrategy<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal): Promise<ApiResponse<T>> {
+  const response = await fetch(`${apiBaseUrl}${path}`, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(body),
+    signal,
+  });
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
+    throw new Error(payload?.error?.message ?? `AI strategy request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as ApiResponse<T>;
+}
+
+export async function fetchAiStrategies(signal?: AbortSignal): Promise<ApiResponse<AiStrategyListPayload>> {
+  return fetchApi<AiStrategyListPayload>("/api/ai/strategies", signal);
+}
+
+export async function createAiStrategy(input: AiStrategyCreateInput, signal?: AbortSignal): Promise<ApiResponse<{ data: AiStrategy }>> {
+  return postAiStrategy<{ data: AiStrategy }>("/api/ai/strategies", input, signal);
+}
+
+export async function simulateAiStrategy(id: string, signal?: AbortSignal): Promise<ApiResponse<{ data: AiStrategySimulation | null }>> {
+  return postAiStrategy<{ data: AiStrategySimulation | null }>(`/api/ai/strategies/${encodeURIComponent(id)}/simulate`, {}, signal);
+}
+
 export type AiSubscriptionPeriod = "monthly" | "quarterly" | "yearly";
 
 export type AiSubscriptionTierKey = "Basic" | "Premium" | "King" | "Institutional";

@@ -1,25 +1,27 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { SplashScreen } from "@/components/layout/SplashScreen";
 import { AppShell, type PageKey } from "@/components/layout/AppShell";
 import { PageContent } from "@/components/layout/PageContent";
 
 import { pageKeyFromHash, writePageHash } from "@/lib/pageRouting";
-import { BusinessPage, type BusinessPageKey } from "@/pages/BusinessPages";
+import type { BusinessPageKey } from "@/pages/BusinessPages";
 import { DashboardPage } from "@/pages/DashboardPage";
-import { PoolPage } from "@/pages/PoolPage";
-import { StakePage } from "@/pages/StakePage";
-import { BridgePage } from "@/pages/BridgePage";
-import { SwapPage } from "@/pages/SwapPage";
-import { TradeProPage } from "@/pages/TradeProPage";
-import { ApproveManagerPage } from "@/pages/ApproveManagerPage";
-import { VaultStakePage } from "@/pages/VaultStakePage";
-import { CopyTradePage } from "@/pages/CopyTradePage";
-import { LiquidityMinePage } from "@/pages/LiquidityMinePage";
-import { DomainManagePage } from "@/pages/DomainManagePage";
-import { AiSubscriptionPage } from "@/pages/AiSubscriptionPage";
-import { SettingPage } from "@/pages/SettingPage";
-import { BatchTransferPage } from "@/pages/BatchTransferPage";
+
+const BusinessPage = lazy(() => import("@/pages/BusinessPages").then((module) => ({ default: module.BusinessPage })));
+const PoolPage = lazy(() => import("@/pages/PoolPage").then((module) => ({ default: module.PoolPage })));
+const StakePage = lazy(() => import("@/pages/StakePage").then((module) => ({ default: module.StakePage })));
+const BridgePage = lazy(() => import("@/pages/BridgePage").then((module) => ({ default: module.BridgePage })));
+const SwapPage = lazy(() => import("@/pages/SwapPage").then((module) => ({ default: module.SwapPage })));
+const TradeProPage = lazy(() => import("@/pages/TradeProPage").then((module) => ({ default: module.TradeProPage })));
+const ApproveManagerPage = lazy(() => import("@/pages/ApproveManagerPage").then((module) => ({ default: module.ApproveManagerPage })));
+const VaultStakePage = lazy(() => import("@/pages/VaultStakePage").then((module) => ({ default: module.VaultStakePage })));
+const CopyTradePage = lazy(() => import("@/pages/CopyTradePage").then((module) => ({ default: module.CopyTradePage })));
+const LiquidityMinePage = lazy(() => import("@/pages/LiquidityMinePage").then((module) => ({ default: module.LiquidityMinePage })));
+const DomainManagePage = lazy(() => import("@/pages/DomainManagePage").then((module) => ({ default: module.DomainManagePage })));
+const AiSubscriptionPage = lazy(() => import("@/pages/AiSubscriptionPage").then((module) => ({ default: module.AiSubscriptionPage })));
+const SettingPage = lazy(() => import("@/pages/SettingPage").then((module) => ({ default: module.SettingPage })));
+const BatchTransferPage = lazy(() => import("@/pages/BatchTransferPage").then((module) => ({ default: module.BatchTransferPage })));
 
 /** Doubao-derived pages (trade-pro / approve-manager / vault-stake) are scaffold previews — see each page banner. */
 const businessPages = new Set<BusinessPageKey>([
@@ -120,7 +122,9 @@ export function App() {
                 className="min-w-0"
               >
                 <PageContent>
-                  <PageRouter onNavigate={navigate} page={activePage} />
+                  <Suspense fallback={<div className="rounded-2xl border border-cyan-300/15 bg-white/[0.04] p-4 text-sm font-bold text-cyan-100/70">Loading ION module…</div>}>
+                    <PageRouter onNavigate={navigate} page={activePage} />
+                  </Suspense>
                 </PageContent>
               </motion.div>
             </AnimatePresence>

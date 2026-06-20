@@ -56,6 +56,7 @@ const uiDebtAllowlist = [
   { file: "frontend/src/lib/ionApi.ts", pattern: /source:\s*"mock";$/ },
   { file: "frontend/src/lib/ionApi.ts", pattern: /const mockMarketProvenance:/ },
   { file: "frontend/src/lib/ionApi.ts", pattern: /provenance:\s*mockMarketProvenance/ },
+  { file: "frontend/src/lib/ionApi.ts", pattern: /export type AiStrategyStatus = "draft" \| "running" \| "paused" \| "closed"/ },
   { file: "frontend/src/pages/AiSubscriptionPage.tsx", pattern: /source:\s*source === "live" \? "upstream" : "mock"/ },
   { file: "frontend/src/pages/BusinessPages.tsx", pattern: /status:\s*"mock"/ },
   { file: "frontend/src/pages/BusinessPages.tsx", pattern: /relayerStatus:\s*"mocked"/ },

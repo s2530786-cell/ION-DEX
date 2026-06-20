@@ -70,6 +70,12 @@ export const DesignTokens = {
     full: '9999px',
   },
 
+  layout: {
+    marketColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+    twoColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
+    detailColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
+  },
+
   borders: {
     thin: '1px',
     thick: '2px',

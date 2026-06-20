@@ -54,7 +54,7 @@ const featureCards: FeatureCard[] = [
   { title: "Domain", label: "ION DNS", target: "domain", icon: ShieldCheck, color: "magenta" },
 ];
 
-// [NO-FALLBACK] All data comes from live API. No demo/mock data allowed (Master red line).
+// [NO-FALLBACK] All data comes from live API. No simulated data allowed (Master red line).
 const EMPTY_TICKERS: MarketTicker[] = [];
 const EMPTY_KLINES: IonKlinesPayload = { timeframe: "1h", candles: [], source: "pending" };
 

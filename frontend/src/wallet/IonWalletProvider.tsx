@@ -11,6 +11,7 @@ import { fetchIonAddressBalanceNano, formatIonBalanceFromNano } from "@/lib/ionC
 import {
   connectIonExtensionWallet,
   isIonExtensionInstalled,
+  readIonExtensionBalance,
   subscribeIonExtensionAccounts,
 } from "@/wallet/ionExtension";
 import { connectIonOnlineWallet, readIonOnlineAddressFromUrl } from "@/wallet/ionOnline";
@@ -78,7 +79,6 @@ export function IonWalletProvider({ children }: PropsWithChildren) {
     try {
       let nano: string;
       if (kind === "ion-browser" && isIonExtensionInstalled()) {
-        const { readIonExtensionBalance } = await import("@/wallet/ionExtension");
         nano = await readIonExtensionBalance(address);
         setSnapshot((current) =>
           current?.address === address

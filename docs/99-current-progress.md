@@ -1,5 +1,14 @@
 # Current Progress
 
+## 2026-06-20 verify-full frontend preview proxy + high audit 收口
+
+- **问题**：`scripts\verify-full-save-log.cmd --no-pause` 的 Frontend verify 阶段仍会在 Vite preview 代理健康探测处失败；日志显示后端动态端口已启动且直连健康检查通过，但 preview 代理请求 `/api/health`、`/api/liquidity-mine/pools`、`/api/domain-manage/overview`、`/api/batch-transfer/config` 返回 502 / `socket hang up`。
+- **修复**：`frontend/vite.config.ts` 将 Vite proxy 使用的自定义 `http.Agent` 从 keep-alive 改为短连接，并在 dev/preview proxy 中显式设置与转发 `connection: close`，避免 Node 24 + Vite preview 并发探测复用不稳定 socket；未改业务 API、后端路由或 Playwright 断言。
+- **依赖审计**：确认 `backend`、`docs-site`、`doubao-vue-prototype`、`doubao-dex-source/doubao-vue-prototype`、`frontend`、根项目、`tools/mcp-e2b-quickstart` 的 high/critical 漏洞均为 0。根项目和 e2b quickstart 仍有 low/moderate 项，不属于当前 `--audit-level=high` 阻断。
+- **验证**：`frontend npm run verify` ✅ Vite `8.0.16` build 成功，Playwright **35 passed / 2 skipped**，preview proxy 502 消失；`frontend npm run audit:high` ✅ `found 0 vulnerabilities`；`node scripts/dev-preflight.mjs` ✅；根项目 `npm audit --audit-level=high --json` ✅ high/critical 0；`tools/mcp-e2b-quickstart npm audit --audit-level=high --json` ✅ high/critical 0；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-encoding.ps1` ✅ 扫描 **1464** files，UTF-8 without BOM / no NUL；ReadLints `frontend/vite.config.ts` ✅ no errors。
+- **范围控制**：本轮只主动修改 `frontend/vite.config.ts` 与进度/会话记录；工作区中 AI Market、合约构建物、Doubao dist、根依赖等既有 dirty 状态保持原样，未 commit/push。
+- **下一步**：如需单条完整 verify-full 证据，可在不中断终端重跑 `scripts\verify-full-save-log.cmd --no-pause`；否则继续 W9 Phase 2 AI Strategy Market 剩余验收或 W8 verify-100 收口。
+
 ## 2026-06-19 root validate / audit harness 收口
 
 - **问题**：`make audit` 在当前 Windows 环境不可用（`make` 不在 PATH）；根项目等价门禁 `npm run validate` 初次失败，因为 `package.json` 将 Python 文件 `agent_harness.py` 交给 `node` 执行。

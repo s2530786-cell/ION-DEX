@@ -1,29 +1,49 @@
-# ION DEX — 当前任务队列
+# 🔴 P0-TASK: 前端代码提交 + 测试 + 队列消化
 
-## P0: 必须完成 — 上线前死线
+**旺财派发 | 2026-06-20 11:50 CST | 立即执行**
 
-### P0-1: ION 主链合约部署与 E2E 联调
-- FunC 13 合约编译全绿 + FIF 构建 → 13/13 `.fc` 编译成功
-- 测试网 ION 链部署 router/pool/vault/FeeDistributor/deployer → testnet.ice.io 合约地址有效
-- BSC ↔ ION 跨链桥 E2E 测试
+## 当前状态（旺财已验证）
+- ✅ 5个核心页面完整实现：SwapPage(16KB) / PoolPage(12KB) / StakePage(7.6KB) / BridgePage(18KB) / DashboardPage(15KB)
+- ✅ AiMarketPage(12KB) + AiStrategyConfig(6KB) + aiStrategy routes/service
+- ✅ TSC 零错误
+- ✅ Dev Server :3000 HTTP 200
+- ✅ Pipeline 全绿
+- ✅ 22个 Solidity 合约 + Forge 36/36 + verify-100 3600次全绿
+- ✅ 后端 8个 API 路由 + 30+ services
 
-### P0-2: FeeReceiver — ION 统一手续费强制执行
-- FeeReceiver 合约：交易/提现/质押/销毁/铸币全部强制 ION 收款
-- 集成到 DexSwap / LiquidityPool / IonSwapRouter / Burn / StakeReward
-- 合约层写死 ION 地址 `0xE1Ab61F7b093435204Df32f5b3A405de55445ea8`
+## P0 任务（按顺序执行）
 
-### P0-3: 1000 次安全测试全绿
-- 10 类攻击 × 100 次 = 1000 次底线
-- 重入 / 闪电贷 / 三明治 / 预言机操控 / 权限绕过 / 整数溢出 / DoS / 假币 / 时间戳 / 抗量子
-- 不通过不走下一步
+### 任务 1: 提交所有未提交代码
+```
+git add -A
+git commit -m "feat: Phase 2 AI Market + frontend polish + design-tokens sync"
+git push
+```
+**验证**: `git status` 显示 clean
 
-## P1: 高优先
-- 真实数据替换（GeckoTerminal / DexScreener / CMC / BSC RPC）
-- Swap/Pool UI 打磨（滑点 / 路径 / ION费率 / 响应式 320~2560px）
-- Wallet 集成（MetaMask / OKX / Bitget / ION原生）
+### 任务 2: 消化 cursor-queue 里的 4 个任务
+读取并执行以下文件中的任务：
+- `cursor-queue/p0-frontend-tasks.md`
+- `cursor-queue/p0-visual-qa-pass.md`
+- `cursor-queue/p1-ui-polish.md`
+- `cursor-queue/0001-p0-pages-task.md`
 
-## 全局铁律
-- 所有费用只收 ION — 合约层写死，不可改
-- 每步 commit + push
-- 1000 次安全测试全绿才走下一步
-- 所有 UI 参考 https://github.com/DavidHDev/react-bits
+### 任务 3: 前端测试覆盖
+- 添加 `frontend/package.json` 的 test 脚本（vitest）
+- 为核心页面写至少 5 个单元测试
+- 运行 `npm test` 确保全绿
+
+## 铁律（每次操作前必读）
+1. 零 mock 数据，全部对接真实 API
+2. 文件 ≤300 行
+3. 颜色从 design-tokens.ts 引用，禁止硬编码 hex/rgba
+4. 写完立即 tsc 检查
+5. commit 前跑 pipeline
+6. 禁止中文乱码，UTF-8 无 BOM
+
+## 验证命令
+```
+npx tsc --noEmit
+node scripts/dev-preflight.mjs
+powershell -File scripts/pipeline/pipeline-frontend.ps1 -Mode full
+```

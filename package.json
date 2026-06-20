@@ -27,10 +27,19 @@
     "vitest": "^4.1.9"
   },
   "overrides": {
-    "protobufjs": "7.5.9",
+    "@grpc/grpc-js": "1.14.4",
     "@opentelemetry/sdk-node": "0.218.0",
     "@opentelemetry/exporter-prometheus": "0.218.0",
-    "@opentelemetry/auto-instrumentations-node": "0.75.0"
+    "@opentelemetry/auto-instrumentations-node": "0.75.0",
+    "agentic-flow": "2.0.14",
+    "axios": "1.18.0",
+    "form-data": "4.0.6",
+    "hono": "4.12.26",
+    "http-proxy-middleware": "4.1.1",
+    "minimatch": "3.1.4",
+    "protobufjs": "8.6.4",
+    "undici": "8.5.0",
+    "ws": "8.21.0"
   },
   "dependencies": {
     "@ton-community/func-js": "^0.11.0",

@@ -1,0 +1,34 @@
+[2026-06-20 11:11:03] [INFO] ============================================
+[2026-06-20 11:11:03] [INFO] ION DEX Frontend Team Auto-Launcher v1.0
+[2026-06-20 11:11:03] [INFO] ============================================
+[2026-06-20 11:11:03] [INFO] Step 1/3: Launching Cursor GUI...
+[2026-06-20 11:11:03] [WARN] Killing ghost Cursor process PID=5692
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=8128
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=10196
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=12584
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=13900
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=18732
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=19788
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=22212
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=23764
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=25884
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=26632
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=37508
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=38000
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=39988
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=40172
+[2026-06-20 11:11:04] [WARN] Killing ghost Cursor process PID=43052
+[2026-06-20 11:11:05] [WARN] Killing ghost Cursor process PID=43300
+[2026-06-20 11:11:05] [INFO] Starting Cursor GUI: C:\Program Files\cursor\Cursor.exe D:\openclaw-tools\ion-dex-nuke
+[2026-06-20 11:11:13] [ERROR] Cursor GUI failed to start!
+[2026-06-20 11:11:13] [INFO] Step 2/3: Starting Dev Server...
+[2026-06-20 11:11:13] [INFO] Starting: npx next dev --port 3000
+[2026-06-20 11:11:27] [WARN] Dev server not responding yet: 无法连接到远程服务器
+[2026-06-20 11:11:27] [SKIP] Step 3/3: Pipeline skipped
+[2026-06-20 11:11:27] [INFO] ============================================
+[2026-06-20 11:11:27] [INFO] STATUS SUMMARY
+[2026-06-20 11:11:27] [INFO] ============================================
+[2026-06-20 11:11:27] [INFO] Cursor GUI: OFFLINE
+[2026-06-20 11:11:27] [INFO] Dev Server: OFFLINE
+[2026-06-20 11:11:27] [INFO] Log: D:\openclaw-tools\ion-dex-nuke\logs\launcher-2026-06-20-1111.log
+[2026-06-20 11:11:27] [ERROR] All systems offline

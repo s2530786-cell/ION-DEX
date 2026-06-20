@@ -1,0 +1,12 @@
+[2026-06-20 11:19:59] [INFO] ============================================
+[2026-06-20 11:19:59] [INFO] ION DEX Frontend Team Auto-Launcher v2.0
+[2026-06-20 11:19:59] [INFO] ============================================
+[2026-06-20 11:19:59] [INFO] Step 1/3: Cursor Agent status...
+[2026-06-20 11:19:59] [INFO] DevServer: UP | Commit: 24d9a421d Fix AI strategy proof gate handling
+[2026-06-20 11:19:59] [OK] Cursor Agent CLI available
+[2026-06-20 11:19:59] [INFO] Step 2/3: Starting Dev Server...
+[2026-06-20 11:20:00] [OK] Dev server already running
+[2026-06-20 11:20:00] [SKIP] Step 3/3: Pipeline skipped
+[2026-06-20 11:20:00] [INFO] ============================================
+[2026-06-20 11:20:05] [INFO] STATUS: DevServer=DOWN
+[2026-06-20 11:20:05] [INFO] Log: D:\openclaw-tools\ion-dex-nuke\logs\launcher-2026-06-20-1119.log

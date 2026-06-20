@@ -1,0 +1,49 @@
+diff --git a/frontend/vite.config.ts b/frontend/vite.config.ts
+--- a/frontend/vite.config.ts
++++ b/frontend/vite.config.ts
+@@ -6,10 +6,10 @@ import { defineConfig } from "vite";
+ 
+ const rootDir = path.dirname(fileURLToPath(import.meta.url));
+ 
+-const verifyBackendTarget = "http://172.28.184.176:8787";
++const verifyBackendTarget = process.env.ION_VERIFY_BACKEND_URL ?? "http://127.0.0.1:8787";
+ 
+ // Explicit agent that bypasses system HTTP_PROXY
+-const directAgent = new http.Agent({ keepAlive: true });
++const directAgent = new http.Agent({ keepAlive: false });
+ 
+ export default defineConfig({
+   plugins: [react()],
+@@ -21,11 +21,15 @@ export default defineConfig({
+         target: verifyBackendTarget,
+         changeOrigin: true,
+         agent: directAgent,
++        headers: {
++          connection: "close",
++        },
+         configure: (proxy) => {
+           proxy.on("proxyReq", (proxyReq) => {
+             // Remove proxy-related headers
+             proxyReq.removeHeader("proxy-authorization");
+             proxyReq.removeHeader("proxy-connection");
++            proxyReq.setHeader("connection", "close");
+           });
+         },
+       },
+@@ -38,6 +42,16 @@ export default defineConfig({
+         target: verifyBackendTarget,
+         changeOrigin: true,
+         agent: directAgent,
++        headers: {
++          connection: "close",
++        },
++        configure: (proxy) => {
++          proxy.on("proxyReq", (proxyReq) => {
++            proxyReq.removeHeader("proxy-authorization");
++            proxyReq.removeHeader("proxy-connection");
++            proxyReq.setHeader("connection", "close");
++          });
++        },
+       },
+     },
+   },

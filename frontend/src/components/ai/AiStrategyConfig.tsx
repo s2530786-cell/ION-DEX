@@ -1,95 +1,89 @@
-'use client';
+import { useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
+import { type AiStrategyCreateInput, type AiStrategyType } from "@/lib/ionApi";
+import { DesignTokens as dt } from "@/lib/design-tokens";
 
-import React, { useState } from 'react';
-import { DesignTokens as dt } from '@/lib/design-tokens';
-
-interface StrategyConfig {
+type StrategyConfig = AiStrategyCreateInput["params"] & {
   name: string;
-  type: 'grid' | 'trend' | 'arbitrage' | 'market_making';
-  fundAmount: number;
-  stopLoss: number;
-  takeProfit: number;
-  maxSlippage: number;
-}
+  type: AiStrategyType;
+};
 
-interface Props {
+type Props = {
   onSubmit: (config: StrategyConfig) => void;
   initial?: Partial<StrategyConfig>;
-}
+};
+
+const strategyTypeLabels: Record<AiStrategyType, string> = {
+  grid: "Grid Trading",
+  trend: "Trend Following",
+  arbitrage: "Arbitrage",
+  market_making: "Market Making",
+};
 
 export default function AiStrategyConfig({ onSubmit, initial }: Props) {
-  const [name, setName] = useState(initial?.name || '');
-  const [type, setType] = useState<StrategyConfig['type']>(initial?.type || 'grid');
-  const [fundAmount, setFundAmount] = useState(initial?.fundAmount?.toString() || '');
-  const [stopLoss, setStopLoss] = useState(initial?.stopLoss?.toString() || '');
-  const [takeProfit, setTakeProfit] = useState(initial?.takeProfit?.toString() || '');
-  const [maxSlippage, setMaxSlippage] = useState(initial?.maxSlippage?.toString() || '');
+  const [name, setName] = useState(initial?.name ?? "");
+  const [type, setType] = useState<AiStrategyType>(initial?.type ?? "grid");
+  const [fundAmount, setFundAmount] = useState(initial?.fundAmount?.toString() ?? "");
+  const [stopLoss, setStopLoss] = useState(initial?.stopLoss?.toString() ?? "");
+  const [takeProfit, setTakeProfit] = useState(initial?.takeProfit?.toString() ?? "");
+  const [maxSlippage, setMaxSlippage] = useState(initial?.maxSlippage?.toString() ?? "");
   const [errors, setErrors] = useState<string[]>([]);
 
   const validate = (): boolean => {
-    const errs: string[] = [];
-    if (!name.trim()) errs.push('Strategy name is required');
-    const fa = parseFloat(fundAmount);
-    if (!fa || fa <= 0) errs.push('Fund amount must be positive');
-    const sl = parseFloat(stopLoss);
-    if (!sl || sl <= 0) errs.push('Stop loss must be positive');
-    const tp = parseFloat(takeProfit);
-    if (!tp || tp <= 0) errs.push('Take profit must be positive');
-    if (sl && tp && sl >= tp) errs.push('Stop loss must be less than take profit');
-    const ms = parseFloat(maxSlippage);
-    if (!ms || ms <= 0) errs.push('Max slippage must be positive');
-    setErrors(errs);
-    return errs.length === 0;
+    const nextErrors: string[] = [];
+    const amount = Number(fundAmount);
+    const loss = Number(stopLoss);
+    const profit = Number(takeProfit);
+    const slippage = Number(maxSlippage);
+
+    if (!name.trim()) nextErrors.push("Strategy name is required");
+    if (!Number.isFinite(amount) || amount <= 0) nextErrors.push("Fund amount must be positive");
+    if (!Number.isFinite(loss) || loss <= 0) nextErrors.push("Stop loss must be positive");
+    if (!Number.isFinite(profit) || profit <= 0) nextErrors.push("Take profit must be positive");
+    if (Number.isFinite(loss) && Number.isFinite(profit) && loss >= profit) nextErrors.push("Stop loss must be less than take profit");
+    if (!Number.isFinite(slippage) || slippage <= 0) nextErrors.push("Max slippage must be positive");
+
+    setErrors(nextErrors);
+    return nextErrors.length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
     if (!validate()) return;
     onSubmit({
       name: name.trim(),
       type,
-      fundAmount: parseFloat(fundAmount),
-      stopLoss: parseFloat(stopLoss),
-      takeProfit: parseFloat(takeProfit),
-      maxSlippage: parseFloat(maxSlippage),
+      fundAmount: Number(fundAmount),
+      stopLoss: Number(stopLoss),
+      takeProfit: Number(takeProfit),
+      maxSlippage: Number(maxSlippage),
     });
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
+  const inputStyle: CSSProperties = {
+    width: "100%",
     padding: `${dt.spacing.sm} ${dt.spacing.md}`,
     borderRadius: dt.borderRadius.md,
-    border: `1px solid ${dt.colors.surfaceBorder}`,
+    border: dt.borders.input,
     background: dt.colors.inputBg,
     color: dt.colors.textPrimary,
     fontSize: dt.typography.body.fontSize,
-    outline: 'none',
-  };
-
-  const selectStyle: React.CSSProperties = {
-    ...inputStyle,
-    cursor: 'pointer',
-  };
-
-  const labelStyle: React.CSSProperties = {
-    color: dt.colors.textSecondary,
-    fontSize: dt.typography.caption.fontSize,
-    marginBottom: 4,
-    display: 'block',
+    outline: "none",
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
-      <h3 style={{
-        color: dt.colors.textPrimary,
-        fontSize: dt.typography.subheading.fontSize,
-        marginBottom: dt.spacing.cardPadding,
-        fontWeight: 600,
-      }}>
+    <form onSubmit={handleSubmit}>
+      <h3
+        style={{
+          color: dt.colors.textPrimary,
+          fontSize: dt.typography.subheading.fontSize,
+          marginBottom: dt.spacing.cardPadding,
+          fontWeight: dt.typography.subheading.fontWeight,
+        }}
+      >
         Configure Strategy
       </h3>
 
-      {errors.length > 0 && (
+      {errors.length > 0 ? (
         <div
           style={{
             background: dt.colors.errorBg,
@@ -99,123 +93,69 @@ export default function AiStrategyConfig({ onSubmit, initial }: Props) {
             marginBottom: dt.spacing.md,
           }}
         >
-          {errors.map((e, i) => (
-            <div key={i} style={{
-              color: dt.colors.negative,
-              fontSize: dt.typography.caption.fontSize,
-              marginBottom: 2,
-            }}>
-              • {e}
+          {errors.map((error) => (
+            <div key={error} style={{ color: dt.colors.negative, fontSize: dt.typography.caption.fontSize }}>
+              {error}
             </div>
           ))}
         </div>
-      )}
+      ) : null}
 
-      <div style={{ marginBottom: dt.spacing.md }}>
-        <label style={labelStyle}>Strategy Name</label>
-        <input
-          style={inputStyle}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. My Grid Bot"
-        />
-      </div>
+      <Field label="Strategy Name">
+        <input aria-label="Strategy name, for example ION Grid Bot" onChange={(event) => setName(event.target.value)} style={inputStyle} value={name} />
+      </Field>
 
-      <div style={{ marginBottom: dt.spacing.md }}>
-        <label style={labelStyle}>Strategy Type</label>
-        <select
-          style={selectStyle}
-          value={type}
-          onChange={(e) => setType(e.target.value as StrategyConfig['type'])}
-        >
-          <option value="grid">Grid Trading</option>
-          <option value="trend">Trend Following</option>
-          <option value="arbitrage">Arbitrage</option>
-          <option value="market_making">Market Making</option>
+      <Field label="Strategy Type">
+        <select onChange={(event) => setType(event.target.value as AiStrategyType)} style={{ ...inputStyle, cursor: "pointer" }} value={type}>
+          {Object.entries(strategyTypeLabels).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </select>
-      </div>
+      </Field>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: dt.spacing.md,
-        marginBottom: dt.spacing.md,
-      }}>
-        <div>
-          <label style={labelStyle}>Fund Amount (USDT)</label>
-          <input
-            style={inputStyle}
-            type="number"
-            min="0"
-            step="1"
-            value={fundAmount}
-            onChange={(e) => setFundAmount(e.target.value)}
-            placeholder="1000"
-          />
-        </div>
-        <div>
-          <label style={labelStyle}>Max Slippage (%)</label>
-          <input
-            style={inputStyle}
-            type="number"
-            min="0"
-            step="0.1"
-            value={maxSlippage}
-            onChange={(e) => setMaxSlippage(e.target.value)}
-            placeholder="0.5"
-          />
-        </div>
-      </div>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: dt.spacing.md,
-        marginBottom: dt.spacing.lg,
-      }}>
-        <div>
-          <label style={labelStyle}>Stop Loss (%)</label>
-          <input
-            style={inputStyle}
-            type="number"
-            min="0"
-            step="0.1"
-            value={stopLoss}
-            onChange={(e) => setStopLoss(e.target.value)}
-            placeholder="5"
-          />
-        </div>
-        <div>
-          <label style={labelStyle}>Take Profit (%)</label>
-          <input
-            style={inputStyle}
-            type="number"
-            min="0"
-            step="0.1"
-            value={takeProfit}
-            onChange={(e) => setTakeProfit(e.target.value)}
-            placeholder="20"
-          />
-        </div>
+      <div style={{ display: "grid", gap: dt.spacing.md, gridTemplateColumns: dt.layout.twoColumns }}>
+        <Field label="Fund Amount (USDT)">
+          <input aria-label="Fund amount in USDT" min="0" onChange={(event) => setFundAmount(event.target.value)} step="1" style={inputStyle} type="number" value={fundAmount} />
+        </Field>
+        <Field label="Max Slippage (%)">
+          <input aria-label="Maximum slippage percent" min="0" onChange={(event) => setMaxSlippage(event.target.value)} step="0.1" style={inputStyle} type="number" value={maxSlippage} />
+        </Field>
+        <Field label="Stop Loss (%)">
+          <input aria-label="Stop loss percent" min="0" onChange={(event) => setStopLoss(event.target.value)} step="0.1" style={inputStyle} type="number" value={stopLoss} />
+        </Field>
+        <Field label="Take Profit (%)">
+          <input aria-label="Take profit percent" min="0" onChange={(event) => setTakeProfit(event.target.value)} step="0.1" style={inputStyle} type="number" value={takeProfit} />
+        </Field>
       </div>
 
       <button
-        type="submit"
         style={{
-          width: '100%',
+          width: "100%",
           padding: `${dt.spacing.sm} ${dt.spacing.xl}`,
           borderRadius: dt.borderRadius.button,
-          border: 'none',
-          background: dt.colors.neonCyan,
+          border: "none",
+          background: dt.gradients.buttonPrimary,
           color: dt.colors.background,
           fontSize: dt.typography.body.fontSize,
-          fontWeight: 600,
-          cursor: 'pointer',
-          transition: 'opacity 0.2s',
+          fontWeight: dt.typography.buttonLabel.fontWeight,
+          cursor: "pointer",
+          marginTop: dt.spacing.lg,
         }}
+        type="submit"
       >
         Create Strategy
       </button>
     </form>
+  );
+}
+
+function Field({ children, label }: { children: ReactNode; label: string }) {
+  return (
+    <div style={{ marginBottom: dt.spacing.md }}>
+      <label style={{ color: dt.colors.textSecondary, display: "block", fontSize: dt.typography.caption.fontSize, marginBottom: dt.spacing.xs }}>{label}</label>
+      {children}
+    </div>
   );
 }

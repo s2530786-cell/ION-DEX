@@ -1,0 +1,11 @@
+[2026-06-20 11:35:11] [INFO] ============================================
+[2026-06-20 11:35:11] [INFO] ION DEX Frontend Team Auto-Launcher v2.1
+[2026-06-20 11:35:11] [INFO] ============================================
+[2026-06-20 11:35:11] [INFO] Step 1/2: Dev Server...
+[2026-06-20 11:35:11] [OK] Dev server already running
+[2026-06-20 11:35:11] [INFO] Step 2/2: Pipeline...
+[2026-06-20 11:35:11] [INFO] Executing: D:\openclaw-tools\ion-dex-nuke\scripts\pipeline\pipeline-frontend.ps1 -Mode full
+[2026-06-20 11:35:36] [OK] Pipeline OK
+[2026-06-20 11:35:36] [INFO] ============================================
+[2026-06-20 11:35:36] [INFO] STATUS: DevServer=UP
+[2026-06-20 11:35:36] [INFO] Log: D:\openclaw-tools\ion-dex-nuke\logs\launcher-2026-06-20-1135.log

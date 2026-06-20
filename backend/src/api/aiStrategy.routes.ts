@@ -7,6 +7,7 @@ import {
   deleteStrategy,
   simulateStrategy,
   type CreateStrategyInput,
+  type StrategyUpdate,
 } from "../services/aiStrategy.js";
 import { ApiErrorCodes, apiError, apiResponse, writeJson, type ApiMeta } from "../gateway/response.js";
 
@@ -96,23 +97,25 @@ export async function handleAiStrategyRoute(
   if (byIdMatch && request.method === "PUT") {
     try {
       const id = byIdMatch[1];
-      const body = (await readJsonBody(request)) as Record<string, unknown>;
+      const body = (await readJsonBody(request)) as Partial<StrategyUpdate>;
       const allowed = ["name", "type", "params", "status"] as const;
-      const filtered: Record<string, unknown> = {};
+      const filtered: StrategyUpdate = {};
       for (const key of allowed) {
-        if (key in body) filtered[key] = body[key];
+        if (key in body) {
+          filtered[key] = body[key] as never;
+        }
       }
 
-      if (filtered.type && !["grid", "trend", "arbitrage", "market_making"].includes(filtered.type as string)) {
+      if (filtered.type && !["grid", "trend", "arbitrage", "market_making"].includes(filtered.type)) {
         writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Invalid strategy type.", meta));
         return true;
       }
-      if (filtered.status && !["draft", "running", "paused", "closed"].includes(filtered.status as string)) {
+      if (filtered.status && !["draft", "running", "paused", "closed"].includes(filtered.status)) {
         writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Invalid status.", meta));
         return true;
       }
 
-      const updated = updateStrategy(id, filtered as any);
+      const updated = updateStrategy(id, filtered);
       if (!updated) {
         writeJson(response, 404, apiError(ApiErrorCodes.notFound, "Strategy not found.", meta));
         return true;

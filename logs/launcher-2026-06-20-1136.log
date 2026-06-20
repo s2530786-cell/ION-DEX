@@ -1,0 +1,12 @@
+[2026-06-20 11:36:41] [INFO] ============================================
+[2026-06-20 11:36:41] [INFO] ION DEX Frontend Team Auto-Launcher v2.1
+[2026-06-20 11:36:41] [INFO] ============================================
+[2026-06-20 11:36:41] [INFO] Step 1/2: Dev Server...
+[2026-06-20 11:36:45] [INFO] Port 3000 in use by PID 0, killing...
+[2026-06-20 11:36:52] [OK] Dev server ready (took 0s)
+[2026-06-20 11:36:52] [INFO] Step 2/2: Pipeline...
+[2026-06-20 11:36:52] [INFO] Executing: D:\openclaw-tools\ion-dex-nuke\scripts\pipeline\pipeline-frontend.ps1 -Mode full
+[2026-06-20 11:37:14] [OK] Pipeline OK
+[2026-06-20 11:37:15] [INFO] ============================================
+[2026-06-20 11:37:15] [INFO] STATUS: DevServer=UP
+[2026-06-20 11:37:15] [INFO] Log: D:\openclaw-tools\ion-dex-nuke\logs\launcher-2026-06-20-1136.log
