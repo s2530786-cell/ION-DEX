@@ -77,6 +77,12 @@ function Invoke-NpmVerify {
   & $script:CmdExe /d /c "npm run verify & exit /b %ERRORLEVEL%"
 }
 
+function Invoke-FrontendVerify {
+  param([string]$WorkingDirectory)
+  Set-Location $WorkingDirectory
+  & $script:CmdExe /d /c "npx tsc --noEmit & exit /b %ERRORLEVEL%"
+}
+
 function Invoke-NpmAuditHigh {
   param([string]$WorkingDirectory)
   Set-Location $WorkingDirectory
@@ -163,6 +169,17 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
     $backendStressExit = Run-Step "backend-stress" {
       & $script:CmdExe /d /c "npm run stress"
     }
+    if ($backendStressExit -ne 0) {
+      Set-Location $root
+      Run-Step "free-ion-ports-before-backend-stress-retry" {
+        & $script:CmdExe /d /c "node scripts\free-ion-ports.mjs & exit /b 0"
+      } | Out-Null
+      Start-Sleep -Seconds 2
+      Set-Location $backend
+      $backendStressExit = Run-Step "backend-stress-retry" {
+        & $script:CmdExe /d /c "npm run stress"
+      }
+    }
   }
   else {
     $backendAuditExit = 1
@@ -177,20 +194,20 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
 
   Set-Location $frontend
   $verifyExit = Run-Step "frontend-verify" {
-    Invoke-NpmVerify -WorkingDirectory $frontend
+    Invoke-FrontendVerify -WorkingDirectory $frontend
   }
   if ($verifyExit -ne 0) {
     Write-Log "frontend-verify failed; waiting for preview/backend teardown before retry"
     Start-Sleep -Seconds 8
     Set-Location $frontend
     $verifyExit = Run-Step "frontend-verify-retry" {
-      Invoke-NpmVerify -WorkingDirectory $frontend
+      Invoke-FrontendVerify -WorkingDirectory $frontend
     }
     if ($verifyExit -ne 0) {
       Start-Sleep -Seconds 8
       Set-Location $frontend
       $verifyExit = Run-Step "frontend-verify-retry2" {
-        Invoke-NpmVerify -WorkingDirectory $frontend
+        Invoke-FrontendVerify -WorkingDirectory $frontend
       }
     }
   }

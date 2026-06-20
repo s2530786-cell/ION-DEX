@@ -34,6 +34,10 @@ function isWithinAllowed(path, allowedPaths) {
   });
 }
 
+function isIgnoredGeneratedPath(path) {
+  return normalizeRepoPath(path).endsWith(".tsbuildinfo");
+}
+
 export function stagePaths(root, paths) {
   if (!Array.isArray(paths) || paths.length === 0) {
     throw new Error("No stage paths configured for this workflow step.");
@@ -67,6 +71,7 @@ export function assertStageScope(root, paths) {
     runGit(root, ["ls-files", "--others", "--exclude-standard", "--", ...paths]),
   );
   const missingStage = [...new Set([...unstagedWithin, ...untrackedWithin])]
+    .filter((path) => !isIgnoredGeneratedPath(path))
     .filter((path) => isWithinAllowed(path, allowed))
     .filter((path) => !staged.includes(path))
     .filter((path) => existsSync(join(root, path)) || true);

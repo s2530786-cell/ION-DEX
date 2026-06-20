@@ -25,6 +25,7 @@ import { handleDomainManageRoute } from "../api/domainManage.routes.js";
 import { handleBatchTransferRoute } from "../api/batchTransfer.routes.js";
 import { handlePriceRoute } from "../api/price.routes.js";
 import { handleAiRoute } from "../api/ai.routes.js";
+import { handleAiStrategyRoute } from "../api/aiStrategy.routes.js";
 import { handleScrapingRoute } from "../api/scraping.routes.js";
 
 export type GatewayOptions = {
@@ -115,6 +116,13 @@ export async function routeRequest(
 
   if (url.pathname.startsWith("/api/batch-transfer/")) {
     const handled = await handleBatchTransferRoute(request, response, url.pathname, meta);
+    if (handled) {
+      return;
+    }
+  }
+
+  if (url.pathname.startsWith("/api/ai/strategies")) {
+    const handled = await handleAiStrategyRoute(request, response, url.pathname, meta);
     if (handled) {
       return;
     }

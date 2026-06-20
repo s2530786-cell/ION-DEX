@@ -1,4 +1,4 @@
-import { Router, type Request, type Response } from 'express';
+import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   getAllStrategies,
   getStrategyById,
@@ -7,132 +7,152 @@ import {
   deleteStrategy,
   simulateStrategy,
   type CreateStrategyInput,
-} from '../services/aiStrategy.js';
+} from "../services/aiStrategy.js";
+import { ApiErrorCodes, apiError, apiResponse, writeJson, type ApiMeta } from "../gateway/response.js";
 
-const router = Router();
+async function readJsonBody(request: IncomingMessage): Promise<unknown> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of request) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+  }
+  const raw = Buffer.concat(chunks).toString("utf8").trim();
+  return raw ? (JSON.parse(raw) as unknown) : {};
+}
 
-// GET /api/ai/strategies
-router.get('/', (_req: Request, res: Response) => {
-  try {
+export async function handleAiStrategyRoute(
+  request: IncomingMessage,
+  response: ServerResponse,
+  pathname: string,
+  meta: ApiMeta,
+): Promise<boolean> {
+  // GET /api/ai/strategies
+  if (pathname === "/api/ai/strategies" && request.method === "GET") {
     const strategies = getAllStrategies();
-    res.json({ data: strategies, total: strategies.length });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch strategies' });
+    writeJson(response, 200, apiResponse({ data: strategies, total: strategies.length }, meta));
+    return true;
   }
-});
 
-// POST /api/ai/strategies
-router.post('/', (req: Request, res: Response) => {
-  try {
-    const { name, type, params } = req.body as CreateStrategyInput;
-    if (!name?.trim()) {
-      res.status(400).json({ error: 'Strategy name is required' });
-      return;
-    }
-    if (!['grid', 'trend', 'arbitrage', 'market_making'].includes(type)) {
-      res.status(400).json({ error: `Invalid strategy type: ${type}` });
-      return;
-    }
-    if (!params?.fundAmount || params.fundAmount <= 0) {
-      res.status(400).json({ error: 'Fund amount must be positive' });
-      return;
-    }
-    if (!params?.stopLoss || params?.stopLoss <= 0) {
-      res.status(400).json({ error: 'Stop loss must be positive' });
-      return;
-    }
-    if (!params?.takeProfit || params?.takeProfit <= 0) {
-      res.status(400).json({ error: 'Take profit must be positive' });
-      return;
-    }
-    if (params.stopLoss >= params.takeProfit) {
-      res.status(400).json({ error: 'Stop loss must be less than take profit' });
-      return;
-    }
-    if (!params?.maxSlippage || params.maxSlippage <= 0) {
-      res.status(400).json({ error: 'Max slippage must be positive' });
-      return;
-    }
+  // POST /api/ai/strategies
+  if (pathname === "/api/ai/strategies" && request.method === "POST") {
+    try {
+      const body = (await readJsonBody(request)) as Partial<CreateStrategyInput>;
+      const { name, type, params } = body;
 
-    const strategy = createStrategy({ name: name.trim(), type, params });
-    res.status(201).json({ data: strategy });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to create strategy' });
+      if (!name?.trim()) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Strategy name is required.", meta));
+        return true;
+      }
+      if (!["grid", "trend", "arbitrage", "market_making"].includes(type ?? "")) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, `Invalid strategy type: ${type}.`, meta));
+        return true;
+      }
+      if (!params?.fundAmount || params.fundAmount <= 0) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Fund amount must be positive.", meta));
+        return true;
+      }
+      if (!params?.stopLoss || params?.stopLoss <= 0) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Stop loss must be positive.", meta));
+        return true;
+      }
+      if (!params?.takeProfit || params?.takeProfit <= 0) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Take profit must be positive.", meta));
+        return true;
+      }
+      if (params.stopLoss >= params.takeProfit) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Stop loss must be less than take profit.", meta));
+        return true;
+      }
+      if (!params?.maxSlippage || params.maxSlippage <= 0) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Max slippage must be positive.", meta));
+        return true;
+      }
+
+      const strategy = createStrategy({ name: name.trim(), type: type!, params: params! });
+      writeJson(response, 201, apiResponse({ data: strategy }, meta));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Request body must be valid JSON.", meta));
+        return true;
+      }
+      throw error;
+    }
+    return true;
   }
-});
 
-// GET /api/ai/strategies/:id
-router.get('/:id', (req: Request, res: Response) => {
-  try {
-    const strategy = getStrategyById(req.params.id);
+  // GET /api/ai/strategies/:id
+  const byIdMatch = pathname.match(/^\/api\/ai\/strategies\/([^/]+)$/);
+  if (byIdMatch && request.method === "GET") {
+    const id = byIdMatch[1];
+    const strategy = getStrategyById(id);
     if (!strategy) {
-      res.status(404).json({ error: 'Strategy not found' });
-      return;
+      writeJson(response, 404, apiError(ApiErrorCodes.notFound, "Strategy not found.", meta));
+      return true;
     }
-    res.json({ data: strategy });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch strategy' });
+    writeJson(response, 200, apiResponse({ data: strategy }, meta));
+    return true;
   }
-});
 
-// PUT /api/ai/strategies/:id
-router.put('/:id', (req: Request, res: Response) => {
-  try {
-    const updates = req.body as Record<string, unknown>;
-    const allowed = ['name', 'type', 'params', 'status'] as const;
+  // PUT /api/ai/strategies/:id
+  if (byIdMatch && request.method === "PUT") {
+    try {
+      const id = byIdMatch[1];
+      const body = (await readJsonBody(request)) as Record<string, unknown>;
+      const allowed = ["name", "type", "params", "status"] as const;
+      const filtered: Record<string, unknown> = {};
+      for (const key of allowed) {
+        if (key in body) filtered[key] = body[key];
+      }
 
-    const filtered: Record<string, unknown> = {};
-    for (const key of allowed) {
-      if (key in updates) filtered[key] = updates[key];
-    }
+      if (filtered.type && !["grid", "trend", "arbitrage", "market_making"].includes(filtered.type as string)) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Invalid strategy type.", meta));
+        return true;
+      }
+      if (filtered.status && !["draft", "running", "paused", "closed"].includes(filtered.status as string)) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Invalid status.", meta));
+        return true;
+      }
 
-    if (filtered.type && !['grid', 'trend', 'arbitrage', 'market_making'].includes(filtered.type as string)) {
-      res.status(400).json({ error: `Invalid strategy type` });
-      return;
+      const updated = updateStrategy(id, filtered as any);
+      if (!updated) {
+        writeJson(response, 404, apiError(ApiErrorCodes.notFound, "Strategy not found.", meta));
+        return true;
+      }
+      writeJson(response, 200, apiResponse({ data: updated }, meta));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        writeJson(response, 400, apiError(ApiErrorCodes.invalidQuoteRequest, "Request body must be valid JSON.", meta));
+        return true;
+      }
+      throw error;
     }
-    if (filtered.status && !['draft', 'running', 'paused', 'closed'].includes(filtered.status as string)) {
-      res.status(400).json({ error: `Invalid status` });
-      return;
-    }
-
-    const updated = updateStrategy(req.params.id, filtered as any);
-    if (!updated) {
-      res.status(404).json({ error: 'Strategy not found' });
-      return;
-    }
-    res.json({ data: updated });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to update strategy' });
+    return true;
   }
-});
 
-// DELETE /api/ai/strategies/:id
-router.delete('/:id', (req: Request, res: Response) => {
-  try {
-    const deleted = deleteStrategy(req.params.id);
+  // DELETE /api/ai/strategies/:id
+  if (byIdMatch && request.method === "DELETE") {
+    const id = byIdMatch[1];
+    const deleted = deleteStrategy(id);
     if (!deleted) {
-      res.status(404).json({ error: 'Strategy not found' });
-      return;
+      writeJson(response, 404, apiError(ApiErrorCodes.notFound, "Strategy not found.", meta));
+      return true;
     }
-    res.json({ data: { id: req.params.id, deleted: true } });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete strategy' });
+    writeJson(response, 200, apiResponse({ data: { id, deleted: true } }, meta));
+    return true;
   }
-});
 
-// POST /api/ai/strategies/:id/simulate
-router.post('/:id/simulate', (req: Request, res: Response) => {
-  try {
-    const strategy = getStrategyById(req.params.id);
+  // POST /api/ai/strategies/:id/simulate
+  const simulateMatch = pathname.match(/^\/api\/ai\/strategies\/([^/]+)\/simulate$/);
+  if (simulateMatch && request.method === "POST") {
+    const id = simulateMatch[1];
+    const strategy = getStrategyById(id);
     if (!strategy) {
-      res.status(404).json({ error: 'Strategy not found' });
-      return;
+      writeJson(response, 404, apiError(ApiErrorCodes.notFound, "Strategy not found.", meta));
+      return true;
     }
-    const result = simulateStrategy(req.params.id);
-    res.json({ data: result });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to simulate strategy' });
+    const result = simulateStrategy(id);
+    writeJson(response, 200, apiResponse({ data: result }, meta));
+    return true;
   }
-});
 
-export default router;
+  return false;
+}

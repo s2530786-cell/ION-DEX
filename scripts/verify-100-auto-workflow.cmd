@@ -18,12 +18,14 @@ set "PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
 
 
 
-echo [auto] free ports + clear stale verify-100 lock
+echo [auto] check verify-100 lock before port cleanup
 
-node scripts\free-ion-ports.mjs
-
-if exist "%TEMP%\ion-verify-100.lock" del /f /q "%TEMP%\ion-verify-100.lock" 2>nul
-
+if exist "%TEMP%\ion-verify-100.lock" (
+  echo [auto] verify-100 lock exists; skip port cleanup and let watchdog decide
+) else (
+  echo [auto] no verify-100 lock; free ports before workflow start
+  node scripts\free-ion-ports.mjs
+)
 
 
 echo [auto] start watchdog daemon

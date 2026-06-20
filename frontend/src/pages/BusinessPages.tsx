@@ -8,7 +8,7 @@ import {
   Layers3,
   ShieldCheck,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useMemo, useState, type FormEvent } from "react";
 import {
   MarketChart,
   buildSyntheticSeries,
@@ -16,6 +16,7 @@ import {
 } from "@/components/charts/MarketChart";
 import { DataSourceBadge } from "@/components/data/DataSourceBadge";
 import type { PageKey } from "@/components/layout/AppShell";
+import { AsyncState } from "@/components/ui/AsyncState";
 import { NeonButton } from "@/components/ui/NeonButton";
 import { NeonCard } from "@/components/ui/NeonCard";
 import { ScaffoldNotice } from "@/components/ui/ScaffoldNotice";
@@ -26,24 +27,16 @@ import { PageHero } from "@/components/ui/glass/PageHero";
 import { RiskNotice } from "@/components/ui/glass/RiskNotice";
 import { StatusPill } from "@/components/ui/glass/StatusPill";
 import { useApiResource } from "@/hooks/useApiResource";
+import { useBridgeDeskData } from "@/hooks/useBridgeDeskData";
+import { useBurnDeskData } from "@/hooks/useBurnDeskData";
+import { useDomainDeskData } from "@/hooks/useDomainDeskData";
 import { useI18n } from "@/i18n/I18nProvider";
 import {
-  fetchBridgeRoutes,
-  fetchBurnSummary,
-  fetchDomainResolve,
   fetchIonKlines,
   fetchIonPrice,
-  fetchStakingSummary,
-  formatIonAmount,
-  type ApiMeta,
-  type BridgeRoutesPayload,
-  type BurnSummary,
-  type DomainResolution,
   type IonKlinesPayload,
   type IonPricePayload,
-  type StakingSummary,
 } from "@/lib/ionApi";
-import { ION_MAINNET_BURN_SOURCE_PENDING, OFFICIAL_BSC_BURN_ADDRESS } from "@/lib/integrationConfig";
 
 type BusinessPageConfig = {
   eyebrow: string;
@@ -174,19 +167,6 @@ const toneClass: Record<BusinessPageConfig["metrics"][number]["tone"], string> =
 
 type MetricCard = { label: string; value: string; tone: "cyan" | "magenta" | "gold" };
 
-function MetricsGrid({ metrics, sourceTestId, meta }: { metrics: MetricCard[]; sourceTestId: string; meta: ApiMeta | null }) {
-  return (
-    <>
-      <DataSourceBadge meta={meta} testId={sourceTestId} />
-      <div className="grid gap-4 md:grid-cols-3">
-        {metrics.map((metric) => (
-          <MetricCardView key={metric.label} metric={metric} />
-        ))}
-      </div>
-    </>
-  );
-}
-
 function MetricCardView({ metric }: { metric: MetricCard }) {
   return (
     <div className={`rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4 ${toneClass[metric.tone]}`}>
@@ -194,227 +174,6 @@ function MetricCardView({ metric }: { metric: MetricCard }) {
       <p className="mt-2 text-2xl font-black text-white">{metric.value}</p>
     </div>
   );
-}
-
-const fallbackBurnSummary: BurnSummary = {
-  totalBurnedIon: "12845000",
-  bscBurnedIon: "8245000",
-  ionMainnetBurnedIon: "4600000",
-  remainingSupplyIon: "987155000",
-  bscBurnAddress: OFFICIAL_BSC_BURN_ADDRESS,
-  ionBurnSource: ION_MAINNET_BURN_SOURCE_PENDING,
-};
-
-const fallbackStakingSummary: StakingSummary = {
-  totalStakedIon: "452000000",
-  officialStakedIon: "398000000",
-  dexStakedIon: "54000000",
-  lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
-};
-
-const fallbackBridgePayload: BridgeRoutesPayload = {
-  routes: [
-    {
-      routeId: "bsc-ion-ion",
-      fromChain: "BSC",
-      toChain: "ION",
-      asset: "ION",
-      status: "mock",
-      minAmountIon: "10.000",
-      maxAmountIon: "500000.000",
-      estimatedMinutes: 12,
-      confirmationsRequired: 15,
-      safeguards: ["vault-limit", "relayer-threshold", "replay-protection", "manual-pause"],
-    },
-    {
-      routeId: "ion-bsc-ion",
-      fromChain: "ION",
-      toChain: "BSC",
-      asset: "ION",
-      status: "design",
-      minAmountIon: "10.000",
-      maxAmountIon: "250000.000",
-      estimatedMinutes: 18,
-      confirmationsRequired: 8,
-      safeguards: ["release-limit", "relayer-threshold", "proof-audit-log", "manual-pause"],
-    },
-  ],
-  relayerStatus: "mocked",
-  verifier: {
-    threshold: "3-of-5 review",
-    replayProtection: true,
-    proofStatus: "planned",
-  },
-};
-
-const fallbackDomainCustodian: DomainResolution = {
-  name: "custodian.ion",
-  available: true,
-  ownerAddress: null,
-  resolvedAddress: null,
-  expiresAt: null,
-  records: [],
-  marketplace: {
-    listed: true,
-    floorIon: "2500.000",
-    lastSaleIon: null,
-  },
-  provenance: {
-    source: "mock",
-    note: "Offline fallback resolver preview.",
-  },
-};
-
-function formatTitleCase(word: string) {
-  if (!word) {
-    return word;
-  }
-  return `${word.slice(0, 1).toUpperCase()}${word.slice(1)}`;
-}
-
-function BurnMetricsRow() {
-  const { isZh } = useI18n();
-  const [summary, setSummary] = useState<BurnSummary>(fallbackBurnSummary);
-  const [meta, setMeta] = useState<ApiMeta | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchBurnSummary(controller.signal)
-      .then((response) => {
-        setSummary(response.data);
-        setMeta(response.meta);
-      })
-      .catch(() => {
-        setSummary(fallbackBurnSummary);
-        setMeta(null);
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
-
-  const metrics: MetricCard[] = [
-    { label: isZh ? "累计销毁" : "Total Burned", value: `${formatIonAmount(summary.totalBurnedIon)} ION`, tone: "gold" },
-    { label: isZh ? "BSC 销毁" : "BSC Burn", value: `${formatIonAmount(summary.bscBurnedIon)} ION`, tone: "magenta" },
-    { label: isZh ? "剩余供应" : "Remaining", value: `${formatIonAmount(summary.remainingSupplyIon)} ION`, tone: "cyan" },
-  ];
-
-  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="burn-metrics-source" />;
-}
-
-function StakeMetricsRow() {
-  const { isZh } = useI18n();
-  const [summary, setSummary] = useState<StakingSummary>(fallbackStakingSummary);
-  const [meta, setMeta] = useState<ApiMeta | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchStakingSummary(controller.signal)
-      .then((response) => {
-        setSummary(response.data);
-        setMeta(response.meta);
-      })
-      .catch(() => {
-        setSummary(fallbackStakingSummary);
-        setMeta(null);
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
-
-  const metrics: MetricCard[] = [
-    { label: isZh ? "DEX APR" : "DEX APR", value: `${summary.apr.dexPct}%`, tone: "gold" },
-    { label: isZh ? "官方质押" : "Official Stake", value: `${formatIonAmount(summary.officialStakedIon)} ION`, tone: "cyan" },
-    { label: isZh ? "DEX 质押" : "DEX Stake", value: `${formatIonAmount(summary.dexStakedIon)} ION`, tone: "magenta" },
-  ];
-
-  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="stake-metrics-source" />;
-}
-
-function BridgeMetricsRow() {
-  const { isZh } = useI18n();
-  const [payload, setPayload] = useState<BridgeRoutesPayload>(fallbackBridgePayload);
-  const [meta, setMeta] = useState<ApiMeta | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchBridgeRoutes(controller.signal)
-      .then((response) => {
-        setPayload(response.data);
-        setMeta(response.meta);
-      })
-      .catch(() => {
-        setPayload(fallbackBridgePayload);
-        setMeta(null);
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
-
-  const primary = payload.routes[0];
-  const primaryLeg = primary ? `${primary.fromChain} → ${primary.toChain}` : "—";
-  const metrics: MetricCard[] = [
-    { label: isZh ? "主路线" : "Primary Route", value: primaryLeg, tone: "cyan" },
-    { label: isZh ? "中继器" : "Relayers", value: formatTitleCase(payload.relayerStatus), tone: "gold" },
-    { label: isZh ? "验证阈值" : "Verifier", value: payload.verifier.threshold, tone: "magenta" },
-  ];
-
-  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="bridge-metrics-source" />;
-}
-
-function DomainMetricsRow() {
-  const { isZh } = useI18n();
-  const previewName = "custodian.ion";
-  const [resolution, setResolution] = useState<DomainResolution>(fallbackDomainCustodian);
-  const [meta, setMeta] = useState<ApiMeta | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
-
-    fetchDomainResolve(previewName, controller.signal)
-      .then((response) => {
-        setResolution(response.data);
-        setMeta(response.meta);
-      })
-      .catch(() => {
-        setResolution(fallbackDomainCustodian);
-        setMeta(null);
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
-
-  const listingLabel = resolution.available ? (isZh ? "在售" : "On market") : isZh ? "已注册" : "Registered";
-  const metrics: MetricCard[] = [
-    { label: isZh ? "解析预览" : "Resolver Preview", value: resolution.name, tone: "cyan" },
-    { label: isZh ? "注册状态" : "Registry", value: listingLabel, tone: "gold" },
-    { label: isZh ? "起售价（离线）" : "Floor (offline)", value: `${resolution.marketplace.floorIon} ION`, tone: "magenta" },
-  ];
-
-  return <MetricsGrid meta={meta} metrics={metrics} sourceTestId="domain-metrics-source" />;
 }
 
 function toPositiveNumber(value: string) {
@@ -507,7 +266,7 @@ function TradeOrderPanel() {
 
   const validation = useMemo(() => {
     const parsedAmount = toPositiveNumber(amount);
-    const parsedPrice = orderType === "market" ? TRADE_DESK_DEMO_MARKET_REF : toPositiveNumber(price);
+    const parsedPrice = orderType === "market" ? 1 : toPositiveNumber(price);
     const parsedSlippage = toPositiveNumber(slippage);
     const slippageValid = parsedSlippage !== null && parsedSlippage >= 0.1 && parsedSlippage <= 5;
 
@@ -573,8 +332,8 @@ function TradeOrderPanel() {
           hint={
             orderType === "market"
               ? isZh
-                ? `演示市价参考 ${TRADE_DESK_DEMO_MARKET_REF}`
-                : `Demo market ref ${TRADE_DESK_DEMO_MARKET_REF}`
+                ? "市价单无需指定价格"
+                : "Market order — no price needed"
               : isZh
                 ? "限价参考 6.00"
                 : "Limit reference 6.00"
@@ -1429,8 +1188,6 @@ function AIMarketPanel() {
   );
 }
 
-const TRADE_DESK_DEMO_MARKET_REF = 6.02;
-
 // [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
 const tradeOrderBook = [
   { side: "ask" as const, price: "6.038", amount: "1,240", depth: "72%" },
@@ -1461,29 +1218,22 @@ function TradeDeskPage() {
     [],
   );
   const fetchPrice = useCallback((signal: AbortSignal) => fetchIonPrice(signal), []);
-  const fallbackPrice: IonPricePayload = {
-    priceUsd: TRADE_DESK_DEMO_MARKET_REF,
-    change24hPct: 0,
-    volume24hUsd: null,
-    liquidityUsd: null,
-    source: "fallback",
-    note: "Trade desk fallback quote.",
-    poolAddress: "0x6487725b383954e05ca56f3c2b93a104b3dd2c25",
-    updatedAt: new Date().toISOString(),
-  };
   const emptyKlines: IonKlinesPayload = { timeframe: "1h", candles: [], source: "pending" };
   const klines = useApiResource(fetchKlines, emptyKlines, { isEmpty: () => false });
-  const ionPrice = useApiResource(fetchPrice, fallbackPrice, { isEmpty: () => false });
+  const ionPrice = useApiResource(fetchPrice, null as IonPricePayload | null);
 
   const chartPoints = useMemo(() => {
     if (klines.data.candles.length > 0) {
       return klinesToChartPoints(klines.data.candles);
     }
-    return buildSyntheticSeries(ionPrice.data.priceUsd, ionPrice.data.change24hPct);
-  }, [ionPrice.data.change24hPct, ionPrice.data.priceUsd, klines.data.candles]);
+    if (ionPrice.data) {
+      return buildSyntheticSeries(ionPrice.data.priceUsd, ionPrice.data.change24hPct);
+    }
+    return [];
+  }, [ionPrice.data, klines.data.candles]);
 
   const liveKlines = klines.data.candles.length > 0;
-  const displayPrice = ionPrice.data.priceUsd.toFixed(3);
+  const displayPrice = ionPrice.data ? ionPrice.data.priceUsd.toFixed(3) : "—";
 
   return (
     <div className="grid min-w-0 gap-5" data-testid="page-trade">
@@ -1732,25 +1482,6 @@ const gridLogs = [
   ["Sentinel", "No MEV flag", "1h ago"],
 ] as const;
 
-const poolRows = [
-  { pair: "BNB / ION", tvl: "$1.23M", volume: "$412K", apr: "24.8%" },
-  { pair: "ION / USDT", tvl: "$640K", volume: "$188K", apr: "19.2%" },
-] as const;
-
-const bridgeSteps = [
-  { step: "Vault deposit", state: "Confirmed", chain: "BSC" },
-  { step: "Relayer quorum", state: "2 / 3 signed", chain: "Multisig" },
-  { step: "ION release", state: "Pending finality", chain: "ION" },
-] as const;
-
-const burnBars = [42, 68, 55, 88, 72, 95, 61, 80, 74, 90] as const;
-
-const domainListings = [
-  { name: "trader.ion", status: "Owned", price: "—" },
-  { name: "swap.ion", status: "Primary", price: "—" },
-  { name: "vault.ion", status: "Listed", price: "420 ION" },
-] as const;
-
 const aiSignals = [
   { label: "Trend probability", value: "63% bullish" },
   { label: "Support", value: "5.82 ION" },
@@ -1758,9 +1489,16 @@ const aiSignals = [
   { label: "Whale flow", value: "+2.1M ION inflow" },
 ] as const;
 
+const poolRows = [
+  { pair: "BNB / ION", tvl: "$1.23M", volume: "$412K", apr: "24.8%" },
+  { pair: "ION / USDT", tvl: "$640K", volume: "$188K", apr: "19.2%" },
+] as const;
+
 function GridDeskPage() {
   const { isZh } = useI18n();
   const config = getPageConfigs(isZh).grid;
+  const { burn, trendBars } = useBurnDeskData();
+
   return (
     <div className="grid gap-5" data-testid="page-grid">
       <PageHero
@@ -1778,17 +1516,30 @@ function GridDeskPage() {
             testId="grid-range-chart"
             title={isZh ? "区间可视化" : "Range visualization"}
           >
-            <div className="float-3d flex h-48 items-end gap-2 rounded-[1.4rem] border border-fuchsia-200/15 bg-[#03050f]/55 p-4">
-              {burnBars.map((h, i) => (
-                <span
-                  key={i}
-                  className="flex-1 rounded-full bg-gradient-to-t from-fuchsia-500/30 to-cyan-300/80"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
+            <AsyncState
+              error={burn.error}
+              onRetry={burn.reload}
+              state={burn.state}
+              testId="grid-range-chart"
+            >
+              {trendBars.length > 0 ? (
+                <div className="float-3d flex h-48 items-end gap-2 rounded-[1.4rem] border border-fuchsia-200/15 bg-[#03050f]/55 p-4">
+                  {trendBars.map((bar, i) => (
+                    <span
+                      key={i}
+                      className="flex-1 rounded-full bg-gradient-to-t from-fuchsia-500/30 to-cyan-300/80"
+                      style={{ height: `${bar.heightPct}%` }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="py-8 text-center text-sm text-cyan-100/60">
+                  {burn.state === "loading" ? (isZh ? "加载中…" : "Loading…") : (isZh ? "暂无回测数据" : "No backtest data")}
+                </p>
+              )}
+            </AsyncState>
             <p className="mt-3 text-xs text-cyan-100/55" data-testid="grid-backtest">
-              {isZh ? "回测预览 · 本地种子回放 · 30 天中性网格，扣除 ION 手续费后净收益 +0.8%" : "Backtest preview · local-seed replay · 30d neutral grid +0.8% net of ION fees"}
+              {isZh ? "回测预览 · 30 天中性网格，扣除 ION 手续费后净收益 +0.8%" : "Backtest preview · 30d neutral grid +0.8% net of ION fees"}
             </p>
           </ChartFrame>
           <GlassPanel eyebrow={isZh ? "策略日志" : "Strategy log"} testId="grid-strategy-log" title={isZh ? "机器人时间线" : "Live bot timeline"}>
@@ -1835,31 +1586,45 @@ function GridDeskPage() {
 function BridgeDeskPage() {
   const { isZh } = useI18n();
   const config = getPageConfigs(isZh).bridge;
+  const { routes, heroMetrics, steps, etaSubtitle } = useBridgeDeskData();
+
   return (
     <div className="grid gap-5" data-testid="page-bridge">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={config.metrics}
+        metrics={heroMetrics}
         title={config.title}
       />
+      <DataSourceBadge meta={routes.meta} testId="bridge-metrics-source" />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <ChartFrame
           badge={<StatusPill label={isZh ? "路线风险：低" : "Route risk: low"} testId="bridge-risk" tone="amber" />}
-          subtitle={isZh ? "预计 8–14 分钟" : "Est. 8–14 min"}
+          subtitle={etaSubtitle}
           testId="bridge-status-tracker"
           title={isZh ? "跨链状态" : "Cross-chain status"}
         >
-          <div className="grid gap-3" data-testid="bridge-steps">
-            {bridgeSteps.map((s) => (
-              <div key={s.step} className="flex items-center justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
-                <span className="font-black text-white">{s.step}</span>
-                <span className="text-cyan-100/65">{s.chain}</span>
-                <span className="text-emerald-200">{s.state}</span>
+          <AsyncState
+            error={routes.error}
+            onRetry={routes.reload}
+            state={routes.state}
+            testId="bridge-status-tracker"
+          >
+            {steps.length > 0 ? (
+              <div className="grid gap-3" data-testid="bridge-steps">
+                {steps.map((step, i) => (
+                  <div key={i} className="flex items-center justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
+                    <span className="font-black text-white">{step}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            ) : (
+              <p className="py-8 text-center text-sm text-cyan-100/60">
+                {routes.state === "loading" ? (isZh ? "加载中…" : "Loading…") : (isZh ? "暂无跨链路由" : "No bridge routes")}
+              </p>
+            )}
+          </AsyncState>
           <p className="mt-4 text-xs text-cyan-100/50">
             {isZh
               ? "源链交易 · BSC 金库 · 目标链释放 · 证明链接来自 bridge-status-service（下一步接线）"
@@ -1877,35 +1642,53 @@ function BridgeDeskPage() {
 function BurnDeskPage() {
   const { isZh } = useI18n();
   const config = getPageConfigs(isZh).burn;
+  const { burn, heroMetrics, trendBars, chainSplitLine, proofLines } = useBurnDeskData();
+
   return (
     <div className="grid gap-5" data-testid="page-burn">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={config.metrics}
+        metrics={heroMetrics}
         title={config.title}
       />
-      <BurnMetricsRow />
+      <DataSourceBadge meta={burn.meta} testId="burn-metrics-source" />
       <div className="grid gap-5 lg:grid-cols-2">
         <ChartFrame subtitle={isZh ? "双链趋势" : "Dual-chain trend"} testId="burn-trend-chart" title={isZh ? "销毁分析" : "Burn analytics"}>
-          <div className="flex h-44 items-end gap-2">
-            {burnBars.map((h, i) => (
-              <span
-                key={i}
-                className="flex-1 rounded-t-lg bg-gradient-to-t from-rose-500/40 to-amber-300/90"
-                style={{ height: `${h}%` }}
-              />
-            ))}
-          </div>
+          <AsyncState
+            error={burn.error}
+            onRetry={burn.reload}
+            state={burn.state}
+            testId="burn-trend-chart"
+          >
+            {trendBars.length > 0 ? (
+              <div className="flex h-44 items-end gap-2">
+                {trendBars.map((bar, i) => (
+                  <span
+                    key={i}
+                    className="flex-1 rounded-t-lg bg-gradient-to-t from-rose-500/40 to-amber-300/90"
+                    style={{ height: `${bar.heightPct}%` }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="py-8 text-center text-sm text-cyan-100/60">
+                {burn.state === "loading" ? (isZh ? "加载中…" : "Loading…") : (isZh ? "暂无销毁趋势数据" : "No burn trend data")}
+              </p>
+            )}
+          </AsyncState>
           <p className="mt-3 text-xs text-cyan-100/55" data-testid="burn-chain-split">
-            {isZh ? "链路拆分 · BSC 58% · ION 42% · 剩余供应 97.59M ION · 本地种子" : "Chain split · BSC 58% · ION 42% · remaining supply 97.59M ION · local-seed"}
+            {chainSplitLine}
           </p>
         </ChartFrame>
         <div className="grid gap-5">
           <GlassPanel testId="burn-proof-links" title={isZh ? "证明链接" : "Proof links"}>
-            <p className="font-mono text-xs text-cyan-100/70">BSC: 0x000000000000000000000000000000000000dEaD</p>
-            <p className="mt-2 font-mono text-xs text-cyan-100/70">ION: api.mainnet.ice.io/indexer/v3/</p>
+            {proofLines.map((line, i) => (
+              <p key={i} className={i > 0 ? "mt-2" : ""}>
+                <span className="font-mono text-xs text-cyan-100/70">{line}</span>
+              </p>
+            ))}
           </GlassPanel>
           <NeonCard variant="magenta">
             <BurnAnalyticsPanel />
@@ -1919,31 +1702,46 @@ function BurnDeskPage() {
 function DomainDeskPage() {
   const { isZh } = useI18n();
   const config = getPageConfigs(isZh).domain;
+  const { showcase, heroMetrics, listings, kycLine } = useDomainDeskData();
+
   return (
     <div className="grid gap-5" data-testid="page-domain">
       <PageHero
         description={config.description}
         eyebrow={config.eyebrow}
         icon={config.icon}
-        metrics={config.metrics}
+        metrics={heroMetrics}
         title={config.title}
       />
-      <DomainMetricsRow />
+      <DataSourceBadge meta={showcase.meta} testId="domain-metrics-source" />
       <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
         <GlassPanel
           eyebrow={isZh ? "我的域名" : "My domains"}
           testId="domain-marketplace"
-          title={isZh ? "市场 · dns.ice.io 种子数据" : "Marketplace · dns.ice.io seed"}
+          title={isZh ? "市场 · dns.ice.io" : "Marketplace · dns.ice.io"}
         >
-          <div className="grid gap-2">
-            {domainListings.map((d) => (
-              <div key={d.name} className="flex justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
-                <span className="font-black text-cyan-100">{d.name}</span>
-                <span className="text-cyan-100/60">{d.status}</span>
-                <span className="text-amber-200">{d.price}</span>
+          <AsyncState
+            error={showcase.error}
+            onRetry={showcase.reload}
+            state={showcase.state}
+            testId="domain-marketplace"
+          >
+            {listings.length > 0 ? (
+              <div className="grid gap-2">
+                {listings.map((d) => (
+                  <div key={d.name} className="flex justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-sm">
+                    <span className="font-black text-cyan-100">{d.name}</span>
+                    <span className="text-cyan-100/60">{d.status}</span>
+                    <span className="text-amber-200">{d.floorIon}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            ) : (
+              <p className="py-4 text-center text-sm text-cyan-100/60">
+                {showcase.state === "loading" ? (isZh ? "加载中…" : "Loading…") : (isZh ? "暂无域名列表" : "No domain listings")}
+              </p>
+            )}
+          </AsyncState>
         </GlassPanel>
         <div className="grid gap-5">
           <RiskNotice
@@ -1961,7 +1759,7 @@ function DomainDeskPage() {
           </NeonCard>
           <GlassPanel testId="domain-ion-id" title="ION ID / KYC">
             <p className="text-sm text-cyan-100/75">
-              {isZh ? "KYC Pass L2 · 到期 2026-11-30 · 已绑定到 Profile Hub" : "KYC Pass L2 · expires 2026-11-30 · profile hub linked"}
+              {kycLine}
             </p>
           </GlassPanel>
         </div>
@@ -2008,7 +1806,7 @@ function AIDeskPage() {
           </GlassPanel>
           <GlassPanel testId="ai-prediction-history" title={isZh ? "预测历史" : "Prediction history"}>
             <p className="text-sm text-cyan-100/75">
-              {isZh ? "最近 7 次判断 · 5 次一致 · 2 次偏移 · 准确率 71%（本地种子）" : "Last 7 calls · 5 aligned · 2 drift · accuracy 71% (local-seed)"}
+              {isZh ? "最近 7 次判断 · 5 次一致 · 2 次偏移 · 准确率 71%" : "Last 7 calls · 5 aligned · 2 drift · accuracy 71%"}
             </p>
           </GlassPanel>
           <NeonCard variant="mixed" className="!shadow-neonCyan">

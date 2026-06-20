@@ -331,9 +331,12 @@ export async function buildLiveMarketTickers(config: ServerConfig): Promise<Mark
     }
   }
 
-  tickers.push(
-    tickerFromUsd("USDT", 1, 0.01, "binance", "USDT/USD peg via Binance stable reference."),
-  );
+  // Only add USDT peg if not already present from upstream
+  if (!tickers.find((t) => t.symbol === "USDT")) {
+    tickers.push(
+      tickerFromUsd("USDT", 1, 0.01, "binance", "USDT/USD peg via Binance stable reference."),
+    );
+  }
 
   return tickers;
 }

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "740db0b8-de9d-4359-a8f3-f1cebaebbb1c",
+    "name": "Test Grid Bot",
+    "type": "grid",
+    "riskLevel": "Low",
+    "params": {
+      "fundAmount": 1000,
+      "stopLoss": 5,
+      "takeProfit": 20,
+      "maxSlippage": 0.5
+    },
+    "status": "draft",
+    "returnRate": 0,
+    "runtime": 0,
+    "fundSize": 1000,
+    "maxDrawdown": 0,
+    "sharpeRatio": 0,
+    "createdAt": "2026-06-19T19:50:13.650Z",
+    "updatedAt": "2026-06-19T19:50:13.650Z"
+  }
+]

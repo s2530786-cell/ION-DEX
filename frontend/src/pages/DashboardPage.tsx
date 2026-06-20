@@ -20,11 +20,6 @@ import { NeonCard } from "@/components/ui/NeonCard";
 import type { PageKey } from "@/components/layout/AppShell";
 import { useApiResource } from "@/hooks/useApiResource";
 import {
-  DEMO_TICKER_FALLBACK,
-  ION_MAINNET_BURN_SOURCE_PENDING,
-  OFFICIAL_BSC_BURN_ADDRESS,
-} from "@/lib/integrationConfig";
-import {
   fetchBurnSummary,
   fetchIonKlines,
   fetchIonPrice,
@@ -43,7 +38,7 @@ type FeatureCard = {
   label: string;
   target: PageKey;
   icon: typeof Layers3;
-  color: "cyan" | "magenta" | "gold";
+  color: "cyan" | "purple" | "bridge" | "burn" | "magenta" | "gold";
 };
 
 type DashboardPageProps = {
@@ -53,46 +48,15 @@ type DashboardPageProps = {
 /** Bottom nav row — aligned with design reference (Pool / Copy Trade / Bridge / Burn / Domain). */
 const featureCards: FeatureCard[] = [
   { title: "Pool", label: "Liquidity", target: "pool", icon: Layers3, color: "cyan" },
-  { title: "Copy Trade", label: "Social desk", target: "copy-trade", icon: Bot, color: "magenta" },
-  { title: "Bridge", label: "ION / BSC", target: "bridge", icon: ArrowLeftRight, color: "cyan" },
-  { title: "Burn", label: "Dual-chain", target: "burn", icon: Flame, color: "magenta" },
-  { title: "Domain", label: "ION DNS", target: "domain", icon: ShieldCheck, color: "gold" },
+  { title: "Copy Trade", label: "Social desk", target: "copy-trade", icon: Bot, color: "purple" },
+  { title: "Bridge", label: "ION / BSC", target: "bridge", icon: ArrowLeftRight, color: "bridge" },
+  { title: "Burn", label: "Dual-chain", target: "burn", icon: Flame, color: "burn" },
+  { title: "Domain", label: "ION DNS", target: "domain", icon: ShieldCheck, color: "magenta" },
 ];
 
-const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK.filter((row) => row.symbol === "ION");
-
-const fallbackBurn: BurnSummary = {
-  totalBurnedIon: "12845000",
-  bscBurnedIon: "8245000",
-  ionMainnetBurnedIon: "4600000",
-  remainingSupplyIon: "987155000",
-  bscBurnAddress: OFFICIAL_BSC_BURN_ADDRESS,
-  ionBurnSource: ION_MAINNET_BURN_SOURCE_PENDING,
-};
-
-const fallbackStaking: StakingSummary = {
-  totalStakedIon: "452000000",
-  officialStakedIon: "398000000",
-  dexStakedIon: "54000000",
-  lpStakedUsd: "12800000",
-  apr: { officialPct: 18.2, dexPct: 25.5, lpMiningPct: 31.8 },
-};
-
-const fallbackIonPrice: IonPricePayload = {
-  priceUsd: 6.02,
-  change24hPct: 8.42,
-  volume24hUsd: null,
-  liquidityUsd: null,
-  source: "mock",
-  note: "fallback",
-  poolAddress: "0x6487725b383954e05ca56f3c2b93a104b3dd2c25",
-  updatedAt: new Date(0).toISOString(),
-  oracleMethod: "mock-single-source",
-  oracleSpreadBps: 0,
-  oracleUsedQuotes: 1,
-  oracleUsedFeeds: [{ platformId: "mock", priceUsd: 6.02, weight: 1, liquidityUsd: null, change24hPct: 8.42 }],
-  oracleRejectedFeeds: [],
-};
+// [NO-FALLBACK] All data comes from live API. No demo/mock data allowed (Master red line).
+const EMPTY_TICKERS: MarketTicker[] = [];
+const EMPTY_KLINES: IonKlinesPayload = { timeframe: "1h", candles: [], source: "pending" };
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const { isZh } = useI18n();
@@ -111,17 +75,16 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     [],
   );
 
-  const tickers = useApiResource(fetchTickers, fallbackTickers, {
+  const tickers = useApiResource(fetchTickers, EMPTY_TICKERS, {
     isEmpty: (data) => data.length === 0,
   });
-  const burn = useApiResource(fetchBurn, fallbackBurn);
-  const staking = useApiResource(fetchStaking, fallbackStaking);
-  const ionPrice = useApiResource(fetchPrice, fallbackIonPrice);
-  const emptyKlines: IonKlinesPayload = { timeframe: "1h", candles: [], source: "pending" };
-  const klines = useApiResource(fetchKlines, emptyKlines, { isEmpty: () => false });
+  const burn = useApiResource(fetchBurn, null as BurnSummary | null);
+  const staking = useApiResource(fetchStaking, null as StakingSummary | null);
+  const ionPrice = useApiResource(fetchPrice, null as IonPricePayload | null);
+  const klines = useApiResource(fetchKlines, EMPTY_KLINES, { isEmpty: () => false });
 
   const ionTicker = useMemo(
-    () => tickers.data.find((ticker) => ticker.symbol === "ION") ?? tickers.data[0],
+    () => tickers.data.find((ticker) => ticker.symbol === "ION") ?? tickers.data[0] ?? null,
     [tickers.data],
   );
 
@@ -136,23 +99,23 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   }, [ionTicker, klines.data.candles]);
 
   const tvlLabel = useMemo(() => {
+    if (!staking.data) return null;
     const lpUsd = Number(staking.data.lpStakedUsd);
-    if (!Number.isFinite(lpUsd)) {
-      return `$${staking.data.lpStakedUsd}`;
-    }
+    if (!Number.isFinite(lpUsd)) return `$${staking.data.lpStakedUsd}`;
     return lpUsd >= 1_000_000
       ? `$${(lpUsd / 1_000_000).toFixed(2)}M`
       : `$${lpUsd.toLocaleString()}`;
-  }, [staking.data.lpStakedUsd]);
+  }, [staking.data]);
 
   const burnProgress = useMemo(() => {
+    if (!burn.data) return 0;
     const burned = Number(burn.data.totalBurnedIon);
     const remaining = Number(burn.data.remainingSupplyIon);
     if (!Number.isFinite(burned) || !Number.isFinite(remaining) || burned + remaining <= 0) {
-      return 62;
+      return 0;
     }
     return Math.min(100, Math.round((burned / (burned + remaining)) * 100));
-  }, [burn.data.remainingSupplyIon, burn.data.totalBurnedIon]);
+  }, [burn.data]);
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-5" data-testid="page-dashboard">
@@ -186,8 +149,8 @@ function MarketStage({
   klines,
 }: {
   tickers: ReturnType<typeof useApiResource<MarketTicker[]>>;
-  ionPrice: ReturnType<typeof useApiResource<IonPricePayload>>;
-  ionTicker: MarketTicker | undefined;
+  ionPrice: ReturnType<typeof useApiResource<IonPricePayload | null>>;
+  ionTicker: MarketTicker | null;
   isZh: boolean;
   chartPoints: ReturnType<typeof buildSyntheticSeries>;
   klines: ReturnType<typeof useApiResource<IonKlinesPayload>>;
@@ -196,6 +159,7 @@ function MarketStage({
     <div className="flow-border min-h-0 rounded-[1.75rem] p-px lg:min-h-[22rem]">
       <NeonCard className="h-full min-h-[20rem] lg:min-h-[22rem]" variant="mixed">
         <div className="flex h-full min-h-0 flex-col">
+          <div className="aurora-noise pointer-events-none absolute inset-0 rounded-[1.7rem]" />
           <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/45">{isZh ? "市场" : "Market"}</p>
@@ -232,43 +196,51 @@ function MarketStage({
             </div>
           </AsyncState>
 
-          <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.05] p-3" data-testid="dashboard-oracle-diagnostics">
-            <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-cyan-100/60">
-              <span>{isZh ? "预言机诊断" : "Oracle Diagnostics"}</span>
-              <span>{ionPrice.data.oracleMethod ?? "n/a"}</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs text-cyan-100/80">
-              <p>
-                {isZh ? "价差" : "spread"}: <span className="font-bold text-white">{ionPrice.data.oracleSpreadBps ?? 0} bps</span>
-              </p>
-              <p>
-                {isZh ? "采纳报价" : "used quotes"}: <span className="font-bold text-white">{ionPrice.data.oracleUsedQuotes ?? 0}</span>
-              </p>
-            </div>
-            <div className="mt-2 text-xs text-cyan-100/75">
-              <p className="mb-1 font-semibold text-cyan-50">{isZh ? "采纳源" : "used feeds"}</p>
-              <div className="flex flex-wrap gap-1.5" data-testid="dashboard-oracle-used-feeds">
-                {(ionPrice.data.oracleUsedFeeds ?? []).slice(0, 4).map((feed) => (
-                  <span className="rounded-full border border-emerald-300/35 bg-emerald-300/10 px-2 py-0.5" key={feed.platformId}>
-                    {feed.platformId}:{feed.priceUsd.toFixed(4)}
-                  </span>
-                ))}
+          {ionPrice.data ? (
+            <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.05] p-3" data-testid="dashboard-oracle-diagnostics">
+              <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-cyan-100/60">
+                <span>{isZh ? "预言机诊断" : "Oracle Diagnostics"}</span>
+                <span>{ionPrice.data.oracleMethod ?? "n/a"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs text-cyan-100/80">
+                <p>
+                  {isZh ? "价差" : "spread"}: <span className="font-bold text-white">{ionPrice.data.oracleSpreadBps ?? 0} bps</span>
+                </p>
+                <p>
+                  {isZh ? "采纳报价" : "used quotes"}: <span className="font-bold text-white">{ionPrice.data.oracleUsedQuotes ?? 0}</span>
+                </p>
+              </div>
+              <div className="mt-2 text-xs text-cyan-100/75">
+                <p className="mb-1 font-semibold text-cyan-50">{isZh ? "采纳源" : "used feeds"}</p>
+                <div className="flex flex-wrap gap-1.5" data-testid="dashboard-oracle-used-feeds">
+                  {(ionPrice.data.oracleUsedFeeds ?? []).slice(0, 4).map((feed) => (
+                    <span className="rounded-full border border-emerald-300/35 bg-emerald-300/10 px-2 py-0.5" key={feed.platformId}>
+                      {feed.platformId}:{feed.priceUsd.toFixed(4)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-2 text-xs text-cyan-100/75">
+                <p className="mb-1 font-semibold text-cyan-50">{isZh ? "剔除源" : "rejected feeds"}</p>
+                <div className="flex flex-wrap gap-1.5" data-testid="dashboard-oracle-rejected-feeds">
+                  {(ionPrice.data.oracleRejectedFeeds ?? []).slice(0, 4).map((feed) => (
+                    <span className="rounded-full border border-rose-300/35 bg-rose-300/10 px-2 py-0.5" key={`${feed.platformId}-${feed.rejectReason}`}>
+                      {feed.platformId}:{feed.rejectReason}
+                    </span>
+                  ))}
+                  {(ionPrice.data.oracleRejectedFeeds ?? []).length === 0 ? (
+                    <span className="rounded-full border border-cyan-300/35 bg-cyan-300/10 px-2 py-0.5">{isZh ? "无" : "none"}</span>
+                  ) : null}
+                </div>
               </div>
             </div>
-            <div className="mt-2 text-xs text-cyan-100/75">
-              <p className="mb-1 font-semibold text-cyan-50">{isZh ? "剔除源" : "rejected feeds"}</p>
-              <div className="flex flex-wrap gap-1.5" data-testid="dashboard-oracle-rejected-feeds">
-                {(ionPrice.data.oracleRejectedFeeds ?? []).slice(0, 4).map((feed) => (
-                  <span className="rounded-full border border-rose-300/35 bg-rose-300/10 px-2 py-0.5" key={`${feed.platformId}-${feed.rejectReason}`}>
-                    {feed.platformId}:{feed.rejectReason}
-                  </span>
-                ))}
-                {(ionPrice.data.oracleRejectedFeeds ?? []).length === 0 ? (
-                  <span className="rounded-full border border-cyan-300/35 bg-cyan-300/10 px-2 py-0.5">{isZh ? "无" : "none"}</span>
-                ) : null}
-              </div>
+          ) : (
+            <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.05] p-3 text-xs text-cyan-100/60">
+              {ionPrice.state === "loading" ? (isZh ? "预言机数据加载中…" : "Loading oracle data…") :
+               ionPrice.state === "error" ? (isZh ? "预言机数据加载失败" : "Oracle data unavailable") :
+               (isZh ? "等待预言机数据…" : "Waiting for oracle data…")}
             </div>
-          </div>
+          )}
         </div>
       </NeonCard>
     </div>
@@ -292,9 +264,9 @@ function RightStats({
   burnProgress,
   isZh,
 }: {
-  staking: ReturnType<typeof useApiResource<StakingSummary>>;
-  burn: ReturnType<typeof useApiResource<BurnSummary>>;
-  tvlLabel: string;
+  staking: ReturnType<typeof useApiResource<StakingSummary | null>>;
+  burn: ReturnType<typeof useApiResource<BurnSummary | null>>;
+  tvlLabel: string | null;
   burnProgress: number;
   isZh: boolean;
 }) {
@@ -309,12 +281,22 @@ function RightStats({
           testId="dashboard-tvl"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/55">TVL</p>
-          <p className="mt-1 text-2xl font-black text-glow-cyan" data-testid="dashboard-tvl-value">
-            {tvlLabel}
-          </p>
-          <p className="mt-1 text-[0.7rem] text-emerald-300">
-            LP APR {staking.data.apr.lpMiningPct}%
-          </p>
+          {tvlLabel ? (
+            <>
+              <p className="mt-1 text-2xl font-black text-glow-cyan" data-testid="dashboard-tvl-value">
+                {tvlLabel}
+              </p>
+              {staking.data && (
+                <p className="mt-1 text-[0.7rem] text-emerald-300">
+                  LP APR {staking.data.apr.lpMiningPct}%
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="mt-1 text-sm text-cyan-100/60">
+              {staking.state === "loading" ? (isZh ? "加载中…" : "Loading…") : (isZh ? "暂无数据" : "No data")}
+            </p>
+          )}
         </AsyncState>
       </NeonCard>
 
@@ -327,14 +309,22 @@ function RightStats({
           testId="dashboard-apr"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/55">APR</p>
-          <p className="mt-1 text-2xl font-black text-glow-magenta" data-testid="dashboard-apr-value">
-            {staking.data.apr.dexPct}%
-          </p>
-          <p className="mt-1 text-[0.7rem] text-cyan-200/80">{isZh ? "DEX 质押" : "DEX staking"}</p>
+          {staking.data ? (
+            <>
+              <p className="mt-1 text-2xl font-black text-glow-magenta" data-testid="dashboard-apr-value">
+                {staking.data.apr.dexPct}%
+              </p>
+              <p className="mt-1 text-[0.7rem] text-cyan-200/80">{isZh ? "DEX 质押" : "DEX staking"}</p>
+            </>
+          ) : (
+            <p className="mt-1 text-sm text-cyan-100/60">
+              {staking.state === "loading" ? (isZh ? "加载中…" : "Loading…") : (isZh ? "暂无数据" : "No data")}
+            </p>
+          )}
         </AsyncState>
       </NeonCard>
 
-      <NeonCard density="compact" variant="gold">
+      <NeonCard density="compact" variant="magenta">
         <DataSourceBadge meta={burn.meta} testId="dashboard-burn-source" />
         <AsyncState
           error={burn.error}
@@ -343,15 +333,23 @@ function RightStats({
           testId="dashboard-burn"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/55">{isZh ? "销毁" : "Burn"}</p>
-          <p className="mt-1 text-2xl font-black" data-testid="dashboard-burn-value">
-            {formatIonAmount(burn.data.totalBurnedIon)}
-          </p>
-          <div className="mt-3 h-1.5 rounded-full bg-white/10">
-            <div
-              className="h-1.5 rounded-full bg-[linear-gradient(90deg,var(--ion-cyan),var(--ion-magenta),var(--ion-gold))]"
-              style={{ width: `${burnProgress}%` }}
-            />
-          </div>
+          {burn.data ? (
+            <>
+              <p className="mt-1 text-2xl font-black" data-testid="dashboard-burn-value">
+                {formatIonAmount(burn.data.totalBurnedIon)}
+              </p>
+              <div className="mt-3 h-1.5 rounded-full bg-white/10">
+                <div
+                  className="h-1.5 rounded-full bg-[linear-gradient(90deg,var(--ion-cyan),var(--ion-magenta),var(--ion-gold))]"
+                  style={{ width: `${burnProgress}%` }}
+                />
+              </div>
+            </>
+          ) : (
+            <p className="mt-1 text-sm text-cyan-100/60">
+              {burn.state === "loading" ? (isZh ? "加载中…" : "Loading…") : (isZh ? "暂无数据" : "No data")}
+            </p>
+          )}
         </AsyncState>
       </NeonCard>
     </div>
@@ -362,10 +360,10 @@ function FeatureGrid({ onNavigate, isZh }: { onNavigate: (page: PageKey) => void
   const cards: FeatureCard[] = isZh
     ? [
         { title: "资金池", label: "流动性", target: "pool", icon: Layers3, color: "cyan" },
-        { title: "跟单", label: "社交交易", target: "copy-trade", icon: Bot, color: "magenta" },
-        { title: "跨链桥", label: "ION / BSC", target: "bridge", icon: ArrowLeftRight, color: "cyan" },
-        { title: "销毁", label: "双链", target: "burn", icon: Flame, color: "magenta" },
-        { title: "域名", label: "ION DNS", target: "domain", icon: ShieldCheck, color: "gold" },
+        { title: "跟单", label: "社交交易", target: "copy-trade", icon: Bot, color: "purple" },
+        { title: "跨链桥", label: "ION / BSC", target: "bridge", icon: ArrowLeftRight, color: "bridge" },
+        { title: "销毁", label: "双链", target: "burn", icon: Flame, color: "burn" },
+        { title: "域名", label: "ION DNS", target: "domain", icon: ShieldCheck, color: "magenta" },
       ]
     : featureCards;
 

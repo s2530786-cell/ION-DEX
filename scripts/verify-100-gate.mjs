@@ -21,6 +21,8 @@ const ignoredWorkspacePaths = new Set([
   ".memory-bank/autonomous-work-watchdog.log",
 ]);
 
+const ignoredWorkspaceSuffixes = [".tsbuildinfo"];
+
 function runGit(args, options = {}) {
   const result = spawnSync("git", args, {
     cwd: options.cwd ?? root,
@@ -118,7 +120,11 @@ function normalizeRepoPath(path) {
 }
 
 function isIgnoredWorkspacePath(path) {
-  return ignoredWorkspacePaths.has(normalizeRepoPath(path));
+  const normalized = normalizeRepoPath(path);
+  return (
+    ignoredWorkspacePaths.has(normalized) ||
+    ignoredWorkspaceSuffixes.some((suffix) => normalized.endsWith(suffix))
+  );
 }
 
 function workspaceEntries() {

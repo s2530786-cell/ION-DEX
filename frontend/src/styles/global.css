@@ -132,18 +132,9 @@ select {
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.08),
       var(--glow-cyber-intense),
-      0 22px 70px rgba(0, 0, 0, 0.55);
-  }
-
-  .glass-surface::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    opacity: 0.05;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 200px 200px;
+      0 22px 70px rgba(0, 0, 0, 0.55),
+      0 8px 32px rgba(var(--ion-cyan-rgb), 0.08);
+    /* Ground reflection via box-shadow faux-mirror (cross-browser) */
   }
 
   .glass-surface::after {
@@ -155,11 +146,28 @@ select {
     filter: blur(60px);
     background: linear-gradient(
       135deg,
-      rgba(var(--ion-cyan-rgb), 0.14) 0%,
-      rgba(var(--ion-purple-rgb), 0.1) 40%,
-      rgba(var(--ion-magenta-rgb), 0.12) 100%
+      rgba(var(--ion-cyan-rgb), 0.18) 0%,
+      rgba(var(--ion-purple-rgb), 0.14) 35%,
+      rgba(var(--ion-magenta-rgb), 0.16) 65%,
+      rgba(var(--ion-cyan-rgb), 0.08) 100%
     );
     transform: translateZ(0);
+    /* Inner highlight streak — 5D depth */
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+
+  /* Extra depth layer — refractive edge highlight */
+  .glass-surface::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    /* Refractive edge highlight */
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(0,0,0,0.2);
   }
 
   /* Neon flowing border — for highlight elements */
@@ -182,9 +190,18 @@ select {
     border-radius: inherit;
     background: var(--ion-gradient-aurora);
     background-size: 260% 100%;
-    filter: blur(4px);
+    filter: blur(6px) contrast(1.1);
     opacity: 0.9;
     animation: ionBorderFlow 7s ease infinite;
+    /* Wave distortion via border-radius irregularity */
+    clip-path: polygon(
+      0% 2%, 2% 0%, 6% 1%, 10% 0%, 15% 2%, 20% 1%, 25% 0%, 30% 2%, 35% 1%, 40% 0%,
+      45% 2%, 50% 1%, 55% 0%, 60% 2%, 65% 1%, 70% 0%, 75% 2%, 80% 1%, 85% 0%,
+      90% 2%, 94% 1%, 98% 0%, 100% 2%,
+      100% 98%, 98% 100%, 94% 99%, 90% 100%, 85% 98%, 80% 99%, 75% 100%, 70% 98%,
+      65% 99%, 60% 100%, 55% 98%, 50% 99%, 45% 100%, 40% 98%, 35% 99%, 30% 100%,
+      25% 98%, 20% 99%, 15% 100%, 10% 98%, 6% 99%, 2% 100%, 0% 98%
+    );
   }
 
   /* 3D stage — main container */

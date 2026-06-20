@@ -721,21 +721,22 @@ function WalletConnectPanel({
 function TickerStrip() {
   const { isZh } = useI18n();
   const [privacyMode] = useState(false);
-  const [tickers, setTickers] = useState<MarketTicker[]>(fallbackTickers);
-  const [sourceLabel, setSourceLabel] = useState(isZh ? "离线回退" : "offline fallback");
+  const [tickers, setTickers] = useState<MarketTicker[] | null>(null);
+  const [sourceLabel, setSourceLabel] = useState(isZh ? "加载中…" : "Loading…");
 
   useEffect(() => {
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 1200);
+    const timeout = window.setTimeout(() => controller.abort(), 8000);
 
     fetchMarketTickers(controller.signal)
       .then((response) => {
         setTickers(response.data);
         setSourceLabel(`${response.meta.source} API`);
       })
-      .catch(() => {
-        setTickers(fallbackTickers);
-        setSourceLabel(isZh ? "离线回退" : "offline fallback");
+      .catch((err) => {
+        console.error("TickerStrip fetch failed:", err.message);
+        setTickers(null);
+        setSourceLabel(isZh ? "数据加载失败" : "data unavailable");
       })
       .finally(() => window.clearTimeout(timeout));
 
@@ -744,6 +745,17 @@ function TickerStrip() {
       controller.abort();
     };
   }, [isZh]);
+
+  if (!tickers || tickers.length === 0) {
+    return (
+      <div
+        className="relative shrink-0 overflow-hidden px-4 py-2 text-xs sm:px-6"
+        data-testid="ticker-strip"
+      >
+        <span className="text-cyan-100/60">{sourceLabel}</span>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -777,5 +789,4 @@ function TickerStrip() {
   );
 }
 
-// [PREVIEW-ONLY] Replace with live data source once backend endpoint is ready
-const fallbackTickers: MarketTicker[] = DEMO_TICKER_FALLBACK;
+// [NO-FALLBACK] TickerStrip uses live data only — no demo data allowed (Master red line).

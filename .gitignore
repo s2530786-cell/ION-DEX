@@ -74,6 +74,7 @@ QUICK_REFERENCE.md
 FILE_INDEX.md
 
 # Build artifacts
+*.tsbuildinfo
 contracts/out/
 contracts/cache/
 contracts/ion/build-func/

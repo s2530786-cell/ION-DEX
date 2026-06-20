@@ -101,10 +101,10 @@ export function AuroraGalaxyBackground() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-ion-ink"
     >
-      <canvas ref={canvasRef} className="aurora-canvas absolute inset-0 opacity-85" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(0,255,255,0.14),transparent_30%),radial-gradient(circle_at_18%_82%,rgba(255,0,255,0.12),transparent_28%),linear-gradient(180deg,#010104_0%,rgba(1,1,4,0.96)_52%,#010104_100%)]" />
+      <canvas ref={canvasRef} className="aurora-canvas absolute inset-0 opacity-95" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(0,255,255,0.18),transparent_30%),radial-gradient(circle_at_18%_82%,rgba(255,0,255,0.16),transparent_28%),linear-gradient(180deg,rgba(1,1,4,0.4)_0%,rgba(1,1,4,0.55)_52%,rgba(1,1,4,0.5)_100%)]" />
       {backgroundMode === "aurora" ? <AuroraLayer /> : <GalaxyLayer />}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(1,1,4,0.12),rgba(1,1,4,0.82))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(1,1,4,0.05),rgba(1,1,4,0.35))]" />
       <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle,rgba(255,255,255,0.9)_1px,transparent_1.2px)] [background-size:38px_38px]" />
     </div>
   );
@@ -122,8 +122,16 @@ function AuroraLayer() {
 function GalaxyLayer() {
   return (
     <div className="ion-bg-galaxy-anim absolute left-1/2 top-1/2 h-[64rem] w-[64rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-80 [animation:ionSpinSlow_360s_linear_infinite]">
-      <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_160deg,transparent,rgba(0,255,255,0.26),transparent_24%,rgba(255,0,255,0.28),transparent_55%,rgba(255,209,102,0.14),transparent_78%)] blur-2xl" />
-      <div className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.18),rgba(96,32,255,0.14)_22%,transparent_58%)]" />
+      {/* Spiral arm 1 — leading cyan */}
+      <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_160deg,transparent,rgba(0,255,255,0.28),transparent_22%,rgba(255,0,255,0.24),transparent_52%,rgba(96,32,255,0.18),transparent_76%)] blur-xl" />
+      {/* Spiral arm 2 — offset by 180deg */}
+      <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_340deg,transparent,rgba(0,255,255,0.18),transparent_18%,rgba(255,0,255,0.20),transparent_48%,rgba(96,32,255,0.22),transparent_72%)] blur-lg" />
+      {/* Spiral arm 3 — tighter inner spiral */}
+      <div className="absolute inset-[15%] rounded-full bg-[conic-gradient(from_250deg,transparent_10%,rgba(0,255,255,0.22)_20%,transparent_30%,rgba(255,0,255,0.16)_45%,transparent_55%,rgba(96,32,255,0.14)_70%,transparent_82%)] blur-md" />
+      {/* Core glow */}
+      <div className="absolute inset-[28%] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.22),rgba(0,255,255,0.16)_18%,rgba(96,32,255,0.12)_38%,transparent_62%)]" />
+      {/* Starfield dots */}
+      <div className="absolute inset-0 rounded-full opacity-60 [background-image:radial-gradient(2px_2px_at_20%_30%,rgba(255,255,255,0.8),transparent),radial-gradient(1.5px_1.5px_at_60%_20%,rgba(0,255,255,0.7),transparent),radial-gradient(2px_2px_at_35%_65%,rgba(255,255,255,0.9),transparent),radial-gradient(1.5px_1.5px_at_75%_55%,rgba(255,0,255,0.6),transparent),radial-gradient(1px_1px_at_50%_45%,rgba(255,255,255,0.7),transparent),radial-gradient(2px_2px_at_12%_75%,rgba(96,32,255,0.8),transparent),radial-gradient(1.5px_1.5px_at_85%_35%,rgba(255,255,255,0.75),transparent),radial-gradient(1px_1px_at_45%_80%,rgba(0,255,255,0.65),transparent)]" />
     </div>
   );
 }

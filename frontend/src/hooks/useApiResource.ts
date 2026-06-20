@@ -21,6 +21,7 @@ export function useApiResource<T>(
   const [state, setState] = useState<ApiLoadState>("loading");
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const retryCount = useRef(0);
   const optionsRef = useRef(options);
   optionsRef.current = options;
 
@@ -44,6 +45,17 @@ export function useApiResource<T>(
         setState(empty ? "empty" : "ready");
       })
       .catch((cause: unknown) => {
+        if (cancelled && cause instanceof DOMException && cause.name === "AbortError") {
+          // External abort (e.g. splash screen unmount) — retry once
+          if (retryCount.current < 1) {
+            retryCount.current += 1;
+            setReloadToken((prev) => prev + 1);
+          } else {
+            setState("error");
+            setError("Request aborted (splash-screen)");
+          }
+          return;
+        }
         if (cancelled) {
           return;
         }
