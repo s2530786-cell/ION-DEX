@@ -1,4 +1,4 @@
-﻿# ION DEX 频道内容体系 v1.0
+# ION DEX 频道内容体系 v1.0
 
 ## 7 个模板文件
 - channel-constitution.md — 频道宪法（6条语气铁律 + 禁止事项 + 品牌基因）

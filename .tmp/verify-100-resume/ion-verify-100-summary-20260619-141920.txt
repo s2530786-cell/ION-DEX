@@ -1,4 +1,4 @@
-﻿ION DEX 100-pass verification
+ION DEX 100-pass verification
 ITERATIONS=100
 LOG=d:\openclaw-tools\ion-dex-nuke\.tmp\verify-100-resume\ion-verify-100-20260619-141920.log
 PASS 93 OK

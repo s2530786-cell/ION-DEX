@@ -1,4 +1,4 @@
-﻿# 全自动前端开发团队蓝图
+# 全自动前端开发团队蓝图
 
 ## 18 角色矩阵
 - Product Manager (PM): define deliverables, manage backlog, set priorities

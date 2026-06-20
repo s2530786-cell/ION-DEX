@@ -1,4 +1,4 @@
-﻿# ION-DEX Harness 工程底座
+# ION-DEX Harness 工程底座
 
 ## 后端 agent_harness.py
 - IONHarnessEngine: security audit + Func compile + Blueprint test

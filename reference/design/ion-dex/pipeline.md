@@ -1,4 +1,4 @@
-﻿# 全自动前端流水线
+# 全自动前端流水线
 
 ## 组件
 - Next.js 16.2.9 + Turbopack → localhost:3000
