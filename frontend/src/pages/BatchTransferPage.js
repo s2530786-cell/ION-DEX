@@ -33,7 +33,7 @@ export default function BatchTransferPage() {
   return (
     <div>
       <PageHeader title="Batch Transfer" subtitle="Send tokens to many addresses in one transaction. 0.1% fee in ION." />
-      <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 320px" }}>
+      <div className="grid gap-6 resp-2" style={{ gridTemplateColumns: "1fr 320px" }}>
         <Panel className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2"><Icon name="batch.svg" size={24} /><h3 className="h1" style={{ fontSize: 17 }}>Recipients</h3></div>

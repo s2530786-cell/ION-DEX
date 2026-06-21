@@ -50,7 +50,8 @@ export default function DiscoverPage() {
         ))}
       </div>
 
-      <Panel className="p-5">
+      <Panel className="p-5 tbl-scroll">
+        <div className="tbl-inner">
         <div className="grid gap-2 px-3 pb-3" style={{ gridTemplateColumns: "40px 1.6fr 1fr 1fr 1fr 1fr", color: "var(--text-dim)", fontSize: 12, borderBottom: "1px solid var(--panel-border)" }}>
           <span></span><span>Token</span><span className="text-right">Price</span><span className="text-right">24h</span><span className="text-right">Volume</span><span className="text-right">Market Cap</span>
         </div>
@@ -68,6 +69,7 @@ export default function DiscoverPage() {
               <span className="mono text-right" style={{ color: "var(--text-dim)" }}>{mcapFmt(t.mcap)}</span>
             </div>
           ))}
+        </div>
       </Panel>
     </div>
   );

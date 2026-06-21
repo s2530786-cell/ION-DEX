@@ -41,7 +41,7 @@ export default function BridgePage() {
   return (
     <div>
       <PageHeader title="Cross-Chain Bridge" subtitle="Move assets between ION Chain, BSC and Ethereum securely." />
-      <div className="grid gap-6" style={{ gridTemplateColumns: "minmax(380px, 480px) 1fr" }}>
+      <div className="grid gap-6 resp-2" style={{ gridTemplateColumns: "minmax(380px, 480px) 1fr" }}>
         <Panel className="p-6">
           <div className="flex items-center gap-3">
             <ChainBox value={from} onChange={setFrom} label="Source" />

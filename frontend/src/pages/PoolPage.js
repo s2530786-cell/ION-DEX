@@ -25,7 +25,8 @@ export default function PoolPage() {
       <PageHeader title="Liquidity Pools" subtitle="Provide liquidity and earn 0.1% trading fees per swap"
         right={<Panel className="px-6 py-4"><StatValue label="Total Value Locked" value={fmtUsd(data.total_tvl)} size={40} aurora /></Panel>} />
 
-      <Panel className="p-5">
+      <Panel className="p-5 tbl-scroll">
+        <div className="tbl-inner">
         <div className="grid gap-2 px-3 pb-3" style={{ gridTemplateColumns: "1.4fr 1fr 1fr 1fr 0.8fr", color: "var(--text-dim)", fontSize: 12, borderBottom: "1px solid var(--panel-border)" }}>
           <span>Pool</span><span className="text-right">TVL</span><span className="text-right">Volume 24h</span><span className="text-right">APR</span><span className="text-right">Action</span>
         </div>
@@ -38,6 +39,7 @@ export default function PoolPage() {
             <div className="text-right"><GhostButton style={{ height: 38, padding: "0 14px" }} onClick={() => setModal(p)} data-testid={`add-liq-${p.id}`}>+ Add</GhostButton></div>
           </div>
         ))}
+        </div>
       </Panel>
 
       {modal && (

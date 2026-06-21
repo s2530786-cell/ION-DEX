@@ -229,6 +229,20 @@ body {
 @media (max-width: 1024px) {
   .dex-grid { grid-template-columns: 1fr !important; }
 }
+@media (max-width: 900px) {
+  .resp-2 { grid-template-columns: 1fr !important; }
+  .resp-3 { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 640px) {
+  .resp-3-sm { grid-template-columns: 1fr 1fr !important; }
+  .h1 { font-size: 20px !important; }
+}
+/* horizontal scroll for wide tables on small screens */
+.tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl-scroll > .tbl-inner { min-width: 620px; }
+@media (max-width: 768px) {
+  main { padding-left: 14px !important; padding-right: 14px !important; }
+}
 
 /* ---------- Boot splash ---------- */
 .boot-splash { position: fixed; inset: 0; z-index: 9998; background: #010104; display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity 700ms ease; }

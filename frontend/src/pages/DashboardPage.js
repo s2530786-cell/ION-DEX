@@ -24,7 +24,7 @@ export default function DashboardPage() {
         <div style={{ color: "var(--green)", marginTop: 6 }}>+{data.pnl24h}% · +{fmtUsd(data.pnl_value)} (24h)</div>
       </Panel>
 
-      <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
+      <div className="grid gap-6 resp-3" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
         <Panel className="p-6 flex flex-col items-center">
           <h3 className="h1 self-start" style={{ fontSize: 16, marginBottom: 16 }}>Asset Distribution</h3>
           <DonutChart data={data.distribution.map((d) => ({ label: d.asset, value: d.value, color: d.color }))} centerValue={fmtUsd(data.total_value)} centerLabel="Total" />

@@ -22,7 +22,7 @@ export default function DomainManagePage() {
   return (
     <div>
       <PageHeader title="ION Identity" subtitle="Register your .ion domain name. 50% of registration fee is burned." />
-      <div className="grid gap-6" style={{ gridTemplateColumns: "minmax(360px, 460px) 1fr" }}>
+      <div className="grid gap-6 resp-2" style={{ gridTemplateColumns: "minmax(360px, 460px) 1fr" }}>
         <Panel className="p-6">
           <div className="flex items-center gap-2 mb-5"><Icon name="domain.svg" size={24} /><h3 className="h1" style={{ fontSize: 17 }}>Register Domain</h3></div>
           <div className="flex items-center gap-2 mb-4">

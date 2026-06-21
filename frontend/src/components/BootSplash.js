@@ -5,7 +5,8 @@ const BOOTS = ["/assets/boot/boot1.mp4", "/assets/boot/boot2.mp4"];
 export default function BootSplash() {
   // Random pick each full page load -> different every time you open
   const src = useMemo(() => BOOTS[Math.floor(Math.random() * BOOTS.length)], []);
-  const [visible, setVisible] = useState(true);
+  const skipParam = typeof window !== "undefined" && window.location.search.includes("noboot");
+  const [visible, setVisible] = useState(!skipParam);
   const [closing, setClosing] = useState(false);
   const [muted, setMuted] = useState(false);
   const ref = useRef(null);

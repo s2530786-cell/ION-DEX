@@ -18,7 +18,8 @@ export default function ApproveManagerPage() {
   return (
     <div>
       <PageHeader title="Approval Manager" subtitle="Review and revoke token allowances to protect your wallet." />
-      <Panel className="p-5">
+      <Panel className="p-5 tbl-scroll">
+        <div className="tbl-inner">
         <div className="grid gap-2 px-3 pb-3" style={{ gridTemplateColumns: "1fr 1.4fr 1fr 0.8fr 0.8fr", color: "var(--text-dim)", fontSize: 12, borderBottom: "1px solid var(--panel-border)" }}>
           <span>Token</span><span>Spender</span><span className="text-right">Allowance</span><span className="text-right">Risk</span><span className="text-right">Action</span>
         </div>
@@ -31,6 +32,7 @@ export default function ApproveManagerPage() {
             <div className="text-right"><GhostButton style={{ height: 36, padding: "0 14px" }} onClick={() => revoke(a)} data-testid={`revoke-${a.id}`}>Revoke</GhostButton></div>
           </div>
         ))}
+        </div>
       </Panel>
     </div>
   );
