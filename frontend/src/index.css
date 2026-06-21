@@ -121,12 +121,15 @@ body {
     border-radius: var(--radius-panel);
     box-shadow:
       inset 0 1.5px 1px rgba(255, 255, 255, 0.22),
-      inset 1px 0 1px rgba(0, 255, 255, 0.10),
       inset 0 -2px 6px rgba(0, 0, 0, 0.55),
       inset 0 0 42px rgba(96, 32, 255, 0.18),
-      0 20px 54px rgba(0, 0, 0, 0.62),
-      0 0 42px rgba(0, 255, 255, 0.20),
-      0 0 96px rgba(96, 32, 255, 0.14);
+      0 4px 0 color-mix(in srgb, var(--cyan) 42%, #000),
+      0 8px 0 color-mix(in srgb, var(--purple) 42%, #000),
+      0 12px 0 color-mix(in srgb, var(--purple) 30%, #000),
+      0 16px 0 color-mix(in srgb, var(--purple) 20%, #000),
+      0 28px 38px rgba(0, 0, 0, 0.62),
+      0 0 42px rgba(0, 255, 255, 0.18),
+      0 0 96px rgba(96, 32, 255, 0.12);
   }
   .panel::before {
     content: "";
@@ -157,14 +160,22 @@ body {
     transition: transform 300ms var(--ease), box-shadow 300ms var(--ease);
   }
   .panel-hover:hover {
-    transform: scale(1.02);
+    transform: translateY(-6px);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      inset 0 0 34px rgba(96, 32, 255, 0.16),
-      0 12px 48px rgba(0, 0, 0, 0.5),
-      0 0 38px rgba(0, 255, 255, 0.22);
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.26),
+      inset 0 0 44px rgba(96, 32, 255, 0.22),
+      0 4px 0 color-mix(in srgb, var(--cyan) 48%, #000),
+      0 8px 0 color-mix(in srgb, var(--purple) 46%, #000),
+      0 12px 0 color-mix(in srgb, var(--purple) 36%, #000),
+      0 16px 0 color-mix(in srgb, var(--purple) 26%, #000),
+      0 20px 0 color-mix(in srgb, var(--purple) 16%, #000),
+      0 36px 48px rgba(0, 0, 0, 0.7),
+      0 0 52px rgba(0, 255, 255, 0.28);
   }
   .panel-hover:hover::before { filter: drop-shadow(0 0 7px var(--cyan)) drop-shadow(0 0 14px var(--magenta)); }
+
+  .nav-flat { box-shadow: 0 2px 28px rgba(0, 0, 0, 0.55) !important; }
+  .nav-flat::before { display: none; }
 
   .aurora-text {
     background: var(--aurora);
@@ -327,11 +338,8 @@ body {
   .dex-grid { grid-template-columns: 1fr !important; }
 }
 
-/* 3D perspective depth — panels converge toward center like the design template */
-.depth-left { transform: perspective(1700px) rotateY(5deg) translateZ(-22px); transform-origin: right center; transition: transform 400ms var(--ease); }
-.depth-right { transform: perspective(1700px) rotateY(-5deg) translateZ(-22px); transform-origin: left center; transition: transform 400ms var(--ease); }
-.depth-bottom { transform: perspective(2000px) rotateX(11deg) translateZ(-40px); transform-origin: center top; transition: transform 400ms var(--ease); }
-.depth-left:hover, .depth-right:hover { transform: perspective(1700px) rotateY(0deg) translateZ(0); }
+/* face-on 3D blocks — no tilt, thickness comes from extruded box-shadow */
+.depth-left, .depth-right, .depth-bottom { transform: none; }
 .gem-float { animation: gemFloat 4.5s ease-in-out infinite; }
 @keyframes gemFloat { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-7px) rotate(1deg); } }
 @media (max-width: 1024px) {

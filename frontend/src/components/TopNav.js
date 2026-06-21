@@ -42,7 +42,7 @@ export default function TopNav() {
   });
 
   return (
-    <nav className="panel" style={{ height: 64, borderRadius: 0, borderLeft: "none", borderRight: "none", borderTop: "none" }}>
+    <nav className="panel nav-flat" style={{ height: 64, borderRadius: 0, borderLeft: "none", borderRight: "none", borderTop: "none" }}>
       <div className="mx-auto flex items-center justify-between h-full px-5" style={{ maxWidth: 1600 }}>
         <div className="flex items-center gap-8">
           <button onClick={() => navigate("/swap")} className="flex items-center gap-2" data-testid="logo-btn">
