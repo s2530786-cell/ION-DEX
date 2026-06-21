@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Panel, NeonButton, Icon, Badge, Loader } from "../components/kit";
 import TradingViewChart from "../components/TradingViewChart";
 import QuickTiles from "../components/QuickTiles";
+import NeonGauge from "../components/NeonGauge";
 import { api, fmt, fmtUsd } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
 
@@ -39,8 +40,10 @@ export default function SwapPage() {
   const [toT, setToT] = useState("USDT");
   const [amount, setAmount] = useState("100");
   const [quote, setQuote] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [burn, setBurn] = useState(null);
 
-  useEffect(() => { api.tokens().then(setTokens); api.recentTrades("ION/USDT").then(setTrades); }, []);
+  useEffect(() => { api.tokens().then(setTokens); api.recentTrades("ION/USDT").then(setTrades); api.pools().then(setStats); api.burnStats().then(setBurn); }, []);
 
   const loadQuote = useCallback(() => {
     const a = parseFloat(amount);
@@ -108,11 +111,34 @@ export default function SwapPage() {
         </Panel>
       </div>
 
-      {/* RIGHT - Market list */}
-      <div>
+      {/* RIGHT - Stats + Market list */}
+      <div className="space-y-4">
+        <Panel className="p-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <div style={{ fontSize: 11, color: "var(--text-dim)" }}>TVL</div>
+              <div className="stat-mono aurora-text" style={{ fontSize: 22 }}>{stats ? "$" + (stats.total_tvl / 1e6).toFixed(1) + "M" : "—"}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 11, color: "var(--text-dim)" }}>Top APR</div>
+              <div className="stat-mono" style={{ fontSize: 22, color: "var(--green)" }}>{stats ? Math.max(...stats.pools.map((p) => p.apr)).toFixed(1) + "%" : "—"}</div>
+            </div>
+          </div>
+        </Panel>
+
+        <Panel className="p-4 flex flex-col items-center">
+          <div className="flex items-center gap-2 self-start mb-1"><Icon name="burn.svg" size={18} /><h3 className="h1" style={{ fontSize: 15 }}>Burn</h3></div>
+          <NeonGauge value={burn ? burn.burn_rate : 0} max={30} size={170}
+            label={burn ? burn.burn_rate + "%" : "—"} sublabel="Dynamic burn rate" color="var(--magenta)" />
+          <div className="w-full flex justify-between mt-2" style={{ fontSize: 12 }}>
+            <span style={{ color: "var(--text-dim)" }}>Total Burned</span>
+            <span className="mono" style={{ color: "var(--red)" }}>{burn ? fmt(burn.total_burned) : "—"} ION</span>
+          </div>
+        </Panel>
+
         <Panel className="p-4">
           <div className="flex items-center gap-2 mb-3"><Icon name="dashboard.svg" size={20} /><h3 className="h1" style={{ fontSize: 16 }}>Markets</h3></div>
-          {tokens.length === 0 ? <Loader /> : tokens.map((t) => (
+          {tokens.length === 0 ? <Loader /> : tokens.slice(0, 6).map((t) => (
             <button key={t.symbol} onClick={() => setFromT(t.symbol)} className="w-full flex items-center justify-between py-2.5 panel-hover px-2 rounded-lg" data-testid={`market-${t.symbol}`}>
               <div className="flex items-center gap-2"><Icon name={t.icon} size={28} /><div className="text-left"><div style={{ fontWeight: 600 }}>{t.symbol}</div><div style={{ fontSize: 11, color: "var(--text-dim)" }}>{t.name}</div></div></div>
               <div className="text-right"><div className="mono" style={{ fontSize: 13 }}>{fmtUsd(t.price)}</div><div style={{ fontSize: 12, color: t.change24h >= 0 ? "var(--green)" : "var(--red)" }}>{t.change24h >= 0 ? "+" : ""}{t.change24h}%</div></div>
