@@ -1,0 +1,109 @@
+{
+  "theme_archetype": "Archetype 7 (Electric & Neon)",
+  "theme_mode": "dark",
+  "rationale": "User explicitly requested 'Deep Space + Neon Cyber + Glassmorphism' with glowing neon borders. It requires a high-end, non-flat dark mode with vivid Aurora highlights.",
+  "colors": {
+    "background_base": "#010104",
+    "panel_bg": "rgba(2, 4, 10, 0.72)",
+    "text_primary": "#f8fbff",
+    "text_secondary": "rgba(248, 251, 255, 0.6)",
+    "neon_cyan": "#00ffff",
+    "neon_purple": "#6020ff",
+    "neon_magenta": "#ff00ff",
+    "neon_green": "#00ff88",
+    "neon_red": "#ff4466",
+    "neon_gold": "#ffd166",
+    "aurora_gradient": "linear-gradient(90deg, #00ffff, #6020ff, #ff00ff)"
+  },
+  "typography": {
+    "headings": {
+      "family": "Inter, 'JetBrains Mono', sans-serif",
+      "weight": 700,
+      "base_size": "24px"
+    },
+    "body": {
+      "family": "Inter, sans-serif",
+      "weight": 400,
+      "base_size": "14px"
+    },
+    "monospace_values": {
+      "family": "'JetBrains Mono', monospace",
+      "weight": 700,
+      "size_range": "20px-28px",
+      "usage": "Crypto balances, APYs, TVL, countdowns, numeric data"
+    }
+  },
+  "layout_spacing": {
+    "system": "Tailwind scale with extra generosity for glass depth",
+    "desktop_grid": "grid-cols-[350px_1fr_300px]",
+    "responsive": "Stack vertically below 1024px (lg breakpoint)",
+    "top_nav": {
+      "height": "64px"
+    }
+  },
+  "visual_system_recipes": {
+    "global_background": {
+      "description": "Deep space background with subtle grid overlay",
+      "css": "background-color: #010104; background-image: linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(96, 32, 255, 0.04) 1px, transparent 1px); background-size: 80px 80px, 48px 48px;"
+    },
+    "glass_panels": {
+      "description": "True 3D glass panels with glowing neon borders (NOT flat)",
+      "container_classes": "relative rounded-[20px] bg-[#02040a]/70 backdrop-blur-[18px] overflow-hidden",
+      "border_glow_implementation": "Instead of a simple 1px border, use a pseudo-element before the content: absolute inset-0 rounded-[20px] p-[1px] bg-gradient-to-r from-[#00ffff]/40 via-[#6020ff]/40 to-[#ff00ff]/40 content-[''] mask-image-[linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] mask-composite-exclude. Additionally add shadow-[inset_0_0_20px_rgba(96,32,255,0.1),_0_0_15px_rgba(0,255,255,0.05)] for depth."
+    },
+    "buttons": {
+      "height": "48px",
+      "border_radius": "12px",
+      "background": "linear-gradient(90deg, #00ffff, #6020ff, #ff00ff)",
+      "glow": "0 0 24px rgba(0, 255, 255, 0.35)",
+      "text": "font-bold text-[#f8fbff] shadow-sm",
+      "hover_state": "scale-[1.02] brightness-110 glow-intensified",
+      "active_state": "scale-[0.98]"
+    },
+    "inputs": {
+      "height": "56px",
+      "border_radius": "16px",
+      "background": "rgba(248, 251, 255, 0.06)",
+      "focus": "border border-[#00ffff] shadow-[0_0_12px_rgba(0,255,255,0.3)]",
+      "text_color": "#f8fbff"
+    },
+    "icon_tiles": {
+      "description": "3D glossy tiles for Pool, Copy Trade, Bridge, Burn, Domain",
+      "styling": "Vivid glowing gradient frame, inner glass layer, 3D crystal/gem icon in center, strong hover scale"
+    },
+    "animations": {
+      "default_timing": "transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+    }
+  },
+  "components_structure": {
+    "TopNav": "64px height. Logo with aurora gradient text fill using background-clip: text. Nav links: Swap, Pool, Stake, Bridge. Wallet button top right.",
+    "SwapPanel": "Left column. Token input cards (120px tall), center rotating swap arrow, details for gas/route/slippage.",
+    "ChartPanel": "Center column. TradingView K-line candlestick chart, market list, recent trades.",
+    "StatCards": "Right column. TVL card (48px monospace), APR tiers, Portfolio Dashboard (56px mono aurora total value, donut chart, burn progress bar gauge)."
+  },
+  "media_assets": {
+    "icons": {
+      "strategy": "Load from /public/assets/icons as <img> per user requirements. Use neon-colored SVG or 3D renders."
+    },
+    "fallback_3d_crystals": [
+      {
+        "url": "https://images.unsplash.com/photo-1677249490921-3246e81f19e3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHw0fHwzZCUyMGNyeXN0YWwlMjBnZW18ZW58MHx8fHwxNzgyMDEyMjM5fDA&ixlib=rb-4.1.0&q=85",
+        "description": "colorful diamond fallback"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1592136184798-ca0d8e17643a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwxfHwzZCUyMGNyeXN0YWwlMjBnZW18ZW58MHx8fHwxNzgyMDEyMjM5fDA&ixlib=rb-4.1.0&q=85",
+        "description": "blue white diamond pattern"
+      }
+    ]
+  },
+  "testing": {
+    "attributes_required": "All interactive elements MUST include data-testid (e.g., data-testid='swap-button', data-testid='wallet-connect')"
+  },
+  "instructions_to_main_agent": [
+    "DO NOT use standard 1px Tailwind borders (e.g., border border-white/10). Instead, build composite borders using pseudo-elements with linear gradients and mask-composite, or multiple inset/outset box-shadows to ensure the panels look actively glowing.",
+    "Apply backdrop-blur-[18px] to all major containers.",
+    "Use JetBrains Mono for ALL numeric data: balances, token amounts, APY, TVL, and countdowns.",
+    "Build the 3-column desktop layout (350px | 1fr | 300px) and ensure it stacks vertically under 1024px.",
+    "The aurora gradient should be central to primary CTA buttons, logo text fills, and active states."
+  ]
+}
