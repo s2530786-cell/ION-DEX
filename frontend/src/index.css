@@ -365,3 +365,141 @@ body {
 .boot-splash.closing { opacity: 0; pointer-events: none; }
 .boot-video { width: 100%; height: 100%; object-fit: cover; }
 .boot-controls { position: absolute; bottom: 40px; left: 0; right: 0; display: flex; gap: 14px; align-items: center; justify-content: center; }
+
+
+/* ---------- Crystal feature tiles (Pool / Copy / Bridge / Burn / Domain) ---------- */
+.crystal-tiles {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 22px;
+}
+.crystal-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 44px 18px 26px;
+  min-height: 300px;
+  border-radius: 24px;
+  cursor: pointer;
+  text-align: center;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(125% 78% at 50% 122%,
+      color-mix(in srgb, var(--c) 62%, transparent) 0%,
+      color-mix(in srgb, var(--c) 20%, transparent) 40%,
+      transparent 70%),
+    linear-gradient(180deg, rgba(12, 16, 32, 0.55) 0%, rgba(2, 4, 10, 0.78) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    inset 0 -34px 64px -22px color-mix(in srgb, var(--c) 60%, transparent),
+    0 26px 52px -14px color-mix(in srgb, var(--c) 45%, transparent),
+    0 0 42px -10px color-mix(in srgb, var(--c) 40%, transparent);
+  transition: transform 360ms var(--ease), box-shadow 360ms var(--ease);
+}
+.crystal-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.8px;
+  background: linear-gradient(150deg,
+    color-mix(in srgb, var(--c) 92%, #ffffff) 0%,
+    var(--c) 42%,
+    color-mix(in srgb, var(--c) 30%, transparent) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 7px var(--c));
+  pointer-events: none;
+  z-index: 3;
+}
+.ct-topglow {
+  position: absolute;
+  top: 0;
+  left: 7%;
+  right: 7%;
+  height: 44%;
+  border-radius: 0 0 70% 70%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, transparent 82%);
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 1;
+}
+.crystal-tile:hover {
+  transform: translateY(-9px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -38px 72px -18px color-mix(in srgb, var(--c) 74%, transparent),
+    0 36px 66px -10px color-mix(in srgb, var(--c) 60%, transparent),
+    0 0 66px -6px var(--c);
+}
+.crystal-tile:active { transform: translateY(-4px) scale(0.99); }
+.ct-gem-wrap {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ct-gem {
+  width: 132px;
+  height: 132px;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 28px color-mix(in srgb, var(--c) 88%, transparent))
+    drop-shadow(0 10px 16px rgba(0, 0, 0, 0.55));
+  animation: gemFloat 4.8s ease-in-out infinite;
+}
+.crystal-tile:hover .ct-gem {
+  filter:
+    drop-shadow(0 0 40px var(--c))
+    drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+}
+.ct-gem-shadow {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--c) 70%, transparent) 0%, transparent 70%);
+  filter: blur(7px);
+  pointer-events: none;
+}
+.ct-title {
+  position: relative;
+  z-index: 2;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.1;
+  color: #f6fbff;
+  letter-spacing: 0.3px;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--c) 70%, transparent);
+}
+.ct-sub {
+  position: relative;
+  z-index: 2;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.6px;
+}
+@media (max-width: 1024px) {
+  .crystal-tiles { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .crystal-tile { min-height: 260px; padding: 34px 14px 22px; }
+  .ct-gem { width: 108px; height: 108px; }
+}
+@media (max-width: 600px) {
+  .crystal-tiles { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .crystal-tile { min-height: 220px; }
+  .ct-gem { width: 92px; height: 92px; }
+  .ct-title { font-size: 19px; }
+}
