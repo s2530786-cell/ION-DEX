@@ -63,7 +63,7 @@ export default function SwapPage() {
     <div className="space-y-6">
     <div style={{ display: "grid", gridTemplateColumns: "350px 1fr 300px", gap: 20 }} className="dex-grid">
       {/* LEFT - Swap */}
-      <div className="space-y-4">
+      <div className="space-y-4 depth-left">
         <Panel className="p-5">
           <div className="flex items-center gap-2 mb-3"><Icon name="swap.svg" size={22} /><h2 className="h1" style={{ fontSize: 20 }}>Swap</h2></div>
           <div className="flex gap-2 mb-4">
@@ -112,7 +112,7 @@ export default function SwapPage() {
       </div>
 
       {/* RIGHT - Stats + Market list */}
-      <div className="space-y-4">
+      <div className="space-y-4 depth-right">
         <Panel className="p-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -147,7 +147,7 @@ export default function SwapPage() {
         </Panel>
       </div>
     </div>
-      <QuickTiles />
+      <div className="depth-bottom"><QuickTiles /></div>
     </div>
   );
 }

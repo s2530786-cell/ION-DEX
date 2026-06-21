@@ -307,6 +307,15 @@ body {
 @media (max-width: 1024px) {
   .dex-grid { grid-template-columns: 1fr !important; }
 }
+
+/* 3D perspective depth — panels converge toward center like the design template */
+.depth-left { transform: perspective(1700px) rotateY(5deg) translateZ(-22px); transform-origin: right center; transition: transform 400ms var(--ease); }
+.depth-right { transform: perspective(1700px) rotateY(-5deg) translateZ(-22px); transform-origin: left center; transition: transform 400ms var(--ease); }
+.depth-bottom { transform: perspective(2200px) rotateX(7deg) translateZ(-30px); transform-origin: center top; transition: transform 400ms var(--ease); }
+.depth-left:hover, .depth-right:hover { transform: perspective(1700px) rotateY(0deg) translateZ(0); }
+@media (max-width: 1024px) {
+  .depth-left, .depth-right, .depth-bottom { transform: none !important; }
+}
 @media (max-width: 900px) {
   .resp-2 { grid-template-columns: 1fr !important; }
   .resp-3 { grid-template-columns: 1fr !important; }
