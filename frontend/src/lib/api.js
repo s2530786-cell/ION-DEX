@@ -41,7 +41,12 @@ export const api = {
   revoke: (body) => client.post("/approvals/revoke", body).then((r) => r.data),
   getSettings: (address) => client.get("/settings", { params: { address } }).then((r) => r.data),
   saveSettings: (body) => client.post("/settings", body).then((r) => r.data),
+  referralBind: (body) => client.post("/referral/bind", body).then((r) => r.data),
+  referralStats: (address) => client.get("/referral/stats", { params: { address } }).then((r) => r.data),
 };
+
+export const referralLink = (address) =>
+  `${typeof window !== "undefined" ? window.location.origin : "https://iondex.app"}/?ref=${address || ""}`;
 
 export const fmt = (n, d = 2) =>
   n == null || isNaN(n) ? "0" : Number(n).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: d });

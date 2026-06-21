@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
+import { api } from "../lib/api";
 
 const WalletContext = createContext(null);
 export const useWallet = () => useContext(WalletContext);
@@ -12,6 +13,30 @@ export function WalletProvider({ children }) {
   const [connecting, setConnecting] = useState(false);
 
   const hasMetaMask = typeof window !== "undefined" && window.ethereum;
+
+  // Capture referral code from URL (?ref=) once on load and persist it.
+  useEffect(() => {
+    try {
+      const ref = new URLSearchParams(window.location.search).get("ref");
+      if (ref && /^0x[a-fA-F0-9]{6,}$/.test(ref)) {
+        localStorage.setItem("ion_ref", ref.toLowerCase());
+      }
+    } catch (e) { /* ignore */ }
+  }, []);
+
+  // Bind referral relationship once a wallet address is available.
+  useEffect(() => {
+    if (!address) return;
+    let ref;
+    try { ref = localStorage.getItem("ion_ref"); } catch (e) { ref = null; }
+    if (!ref || ref === address.toLowerCase()) return;
+    api.referralBind({ referrer: ref, referee: address })
+      .then((r) => {
+        if (r?.bound) toast.success("已绑定推荐人", { description: "你的交易手续费将为推荐人返佣" });
+        try { localStorage.removeItem("ion_ref"); } catch (e) { /* ignore */ }
+      })
+      .catch(() => { /* silent */ });
+  }, [address]);
 
   const connect = useCallback(async () => {
     setConnecting(true);

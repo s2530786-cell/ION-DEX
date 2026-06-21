@@ -6,30 +6,33 @@ import ShareableBurnCard from "./ShareableBurnCard";
 import ShareMenu from "./ShareMenu";
 import { Loader, Badge } from "./kit";
 import { Flame } from "lucide-react";
-import { api, fmt } from "../lib/api";
+import { api, fmt, referralLink } from "../lib/api";
+import { useWallet } from "../context/WalletContext";
 
 export default function BurnTrackerModal({ open, onClose }) {
   const [burn, setBurn] = useState(null);
   const [share, setShare] = useState(false);
   const cardRef = useRef(null);
   const navigate = useNavigate();
+  const { address } = useWallet();
 
   useEffect(() => { if (open && !burn) api.burnStats().then(setBurn); }, [open, burn]);
 
   const close = () => { setShare(false); onClose(); };
   const dayPct = burn ? Math.min((burn.day_burned / 500000) * 100, 100) : 0;
   const shareText = burn
-    ? `🔥 ION DEX 已累计销毁 ${fmt(burn.total_burned)} ION(今日 +${fmt(burn.day_burned)}),通缩飞轮持续运转!ION $${burn.ion_price}`
-    : "🔥 ION DEX 通缩飞轮持续运转!";
+    ? `🔥 ION DEX 已累计销毁 ${fmt(burn.total_burned)} ION(今日 +${fmt(burn.day_burned)}),通缩飞轮持续运转!用我的邀请链接进来,交易手续费还能返佣 👇`
+    : "🔥 ION DEX 通缩飞轮持续运转!用我的邀请链接进来,交易手续费还能返佣";
+  const shareUrl = referralLink(address);
 
   return (
     <Modal open={open} onClose={close} title="Burn Tracker" icon="burn.svg" width={760} testId="burn-modal">
       {!burn ? <Loader /> : share ? (
         <div className="space-y-5">
-          <div className="flex justify-center"><ShareableBurnCard ref={cardRef} burn={burn} /></div>
+          <div className="flex justify-center"><ShareableBurnCard ref={cardRef} burn={burn} address={address} /></div>
           <div>
-            <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 8 }}>把这张霓虹卡片晒到 X / Telegram,为 ION 引流</div>
-            <ShareMenu cardRef={cardRef} text={shareText} filename="ion-burn.png" testIdPrefix="burn-share" />
+            <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 8 }}>卡片已带你的专属邀请二维码,晒到 X / Telegram,好友扫码进来交易即返佣</div>
+            <ShareMenu cardRef={cardRef} text={shareText} url={shareUrl} filename="ion-burn.png" testIdPrefix="burn-share" />
           </div>
           <button className="ghost-btn w-full" style={{ height: 44 }} onClick={() => setShare(false)} data-testid="burn-share-back">← 返回</button>
         </div>

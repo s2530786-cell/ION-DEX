@@ -5,7 +5,7 @@ import { NeonButton, NeonInput, Icon } from "./kit";
 import { Zap } from "lucide-react";
 import ShareableBridgeCard from "./ShareableBridgeCard";
 import ShareMenu from "./ShareMenu";
-import { api } from "../lib/api";
+import { api, referralLink } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
 
 const CHAINS = [
@@ -26,7 +26,8 @@ export default function QuickBridgeModal({ open, onClose }) {
 
   const fee = amount ? (parseFloat(amount) * 0.001 + 0.5).toFixed(4) : "0.0";
   const received = amount ? Math.max(parseFloat(amount) - parseFloat(fee), 0).toFixed(4) : "0.0";
-  const shareText = `⚡ 在 ION DEX 上 ${from} ⇄ ${to} 跨链只需 ~3 分钟,0.1% 低费率、MEV 保护、非托管。快来体验!`;
+  const shareText = `⚡ 在 ION DEX 上 ${from} ⇄ ${to} 跨链只需 ~3 分钟,0.1% 低费率、MEV 保护、非托管。用我的邀请链接进来,交易手续费还能返佣 👇`;
+  const shareUrl = referralLink(address);
 
   const close = () => { setShare(false); onClose(); };
   const flip = () => { setFrom(to); setTo(from); };
@@ -49,10 +50,10 @@ export default function QuickBridgeModal({ open, onClose }) {
     <Modal open={open} onClose={close} title="Quick Bridge" icon="bridge.svg" width={640} testId="bridge-modal">
       {share ? (
         <div className="space-y-5">
-          <div className="flex justify-center"><ShareableBridgeCard ref={cardRef} from={from} to={to} /></div>
+          <div className="flex justify-center"><ShareableBridgeCard ref={cardRef} from={from} to={to} address={address} /></div>
           <div>
-            <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 8 }}>分享这张跨链卡片,邀请好友体验 ION DEX</div>
-            <ShareMenu cardRef={cardRef} text={shareText} filename="ion-bridge.png" testIdPrefix="bridge-share" />
+            <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 8 }}>卡片已带你的专属邀请二维码,邀请好友扫码体验 ION DEX 并返佣</div>
+            <ShareMenu cardRef={cardRef} text={shareText} url={shareUrl} filename="ion-bridge.png" testIdPrefix="bridge-share" />
           </div>
           <button className="ghost-btn w-full" style={{ height: 44 }} onClick={() => setShare(false)} data-testid="bridge-share-back">← 返回</button>
         </div>

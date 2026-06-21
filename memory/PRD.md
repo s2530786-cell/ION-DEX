@@ -54,6 +54,14 @@
   - 接入 Burn / Bridge 模态(分享视图 + 返回);截图验证 PNG 下载成功、控制台无报错
   - 注:导出 PNG 因 Google Fonts CORS 用系统回退字体(屏显卡片仍为 Orbitron/Mono);如需导出字体完全一致,后续可自托管字体
 
+- **[2026-06-21] 推荐返佣系统(自传播增长闭环)**:
+  - 后端:`POST /api/referral/bind`(幂等绑定 referrer→referee)、`GET /api/referral/stats`(邀请数/累计返佣/邀请记录/上级)、`do_swap` 中按手续费 10% 给上级自动返佣;`referrals` 集合;curl 实测返佣计算正确
+  - 前端:`WalletContext` 捕获 URL `?ref=`(localStorage 持久化)→ 连接钱包后自动 `referralBind`;`lib/api.referralLink(address)`
+  - 分享卡(Burn/Bridge)新增 `QrBlock`:专属邀请二维码(qrcode.react)+ 邀请码(地址后 6 位),分享文案/链接带 `?ref=钱包地址`
+  - `DashboardPage` 新增"邀请返佣 · Referral Rewards"面板:邀请链接+复制、二维码、邀请人数、累计返佣、邀请记录
+  - 依赖:`qrcode.react`;验证:后端 curl 闭环 ✓、分享卡 QR+邀请码截图 ✓、钱包绑定 ✓、面板渲染 ✓
+  - 注:已连接态 Dashboard 面板因无头浏览器下拉导航限制未截图,复用同套已验证组件
+
 ## 待办 / Backlog (优先级)
 ### P0
 - [ ] 将 `NeonCandlestickChart` 应用到 `TradeProPage`(目前仅 Swap 页)

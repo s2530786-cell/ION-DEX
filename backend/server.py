@@ -121,6 +121,11 @@ class SettingsRequest(BaseModel):
     multisig_threshold: int = 3
 
 
+class ReferralBindRequest(BaseModel):
+    referrer: str
+    referee: str
+
+
 # ---------------- Seed Data ----------------
 TOKENS = [
     {"symbol": "ION", "name": "ION Token", "price": 4.82, "change24h": 12.4, "volume": 18420000, "icon": "ion.svg"},
@@ -259,7 +264,43 @@ async def do_swap(req: SwapRequest) -> dict:
                      amount_in=req.amount_in, amount_out=q["amount_out"], fee_ion=q["fee_ion"],
                      tx_hash="0x" + uuid.uuid4().hex)
     await db.swaps.insert_one(rec.model_dump())
+    # Referral rebate: if this trader was referred, credit referrer 10% of the swap fee
+    ref = await db.referrals.find_one({"referee": req.address.lower()})
+    if ref:
+        rebate = round(q["fee_ion"] * 0.10, 6)
+        await db.referrals.update_one({"_id": ref["_id"]}, {"$inc": {"rebate": rebate}})
     return rec.model_dump()
+
+
+@api_router.post("/referral/bind")
+async def referral_bind(req: ReferralBindRequest) -> dict:
+    referrer = (req.referrer or "").lower()
+    referee = (req.referee or "").lower()
+    if not referrer or not referee or referrer == referee:
+        return {"ok": False, "bound": False, "reason": "invalid"}
+    existing = await db.referrals.find_one({"referee": referee})
+    if existing:
+        return {"ok": True, "bound": False, "referrer": existing["referrer"], "reason": "already_bound"}
+    doc = {"id": uid(), "referrer": referrer, "referee": referee, "rebate": 0.0, "timestamp": now_iso()}
+    await db.referrals.insert_one(doc)
+    return {"ok": True, "bound": True, "referrer": referrer}
+
+
+@api_router.get("/referral/stats")
+async def referral_stats(address: str) -> dict:
+    addr = (address or "").lower()
+    refs = await db.referrals.find({"referrer": addr}, {"_id": 0}).sort("timestamp", -1).to_list(500)
+    total = round(sum(r.get("rebate", 0) for r in refs), 6)
+    referred_by = await db.referrals.find_one({"referee": addr}, {"_id": 0})
+    return {
+        "address": address,
+        "code": address[-6:].upper() if address else "",
+        "referral_count": len(refs),
+        "total_rebate": total,
+        "rebate_rate": 10,
+        "referred_by": referred_by["referrer"] if referred_by else None,
+        "referrals": refs,
+    }
 
 
 @api_router.get("/pools")

@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
-import { fmt } from "../lib/api";
+import { QRCodeSVG } from "qrcode.react";
+import { fmt, referralLink } from "../lib/api";
 
 const Diamond = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" style={{ filter: "drop-shadow(0 0 6px #00F5FF)" }}>
@@ -8,9 +9,9 @@ const Diamond = () => (
   </svg>
 );
 
-const Sparkline = ({ data }) => {
+const Sparkline = ({ data, width = 420 }) => {
   if (!data || data.length < 2) return null;
-  const W = 564, H = 72;
+  const W = width, H = 64;
   const a = data.map((d) => d.amount);
   const mx = Math.max(...a), mn = Math.min(...a), sp = mx - mn || 1;
   const step = W / (data.length - 1);
@@ -42,10 +43,23 @@ const Stat = ({ label, value, color }) => (
   </div>
 );
 
-const ShareableBurnCard = forwardRef(({ burn }, ref) => (
+export const QrBlock = ({ address }) => {
+  const code = address ? address.slice(-6).toUpperCase() : "DEMO";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
+      <div style={{ background: "#fff", padding: 6, borderRadius: 10, boxShadow: "0 0 16px rgba(0,245,255,0.3)" }}>
+        <QRCodeSVG value={referralLink(address)} size={66} bgColor="#ffffff" fgColor="#050811" level="M" />
+      </div>
+      <div style={{ fontSize: 9.5, color: "#8A99AD", letterSpacing: 0.5 }}>扫码加入 ION DEX</div>
+      <div style={{ fontSize: 11, color: "#00F5FF", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>邀请码 {code}</div>
+    </div>
+  );
+};
+
+const ShareableBurnCard = forwardRef(({ burn, address }, ref) => (
   <div ref={ref} style={{
     width: 620, height: 360, borderRadius: 24, position: "relative", overflow: "hidden", boxSizing: "border-box",
-    padding: 28, color: "#fff", fontFamily: "'Sora', sans-serif",
+    padding: 26, color: "#fff", fontFamily: "'Sora', sans-serif",
     background: "linear-gradient(140deg, #0B1220 0%, #050811 100%)",
     border: "1px solid rgba(255,255,255,0.1)",
   }}>
@@ -60,27 +74,26 @@ const ShareableBurnCard = forwardRef(({ burn }, ref) => (
       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#FF007A", border: "1px solid rgba(255,0,122,0.5)", borderRadius: 999, padding: "5px 12px", textShadow: "0 0 10px rgba(255,0,122,0.5)" }}>DEFLATIONARY</span>
     </div>
 
-    <div style={{ position: "relative", marginTop: 26 }}>
+    <div style={{ position: "relative", marginTop: 18 }}>
       <div style={{ fontSize: 13, color: "#8A99AD", letterSpacing: 0.6 }}>Total ION Burned</div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 4 }}>
-        <span style={{ fontSize: 46, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", color: "#FF007A", lineHeight: 1, textShadow: "0 0 24px rgba(255,0,122,0.55)" }}>{burn ? fmt(burn.total_burned) : "—"}</span>
+        <span style={{ fontSize: 44, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", color: "#FF007A", lineHeight: 1, textShadow: "0 0 24px rgba(255,0,122,0.55)" }}>{burn ? fmt(burn.total_burned) : "—"}</span>
         <span style={{ fontSize: 16, color: "#8A99AD", fontWeight: 700 }}>ION</span>
       </div>
     </div>
 
-    <div style={{ position: "relative", display: "flex", gap: 18, marginTop: 22 }}>
+    <div style={{ position: "relative", display: "flex", gap: 16, marginTop: 18 }}>
       <Stat label="Burned Today" value={burn ? `+${fmt(burn.day_burned)}` : "—"} color="#ffd166" />
       <Stat label="ION Price" value={burn ? `$${burn.ion_price}` : "—"} color="#00F5FF" />
       <Stat label="Dynamic Burn" value={burn ? `${burn.burn_rate}%` : "—"} color="#FF007A" />
     </div>
 
-    <div style={{ position: "relative", marginTop: 14 }}>
-      <Sparkline data={burn?.history || []} />
-    </div>
-
-    <div style={{ position: "absolute", bottom: 16, left: 28, right: 28, display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8A99AD", letterSpacing: 0.4 }}>
-      <span>Deflationary by design — every swap burns ION</span>
-      <span style={{ color: "#00F5FF" }}>iondex.app</span>
+    <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, marginTop: 18 }}>
+      <div style={{ flex: 1 }}>
+        <Sparkline data={burn?.history || []} width={400} />
+        <div style={{ fontSize: 11, color: "#8A99AD", letterSpacing: 0.4, marginTop: 8 }}>Deflationary by design — every swap burns ION · iondex.app</div>
+      </div>
+      <QrBlock address={address} />
     </div>
   </div>
 ));
