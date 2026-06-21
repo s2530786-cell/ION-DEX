@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Panel, NeonButton, NeonInput, PageHeader, Icon, Loader } from "../components/kit";
 import { api, fmt } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
@@ -9,8 +9,8 @@ export default function DomainManagePage() {
   const [years, setYears] = useState(1);
   const [domains, setDomains] = useState([]);
 
-  const load = () => { if (address) api.domains(address).then(setDomains); };
-  useEffect(() => { load(); }, [address]);
+  const load = useCallback(() => { if (address) api.domains(address).then(setDomains); }, [address]);
+  useEffect(() => { load(); }, [load]);
 
   const register = async () => {
     const clean = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");

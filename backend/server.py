@@ -26,11 +26,11 @@ MASTER_ADDRESS = "0x8ff2e1210434495c4f5629bd9d8bd4965a67b84c"
 BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD"
 
 
-def now_iso():
+def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def uid():
+def uid() -> str:
     return str(uuid.uuid4())
 
 
@@ -187,7 +187,7 @@ LP_POOLS = [
 ]
 
 
-async def seed():
+async def seed() -> None:
     if await db.pools.count_documents({}) == 0:
         pools = [
             {"id": "p1", "pair": "ION/USDT", "token_a": "ION", "token_b": "USDT", "reserve_a": 2580000, "reserve_b": 12435600, "tvl": 24871200, "apr": 48.2, "volume24h": 8420000, "fee": 0.001},
@@ -208,17 +208,17 @@ async def seed():
 
 # ---------------- Routes ----------------
 @api_router.get("/")
-async def root():
+async def root() -> dict:
     return {"message": "ION DEX API", "master": MASTER_ADDRESS, "burn": BURN_ADDRESS}
 
 
 @api_router.get("/tokens")
-async def get_tokens():
+async def get_tokens() -> list:
     return TOKENS
 
 
 @api_router.get("/trades/recent")
-async def recent_trades(pair: str = "ION/USDT"):
+async def recent_trades(pair: str = "ION/USDT") -> list:
     out = []
     base = 4.82
     for i in range(20):
@@ -234,7 +234,7 @@ async def recent_trades(pair: str = "ION/USDT"):
 
 
 @api_router.get("/swap/quote")
-async def swap_quote(from_token: str, to_token: str, amount_in: float):
+async def swap_quote(from_token: str, to_token: str, amount_in: float) -> dict:
     prices = {t["symbol"]: t["price"] for t in TOKENS}
     if from_token not in prices or to_token not in prices:
         raise HTTPException(400, "Unknown token")
@@ -253,7 +253,7 @@ async def swap_quote(from_token: str, to_token: str, amount_in: float):
 
 
 @api_router.post("/swap")
-async def do_swap(req: SwapRequest):
+async def do_swap(req: SwapRequest) -> dict:
     q = await swap_quote(req.from_token, req.to_token, req.amount_in)
     rec = SwapRecord(address=req.address, from_token=req.from_token, to_token=req.to_token,
                      amount_in=req.amount_in, amount_out=q["amount_out"], fee_ion=q["fee_ion"],
@@ -263,14 +263,14 @@ async def do_swap(req: SwapRequest):
 
 
 @api_router.get("/pools")
-async def get_pools():
+async def get_pools() -> dict:
     pools = await db.pools.find({}, {"_id": 0}).to_list(100)
     total_tvl = sum(p["tvl"] for p in pools)
     return {"total_tvl": total_tvl, "pools": pools}
 
 
 @api_router.post("/pools/liquidity")
-async def add_liq(req: LiquidityRequest):
+async def add_liq(req: LiquidityRequest) -> dict:
     rec = {"id": uid(), "address": req.address, "pool_id": req.pool_id,
            "amount_a": req.amount_a, "amount_b": req.amount_b, "lp_tokens": round(math.sqrt(max(req.amount_a * req.amount_b, 0)), 4),
            "timestamp": now_iso()}
@@ -279,12 +279,12 @@ async def add_liq(req: LiquidityRequest):
 
 
 @api_router.get("/stake/products")
-async def stake_products():
+async def stake_products() -> list:
     return STAKE_PRODUCTS
 
 
 @api_router.post("/stake")
-async def do_stake(req: StakeRequest):
+async def do_stake(req: StakeRequest) -> dict:
     prod = next((p for p in STAKE_PRODUCTS if p["id"] == req.product_id), None)
     if not prod:
         raise HTTPException(400, "Invalid product")
@@ -298,20 +298,20 @@ async def do_stake(req: StakeRequest):
 
 
 @api_router.get("/stake/positions")
-async def stake_positions(address: str):
+async def stake_positions(address: str) -> dict:
     items = await db.stakes.find({"address": address}, {"_id": 0}).to_list(200)
     total = sum(i["amount"] for i in items)
     return {"total_staked": total, "positions": items}
 
 
 @api_router.get("/bridge/history")
-async def bridge_history(address: str):
+async def bridge_history(address: str) -> list:
     items = await db.bridges.find({"address": address}, {"_id": 0}).sort("timestamp", -1).to_list(100)
     return items
 
 
 @api_router.post("/bridge")
-async def do_bridge(req: BridgeRequest):
+async def do_bridge(req: BridgeRequest) -> dict:
     fee = round(req.amount * 0.001 + 0.5, 4)
     rec = {"id": uid(), "address": req.address, "from_chain": req.from_chain, "to_chain": req.to_chain,
            "token": req.token, "amount": req.amount, "fee": fee, "received": round(req.amount - fee, 4),
@@ -321,7 +321,7 @@ async def do_bridge(req: BridgeRequest):
 
 
 @api_router.get("/dashboard")
-async def dashboard(address: str = ""):
+async def dashboard(address: str = "") -> dict:
     distribution = [
         {"asset": "ION", "value": 48200, "pct": 42, "color": "#00ffff"},
         {"asset": "USDT", "value": 28400, "pct": 25, "color": "#00ff88"},
@@ -336,30 +336,30 @@ async def dashboard(address: str = ""):
 
 
 @api_router.get("/burn/stats")
-async def burn_stats():
+async def burn_stats() -> Optional[dict]:
     burn = await db.burn.find_one({"id": "global"}, {"_id": 0})
     return burn
 
 
 @api_router.get("/ai/strategies")
-async def ai_strategies():
+async def ai_strategies() -> list:
     return AI_STRATEGIES
 
 
 @api_router.post("/ai/subscribe-strategy")
-async def sub_strategy(req: SubscribeRequest):
+async def sub_strategy(req: SubscribeRequest) -> dict:
     rec = {"id": uid(), "address": req.address, "strategy_id": req.tier, "timestamp": now_iso()}
     await db.strategy_subs.insert_one(rec)
     return {k: v for k, v in rec.items()}
 
 
 @api_router.get("/copytrade/traders")
-async def copy_traders():
+async def copy_traders() -> list:
     return TRADERS
 
 
 @api_router.post("/copytrade")
-async def do_copy(req: CopyRequest):
+async def do_copy(req: CopyRequest) -> dict:
     rec = {"id": uid(), "address": req.address, "trader_id": req.trader_id,
            "allocation": req.allocation, "status": "active", "timestamp": now_iso()}
     await db.copytrades.insert_one(rec)
@@ -367,12 +367,12 @@ async def do_copy(req: CopyRequest):
 
 
 @api_router.get("/subscription/tiers")
-async def sub_tiers():
+async def sub_tiers() -> list:
     return SUB_TIERS
 
 
 @api_router.post("/subscription/subscribe")
-async def subscribe(req: SubscribeRequest):
+async def subscribe(req: SubscribeRequest) -> dict:
     tier = next((t for t in SUB_TIERS if t["id"] == req.tier), None)
     if not tier:
         raise HTTPException(400, "Invalid tier")
@@ -383,7 +383,7 @@ async def subscribe(req: SubscribeRequest):
 
 
 @api_router.get("/orderbook")
-async def orderbook(pair: str = "ION/USDT"):
+async def orderbook(pair: str = "ION/USDT") -> dict:
     mid = 4.82
     bids, asks = [], []
     for i in range(15):
@@ -395,7 +395,7 @@ async def orderbook(pair: str = "ION/USDT"):
 
 
 @api_router.post("/orders")
-async def place_order(req: OrderRequest):
+async def place_order(req: OrderRequest) -> dict:
     rec = {"id": uid(), "address": req.address, "pair": req.pair, "side": req.side,
            "order_type": req.order_type, "price": req.price, "amount": req.amount,
            "status": "open" if req.order_type == "limit" else "filled", "timestamp": now_iso()}
@@ -404,23 +404,23 @@ async def place_order(req: OrderRequest):
 
 
 @api_router.get("/orders")
-async def get_orders(address: str):
+async def get_orders(address: str) -> list:
     return await db.orders.find({"address": address}, {"_id": 0}).sort("timestamp", -1).to_list(100)
 
 
 @api_router.get("/liquiditymine/pools")
-async def lm_pools():
+async def lm_pools() -> list:
     return LP_POOLS
 
 
 @api_router.get("/vault/list")
-async def vault_list():
+async def vault_list() -> dict:
     total = sum(v["tvl"] for v in VAULTS)
     return {"total_tvl": total, "vaults": VAULTS}
 
 
 @api_router.post("/vault/deposit")
-async def vault_deposit(req: VaultRequest):
+async def vault_deposit(req: VaultRequest) -> dict:
     rec = {"id": uid(), "address": req.address, "vault_id": req.vault_id, "amount": req.amount,
            "shares": round(req.amount * 0.98, 4), "timestamp": now_iso()}
     await db.vault_deposits.insert_one(rec)
@@ -428,17 +428,17 @@ async def vault_deposit(req: VaultRequest):
 
 
 @api_router.get("/business/modules")
-async def business():
+async def business() -> list:
     return BUSINESS_MODULES
 
 
 @api_router.get("/domains")
-async def get_domains(address: str):
+async def get_domains(address: str) -> list:
     return await db.domains.find({"address": address}, {"_id": 0}).to_list(100)
 
 
 @api_router.post("/domains")
-async def register_domain(req: DomainRequest):
+async def register_domain(req: DomainRequest) -> dict:
     existing = await db.domains.find_one({"name": req.name})
     if existing:
         raise HTTPException(400, "Domain already registered")
@@ -452,7 +452,7 @@ async def register_domain(req: DomainRequest):
 
 
 @api_router.post("/batchtransfer")
-async def batch_transfer(req: BatchTransferRequest):
+async def batch_transfer(req: BatchTransferRequest) -> dict:
     total = sum(r.get("amount", 0) for r in req.recipients)
     fee = round(total * 0.001, 6)
     rec = {"id": uid(), "address": req.address, "token": req.token, "count": len(req.recipients),
@@ -463,7 +463,7 @@ async def batch_transfer(req: BatchTransferRequest):
 
 
 @api_router.get("/approvals")
-async def get_approvals(address: str):
+async def get_approvals(address: str) -> list:
     return [
         {"id": "a1", "token": "USDT", "spender": "DexSwap", "spender_addr": "0x10ED...a3F2", "amount": "Unlimited", "risk": "high"},
         {"id": "a2", "token": "ION", "spender": "StakeReward", "spender_addr": "0x88aB...91C4", "amount": "50,000", "risk": "low"},
@@ -473,12 +473,12 @@ async def get_approvals(address: str):
 
 
 @api_router.post("/approvals/revoke")
-async def revoke(payload: dict):
+async def revoke(payload: dict) -> dict:
     return {"status": "revoked", "id": payload.get("id"), "tx_hash": "0x" + uuid.uuid4().hex}
 
 
 @api_router.get("/settings")
-async def get_settings(address: str):
+async def get_settings(address: str) -> dict:
     s = await db.settings.find_one({"address": address}, {"_id": 0})
     if not s:
         return {"address": address, "slippage": 0.5, "gas_mode": "standard", "oracle": "dual", "multisig_threshold": 3}
@@ -486,7 +486,7 @@ async def get_settings(address: str):
 
 
 @api_router.post("/settings")
-async def save_settings(req: SettingsRequest):
+async def save_settings(req: SettingsRequest) -> dict:
     await db.settings.update_one({"address": req.address}, {"$set": req.model_dump()}, upsert=True)
     return req.model_dump()
 
@@ -510,7 +510,7 @@ MARKET = [
 
 
 @api_router.get("/market")
-async def market(cat: str = "all", q: str = ""):
+async def market(cat: str = "all", q: str = "") -> list:
     items = MARKET
     if cat and cat != "all":
         if cat == "gainer":
@@ -540,11 +540,11 @@ logger = logging.getLogger(__name__)
 
 
 @app.on_event("startup")
-async def startup():
+async def startup() -> None:
     await seed()
     logger.info("ION DEX API seeded and ready")
 
 
 @app.on_event("shutdown")
-async def shutdown_db_client():
+async def shutdown_db_client() -> None:
     client.close()

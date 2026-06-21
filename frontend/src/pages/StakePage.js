@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Panel, NeonButton, NeonInput, PageHeader, StatValue, Icon, Risk, Loader } from "../components/kit";
 import { api, fmt } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
@@ -10,9 +10,9 @@ export default function StakePage() {
   const [modal, setModal] = useState(null);
   const [amount, setAmount] = useState("");
 
-  const loadPos = () => { if (address) api.stakePositions(address).then(setPositions); };
+  const loadPos = useCallback(() => { if (address) api.stakePositions(address).then(setPositions); }, [address]);
   useEffect(() => { api.stakeProducts().then(setProducts); }, []);
-  useEffect(() => { loadPos(); }, [address]);
+  useEffect(() => { loadPos(); }, [loadPos]);
 
   const submit = async () => {
     const r = await sendTx("Stake", () => api.stake({ address, product_id: modal.id, amount: parseFloat(amount) || 0 }));
