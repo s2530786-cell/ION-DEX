@@ -1,0 +1,116 @@
+;; pool.fc — ION chain constant-product AMM (x*y=k)
+;; Implements a Jetton/Jetton liquidity pool with 0.3% swap fee.
+;; Build: func -o pool.fif -SPA stdlib.fc pool.fc
+
+#include "stdlib.fc";
+
+const int FEE_NUM = 3;       ;; 0.3%
+const int FEE_DEN = 1000;
+const int op::swap          = 0x25938561;
+const int op::add_liquidity = 0x3ebe5431;
+const int op::remove_liq    = 0x595f07bc;
+
+;; storage: reserve0:Coins reserve1:Coins total_lp:Coins jetton0:slice jetton1:slice
+(int, int, int, slice, slice) load_data() inline {
+    var ds = get_data().begin_parse();
+    return (
+        ds~load_coins(),   ;; reserve0
+        ds~load_coins(),   ;; reserve1
+        ds~load_coins(),   ;; total_lp
+        ds~load_msg_addr(),;; jetton0 wallet
+        ds~load_msg_addr() ;; jetton1 wallet
+    );
+}
+
+() save_data(int r0, int r1, int lp, slice j0, slice j1) impure inline {
+    set_data(begin_cell()
+        .store_coins(r0)
+        .store_coins(r1)
+        .store_coins(lp)
+        .store_slice(j0)
+        .store_slice(j1)
+        .end_cell());
+}
+
+;; constant-product output with 0.3% fee
+int get_amount_out(int amount_in, int reserve_in, int reserve_out) inline {
+    throw_unless(101, amount_in > 0);
+    throw_unless(102, (reserve_in > 0) & (reserve_out > 0));
+    int amount_in_with_fee = amount_in * (FEE_DEN - FEE_NUM);
+    int numerator = amount_in_with_fee * reserve_out;
+    int denominator = reserve_in * FEE_DEN + amount_in_with_fee;
+    return numerator / denominator;
+}
+
+int sqrt(int x) inline {
+    if (x == 0) { return 0; }
+    int z = (x + 1) / 2;
+    int y = x;
+    while (z < y) { y = z; z = (x / z + z) / 2; }
+    return y;
+}
+
+() recv_internal(int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    if (in_msg_body.slice_empty?()) { return (); }
+    slice cs = in_msg_full.begin_parse();
+    int flags = cs~load_uint(4);
+    if (flags & 1) { return (); } ;; ignore bounced
+
+    int op = in_msg_body~load_uint(32);
+    int query_id = in_msg_body~load_uint(64);
+
+    var (r0, r1, lp, j0, j1) = load_data();
+
+    if (op == op::swap) {
+        int amount_in = in_msg_body~load_coins();
+        int zero_for_one = in_msg_body~load_uint(1);
+        int min_out = in_msg_body~load_coins();
+        int amount_out = 0;
+        if (zero_for_one) {
+            amount_out = get_amount_out(amount_in, r0, r1);
+            throw_unless(110, amount_out >= min_out);
+            r0 += amount_in; r1 -= amount_out;
+        } else {
+            amount_out = get_amount_out(amount_in, r1, r0);
+            throw_unless(110, amount_out >= min_out);
+            r1 += amount_in; r0 -= amount_out;
+        }
+        save_data(r0, r1, lp, j0, j1);
+        return ();
+    }
+
+    if (op == op::add_liquidity) {
+        int amt0 = in_msg_body~load_coins();
+        int amt1 = in_msg_body~load_coins();
+        int minted = 0;
+        if (lp == 0) {
+            minted = sqrt(amt0 * amt1);
+        } else {
+            int a = amt0 * lp / r0;
+            int b = amt1 * lp / r1;
+            minted = (a < b) ? a : b;
+        }
+        throw_unless(120, minted > 0);
+        r0 += amt0; r1 += amt1; lp += minted;
+        save_data(r0, r1, lp, j0, j1);
+        return ();
+    }
+
+    if (op == op::remove_liq) {
+        int burn_lp = in_msg_body~load_coins();
+        throw_unless(130, (burn_lp > 0) & (burn_lp <= lp));
+        int out0 = burn_lp * r0 / lp;
+        int out1 = burn_lp * r1 / lp;
+        r0 -= out0; r1 -= out1; lp -= burn_lp;
+        save_data(r0, r1, lp, j0, j1);
+        return ();
+    }
+
+    throw(0xffff); ;; unknown op
+}
+
+;; getter: returns (reserve0, reserve1, total_lp)
+(int, int, int) get_reserves() method_id {
+    var (r0, r1, lp, _, _) = load_data();
+    return (r0, r1, lp);
+}
