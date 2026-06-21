@@ -38,6 +38,14 @@
   - 截图验证 Swap/Dashboard/Stake/BatchTransfer 多版式渲染正常;5 张水晶卡保持竖版不倾斜(用户确认)
   - 备注:SkinSwitcher 备用皮肤(aurora/nebula 等)保留;默认 deepspace 即新规范
 
+- **[2026-06-21] 霓虹模态弹窗(按规范)**:
+  - 新增可复用 `Modal.jsx`(玻璃拟态 + cyan→purple→magenta 渐变光边 + 背景模糊 + ESC/点遮罩关闭 + portal)
+  - `NeonAreaChart.jsx`:SVG 面积图,青→品红垂直渐变填充 + 发光描边 + 数据点 + 日期轴
+  - `BurnTrackerModal.jsx`(760):总销毁/今日销毁大字 mono、市场阶段/动态销毁率徽章、7 日面积图、今日 vs 目标进度条、跳转 /dashboard
+  - `QuickBridgeModal.jsx`(640):源⇄目标链选择+翻转、代币、金额、实时费率(费=量*0.1%+0.5,已验证)、Transfer、跳转 /bridge
+  - 触发:底部 5 卡的 **Burn → Burn Tracker**、**Bridge → Quick Bridge**(Pool/Copy/Domain 仍跳转);截图交互验证通过
+  - `NeonGauge` 渐变同步到新霓虹色
+
 ## 待办 / Backlog (优先级)
 ### P0
 - [ ] 将 `NeonCandlestickChart` 应用到 `TradeProPage`(目前仅 Swap 页)
