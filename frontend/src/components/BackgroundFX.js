@@ -28,9 +28,7 @@ export default function BackgroundFX() {
         <div className="bgfx-stars" />
 
         <div className={`bgfx-layer ${bg === "galaxy" ? "active" : ""}`}>
-          <div className="bgfx-galaxy-tilt">
-            <div className="bgfx-galaxy-disk" style={{ backgroundImage: "url(/assets/bg/galaxy.png)" }} />
-          </div>
+          <div className="bgfx-galaxy-img" style={{ backgroundImage: "url(/assets/bg/galaxy.png)" }} />
         </div>
 
         <div className={`bgfx-layer ${bg === "aurora" ? "active" : ""}`}>

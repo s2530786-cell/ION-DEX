@@ -60,13 +60,12 @@ body {
 .bgfx-stars.far { opacity: 0.5; transform: translate3d(calc(var(--mx,0) * 6px), calc(var(--my,0) * 6px), -600px) scale(1.8); animation-duration: 200s; }
 @keyframes starsDrift { from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0; } to { background-position: 420px 210px, -360px 180px, 300px -150px, -500px 250px, 260px 130px; } }
 
-/* 3D tilted rotating galaxy disk */
-.bgfx-galaxy-tilt { position: absolute; left: 50%; top: 46%; width: 1300px; height: 1300px; margin: -650px 0 0 -650px;
-  transform: translate3d(calc(var(--mx,0) * -22px), calc(var(--my,0) * -22px), -120px) rotateX(64deg); transform-style: preserve-3d; }
-.bgfx-galaxy-disk { position: absolute; inset: 0; border-radius: 50%;
-  background: center / cover no-repeat; -webkit-mask-image: radial-gradient(circle at center, transparent 0%, transparent 20%, #000 34%, #000 52%, transparent 72%); mask-image: radial-gradient(circle at center, transparent 0%, transparent 20%, #000 34%, #000 52%, transparent 72%);
-  animation: galaxySpin 150s linear infinite; opacity: 0.85; }
-@keyframes galaxySpin { from { transform: rotateZ(0deg); } to { transform: rotateZ(360deg); } }
+/* full-screen design galaxy with slow rotation + parallax depth */
+.bgfx-galaxy-img { position: absolute; left: 50%; top: 50%; width: 150vmax; height: 150vmax; margin-left: -75vmax; margin-top: -75vmax;
+  background: center / cover no-repeat;
+  transform: translate3d(calc(var(--mx,0) * -18px), calc(var(--my,0) * -18px), -100px) rotate(0deg);
+  animation: galaxySpin 200s linear infinite; opacity: 1; }
+@keyframes galaxySpin { from { transform: translate3d(calc(var(--mx,0) * -18px), calc(var(--my,0) * -18px), -100px) rotate(0deg) scale(1); } 50% { transform: translate3d(calc(var(--mx,0) * -18px), calc(var(--my,0) * -18px), -100px) rotate(180deg) scale(1.08); } to { transform: translate3d(calc(var(--mx,0) * -18px), calc(var(--my,0) * -18px), -100px) rotate(360deg) scale(1); } }
 
 /* procedural 3D aurora curtains */
 .bgfx-aurora-fx { position: absolute; inset: -10%; filter: blur(34px) saturate(1.4); transform: translate3d(calc(var(--mx,0) * 16px), calc(var(--my,0) * 16px), -200px); }
@@ -89,7 +88,7 @@ body {
     repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(0, 255, 255, 0.04) 79px, rgba(0, 255, 255, 0.04) 80px),
     repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(96, 32, 255, 0.045) 47px, rgba(96, 32, 255, 0.045) 48px);
 }
-.bgfx-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 30%, rgba(1, 1, 4, 0.78) 100%); }
+.bgfx-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(1, 1, 4, 0.62) 100%); }
 
 /* ---------- Skins / themes ---------- */
 [data-theme="aurora"] { --cyan: #00ff88; --purple: #00ffff; --magenta: #6020ff; --aurora: linear-gradient(90deg, #00ff88, #00ffff, #6020ff); --glow-cyan: 0 0 24px rgba(0, 255, 136, 0.35); }
