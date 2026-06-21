@@ -46,6 +46,14 @@
   - 触发:底部 5 卡的 **Burn → Burn Tracker**、**Bridge → Quick Bridge**(Pool/Copy/Domain 仍跳转);截图交互验证通过
   - `NeonGauge` 渐变同步到新霓虹色
 
+- **[2026-06-21] 模态"一键分享/截图"自传播功能**:
+  - 依赖:`html-to-image`(toPng,`skipFonts` 静默跨域字体告警);`lib/share.js`(下载/原生分享/X/Telegram/复制)
+  - `ShareableBurnCard.jsx`:620×360 霓虹分享卡(ION DEX 品牌 + 总销毁大字 + 今日/价格/动态销毁率 + sparkline + iondex.app)
+  - `ShareableBridgeCard.jsx`:跨链宣传卡(ION→BSC→ETH + 低费/MEV/非托管卖点)
+  - `ShareMenu.jsx`:lucide 图标按钮(原生分享带图[移动端]/保存图片/X/Telegram/复制文案),sonner toast 反馈
+  - 接入 Burn / Bridge 模态(分享视图 + 返回);截图验证 PNG 下载成功、控制台无报错
+  - 注:导出 PNG 因 Google Fonts CORS 用系统回退字体(屏显卡片仍为 Orbitron/Mono);如需导出字体完全一致,后续可自托管字体
+
 ## 待办 / Backlog (优先级)
 ### P0
 - [ ] 将 `NeonCandlestickChart` 应用到 `TradeProPage`(目前仅 Swap 页)
