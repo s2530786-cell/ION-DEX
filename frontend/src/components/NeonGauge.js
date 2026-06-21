@@ -14,9 +14,9 @@ export default function NeonGauge({ value = 0, max = 100, size = 150, label, sub
       <svg width={size} height={size / 2 + 14} viewBox={`0 0 ${size} ${size / 2 + 14}`}>
         <defs>
           <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#00ffff" />
-            <stop offset="0.5" stopColor="#6020ff" />
-            <stop offset="1" stopColor="#ff00ff" />
+            <stop offset="0" stopColor="#00F5FF" />
+            <stop offset="0.5" stopColor="#9D4EDD" />
+            <stop offset="1" stopColor="#FF007A" />
           </linearGradient>
           <filter id="gaugeGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="4" result="b" />
