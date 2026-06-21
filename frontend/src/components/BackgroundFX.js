@@ -29,6 +29,7 @@ export default function BackgroundFX() {
 
         <div className={`bgfx-layer ${bg === "galaxy" ? "active" : ""}`}>
           <div className="bgfx-galaxy-img" style={{ backgroundImage: "url(/assets/bg/galaxy.png)" }} />
+          <div className="bgfx-neon" />
         </div>
 
         <div className={`bgfx-layer ${bg === "aurora" ? "active" : ""}`}>

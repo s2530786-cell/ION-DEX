@@ -63,8 +63,16 @@ body {
 /* full-screen design galaxy with slow rotation + parallax depth */
 .bgfx-galaxy-img { position: absolute; left: 50%; top: 50%; width: 150vmax; height: 150vmax; margin-left: -75vmax; margin-top: -75vmax;
   background: center / cover no-repeat;
+  filter: brightness(1.45) saturate(1.9) contrast(1.12);
   transform: translate3d(calc(var(--mx,0) * -18px), calc(var(--my,0) * -18px), -100px) rotate(0deg);
   animation: galaxySpin 200s linear infinite; opacity: 1; }
+.bgfx-neon { position: absolute; inset: 0; mix-blend-mode: screen; opacity: 0.5; pointer-events: none;
+  background:
+    radial-gradient(circle at 28% 32%, rgba(0,255,255,0.35), transparent 42%),
+    radial-gradient(circle at 74% 64%, rgba(255,0,255,0.32), transparent 46%),
+    radial-gradient(circle at 55% 48%, rgba(96,32,255,0.30), transparent 50%);
+  animation: neonPulse 9s ease-in-out infinite; }
+@keyframes neonPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 0.7; } }
 @keyframes galaxySpin { from { transform: translate3d(calc(var(--mx,0) * -18px), calc(var(--my,0) * -18px), -100px) rotate(0deg) scale(1); } 50% { transform: translate3d(calc(var(--mx,0) * -18px), calc(var(--my,0) * -18px), -100px) rotate(180deg) scale(1.08); } to { transform: translate3d(calc(var(--mx,0) * -18px), calc(var(--my,0) * -18px), -100px) rotate(360deg) scale(1); } }
 
 /* procedural 3D aurora curtains */
@@ -221,3 +229,9 @@ body {
 @media (max-width: 1024px) {
   .dex-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ---------- Boot splash ---------- */
+.boot-splash { position: fixed; inset: 0; z-index: 9998; background: #010104; display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity 700ms ease; }
+.boot-splash.closing { opacity: 0; pointer-events: none; }
+.boot-video { width: 100%; height: 100%; object-fit: cover; }
+.boot-controls { position: absolute; bottom: 40px; left: 0; right: 0; display: flex; gap: 14px; align-items: center; justify-content: center; }

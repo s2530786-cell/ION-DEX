@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { WalletProvider } from "./context/WalletContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import BackgroundFX from "./components/BackgroundFX";
+import BootSplash from "./components/BootSplash";
 import Layout from "./components/Layout";
 
 import SwapPage from "./pages/SwapPage";
@@ -29,6 +30,7 @@ function App() {
     <ThemeProvider>
       <WalletProvider>
         <BrowserRouter>
+          <BootSplash />
           <BackgroundFX />
           <Layout>
           <Routes>
