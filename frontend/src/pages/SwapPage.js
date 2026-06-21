@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Panel, NeonButton, Icon, Badge, Loader } from "../components/kit";
 import TradingViewChart from "../components/TradingViewChart";
+import NeonCandlestickChart from "../components/NeonCandlestickChart";
 import QuickTiles from "../components/QuickTiles";
 import NeonGauge from "../components/NeonGauge";
 import { api, fmt, fmtUsd } from "../lib/api";
@@ -92,7 +93,7 @@ export default function SwapPage() {
 
       {/* CENTER - Chart + trades */}
       <div className="space-y-4">
-        <TradingViewChart symbol={TV_SYMBOLS[fromT] || "BINANCE:BNBUSDT"} height={420} />
+        <NeonCandlestickChart pair={`${fromT}/${toT}`} base={fromT === "ION" ? 4.82 : 100} height={440} />
         <Panel className="p-5">
           <div className="flex items-center gap-2 mb-3"><Icon name="order.svg" size={20} /><h3 className="h1" style={{ fontSize: 16 }}>Recent Trades</h3></div>
           <div className="grid grid-cols-4 gap-2 pb-2" style={{ color: "var(--text-dim)", fontSize: 12, borderBottom: "1px solid var(--panel-border)" }}>
