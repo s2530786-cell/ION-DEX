@@ -112,21 +112,53 @@ body {
 
 @layer components {
   .panel {
+    position: relative;
     background: var(--panel-bg);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(18px) saturate(1.25);
+    -webkit-backdrop-filter: blur(18px) saturate(1.25);
     border-radius: var(--radius-panel);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.10),
+      inset 0 0 30px rgba(96, 32, 255, 0.10),
+      0 10px 44px rgba(0, 0, 0, 0.5),
+      0 0 22px rgba(0, 255, 255, 0.06);
+  }
+  .panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 48%, var(--magenta) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 300ms var(--ease);
+  }
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.06) 0%, transparent 32%);
+    pointer-events: none;
   }
 
   .panel-hover {
-    transition: transform 300ms var(--ease), border-color 300ms var(--ease), box-shadow 300ms var(--ease);
+    transition: transform 300ms var(--ease), box-shadow 300ms var(--ease);
   }
   .panel-hover:hover {
     transform: scale(1.02);
-    border-color: rgba(0, 255, 255, 0.4);
-    box-shadow: 0 0 32px rgba(0, 255, 255, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 0 34px rgba(96, 32, 255, 0.16),
+      0 12px 48px rgba(0, 0, 0, 0.5),
+      0 0 38px rgba(0, 255, 255, 0.22);
   }
+  .panel-hover:hover::before { opacity: 1; }
 
   .aurora-text {
     background: var(--aurora);
@@ -202,7 +234,49 @@ body {
 
   .mono { font-family: var(--font-mono); font-weight: 700; }
 
-  .stat-mono { font-family: var(--font-mono); font-weight: 800; letter-spacing: -0.02em; }
+  .stat-mono { font-family: var(--font-mono); font-weight: 800; letter-spacing: -0.02em; text-shadow: 0 0 20px rgba(0, 255, 255, 0.28); }
+
+  .neon-tile {
+    position: relative;
+    border-radius: 18px;
+    padding: 18px;
+    background: rgba(2, 4, 10, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 300ms var(--ease), box-shadow 300ms var(--ease);
+    box-shadow: inset 0 0 22px rgba(96, 32, 255, 0.12), 0 8px 30px rgba(0, 0, 0, 0.45);
+  }
+  .neon-tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.6px;
+    background: linear-gradient(140deg, var(--tile-color, var(--cyan)), color-mix(in srgb, var(--tile-color, var(--cyan)) 30%, transparent));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .neon-tile:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: inset 0 0 26px rgba(96, 32, 255, 0.2), 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 34px var(--tile-color, var(--cyan));
+  }
+  .tile-glow {
+    position: absolute;
+    left: 50%;
+    bottom: -40%;
+    width: 120%;
+    height: 90%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, var(--tile-color, var(--cyan)), transparent 65%);
+    opacity: 0.35;
+    filter: blur(20px);
+    pointer-events: none;
+  }
 
   .chip {
     display: inline-flex;
