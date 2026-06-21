@@ -5,7 +5,7 @@
 
 :root {
   --bg: #010104;
-  --panel-bg: rgba(2, 4, 10, 0.72);
+  --panel-bg: rgba(2, 4, 10, 0.80);
   --panel-border: rgba(248, 251, 255, 0.10);
   --cyan: #00ffff;
   --purple: #6020ff;
@@ -118,23 +118,24 @@ body {
     -webkit-backdrop-filter: blur(18px) saturate(1.25);
     border-radius: var(--radius-panel);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.10),
-      inset 0 0 30px rgba(96, 32, 255, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 0 34px rgba(96, 32, 255, 0.14),
       0 10px 44px rgba(0, 0, 0, 0.5),
-      0 0 22px rgba(0, 255, 255, 0.06);
+      0 0 30px rgba(0, 255, 255, 0.12),
+      0 0 60px rgba(96, 32, 255, 0.08);
   }
   .panel::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    padding: 1.4px;
+    padding: 1.6px;
     background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 48%, var(--magenta) 100%);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
-    opacity: 0.55;
+    opacity: 0.75;
     pointer-events: none;
     transition: opacity 300ms var(--ease);
   }
