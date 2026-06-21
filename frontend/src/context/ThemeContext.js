@@ -16,7 +16,7 @@ const ROTATE_MS = 30 * 60 * 1000; // 30 minutes
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => localStorage.getItem("ion-theme") || "deepspace");
-  const [bg, setBg] = useState(() => localStorage.getItem("ion-bg") || "galaxy");
+  const [bg, setBg] = useState(() => localStorage.getItem("ion-bg") || "scenery");
   const [autoBg, setAutoBg] = useState(() => localStorage.getItem("ion-autobg") !== "false");
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function ThemeProvider({ children }) {
   // Auto-rotate background every 30 minutes
   useEffect(() => {
     if (!autoBg) return;
-    const t = setInterval(() => setBg((b) => (b === "galaxy" ? "aurora" : "galaxy")), ROTATE_MS);
+    const t = setInterval(() => setBg((b) => (b === "scenery" ? "aurora" : "scenery")), ROTATE_MS);
     return () => clearInterval(t);
   }, [autoBg]);
 

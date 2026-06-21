@@ -1,11 +1,28 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 
-// True 3D dynamic backgrounds: tilted rotating galaxy disk + procedural aurora curtains,
-// with multi-layer parallax starfield reacting to pointer movement.
+export const SCENES = [
+  { id: "iceland", img: "/assets/bg/scene_iceland.jpg", name: "Iceland Aurora" },
+  { id: "santorini", img: "/assets/bg/scene_santorini.jpg", name: "Santorini" },
+  { id: "fuji", img: "/assets/bg/scene_fuji.jpg", name: "Mount Fuji" },
+  { id: "maldives", img: "/assets/bg/scene_maldives.jpg", name: "Maldives" },
+  { id: "banff", img: "/assets/bg/scene_banff.jpg", name: "Moraine Lake" },
+  { id: "guilin", img: "/assets/bg/scene_guilin.jpg", name: "Guilin" },
+];
+
+// 3D dynamic world-scenery slideshow (Ken-Burns + pointer parallax) with procedural aurora alt.
 export default function BackgroundFX() {
   const { bg } = useTheme();
+  const [idx, setIdx] = useState(() => Math.floor(Math.random() * SCENES.length));
 
+  // cycle scenes every 11s when scenery mode is active
+  useEffect(() => {
+    if (bg !== "scenery") return;
+    const t = setInterval(() => setIdx((i) => (i + 1) % SCENES.length), 11000);
+    return () => clearInterval(t);
+  }, [bg]);
+
+  // pointer parallax
   useEffect(() => {
     let frame;
     const onMove = (e) => {
@@ -25,10 +42,17 @@ export default function BackgroundFX() {
     <div className="bgfx" aria-hidden="true">
       <div className="bgfx-scene">
         <div className="bgfx-stars far" />
-        <div className="bgfx-stars" />
 
-        <div className={`bgfx-layer ${bg === "galaxy" ? "active" : ""}`}>
-          <div className="bgfx-galaxy-img" style={{ backgroundImage: "url(/assets/bg/galaxy.png)" }} />
+        <div className={`bgfx-layer ${bg === "scenery" ? "active" : ""}`}>
+          <div className="bgfx-scenery">
+            {SCENES.map((s, i) => (
+              <div
+                key={s.id}
+                className={`bgfx-scene-img ${i === idx ? "active" : ""}`}
+                style={{ backgroundImage: `url(${s.img})` }}
+              />
+            ))}
+          </div>
           <div className="bgfx-neon" />
         </div>
 

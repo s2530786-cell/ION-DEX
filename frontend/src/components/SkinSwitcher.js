@@ -26,8 +26,8 @@ export default function SkinSwitcher() {
 
           <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 10, fontWeight: 600 }}>BACKGROUND</div>
           <div className="flex gap-2 mb-3">
-            <button onClick={() => setBg("galaxy")} className="ghost-btn flex-1" style={{ height: 40, borderColor: !autoBg && bg === "galaxy" ? "var(--cyan)" : undefined }} data-testid="bg-galaxy">Galaxy</button>
-            <button onClick={() => setBg("aurora")} className="ghost-btn flex-1" style={{ height: 40, borderColor: !autoBg && bg === "aurora" ? "var(--cyan)" : undefined }} data-testid="bg-aurora">Aurora</button>
+            <button onClick={() => setBg("scenery")} className="ghost-btn flex-1" style={{ height: 40, borderColor: !autoBg && bg === "scenery" ? "var(--cyan)" : undefined }} data-testid="bg-galaxy">🌍 Scenery</button>
+            <button onClick={() => setBg("aurora")} className="ghost-btn flex-1" style={{ height: 40, borderColor: !autoBg && bg === "aurora" ? "var(--cyan)" : undefined }} data-testid="bg-aurora">🌌 Aurora</button>
           </div>
           <button onClick={() => setAutoBg(!autoBg)} className="ghost-btn w-full" style={{ height: 40, borderColor: autoBg ? "var(--cyan)" : undefined, color: autoBg ? "var(--cyan)" : "var(--text-dim)" }} data-testid="bg-auto">
             Auto-rotate {autoBg ? "ON" : "OFF"} · 30min
