@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Panel, NeonButton, Icon, Badge, Loader } from "../components/kit";
 import TradingViewChart from "../components/TradingViewChart";
+import QuickTiles from "../components/QuickTiles";
 import { api, fmt, fmtUsd } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
 
@@ -56,6 +57,7 @@ export default function SwapPage() {
   };
 
   return (
+    <div className="space-y-6">
     <div style={{ display: "grid", gridTemplateColumns: "350px 1fr 300px", gap: 20 }} className="dex-grid">
       {/* LEFT - Swap */}
       <div className="space-y-4">
@@ -118,6 +120,8 @@ export default function SwapPage() {
           ))}
         </Panel>
       </div>
+    </div>
+      <QuickTiles />
     </div>
   );
 }
