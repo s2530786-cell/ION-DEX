@@ -447,6 +447,28 @@ body {
   border: 1px solid var(--panel-border);
   box-shadow: inset 0 0 24px rgba(157, 78, 221, 0.10);
 }
+.share-act {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--sc) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sc) 55%, transparent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s var(--ease), box-shadow 0.25s var(--ease), transform 0.2s var(--ease);
+}
+.share-act:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--sc) 22%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--sc) 45%, transparent);
+  transform: translateY(-2px);
+}
+.share-act:disabled { opacity: 0.55; cursor: default; }
+
 
 .crystal-tiles {
   display: grid;
