@@ -24,6 +24,12 @@
   - `QuickTiles.js` + `index.css` 重写为竖向毛玻璃面板:底部彩色径向辉光、粗霓虹渐变光边、玻璃顶部高光、宝石悬浮光晕 + 接触投影、粗体贴底标题
   - 截图自测通过
 
+- **[2026-06-21] 代码评审修复**:
+  - 🔴 修复 6 处 React Hook 缺失依赖(useCallback 包裹 load/loadPos/loadOrders + chart useMemo 让 `tf` 成为真实依赖)— eslint react-hooks 现 0 警告
+  - 🟡 索引 key 替换为稳定 key:DashboardPage(`h.day`)、BatchTransferPage(行 `id`,已验证增删/输入状态正确)、TradeProPage 订单簿(按 price)
+  - 🟢 backend `server.py` 全部函数补充返回类型注解(无 def 缺注解);console 语句:src 内本就为 0
+  - 未做:🟡 拆分 17 个长函数 / 降低 6 个函数复杂度 —— 多为内聚的工作函数(如 canvas 绘图、seed 数据),盲目拆分对设计敏感的可用应用有回归风险,留待用户按需指定
+
 ## 待办 / Backlog (优先级)
 ### P0
 - [ ] 将 `NeonCandlestickChart` 应用到 `TradeProPage`(目前仅 Swap 页)

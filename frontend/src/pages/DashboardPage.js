@@ -56,10 +56,10 @@ export default function DashboardPage() {
         <Panel className="p-6">
           <h3 className="h1" style={{ fontSize: 16, marginBottom: 16 }}>7-Day Burn Trend</h3>
           <div className="flex items-end gap-2" style={{ height: 200 }}>
-            {(burn.history || []).map((h, i) => {
+            {(burn.history || []).map((h) => {
               const max = Math.max(...(burn.history || []).map((x) => x.amount));
               return (
-                <div key={i} className="flex-1 flex flex-col items-center justify-end" style={{ height: "100%" }}>
+                <div key={h.day} className="flex-1 flex flex-col items-center justify-end" style={{ height: "100%" }}>
                   <div style={{ width: "100%", height: `${(h.amount / max) * 100}%`, background: "var(--aurora)", borderRadius: "6px 6px 0 0", boxShadow: "0 0 14px rgba(0,255,255,0.3)" }} title={fmt(h.amount)} />
                   <span style={{ fontSize: 10, color: "var(--text-dim)", marginTop: 6 }}>{h.day}</span>
                 </div>

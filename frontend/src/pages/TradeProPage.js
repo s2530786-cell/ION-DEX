@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Panel, NeonButton, GhostButton, NeonInput, Icon, Loader } from "../components/kit";
 import TradingViewChart from "../components/TradingViewChart";
 import { api, fmt } from "../lib/api";
@@ -13,9 +13,9 @@ export default function TradeProPage() {
   const [amount, setAmount] = useState("");
   const [orders, setOrders] = useState([]);
 
-  const loadOrders = () => { if (address) api.orders(address).then(setOrders); };
+  const loadOrders = useCallback(() => { if (address) api.orders(address).then(setOrders); }, [address]);
   useEffect(() => { api.orderbook("ION/USDT").then(setBook); const i = setInterval(() => api.orderbook("ION/USDT").then(setBook), 5000); return () => clearInterval(i); }, []);
-  useEffect(() => { loadOrders(); }, [address]);
+  useEffect(() => { loadOrders(); }, [loadOrders]);
 
   const submit = async () => {
     const r = await sendTx("Order", () => api.placeOrder({ address, pair: "ION/USDT", side, order_type: type, price: parseFloat(price) || 0, amount: parseFloat(amount) || 0 }));
@@ -46,15 +46,15 @@ export default function TradeProPage() {
         <h3 className="h1" style={{ fontSize: 15, marginBottom: 10 }}>Order Book</h3>
         {!book ? <Loader /> : (
           <>
-            {book.asks.slice().reverse().map((a, i) => (
-              <div key={`a${i}`} className="relative flex justify-between py-1" style={{ fontSize: 12 }}>
+            {book.asks.slice().reverse().map((a) => (
+              <div key={`a${a.price}`} className="relative flex justify-between py-1" style={{ fontSize: 12 }}>
                 <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: `${(a.total / maxTotal) * 100}%`, background: "rgba(255,68,102,0.12)" }} />
                 <span className="mono" style={{ color: "var(--red)", zIndex: 1 }}>{fmt(a.price, 4)}</span><span className="mono" style={{ zIndex: 1 }}>{fmt(a.amount)}</span>
               </div>
             ))}
             <div className="my-2 text-center mono aurora-text" style={{ fontSize: 18 }}>{fmt(book.mid, 4)}</div>
-            {book.bids.map((b, i) => (
-              <div key={`b${i}`} className="relative flex justify-between py-1" style={{ fontSize: 12 }}>
+            {book.bids.map((b) => (
+              <div key={`b${b.price}`} className="relative flex justify-between py-1" style={{ fontSize: 12 }}>
                 <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: `${(b.total / maxTotal) * 100}%`, background: "rgba(0,255,136,0.12)" }} />
                 <span className="mono" style={{ color: "var(--green)", zIndex: 1 }}>{fmt(b.price, 4)}</span><span className="mono" style={{ zIndex: 1 }}>{fmt(b.amount)}</span>
               </div>

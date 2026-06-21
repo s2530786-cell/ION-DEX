@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Panel, NeonButton, NeonInput, PageHeader, Icon, Loader } from "../components/kit";
 import { api, fmt } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
@@ -17,8 +17,8 @@ export default function BridgePage() {
   const [amount, setAmount] = useState("");
   const [history, setHistory] = useState([]);
 
-  const load = () => { if (address) api.bridgeHistory(address).then(setHistory); };
-  useEffect(() => { load(); }, [address]);
+  const load = useCallback(() => { if (address) api.bridgeHistory(address).then(setHistory); }, [address]);
+  useEffect(() => { load(); }, [load]);
 
   const fee = amount ? (parseFloat(amount) * 0.001 + 0.5).toFixed(4) : "0.0";
   const received = amount ? Math.max(parseFloat(amount) - parseFloat(fee), 0).toFixed(4) : "0.0";

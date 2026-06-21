@@ -26,12 +26,13 @@ function ma(data, period, key = "close") {
 }
 
 const TF = ["1H", "4H", "1D", "1W", "1M", "ALL"];
+const TF_BARS = { "1H": 64, "4H": 56, "1D": 72, "1W": 60, "1M": 80, "ALL": 90 };
 
 export default function NeonCandlestickChart({ height = 440, pair = "ION/USDT", base = 4.82 }) {
   const ref = useRef(null);
   const wrapRef = useRef(null);
   const [tf, setTf] = useState("1H");
-  const candles = useMemo(() => genCandles(64, base), [base, tf]);
+  const candles = useMemo(() => genCandles(TF_BARS[tf] || 64, base), [base, tf]);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {

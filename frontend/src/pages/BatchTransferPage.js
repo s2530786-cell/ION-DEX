@@ -4,19 +4,22 @@ import { api, fmt } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
 import { toast } from "sonner";
 
+let _rid = 0;
+const newRow = () => ({ id: ++_rid, to: "", amount: "" });
+
 export default function BatchTransferPage() {
   const { address, sendTx } = useWallet();
   const [token, setToken] = useState("ION");
-  const [rows, setRows] = useState([{ to: "", amount: "" }]);
+  const [rows, setRows] = useState([newRow()]);
 
-  const addRow = () => setRows([...rows, { to: "", amount: "" }]);
+  const addRow = () => setRows([...rows, newRow()]);
   const update = (i, k, v) => setRows(rows.map((r, idx) => (idx === i ? { ...r, [k]: v } : r)));
   const remove = (i) => setRows(rows.filter((_, idx) => idx !== i));
 
   const parseCsv = (text) => {
     const parsed = text.split("\n").map((l) => l.trim()).filter(Boolean).map((l) => {
       const [to, amount] = l.split(/[,\s]+/);
-      return { to: to || "", amount: amount || "" };
+      return { id: ++_rid, to: to || "", amount: amount || "" };
     });
     if (parsed.length) setRows(parsed);
   };
@@ -27,7 +30,7 @@ export default function BatchTransferPage() {
     const recipients = rows.filter((r) => r.to && r.amount).map((r) => ({ to: r.to, amount: parseFloat(r.amount) }));
     if (recipients.length === 0) { toast.error("Add at least one valid recipient"); return; }
     const r = await sendTx("Batch Transfer", () => api.batchTransfer({ address, token, recipients }));
-    if (r) { setRows([{ to: "", amount: "" }]); toast.success(`Sent to ${recipients.length} recipients`); }
+    if (r) { setRows([newRow()]); toast.success(`Sent to ${recipients.length} recipients`); }
   };
 
   return (
@@ -42,7 +45,7 @@ export default function BatchTransferPage() {
             </select>
           </div>
           {rows.map((r, i) => (
-            <div key={i} className="flex gap-2 mb-3" data-testid={`batch-row-${i}`}>
+            <div key={r.id} className="flex gap-2 mb-3" data-testid={`batch-row-${i}`}>
               <input value={r.to} onChange={(e) => update(i, "to", e.target.value)} placeholder="0x recipient address" className="neon-input" style={{ height: 48, flex: 2, fontSize: 13 }} data-testid={`batch-to-${i}`} />
               <input value={r.amount} onChange={(e) => update(i, "amount", e.target.value)} type="number" placeholder="Amount" className="neon-input" style={{ height: 48, flex: 1 }} data-testid={`batch-amount-${i}`} />
               <button onClick={() => remove(i)} className="ghost-btn" style={{ height: 48, width: 48, padding: 0 }}>✕</button>

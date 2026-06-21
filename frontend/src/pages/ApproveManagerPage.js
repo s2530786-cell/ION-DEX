@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Panel, GhostButton, PageHeader, Icon, Risk, Loader } from "../components/kit";
 import { api } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
@@ -7,8 +7,8 @@ export default function ApproveManagerPage() {
   const { address, sendTx } = useWallet();
   const [items, setItems] = useState([]);
 
-  const load = () => api.approvals(address || "demo").then(setItems);
-  useEffect(() => { load(); }, [address]);
+  const load = useCallback(() => api.approvals(address || "demo").then(setItems), [address]);
+  useEffect(() => { load(); }, [load]);
 
   const revoke = async (a) => {
     const r = await sendTx(`Revoke ${a.token}`, () => api.revoke({ id: a.id }));
