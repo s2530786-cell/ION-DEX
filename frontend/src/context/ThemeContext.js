@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 export const THEMES = [
-  { id: "deepspace", name: "Deep Space", swatch: ["#00ffff", "#6020ff", "#ff00ff"] },
+  { id: "deepspace", name: "Deep Space", swatch: ["#00F5FF", "#9D4EDD", "#FF007A"] },
   { id: "aurora", name: "Aurora", swatch: ["#00ff88", "#00ffff", "#6020ff"] },
   { id: "nebula", name: "Sunset Nebula", swatch: ["#ff00ff", "#ffd166", "#ff4466"] },
   { id: "quantum", name: "Quantum Violet", swatch: ["#a020ff", "#6020ff", "#00ffff"] },
