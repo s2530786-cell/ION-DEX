@@ -12,6 +12,16 @@ export const SCENES = [
   { id: "banff", img: "/assets/bg/scene_banff.jpg", name: "Moraine Lake" },
   { id: "sahara", img: "/assets/bg/scene_sahara.jpg", name: "Sahara" },
   { id: "guilin", img: "/assets/bg/scene_guilin.jpg", name: "Guilin" },
+  { id: "norway", img: "/assets/bg/scene_norway.jpg", name: "Norway Fjord" },
+  { id: "nz", img: "/assets/bg/scene_nz.jpg", name: "Milford Sound" },
+  { id: "bora", img: "/assets/bg/scene_bora.jpg", name: "Bora Bora" },
+  { id: "patagonia", img: "/assets/bg/scene_patagonia.jpg", name: "Patagonia" },
+  { id: "tuscany", img: "/assets/bg/scene_tuscany.jpg", name: "Tuscany" },
+  { id: "louise", img: "/assets/bg/scene_louise.jpg", name: "Lake Louise" },
+  { id: "antelope", img: "/assets/bg/scene_antelope.jpg", name: "Antelope Canyon" },
+  { id: "halong", img: "/assets/bg/scene_halong.jpg", name: "Halong Bay" },
+  { id: "plitvice", img: "/assets/bg/scene_plitvice.jpg", name: "Plitvice Lakes" },
+  { id: "cappadocia", img: "/assets/bg/scene_cappadocia.jpg", name: "Cappadocia" },
 ];
 
 // 3D dynamic world-scenery slideshow (Ken-Burns + pointer parallax) with procedural aurora alt.
