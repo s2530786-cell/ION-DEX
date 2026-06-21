@@ -5,8 +5,12 @@ export const SCENES = [
   { id: "iceland", img: "/assets/bg/scene_iceland.jpg", name: "Iceland Aurora" },
   { id: "santorini", img: "/assets/bg/scene_santorini.jpg", name: "Santorini" },
   { id: "fuji", img: "/assets/bg/scene_fuji.jpg", name: "Mount Fuji" },
+  { id: "dubai", img: "/assets/bg/scene_dubai.jpg", name: "Dubai" },
+  { id: "swiss", img: "/assets/bg/scene_swiss.jpg", name: "Swiss Alps" },
   { id: "maldives", img: "/assets/bg/scene_maldives.jpg", name: "Maldives" },
+  { id: "zhangjiajie", img: "/assets/bg/scene_zhangjiajie.jpg", name: "Zhangjiajie" },
   { id: "banff", img: "/assets/bg/scene_banff.jpg", name: "Moraine Lake" },
+  { id: "sahara", img: "/assets/bg/scene_sahara.jpg", name: "Sahara" },
   { id: "guilin", img: "/assets/bg/scene_guilin.jpg", name: "Guilin" },
 ];
 
