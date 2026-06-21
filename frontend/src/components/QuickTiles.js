@@ -17,7 +17,7 @@ export default function QuickTiles() {
         <button key={t.to} onClick={() => navigate(t.to)} className="neon-tile text-left" style={{ "--tile-color": t.color }} data-testid={`tile-${t.label.toLowerCase().replace(" ", "-")}`}>
           <span className="tile-glow" />
           <div className="flex flex-col items-center" style={{ position: "relative", zIndex: 1 }}>
-            <img src={`/assets/icons/${t.gem}`} alt={t.label} width={86} height={86} style={{ width: 86, height: 86, objectFit: "contain", filter: `drop-shadow(0 6px 18px ${t.color})` }} />
+            <img src={`/assets/icons/${t.gem}`} alt={t.label} width={96} height={96} className="gem-float" style={{ width: 96, height: 96, objectFit: "contain", filter: `drop-shadow(0 10px 22px ${t.color})` }} />
             <div className="mt-2" style={{ fontWeight: 700, fontSize: 16 }}>{t.label}</div>
             <div style={{ fontSize: 11, color: "var(--text-dim)" }}>{t.sub}</div>
           </div>

@@ -249,27 +249,46 @@ body {
     background: rgba(2, 4, 10, 0.55);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
-    transition: transform 300ms var(--ease), box-shadow 300ms var(--ease);
-    box-shadow: inset 0 0 22px rgba(96, 32, 255, 0.12), 0 8px 30px rgba(0, 0, 0, 0.45);
+    transform-style: preserve-3d;
+    transition: transform 320ms var(--ease), box-shadow 320ms var(--ease);
+    box-shadow:
+      0 3px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 60%, #000),
+      0 6px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 46%, #000),
+      0 9px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 34%, #000),
+      0 12px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 24%, #000),
+      0 15px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 16%, #000),
+      0 22px 30px rgba(0, 0, 0, 0.65),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 0 26px rgba(96, 32, 255, 0.16),
+      0 0 34px var(--tile-color, var(--cyan));
   }
   .neon-tile::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    padding: 1.6px;
-    background: linear-gradient(140deg, var(--tile-color, var(--cyan)), color-mix(in srgb, var(--tile-color, var(--cyan)) 30%, transparent));
+    padding: 2px;
+    background: linear-gradient(140deg, var(--tile-color, var(--cyan)), color-mix(in srgb, var(--tile-color, var(--cyan)) 25%, transparent));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     pointer-events: none;
+    filter: drop-shadow(0 0 5px var(--tile-color, var(--cyan)));
   }
   .neon-tile:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow: inset 0 0 26px rgba(96, 32, 255, 0.2), 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 34px var(--tile-color, var(--cyan));
+    transform: translateY(-8px) scale(1.03);
+    box-shadow:
+      0 3px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 60%, #000),
+      0 6px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 48%, #000),
+      0 9px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 38%, #000),
+      0 12px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 30%, #000),
+      0 16px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 22%, #000),
+      0 20px 0 color-mix(in srgb, var(--tile-color, var(--cyan)) 14%, #000),
+      0 30px 40px rgba(0, 0, 0, 0.7),
+      0 0 50px var(--tile-color, var(--cyan));
   }
   .tile-glow {
     position: absolute;
@@ -311,8 +330,10 @@ body {
 /* 3D perspective depth — panels converge toward center like the design template */
 .depth-left { transform: perspective(1700px) rotateY(5deg) translateZ(-22px); transform-origin: right center; transition: transform 400ms var(--ease); }
 .depth-right { transform: perspective(1700px) rotateY(-5deg) translateZ(-22px); transform-origin: left center; transition: transform 400ms var(--ease); }
-.depth-bottom { transform: perspective(2200px) rotateX(7deg) translateZ(-30px); transform-origin: center top; transition: transform 400ms var(--ease); }
+.depth-bottom { transform: perspective(2000px) rotateX(11deg) translateZ(-40px); transform-origin: center top; transition: transform 400ms var(--ease); }
 .depth-left:hover, .depth-right:hover { transform: perspective(1700px) rotateY(0deg) translateZ(0); }
+.gem-float { animation: gemFloat 4.5s ease-in-out infinite; }
+@keyframes gemFloat { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-7px) rotate(1deg); } }
 @media (max-width: 1024px) {
   .depth-left, .depth-right, .depth-bottom { transform: none !important; }
 }
