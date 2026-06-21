@@ -88,7 +88,7 @@ export default function NeonCandlestickChart({ height = 440, pair = "ION/USDT", 
     const maxVol = Math.max(...data.map((c) => c.vol));
     data.forEach((c, i) => {
       const vh = (c.vol / maxVol) * (chartH * 0.18);
-      ctx.fillStyle = c.close >= c.open ? "rgba(0,255,255,0.18)" : "rgba(255,46,154,0.16)";
+      ctx.fillStyle = c.close >= c.open ? "rgba(0,245,255,0.18)" : "rgba(123,44,191,0.18)";
       const bw = (chartW / data.length) * 0.6;
       ctx.fillRect(x(i) - bw / 2, padT + chartH - vh, bw, vh);
     });
@@ -97,7 +97,7 @@ export default function NeonCandlestickChart({ height = 440, pair = "ION/USDT", 
     const cw = Math.max(2, (chartW / data.length) * 0.62);
     data.forEach((c, i) => {
       const up = c.close >= c.open;
-      const col = up ? "#00ffff" : "#ff2e9a";
+      const col = up ? "#00F5FF" : "#7B2CBF";
       ctx.strokeStyle = col;
       ctx.fillStyle = col;
       ctx.shadowColor = col;
@@ -127,13 +127,13 @@ export default function NeonCandlestickChart({ height = 440, pair = "ION/USDT", 
       ctx.stroke(); ctx.shadowBlur = 0;
     };
     drawMA(ma(data, 7), "#ffd166");
-    drawMA(ma(data, 25), "#6020ff");
+    drawMA(ma(data, 25), "#9D4EDD");
 
     // last price line
     const lp = y(last.close);
-    ctx.strokeStyle = "rgba(0,255,255,0.5)"; ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(0,245,255,0.5)"; ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(padL, lp); ctx.lineTo(padL + chartW, lp); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle = "#00ffff"; ctx.fillRect(padL + chartW, lp - 9, padR, 18);
+    ctx.fillStyle = "#00F5FF"; ctx.fillRect(padL + chartW, lp - 9, padR, 18);
     ctx.fillStyle = "#001018"; ctx.textAlign = "left"; ctx.font = "700 11px 'JetBrains Mono', monospace";
     ctx.fillText(last.close.toFixed(4), padL + chartW + 6, lp);
   }, [candles, height, base, tick]);
@@ -158,9 +158,9 @@ export default function NeonCandlestickChart({ height = 440, pair = "ION/USDT", 
       </div>
       <div className="flex gap-3 mb-1" style={{ fontSize: 11 }}>
         <span style={{ color: "#ffd166" }}>— MA7</span>
-        <span style={{ color: "#6020ff" }}>— MA25</span>
-        <span style={{ color: "#00ffff" }}>▮ Up</span>
-        <span style={{ color: "#ff2e9a" }}>▮ Down</span>
+        <span style={{ color: "#9D4EDD" }}>— MA25</span>
+        <span style={{ color: "#00F5FF" }}>▮ Up</span>
+        <span style={{ color: "#7B2CBF" }}>▮ Down</span>
       </div>
       <canvas ref={ref} />
     </div>

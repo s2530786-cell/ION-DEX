@@ -30,6 +30,14 @@
   - 🟢 backend `server.py` 全部函数补充返回类型注解(无 def 缺注解);console 语句:src 内本就为 0
   - 未做:🟡 拆分 17 个长函数 / 降低 6 个函数复杂度 —— 多为内聚的工作函数(如 canvas 绘图、seed 数据),盲目拆分对设计敏感的可用应用有回归风险,留待用户按需指定
 
+- **[2026-06-21] 全站赛博霓虹换肤(按 Master 设计规范,作用于 16 页)**:
+  - 设计令牌化:`index.css :root` 替换为规范色值 — bg `#050811→#0B1220` 渐变、cyan `#00F5FF`、purple `#9D4EDD`/deep `#7B2CBF`、magenta `#FF007A`、blue `#3A86FF`、主文 `#FFFFFF`、副文 `#8A99AD`;新增 `--shadow-glass-cyan/magenta`、`--neon-glow` 玻璃阴影令牌
+  - 字体:引入 Orbitron,仅用于 Logo/导航/标题(`--font-display`),正文 Sora、数字 JetBrains Mono(可读性优先)
+  - 背景层(bgfx 极光/网格/霓虹叠加)、滚动条、选区、面板内发光统一到新霓虹色
+  - K 线 `NeonCandlestickChart`:涨 `#00F5FF` / 跌 `#7B2CBF`,MA25 `#9D4EDD`
+  - 截图验证 Swap/Dashboard/Stake/BatchTransfer 多版式渲染正常;5 张水晶卡保持竖版不倾斜(用户确认)
+  - 备注:SkinSwitcher 备用皮肤(aurora/nebula 等)保留;默认 deepspace 即新规范
+
 ## 待办 / Backlog (优先级)
 ### P0
 - [ ] 将 `NeonCandlestickChart` 应用到 `TradeProPage`(目前仅 Swap 页)
