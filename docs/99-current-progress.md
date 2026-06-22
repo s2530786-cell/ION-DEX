@@ -1,5 +1,51 @@
 # Current Progress
 
+## 2026-06-23 root-level FunC audit / funding integrity fixes
+
+- **Audit gap closed**: reviewed the four root-level FunC drafts that were not covered by `contracts/audit/2026-06-22-bsc-audit-round-1.md`:
+  - `contracts/ion_cross_border_payment_v6.fc`
+  - `contracts/ion_ecommerce_escrow_v6.fc`
+  - `contracts/ion_mmr_ledger_v6.fc`
+  - `contracts/ion_multichain_gateway_v6.fc`
+- **New audit record**:
+  - `contracts/audit/2026-06-23-func-audit-round-2.md`
+- **Fixed vulnerabilities**:
+  - `contracts/ion_cross_border_payment_v6.fc`: merchant crediting now requires real attached value; merchant withdrawal replay is blocked; bounced withdrawal restores balance and clears the consumed withdrawal marker.
+  - `contracts/ion_ecommerce_escrow_v6.fc`: escrow dispatch now requires real attached value; duplicate `order_id` is rejected; bounced seller/refund payouts carry metadata and are redirected to arbitration sink.
+  - `contracts/ion_multichain_gateway_v6.fc`: cross-chain deposit now requires real attached value; duplicate synthetic orders are rejected; downstream routing keeps order context until callback success and bounce rollback can recover the exact order.
+- **Residual risks recorded**:
+  - `contracts/ion_mmr_ledger_v6.fc` still allows overwrite of live commit entries for the same `query_id`.
+  - The root-level FunC drafts still lack dedicated automated test suites in this repo and remain centralized around a trusted operator/governor.
+- **Verification**:
+  - `cd contracts && D:\openclaw-data\workspace\func.exe -o build-cross-border.fif -SPA imports/stdlib.fc ion_cross_border_payment_v6.fc` -> exit `0`
+  - `cd contracts && D:\openclaw-data\workspace\func.exe -o build-ecommerce-escrow.fif -SPA imports/stdlib.fc ion_ecommerce_escrow_v6.fc` -> exit `0`
+  - `cd contracts && D:\openclaw-data\workspace\func.exe -o build-multichain-gateway.fif -SPA imports/stdlib.fc ion_multichain_gateway_v6.fc` -> exit `0`
+  - `cd contracts && D:\openclaw-data\workspace\func.exe -o build-mmr-ledger.fif -SPA imports/stdlib.fc ion_mmr_ledger_v6.fc` -> exit `0`
+  - `D:\openclaw-tools\foundry\bin\forge.exe test --root contracts --match-path "test/*.t.sol" --no-match-path "lib/**" -vv` -> **43 passed, 0 failed**
+
+## 2026-06-22 contracts audit / exploit fixes
+
+- **Audit baseline**: `contracts/audit/` did not exist. Initialized it with [`contracts/audit/README.md`](../contracts/audit/README.md) and [`contracts/audit/2026-06-22-bsc-audit-round-1.md`](../contracts/audit/2026-06-22-bsc-audit-round-1.md), and consolidated prior scattered evidence from `contracts/ion/FIX_LOG.md`.
+- **Verify gate hotfix**: `scripts/verify-100.ps1`, `scripts/verify-100-watch-and-ship.ps1`, and `scripts/verify-100-until-green.ps1` now write UTF-8 without BOM under Windows PowerShell 5.1; root `README.md` was normalized back to no-BOM to remove the reproducible verify-100 encoding self-corruption.
+- **Fixed vulnerabilities**:
+  - `contracts/bsc/BridgeRelay.sol`: enforced distinct-relayer quorum before release; rejected duplicate attestations; guarded relayer removal below quorum.
+  - `contracts/bsc/Dividend.sol`: removed arbitrary user share mint path; introduced `shareManager`-gated `stakeFor/unstakeFor`.
+  - `contracts/bsc/DexSwap.sol`: corrected payout source to pool settlement path and switched pricing to pre-swap reserves.
+  - `contracts/bsc/LiquidityPool.sol`: corrected LP mint denominator to pre-deposit reserves; added DEX-only payout function.
+  - `contracts/bsc/BatchTransfer.sol`: added exact `msg.value` accounting to prevent trapped native funds.
+- **Added tests**:
+  - `contracts/test/AuditFixes.t.sol`
+  - `contracts/test/Dividend.t.sol`
+- **Verification**:
+  - `powershell -ExecutionPolicy Bypass -File scripts/check-encoding.ps1 -Path contracts` -> scanned `858` files, all UTF-8 without BOM, no NUL.
+  - `powershell -ExecutionPolicy Bypass -File scripts/check-encoding.ps1` -> scanned `5327` files, all UTF-8 without BOM, no NUL.
+  - `D:\openclaw-tools\foundry\bin\forge.exe test --root contracts --match-path "test/*.t.sol" --no-match-path "lib/**" -vv` -> **43 passed, 0 failed**.
+  - Raw `forge test -C contracts` still fails in this repo because vendored `contracts/lib/openzeppelin-contracts/` upstream test/fv trees reference missing external fixtures; documented as a repo-layout issue, not a regression from this patch.
+- **Residual risks recorded**:
+  - `contracts/bsc/NFTAuction.sol` royalty recipient semantics are incomplete and can trap royalty value.
+  - `contracts/bsc/OrderBook.sol` has unbounded read scaling in `getUserOrders()`.
+  - `contracts/bsc/Burn.sol` and `contracts/bsc/VaultLock.sol` remain preview-only and non-production-safe.
+
 ## 2026-06-19 root validate / audit harness 收口
 
 - **问题**：`make audit` 在当前 Windows 环境不可用（`make` 不在 PATH）；根项目等价门禁 `npm run validate` 初次失败，因为 `package.json` 将 Python 文件 `agent_harness.py` 交给 `node` 执行。

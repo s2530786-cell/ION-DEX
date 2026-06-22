@@ -1,4 +1,21 @@
 # Current Session State
+## 当前附加任务 - root-level FunC audit round 2（2026-06-23）
+- **范围**：补齐 `contracts/audit/` 缺口，审查未纳入现有审计目录的 4 个根部 FunC 草案：`ion_cross_border_payment_v6.fc`、`ion_ecommerce_escrow_v6.fc`、`ion_mmr_ledger_v6.fc`、`ion_multichain_gateway_v6.fc`。
+- **已修复**：
+  - `ion_cross_border_payment_v6.fc`：`offline_invoice_pay` 现在强制 `msg_value >= payment_amount_ion`；新增提现重放消费记录；提现 bounced 时回补商户余额并清除消费标记。
+  - `ion_ecommerce_escrow_v6.fc`：`business_dispatch` 现在强制 `msg_value >= total_ion`；拒绝重复 `order_id`；退款/放款外发带回滚元数据，bounced 时导向人工仲裁地址。
+  - `ion_multichain_gateway_v6.fc`：`cross_chain_deposit` 现在强制 `msg_value >= deposit_amount`；`order_hash` 绑定 `query_id`；执行路由时不再先删订单，改为 `in_flight`，成功回调后再结算删除，bounce 可精确退款。
+- **审计记录**：新增 `contracts/audit/2026-06-23-func-audit-round-2.md`，并更新 `contracts/audit/README.md`。
+- **验证证据**：
+  - `cd contracts && D:\openclaw-data\workspace\func.exe -o build-cross-border.fif -SPA imports/stdlib.fc ion_cross_border_payment_v6.fc` -> exit `0`
+  - `cd contracts && D:\openclaw-data\workspace\func.exe -o build-ecommerce-escrow.fif -SPA imports/stdlib.fc ion_ecommerce_escrow_v6.fc` -> exit `0`
+  - `cd contracts && D:\openclaw-data\workspace\func.exe -o build-multichain-gateway.fif -SPA imports/stdlib.fc ion_multichain_gateway_v6.fc` -> exit `0`
+  - `cd contracts && D:\openclaw-data\workspace\func.exe -o build-mmr-ledger.fif -SPA imports/stdlib.fc ion_mmr_ledger_v6.fc` -> exit `0`
+  - `D:\openclaw-tools\foundry\bin\forge.exe test --root contracts --match-path "test/*.t.sol" --no-match-path "lib/**" -vv` -> **43 passed, 0 failed**
+- **残余风险**：
+  - `ion_mmr_ledger_v6.fc` 仍允许同一 `query_id` 的 live commit 被覆盖，需后续补唯一性/过期清理。
+  - 这 4 个根部 FunC 草案仍无专门自动化测试套件，且治理面仍然中心化。
+- **下一步**：执行 `scripts/check-encoding.ps1 -Path contracts`，仅暂存本次相关文件并 `git commit/push`；不要夹带工作区其他既有 dirty 文件。
 
 ## 当前附加任务 — root validate / audit harness 收口（2026-06-19）
 

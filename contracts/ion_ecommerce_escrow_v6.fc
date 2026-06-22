@@ -19,6 +19,8 @@ const int err::order_already_settled = 505;
 const int err::integer_overflow = 506;
 const int err::flash_loan_violation = 507;
 const int err::price_manipulation = 508;
+const int err::insufficient_attached_value = 509;
+const int err::duplicate_order = 510;
 
 const int DEFAULT_LEASE_PERIOD = 604800;
 const int MIN_DISPATCH_INTERVAL = 60;
@@ -67,20 +69,15 @@ const int MIN_DISPATCH_INTERVAL = 60;
             int bounced_op = in_msg_body~load_uint(32);
             int bounced_qid = in_msg_body~load_uint(64);
 
-            ;; Refund bounced: funds returned to contract, fallback to platform fee addr
-            if (bounced_op == op::trigger_refund) {
-                if (in_msg_body.slice_bits() >= 256) {
-                    int order_id = in_msg_body~load_uint(256);
-                    ;; Order deleted, funds returned to contract balance
-                    ;; Fallback: route to platform fee addr for manual arbitration
-                }
-            }
-
-            ;; Confirm delivery bounced: same handling
-            if (bounced_op == op::confirm_delivery) {
-                if (in_msg_body.slice_bits() >= 256) {
-                    int order_id = in_msg_body~load_uint(256);
-                }
+            ;; Seller / buyer payouts that bounce are redirected for manual arbitration
+            if (((bounced_op == op::trigger_refund) | (bounced_op == op::confirm_delivery)) & (msg_value > 0)) {
+                cell arbitration_msg = begin_cell()
+                    .store_uint(0x10, 6)
+                    .store_slice(platform_fee_addr)
+                    .store_coins(msg_value)
+                    .store_uint(0, 107)
+                    .end_cell();
+                send_raw_message(arbitration_msg, 1);
             }
         }
 
@@ -106,6 +103,11 @@ const int MIN_DISPATCH_INTERVAL = 60;
         slice buyer_address = in_msg_body~load_msg_addr();
         slice seller_address = in_msg_body~load_msg_addr();
         int fee_bps = in_msg_body~load_uint(16);
+
+        throw_if(err::insufficient_attached_value, msg_value < total_ion);
+
+        (_, int order_exists) = escrow_vault.udict_get?(256, order_id);
+        throw_if(err::duplicate_order, order_exists);
 
         ;; V6: Oracle manipulation protection - validate fee_bps range
         throw_if(err::price_manipulation, fee_bps > 1000);  ;; Max 10% fee
@@ -137,8 +139,8 @@ const int MIN_DISPATCH_INTERVAL = 60;
         slice seller = escrow_slice~load_msg_addr();
         int total_ion = escrow_slice~load_coins();
         int fee_bps = escrow_slice~load_uint(16);
-        _ = escrow_slice~load_uint(32);  ;; lease_deadline
-        _ = escrow_slice~load_uint(32);  ;; dispatch_timestamp (V6)
+        int lease_deadline = escrow_slice~load_uint(32);
+        int dispatch_timestamp = escrow_slice~load_uint(32);
         int is_settled = escrow_slice~load_uint(2);
 
         throw_if(err::order_already_settled, is_settled == 1);
@@ -163,11 +165,18 @@ const int MIN_DISPATCH_INTERVAL = 60;
         }
 
         ;; Mode 64: final seller settlement
+        cell seller_body = begin_cell()
+            .store_uint(op::confirm_delivery, 32)
+            .store_uint(query_id, 64)
+            .store_uint(order_id, 256)
+            .end_cell();
+
         cell msg_seller = begin_cell()
             .store_uint(0x10, 6)
             .store_slice(seller)
             .store_coins(seller_revenue)
-            .store_uint(0, 107)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+            .store_ref(seller_body)
             .end_cell();
         send_raw_message(msg_seller, 64);
         return ();
@@ -180,9 +189,9 @@ const int MIN_DISPATCH_INTERVAL = 60;
         throw_unless(err::order_already_settled, found);
 
         slice buyer = escrow_slice~load_msg_addr();
-        _ = escrow_slice~load_msg_addr();
+        slice seller = escrow_slice~load_msg_addr();
         int total_ion = escrow_slice~load_coins();
-        _ = escrow_slice~load_uint(16);
+        int fee_bps = escrow_slice~load_uint(16);
         int lease_deadline = escrow_slice~load_uint(32);
 
         ifnot (equal_slice_bits(sender_address, super_hub)) {
@@ -192,11 +201,18 @@ const int MIN_DISPATCH_INTERVAL = 60;
         escrow_vault~udict_delete?(256, order_id);
         save_escrow_storage(super_hub, platform_fee_addr, escrow_vault, last_dispatch_ts);
 
+        cell refund_body = begin_cell()
+            .store_uint(op::trigger_refund, 32)
+            .store_uint(query_id, 64)
+            .store_uint(order_id, 256)
+            .end_cell();
+
         cell msg_refund = begin_cell()
             .store_uint(0x10, 6)
             .store_slice(buyer)
             .store_coins(total_ion)
-            .store_uint(0, 107)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+            .store_ref(refund_body)
             .end_cell();
 
         send_raw_message(msg_refund, 64);
