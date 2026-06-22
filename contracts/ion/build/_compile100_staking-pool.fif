@@ -1,0 +1,485 @@
+"Asm.fif" include
+// automatically generated from `D:/openclaw-data/workspace/ion-official/ion/crypto/smartcont/stdlib.fc` `common/gas.fc` `common/common.fc` `staking-pool.fc` 
+PROGRAM{
+  DECLPROC ctx::init
+  DECLPROC ctx::body
+  DECLPROC ctx::sender
+  DECLPROC ctx::opcode
+  DECLPROC ctx::isBounced
+  DECLPROC ctx::balance
+  DECLPROC ctx::fwdFee
+  DECLPROC ctx::value
+  DECLPROC address::check_workchain
+  DECLPROC reserves::max_balance
+  DECLPROC equal_slices
+  DECLPROC sqrt
+  DECLPROC math::mul_div
+  DECLPROC amm::get_amount_out
+  DECLPROC msgs::send_simple
+  DECLPROC storage::load
+  DECLPROC storage::save
+  DECLPROC recv_internal
+  108033 DECLMETHOD get_staking_data
+  116282 DECLMETHOD get_staker_balance
+  DECLGLOBVAR ctx::body_slice
+  DECLGLOBVAR ctx::sender_slice
+  DECLGLOBVAR ctx::opcode_val
+  DECLGLOBVAR ctx::is_bounced
+  DECLGLOBVAR ctx::balance_val
+  DECLGLOBVAR ctx::fwd_fee_val
+  DECLGLOBVAR ctx::msg_value_val
+  DECLGLOBVAR storage::owner_address
+  DECLGLOBVAR storage::total_staked
+  DECLGLOBVAR storage::reward_per_token
+  DECLGLOBVAR storage::reward_balance
+  DECLGLOBVAR storage::stake_dict
+  ctx::init PROCINLINE:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    //  my_balance _4 in_msg_full in_msg_body
+    s0 s2 XCHG	//  my_balance in_msg_body in_msg_full _4
+    ctx::msg_value_val SETGLOB	//  _5 in_msg_body in_msg_full
+    s0 s2 XCHG	//  in_msg_full in_msg_body _5
+    ctx::balance_val SETGLOB
+    DUP	//  in_msg_full in_msg_body _6
+    ctx::body_slice SETGLOB
+    32 PLDU	//  in_msg_full _9
+    ctx::opcode_val SETGLOB
+    CTOS	//  cs
+    4 LDU	//  flags cs
+    SWAP
+    1 PUSHINT	//  cs flags _16=1
+    AND	//  cs _18
+    ctx::is_bounced SETGLOB
+    LDMSGADDR	//  _21 cs
+    SWAP	//  cs _21
+    ctx::sender_slice SETGLOB
+    LDMSGADDR	//  _39 _38
+    NIP	//  cs
+    LDGRAMS	//  _41 _40
+    NIP	//  cs
+    1 LDU	//  _43 _42
+    NIP	//  cs
+    LDGRAMS	//  _45 _44
+    NIP	//  cs
+    LDGRAMS	//  _47 _46
+    DROP	//  _33
+    ctx::fwd_fee_val SETGLOB
+  }>
+  ctx::body PROCINLINE:<{
+    // 
+    ctx::body_slice GETGLOB	//  _0
+  }>
+  ctx::sender PROCINLINE:<{
+    // 
+    ctx::sender_slice GETGLOB	//  _0
+  }>
+  ctx::opcode PROCINLINE:<{
+    // 
+    ctx::opcode_val GETGLOB	//  _0
+  }>
+  ctx::isBounced PROCINLINE:<{
+    // 
+    ctx::is_bounced GETGLOB	//  _0
+  }>
+  ctx::balance PROCINLINE:<{
+    // 
+    ctx::balance_val GETGLOB	//  _0
+  }>
+  ctx::fwdFee PROCINLINE:<{
+    // 
+    ctx::fwd_fee_val GETGLOB	//  _0
+  }>
+  ctx::value PROCINLINE:<{
+    // 
+    ctx::msg_value_val GETGLOB	//  _0
+  }>
+  address::check_workchain PROCINLINE:<{
+    //  addr expected_workchain
+    SWAP	//  expected_workchain addr
+    8 PLDI	//  expected_workchain wc
+    SWAP	//  wc expected_workchain
+    EQUAL	//  _5
+    IF:<{	// 
+      -1 PUSHINT	//  _6=-1
+    }>ELSE<{	// 
+      0 PUSHINT	//  _6=0
+    }>
+  }>
+  reserves::max_balance PROCINLINE:<{
+    //  amount
+    2 PUSHINT	//  amount _1=2
+    RAWRESERVE
+  }>
+  equal_slices PROCINLINE:<{
+    //  a b
+    SDEQ	//  _2
+  }>
+  sqrt PROCINLINE:<{
+    //  x
+    DUP	//  x x
+    1 LESSINT	//  x _2
+    IF:<{	//  x
+      DROP	// 
+      0 PUSHINT	//  _3=0
+    }>ELSE<{	//  x
+      DUP	//  x z
+      0 PUSHINT	//  x z i=0
+      WHILE:<{
+        DUP	//  x z i i
+        32 LESSINT	//  x z i _8
+      }>DO<{	//  x z i
+        INC	//  x z i
+        s2 s1 PUSH2	//  x z i x z
+        DIV	//  x z i _11
+        s1 s2 XCHG	//  x i z _11
+        ADD	//  x i _12
+        1 RSHIFT#	//  x i z
+        SWAP	//  x z i
+      }>	//  x z i
+      DROP
+      NIP	//  z
+    }>
+  }>
+  math::mul_div PROCINLINE:<{
+    //  a b denom
+    DUP	//  a b denom denom
+    0 GTINT	//  a b denom _5
+    101 THROWIFNOT
+    MULDIV	//  _7
+  }>
+  amm::get_amount_out PROCINLINE:<{
+    //  amount_in reserve_in reserve_out fee_num fee_denom
+    s4 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom amount_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _7
+    101 THROWIFNOT
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom reserve_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom _11 reserve_out
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11 _13
+    AND	//  amount_in reserve_in reserve_out fee_num fee_denom _14
+    113 THROWIFNOT
+    s2 s4 XCHG	//  reserve_out reserve_in amount_in fee_num fee_denom
+    math::mul_div INLINECALLDICT	//  reserve_out reserve_in amount_in_with_fee
+    s0 s2 PUXC	//  amount_in_with_fee reserve_in amount_in_with_fee reserve_out
+    MUL	//  amount_in_with_fee reserve_in numerator
+    s0 s2 XCHG	//  numerator reserve_in amount_in_with_fee
+    ADD	//  numerator denominator
+    DUP	//  numerator denominator denominator
+    0 GTINT	//  numerator denominator _24
+    106 THROWIFNOT
+    DIV	//  _26
+  }>
+  msgs::send_simple PROCINLINE:<{
+    //  mode to body send_mode
+    0 PUSHINT	//  mode to body send_mode _4=0
+    1 PUSHINT	//  mode to body send_mode _4=0 _5=1
+    s0 s2 XCHG
+    NEWC	//  mode to body _5=1 _4=0 send_mode _6
+    8 STU	//  mode to body _5=1 _4=0 _8
+    s0 s4 XCHG2	//  mode _4=0 body _5=1 _8 to
+    STSLICER	//  mode _4=0 body _5=1 _9
+    s0 s4 XCHG2	//  _5=1 _4=0 body _9 mode
+    STGRAMS	//  _5=1 _4=0 body _10
+    s1 s3 XCHG	//  body _4=0 _5=1 _10
+    1 STU	//  body _4=0 _12
+    1 STU	//  body _14
+    STREF	//  _15
+    ENDC	//  _16
+    2 PUSHINT	//  _16 _17=2
+    SENDRAWMSG
+  }>
+  storage::load PROCINLINE:<{
+    // 
+    c4 PUSH	//  _1
+    CTOS	//  ds
+    LDMSGADDR	//  _5 ds
+    SWAP	//  ds _5
+    storage::owner_address SETGLOB
+    LDGRAMS	//  _8 ds
+    SWAP	//  ds _8
+    storage::total_staked SETGLOB
+    128 LDU	//  _12 ds
+    SWAP	//  ds _12
+    storage::reward_per_token SETGLOB
+    LDGRAMS	//  _15 ds
+    SWAP	//  ds _15
+    storage::reward_balance SETGLOB
+    LDDICT	//  _18 ds
+    SWAP	//  ds _18
+    storage::stake_dict SETGLOB
+    ENDS
+  }>
+  storage::save PROCREF:<{
+    // 
+    storage::stake_dict GETGLOB	//  _0
+    storage::reward_per_token GETGLOB	//  _0 _1
+    NEWC	//  _0 _1 _2
+    storage::owner_address GETGLOB	//  _0 _1 _2 _3
+    STSLICER	//  _0 _1 _4
+    storage::total_staked GETGLOB	//  _0 _1 _4 _5
+    STGRAMS	//  _0 _1 _6
+    128 STU	//  _0 _8
+    storage::reward_balance GETGLOB	//  _0 _8 _9
+    STGRAMS	//  _0 _10
+    STDICT	//  _11
+    ENDC	//  _12
+    c4 POP
+  }>
+  recv_internal PROC:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    DUP	//  my_balance msg_value in_msg_full in_msg_body in_msg_body
+    SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
+    103 THROWIF
+    ctx::init INLINECALLDICT
+    ctx::isBounced INLINECALLDICT	//  _8
+    IFJMP:<{	// 
+    }>	// 
+    ctx::sender INLINECALLDICT	//  _10
+    0 PUSHINT	//  _10 _11=0
+    address::check_workchain INLINECALLDICT	//  _12
+    104 THROWIFNOT
+    storage::load INLINECALLDICT
+    ctx::opcode INLINECALLDICT	//  _15
+    1616161616 PUSHINT	//  _15 _16=1616161616
+    EQUAL	//  _17
+    IFJMP:<{	// 
+      ctx::body INLINECALLDICT	//  body
+      64 LDU	//  _253 _252
+      DROP	//  query_id
+      ctx::value INLINECALLDICT	//  query_id amount
+      ctx::sender INLINECALLDICT	//  query_id amount staker
+      OVER	//  query_id amount staker amount
+      0 GTINT	//  query_id amount staker _30
+      101 THROWIFNOT
+      DUP	//  query_id amount staker staker
+      HASHSU	//  query_id amount staker key
+      storage::stake_dict GETGLOB	//  query_id amount staker key _36
+      s1 s(-1) PUXC
+      8 PUSHPOW2	//  query_id amount staker key key _36 _37=256
+      DICTUGET
+      NULLSWAPIFNOT	//  query_id amount staker key entry found
+      0 PUSHINT	//  query_id amount staker key entry found staked=0
+      s0 s1 PUXC	//  query_id amount staker key entry reward_debt=0 staked=0 found
+      IF:<{	//  query_id amount staker key entry reward_debt=0 staked=0
+        2DROP	//  query_id amount staker key es
+        LDGRAMS	//  query_id amount staker key staked es
+        128 LDU	//  query_id amount staker key staked reward_debt es
+        ENDS
+      }>ELSE<{
+        s2 POP	//  query_id amount staker key staked reward_debt
+      }>
+      storage::total_staked GETGLOB	//  query_id amount staker key staked reward_debt _50
+      s5 PUSH	//  query_id amount staker key staked reward_debt _50 amount
+      ADD	//  query_id amount staker key staked reward_debt _52
+      storage::total_staked SETGLOB
+      s0 s4 XCHG	//  query_id reward_debt staker key staked amount
+      ADD	//  query_id reward_debt staker key staked
+      NEWC	//  query_id reward_debt staker key staked _55
+      OVER	//  query_id reward_debt staker key staked _55 staked
+      STGRAMS	//  query_id reward_debt staker key staked _56
+      s1 s4 XCHG	//  query_id staked staker key reward_debt _56
+      128 STU	//  query_id staked staker key _58
+      ENDC	//  query_id staked staker key _59
+      CTOS	//  query_id staked staker key _60
+      storage::stake_dict GETGLOB	//  query_id staked staker key _60 _61
+      s1 s2 XCHG
+      8 PUSHPOW2	//  query_id staked staker _60 key _61 _62=256
+      DICTUSET	//  query_id staked staker _64
+      storage::stake_dict SETGLOB
+      storage::save INLINECALLDICT
+      0 PUSHINT	//  query_id staked staker _66=0
+      1616161616 PUSHINT	//  query_id staked staker _66=0 _67=1616161616
+      NEWC	//  query_id staked staker _66=0 _67=1616161616 _68
+      32 STU	//  query_id staked staker _66=0 _70
+      s1 s4 XCHG	//  _66=0 staked staker query_id _70
+      64 STU	//  _66=0 staked staker _72
+      ROT	//  _66=0 staker _72 staked
+      STGRAMS	//  _66=0 staker _73
+      ENDC	//  _66=0 staker _74
+      7 PUSHPOW2	//  _66=0 staker _74 _75=128
+      msgs::send_simple INLINECALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _77
+    1717171717 PUSHINT	//  _77 _78=1717171717
+    EQUAL	//  _79
+    IFJMP:<{	// 
+      ctx::body INLINECALLDICT	//  body
+      64 LDU	//  query_id body
+      LDGRAMS	//  query_id _263 _262
+      DROP	//  query_id amount
+      ctx::sender INLINECALLDICT	//  query_id amount staker
+      OVER	//  query_id amount staker amount
+      0 GTINT	//  query_id amount staker _93
+      101 THROWIFNOT
+      DUP	//  query_id amount staker staker
+      HASHSU	//  query_id amount staker key
+      storage::stake_dict GETGLOB	//  query_id amount staker key _99
+      s1 s(-1) PUXC
+      8 PUSHPOW2	//  query_id amount staker key key _99 _100=256
+      DICTUGET
+      NULLSWAPIFNOT	//  query_id amount staker key entry found
+      119 THROWIFNOT	//  query_id amount staker key es
+      LDGRAMS	//  query_id amount staker key staked es
+      128 LDU	//  query_id amount staker key staked reward_debt es
+      ENDS
+      s4 s1 PUSH2	//  query_id amount staker key staked reward_debt amount staked
+      LEQ	//  query_id amount staker key staked reward_debt _114
+      119 THROWIFNOT
+      s1 s4 XCPU	//  query_id amount staker key reward_debt staked amount
+      SUB	//  query_id amount staker key reward_debt staked
+      storage::total_staked GETGLOB	//  query_id amount staker key reward_debt staked _117
+      s5 PUSH	//  query_id amount staker key reward_debt staked _117 amount
+      SUB	//  query_id amount staker key reward_debt staked _119
+      storage::total_staked SETGLOB
+      DUP	//  query_id amount staker key reward_debt staked staked
+      0 EQINT	//  query_id amount staker key reward_debt staked _121
+      IF:<{	//  query_id amount staker key reward_debt staked
+        2DROP	//  query_id amount staker key
+        storage::stake_dict GETGLOB	//  query_id amount staker key _123
+        8 PUSHPOW2	//  query_id amount staker key _123 _124=256
+        DICTUDEL	//  query_id amount staker _270 _271
+        DROP	//  query_id amount staker _126
+        storage::stake_dict SETGLOB
+      }>ELSE<{	//  query_id amount staker key reward_debt staked
+        NEWC	//  query_id amount staker key reward_debt staked _128
+        SWAP	//  query_id amount staker key reward_debt _128 staked
+        STGRAMS	//  query_id amount staker key reward_debt _129
+        128 STU	//  query_id amount staker key _131
+        ENDC	//  query_id amount staker key _132
+        CTOS	//  query_id amount staker key _133
+        storage::stake_dict GETGLOB	//  query_id amount staker key _133 _134
+        s1 s2 XCHG
+        8 PUSHPOW2	//  query_id amount staker _133 key _134 _135=256
+        DICTUSET	//  query_id amount staker _137
+        storage::stake_dict SETGLOB
+      }>
+      storage::save INLINECALLDICT
+      0 PUSHINT	//  query_id amount staker _139=0
+      1717171717 PUSHINT	//  query_id amount staker _139=0 _140=1717171717
+      NEWC	//  query_id amount staker _139=0 _140=1717171717 _141
+      32 STU	//  query_id amount staker _139=0 _143
+      s1 s4 XCHG	//  _139=0 amount staker query_id _143
+      64 STU	//  _139=0 amount staker _145
+      ROT	//  _139=0 staker _145 amount
+      STGRAMS	//  _139=0 staker _146
+      ENDC	//  _139=0 staker _147
+      7 PUSHPOW2	//  _139=0 staker _147 _148=128
+      msgs::send_simple INLINECALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _150
+    1818181818 PUSHINT	//  _150 _151=1818181818
+    EQUAL	//  _152
+    IFJMP:<{	// 
+      ctx::body INLINECALLDICT	//  body
+      64 LDU	//  _273 _272
+      DROP	//  query_id
+      ctx::sender INLINECALLDICT	//  query_id staker
+      DUP	//  query_id staker staker
+      HASHSU	//  query_id staker key
+      storage::stake_dict GETGLOB	//  query_id staker key _165
+      s1 s(-1) PUXC
+      8 PUSHPOW2	//  query_id staker key key _165 _166=256
+      DICTUGET
+      NULLSWAPIFNOT	//  query_id staker key entry found
+      119 THROWIFNOT	//  query_id staker key es
+      LDGRAMS	//  query_id staker key staked es
+      128 LDU	//  query_id staker key staked reward_debt es
+      ENDS
+      storage::reward_per_token GETGLOB	//  query_id staker key staked reward_debt _180
+      s2 s(-1) PUXC
+      1 PUSHINT	//  query_id staker key staked reward_debt staked _180 _181=1
+      math::mul_div INLINECALLDICT	//  query_id staker key staked reward_debt _182
+      SWAP	//  query_id staker key staked _182 reward_debt
+      SUB	//  query_id staker key staked earned
+      DUP	//  query_id staker key staked earned earned
+      0 GTINT	//  query_id staker key staked earned _186
+      106 THROWIFNOT
+      storage::reward_balance GETGLOB	//  query_id staker key staked earned _189
+      s1 s(-1) PUXC	//  query_id staker key staked earned earned _189
+      LEQ	//  query_id staker key staked earned _190
+      101 THROWIFNOT
+      storage::reward_balance GETGLOB	//  query_id staker key staked earned _192
+      OVER	//  query_id staker key staked earned _192 earned
+      SUB	//  query_id staker key staked earned _194
+      storage::reward_balance SETGLOB
+      storage::reward_per_token GETGLOB	//  query_id staker key staked earned _196
+      s2 s(-1) PUXC
+      1 PUSHINT	//  query_id staker key staked earned staked _196 _197=1
+      math::mul_div INLINECALLDICT	//  query_id staker key staked earned new_debt
+      NEWC	//  query_id staker key staked earned new_debt _200
+      s0 s3 XCHG2	//  query_id staker key new_debt earned _200 staked
+      STGRAMS	//  query_id staker key new_debt earned _201
+      s1 s2 XCHG	//  query_id staker key earned new_debt _201
+      128 STU	//  query_id staker key earned _203
+      ENDC	//  query_id staker key earned _204
+      CTOS	//  query_id staker key earned _205
+      storage::stake_dict GETGLOB	//  query_id staker key earned _205 _206
+      s1 s3 s0 XCHG3
+      8 PUSHPOW2	//  query_id staker earned _205 key _206 _207=256
+      DICTUSET	//  query_id staker earned _209
+      storage::stake_dict SETGLOB
+      storage::save INLINECALLDICT
+      0 PUSHINT	//  query_id staker earned _211=0
+      1818181818 PUSHINT	//  query_id staker earned _211=0 _212=1818181818
+      NEWC	//  query_id staker earned _211=0 _212=1818181818 _213
+      32 STU	//  query_id staker earned _211=0 _215
+      s1 s4 XCHG	//  _211=0 staker earned query_id _215
+      64 STU	//  _211=0 staker earned _217
+      SWAP	//  _211=0 staker _217 earned
+      STGRAMS	//  _211=0 staker _218
+      ENDC	//  _211=0 staker _219
+      7 PUSHPOW2	//  _211=0 staker _219 _220=128
+      msgs::send_simple INLINECALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _222
+    1919191919 PUSHINT	//  _222 _223=1919191919
+    EQUAL	//  _224
+    IFJMP:<{	// 
+      ctx::sender INLINECALLDICT	//  _226
+      storage::owner_address GETGLOB	//  _226 _227
+      equal_slices INLINECALLDICT	//  _228
+      107 THROWIFNOT
+      ctx::value INLINECALLDICT	//  fund_amount
+      DUP	//  fund_amount fund_amount
+      0 GTINT	//  fund_amount _234
+      storage::total_staked GETGLOB	//  fund_amount _234 _235
+      0 GTINT	//  fund_amount _234 _237
+      AND	//  fund_amount _238
+      101 THROWIFNOT
+      storage::reward_balance GETGLOB	//  fund_amount _240
+      OVER	//  fund_amount _240 fund_amount
+      ADD	//  fund_amount _242
+      storage::reward_balance SETGLOB
+      storage::reward_per_token GETGLOB	//  fund_amount _243
+      1 PUSHINT	//  fund_amount _243 _244=1
+      storage::total_staked GETGLOB	//  fund_amount _243 _244=1 _245
+      s2 s3 XCHG	//  _243 fund_amount _244=1 _245
+      math::mul_div INLINECALLDICT	//  _243 _246
+      ADD	//  _248
+      storage::reward_per_token SETGLOB
+      storage::save INLINECALLDICT
+    }>	// 
+    105 THROW
+  }>
+  get_staking_data PROC:<{
+    // 
+    storage::load INLINECALLDICT
+    storage::owner_address GETGLOB	//  _1
+    storage::total_staked GETGLOB	//  _1 _2
+    storage::reward_per_token GETGLOB	//  _1 _2 _3
+    storage::reward_balance GETGLOB	//  _1 _2 _3 _4
+  }>
+  get_staker_balance PROC:<{
+    //  staker
+    storage::load INLINECALLDICT
+    HASHSU	//  key
+    storage::stake_dict GETGLOB	//  key _6
+    8 PUSHPOW2	//  key _6 _7=256
+    DICTUGET
+    NULLSWAPIFNOT	//  entry found
+    119 THROWIFNOT	//  es
+    LDGRAMS	//  _12 es
+    128 LDU	//  _12 _22 _21
+    DROP	//  _12 _14
+  }>
+}END>c

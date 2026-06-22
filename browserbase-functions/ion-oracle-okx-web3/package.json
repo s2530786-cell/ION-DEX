@@ -1,0 +1,13 @@
+{
+  "name": "ion-oracle-okx-web3",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bb dev index.ts",
+    "publish:function": "bb publish index.ts"
+  },
+  "dependencies": {
+    "@browserbasehq/sdk-functions": "1.0.1",
+    "playwright-core": "1.60.0"
+  }
+}

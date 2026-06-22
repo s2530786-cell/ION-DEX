@@ -1,0 +1,44 @@
+# ION-DEX 工程铁律 (Production Level)
+# TEMPERATURE 0.1: Deterministic & Strict
+# 最后通牒 — AI 必须遵守，不可绕过
+
+## 1. 强制工程工作流 (Mandatory Workflow)
+- 严禁直接提交代码。任何改动必须先通过 `make audit`。
+- 如果 AI 生成的代码导致 `make audit` 失败，AI 必须自动解析报错日志，进行自我修复，直到 `make audit` 返回 `SUCCESS` 为止。
+- 禁止使用任何非确定性逻辑。所有合约调用必须具备 Gas 边界处理。
+- ALL code must pass `npm run validate` before being committed or presented to the user.
+
+## 2. 视觉防错协议 (Visual Protocol)
+- 所有 UI 元素必须具备单元测试（Snapshot Testing）。
+- 严禁任何硬编码像素值，必须引用 `src/lib/design-tokens.ts`。
+- 若 UI 设计图发生变更，必须先更新 Token 定义，严禁修改组件内部 CSS。
+- Layouts MUST use `DEXGridHarness`. No arbitrary absolute/fixed positioning.
+
+## 3. 自动纠错闭环 (Self-Healing Loop)
+- 当且仅当 AI 无法通过 `make audit` 时，才允许向用户寻求干预。
+- 用户介入时，AI 必须提供：
+  1. 当前报错日志
+  2. 导致报错的根源代码
+  3. 修复方案
+- AI 自愈流程：
+  1. Analyze the specific violation line and the matched pattern.
+  2. Map the violation to a DesignToken key.
+  3. Replace the violation with the Token reference.
+  4. Re-run `make audit` to confirm `SUCCESS`.
+
+## 4. 后端安全协议 (Backend Security)
+- All contract operations MUST be routed through `agent_harness.py --audit`.
+- NO MOCKS: Use actual Blueprint test suite, not mock blockchain states.
+- Every contract function must implement gas-limit checks and consistent error handling.
+- Write Test Case BEFORE writing contract code.
+
+## 5. 三层防线 (Three-Layer Defense)
+1. **Compile-time**: `audit_tokens.py` blocks hardcoded values
+2. **Render-time**: `Guarded` component detects DOM violations
+3. **Run-time**: Contract test suite blocks logic errors
+4. **CI/CD**: `.github/workflows/production.yml` runs on every push
+
+## 6. 零容忍 (Zero Tolerance)
+- Any layer alert = AI MUST auto-rewrite. No skipping.
+- `make audit` failure = code is NOT deliverable.
+- The pipeline is the gatekeeper. AI cannot bypass it.

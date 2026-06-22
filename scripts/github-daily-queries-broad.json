@@ -1,0 +1,440 @@
+{
+  "version": 1,
+  "profile": "broad",
+  "description": "GitHub-wide taxonomy: languages, systems, ML, games, science, mobile, non-DEX chain, IoT, data infra. Aligns with GitHub topics / ecosystem leaderboards.",
+  "defaults": {
+    "perPage": 6,
+    "minStars": 800,
+    "sort": "stars",
+    "order": "desc"
+  },
+  "ionRelevanceTags": [],
+  "sections": [
+    { "id": "languages", "label": "Programming languages & runtimes" },
+    { "id": "systems", "label": "OS / kernel / embedded / FPGA" },
+    { "id": "ml-ai", "label": "ML frameworks & inference" },
+    { "id": "graphics-games", "label": "Games / graphics / GPU" },
+    { "id": "science", "label": "Scientific computing / bio / GIS" },
+    { "id": "web-content", "label": "Education / blogs / static / CMS" },
+    { "id": "mobile", "label": "Mobile" },
+    { "id": "blockchain-non-dex", "label": "Blockchain non-DEX (L1/L2/ZK)" },
+    { "id": "hardware-iot", "label": "Hardware / robotics / IoT" },
+    { "id": "data-infra", "label": "Data / messaging / search" },
+    { "id": "cloud-compilers", "label": "Cloud / compilers / network" }
+  ],
+  "categories": [
+    {
+      "id": "lang-python",
+      "section": "languages",
+      "label": "Python ecosystem",
+      "q": "stars:>10000 language:Python in:name,description,readme -topic:awesome -topic:list",
+      "perPage": 8
+    },
+    {
+      "id": "lang-javascript",
+      "section": "languages",
+      "label": "JavaScript ecosystem",
+      "q": "stars:>12000 language:JavaScript in:name,description,readme -topic:awesome",
+      "perPage": 8
+    },
+    {
+      "id": "lang-typescript",
+      "section": "languages",
+      "label": "TypeScript ecosystem",
+      "q": "stars:>6000 topic:typescript in:name,description,readme -topic:awesome",
+      "perPage": 8
+    },
+    {
+      "id": "lang-java",
+      "section": "languages",
+      "label": "Java / JVM ecosystem",
+      "q": "stars:>8000 language:Java in:name,description,readme -topic:awesome",
+      "perPage": 8
+    },
+    {
+      "id": "lang-go",
+      "section": "languages",
+      "label": "Go ecosystem",
+      "q": "stars:>6000 language:Go in:name,description,readme -topic:awesome",
+      "perPage": 8
+    },
+    {
+      "id": "lang-rust",
+      "section": "languages",
+      "label": "Rust ecosystem",
+      "q": "stars:>5000 language:Rust in:name,description,readme -topic:awesome",
+      "perPage": 8
+    },
+    {
+      "id": "lang-cpp",
+      "section": "languages",
+      "label": "C / C++ ecosystem",
+      "q": "stars:>4000 language:C++ in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "lang-csharp",
+      "section": "languages",
+      "label": "C# / .NET ecosystem",
+      "q": "stars:>4000 language:C# in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "lang-ruby",
+      "section": "languages",
+      "label": "Ruby ecosystem",
+      "q": "stars:>3000 language:Ruby in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "lang-php",
+      "section": "languages",
+      "label": "PHP ecosystem",
+      "q": "stars:>4000 language:PHP in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "lang-swift",
+      "section": "languages",
+      "label": "Swift ecosystem",
+      "q": "stars:>3000 language:Swift in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "lang-kotlin",
+      "section": "languages",
+      "label": "Kotlin ecosystem",
+      "q": "stars:>2500 language:Kotlin in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "lang-scala",
+      "section": "languages",
+      "label": "Scala ecosystem",
+      "q": "stars:>2000 language:Scala in:name,description,readme -topic:awesome",
+      "perPage": 5
+    },
+    {
+      "id": "lang-r-lang",
+      "section": "languages",
+      "label": "R language (stats)",
+      "q": "stars:>1500 language:R in:name,description,readme -topic:awesome",
+      "perPage": 5
+    },
+    {
+      "id": "lang-dart",
+      "section": "languages",
+      "label": "Dart / Flutter language",
+      "q": "stars:>2000 language:Dart in:name,description,readme -topic:awesome",
+      "perPage": 5
+    },
+    {
+      "id": "lang-zig",
+      "section": "languages",
+      "label": "Zig language",
+      "q": "stars:>800 topic:zig language:Zig in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "os-linux-kernel",
+      "section": "systems",
+      "label": "Linux kernel & distros tooling",
+      "q": "stars:>3000 topic:linux kernel distro in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "os-bsd",
+      "section": "systems",
+      "label": "BSD / Unix systems",
+      "q": "stars:>1000 (freebsd OR openbsd OR netbsd) in:name,description,readme -topic:awesome",
+      "perPage": 5
+    },
+    {
+      "id": "os-hypervisor",
+      "section": "systems",
+      "label": "Hypervisor / virtualization",
+      "q": "stars:>2000 topic:virtualization (qemu OR kvm OR xen OR proxmox) in:name,description",
+      "perPage": 5
+    },
+    {
+      "id": "embedded-rtos",
+      "section": "systems",
+      "label": "Embedded / RTOS / MCU",
+      "q": "stars:>800 topic:embedded (freertos OR stm32 OR esp32 OR arduino) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "fpga-hdl",
+      "section": "systems",
+      "label": "FPGA / Verilog / VHDL",
+      "q": "stars:>500 topic:fpga (verilog OR vhdl OR vivado) in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "systems-low-level",
+      "section": "systems",
+      "label": "Low-level systems (drivers, firmware)",
+      "q": "stars:>1500 topic:firmware topic:driver in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "ml-pytorch",
+      "section": "ml-ai",
+      "label": "PyTorch ecosystem",
+      "q": "stars:>8000 topic:pytorch in:name,description,readme -topic:awesome",
+      "perPage": 8
+    },
+    {
+      "id": "ml-tensorflow",
+      "section": "ml-ai",
+      "label": "TensorFlow / Keras ecosystem",
+      "q": "stars:>6000 topic:tensorflow in:name,description,readme -topic:awesome",
+      "perPage": 8
+    },
+    {
+      "id": "ml-jax",
+      "section": "ml-ai",
+      "label": "JAX / scientific ML",
+      "q": "stars:>3000 (jax OR \"google jax\") in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "ml-inference-serving",
+      "section": "ml-ai",
+      "label": "ML inference / serving",
+      "q": "stars:>2000 (onnxruntime OR vllm OR tensorrt OR triton-inference) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "ml-computer-vision",
+      "section": "ml-ai",
+      "label": "Computer vision (OpenCV, detection)",
+      "q": "stars:>5000 topic:computer-vision opencv yolo in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "ml-nlp-classic",
+      "section": "ml-ai",
+      "label": "NLP / transformers (libraries)",
+      "q": "stars:>5000 topic:nlp transformers huggingface in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "game-engines",
+      "section": "graphics-games",
+      "label": "Game engines (Godot, Unity OSS, etc.)",
+      "q": "stars:>3000 topic:game-engine (godot OR unity OR unreal OR bevy) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "graphics-rendering",
+      "section": "graphics-games",
+      "label": "Graphics / rendering / shaders",
+      "q": "stars:>2000 topic:graphics (opengl OR vulkan OR webgpu OR shader) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "graphics-3d-assets",
+      "section": "graphics-games",
+      "label": "3D assets / tooling (non-web)",
+      "q": "stars:>1500 topic:3d topic:blender in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "sci-python-stack",
+      "section": "science",
+      "label": "Scientific Python (NumPy, SciPy, Jupyter)",
+      "q": "stars:>5000 (numpy OR scipy OR jupyter OR matplotlib) in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "sci-bioinformatics",
+      "section": "science",
+      "label": "Bioinformatics / genomics",
+      "q": "stars:>1200 topic:bioinformatics genomics in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "sci-gis-geospatial",
+      "section": "science",
+      "label": "GIS / geospatial",
+      "q": "stars:>1200 topic:gis geospatial postgis in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "sci-astronomy",
+      "section": "science",
+      "label": "Astronomy / physics simulation",
+      "q": "stars:>800 topic:astronomy astrophysics simulation in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "edu-platforms",
+      "section": "web-content",
+      "label": "Education / LMS / learning platforms",
+      "q": "stars:>2000 topic:education learning lms in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "static-site-generators",
+      "section": "web-content",
+      "label": "Static site generators",
+      "q": "stars:>3000 topic:static-site-generator (hugo OR jekyll OR gatsby OR astro OR hexo) in:name,description",
+      "perPage": 6
+    },
+    {
+      "id": "cms-wordpress",
+      "section": "web-content",
+      "label": "CMS / WordPress ecosystem",
+      "q": "stars:>2000 (wordpress OR drupal OR ghost) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "blog-docs-publish",
+      "section": "web-content",
+      "label": "Blog / docs publishing",
+      "q": "stars:>1500 topic:blog topic:documentation site-generator in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "mobile-android",
+      "section": "mobile",
+      "label": "Android native / tooling",
+      "q": "stars:>5000 topic:android in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "mobile-ios",
+      "section": "mobile",
+      "label": "iOS / SwiftUI / Apple dev",
+      "q": "stars:>2500 topic:ios swiftui in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "mobile-cross-platform",
+      "section": "mobile",
+      "label": "Cross-platform mobile (Flutter, RN)",
+      "q": "stars:>8000 (flutter OR react-native) in:name,description,readme -topic:awesome",
+      "perPage": 6
+    },
+    {
+      "id": "chain-bitcoin",
+      "section": "blockchain-non-dex",
+      "label": "Bitcoin Core & ecosystem",
+      "q": "stars:>3000 topic:bitcoin in:name,description,readme -uniswap -pancake",
+      "perPage": 6
+    },
+    {
+      "id": "chain-ethereum-clients",
+      "section": "blockchain-non-dex",
+      "label": "Ethereum execution clients",
+      "q": "stars:>2000 (geth OR erigon OR nethermind OR reth) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "chain-l1-alt",
+      "section": "blockchain-non-dex",
+      "label": "Alt L1 nodes (Solana, Cosmos, …)",
+      "q": "stars:>2000 (solana OR cosmos OR polkadot OR avalanche OR near-protocol) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "chain-l2-rollups",
+      "section": "blockchain-non-dex",
+      "label": "L2 / rollups / scaling",
+      "q": "stars:>1200 topic:layer-2 rollup optimistic OR zk-rollup in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "chain-zk-crypto",
+      "section": "blockchain-non-dex",
+      "label": "ZK / cryptography for chain",
+      "q": "stars:>1000 topic:zero-knowledge (circom OR snark OR stark OR zksync) in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "chain-indexers-non-dex",
+      "section": "blockchain-non-dex",
+      "label": "Chain indexers / explorers (non-DEX UI)",
+      "q": "stars:>1000 topic:blockchain indexer explorer in:name,description,readme -uniswap",
+      "perPage": 5
+    },
+    {
+      "id": "hardware-robotics",
+      "section": "hardware-iot",
+      "label": "Robotics / ROS",
+      "q": "stars:>2000 topic:robotics ros2 in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "iot-edge",
+      "section": "hardware-iot",
+      "label": "IoT / MQTT / edge",
+      "q": "stars:>1500 topic:iot mqtt edge in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "home-automation",
+      "section": "hardware-iot",
+      "label": "Home automation / smart home",
+      "q": "stars:>5000 homeassistant in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "hardware-cad-3dprint",
+      "section": "hardware-iot",
+      "label": "CAD / 3D printing / CNC",
+      "q": "stars:>1500 topic:3d-printing cnc cad in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "data-engineering",
+      "section": "data-infra",
+      "label": "Data engineering (Spark, Airflow, dbt)",
+      "q": "stars:>3000 topic:data-engineering (spark OR airflow OR dbt) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "message-queues",
+      "section": "data-infra",
+      "label": "Messaging / streaming (Kafka, NATS)",
+      "q": "stars:>2000 topic:kafka (rabbitmq OR nats OR pulsar) in:name,description,readme",
+      "perPage": 5
+    },
+    {
+      "id": "search-analytics-db",
+      "section": "data-infra",
+      "label": "Search / OLAP (Elastic, ClickHouse)",
+      "q": "stars:>3000 (elasticsearch OR opensearch OR clickhouse) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "cloud-terraform-iac",
+      "section": "cloud-compilers",
+      "label": "Cloud IaC / Terraform / K8s addons",
+      "q": "stars:>2000 topic:terraform topic:kubernetes helm in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "compiler-llvm-wasm",
+      "section": "cloud-compilers",
+      "label": "Compilers / LLVM / WebAssembly",
+      "q": "stars:>4000 topic:compiler (llvm OR wasm OR webassembly) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "networking-servers",
+      "section": "cloud-compilers",
+      "label": "Networking / proxies / DNS",
+      "q": "stars:>3000 (nginx OR caddy OR traefik OR bind9) in:name,description,readme",
+      "perPage": 6
+    },
+    {
+      "id": "reverse-security-research",
+      "section": "cloud-compilers",
+      "label": "Security research / reversing (broad)",
+      "q": "stars:>2000 topic:security-research reversing in:name,description,readme",
+      "perPage": 5
+    }
+  ]
+}

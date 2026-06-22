@@ -1,0 +1,109 @@
+#!/usr/bin/env fift -s
+
+// Full deploy (with on-chain cells) loads Asm/TonUtil when operator runs live fift session.
+// Dry-run / CI only executes the checklist output at the bottom of this file.
+
+// ============================================================
+// ION DEX v2 — Deployment Configuration
+// ============================================================
+
+// Fee weights (total = 10000 = 100%)
+// LP: 5000 (50%), Staking: 1500 (15%), Treasury: 1000 (10%), Dev: 2500 (25%)
+const LP_BPS 5000
+const STAKING_BPS 1500
+const TREASURY_BPS 1000
+const DEV_BPS 2500
+
+// Swap fee: 0.3% = 30 bps (fee_num = 9970, fee_denom = 10000 for Uniswap v2 style)
+// fee_collected = amount_in * (fee_denom - fee_num) / fee_denom = amount_in * 30 / 10000
+// The actual swap formula: amount_in * fee_num / fee_denom = amount_in * 9970 / 10000
+const FEE_NUMERATOR 9970
+const FEE_DENOMINATOR 10000
+
+// Protocol fee: 5 bps (0.05% of total reserves to fee distributor)
+const PROTOCOL_FEE_BPS 5
+
+// Workchain
+const WORKCHAIN 0
+
+// ============================================================
+// Step 1: Deploy FeeDistributor
+// ============================================================
+// Owner, LP_recipient, Treasury_recipient, Insurance(Staking+Dev)_recipient
+// Note: Insurance = Staking (15%) + Dev (25%) = 40% total via insurance wallet
+// The 4-way split (50/15/10/25) is modeled as:
+//   LP = 50%, Treasury = 10%, Insurance = 40% (which then splits internally)
+
+// Deploy FeeDistributor with 3-recipient config
+// (Staking and Dev fees will be routed via the insurance recipient in a 2-hop)
+// Or deploy a custom 4-recipient version
+
+// For now, deploy with configurable state initialization
+// State: owner_addr, lp_recipient, treasury_recipient, insurance_recipient,
+//        lp_bps(16), treasury_bps(16), insurance_bps(16)
+
+// ============================================================
+// Step 2: Deploy Pool (DEX pool pair)
+// ============================================================
+// Pool state: owner_addr, token0, token1, fee_numerator(16), fee_denominator(16),
+//             reserve0, reserve1, fee_distributor_addr, lp_wallet_code(cell),
+//             router_addr, sandwich_guard_addr, status(8)
+
+// ============================================================
+// Step 3: Deploy Router
+// ============================================================
+// Router state: owner_addr, fee_distributor_addr, sandwich_guard_addr,
+//               pool_dict, protocol_fee_bps(16)
+
+// ============================================================
+// Step 4: Deploy Staking Pool
+// ============================================================
+// Staking state: owner_addr, total_staked, reward_per_token(128),
+//                reward_balance, stake_dict
+
+// ============================================================
+// Step 5: Deploy supporting contracts
+// ============================================================
+// vault, lp_account, lp_wallet, sandwich_guard, BridgeInbox, deployer
+// dns-auction, dns-registrar, dns-resolver
+
+// Compile and deploy commands to be run BEFORE this script:
+//
+// Compile all contracts:
+//   func -o builds/pool.fif -SPA stdlib.fc common/gas.fc common/common.fc pool.fc
+//   func -o builds/router.fif -SPA stdlib.fc common/gas.fc common/common.fc router.fc
+//   func -o builds/FeeDistributor.fif -SPA stdlib.fc common/gas.fc common/common.fc FeeDistributor.fc
+//   func -o builds/lp_account.fif -SPA stdlib.fc common/gas.fc common/common.fc lp_account.fc
+//   func -o builds/lp_wallet.fif -SPA stdlib.fc common/gas.fc common/common.fc lp_wallet.fc
+//   func -o builds/vault.fif -SPA stdlib.fc common/gas.fc common/common.fc vault.fc
+//   func -o builds/staking-pool.fif -SPA stdlib.fc common/gas.fc common/common.fc staking-pool.fc
+//   func -o builds/sandwich.fif -SPA stdlib.fc common/gas.fc common/common.fc sandwich.fc
+//   func -o builds/BridgeInbox.fif -SPA stdlib.fc common/gas.fc common/common.fc BridgeInbox.fc
+//   func -o builds/deployer.fif -SPA stdlib.fc common/gas.fc common/common.fc deployer.fc
+//   func -o builds/dns-auction.fif -SPA stdlib.fc common/gas.fc common/common.fc dns-auction.fc
+//   func -o builds/dns-registrar.fif -SPA stdlib.fc common/gas.fc common/common.fc dns-registrar.fc
+//   func -o builds/dns-resolver.fif -SPA stdlib.fc common/gas.fc common/common.fc dns-resolver.fc
+
+// Deploy on ION chain:
+//   1. Send deploy message with initial state to each contract address
+//   2. Configure FeeDistributor with recipients
+//   3. Register pool in router
+//   4. Set up LP token wallet code in pool
+//   5. Start accepting swaps
+
+."=== ION DEX v2 Deployment Script ===" cr
+."Replace the following addresses before deploying:" cr
+."   <owner_address>              - Contract owner wallet" cr
+."   <lp_recipient>               - LP fee recipient" cr
+."   <treasury_recipient>         - Treasury fee recipient" cr
+."   <insurance_recipient>        - Insurance/Staking+Dev fee recipient" cr
+."   <token0_addr>                - First token address" cr
+."   <token1_addr>                - Second token address" cr
+."   <fee_distributor_addr>       - FeeDistributor contract address" cr
+."   <router_addr>                - Router contract address" cr
+."   <vault_addr>                 - Vault contract address" cr
+."   <staking_pool_addr>          - Staking pool contract address" cr
+."" cr
+."=== Fee Split ===" cr
+."LP: 50% | Staking: 15% | Treasury: 10% | Developer: 25%" cr
+.

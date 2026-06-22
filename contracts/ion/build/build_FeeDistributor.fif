@@ -1,0 +1,400 @@
+"Asm.fif" include
+// automatically generated from `D:/openclaw-data/workspace/ion-official/ion/crypto/smartcont/stdlib.fc` `D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/gas.fc` `D:/openclaw-tools/ion-dex-nuke/contracts/ion/common/common.fc` `D:/openclaw-tools/ion-dex-nuke/contracts/ion/FeeDistributor.fc` 
+PROGRAM{
+  DECLPROC ctx::init
+  DECLPROC ctx::body
+  DECLPROC ctx::sender
+  DECLPROC ctx::opcode
+  DECLPROC ctx::isBounced
+  DECLPROC ctx::balance
+  DECLPROC ctx::fwdFee
+  DECLPROC ctx::value
+  DECLPROC address::check_workchain
+  DECLPROC reserves::max_balance
+  DECLPROC equal_slices
+  DECLPROC sqrt
+  DECLPROC math::mul_div
+  DECLPROC amm::get_amount_out
+  DECLPROC msgs::send_simple
+  DECLPROC storage::load
+  DECLPROC storage::save
+  DECLPROC fee_dist::validate_bps
+  DECLPROC handle_distribute_fees
+  DECLPROC handle_set_recipients
+  DECLPROC recv_internal
+  119583 DECLMETHOD get_fee_distributor_data
+  DECLGLOBVAR ctx::body_slice
+  DECLGLOBVAR ctx::sender_slice
+  DECLGLOBVAR ctx::opcode_val
+  DECLGLOBVAR ctx::is_bounced
+  DECLGLOBVAR ctx::balance_val
+  DECLGLOBVAR ctx::fwd_fee_val
+  DECLGLOBVAR ctx::msg_value_val
+  DECLGLOBVAR storage::owner_address
+  DECLGLOBVAR storage::lp_recipient
+  DECLGLOBVAR storage::treasury_recipient
+  DECLGLOBVAR storage::insurance_recipient
+  DECLGLOBVAR storage::lp_bps
+  DECLGLOBVAR storage::treasury_bps
+  DECLGLOBVAR storage::insurance_bps
+  ctx::init PROCINLINE:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    //  my_balance _4 in_msg_full in_msg_body
+    s0 s2 XCHG	//  my_balance in_msg_body in_msg_full _4
+    ctx::msg_value_val SETGLOB	//  _5 in_msg_body in_msg_full
+    s0 s2 XCHG	//  in_msg_full in_msg_body _5
+    ctx::balance_val SETGLOB
+    DUP	//  in_msg_full in_msg_body _6
+    ctx::body_slice SETGLOB
+    32 PLDU	//  in_msg_full _9
+    ctx::opcode_val SETGLOB
+    CTOS	//  cs
+    4 LDU	//  flags cs
+    SWAP
+    1 PUSHINT	//  cs flags _16=1
+    AND	//  cs _18
+    ctx::is_bounced SETGLOB
+    LDMSGADDR	//  _21 cs
+    SWAP	//  cs _21
+    ctx::sender_slice SETGLOB
+    LDMSGADDR	//  _39 _38
+    NIP	//  cs
+    LDGRAMS	//  _41 _40
+    NIP	//  cs
+    1 LDU	//  _43 _42
+    NIP	//  cs
+    LDGRAMS	//  _45 _44
+    NIP	//  cs
+    LDGRAMS	//  _47 _46
+    DROP	//  _33
+    ctx::fwd_fee_val SETGLOB
+  }>
+  ctx::body PROCINLINE:<{
+    // 
+    ctx::body_slice GETGLOB	//  _0
+  }>
+  ctx::sender PROCINLINE:<{
+    // 
+    ctx::sender_slice GETGLOB	//  _0
+  }>
+  ctx::opcode PROCINLINE:<{
+    // 
+    ctx::opcode_val GETGLOB	//  _0
+  }>
+  ctx::isBounced PROCINLINE:<{
+    // 
+    ctx::is_bounced GETGLOB	//  _0
+  }>
+  ctx::balance PROCINLINE:<{
+    // 
+    ctx::balance_val GETGLOB	//  _0
+  }>
+  ctx::fwdFee PROCINLINE:<{
+    // 
+    ctx::fwd_fee_val GETGLOB	//  _0
+  }>
+  ctx::value PROCINLINE:<{
+    // 
+    ctx::msg_value_val GETGLOB	//  _0
+  }>
+  address::check_workchain PROCINLINE:<{
+    //  addr expected_workchain
+    SWAP	//  expected_workchain addr
+    8 PLDI	//  expected_workchain wc
+    SWAP	//  wc expected_workchain
+    EQUAL	//  _5
+    IF:<{	// 
+      -1 PUSHINT	//  _6=-1
+    }>ELSE<{	// 
+      0 PUSHINT	//  _6=0
+    }>
+  }>
+  reserves::max_balance PROCINLINE:<{
+    //  amount
+    2 PUSHINT	//  amount _1=2
+    RAWRESERVE
+  }>
+  equal_slices PROCINLINE:<{
+    //  a b
+    SDEQ	//  _2
+  }>
+  sqrt PROCINLINE:<{
+    //  x
+    DUP	//  x x
+    1 LESSINT	//  x _2
+    IF:<{	//  x
+      DROP	// 
+      0 PUSHINT	//  _3=0
+    }>ELSE<{	//  x
+      DUP	//  x z
+      0 PUSHINT	//  x z i=0
+      WHILE:<{
+        DUP	//  x z i i
+        32 LESSINT	//  x z i _8
+      }>DO<{	//  x z i
+        INC	//  x z i
+        s2 s1 PUSH2	//  x z i x z
+        DIV	//  x z i _11
+        s1 s2 XCHG	//  x i z _11
+        ADD	//  x i _12
+        1 RSHIFT#	//  x i z
+        SWAP	//  x z i
+      }>	//  x z i
+      DROP
+      NIP	//  z
+    }>
+  }>
+  math::mul_div PROCINLINE:<{
+    //  a b denom
+    DUP	//  a b denom denom
+    0 GTINT	//  a b denom _5
+    101 THROWIFNOT
+    MULDIV	//  _7
+  }>
+  amm::get_amount_out PROCINLINE:<{
+    //  amount_in reserve_in reserve_out fee_num fee_denom
+    s4 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom amount_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _7
+    101 THROWIFNOT
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom reserve_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom _11 reserve_out
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11 _13
+    AND	//  amount_in reserve_in reserve_out fee_num fee_denom _14
+    113 THROWIFNOT
+    s2 s4 XCHG	//  reserve_out reserve_in amount_in fee_num fee_denom
+    math::mul_div INLINECALLDICT	//  reserve_out reserve_in amount_in_with_fee
+    s0 s2 PUXC	//  amount_in_with_fee reserve_in amount_in_with_fee reserve_out
+    MUL	//  amount_in_with_fee reserve_in numerator
+    s0 s2 XCHG	//  numerator reserve_in amount_in_with_fee
+    ADD	//  numerator denominator
+    DUP	//  numerator denominator denominator
+    0 GTINT	//  numerator denominator _24
+    106 THROWIFNOT
+    DIV	//  _26
+  }>
+  msgs::send_simple PROCINLINE:<{
+    //  mode to body send_mode
+    0 PUSHINT	//  mode to body send_mode _4=0
+    1 PUSHINT	//  mode to body send_mode _4=0 _5=1
+    s0 s2 XCHG
+    NEWC	//  mode to body _5=1 _4=0 send_mode _6
+    8 STU	//  mode to body _5=1 _4=0 _8
+    s0 s4 XCHG2	//  mode _4=0 body _5=1 _8 to
+    STSLICER	//  mode _4=0 body _5=1 _9
+    s0 s4 XCHG2	//  _5=1 _4=0 body _9 mode
+    STGRAMS	//  _5=1 _4=0 body _10
+    s1 s3 XCHG	//  body _4=0 _5=1 _10
+    1 STU	//  body _4=0 _12
+    1 STU	//  body _14
+    STREF	//  _15
+    ENDC	//  _16
+    2 PUSHINT	//  _16 _17=2
+    SENDRAWMSG
+  }>
+  storage::load PROCINLINE:<{
+    // 
+    c4 PUSH	//  _1
+    CTOS	//  ds
+    LDMSGADDR	//  _5 ds
+    SWAP	//  ds _5
+    storage::owner_address SETGLOB
+    LDMSGADDR	//  _8 ds
+    SWAP	//  ds _8
+    storage::lp_recipient SETGLOB
+    LDMSGADDR	//  _11 ds
+    SWAP	//  ds _11
+    storage::treasury_recipient SETGLOB
+    LDMSGADDR	//  _14 ds
+    SWAP	//  ds _14
+    storage::insurance_recipient SETGLOB
+    16 LDU	//  _18 ds
+    SWAP	//  ds _18
+    storage::lp_bps SETGLOB
+    16 LDU	//  _22 ds
+    SWAP	//  ds _22
+    storage::treasury_bps SETGLOB
+    16 LDU	//  _26 ds
+    SWAP	//  ds _26
+    storage::insurance_bps SETGLOB
+    ENDS
+  }>
+  storage::save PROCREF:<{
+    // 
+    storage::insurance_bps GETGLOB	//  _0
+    storage::treasury_bps GETGLOB	//  _0 _1
+    storage::lp_bps GETGLOB	//  _0 _1 _2
+    NEWC	//  _0 _1 _2 _3
+    storage::owner_address GETGLOB	//  _0 _1 _2 _3 _4
+    STSLICER	//  _0 _1 _2 _5
+    storage::lp_recipient GETGLOB	//  _0 _1 _2 _5 _6
+    STSLICER	//  _0 _1 _2 _7
+    storage::treasury_recipient GETGLOB	//  _0 _1 _2 _7 _8
+    STSLICER	//  _0 _1 _2 _9
+    storage::insurance_recipient GETGLOB	//  _0 _1 _2 _9 _10
+    STSLICER	//  _0 _1 _2 _11
+    16 STU	//  _0 _1 _13
+    16 STU	//  _0 _15
+    16 STU	//  _17
+    ENDC	//  _18
+    c4 POP
+  }>
+  fee_dist::validate_bps PROCINLINE:<{
+    // 
+    storage::lp_bps GETGLOB	//  _1
+    storage::treasury_bps GETGLOB	//  _1 _2
+    ADD	//  _3
+    storage::insurance_bps GETGLOB	//  _3 _4
+    ADD	//  total
+    10000 PUSHINT	//  total _7=10000
+    EQUAL	//  _8
+    121 THROWIFNOT
+  }>
+  handle_distribute_fees PROC:<{
+    // 
+    ctx::body INLINECALLDICT	//  body
+    64 LDU	//  query_id body
+    LDGRAMS	//  query_id _70 _69
+    DROP	//  query_id total_amount
+    DUP	//  query_id total_amount total_amount
+    0 GTINT	//  query_id total_amount _11
+    101 THROWIFNOT
+    fee_dist::validate_bps INLINECALLDICT
+    storage::lp_bps GETGLOB	//  query_id total_amount _15
+    s1 s(-1) PUXC
+    10000 PUSHINT	//  query_id total_amount total_amount _15 _16=10000
+    math::mul_div INLINECALLDICT	//  query_id total_amount lp_amt
+    storage::treasury_bps GETGLOB	//  query_id total_amount lp_amt _19
+    s2 s(-1) PUXC
+    10000 PUSHINT	//  query_id total_amount lp_amt total_amount _19 _20=10000
+    math::mul_div INLINECALLDICT	//  query_id total_amount lp_amt treasury_amt
+    s2 s1 XCPU	//  query_id treasury_amt lp_amt total_amount lp_amt
+    SUB	//  query_id treasury_amt lp_amt _23
+    s2 PUSH	//  query_id treasury_amt lp_amt _23 treasury_amt
+    SUB	//  query_id treasury_amt lp_amt insurance_amt
+    OVER	//  query_id treasury_amt lp_amt insurance_amt lp_amt
+    0 GTINT	//  query_id treasury_amt lp_amt insurance_amt _26
+    IF:<{	//  query_id treasury_amt lp_amt insurance_amt
+      0 PUSHINT	//  query_id treasury_amt lp_amt insurance_amt _27=0
+      storage::lp_recipient GETGLOB	//  query_id treasury_amt lp_amt insurance_amt _27=0 _28
+      1952064560 PUSHINT	//  query_id treasury_amt lp_amt insurance_amt _27=0 _28 _29=1952064560
+      NEWC	//  query_id treasury_amt lp_amt insurance_amt _27=0 _28 _29=1952064560 _30
+      32 STU	//  query_id treasury_amt lp_amt insurance_amt _27=0 _28 _32
+      s6 s(-1) PUXC	//  query_id treasury_amt lp_amt insurance_amt _27=0 _28 query_id _32
+      64 STU	//  query_id treasury_amt lp_amt insurance_amt _27=0 _28 _34
+      s0 s4 XCHG2	//  query_id treasury_amt _28 insurance_amt _27=0 _34 lp_amt
+      STGRAMS	//  query_id treasury_amt _28 insurance_amt _27=0 _35
+      ENDC	//  query_id treasury_amt _28 insurance_amt _27=0 _36
+      s1 s3 s0 XCHG3
+      7 PUSHPOW2	//  query_id treasury_amt insurance_amt _27=0 _28 _36 _37=128
+      msgs::send_simple INLINECALLDICT
+    }>ELSE<{
+      NIP	//  query_id treasury_amt insurance_amt
+    }>
+    OVER	//  query_id treasury_amt insurance_amt treasury_amt
+    0 GTINT	//  query_id treasury_amt insurance_amt _40
+    IF:<{	//  query_id treasury_amt insurance_amt
+      0 PUSHINT	//  query_id treasury_amt insurance_amt _41=0
+      storage::treasury_recipient GETGLOB	//  query_id treasury_amt insurance_amt _41=0 _42
+      1952064560 PUSHINT	//  query_id treasury_amt insurance_amt _41=0 _42 _43=1952064560
+      NEWC	//  query_id treasury_amt insurance_amt _41=0 _42 _43=1952064560 _44
+      32 STU	//  query_id treasury_amt insurance_amt _41=0 _42 _46
+      s5 s(-1) PUXC	//  query_id treasury_amt insurance_amt _41=0 _42 query_id _46
+      64 STU	//  query_id treasury_amt insurance_amt _41=0 _42 _48
+      s0 s4 XCHG2	//  query_id _42 insurance_amt _41=0 _48 treasury_amt
+      STGRAMS	//  query_id _42 insurance_amt _41=0 _49
+      ENDC	//  query_id _42 insurance_amt _41=0 _50
+      s1 s3 s0 XCHG3
+      7 PUSHPOW2	//  query_id insurance_amt _41=0 _42 _50 _51=128
+      msgs::send_simple INLINECALLDICT
+    }>ELSE<{
+      NIP	//  query_id insurance_amt
+    }>
+    DUP	//  query_id insurance_amt insurance_amt
+    0 GTINT	//  query_id insurance_amt _54
+    IF:<{	//  query_id insurance_amt
+      0 PUSHINT	//  query_id insurance_amt _55=0
+      storage::insurance_recipient GETGLOB	//  query_id insurance_amt _55=0 _56
+      1952064560 PUSHINT	//  query_id insurance_amt _55=0 _56 _57=1952064560
+      NEWC	//  query_id insurance_amt _55=0 _56 _57=1952064560 _58
+      32 STU	//  query_id insurance_amt _55=0 _56 _60
+      s1 s4 XCHG	//  _56 insurance_amt _55=0 query_id _60
+      64 STU	//  _56 insurance_amt _55=0 _62
+      ROT	//  _56 _55=0 _62 insurance_amt
+      STGRAMS	//  _56 _55=0 _63
+      ENDC	//  _56 _55=0 _64
+      s1 s2 XCHG
+      7 PUSHPOW2	//  _55=0 _56 _64 _65=128
+      msgs::send_simple INLINECALLDICT
+    }>ELSE<{
+      2DROP	// 
+    }>
+  }>
+  handle_set_recipients PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::owner_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    107 THROWIFNOT
+    ctx::body INLINECALLDICT	//  body
+    LDMSGADDR	//  _9 body
+    SWAP	//  body _9
+    storage::lp_recipient SETGLOB
+    LDMSGADDR	//  _12 body
+    SWAP	//  body _12
+    storage::treasury_recipient SETGLOB
+    LDMSGADDR	//  _15 body
+    SWAP	//  body _15
+    storage::insurance_recipient SETGLOB
+    16 LDU	//  _19 body
+    SWAP	//  body _19
+    storage::lp_bps SETGLOB
+    16 LDU	//  _23 body
+    SWAP	//  body _23
+    storage::treasury_bps SETGLOB
+    16 LDU	//  _41 _40
+    DROP	//  _27
+    storage::insurance_bps SETGLOB
+    fee_dist::validate_bps INLINECALLDICT
+    storage::save INLINECALLDICT
+  }>
+  recv_internal PROC:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    DUP	//  my_balance msg_value in_msg_full in_msg_body in_msg_body
+    SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
+    103 THROWIF
+    ctx::init INLINECALLDICT
+    ctx::isBounced INLINECALLDICT	//  _8
+    IFJMP:<{	// 
+    }>	// 
+    ctx::sender INLINECALLDICT	//  _10
+    0 PUSHINT	//  _10 _11=0
+    address::check_workchain INLINECALLDICT	//  _12
+    104 THROWIFNOT
+    storage::load INLINECALLDICT
+    ctx::opcode INLINECALLDICT	//  _15
+    4444444444 PUSHINT	//  _15 _16=4444444444
+    EQUAL	//  _17
+    IFJMP:<{	// 
+      handle_distribute_fees CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _19
+    5555555555 PUSHINT	//  _19 _20=5555555555
+    EQUAL	//  _21
+    IFJMP:<{	// 
+      handle_set_recipients CALLDICT
+    }>	// 
+    105 THROW
+  }>
+  get_fee_distributor_data PROC:<{
+    // 
+    storage::load INLINECALLDICT
+    storage::owner_address GETGLOB	//  _1
+    storage::lp_recipient GETGLOB	//  _1 _2
+    storage::treasury_recipient GETGLOB	//  _1 _2 _3
+    storage::insurance_recipient GETGLOB	//  _1 _2 _3 _4
+    storage::lp_bps GETGLOB	//  _1 _2 _3 _4 _5
+    storage::treasury_bps GETGLOB	//  _1 _2 _3 _4 _5 _6
+    storage::insurance_bps GETGLOB	//  _1 _2 _3 _4 _5 _6 _7
+  }>
+}END>c

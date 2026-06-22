@@ -1,0 +1,81 @@
+
+> ion-dex-frontend@0.1.0 verify
+> node scripts/verify.mjs
+
+
+> ion-dex-frontend@0.1.0 build
+> tsc && vite build
+
+[36mvite v8.0.13 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 3947 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.45 kB │ gzip:   0.29 kB
+dist/assets/index-DYGs42OU.css     41.95 kB │ gzip:   8.10 kB
+dist/assets/ccip-C-5Q6NgL.js        2.83 kB │ gzip:   1.30 kB
+dist/assets/index-BXdVH-Co.js   1,730.17 kB │ gzip: 522.22 kB
+
+[33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/wallet/ionExtension.ts is dynamically imported by src/wallet/IonWalletProvider.tsx but also statically imported by src/components/layout/AppShell.tsx, src/wallet/IonWalletProvider.tsx, dynamic import will not move module into another chunk.
+[39m
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 2.04s[39m
+[verify-e2e] dedicated verify backend on :8788 (:8787 left for dev).
+[verify-e2e] preview=http://127.0.0.1:61120 proxy=/api -> http://127.0.0.1:8788
+
+> ion-dex-backend@0.1.0 build
+> tsc -p tsconfig.json
+
+(node:41556) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[verify-e2e] backend=http://127.0.0.1:8788 preview will bind next
+(node:44576) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m61120[22m/[39m
+ION DEX API gateway listening on http://127.0.0.1:8788
+[liquidity-mine] on-chain pool registry not yet wired; using local session + catalog seed.
+
+Running 36 tests using 1 worker
+
+  ok  1 [chromium] › e2e\batch-transfer.spec.ts:34:3 › Batch Transfer › loads and shows config tiles (4.3s)
+  ok  2 [chromium] › e2e\batch-transfer.spec.ts:41:3 › Batch Transfer › parses CSV recipients into the list (4.3s)
+  ok  3 [chromium] › e2e\batch-transfer.spec.ts:48:3 › Batch Transfer › can remove a recipient from the list (4.3s)
+  ok  4 [chromium] › e2e\batch-transfer.spec.ts:57:3 › Batch Transfer › validates transfer payload via gateway (4.4s)
+  ok  5 [chromium] › e2e\batch-transfer.spec.ts:90:3 › Batch Transfer › can switch to collect tab (4.3s)
+  ok  6 [chromium] › e2e\copy-trade.spec.ts:21:3 › Copy Trade › loads and shows stats cards (4.3s)
+  ok  7 [chromium] › e2e\copy-trade.spec.ts:28:3 › Copy Trade › can toggle copy trading on/off (4.5s)
+  -   8 [chromium] › e2e\dashboard-visual-signoff.spec.ts:22:3 › Dashboard visual signoff captures › capture dashboard at 375/768/1440
+  ok  9 [chromium] › e2e\domain-manage.spec.ts:14:3 › Domain Manage › loads portfolio stats and owned list (4.2s)
+  ok 10 [chromium] › e2e\domain-manage.spec.ts:20:3 › Domain Manage › can lookup and register a domain (4.4s)
+  ok 11 [chromium] › e2e\liquidity-mine.spec.ts:14:3 › Liquidity Mine › loads summary tiles and pool rows (4.2s)
+  ok 12 [chromium] › e2e\liquidity-mine.spec.ts:21:3 › Liquidity Mine › can submit stake intent from first pool (4.3s)
+  ok 13 [chromium] › e2e\settings.spec.ts:17:3 › Settings page › loads preference rows and summary tiles (4.2s)
+  ok 14 [chromium] › e2e\settings.spec.ts:26:3 › Settings page › runs sentinel alert self-test from settings (4.3s)
+  ok 15 [chromium] › e2e\settings.spec.ts:31:3 › Settings page › updates slippage and clears removable cache entries (4.3s)
+  ok 16 [chromium] › e2e\smoke.spec.ts:93:3 › ION DEX smoke › home page shows key sections and controls (4.7s)
+  ok 17 [chromium] › e2e\smoke.spec.ts:114:3 › ION DEX smoke › boot splash renders upgraded ION DEX brand overlays before skip (4.1s)
+  ok 18 [chromium] › e2e\smoke.spec.ts:125:3 › ION DEX smoke › wallet shell connects via official ION extension provider mock (4.3s)
+  ok 19 [chromium] › e2e\smoke.spec.ts:167:3 › ION DEX smoke › 375px viewport keeps brand and main content visible (4.7s)
+  ok 20 [chromium] › e2e\smoke.spec.ts:175:3 › ION DEX smoke › 768px and 1440px viewports keep brand visible (8.2s)
+  ok 21 [chromium] › e2e\smoke.spec.ts:183:3 › ION DEX smoke › hash route opens swap page directly (4.3s)
+  ok 22 [chromium] › e2e\smoke.spec.ts:191:3 › ION DEX smoke › top navigation opens business page shells (8.0s)
+  ok 23 [chromium] › e2e\smoke.spec.ts:226:3 › ION DEX smoke › trade page shows professional desk modules (5.3s)
+  ok 24 [chromium] › e2e\smoke.spec.ts:240:3 › ION DEX smoke › grid pool bridge burn domain ai pages show liquid-glass desk modules (9.9s)
+  ok 25 [chromium] › e2e\smoke.spec.ts:282:3 › ION DEX smoke › trade page validates and prepares a limit order (5.3s)
+  ok 26 [chromium] › e2e\smoke.spec.ts:302:3 › ION DEX smoke › grid page validates bounds and prepares a strategy (5.5s)
+  ok 27 [chromium] › e2e\smoke.spec.ts:326:3 › ION DEX smoke › pool page validates slippage and prepares liquidity mint (5.4s)
+  ok 28 [chromium] › e2e\smoke.spec.ts:349:3 › ION DEX smoke › stake page prepares stake and unstake payloads (5.3s)
+  ok 29 [chromium] › e2e\smoke.spec.ts:374:3 › ION DEX smoke › bridge page validates destination memo and prepares sweep (4.3s)
+  ok 30 [chromium] › e2e\smoke.spec.ts:394:3 › ION DEX smoke › burn page enforces memo length and prepares narrative (5.3s)
+  ok 31 [chromium] › e2e\smoke.spec.ts:413:3 › ION DEX smoke › domain page validates label shape and prepares handshake (5.2s)
+  ok 32 [chromium] › e2e\smoke.spec.ts:431:3 › ION DEX smoke › ai subscription page loads tiers and wallet panel (9.7s)
+  -  33 [chromium] › e2e\splash-visual-signoff.spec.ts:23:3 › Splash visual signoff captures › capture splash at 375/768/1440
+  ok 34 [chromium] › e2e\wallet-connect.spec.ts:84:3 › wallet connect (W2) — EVM › shows seven EVM wallet entries in connect panel (4.8s)
+  ok 35 [chromium] › e2e\wallet-connect.spec.ts:97:3 › wallet connect (W2) — EVM › connects mocked MetaMask and shows profile hub (4.8s)
+  ok 36 [chromium] › e2e\wallet-connect.spec.ts:138:3 › wallet connect (W2) — sign summary › swap opens sign summary before ION wallet intent (4.8s)
+
+  2 skipped
+  34 passed (2.9m)

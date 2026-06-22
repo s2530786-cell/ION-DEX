@@ -1,0 +1,19 @@
+{
+  "name": "mcp-e2b-quickstart",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "E2B sandbox + Docker MCP Catalog (Notion + GitHub) quickstart",
+  "scripts": {
+    "start": "tsx index.ts",
+    "workflow": "tsx index.ts --workflow"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "e2b": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

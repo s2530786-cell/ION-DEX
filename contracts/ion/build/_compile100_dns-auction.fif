@@ -1,0 +1,358 @@
+"Asm.fif" include
+// automatically generated from `D:/openclaw-data/workspace/ion-official/ion/crypto/smartcont/stdlib.fc` `common/gas.fc` `common/common.fc` `dns-auction.fc` 
+PROGRAM{
+  DECLPROC ctx::init
+  DECLPROC ctx::body
+  DECLPROC ctx::sender
+  DECLPROC ctx::opcode
+  DECLPROC ctx::isBounced
+  DECLPROC ctx::balance
+  DECLPROC ctx::fwdFee
+  DECLPROC ctx::value
+  DECLPROC address::check_workchain
+  DECLPROC reserves::max_balance
+  DECLPROC equal_slices
+  DECLPROC sqrt
+  DECLPROC math::mul_div
+  DECLPROC amm::get_amount_out
+  DECLPROC msgs::send_simple
+  DECLPROC storage::load
+  DECLPROC storage::save
+  DECLPROC recv_internal
+  109137 DECLMETHOD get_auction_data
+  DECLGLOBVAR ctx::body_slice
+  DECLGLOBVAR ctx::sender_slice
+  DECLGLOBVAR ctx::opcode_val
+  DECLGLOBVAR ctx::is_bounced
+  DECLGLOBVAR ctx::balance_val
+  DECLGLOBVAR ctx::fwd_fee_val
+  DECLGLOBVAR ctx::msg_value_val
+  DECLGLOBVAR storage::owner_address
+  DECLGLOBVAR storage::resolver_address
+  DECLGLOBVAR storage::auction_dict
+  ctx::init PROCINLINE:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    //  my_balance _4 in_msg_full in_msg_body
+    s0 s2 XCHG	//  my_balance in_msg_body in_msg_full _4
+    ctx::msg_value_val SETGLOB	//  _5 in_msg_body in_msg_full
+    s0 s2 XCHG	//  in_msg_full in_msg_body _5
+    ctx::balance_val SETGLOB
+    DUP	//  in_msg_full in_msg_body _6
+    ctx::body_slice SETGLOB
+    32 PLDU	//  in_msg_full _9
+    ctx::opcode_val SETGLOB
+    CTOS	//  cs
+    4 LDU	//  flags cs
+    SWAP
+    1 PUSHINT	//  cs flags _16=1
+    AND	//  cs _18
+    ctx::is_bounced SETGLOB
+    LDMSGADDR	//  _21 cs
+    SWAP	//  cs _21
+    ctx::sender_slice SETGLOB
+    LDMSGADDR	//  _39 _38
+    NIP	//  cs
+    LDGRAMS	//  _41 _40
+    NIP	//  cs
+    1 LDU	//  _43 _42
+    NIP	//  cs
+    LDGRAMS	//  _45 _44
+    NIP	//  cs
+    LDGRAMS	//  _47 _46
+    DROP	//  _33
+    ctx::fwd_fee_val SETGLOB
+  }>
+  ctx::body PROCINLINE:<{
+    // 
+    ctx::body_slice GETGLOB	//  _0
+  }>
+  ctx::sender PROCINLINE:<{
+    // 
+    ctx::sender_slice GETGLOB	//  _0
+  }>
+  ctx::opcode PROCINLINE:<{
+    // 
+    ctx::opcode_val GETGLOB	//  _0
+  }>
+  ctx::isBounced PROCINLINE:<{
+    // 
+    ctx::is_bounced GETGLOB	//  _0
+  }>
+  ctx::balance PROCINLINE:<{
+    // 
+    ctx::balance_val GETGLOB	//  _0
+  }>
+  ctx::fwdFee PROCINLINE:<{
+    // 
+    ctx::fwd_fee_val GETGLOB	//  _0
+  }>
+  ctx::value PROCINLINE:<{
+    // 
+    ctx::msg_value_val GETGLOB	//  _0
+  }>
+  address::check_workchain PROCINLINE:<{
+    //  addr expected_workchain
+    SWAP	//  expected_workchain addr
+    8 PLDI	//  expected_workchain wc
+    SWAP	//  wc expected_workchain
+    EQUAL	//  _5
+    IF:<{	// 
+      -1 PUSHINT	//  _6=-1
+    }>ELSE<{	// 
+      0 PUSHINT	//  _6=0
+    }>
+  }>
+  reserves::max_balance PROCINLINE:<{
+    //  amount
+    2 PUSHINT	//  amount _1=2
+    RAWRESERVE
+  }>
+  equal_slices PROCINLINE:<{
+    //  a b
+    SDEQ	//  _2
+  }>
+  sqrt PROCINLINE:<{
+    //  x
+    DUP	//  x x
+    1 LESSINT	//  x _2
+    IF:<{	//  x
+      DROP	// 
+      0 PUSHINT	//  _3=0
+    }>ELSE<{	//  x
+      DUP	//  x z
+      0 PUSHINT	//  x z i=0
+      WHILE:<{
+        DUP	//  x z i i
+        32 LESSINT	//  x z i _8
+      }>DO<{	//  x z i
+        INC	//  x z i
+        s2 s1 PUSH2	//  x z i x z
+        DIV	//  x z i _11
+        s1 s2 XCHG	//  x i z _11
+        ADD	//  x i _12
+        1 RSHIFT#	//  x i z
+        SWAP	//  x z i
+      }>	//  x z i
+      DROP
+      NIP	//  z
+    }>
+  }>
+  math::mul_div PROCINLINE:<{
+    //  a b denom
+    DUP	//  a b denom denom
+    0 GTINT	//  a b denom _5
+    101 THROWIFNOT
+    MULDIV	//  _7
+  }>
+  amm::get_amount_out PROCINLINE:<{
+    //  amount_in reserve_in reserve_out fee_num fee_denom
+    s4 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom amount_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _7
+    101 THROWIFNOT
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom reserve_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom _11 reserve_out
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11 _13
+    AND	//  amount_in reserve_in reserve_out fee_num fee_denom _14
+    113 THROWIFNOT
+    s2 s4 XCHG	//  reserve_out reserve_in amount_in fee_num fee_denom
+    math::mul_div INLINECALLDICT	//  reserve_out reserve_in amount_in_with_fee
+    s0 s2 PUXC	//  amount_in_with_fee reserve_in amount_in_with_fee reserve_out
+    MUL	//  amount_in_with_fee reserve_in numerator
+    s0 s2 XCHG	//  numerator reserve_in amount_in_with_fee
+    ADD	//  numerator denominator
+    DUP	//  numerator denominator denominator
+    0 GTINT	//  numerator denominator _24
+    106 THROWIFNOT
+    DIV	//  _26
+  }>
+  msgs::send_simple PROCINLINE:<{
+    //  mode to body send_mode
+    0 PUSHINT	//  mode to body send_mode _4=0
+    1 PUSHINT	//  mode to body send_mode _4=0 _5=1
+    s0 s2 XCHG
+    NEWC	//  mode to body _5=1 _4=0 send_mode _6
+    8 STU	//  mode to body _5=1 _4=0 _8
+    s0 s4 XCHG2	//  mode _4=0 body _5=1 _8 to
+    STSLICER	//  mode _4=0 body _5=1 _9
+    s0 s4 XCHG2	//  _5=1 _4=0 body _9 mode
+    STGRAMS	//  _5=1 _4=0 body _10
+    s1 s3 XCHG	//  body _4=0 _5=1 _10
+    1 STU	//  body _4=0 _12
+    1 STU	//  body _14
+    STREF	//  _15
+    ENDC	//  _16
+    2 PUSHINT	//  _16 _17=2
+    SENDRAWMSG
+  }>
+  storage::load PROCINLINE:<{
+    // 
+    c4 PUSH	//  _1
+    CTOS	//  ds
+    LDMSGADDR	//  _5 ds
+    SWAP	//  ds _5
+    storage::owner_address SETGLOB
+    LDMSGADDR	//  _8 ds
+    SWAP	//  ds _8
+    storage::resolver_address SETGLOB
+    LDDICT	//  _11 ds
+    SWAP	//  ds _11
+    storage::auction_dict SETGLOB
+    ENDS
+  }>
+  storage::save PROCREF:<{
+    // 
+    storage::auction_dict GETGLOB	//  _0
+    NEWC	//  _0 _1
+    storage::owner_address GETGLOB	//  _0 _1 _2
+    STSLICER	//  _0 _3
+    storage::resolver_address GETGLOB	//  _0 _3 _4
+    STSLICER	//  _0 _5
+    STDICT	//  _6
+    ENDC	//  _7
+    c4 POP
+  }>
+  recv_internal PROC:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    DUP	//  my_balance msg_value in_msg_full in_msg_body in_msg_body
+    SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
+    103 THROWIF
+    ctx::init INLINECALLDICT
+    ctx::isBounced INLINECALLDICT	//  _8
+    IFJMP:<{	// 
+    }>	// 
+    ctx::sender INLINECALLDICT	//  _10
+    0 PUSHINT	//  _10 _11=0
+    address::check_workchain INLINECALLDICT	//  _12
+    104 THROWIFNOT
+    storage::load INLINECALLDICT
+    ctx::opcode INLINECALLDICT	//  _15
+    1414141414 PUSHINT	//  _15 _16=1414141414
+    EQUAL	//  _17
+    IFJMP:<{	// 
+      ctx::body INLINECALLDICT	//  body
+      64 LDU	//  query_id body
+      LDREF	//  query_id _156 _155
+      DROP	//  query_id name_cell
+      ctx::value INLINECALLDICT	//  query_id name_cell bid_amount
+      ctx::sender INLINECALLDICT	//  query_id name_cell bid_amount bidder
+      s2 PUSH	//  query_id name_cell bid_amount bidder name_cell
+      HASHCU	//  query_id name_cell bid_amount bidder key
+      s2 PUSH	//  query_id name_cell bid_amount bidder key bid_amount
+      0 GTINT	//  query_id name_cell bid_amount bidder key _35
+      101 THROWIFNOT
+      storage::auction_dict GETGLOB	//  query_id name_cell bid_amount bidder key _39
+      s1 s(-1) PUXC
+      8 PUSHPOW2	//  query_id name_cell bid_amount bidder key key _39 _40=256
+      DICTUGET
+      NULLSWAPIFNOT	//  query_id name_cell bid_amount bidder key entry found
+      NOW	//  query_id name_cell bid_amount bidder key entry found _45
+      3600 PUSHINT	//  query_id name_cell bid_amount bidder key entry found _45 _46=3600
+      ADD	//  query_id name_cell bid_amount bidder key entry found ends_at
+      SWAP	//  query_id name_cell bid_amount bidder key entry ends_at found
+      IF:<{	//  query_id name_cell bid_amount bidder key entry ends_at
+        DROP	//  query_id name_cell bid_amount bidder key es
+        LDGRAMS	//  query_id name_cell bid_amount bidder key high_bid es
+        32 LDU	//  query_id name_cell bid_amount bidder key high_bid ends_at es
+        LDMSGADDR	//  query_id name_cell bid_amount bidder key high_bid ends_at _164 _163
+        NIP	//  query_id name_cell bid_amount bidder key high_bid ends_at es
+        ENDS
+        s4 s1 PUXC	//  query_id name_cell bid_amount bidder key ends_at bid_amount high_bid
+        GREATER	//  query_id name_cell bid_amount bidder key ends_at _58
+        101 THROWIFNOT
+      }>ELSE<{
+        NIP	//  query_id name_cell bid_amount bidder key ends_at
+      }>
+      NEWC	//  query_id name_cell bid_amount bidder key ends_at _61
+      s4 PUSH	//  query_id name_cell bid_amount bidder key ends_at _61 bid_amount
+      STGRAMS	//  query_id name_cell bid_amount bidder key ends_at _62
+      32 STU	//  query_id name_cell bid_amount bidder key _64
+      s2 PUSH	//  query_id name_cell bid_amount bidder key _64 bidder
+      STSLICER	//  query_id name_cell bid_amount bidder key _65
+      s1 s4 XCHG	//  query_id key bid_amount bidder name_cell _65
+      STREF	//  query_id key bid_amount bidder _66
+      ENDC	//  query_id key bid_amount bidder _67
+      CTOS	//  query_id key bid_amount bidder _68
+      storage::auction_dict GETGLOB	//  query_id key bid_amount bidder _68 _69
+      s1 s4 s0 XCHG3
+      8 PUSHPOW2	//  query_id bidder bid_amount _68 key _69 _70=256
+      DICTUSET	//  query_id bidder bid_amount _72
+      storage::auction_dict SETGLOB
+      storage::save INLINECALLDICT
+      0 PUSHINT	//  query_id bidder bid_amount _74=0
+      1414141414 PUSHINT	//  query_id bidder bid_amount _74=0 _75=1414141414
+      NEWC	//  query_id bidder bid_amount _74=0 _75=1414141414 _76
+      32 STU	//  query_id bidder bid_amount _74=0 _78
+      s1 s4 XCHG	//  _74=0 bidder bid_amount query_id _78
+      64 STU	//  _74=0 bidder bid_amount _80
+      SWAP	//  _74=0 bidder _80 bid_amount
+      STGRAMS	//  _74=0 bidder _81
+      ENDC	//  _74=0 bidder _82
+      7 PUSHPOW2	//  _74=0 bidder _82 _83=128
+      msgs::send_simple INLINECALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _85
+    1515151515 PUSHINT	//  _85 _86=1515151515
+    EQUAL	//  _87
+    IFJMP:<{	// 
+      ctx::sender INLINECALLDICT	//  _89
+      storage::owner_address GETGLOB	//  _89 _90
+      equal_slices INLINECALLDICT	//  _91
+      107 THROWIFNOT
+      ctx::body INLINECALLDICT	//  body
+      64 LDU	//  query_id body
+      LDREF	//  query_id _168 _167
+      DROP	//  query_id name_cell
+      DUP	//  query_id name_cell name_cell
+      HASHCU	//  query_id name_cell key
+      storage::auction_dict GETGLOB	//  query_id name_cell key _106
+      s1 s(-1) PUXC
+      8 PUSHPOW2	//  query_id name_cell key key _106 _107=256
+      DICTUGET
+      NULLSWAPIFNOT	//  query_id name_cell key entry found
+      118 THROWIFNOT	//  query_id name_cell key es
+      LDGRAMS	//  query_id name_cell key _172 _171
+      NIP	//  query_id name_cell key es
+      32 LDU	//  query_id name_cell key ends_at es
+      LDMSGADDR	//  query_id name_cell key ends_at winner es
+      ENDS
+      NOW
+      ROT	//  query_id name_cell key winner _124 ends_at
+      GEQ	//  query_id name_cell key winner _125
+      118 THROWIFNOT
+      storage::auction_dict GETGLOB	//  query_id name_cell key winner _128
+      s1 s2 XCHG
+      8 PUSHPOW2	//  query_id name_cell winner key _128 _129=256
+      DICTUDEL	//  query_id name_cell winner _177 _178
+      DROP	//  query_id name_cell winner _131
+      storage::auction_dict SETGLOB
+      storage::save INLINECALLDICT
+      0 PUSHINT	//  query_id name_cell winner _133=0
+      storage::resolver_address GETGLOB	//  query_id name_cell winner _133=0 _134
+      NOW	//  query_id name_cell winner _133=0 _134 _135
+      31536000 PUSHINT	//  query_id name_cell winner _133=0 _134 _135 _136=31536000
+      ADD	//  query_id name_cell winner _133=0 _134 _137
+      1010101010 PUSHINT	//  query_id name_cell winner _133=0 _134 _137 _138=1010101010
+      NEWC	//  query_id name_cell winner _133=0 _134 _137 _138=1010101010 _139
+      32 STU	//  query_id name_cell winner _133=0 _134 _137 _141
+      s1 s6 XCHG	//  _137 name_cell winner _133=0 _134 query_id _141
+      64 STU	//  _137 name_cell winner _133=0 _134 _143
+      s1 s4 XCHG	//  _137 _134 winner _133=0 name_cell _143
+      STREF	//  _137 _134 winner _133=0 _144
+      ROT	//  _137 _134 _133=0 _144 winner
+      STSLICER	//  _137 _134 _133=0 _145
+      s1 s3 XCHG	//  _133=0 _134 _137 _145
+      32 STU	//  _133=0 _134 _147
+      ENDC	//  _133=0 _134 _148
+      7 PUSHPOW2	//  _133=0 _134 _148 _149=128
+      msgs::send_simple INLINECALLDICT
+    }>	// 
+    105 THROW
+  }>
+  get_auction_data PROC:<{
+    // 
+    storage::load INLINECALLDICT
+    storage::owner_address GETGLOB	//  _1
+    storage::resolver_address GETGLOB	//  _1 _2
+  }>
+}END>c

@@ -1,0 +1,582 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Master-locked aurora tricolor — .memory-bank/ui-cyber-glass-iron-law.md */
+  --ion-cyan: #00ffff;
+  --ion-purple: #6020ff;
+  --ion-magenta: #ff00ff;
+  --ion-violet: var(--ion-purple);
+  --ion-gold: #ffd166;
+  --ion-green: #00ff88;
+  /* Deep black cyber base — neon accents pop on pure dark */
+  --ion-ink: #010104;
+  --ion-ink-elevated: #06060f;
+  --ion-cyan-rgb: 0, 255, 255;
+  --ion-purple-rgb: 96, 32, 255;
+  --ion-magenta-rgb: 255, 0, 255;
+  --glass-bg: rgba(2, 4, 10, 0.72);
+  --glass-bg-hero: rgba(4, 6, 14, 0.82);
+  --glass-blur: 20px;
+  --panel-radius: 20px;
+  --btn-radius: 12px;
+  --glow-cyan: 0 0 14px 4px rgba(var(--ion-cyan-rgb), 0.55);
+  --glow-purple: 0 0 14px 4px rgba(var(--ion-purple-rgb), 0.5);
+  --glow-magenta: 0 0 14px 4px rgba(var(--ion-magenta-rgb), 0.5);
+  --glow-cyber-intense: 0 0 24px rgba(var(--ion-cyan-rgb), 0.35),
+    0 0 48px rgba(var(--ion-purple-rgb), 0.22),
+    0 0 72px rgba(var(--ion-magenta-rgb), 0.14);
+  --ion-gradient-aurora: linear-gradient(
+    90deg,
+    var(--ion-cyan),
+    var(--ion-purple),
+    var(--ion-magenta)
+  );
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--ion-ink);
+  color: #f8fbff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100dvh;
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--ion-ink);
+}
+
+/* Subtle global cyber grid — sits above background, below content */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  opacity: 0.35;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(var(--ion-cyan-rgb), 0.04) 100%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(var(--ion-cyan-rgb), 0.04) 0,
+      rgba(var(--ion-cyan-rgb), 0.04) 1px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      rgba(var(--ion-purple-rgb), 0.05) 0,
+      rgba(var(--ion-purple-rgb), 0.05) 1px,
+      transparent 1px,
+      transparent 48px
+    );
+}
+
+#root {
+  display: flex;
+  min-height: 100dvh;
+  min-height: 100svh;
+  flex-direction: column;
+}
+
+html[data-ion-dark-mode="0"] body {
+  filter: saturate(0.92) brightness(1.04);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+/* ========== Cyber Neon Glassmorphism Core ========== */
+@layer utilities {
+  .ion-glass-panel,
+  .glass-surface {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgba(var(--ion-cyan-rgb), 0.35);
+    border-radius: var(--panel-radius);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--glow-cyan), var(--glow-purple), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .glass-surface {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background:
+      linear-gradient(
+          125deg,
+          rgba(var(--ion-cyan-rgb), 0.55),
+          rgba(var(--ion-purple-rgb), 0.32),
+          rgba(var(--ion-magenta-rgb), 0.48)
+        )
+        border-box,
+      var(--glass-bg) padding-box;
+    background-clip: padding-box, border-box;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      var(--glow-cyber-intense),
+      0 22px 70px rgba(0, 0, 0, 0.55);
+  }
+
+  .glass-surface::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  .glass-surface::after {
+    content: "";
+    position: absolute;
+    inset: 6% 8% 0;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(60px);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--ion-cyan-rgb), 0.14) 0%,
+      rgba(var(--ion-purple-rgb), 0.1) 40%,
+      rgba(var(--ion-magenta-rgb), 0.12) 100%
+    );
+    transform: translateZ(0);
+  }
+
+  /* Neon flowing border — for highlight elements */
+  .flow-border {
+    isolation: isolate;
+  }
+
+  .ion-glass-border,
+  .flow-border {
+    position: relative;
+    border-radius: var(--panel-radius);
+  }
+
+  .ion-glass-border::before,
+  .flow-border::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--ion-gradient-aurora);
+    background-size: 260% 100%;
+    filter: blur(4px);
+    opacity: 0.9;
+    animation: ionBorderFlow 7s ease infinite;
+  }
+
+  /* 3D stage — main container */
+  .depth-stage {
+    perspective: 1400px;
+    transform-style: preserve-3d;
+  }
+
+  .float-3d {
+    transform: rotateX(7deg) rotateY(-8deg) translateZ(0);
+    animation: ionFloat3d 9s ease-in-out infinite;
+  }
+
+  .float-3d-strong {
+    transform: rotateX(10deg) rotateY(-12deg) translateZ(0);
+    animation: ionFloat3d 12s ease-in-out infinite;
+  }
+
+  /* Neon liquid-glass card — NeonGlassCard component */
+  .neon-glass-card {
+    position: relative;
+    isolation: isolate;
+    border-radius: 2rem;
+    padding: 1px;
+    background: var(--ion-gradient-aurora);
+    background-size: 260% 100%;
+    animation: ionBorderFlow 9s ease infinite;
+    box-shadow: var(--glow-cyber-intense);
+  }
+
+  .neon-glass-card.neon-rim-hero {
+    padding: 2px;
+    box-shadow:
+      var(--glow-cyan),
+      var(--glow-magenta),
+      0 0 60px rgba(var(--ion-cyan-rgb), 0.2);
+  }
+
+  .neon-glass-card__inner {
+    position: relative;
+    border-radius: calc(2rem - 1px);
+    background: var(--glass-bg-hero);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  .neon-glass-card.neon-rim-hero .neon-glass-card__inner {
+    border-radius: calc(2rem - 2px);
+  }
+
+  .neon-glass-card__inner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at 20% 0%,
+      rgba(var(--ion-cyan-rgb), 0.1),
+      transparent 55%
+    );
+  }
+
+  /* Neon ambient glow for content containers */
+  .neon-ambient {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .neon-ambient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(var(--ion-cyan-rgb), 0.1), transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(var(--ion-purple-rgb), 0.08), transparent 50%);
+  }
+
+  .neon-ambient > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Intense neon edge glow for main panels */
+  .neon-panel-glow {
+    box-shadow:
+      0 0 40px rgba(var(--ion-cyan-rgb), 0.16),
+      0 0 80px rgba(var(--ion-cyan-rgb), 0.08),
+      0 0 120px rgba(var(--ion-purple-rgb), 0.06);
+  }
+
+  /* Neon text glow */
+  .text-glow-cyan {
+    text-shadow: 0 0 18px rgba(var(--ion-cyan-rgb), 0.75), 0 0 40px rgba(var(--ion-cyan-rgb), 0.3);
+  }
+
+  .text-glow-magenta {
+    text-shadow: 0 0 18px rgba(var(--ion-magenta-rgb), 0.65), 0 0 40px rgba(var(--ion-magenta-rgb), 0.25);
+  }
+
+  .text-glow-violet {
+    text-shadow: 0 0 18px rgba(var(--ion-purple-rgb), 0.65);
+  }
+
+  /* Aurora noise background */
+  .aurora-noise {
+    background-image:
+      radial-gradient(circle at 15% 15%, rgba(var(--ion-cyan-rgb), 0.22), transparent 28%),
+      radial-gradient(circle at 78% 18%, rgba(var(--ion-magenta-rgb), 0.18), transparent 32%),
+      radial-gradient(circle at 52% 78%, rgba(var(--ion-purple-rgb), 0.22), transparent 32%);
+  }
+
+  /* Cyber scanline effect */
+  .cyber-scanline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(var(--ion-cyan-rgb), 0.03) 2px,
+      rgba(var(--ion-cyan-rgb), 0.03) 4px
+    );
+    border-radius: inherit;
+  }
+
+  /* Neon bottom-edge glow */
+  .neon-edge-glow {
+    box-shadow:
+      0 4px 20px rgba(var(--ion-cyan-rgb), 0.2),
+      0 8px 40px rgba(var(--ion-purple-rgb), 0.14);
+  }
+
+  /* Global scanline drift */
+  .animate-scanline {
+    animation: ionScanlineDrift 8s linear infinite;
+  }
+
+  .animate-border-pulse {
+    animation: ionNeonPulse 3.5s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-border::before,
+    .float-3d,
+    .float-3d-strong,
+    .neon-glass-card {
+      animation: none;
+    }
+
+    .float-3d,
+    .float-3d-strong {
+      transform: none;
+    }
+
+    .glass-surface {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .glass-surface::after {
+      display: none;
+    }
+
+    [data-testid="ticker-strip"] > div {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    button {
+      transition-duration: 0s !important;
+    }
+
+    button:hover,
+    button:active {
+      transform: none !important;
+    }
+  }
+
+  /* Playwright verify build — freeze motion even if reduced-motion is not applied */
+  html[data-ion-e2e-stable="1"] .flow-border::before,
+  html[data-ion-e2e-stable="1"] .float-3d,
+  html[data-ion-e2e-stable="1"] .float-3d-strong,
+  html[data-ion-e2e-stable="1"] .neon-glass-card,
+  html[data-ion-e2e-stable="1"] [data-testid="ticker-strip"] > div {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  html[data-ion-e2e-stable="1"] .glass-surface {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  html[data-ion-e2e-stable="1"] .glass-surface::after {
+    display: none;
+  }
+
+  html[data-ion-e2e-stable="1"] button {
+    transition-duration: 0s !important;
+  }
+
+  html[data-ion-e2e-stable="1"] button:hover,
+  html[data-ion-e2e-stable="1"] button:active {
+    transform: none !important;
+  }
+
+  .boot-horizon-grid {
+    position: relative;
+    height: 14rem;
+    border-top: 1px solid rgba(0, 255, 255, 0.26);
+    background:
+      linear-gradient(180deg, rgba(0, 255, 255, 0.12), transparent 28%),
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 255, 255, 0.16) 0,
+        rgba(0, 255, 255, 0.16) 1px,
+        transparent 1px,
+        transparent 74px
+      ),
+      repeating-linear-gradient(
+        180deg,
+        rgba(96, 32, 255, 0.22) 0,
+        rgba(96, 32, 255, 0.22) 1px,
+        transparent 1px,
+        transparent 38px
+      );
+    clip-path: polygon(0 100%, 100% 100%, 63% 20%, 37% 20%);
+    opacity: 0.72;
+    filter: drop-shadow(0 0 18px rgba(0, 255, 255, 0.22));
+  }
+
+  .boot-horizon-grid::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(0, 255, 255, 0.24), transparent 44%);
+  }
+
+  .boot-brand-chip,
+  .boot-fallback-stage {
+    isolation: isolate;
+  }
+
+  .boot-fallback-nebula {
+    background:
+      radial-gradient(circle at 50% 20%, rgba(0, 255, 255, 0.18), transparent 28%),
+      radial-gradient(circle at 78% 24%, rgba(255, 0, 255, 0.16), transparent 32%),
+      radial-gradient(circle at 20% 78%, rgba(96, 32, 255, 0.22), transparent 36%),
+      linear-gradient(180deg, rgba(5, 10, 28, 0.18), rgba(3, 8, 24, 0.72));
+  }
+
+  .boot-fallback-grid {
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(0, 255, 255, 0.12) 100%),
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 255, 255, 0.2) 0,
+        rgba(0, 255, 255, 0.2) 1px,
+        transparent 1px,
+        transparent 46px
+      ),
+      repeating-linear-gradient(
+        180deg,
+        rgba(var(--ion-purple-rgb), 0.22) 0,
+        rgba(var(--ion-purple-rgb), 0.22) 1px,
+        transparent 1px,
+        transparent 24px
+      );
+    clip-path: polygon(0 100%, 100% 100%, 72% 0, 28% 0);
+    opacity: 0.62;
+  }
+
+  .boot-fallback-orb {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8), rgba(0, 255, 255, 0.2) 32%, rgba(255, 0, 255, 0.08) 54%, transparent 72%);
+    box-shadow:
+      0 0 26px rgba(0, 255, 255, 0.3),
+      0 0 80px rgba(96, 32, 255, 0.18);
+    filter: blur(1px);
+  }
+}
+
+/* ========== Keyframe Animations ========== */
+@keyframes ionFloat3d {
+  0%,
+  100% {
+    transform: rotateX(7deg) rotateY(-8deg) translate3d(0, 0, 0);
+  }
+  33% {
+    transform: rotateX(3deg) rotateY(6deg) translate3d(0, -12px, 28px);
+  }
+  66% {
+    transform: rotateX(5deg) rotateY(-3deg) translate3d(4px, -6px, 14px);
+  }
+}
+
+@keyframes ionBorderFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes ionSpinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ionPulseSlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes ionShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes ionScale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes ionAuroraFlow {
+  0%, 100% {
+    transform: translateX(-5%) rotate(-2deg) scaleX(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateX(8%) rotate(1.5deg) scaleX(1.08);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateX(20%) rotate(4deg) scaleX(1.15);
+    opacity: 0.7;
+  }
+  75% {
+    transform: translateX(5%) rotate(-1deg) scaleX(0.95);
+    opacity: 0.85;
+  }
+}
+
+/* Neon pulse (key states / buttons) */
+@keyframes ionNeonPulse {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(var(--ion-cyan-rgb), 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(var(--ion-cyan-rgb), 0.65), 0 0 60px rgba(var(--ion-purple-rgb), 0.35);
+  }
+}
+
+@keyframes ionScanlineDrift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+@keyframes ionGlowShift {
+  0% { filter: hue-rotate(0deg) brightness(1); }
+  50% { filter: hue-rotate(10deg) brightness(1.1); }
+  100% { filter: hue-rotate(0deg) brightness(1); }
+}
+
+/* ========== Scrollbar Styling ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(var(--ion-cyan-rgb), 0.45), rgba(var(--ion-purple-rgb), 0.35));
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(var(--ion-cyan-rgb), 0.65), rgba(var(--ion-purple-rgb), 0.55));
+}
+
+/* ========== Text Selection ========== */
+::selection {
+  background: rgba(var(--ion-cyan-rgb), 0.28);
+  color: #fff;
+}

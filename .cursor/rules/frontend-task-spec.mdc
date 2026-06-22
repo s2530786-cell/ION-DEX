@@ -1,0 +1,182 @@
+# Cursor Composer: ION DEX Frontend Task Spec
+# HOW TO READ: Copy everything below this line. Paste into Cursor Composer (Ctrl+I).
+# Cursor will auto-detect .cursorrules and design-tokens.ts from workspace.
+
+============================================================
+TASK: ION DEX 5-page Frontend Implementation
+============================================================
+
+=== PRE-FLIGHT (do this FIRST) ===
+1. Read src/lib/design-tokens.ts — all colors/spacing/effects are here
+2. Read .cursorrules — Zero-Visual-Discretion, Grid-Only, Asset-Img-Only
+3. Read src/components/layout/DEXGridHarness.tsx — gridTemplateColumns: 350px 1fr 300px
+
+=== GRID LAYOUT CONTRACT ===
+Every page MUST be wrapped in DEXGridHarness:
+```
+<DEXGridHarness>
+  {/* left sidebar: 350px */}
+  {/* center: 1fr */}
+  {/* right sidebar: 300px */}
+</DEXGridHarness>
+```
+
+=== DESIGN TOKEN CONTRACT ===
+NO hardcoded hex/rgba values in CSS. Only use:
+- DesignTokens.colors.xxx — all colors
+- DesignTokens.typography.xxx — all fonts
+- DesignTokens.spacing.xxx — all padding/margin/gap
+- DesignTokens.effects.xxx — all shadows/blur/glow
+- DesignTokens.gradients.xxx — all gradients
+- DesignTokens.animation.xxx — all transitions
+- DesignTokens.borders.xxx — all borders
+- DesignTokens.buttons.xxx — all button dimensions
+- DesignTokens.inputs.xxx — all input fields
+
+=== VISUAL VERIFICATION ===
+After EACH page: npx playwright test — visual regression
+diff < 2% → pass
+diff >= 2% → fix Token values, NOT component CSS
+
+=== GIT COMMIT RULE ===
+One commit per page. Format: "feat: [PageName] full implementation"
+
+============================================================
+
+Task 1/5: Swap Page (src/app/swap/page.tsx)
+
+LAYOUT INTENT:
+- Center column: Swap form
+- Right sidebar: Price chart (DexScreener embed)
+- Left sidebar: Token info + recent trades
+
+FUNCTIONAL SPEC:
+1. Token Select: dropdown with search. Tokens: ION (0xe1ab61f7b093435204df32f5b3a405de55445ea8), WBNB (0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c), USDT (0x55d398326f99059fF775485246999027B3197955)
+2. Amount Input: text field with "MAX" button that reads wallet balance
+3. Quote Display: show rate + price impact + min received (slippage 0.5%)
+4. Swap Button: calls PancakeSwap V3 router (0x13f4EA83D0bd40E75C8222255bc855a974568Dd4) exactInputSingle
+5. Read real token price from PancakeSwap V3 pool getReserves() → convert to human readable
+6. Use NeonCard component for the swap card
+
+TYPES:
+```typescript
+interface Token {
+  symbol: string; address: `0x${string}`; decimals: number; logoURI: string;
+}
+interface SwapState {
+  fromToken: Token; toToken: Token; amount: string; quote: string | null;
+}
+```
+
+============================================================
+
+Task 2/5: Pool Page (src/app/pool/page.tsx)
+
+LAYOUT INTENT:
+- Center column: Pool list (top half) + Add/Remove liquidity (bottom half)
+- Right sidebar: Pool stats (TVL, Volume, Fees)
+- Left sidebar: My positions
+
+FUNCTIONAL SPEC:
+1. Pool List: table with columns [Pair, TVL, APR, 24h Volume, My Liquidity]
+2. Source data from PancakeSwap V3 subgraph or on-chain pool reads
+3. "Add Liquidity" button opens modal/form: select two tokens + amounts → approve → addLiquidity on PancakeSwap V3 nonfungiblePositionManager (0x46A15B0b27311cedF172AB29E4f4766fbE7F4364)
+4. "Remove Liquidity" button: show position NFT → decreaseLiquidity → collectFees
+5. Use PoolCard component from src/components/DEX/PoolCard.tsx
+6. Format TVL/Volume with Intl.NumberFormat (compact notation)
+
+TYPES:
+```typescript
+interface Pool {
+  pair: string; token0: Token; token1: Token; tvl: number; apr: number; volume24h: number;
+}
+interface Position {
+  pool: Pool; liquidity: string; token0Amount: string; token1Amount: string;
+}
+```
+
+============================================================
+
+Task 3/5: Stake Page (src/app/stake/page.tsx)
+
+LAYOUT INTENT:
+- Center column: Stake form + rewards display
+- Right sidebar: APR calculator + stats
+- Left sidebar: Stake history
+
+FUNCTIONAL SPEC:
+1. Stake Form: amount input + duration selector (Flexible 8% | 7-day 10% | 30-day 12% | 90-day 15% | 180-day 20% | 365-day 30%)
+2. "Stake" button: approve ION → stake on FeeDistributor contract
+3. Unstake form: shows staked amount + accrued rewards + early exit penalty
+4. Rewards display: total earned + claimable now + projected APR
+5. Use StakePanel component from src/components/DEX/StakePanel.tsx
+6. Read real ION balance and staking data from BSC chain
+
+TYPES:
+```typescript
+interface StakePosition {
+  amount: string; duration: number; apr: number; rewards: string; lockEnd: number;
+}
+```
+
+============================================================
+
+Task 4/5: Bridge Page (src/app/bridge/page.tsx)
+
+LAYOUT INTENT:
+- Center column: Bridge form (source → destination)
+- Right sidebar: Transaction history
+- Left sidebar: Bridge stats + fees
+
+FUNCTIONAL SPEC:
+1. Chain Selector: BSC ↔ ION (icons for each chain)
+2. Token Selector: ION or wrapped ION (wION)
+3. Amount Input + estimated arrival time
+4. Bridge flow:
+   a. Lock tokens on source chain (BSC bridge contract)
+   b. Show confirmation + tx hash
+   c. Show status: Locking → Confirming → Minting → Complete
+5. Read real bridge contract: BSC side 0x... (from ion-dex-nuke contracts)
+6. Fee display: 0.1% bridge fee
+
+TYPES:
+```typescript
+interface BridgeState {
+  fromChain: 'BSC' | 'ION'; toChain: 'BSC' | 'ION'; token: Token; amount: string; status: BridgeStatus;
+}
+type BridgeStatus = 'idle' | 'approving' | 'locking' | 'confirming' | 'minting' | 'complete' | 'failed';
+```
+
+============================================================
+
+Task 5/5: Home/Dashboard (src/app/page.tsx)
+
+LAYOUT INTENT:
+- Center column: ION price chart (full width)
+- Below chart: Quick action cards (4 cards in 2x2 grid)
+- Right sidebar: Market stats (TVL, Volume, Market Cap)
+- Left sidebar: Portfolio summary
+
+FUNCTIONAL SPEC:
+1. Price Chart: fetch ION/USD from DexScreener API (https://api.dexscreener.com/latest/dex/tokens/0xe1ab61f7b093435204df32f5b3a405de55445ea8) → render candlestick/line chart with Recharts
+2. Quick Action Cards: 4 cards — "Swap", "Pool", "Stake", "Bridge" → each links to respective page
+3. TVL Display: sum of all PancakeSwap pool TVL → formatted number
+4. 24h Volume + Price Change (% green/red)
+5. Market Cap from DexScreener data
+6. Use glassmorphism cards with neon glow effects from DesignTokens
+7. Auto-refresh price every 30s
+
+TYPES:
+```typescript
+interface MarketData {
+  price: number; priceChange24h: number; volume24h: number; tvl: number; marketCap: number;
+}
+```
+
+============================================================
+OUTPUT FORMAT:
+1. State "Layout Intent Analysis" before writing code
+2. Write all TypeScript types at top of file
+3. Use DesignTokens.[category].[key] for ALL visual values
+4. ONE file per task — do not split into multiple files
+5. After writing: run npx tsc --noEmit → fix any errors → then COMMIT

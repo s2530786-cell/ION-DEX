@@ -1,0 +1,393 @@
+"Asm.fif" include
+// automatically generated from `D:/openclaw-data/workspace/ion-official/ion/crypto/smartcont/stdlib.fc` `common/gas.fc` `common/common.fc` `vault.fc` 
+PROGRAM{
+  DECLPROC ctx::init
+  DECLPROC ctx::body
+  DECLPROC ctx::raw_body
+  DECLPROC ctx::sender
+  DECLPROC ctx::opcode
+  DECLPROC ctx::isBounced
+  DECLPROC ctx::balance
+  DECLPROC ctx::fwdFee
+  DECLPROC ctx::value
+  DECLPROC address::check_workchain
+  DECLPROC address::is_none
+  DECLPROC address::none
+  DECLPROC reserves::max_balance
+  DECLPROC equal_slices
+  DECLPROC sqrt
+  DECLPROC math::mul_div
+  DECLPROC amm::get_amount_out
+  DECLPROC msgs::send_internal
+  DECLPROC msgs::send_simple
+  DECLPROC msgs::send_value
+  DECLPROC msgs::send_nobounce
+  DECLPROC storage::load
+  DECLPROC storage::save
+  DECLPROC handle_deposit_ref_fee
+  DECLPROC handle_withdraw_fee
+  DECLPROC recv_internal
+  127184 DECLMETHOD get_vault_data
+  DECLGLOBVAR ctx::body_slice
+  DECLGLOBVAR ctx::raw_body_slice
+  DECLGLOBVAR ctx::sender_slice
+  DECLGLOBVAR ctx::opcode_val
+  DECLGLOBVAR ctx::is_bounced
+  DECLGLOBVAR ctx::balance_val
+  DECLGLOBVAR ctx::fwd_fee_val
+  DECLGLOBVAR ctx::msg_value_val
+  DECLGLOBVAR storage::owner_address
+  DECLGLOBVAR storage::token_address
+  DECLGLOBVAR storage::router_address
+  DECLGLOBVAR storage::deposited_amount
+  ctx::init PROCINLINE:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    //  my_balance _4 in_msg_full in_msg_body
+    s0 s2 XCHG	//  my_balance in_msg_body in_msg_full _4
+    ctx::msg_value_val SETGLOB	//  _5 in_msg_body in_msg_full
+    s0 s2 XCHG	//  in_msg_full in_msg_body _5
+    ctx::balance_val SETGLOB
+    DUP	//  in_msg_full in_msg_body _6
+    ctx::raw_body_slice SETGLOB
+    DUP	//  in_msg_full in_msg_body in_msg_body
+    SBITS	//  in_msg_full in_msg_body _7
+    31 GTINT	//  in_msg_full in_msg_body _9
+    IF:<{	//  in_msg_full in_msg_body
+      DUP	//  in_msg_full in_msg_body in_msg_body
+      32 PLDU	//  in_msg_full in_msg_body _12
+      ctx::opcode_val SETGLOB
+      32 PUSHINT	//  in_msg_full in_msg_body _13=32
+      SDSKIPFIRST	//  in_msg_full _15
+      ctx::body_slice SETGLOB
+    }>ELSE<{	//  in_msg_full in_msg_body
+      0 PUSHINT	//  in_msg_full in_msg_body _17=0
+      ctx::opcode_val SETGLOB	//  in_msg_full _18
+      ctx::body_slice SETGLOB
+    }>
+    CTOS	//  cs
+    4 LDU	//  flags cs
+    SWAP
+    1 PUSHINT	//  cs flags _25=1
+    AND	//  cs _27
+    ctx::is_bounced SETGLOB
+    LDMSGADDR	//  _30 cs
+    SWAP	//  cs _30
+    ctx::sender_slice SETGLOB
+    LDMSGADDR	//  _48 _47
+    NIP	//  cs
+    LDGRAMS	//  _50 _49
+    NIP	//  cs
+    1 LDU	//  _52 _51
+    NIP	//  cs
+    LDGRAMS	//  _54 _53
+    NIP	//  cs
+    LDGRAMS	//  _56 _55
+    DROP	//  _42
+    ctx::fwd_fee_val SETGLOB
+  }>
+  ctx::body PROCINLINE:<{
+    // 
+    ctx::body_slice GETGLOB	//  _0
+  }>
+  ctx::raw_body PROCINLINE:<{
+    // 
+    ctx::raw_body_slice GETGLOB	//  _0
+  }>
+  ctx::sender PROCINLINE:<{
+    // 
+    ctx::sender_slice GETGLOB	//  _0
+  }>
+  ctx::opcode PROCINLINE:<{
+    // 
+    ctx::opcode_val GETGLOB	//  _0
+  }>
+  ctx::isBounced PROCINLINE:<{
+    // 
+    ctx::is_bounced GETGLOB	//  _0
+  }>
+  ctx::balance PROCINLINE:<{
+    // 
+    ctx::balance_val GETGLOB	//  _0
+  }>
+  ctx::fwdFee PROCINLINE:<{
+    // 
+    ctx::fwd_fee_val GETGLOB	//  _0
+  }>
+  ctx::value PROCINLINE:<{
+    // 
+    ctx::msg_value_val GETGLOB	//  _0
+  }>
+  address::check_workchain PROCINLINE:<{
+    //  addr expected_workchain
+    SWAP	//  expected_workchain addr
+    REWRITESTDADDR	//  expected_workchain _9 _10
+    DROP	//  expected_workchain wc
+    SWAP	//  wc expected_workchain
+    EQUAL	//  _5
+    IF:<{	// 
+      -1 PUSHINT	//  _6=-1
+    }>ELSE<{	// 
+      0 PUSHINT	//  _6=0
+    }>
+  }>
+  address::is_none PROCINLINE:<{
+    //  addr
+    2 PLDU	//  _2
+    0 EQINT	//  _4
+  }>
+  address::none PROCINLINE:<{
+    // 
+    0 PUSHINT	//  _0=0
+    NEWC	//  _0=0 _1
+    2 STU	//  _3
+    ENDC	//  _4
+    CTOS	//  _5
+  }>
+  reserves::max_balance PROCINLINE:<{
+    //  amount
+    2 PUSHINT	//  amount _1=2
+    RAWRESERVE
+  }>
+  equal_slices PROCINLINE:<{
+    //  a b
+    SDEQ	//  _2
+  }>
+  sqrt PROCINLINE:<{
+    //  x
+    DUP	//  x x
+    1 LESSINT	//  x _2
+    IF:<{	//  x
+      DROP	// 
+      0 PUSHINT	//  _3=0
+    }>ELSE<{	//  x
+      DUP	//  x z
+      0 PUSHINT	//  x z i=0
+      WHILE:<{
+        DUP	//  x z i i
+        32 LESSINT	//  x z i _8
+      }>DO<{	//  x z i
+        INC	//  x z i
+        s2 s1 PUSH2	//  x z i x z
+        DIV	//  x z i _11
+        s1 s2 XCHG	//  x i z _11
+        ADD	//  x i _12
+        1 RSHIFT#	//  x i z
+        SWAP	//  x z i
+      }>	//  x z i
+      DROP
+      NIP	//  z
+    }>
+  }>
+  math::mul_div PROCINLINE:<{
+    //  a b denom
+    DUP	//  a b denom denom
+    0 GTINT	//  a b denom _5
+    101 THROWIFNOT
+    MULDIV	//  _7
+  }>
+  amm::get_amount_out PROCINLINE:<{
+    //  amount_in reserve_in reserve_out fee_num fee_denom
+    s4 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom amount_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _7
+    101 THROWIFNOT
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom reserve_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom _11 reserve_out
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11 _13
+    AND	//  amount_in reserve_in reserve_out fee_num fee_denom _14
+    113 THROWIFNOT
+    s2 s4 XCHG	//  reserve_out reserve_in amount_in fee_num fee_denom
+    math::mul_div INLINECALLDICT	//  reserve_out reserve_in amount_in_with_fee
+    s0 s2 PUXC	//  amount_in_with_fee reserve_in amount_in_with_fee reserve_out
+    MUL	//  amount_in_with_fee reserve_in numerator
+    s0 s2 XCHG	//  numerator reserve_in amount_in_with_fee
+    ADD	//  numerator denominator
+    DUP	//  numerator denominator denominator
+    0 GTINT	//  numerator denominator _24
+    106 THROWIFNOT
+    DIV	//  _26
+  }>
+  msgs::send_internal PROCINLINE:<{
+    //  value to body bounce mode
+    0 PUSHINT	//  value to body bounce mode _6=0
+    s0 s2 PUXC	//  value to body _7=0 mode _6=0 bounce
+    IF:<{	//  value to body _7=0 mode _6=0
+      24 PUSHINT	//  value to body _7=0 mode _6=0 _8=24
+    }>ELSE<{	//  value to body _7=0 mode _6=0
+      16 PUSHINT	//  value to body _7=0 mode _6=0 _8=16
+    }>
+    NEWC	//  value to body _7=0 mode _6=0 _8 _11
+    6 STU	//  value to body _7=0 mode _6=0 _13
+    s0 s5 XCHG2	//  value _6=0 body _7=0 mode _13 to
+    STSLICER	//  value _6=0 body _7=0 mode _14
+    s0 s5 XCHG2	//  mode _6=0 body _7=0 _14 value
+    STGRAMS	//  mode _6=0 body _7=0 _15
+    105 STU	//  mode _6=0 body _25
+    s1 s2 XCHG	//  mode body _6=0 _25
+    1 STU	//  mode body msg
+    OVER	//  mode body msg body
+    ISNULL	//  mode body msg _28
+    IF:<{	//  mode body msg
+      0 PUSHINT
+      s2 POP	//  mode _30=0 msg
+      1 STU	//  mode msg
+    }>ELSE<{	//  mode body msg
+      1 PUSHINT	//  mode body msg _34=1
+      SWAP	//  mode body _34=1 msg
+      1 STU	//  mode body msg
+      STREF	//  mode msg
+    }>
+    ENDC	//  mode _38
+    SWAP	//  _38 mode
+    SENDRAWMSG
+  }>
+  msgs::send_simple PROCINLINE:<{
+    //  value to body mode
+    -1 PUSHINT	//  value to body mode _4=-1
+    SWAP	//  value to body _4=-1 mode
+    msgs::send_internal INLINECALLDICT
+  }>
+  msgs::send_value PROCINLINE:<{
+    //  value to body mode
+    -1 PUSHINT	//  value to body mode _4=-1
+    SWAP	//  value to body _4=-1 mode
+    msgs::send_internal INLINECALLDICT
+  }>
+  msgs::send_nobounce PROCINLINE:<{
+    //  value to body mode
+    0 PUSHINT	//  value to body mode _4=0
+    SWAP	//  value to body _4=0 mode
+    msgs::send_internal INLINECALLDICT
+  }>
+  storage::load PROCINLINE:<{
+    // 
+    c4 PUSH	//  _1
+    CTOS	//  ds
+    LDMSGADDR	//  _5 ds
+    SWAP	//  ds _5
+    storage::owner_address SETGLOB
+    LDMSGADDR	//  _8 ds
+    SWAP	//  ds _8
+    storage::token_address SETGLOB
+    LDMSGADDR	//  _11 ds
+    SWAP	//  ds _11
+    storage::router_address SETGLOB
+    LDGRAMS	//  _14 ds
+    SWAP	//  ds _14
+    storage::deposited_amount SETGLOB
+    ENDS
+  }>
+  storage::save PROCREF:<{
+    // 
+    NEWC	//  _0
+    storage::owner_address GETGLOB	//  _0 _1
+    STSLICER	//  _2
+    storage::token_address GETGLOB	//  _2 _3
+    STSLICER	//  _4
+    storage::router_address GETGLOB	//  _4 _5
+    STSLICER	//  _6
+    storage::deposited_amount GETGLOB	//  _6 _7
+    STGRAMS	//  _8
+    ENDC	//  _9
+    c4 POP
+  }>
+  handle_deposit_ref_fee PROC:<{
+    // 
+    ctx::body_slice GETGLOB	//  body
+    LDGRAMS	//  jetton_amount body
+    LDMSGADDR	//  jetton_amount _21 _20
+    DROP	//  jetton_amount excesses_address
+    storage::deposited_amount GETGLOB	//  jetton_amount excesses_address _8
+    ROT	//  excesses_address _8 jetton_amount
+    ADD	//  excesses_address _10
+    storage::deposited_amount SETGLOB
+    storage::save INLINECALLDICT
+    1000000 PUSHINT	//  excesses_address _12=1000000
+    reserves::max_balance INLINECALLDICT
+    0 PUSHINT	//  excesses_address _14=0
+    SWAP
+    PUSHNULL
+    7 PUSHPOW2	//  _14=0 excesses_address _15 _16=128
+    msgs::send_simple INLINECALLDICT
+  }>
+  handle_withdraw_fee PROC:<{
+    // 
+    storage::deposited_amount GETGLOB	//  _1
+    0 GTINT	//  _3
+    106 THROWIFNOT
+    ctx::balance_val GETGLOB	//  _6
+    ctx::fwd_fee_val GETGLOB	//  _6 _7
+    5 MULCONST	//  _6 _9
+    22000000 PUSHINT	//  _6 _9 _10=22000000
+    ADD	//  _6 _11
+    11000000 PUSHINT	//  _6 _11 _12=11000000
+    ADD	//  _6 _13
+    10000000 PUSHINT	//  _6 _13 _14=10000000
+    ADD	//  _6 _15
+    10000000 PUSHINT	//  _6 _15 _16=10000000
+    ADD	//  _6 _17
+    77000000 PUSHINT	//  _6 _17 _18=77000000
+    ADD	//  _6 _19
+    GREATER	//  _20
+    102 THROWIFNOT
+    0 PUSHINT	//  _22=0
+    storage::router_address GETGLOB	//  _22=0 _23
+    OVER	//  _22=0 _23 _24=0
+    2526861840 PUSHINT	//  _22=0 _23 _24=0 _25=2526861840
+    NEWC	//  _22=0 _23 _24=0 _25=2526861840 _26
+    32 STU	//  _22=0 _23 _24=0 _28
+    64 STU	//  _22=0 _23 _30
+    storage::deposited_amount GETGLOB	//  _22=0 _23 _30 _31
+    STGRAMS	//  _22=0 _23 _32
+    storage::token_address GETGLOB	//  _22=0 _23 _32 _33
+    STSLICER	//  _22=0 _23 _34
+    storage::owner_address GETGLOB	//  _22=0 _23 _34 _35
+    STSLICER	//  _22=0 _23 _36
+    ENDC	//  _22=0 _23 _37
+    160 PUSHINT	//  _22=0 _23 _37 _40
+    msgs::send_simple INLINECALLDICT
+    0 PUSHINT	//  _43=0
+    storage::deposited_amount SETGLOB
+    storage::save INLINECALLDICT
+  }>
+  recv_internal PROC:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    DUP	//  my_balance msg_value in_msg_full in_msg_body in_msg_body
+    SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
+    103 THROWIF
+    ctx::init INLINECALLDICT
+    ctx::is_bounced GETGLOB	//  _8
+    IFJMP:<{	// 
+    }>	// 
+    ctx::sender_slice GETGLOB	//  _10
+    0 PUSHINT	//  _10 _11=0
+    address::check_workchain INLINECALLDICT	//  _12
+    104 THROWIFNOT
+    storage::load INLINECALLDICT
+    ctx::opcode_val GETGLOB	//  _15
+    2188830393 PUSHINT	//  _15 _16=2188830393
+    EQUAL	//  _17
+    IFJMP:<{	// 
+      ctx::sender_slice GETGLOB	//  _19
+      storage::router_address GETGLOB	//  _19 _20
+      equal_slices INLINECALLDICT	//  _21
+      107 THROWIFNOT
+      handle_deposit_ref_fee CALLDICT
+    }>	// 
+    ctx::opcode_val GETGLOB	//  _24
+    3488591206 PUSHINT	//  _24 _25=3488591206
+    EQUAL	//  _26
+    IFJMP:<{	// 
+      handle_withdraw_fee CALLDICT
+    }>	// 
+    105 THROW
+  }>
+  get_vault_data PROC:<{
+    // 
+    storage::load INLINECALLDICT
+    storage::owner_address GETGLOB	//  _1
+    storage::token_address GETGLOB	//  _1 _2
+    storage::router_address GETGLOB	//  _1 _2 _3
+    storage::deposited_amount GETGLOB	//  _1 _2 _3 _4
+  }>
+}END>c

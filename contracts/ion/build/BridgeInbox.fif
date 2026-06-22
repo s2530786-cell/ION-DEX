@@ -1,0 +1,800 @@
+"Asm.fif" include
+// automatically generated from `D:/openclaw-data/workspace/ion-official/ion/crypto/smartcont/stdlib.fc` `common/gas.fc` `common/common.fc` `BridgeInbox.fc` 
+PROGRAM{
+  DECLPROC ctx::init
+  DECLPROC ctx::body
+  DECLPROC ctx::raw_body
+  DECLPROC ctx::sender
+  DECLPROC ctx::opcode
+  DECLPROC ctx::isBounced
+  DECLPROC ctx::balance
+  DECLPROC ctx::fwdFee
+  DECLPROC ctx::value
+  DECLPROC address::check_workchain
+  DECLPROC address::is_none
+  DECLPROC address::none
+  DECLPROC reserves::max_balance
+  DECLPROC equal_slices
+  DECLPROC sqrt
+  DECLPROC math::mul_div
+  DECLPROC amm::get_amount_out
+  DECLPROC msgs::send_internal
+  DECLPROC msgs::send_simple
+  DECLPROC msgs::send_value
+  DECLPROC msgs::send_nobounce
+  DECLPROC storage::load
+  DECLPROC storage::save
+  DECLPROC bridge::message_id
+  DECLPROC bridge::get_relayer_meta
+  DECLPROC bridge::active_relayer_count
+  DECLPROC bridge::build_pending_value
+  DECLPROC bridge::load_pending
+  DECLPROC bridge::mark_executed
+  DECLPROC bridge::forward_execute
+  DECLPROC handle_bridge_submit
+  DECLPROC handle_bridge_ack
+  DECLPROC handle_bridge_retry
+  DECLPROC handle_set_relayer
+  DECLPROC handle_revoke_relayer
+  DECLPROC handle_set_bridge_quorum
+  DECLPROC recv_internal
+  66744 DECLMETHOD get_bridge_inbox_data
+  DECLGLOBVAR ctx::body_slice
+  DECLGLOBVAR ctx::raw_body_slice
+  DECLGLOBVAR ctx::sender_slice
+  DECLGLOBVAR ctx::opcode_val
+  DECLGLOBVAR ctx::is_bounced
+  DECLGLOBVAR ctx::balance_val
+  DECLGLOBVAR ctx::fwd_fee_val
+  DECLGLOBVAR ctx::msg_value_val
+  DECLGLOBVAR storage::owner_address
+  DECLGLOBVAR storage::router_address
+  DECLGLOBVAR storage::relayer_dict
+  DECLGLOBVAR storage::pending_dict
+  DECLGLOBVAR storage::executed_dict
+  DECLGLOBVAR storage::quorum
+  DECLGLOBVAR storage::next_relayer_idx
+  ctx::init PROCINLINE:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    //  my_balance _4 in_msg_full in_msg_body
+    s0 s2 XCHG	//  my_balance in_msg_body in_msg_full _4
+    ctx::msg_value_val SETGLOB	//  _5 in_msg_body in_msg_full
+    s0 s2 XCHG	//  in_msg_full in_msg_body _5
+    ctx::balance_val SETGLOB
+    DUP	//  in_msg_full in_msg_body _6
+    ctx::raw_body_slice SETGLOB
+    DUP	//  in_msg_full in_msg_body in_msg_body
+    SBITS	//  in_msg_full in_msg_body _7
+    31 GTINT	//  in_msg_full in_msg_body _9
+    IF:<{	//  in_msg_full in_msg_body
+      DUP	//  in_msg_full in_msg_body in_msg_body
+      32 PLDU	//  in_msg_full in_msg_body _12
+      ctx::opcode_val SETGLOB
+      32 PUSHINT	//  in_msg_full in_msg_body _13=32
+      SDSKIPFIRST	//  in_msg_full _15
+      ctx::body_slice SETGLOB
+    }>ELSE<{	//  in_msg_full in_msg_body
+      0 PUSHINT	//  in_msg_full in_msg_body _17=0
+      ctx::opcode_val SETGLOB	//  in_msg_full _18
+      ctx::body_slice SETGLOB
+    }>
+    CTOS	//  cs
+    4 LDU	//  flags cs
+    SWAP
+    1 PUSHINT	//  cs flags _25=1
+    AND	//  cs _27
+    ctx::is_bounced SETGLOB
+    LDMSGADDR	//  _30 cs
+    SWAP	//  cs _30
+    ctx::sender_slice SETGLOB
+    LDMSGADDR	//  _48 _47
+    NIP	//  cs
+    LDGRAMS	//  _50 _49
+    NIP	//  cs
+    1 LDU	//  _52 _51
+    NIP	//  cs
+    LDGRAMS	//  _54 _53
+    NIP	//  cs
+    LDGRAMS	//  _56 _55
+    DROP	//  _42
+    ctx::fwd_fee_val SETGLOB
+  }>
+  ctx::body PROCINLINE:<{
+    // 
+    ctx::body_slice GETGLOB	//  _0
+  }>
+  ctx::raw_body PROCINLINE:<{
+    // 
+    ctx::raw_body_slice GETGLOB	//  _0
+  }>
+  ctx::sender PROCINLINE:<{
+    // 
+    ctx::sender_slice GETGLOB	//  _0
+  }>
+  ctx::opcode PROCINLINE:<{
+    // 
+    ctx::opcode_val GETGLOB	//  _0
+  }>
+  ctx::isBounced PROCINLINE:<{
+    // 
+    ctx::is_bounced GETGLOB	//  _0
+  }>
+  ctx::balance PROCINLINE:<{
+    // 
+    ctx::balance_val GETGLOB	//  _0
+  }>
+  ctx::fwdFee PROCINLINE:<{
+    // 
+    ctx::fwd_fee_val GETGLOB	//  _0
+  }>
+  ctx::value PROCINLINE:<{
+    // 
+    ctx::msg_value_val GETGLOB	//  _0
+  }>
+  address::check_workchain PROCINLINE:<{
+    //  addr expected_workchain
+    SWAP	//  expected_workchain addr
+    REWRITESTDADDR	//  expected_workchain _9 _10
+    DROP	//  expected_workchain wc
+    SWAP	//  wc expected_workchain
+    EQUAL	//  _5
+    IF:<{	// 
+      -1 PUSHINT	//  _6=-1
+    }>ELSE<{	// 
+      0 PUSHINT	//  _6=0
+    }>
+  }>
+  address::is_none PROCINLINE:<{
+    //  addr
+    2 PLDU	//  _2
+    0 EQINT	//  _4
+  }>
+  address::none PROCINLINE:<{
+    // 
+    0 PUSHINT	//  _0=0
+    NEWC	//  _0=0 _1
+    2 STU	//  _3
+    ENDC	//  _4
+    CTOS	//  _5
+  }>
+  reserves::max_balance PROCINLINE:<{
+    //  amount
+    2 PUSHINT	//  amount _1=2
+    RAWRESERVE
+  }>
+  equal_slices PROCINLINE:<{
+    //  a b
+    SDEQ	//  _2
+  }>
+  sqrt PROCINLINE:<{
+    //  x
+    DUP	//  x x
+    1 LESSINT	//  x _2
+    IF:<{	//  x
+      DROP	// 
+      0 PUSHINT	//  _3=0
+    }>ELSE<{	//  x
+      DUP	//  x z
+      0 PUSHINT	//  x z i=0
+      WHILE:<{
+        DUP	//  x z i i
+        32 LESSINT	//  x z i _8
+      }>DO<{	//  x z i
+        INC	//  x z i
+        s2 s1 PUSH2	//  x z i x z
+        DIV	//  x z i _11
+        s1 s2 XCHG	//  x i z _11
+        ADD	//  x i _12
+        1 RSHIFT#	//  x i z
+        SWAP	//  x z i
+      }>	//  x z i
+      DROP
+      NIP	//  z
+    }>
+  }>
+  math::mul_div PROCINLINE:<{
+    //  a b denom
+    DUP	//  a b denom denom
+    0 GTINT	//  a b denom _5
+    101 THROWIFNOT
+    MULDIV	//  _7
+  }>
+  amm::get_amount_out PROCINLINE:<{
+    //  amount_in reserve_in reserve_out fee_num fee_denom
+    s4 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom amount_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _7
+    101 THROWIFNOT
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom reserve_in
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11
+    s3 PUSH	//  amount_in reserve_in reserve_out fee_num fee_denom _11 reserve_out
+    0 GTINT	//  amount_in reserve_in reserve_out fee_num fee_denom _11 _13
+    AND	//  amount_in reserve_in reserve_out fee_num fee_denom _14
+    113 THROWIFNOT
+    s2 s4 XCHG	//  reserve_out reserve_in amount_in fee_num fee_denom
+    math::mul_div INLINECALLDICT	//  reserve_out reserve_in amount_in_with_fee
+    s0 s2 PUXC	//  amount_in_with_fee reserve_in amount_in_with_fee reserve_out
+    MUL	//  amount_in_with_fee reserve_in numerator
+    s0 s2 XCHG	//  numerator reserve_in amount_in_with_fee
+    ADD	//  numerator denominator
+    DUP	//  numerator denominator denominator
+    0 GTINT	//  numerator denominator _24
+    106 THROWIFNOT
+    DIV	//  _26
+  }>
+  msgs::send_internal PROCINLINE:<{
+    //  value to body bounce mode
+    0 PUSHINT	//  value to body bounce mode _6=0
+    s0 s2 PUXC	//  value to body _7=0 mode _6=0 bounce
+    IF:<{	//  value to body _7=0 mode _6=0
+      24 PUSHINT	//  value to body _7=0 mode _6=0 _8=24
+    }>ELSE<{	//  value to body _7=0 mode _6=0
+      16 PUSHINT	//  value to body _7=0 mode _6=0 _8=16
+    }>
+    NEWC	//  value to body _7=0 mode _6=0 _8 _11
+    6 STU	//  value to body _7=0 mode _6=0 _13
+    s0 s5 XCHG2	//  value _6=0 body _7=0 mode _13 to
+    STSLICER	//  value _6=0 body _7=0 mode _14
+    s0 s5 XCHG2	//  mode _6=0 body _7=0 _14 value
+    STGRAMS	//  mode _6=0 body _7=0 _15
+    105 STU	//  mode _6=0 body _25
+    s1 s2 XCHG	//  mode body _6=0 _25
+    1 STU	//  mode body msg
+    OVER	//  mode body msg body
+    ISNULL	//  mode body msg _28
+    IF:<{	//  mode body msg
+      0 PUSHINT
+      s2 POP	//  mode _30=0 msg
+      1 STU	//  mode msg
+    }>ELSE<{	//  mode body msg
+      1 PUSHINT	//  mode body msg _34=1
+      SWAP	//  mode body _34=1 msg
+      1 STU	//  mode body msg
+      STREF	//  mode msg
+    }>
+    ENDC	//  mode _38
+    SWAP	//  _38 mode
+    SENDRAWMSG
+  }>
+  msgs::send_simple PROCINLINE:<{
+    //  value to body mode
+    -1 PUSHINT	//  value to body mode _4=-1
+    SWAP	//  value to body _4=-1 mode
+    msgs::send_internal INLINECALLDICT
+  }>
+  msgs::send_value PROCINLINE:<{
+    //  value to body mode
+    -1 PUSHINT	//  value to body mode _4=-1
+    SWAP	//  value to body _4=-1 mode
+    msgs::send_internal INLINECALLDICT
+  }>
+  msgs::send_nobounce PROCINLINE:<{
+    //  value to body mode
+    0 PUSHINT	//  value to body mode _4=0
+    SWAP	//  value to body _4=0 mode
+    msgs::send_internal INLINECALLDICT
+  }>
+  storage::load PROCINLINE:<{
+    // 
+    c4 PUSH	//  _1
+    CTOS	//  ds
+    LDMSGADDR	//  _5 ds
+    SWAP	//  ds _5
+    storage::owner_address SETGLOB
+    LDMSGADDR	//  _8 ds
+    SWAP	//  ds _8
+    storage::router_address SETGLOB
+    LDDICT	//  _11 ds
+    SWAP	//  ds _11
+    storage::relayer_dict SETGLOB
+    LDDICT	//  _14 ds
+    SWAP	//  ds _14
+    storage::pending_dict SETGLOB
+    LDDICT	//  _17 ds
+    SWAP	//  ds _17
+    storage::executed_dict SETGLOB
+    8 LDU	//  _21 ds
+    SWAP	//  ds _21
+    storage::quorum SETGLOB
+    DUP	//  ds ds
+    SEMPTY	//  ds _22
+    IF:<{	//  ds
+      0 PUSHINT	//  ds _24=0
+      storage::next_relayer_idx SETGLOB
+    }>ELSE<{	//  ds
+      8 LDU	//  _28 ds
+      SWAP	//  ds _28
+      storage::next_relayer_idx SETGLOB
+    }>
+    ENDS
+  }>
+  storage::save PROCREF:<{
+    // 
+    storage::next_relayer_idx GETGLOB	//  _0
+    storage::quorum GETGLOB	//  _0 _1
+    storage::executed_dict GETGLOB	//  _0 _1 _2
+    storage::pending_dict GETGLOB	//  _0 _1 _2 _3
+    storage::relayer_dict GETGLOB	//  _0 _1 _2 _3 _4
+    NEWC	//  _0 _1 _2 _3 _4 _5
+    storage::owner_address GETGLOB	//  _0 _1 _2 _3 _4 _5 _6
+    STSLICER	//  _0 _1 _2 _3 _4 _7
+    storage::router_address GETGLOB	//  _0 _1 _2 _3 _4 _7 _8
+    STSLICER	//  _0 _1 _2 _3 _4 _9
+    STDICT	//  _0 _1 _2 _3 _10
+    STDICT	//  _0 _1 _2 _11
+    STDICT	//  _0 _1 _12
+    8 STU	//  _0 _14
+    8 STU	//  _16
+    ENDC	//  _17
+    c4 POP
+  }>
+  bridge::message_id PROCINLINE:<{
+    //  source_chain_id source_nonce amount recipient token
+    s0 s4 XCHG
+    NEWC	//  token source_nonce amount recipient source_chain_id _5
+    32 STU	//  token source_nonce amount recipient _7
+    s1 s3 XCHG	//  token recipient amount source_nonce _7
+    256 STU	//  token recipient amount _9
+    SWAP	//  token recipient _9 amount
+    STGRAMS	//  token recipient _10
+    SWAP	//  token _10 recipient
+    STSLICER	//  token _11
+    SWAP	//  _11 token
+    STSLICER	//  _12
+    ENDC	//  _13
+    HASHCU	//  _14
+  }>
+  bridge::get_relayer_meta PROCINLINE:<{
+    //  relayer
+    HASHSU	//  _3
+    storage::relayer_dict GETGLOB	//  _3 _4
+    8 PUSHPOW2	//  _3 _4 _5=256
+    DICTUGET
+    NULLSWAPIFNOT	//  entry found
+    IFNOT:<{	//  entry
+      DROP	// 
+      0 PUSHINT	//  _7=0
+      DUP	//  _7=0 _8=0
+    }>ELSE<{	//  entry
+      8 LDU	//  idx entry
+      1 LDU	//  idx _22 _21
+      DROP	//  idx enabled
+    }>
+  }>
+  bridge::active_relayer_count PROCINLINE:<{
+    // 
+    0 PUSHINT	//  count=0
+    -1 PUSHINT	//  count=0 pivot=-1
+    UNTIL:<{
+      storage::relayer_dict GETGLOB	//  count pivot _7
+      s1 s(-1) PUXC
+      8 PUSHPOW2	//  count pivot pivot _7 _8=256
+      DICTUGETNEXT
+      NULLSWAPIFNOT2	//  count pivot entry next_key found
+      DUP	//  count pivot entry next_key found found
+      IF:<{	//  count pivot entry next_key found
+        s3 POP	//  count found entry pivot
+        SWAP
+        8 PUSHINT	//  count found pivot entry _10=8
+        SDSKIPFIRST	//  count found pivot _11
+        1 PLDU	//  count found pivot _13
+        s1 s3 XCHG	//  pivot found count _13
+        ADD	//  pivot found count
+        -ROT	//  count pivot found
+      }>ELSE<{
+        2 1 BLKDROP2	//  count pivot found
+      }>
+      NOT	//  count pivot _15
+    }>	//  count pivot
+    DROP	//  count
+  }>
+  bridge::build_pending_value PROCREF:<{
+    //  approvals_mask approvals_count source_chain_id source_nonce amount recipient token state created_at
+    s0 s8 XCHG
+    NEWC	//  created_at approvals_count source_chain_id source_nonce amount recipient token state approvals_mask _9
+    32 STU	//  created_at approvals_count source_chain_id source_nonce amount recipient token state _11
+    s1 s7 XCHG	//  created_at state source_chain_id source_nonce amount recipient token approvals_count _11
+    8 STU	//  created_at state source_chain_id source_nonce amount recipient token _13
+    s1 s5 XCHG	//  created_at state token source_nonce amount recipient source_chain_id _13
+    32 STU	//  created_at state token source_nonce amount recipient _15
+    s1 s3 XCHG	//  created_at state token recipient amount source_nonce _15
+    256 STU	//  created_at state token recipient amount _17
+    SWAP	//  created_at state token recipient _17 amount
+    STGRAMS	//  created_at state token recipient _18
+    SWAP	//  created_at state token _18 recipient
+    STSLICER	//  created_at state token _19
+    SWAP	//  created_at state _19 token
+    STSLICER	//  created_at state _20
+    2 STU	//  created_at _22
+    64 STU	//  _24
+    ENDC	//  _25
+  }>
+  bridge::load_pending PROCREF:<{
+    //  entry
+    32 LDU	//  _1 entry
+    8 LDU	//  _1 _4 entry
+    32 LDU	//  _1 _4 _7 entry
+    256 LDU	//  _1 _4 _7 _10 entry
+    LDGRAMS	//  _1 _4 _7 _10 _13 entry
+    LDMSGADDR	//  _1 _4 _7 _10 _13 _15 entry
+    LDMSGADDR	//  _1 _4 _7 _10 _13 _15 _17 entry
+    2 LDU	//  _1 _4 _7 _10 _13 _15 _17 _19 entry
+    64 LDU	//  _1 _4 _7 _10 _13 _15 _17 _19 _42 _41
+    DROP	//  _1 _4 _7 _10 _13 _15 _17 _19 _22
+  }>
+  bridge::mark_executed PROCREF:<{
+    //  message_id
+    3 PUSHINT	//  message_id _2=3
+    NOW	//  message_id _2=3 _3
+    NEWC	//  message_id _2=3 _3 _4
+    64 STU	//  message_id _2=3 _6
+    2 STU	//  message_id _8
+    ENDC	//  message_id _9
+    CTOS	//  message_id _10
+    storage::executed_dict GETGLOB	//  message_id _10 _11
+    s1 s2 XCHG
+    8 PUSHPOW2	//  _10 message_id _11 _12=256
+    DICTUSET	//  _14
+    storage::executed_dict SETGLOB
+  }>
+  bridge::forward_execute PROCREF:<{
+    //  query_id message_id source_chain_id source_nonce amount recipient token
+    22000000 PUSHINT	//  query_id message_id source_chain_id source_nonce amount recipient token reserve
+    ctx::balance INLINECALLDICT	//  query_id message_id source_chain_id source_nonce amount recipient token reserve _12
+    46000000 PUSHINT	//  query_id message_id source_chain_id source_nonce amount recipient token reserve _12 _14
+    GREATER	//  query_id message_id source_chain_id source_nonce amount recipient token reserve _15
+    102 THROWIFNOT
+    reserves::max_balance INLINECALLDICT
+    24000000 PUSHINT	//  query_id message_id source_chain_id source_nonce amount recipient token _18=24000000
+    storage::router_address GETGLOB	//  query_id message_id source_chain_id source_nonce amount recipient token _18=24000000 _19
+    6666666667 PUSHINT	//  query_id message_id source_chain_id source_nonce amount recipient token _18=24000000 _19 _20=6666666667
+    NEWC	//  query_id message_id source_chain_id source_nonce amount recipient token _18=24000000 _19 _20=6666666667 _21
+    32 STU	//  query_id message_id source_chain_id source_nonce amount recipient token _18=24000000 _19 _23
+    s1 s9 XCHG	//  _19 message_id source_chain_id source_nonce amount recipient token _18=24000000 query_id _23
+    64 STU	//  _19 message_id source_chain_id source_nonce amount recipient token _18=24000000 _25
+    s1 s7 XCHG	//  _19 _18=24000000 source_chain_id source_nonce amount recipient token message_id _25
+    256 STU	//  _19 _18=24000000 source_chain_id source_nonce amount recipient token _27
+    s1 s5 XCHG	//  _19 _18=24000000 token source_nonce amount recipient source_chain_id _27
+    32 STU	//  _19 _18=24000000 token source_nonce amount recipient _29
+    s1 s3 XCHG	//  _19 _18=24000000 token recipient amount source_nonce _29
+    256 STU	//  _19 _18=24000000 token recipient amount _31
+    SWAP	//  _19 _18=24000000 token recipient _31 amount
+    STGRAMS	//  _19 _18=24000000 token recipient _32
+    ROT	//  _19 _18=24000000 recipient _32 token
+    STSLICER	//  _19 _18=24000000 recipient _33
+    SWAP	//  _19 _18=24000000 _33 recipient
+    STSLICER	//  _19 _18=24000000 _34
+    ENDC	//  _19 _18=24000000 _35
+    s1 s2 XCHG
+    0 PUSHINT	//  _18=24000000 _19 _35 _36=0
+    msgs::send_value INLINECALLDICT
+  }>
+  handle_bridge_submit PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _2
+    bridge::get_relayer_meta INLINECALLDICT	//  relayer_idx relayer_enabled
+    112 THROWIFNOT
+    ctx::body INLINECALLDICT	//  relayer_idx body
+    64 LDU	//  relayer_idx query_id body
+    32 LDU	//  relayer_idx query_id source_chain_id body
+    256 LDU	//  relayer_idx query_id source_chain_id source_nonce body
+    LDGRAMS	//  relayer_idx query_id source_chain_id source_nonce amount body
+    LDMSGADDR	//  relayer_idx query_id source_chain_id source_nonce amount recipient body
+    LDMSGADDR	//  relayer_idx query_id source_chain_id source_nonce amount recipient _124 _123
+    DROP	//  relayer_idx query_id source_chain_id source_nonce amount recipient token
+    s2 PUSH	//  relayer_idx query_id source_chain_id source_nonce amount recipient token amount
+    0 GTINT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token _31
+    101 THROWIFNOT
+    s4 s3 s2 PUSH3
+    s4 s3 PUSH2	//  relayer_idx query_id source_chain_id source_nonce amount recipient token source_chain_id source_nonce amount recipient token
+    bridge::message_id INLINECALLDICT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id
+    storage::executed_dict GETGLOB	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id _37
+    s1 s(-1) PUXC
+    8 PUSHPOW2	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id message_id _37 _38=256
+    DICTUGET
+    NULLSWAPIFNOT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id _125 _126
+    NIP	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id already_done
+    0 EQINT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id _42
+    111 THROWIFNOT
+    0 PUSHINT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask=0
+    DUP	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask=0 approvals_count=0
+    1 PUSHINT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask=0 approvals_count=0 state=1
+    NOW	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask=0 approvals_count=0 state=1 created_at
+    storage::pending_dict GETGLOB	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask=0 approvals_count=0 state=1 created_at _54
+    s5 s(-1) PUXC
+    8 PUSHPOW2	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask=0 approvals_count=0 state=1 created_at message_id _54 _55=256
+    DICTUGET
+    NULLSWAPIFNOT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask=0 approvals_count=0 state=1 created_at existing_entry found
+    IF:<{	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask=0 approvals_count=0 state=1 created_at existing_entry
+      4 1 BLKDROP2	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id existing_entry
+      bridge::load_pending INLINECALLDICT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count stored_source_chain_id stored_source_nonce stored_amount stored_recipient stored_token state created_at
+      OVER	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count stored_source_chain_id stored_source_nonce stored_amount stored_recipient stored_token state created_at state
+      3 NEQINT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count stored_source_chain_id stored_source_nonce stored_amount stored_recipient stored_token state created_at _70
+      127 THROWIFNOT
+      s6 s14 XCPU	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at stored_source_nonce stored_amount stored_recipient stored_token state stored_source_chain_id source_chain_id
+      EQUAL	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at stored_source_nonce stored_amount stored_recipient stored_token state _73
+      s5 s13 XCPU	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at _73 stored_amount stored_recipient stored_token state stored_source_nonce source_nonce
+      EQUAL	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at _73 stored_amount stored_recipient stored_token state _74
+      s1 s5 XCHG	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state stored_amount stored_recipient stored_token _73 _74
+      AND	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state stored_amount stored_recipient stored_token _75
+      s3 s11 XCPU	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state _75 stored_recipient stored_token stored_amount amount
+      EQUAL	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state _75 stored_recipient stored_token _76
+      s1 s3 XCHG	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state stored_token stored_recipient _75 _76
+      AND	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state stored_token stored_recipient _77
+      s1 s9 XCPU	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state stored_token _77 stored_recipient recipient
+      equal_slices INLINECALLDICT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state stored_token _77 _78
+      AND	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state stored_token _79
+      s1 s7 XCPU	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state _79 stored_token token
+      equal_slices INLINECALLDICT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state _79 _80
+      AND	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count created_at state _81
+      127 THROWIFNOT
+      SWAP	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state created_at
+    }>ELSE<{
+      DROP	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state created_at
+    }>
+    s11 PUSH	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state created_at relayer_idx
+    32 LESSINT	//  relayer_idx query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state created_at _85
+    107 THROWIFNOT
+    s0 s11 XCHG	//  created_at query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state relayer_idx
+    POW2	//  created_at query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state approval_bit
+    s3 s0 PUSH2	//  created_at query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state approval_bit approvals_mask approval_bit
+    AND	//  created_at query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state approval_bit _91
+    0 EQINT	//  created_at query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count state approval_bit _93
+    124 THROWIFNOT
+    s1 s3 XCHG	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_count approvals_mask approval_bit
+    OR	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_count approvals_mask
+    SWAP	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_mask approvals_count
+    INC	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_mask approvals_count
+    storage::quorum GETGLOB	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_mask approvals_count _98
+    s1 s(-1) PUXC	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_mask approvals_count approvals_count _98
+    GEQ	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_mask approvals_count _99
+    IF:<{	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_mask approvals_count
+      2 PUSHINT
+      s3 POP	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state=2 approvals_mask approvals_count
+    }>	//  created_at query_id source_chain_id source_nonce amount recipient token message_id state approvals_mask approvals_count
+    s0 s8 s2 XCPUXC
+    s8 s7 s(-2) PU2XC
+    s8 s7 s(-2) PU2XC
+    DUP
+    s0 16 s() XCHG	//  state query_id source_chain_id source_nonce amount recipient token message_id approvals_mask approvals_count source_chain_id source_nonce amount recipient token state created_at
+    bridge::build_pending_value INLINECALLDICT	//  state query_id source_chain_id source_nonce amount recipient token message_id _102
+    storage::pending_dict GETGLOB	//  state query_id source_chain_id source_nonce amount recipient token message_id _102 _103
+    s2 s(-1) PUXC
+    8 PUSHPOW2	//  state query_id source_chain_id source_nonce amount recipient token message_id _102 message_id _103 _104=256
+    DICTUSETREF	//  state query_id source_chain_id source_nonce amount recipient token message_id _106
+    storage::pending_dict SETGLOB
+    storage::save INLINECALLDICT
+    s0 s7 XCHG	//  message_id query_id source_chain_id source_nonce amount recipient token state
+    2 EQINT	//  message_id query_id source_chain_id source_nonce amount recipient token _109
+    IF:<{	//  message_id query_id source_chain_id source_nonce amount recipient token
+      s5 s6 XCHG	//  query_id message_id source_chain_id source_nonce amount recipient token
+      bridge::forward_execute INLINECALLDICT
+    }>ELSE<{
+      7 BLKDROP	// 
+    }>
+  }>
+  handle_bridge_ack PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::router_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    107 THROWIFNOT
+    ctx::body INLINECALLDICT	//  body
+    64 LDU	//  _60 _59
+    NIP	//  body
+    256 LDU	//  _62 _61
+    DROP	//  message_id
+    storage::pending_dict GETGLOB	//  message_id _17
+    s1 s(-1) PUXC
+    8 PUSHPOW2	//  message_id message_id _17 _18=256
+    DICTUGET
+    NULLSWAPIFNOT	//  message_id entry found
+    126 THROWIFNOT
+    bridge::load_pending INLINECALLDICT	//  message_id _65 _66 _67 _68 _69 _70 _71 _72 _73
+    s1 s8 XCHG
+    8 BLKDROP	//  message_id state
+    2 EQINT	//  message_id _50
+    127 THROWIFNOT
+    DUP	//  message_id message_id
+    bridge::mark_executed INLINECALLDICT
+    storage::pending_dict GETGLOB	//  message_id _54
+    8 PUSHPOW2	//  message_id _54 _55=256
+    DICTUDEL	//  _74 _75
+    DROP	//  _57
+    storage::pending_dict SETGLOB
+    storage::save INLINECALLDICT
+  }>
+  handle_bridge_retry PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::owner_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    107 THROWIFNOT
+    ctx::body INLINECALLDICT	//  body
+    64 LDU	//  query_id body
+    256 LDU	//  query_id _49 _48
+    DROP	//  query_id message_id
+    storage::pending_dict GETGLOB	//  query_id message_id _17
+    s1 s(-1) PUXC
+    8 PUSHPOW2	//  query_id message_id message_id _17 _18=256
+    DICTUGET
+    NULLSWAPIFNOT	//  query_id message_id entry found
+    126 THROWIFNOT
+    bridge::load_pending INLINECALLDICT	//  query_id message_id _52 _53 _54 _55 _56 _57 _58 _59 _60
+    DROP
+    s7 POP	//  query_id message_id state approvals_count source_chain_id source_nonce amount recipient token
+    storage::quorum GETGLOB	//  query_id message_id state approvals_count source_chain_id source_nonce amount recipient token _37
+    s1 s6 XCHG	//  query_id message_id state token source_chain_id source_nonce amount recipient approvals_count _37
+    GEQ	//  query_id message_id state token source_chain_id source_nonce amount recipient _38
+    123 THROWIFNOT
+    s0 s5 XCHG	//  query_id message_id recipient token source_chain_id source_nonce amount state
+    2 EQINT	//  query_id message_id recipient token source_chain_id source_nonce amount _42
+    127 THROWIFNOT
+    storage::save INLINECALLDICT
+    2 3 BLKSWAP	//  query_id message_id source_chain_id source_nonce amount recipient token
+    bridge::forward_execute INLINECALLDICT
+  }>
+  handle_set_relayer PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::owner_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    107 THROWIFNOT
+    ctx::body INLINECALLDICT	//  body_cs
+    LDMSGADDR	//  _43 _42
+    DROP	//  relayer
+    DUP	//  relayer relayer
+    HASHSU	//  relayer _12
+    storage::relayer_dict GETGLOB	//  relayer _12 _13
+    8 PUSHPOW2	//  relayer _12 _13 _14=256
+    DICTUGET
+    NULLSWAPIFNOT	//  relayer existing_entry found
+    IF:<{	//  relayer existing_entry
+      8 LDU	//  relayer _47 _46
+      DROP	//  relayer relayer_idx
+    }>ELSE<{	//  relayer existing_entry
+      DROP	//  relayer
+      storage::next_relayer_idx GETGLOB	//  relayer relayer_idx
+      storage::next_relayer_idx GETGLOB	//  relayer relayer_idx _22
+      INC	//  relayer relayer_idx _25
+      storage::next_relayer_idx SETGLOB
+    }>
+    1 PUSHINT	//  relayer relayer_idx _27=1
+    SWAP
+    NEWC	//  relayer _27=1 relayer_idx _28
+    8 STU	//  relayer _27=1 _30
+    1 STU	//  relayer _32
+    OVER	//  relayer _32 relayer
+    STSLICER	//  relayer _33
+    ENDC	//  relayer _34
+    CTOS	//  relayer _35
+    SWAP	//  _35 relayer
+    HASHSU	//  _35 _36
+    storage::relayer_dict GETGLOB	//  _35 _36 _37
+    8 PUSHPOW2	//  _35 _36 _37 _38=256
+    DICTUSET	//  _40
+    storage::relayer_dict SETGLOB
+    storage::save INLINECALLDICT
+  }>
+  handle_revoke_relayer PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::owner_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    107 THROWIFNOT
+    ctx::body INLINECALLDICT	//  body_cs
+    LDMSGADDR	//  _52 _51
+    DROP	//  relayer
+    DUP	//  relayer relayer
+    HASHSU	//  relayer _12
+    storage::relayer_dict GETGLOB	//  relayer _12 _13
+    8 PUSHPOW2	//  relayer _12 _13 _14=256
+    DICTUGET
+    NULLSWAPIFNOT	//  relayer existing_entry found
+    126 THROWIFNOT
+    8 LDU	//  relayer _56 _55
+    DROP	//  relayer relayer_idx
+    0 PUSHINT	//  relayer relayer_idx _26=0
+    SWAP
+    NEWC	//  relayer _26=0 relayer_idx _27
+    8 STU	//  relayer _26=0 _29
+    1 STU	//  relayer _31
+    OVER	//  relayer _31 relayer
+    STSLICER	//  relayer _32
+    ENDC	//  relayer _33
+    CTOS	//  relayer _34
+    SWAP	//  _34 relayer
+    HASHSU	//  _34 _35
+    storage::relayer_dict GETGLOB	//  _34 _35 _36
+    8 PUSHPOW2	//  _34 _35 _36 _37=256
+    DICTUSET	//  _39
+    storage::relayer_dict SETGLOB
+    bridge::active_relayer_count INLINECALLDICT	//  active_count
+    storage::quorum GETGLOB	//  active_count _43
+    0 GTINT	//  active_count _45
+    storage::quorum GETGLOB	//  active_count _45 _46
+    ROT	//  _45 _46 active_count
+    LEQ	//  _45 _47
+    AND	//  _48
+    123 THROWIFNOT
+    storage::save INLINECALLDICT
+  }>
+  handle_set_bridge_quorum PROC:<{
+    // 
+    ctx::sender INLINECALLDICT	//  _1
+    storage::owner_address GETGLOB	//  _1 _2
+    equal_slices INLINECALLDICT	//  _3
+    107 THROWIFNOT
+    ctx::body INLINECALLDICT	//  body
+    8 LDU	//  _22 _21
+    DROP	//  new_quorum
+    bridge::active_relayer_count INLINECALLDICT	//  new_quorum active_count
+    OVER	//  new_quorum active_count new_quorum
+    0 GTINT	//  new_quorum active_count _15
+    s2 s1 PUXC	//  new_quorum _15 new_quorum active_count
+    LEQ	//  new_quorum _15 _16
+    AND	//  new_quorum _17
+    123 THROWIFNOT	//  _19
+    storage::quorum SETGLOB
+    storage::save INLINECALLDICT
+  }>
+  recv_internal PROC:<{
+    //  my_balance msg_value in_msg_full in_msg_body
+    DUP	//  my_balance msg_value in_msg_full in_msg_body in_msg_body
+    SEMPTY	//  my_balance msg_value in_msg_full in_msg_body _5
+    103 THROWIF
+    ctx::init INLINECALLDICT
+    ctx::isBounced INLINECALLDICT	//  _8
+    IFJMP:<{	// 
+    }>	// 
+    ctx::sender INLINECALLDICT	//  _10
+    0 PUSHINT	//  _10 _11=0
+    address::check_workchain INLINECALLDICT	//  _12
+    104 THROWIFNOT
+    storage::load INLINECALLDICT
+    ctx::opcode INLINECALLDICT	//  _15
+    6666666666 PUSHINT	//  _15 _16=6666666666
+    EQUAL	//  _17
+    IFJMP:<{	// 
+      handle_bridge_submit CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _19
+    6666666668 PUSHINT	//  _19 _20=6666666668
+    EQUAL	//  _21
+    IFJMP:<{	// 
+      handle_bridge_ack CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _23
+    6666666669 PUSHINT	//  _23 _24=6666666669
+    EQUAL	//  _25
+    IFJMP:<{	// 
+      handle_bridge_retry CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _27
+    7777777777 PUSHINT	//  _27 _28=7777777777
+    EQUAL	//  _29
+    IFJMP:<{	// 
+      handle_set_relayer CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _31
+    8888888888 PUSHINT	//  _31 _32=8888888888
+    EQUAL	//  _33
+    IFJMP:<{	// 
+      handle_revoke_relayer CALLDICT
+    }>	// 
+    ctx::opcode INLINECALLDICT	//  _35
+    6666666670 PUSHINT	//  _35 _36=6666666670
+    EQUAL	//  _37
+    IFJMP:<{	// 
+      handle_set_bridge_quorum CALLDICT
+    }>	// 
+    105 THROW
+  }>
+  get_bridge_inbox_data PROC:<{
+    // 
+    storage::load INLINECALLDICT
+    storage::owner_address GETGLOB	//  _1
+    storage::router_address GETGLOB	//  _1 _2
+    storage::quorum GETGLOB	//  _1 _2 _3
+    storage::next_relayer_idx GETGLOB	//  _1 _2 _3 _4
+  }>
+}END>c

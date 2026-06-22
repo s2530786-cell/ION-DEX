@@ -1,0 +1,31 @@
+{
+  "mcpServers": {
+    "hermes-agent": {
+      "command": "D:\\openclaw-tools\\ion-dex-nuke\\hermes-agent\\venv\\Scripts\\hermes.exe",
+      "args": ["mcp", "serve"],
+      "env": {
+        "HERMES_HOME": "C:\\Users\\admin\\AppData\\Local\\hermes"
+      }
+    },
+    "desktop-commander": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@wonderwhy-er/desktop-commander@0.2.41"]
+    },
+    "ion-dex-memory-bank": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@allpepper/memory-bank-mcp@0.2.2"],
+      "env": {
+        "MEMORY_BANK_ROOT": "${workspaceFolder}/.memory-bank"
+      }
+    },
+    "MCP_DOCKER": {
+      "command": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe",
+      "args": ["mcp", "gateway", "run", "--profile", "dev_workflow"],
+      "env": {
+        "LOCALAPPDATA": "C:\\Users\\admin\\AppData\\Local",
+        "ProgramData": "C:\\ProgramData",
+        "ProgramFiles": "C:\\Program Files"
+      }
+    }
+  }
+}

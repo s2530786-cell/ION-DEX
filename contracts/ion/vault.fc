@@ -1,0 +1,105 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::token_address;
+global slice storage::router_address;
+global int storage::deposited_amount;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::token_address = ds~load_msg_addr();
+    storage::router_address = ds~load_msg_addr();
+    storage::deposited_amount = ds~load_coins();
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::token_address)
+        .store_slice(storage::router_address)
+        .store_coins(storage::deposited_amount)
+    .end_cell());
+}
+
+;; 鈹€鈹€ Message handlers 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+() handle_deposit_ref_fee() impure {
+    slice body = ctx::body_slice;
+    int jetton_amount = body~load_coins();
+    slice excesses_address = body~load_msg_addr();
+
+    storage::deposited_amount += jetton_amount;
+    storage::save();
+
+    reserves::max_balance(storage_fee::vault);
+    msgs::send_simple(0, excesses_address, null(), QCARRY_ALL_BALANCE);
+}
+
+() handle_withdraw_fee() impure {
+    throw_unless(error::zero_output, storage::deposited_amount > 0);
+
+    throw_unless(error::insufficient_gas,
+        ctx::balance_val > ctx::fwd_fee_val * 5
+        + gas::router::vault_pay_to + gas::vault::withdraw_fee
+        + storage_fee::router + storage_fee::est_jetton_wallet
+        + gas::jetton_wallet::est_transfer);
+
+    ;; Send all deposited tokens back to owner via router
+    msgs::send_simple(
+        0,
+        storage::router_address,
+        begin_cell()
+            .store_uint(op::vault_pay_to, 32)
+            .store_uint(0, 64)  ;; query_id
+            .store_coins(storage::deposited_amount)
+            .store_slice(storage::token_address)
+            .store_slice(storage::owner_address)
+        .end_cell(),
+        QCARRY_ALL_BALANCE | DESTROY_IF_ZERO);
+
+    storage::deposited_amount = 0;
+    storage::save();
+}
+
+;; 鈹€鈹€ Main entry 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::is_bounced {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender_slice.address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode_val == op::deposit_ref_fee {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender_slice, storage::router_address));
+        handle_deposit_ref_fee();
+        return ();
+    }
+
+    if ctx::opcode_val == op::withdraw_fee {
+        handle_withdraw_fee();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+;; 鈹€鈹€ Getters 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+_ get_vault_data() method_id {
+    storage::load();
+    return (
+        storage::owner_address,
+        storage::token_address,
+        storage::router_address,
+        storage::deposited_amount
+    );
+}

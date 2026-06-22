@@ -1,0 +1,45 @@
+# ION-DEX UI Engineering Harness Protocol v4.0
+# Auto-loaded by Cursor — DO NOT MODIFY without Master approval
+
+## Architecture
+- DesignTokens v4.0: 13 colors + 6 typography + 3 button variants + inputs + grid
+- DEXGridHarness: 12-col grid, repeat(12, 1fr)
+- NeonCard v2.0: Foundation with subtitle + footer + violet variant
+- VisualAuditor v2.0: Toggleable dev overlay showing live Token values + color swatches
+- agent_harness.py: Contract compile/test/audit gateway
+
+## 1. Vision Protocol
+- NO HARDCODING: Never use hex/rgba colors or pixel values directly
+- TOKEN USAGE: All visual attributes from `src/lib/design-tokens.ts`
+- GRID ENFORCEMENT: All layouts use DEXGridHarness, grid-column: span X
+
+## 2. Backend Protocol
+- AGENT HARNESS: All contract ops through agent_harness.py
+- NO MOCKS: Real Blueprint test suite
+- SECURITY FIRST: Gas-limit checks + error handling
+
+## 3. Workflow (3-Step)
+1. ANALYSIS: State Grid coordinates + tokens before coding
+2. EXECUTION: Reference only architectural components
+3. VERIFICATION: Self-check against protocol
+
+## 4. Visual Red Line
+- AI MUST proactively flag visible deviations
+- "Close enough" = NOT acceptable
+
+## 5. Asset Quality Gate
+- HD WebP, transparent background, uniform padding
+- Jagged edges / non-transparent = UNUSABLE
+
+## 6. Zero Manual Labor
+- AI performs reverse visual engineering on design images
+- No manual measurement ever required from user
+- Missing icons: AI generates placeholders or provides download URLs
+- VisualAuditor debug overlay included in dev builds
+
+## 7. Pixel-Perfect Audit
+- When user reports visual mismatch, AI MUST:
+  1. Check Token values via VisualAuditor overlay
+  2. Compare with user's design screenshot
+  3. Calculate deviation and state exact pixel difference
+  4. NEVER modify inline styles — ALL adjustments via Token updates

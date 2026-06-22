@@ -1,0 +1,231 @@
+volumes:
+  pentagi-data:
+    driver: local
+  pentagi-ssl:
+    driver: local
+  pentagi-ollama:
+    driver: local
+  pentagi-postgres-data:
+    driver: local
+  pentagi-scraper-ssl:
+    driver: local
+
+networks:
+  pentagi-network:
+    driver: bridge
+    name: ion-pentagi-network
+
+services:
+  sast-audit:
+    build:
+      context: .
+      dockerfile: Dockerfile.sast-audit
+    image: ion-dex/sast-audit:local
+    working_dir: /workspace
+    network_mode: bridge
+    environment:
+      HOME: /tmp
+      PIP_CACHE_DIR: /tmp/pip-cache
+      PYTHONUSERBASE: /tmp/python-userbase
+    command: >
+      bash -lc "python -m semgrep scan --config auto --metrics=off --disable-version-check
+      --exclude node_modules --exclude dist --exclude build --exclude coverage
+      /workspace/backend /workspace/frontend /workspace/contracts || true &&
+      python -m bandit -r backend/src -f txt || true"
+    volumes:
+      - ../../:/workspace:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["sast-audit"]
+
+  pentagi-pgvector:
+    image: vxcontrol/pgvector:latest
+    container_name: ion-pentagi-pgvector
+    hostname: pentagi-pgvector
+    restart: unless-stopped
+    expose:
+      - 5432/tcp
+    ports:
+      - ${PENTAGI_PGVECTOR_LISTEN_IP:-127.0.0.1}:${PENTAGI_PGVECTOR_LISTEN_PORT:-15432}:5432
+    environment:
+      POSTGRES_USER: ${PENTAGI_POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${PENTAGI_POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${PENTAGI_POSTGRES_DB:-pentagidb}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    volumes:
+      - pentagi-postgres-data:/var/lib/postgresql/data
+    networks:
+      - pentagi-network
+    profiles: ["pentagi"]
+
+  pentagi-scraper:
+    image: vxcontrol/scraper:latest
+    container_name: ion-pentagi-scraper
+    hostname: pentagi-scraper
+    restart: unless-stopped
+    expose:
+      - 443/tcp
+    ports:
+      - ${PENTAGI_SCRAPER_LISTEN_IP:-127.0.0.1}:${PENTAGI_SCRAPER_LISTEN_PORT:-19443}:443
+    environment:
+      MAX_CONCURRENT_SESSIONS: ${LOCAL_SCRAPER_MAX_CONCURRENT_SESSIONS:-4}
+      USERNAME: ${LOCAL_SCRAPER_USERNAME:-ion-audit}
+      PASSWORD: ${LOCAL_SCRAPER_PASSWORD:-ion-audit-local-only}
+    volumes:
+      - pentagi-scraper-ssl:/usr/src/app/ssl
+    networks:
+      - pentagi-network
+    shm_size: 1g
+    profiles: ["pentagi"]
+
+  pentagi-agent:
+    image: ${PENTAGI_AGENT_IMAGE:-vxcontrol/pentagi:latest}
+    container_name: ion-pentagi-agent
+    hostname: pentagi-agent
+    working_dir: /audit
+    command: >
+      sh -lc "echo 'pentagi-agent image is ready for controlled audit execution'; touch /tmp/pentagi-agent-ready; sleep infinity"
+    environment:
+      HOME: /tmp
+      DOCKER_INSIDE: "true"
+      DOCKER_NET_ADMIN: "false"
+      PENTAGI_AGENT_MODE: audit
+    volumes:
+      - ../../:/audit:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/pentagi-agent-ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 5s
+    networks:
+      - pentagi-network
+    profiles: ["pentagi"]
+
+  pentagi:
+    image: ${PENTAGI_IMAGE:-vxcontrol/pentagi:latest}
+    container_name: ion-pentagi
+    hostname: pentagi
+    restart: unless-stopped
+    depends_on:
+      pentagi-pgvector:
+        condition: service_healthy
+      pentagi-scraper:
+        condition: service_started
+    expose:
+      - 8443/tcp
+    ports:
+      - ${PENTAGI_LISTEN_IP:-127.0.0.1}:${PENTAGI_LISTEN_PORT:-18443}:8443
+    environment:
+      DEBUG: ${PENTAGI_DEBUG:-false}
+      ASK_USER: ${PENTAGI_ASK_USER:-false}
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 8443
+      SERVER_USE_SSL: ${PENTAGI_SERVER_USE_SSL:-true}
+      DATABASE_URL: postgres://${PENTAGI_POSTGRES_USER:-postgres}:${PENTAGI_POSTGRES_PASSWORD:-postgres}@pentagi-pgvector:5432/${PENTAGI_POSTGRES_DB:-pentagidb}?sslmode=disable
+      SCRAPER_PRIVATE_URL: https://pentagi-scraper
+      SCRAPER_PUBLIC_URL: https://127.0.0.1:${PENTAGI_SCRAPER_LISTEN_PORT:-19443}
+      DOCKER_HOST: unix:///var/run/docker.sock
+      DOCKER_INSIDE: "false"
+      DOCKER_NET_ADMIN: "false"
+      DOCKER_NETWORK: ion-pentagi-network
+      DOCKER_DEFAULT_IMAGE_FOR_PENTEST: ${PENTAGI_AGENT_IMAGE:-vxcontrol/pentagi:latest}
+      OPEN_AI_KEY: ${OPEN_AI_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      KIMI_API_KEY: ${KIMI_API_KEY:-}
+      QWEN_API_KEY: ${QWEN_API_KEY:-}
+      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
+      PERPLEXITY_API_KEY: ${PERPLEXITY_API_KEY:-}
+    volumes:
+      - pentagi-data:/opt/pentagi/data
+      - pentagi-ssl:/opt/pentagi/ssl
+      - pentagi-ollama:/root/.ollama
+      - ${PENTAGI_DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
+    networks:
+      - pentagi-network
+    profiles: ["pentagi"]
+
+  scraping-lab:
+    image: python:3.12-slim
+    working_dir: /workspace
+    network_mode: bridge
+    environment:
+      HOME: /tmp
+      PIP_CACHE_DIR: /tmp/pip-cache
+      PYTHONUSERBASE: /tmp/python-userbase
+      FIRECRAWL_API_KEY: ${FIRECRAWL_API_KEY:-}
+      SCRAPING_LAB_MODE: "1"
+    command: >
+      bash -lc "python -V && echo 'Scraping lab ready. Mount is read-only by default.'"
+    volumes:
+      - ../../:/workspace:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["scraping-lab"]
+
+  offsec-lab:
+    image: python:3.12-slim
+    working_dir: /sandbox
+    command: >
+      bash -lc "echo 'offsec-lab isolated mode (network disabled)'; sleep infinity"
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /sandbox
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["offsec-lab"]
+
+  sentinel-lab:
+    image: python:3.12-slim
+    working_dir: /tools
+    network_mode: bridge
+    environment:
+      HOME: /tmp
+      PIP_CACHE_DIR: /tmp/pip-cache
+      PYTHONUSERBASE: /tmp/python-userbase
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      ION_SENTINEL_VENDOR_ROOT: /tools/vendor
+    command: >
+      bash -lc "echo 'sentinel-lab ready (controlled outbound for recon tools)'; sleep infinity"
+    volumes:
+      - ${ION_SENTINEL_VENDOR_ROOT:-../../../vendor-ion-discovery/D4Vinci}:/tools/vendor:ro
+      - ./scripts:/scripts:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /root/.cache
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["sentinel-lab"]
+

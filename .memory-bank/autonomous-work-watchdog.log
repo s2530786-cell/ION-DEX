@@ -1,0 +1,87 @@
+[2026-05-28T00:11:15.501Z] watchdog once
+[2026-05-28T00:20:44.304Z] watchdog daemon interval=90s
+[2026-05-28T00:25:57.899Z] watchdog once
+[2026-05-28T00:31:42.087Z] watchdog daemon interval=60s
+[2026-05-28T01:10:14.510Z] START step=verify-100 (spawn verify-100.ps1)
+[2026-05-28T01:10:14.561Z] watchdog once
+[2026-05-28T01:10:23.062Z] watchdog daemon interval=60s
+[2026-05-28T01:11:59.035Z] FAIL step=verify-100 exit=4294967295
+[2026-05-28T01:12:11.037Z] watchdog once
+[2026-05-28T01:12:11.049Z] START step=verify-100 RESUME from 28 (passed=27)
+[2026-05-28T03:17:50.080Z] FAIL step=verify-100 exit=1
+[2026-05-28T03:18:24.687Z] REQUEUE verify-100 resume startAt=28 initialPassed=27
+[2026-05-28T03:18:24.780Z] START step=verify-100 RESUME from 28 (passed=27)
+[2026-05-28T03:19:38.484Z] FAIL step=verify-100 exit=1
+[2026-05-28T04:04:23.409Z] watchdog once (auto-advance on step OK)
+[2026-05-28T05:39:27.022Z] START step=verify-100 RESUME from 75 (passed=74)
+[2026-05-28T06:49:27.893Z] START step=git-commit-push-b git commit+push batch=B
+[2026-05-28T06:49:28.006Z] FAIL step=git-commit-push-b exit=1
+[2026-05-28T06:55:12.767Z] watchdog once (auto-advance on step OK)
+[2026-05-28T06:55:12.838Z] FAIL step=verify-100 exit=0
+[2026-05-28T07:04:06.094Z] watchdog once (auto-advance on step OK)
+[2026-05-28T07:04:28.006Z] START step=git-commit-push-b git commit+push batch=B
+[2026-05-28T07:04:28.038Z] watchdog once (auto-advance on step OK)
+[2026-05-28T07:04:28.103Z] FAIL step=git-commit-push-b exit=1
+[2026-05-28T07:34:17.817Z] watchdog once (auto-advance on step OK)
+[2026-05-28T07:34:17.831Z] START step=git-commit-push-b git commit+push batch=B
+[2026-05-28T07:34:17.929Z] FAIL step=git-commit-push-b exit=1
+[2026-05-28T08:04:07.617Z] watchdog once (auto-advance on step OK)
+[2026-05-28T08:04:45.952Z] watchdog once (auto-advance on step OK)
+[2026-06-04T04:40:43.730Z] watchdog once (auto-advance on step OK)
+[2026-06-04T04:41:40.616Z] watchdog once (auto-advance on step OK)
+[2026-06-04T04:48:01.867Z] watchdog once (auto-advance on step OK)
+[2026-06-04T04:48:01.882Z] START step=verify-100 (spawn verify-100.ps1)
+[2026-06-04T04:57:06.961Z] watchdog once (auto-advance on step OK)
+[2026-06-04T08:35:38.815Z] FAIL step=verify-100 exit=1
+[2026-06-13T01:07:36.868Z] watchdog once (auto-advance on step OK)
+[2026-06-13T01:09:20.501Z] watchdog once (auto-advance on step OK)
+[2026-06-13T01:09:20.512Z] REQUEUE verify-100 from failed -> pending
+[2026-06-13T01:09:20.516Z] START step=verify-100 (spawn verify-100.ps1)
+[2026-06-13T01:24:46.356Z] FAIL step=verify-100 exit=1
+[2026-06-14T09:17:23.767Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-14T09:17:23.987Z] START step=verify-100 (spawn verify-100.ps1)
+[2026-06-14T11:26:29.057Z] FAIL step=verify-100 exit=1
+[2026-06-14T11:27:26.618Z] REQUEUE verify-100 resume startAt=21 initialPassed=20
+[2026-06-14T11:27:26.621Z] START step=verify-100 RESUME from 21 (passed=20)
+[2026-06-14T11:43:31.495Z] FAIL step=verify-100 exit=1
+[2026-06-14T11:44:26.807Z] REQUEUE verify-100 resume startAt=21 initialPassed=20
+[2026-06-14T11:44:26.811Z] START step=verify-100 RESUME from 21 (passed=20)
+[2026-06-14T11:49:51.724Z] FAIL step=verify-100 exit=1
+[2026-06-14T11:50:26.869Z] REQUEUE verify-100 resume startAt=21 initialPassed=20
+[2026-06-14T11:50:26.872Z] START step=verify-100 RESUME from 21 (passed=20)
+[2026-06-14T12:11:38.599Z] FAIL step=verify-100 exit=1
+[2026-06-14T12:17:01.527Z] watchdog once (auto-advance on step OK)
+[2026-06-14T12:17:01.566Z] REQUEUE verify-100 from failed -> pending
+[2026-06-14T12:17:01.573Z] WAIT step=verify-100 external run active (lock + fresh log)
+[2026-06-14T12:18:01.108Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-14T12:21:34.357Z] watchdog once (auto-advance on step OK)
+[2026-06-14T12:21:34.375Z] REQUEUE verify-100 resume startAt=24 initialPassed=23
+[2026-06-14T12:21:34.380Z] START step=verify-100 RESUME from 24 (passed=23)
+[2026-06-14T12:28:22.903Z] FAIL step=verify-100 exit=1
+[2026-06-14T12:31:36.256Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-14T12:31:36.271Z] REQUEUE verify-100 resume startAt=25 initialPassed=24
+[2026-06-14T12:31:36.276Z] START step=verify-100 RESUME from 25 (passed=24)
+[2026-06-14T12:31:36.529Z] watchdog once (auto-advance on step OK)
+[2026-06-18T14:58:55.437Z] watchdog once (auto-advance on step OK)
+[2026-06-18T15:06:48.307Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-18T15:06:48.314Z] watchdog once (auto-advance on step OK)
+[2026-06-18T15:06:48.328Z] REQUEUE verify-100 resume startAt=47 initialPassed=46
+[2026-06-18T15:06:48.333Z] START step=verify-100 RESUME from 47 (passed=46)
+[2026-06-18T15:06:48.334Z] REQUEUE verify-100 resume startAt=47 initialPassed=46
+[2026-06-18T15:06:48.339Z] START step=verify-100 RESUME from 47 (passed=46)
+[2026-06-18T15:06:48.964Z] FAIL step=verify-100 exit=1
+[2026-06-18T15:31:32.768Z] watchdog once (auto-advance on step OK)
+[2026-06-18T15:31:32.768Z] watchdog daemon interval=60s (auto-advance on step OK)
+[2026-06-18T15:31:33.550Z] REQUEUE verify-100 resume startAt=11 initialPassed=10
+[2026-06-18T15:31:33.551Z] REQUEUE verify-100 resume startAt=11 initialPassed=10
+[2026-06-18T15:31:33.555Z] START step=verify-100 RESUME from 11 (passed=10)
+[2026-06-18T15:31:33.556Z] START step=verify-100 RESUME from 11 (passed=10)
+[2026-06-18T15:31:34.521Z] WAIT step=verify-100 exit=2 (duplicate lock)
+[2026-06-18T16:27:00.072Z] watchdog once (auto-advance on step OK)
+[2026-06-18T16:27:00.105Z] Removed stale or orphaned verify-100 lock
+[2026-06-18T16:27:00.108Z] REQUEUE verify-100 resume startAt=11 initialPassed=10
+[2026-06-18T16:27:00.114Z] START step=verify-100 RESUME from 11 (passed=10)
+[2026-06-19T00:58:07.525Z] FAIL step=verify-100 exit=1
+[2026-06-19T05:49:25.090Z] watchdog once (auto-advance on step OK)
+[2026-06-19T05:49:25.109Z] REQUEUE verify-100 from failed -> pending
+[2026-06-19T05:49:25.118Z] WAIT step=verify-100 external run active (lock + fresh log)

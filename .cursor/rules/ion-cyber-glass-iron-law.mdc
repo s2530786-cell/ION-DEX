@@ -1,0 +1,35 @@
+---
+description: ION DEX cyber aurora glass UI iron law — locked tricolor, layout anchors, glass CSS. Mandatory for all frontend UI work.
+globs:
+  - frontend/**/*.tsx
+  - frontend/**/*.ts
+  - frontend/**/*.css
+alwaysApply: false
+---
+
+# ION Cyber Glass UI — Agent 铁律
+
+Before editing any file matched by this rule:
+
+1. Read `.memory-bank/ui-cyber-glass-iron-law.md` (Master locked colors & layout).
+2. Read `.memory-bank/ui-design-master-template.md` and open the matching PNG under `.memory-bank/design-refs/screens/` (Dashboard: `04-dashboard-galaxy-spiral.png`).
+3. Read `docs/10-ui-design-route.md` and `.cursor/skills/ion-web3-ui/SKILL.md`.
+4. After edits: run gap-analysis workflow in `ui-design-master-template.md` §4–§5 until P0=0.
+
+## Non-negotiable
+
+- **New feature UI**: any new page/module/modal/tile must match the Master template and existing screens — reuse `NeonGlassCard`, `NeonButton`, `FeatureTile`, tokens, `.flow-border`. No second visual system. See `ui-cyber-glass-iron-law.md` §0 and `ui-design-master-template.md` §0.
+- **Colors only**: `#00FFFF` (cyan), `#6020FF` (purple), `#FF00FF` (magenta) for primary gradients and neon rims. Use CSS vars `--ion-cyan`, `--ion-purple`, `--ion-magenta`.
+- **Gradient direction**: `linear-gradient(90deg, ...)` for borders and primary buttons unless design doc says otherwise.
+- **Glass**: every product panel uses `backdrop-filter` blur (`--glass-blur: 18px`) and `--glass-bg`.
+- **Layout** (Dashboard): top nav | left Swap | center chart | right stats | bottom 5 feature tiles — do not reorder zones.
+- **Motion**: keep `flow-border`, `float-3d`, aurora background. Do not add global `data-ion-ui-stable` to disable animations.
+- **No** rough placeholders, `shell`, `draft`, `TBD`, or huge bitmap logo in header.
+
+## Code conventions
+
+- Prefer existing: `NeonGlassCard`, `NeonCard`, `NeonButton`, `FeatureTile`, `AuroraGalaxyBackground`, `.flow-border`.
+- New hex colors in TSX/CSS are forbidden unless user explicitly approves.
+- After edits: run verification per `AGENTS.md`.
+
+Copy-paste prompt for user chats: `docs/cursor-prompt-ion-ui-1to1.md`.

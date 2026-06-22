@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+node scripts/check-public-ip-leak.mjs
+node scripts/verify-100-gate.mjs assert-commit "$@"

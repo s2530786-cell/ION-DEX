@@ -1,0 +1,66 @@
+#!/usr/bin/env fift -s
+// Operator broadcast segment: build FeeDistributor StateInit + optional wallet query BoC.
+// Requires deploy-live-params.generated.fif (from scripts/deploy-fift-live-send.mjs).
+// CI must never run with broadcast_enabled=1.
+
+"Asm.fif" include
+"TonUtil.fif" include
+
+def? deploy-live-params.generated.fif
+{ "deploy-live-params.generated.fif" include }
+{ ."ABORT: missing deploy-live-params.generated.fif — run scripts/deploy-fift-live-send.mjs first" cr 1 halt }
+if
+
+."=== ION DEX live deploy SEND (FeeDistributor) ===" cr
+."Network: " network_name type cr
+."Mode: on-chain BoC generation (operator submits wallet-query / RPC manually)" cr
+"" cr
+
+// --- Load compiled code (func -SPA output) ---
+"build/FeeDistributor.fif" include
+constant fee_distributor_code
+
+// --- Parse addresses from generated string constants (S bounce? -> wc addr bounce?) ---
+owner_addr_str false parse-load-address 2=: owner_addr 2drop
+lp_addr_str false parse-load-address 2=: lp_addr 2drop
+treasury_addr_str false parse-load-address 2=: treasury_addr 2drop
+insurance_addr_str false parse-load-address 2=: insurance_addr 2drop
+
+// --- Initial storage (matches FeeDistributor.fc storage::save layout) ---
+<b
+  owner_addr Addr,
+  lp_addr Addr,
+  treasury_addr Addr,
+  insurance_addr Addr,
+  lp_bps 16 u, treasury_bps 16 u, insurance_bps 16 u,
+b>
+constant fee_distributor_data
+
+<b b{0011} s, fee_distributor_code ref, fee_distributor_data ref, b>
+constant fee_distributor_state_init
+
+fee_distributor_state_init dup ."FeeDistributor StateInit: " <s csr. cr
+hashu 0 swap 2dup 2constant fee_distributor_addr
+."FeeDistributor contract address (bounceable): " fee_distributor_addr .addr cr
+6 .Addr cr
+"" cr
+
+// --- Persist StateInit BoC for wallet-v3 -I ---
+fee_distributor_state_init <s b{11} swap boc>B
+"deploy/out/fee-distributor-state-init.boc" tuck B>file
+."OK saved deploy/out/fee-distributor-state-init.boc" cr
+
+broadcast_enabled {
+  ."Send mode: wallet query BoC is built by deploy-fift-live-send.mjs (wallet-v3.fif)" cr
+  wallet_file_base ""$= {
+    ."WARN wallet_file_base unset in params — Node should have validated this" cr
+  } {
+    ."Wallet base: " wallet_file_base type cr
+    ."Seqno: " wallet_seqno . cr
+    ."Deploy grams: " deploy_grams . cr
+  } if
+} {
+  ."Plan mode: StateInit BoC only. Use ION_DEPLOY_SEND_MODE=send after audit for wallet query." cr
+} if
+
+."=== FeeDistributor deploy segment complete (no RPC in this script) ===" cr

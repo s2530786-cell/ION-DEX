@@ -1,0 +1,35 @@
+name: ION-DEX Production Pipeline
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Engineering Gate (Audit)
+        run: make audit
+
+      - name: Run Tests
+        run: make test
+
+      - name: Build
+        run: make build

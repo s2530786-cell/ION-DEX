@@ -1,0 +1,19 @@
+---
+description: Auto-load Cursor Skills by module via ion-skill-autopilot (run skill-route before coding)
+alwaysApply: true
+---
+
+# ION Skill Autopilot（自动技能调度）
+
+**每个开发任务开始前**（用户未明确禁止时）：
+
+1. 运行 `node scripts/skill-route.mjs --git`；若用户描述了任务，追加 `--task "<用户原话摘要>"`。
+2. 按输出 **逐条 Read** 所列 `SKILL.md`（路径以 `private` 为准）。
+3. 读取输出的 `DOCS` 与 `MEMORY_BANK` 文件（若列出）。
+4. 若输出含 `PREFLIGHT`，运行 `node scripts/dev-preflight.mjs`。
+5. 若输出含 `SECURITY`，运行 `node scripts/security-preflight.mjs`。
+6. 详细流程见 `.cursor/skills/ion-skill-autopilot/SKILL.md` 与 `.cursor/skill-routing.manifest.json`。
+
+**禁止**将 `.cursor/skills-private/`、`d:\vendor-quant\` 或闭源 AI 权重推送到公开 `ion-dex-nuke` 远程。
+
+量化/K 线/短视频等商业能力：先 `quant-trading-frameworks`（私有全量）或 `kronos` 等子 Skill，勿在公开仓复制私有正文。
