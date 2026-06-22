@@ -1,76 +1,123 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
-import {IERC20} from "./interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./AdminManager.sol";
 
-/// @title LiquidityPool - addLiquidity / removeLiquidity with 0.1% pool fee
-contract LiquidityPool {
-    uint256 public constant POOL_FEE_NUMERATOR = 1;     // 0.1%
-    uint256 public constant POOL_FEE_DENOMINATOR = 1000;
-    uint256 private constant MIN_LIQUIDITY = 1000;
+contract LiquidityPool is ERC20, ReentrancyGuard {
+    uint256 public constant MINIMUM_LIQUIDITY = 1_000;
+    address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
 
-    address public immutable token0;
-    address public immutable token1;
+    address public immutable tokenA;
+    address public immutable tokenB;
+    address public dexContract;
+    AdminManager public admin;
 
-    uint112 private reserve0;
-    uint112 private reserve1;
-    uint256 public totalLpSupply;
-    mapping(address => uint256) public lpBalance;
+    event AddLiquidity(address indexed user, uint256 amountA, uint256 amountB, uint256 lpMinted);
+    event RemoveLiquidity(address indexed user, uint256 lpBurned, uint256 amountA, uint256 amountB);
 
-    uint256 private _locked = 1;
-    modifier nonReentrant() { require(_locked == 1, "REENTRANCY"); _locked = 2; _; _locked = 1; }
+    constructor(
+        string memory name,
+        string memory symbol,
+        address tokenA_,
+        address tokenB_,
+        address admin_,
+        address dex_
+    ) ERC20(name, symbol) {
+        require(tokenA_ != address(0) && tokenB_ != address(0), "Token zero");
+        require(admin_ != address(0) && dex_ != address(0), "Config zero");
+        require(tokenA_ != tokenB_, "Same token");
 
-    event Mint(address indexed to, uint256 amount0, uint256 amount1, uint256 liquidity);
-    event Burn(address indexed from, uint256 amount0, uint256 amount1, uint256 liquidity);
-
-    constructor(address _token0, address _token1) {
-        require(_token0 != _token1, "IDENTICAL");
-        (token0, token1) = _token0 < _token1 ? (_token0, _token1) : (_token1, _token0);
+        tokenA = tokenA_;
+        tokenB = tokenB_;
+        admin = AdminManager(admin_);
+        dexContract = dex_;
     }
 
-    function getReserves() external view returns (uint112, uint112) {
-        return (reserve0, reserve1);
+    modifier onlyWhenRunning() {
+        require(!admin.paused(), "Paused");
+        _;
+    }
+
+    function addLiquidity(uint256 amountA, uint256 amountB)
+        external
+        nonReentrant
+        onlyWhenRunning
+        returns (uint256 lpAmount)
+    {
+        require(amountA > 0 && amountB > 0, "Amount zero");
+
+        uint256 reserveA = IERC20(tokenA).balanceOf(address(this));
+        uint256 reserveB = IERC20(tokenB).balanceOf(address(this));
+
+        require(IERC20(tokenA).transferFrom(msg.sender, address(this), amountA), "TF fail");
+        require(IERC20(tokenB).transferFrom(msg.sender, address(this), amountB), "TF fail");
+
+        if (totalSupply() == 0) {
+            uint256 rootK = _sqrt(amountA * amountB);
+            require(rootK > MINIMUM_LIQUIDITY, "Min LP not met");
+            _mint(DEAD_ADDRESS, MINIMUM_LIQUIDITY);
+            lpAmount = rootK - MINIMUM_LIQUIDITY;
+        } else {
+            require(amountA * reserveB == amountB * reserveA, "Invalid ratio");
+            uint256 shareA = (amountA * totalSupply()) / reserveA;
+            uint256 shareB = (amountB * totalSupply()) / reserveB;
+            lpAmount = shareA < shareB ? shareA : shareB;
+        }
+
+        require(lpAmount > 0, "LP zero");
+        _mint(msg.sender, lpAmount);
+        emit AddLiquidity(msg.sender, amountA, amountB, lpAmount);
+    }
+
+    function removeLiquidity(uint256 lpAmount) external nonReentrant onlyWhenRunning {
+        require(lpAmount > 0, "LP zero");
+        require(balanceOf(msg.sender) >= lpAmount, "Insufficient LP");
+
+        uint256 balanceA = IERC20(tokenA).balanceOf(address(this));
+        uint256 balanceB = IERC20(tokenB).balanceOf(address(this));
+        uint256 totalLP = totalSupply();
+
+        uint256 amountA = (lpAmount * balanceA) / totalLP;
+        uint256 amountB = (lpAmount * balanceB) / totalLP;
+
+        _burn(msg.sender, lpAmount);
+        require(IERC20(tokenA).transfer(msg.sender, amountA), "TF fail");
+        require(IERC20(tokenB).transfer(msg.sender, amountB), "TF fail");
+
+        emit RemoveLiquidity(msg.sender, lpAmount, amountA, amountB);
+    }
+
+    function setDexContract(address dex_) external {
+        require(msg.sender == owner(), "Not authorized");
+        require(dex_ != address(0), "Dex zero");
+        dexContract = dex_;
+    }
+
+    function payout(address token, address to, uint256 amount) external nonReentrant {
+        require(msg.sender == dexContract, "Not dex");
+        require(token == tokenA || token == tokenB, "Invalid token");
+        require(to != address(0), "To zero");
+        require(amount > 0, "Amount zero");
+        require(IERC20(token).transfer(to, amount), "TF fail");
+    }
+
+    function owner() public view returns (address) {
+        return admin.owner();
     }
 
     function _sqrt(uint256 y) internal pure returns (uint256 z) {
-        if (y > 3) { z = y; uint256 x = y / 2 + 1; while (x < z) { z = x; x = (y / x + x) / 2; } }
-        else if (y != 0) { z = 1; }
-    }
-
-    function _min(uint256 a, uint256 b) internal pure returns (uint256) { return a < b ? a : b; }
-
-    function addLiquidity(uint256 amount0, uint256 amount1) external nonReentrant returns (uint256 liquidity) {
-        require(IERC20(token0).transferFrom(msg.sender, address(this), amount0), "T0");
-        require(IERC20(token1).transferFrom(msg.sender, address(this), amount1), "T1");
-
-        if (totalLpSupply == 0) {
-            liquidity = _sqrt(amount0 * amount1) - MIN_LIQUIDITY;
-            totalLpSupply = MIN_LIQUIDITY; // permanently locked
-        } else {
-            liquidity = _min((amount0 * totalLpSupply) / reserve0, (amount1 * totalLpSupply) / reserve1);
+        if (y > 3) {
+            z = y;
+            uint256 x = y / 2 + 1;
+            while (x < z) {
+                z = x;
+                x = (y / x + x) / 2;
+            }
+        } else if (y != 0) {
+            z = 1;
         }
-        require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
-
-        lpBalance[msg.sender] += liquidity;
-        totalLpSupply += liquidity;
-        reserve0 += uint112(amount0);
-        reserve1 += uint112(amount1);
-        emit Mint(msg.sender, amount0, amount1, liquidity);
-    }
-
-    function removeLiquidity(uint256 liquidity) external nonReentrant returns (uint256 amount0, uint256 amount1) {
-        require(lpBalance[msg.sender] >= liquidity, "INSUFFICIENT_LP");
-        amount0 = (liquidity * reserve0) / totalLpSupply;
-        amount1 = (liquidity * reserve1) / totalLpSupply;
-        require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_BURNED");
-
-        lpBalance[msg.sender] -= liquidity;
-        totalLpSupply -= liquidity;
-        reserve0 -= uint112(amount0);
-        reserve1 -= uint112(amount1);
-
-        require(IERC20(token0).transfer(msg.sender, amount0), "T0_OUT");
-        require(IERC20(token1).transfer(msg.sender, amount1), "T1_OUT");
-        emit Burn(msg.sender, amount0, amount1, liquidity);
     }
 }
