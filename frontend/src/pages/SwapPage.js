@@ -4,8 +4,11 @@ import TradingViewChart from "../components/TradingViewChart";
 import NeonCandlestickChart from "../components/NeonCandlestickChart";
 import QuickTiles from "../components/QuickTiles";
 import NeonGauge from "../components/NeonGauge";
+import SlippageControl from "../components/SlippageControl";
+import SwapHistory from "../components/SwapHistory";
 import { api, fmt, fmtUsd } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
+import { useSwapPrice } from "../hooks/useSwapPrice";
 
 const TV_SYMBOLS = { ION: "BINANCE:TONUSDT", BNB: "BINANCE:BNBUSDT", BTC: "BINANCE:BTCUSDT", ETH: "BINANCE:ETHUSDT", TON: "BINANCE:TONUSDT", CAKE: "BINANCE:CAKEUSDT" };
 
@@ -35,6 +38,17 @@ function TokenCard({ label, token, amount, onAmount, tokens, onToken, readOnly }
 
 export default function SwapPage() {
   const { address, sendTx } = useWallet();
+  const {
+    calculatePrice,
+    slippageMode,
+    setSlippageMode,
+    customSlippage,
+    setCustomSlippage,
+    suggestedSlippage,
+    priceImpact,
+    validateSlippage,
+  } = useSwapPrice();
+
   const [tokens, setTokens] = useState([]);
   const [trades, setTrades] = useState([]);
   const [fromT, setFromT] = useState("ION");
@@ -43,21 +57,74 @@ export default function SwapPage() {
   const [quote, setQuote] = useState(null);
   const [stats, setStats] = useState(null);
   const [burn, setBurn] = useState(null);
+  const [isSwapping, setIsSwapping] = useState(false);
 
-  useEffect(() => { api.tokens().then(setTokens); api.recentTrades("ION/USDT").then(setTrades); api.pools().then(setStats); api.burnStats().then(setBurn); }, []);
+  useEffect(() => {
+    api.tokens().then(setTokens);
+    api.recentTrades("ION/USDT").then(setTrades);
+    api.pools().then(setStats);
+    api.burnStats().then(setBurn);
+  }, []);
 
-  const loadQuote = useCallback(() => {
+  // 使用新的价格计算引擎
+  const calculateSwapPrice = useCallback(() => {
     const a = parseFloat(amount);
-    if (!a || a <= 0 || fromT === toT) { setQuote(null); return; }
-    api.swapQuote(fromT, toT, a).then(setQuote).catch(() => setQuote(null));
-  }, [amount, fromT, toT]);
+    if (!a || a <= 0 || fromT === toT) {
+      setQuote(null);
+      return;
+    }
 
-  useEffect(() => { loadQuote(); }, [loadQuote]);
+    const priceQuote = calculatePrice(fromT, toT, a);
+    if (priceQuote) {
+      setQuote(priceQuote);
+    }
+  }, [amount, fromT, toT, calculatePrice]);
 
-  const flip = () => { setFromT(toT); setToT(fromT); };
+  useEffect(() => {
+    calculateSwapPrice();
+  }, [calculateSwapPrice]);
+
+  const flip = () => {
+    setFromT(toT);
+    setToT(fromT);
+    calculateSwapPrice();
+  };
 
   const doSwap = async () => {
-    await sendTx("Swap", () => api.swap({ address, from_token: fromT, to_token: toT, amount_in: parseFloat(amount) }));
+    if (!quote || isSwapping) return;
+
+    setIsSwapping(true);
+    try {
+      // 验证滑点
+      const validation = validateSlippage(quote.slippage);
+      if (!validation.valid) {
+        alert(validation.message);
+        setIsSwapping(false);
+        return;
+      }
+
+      // 执行交易
+      await sendTx(
+        `Swap ${amount} ${fromT} to ${quote.minOutput.toFixed(4)} ${toT}`,
+        () =>
+          api.swap({
+            address,
+            from_token: fromT,
+            to_token: toT,
+            amount_in: parseFloat(amount),
+            min_amount_out: quote.minOutput,
+            slippage: quote.slippage,
+          })
+      );
+
+      // 重置表单
+      setAmount("0");
+      setQuote(null);
+    } catch (error) {
+      console.error("Swap failed:", error);
+    } finally {
+      setIsSwapping(false);
+    }
   };
 
   return (
@@ -75,19 +142,81 @@ export default function SwapPage() {
           <div className="flex justify-center my-2">
             <button onClick={flip} className="ghost-btn spin-arrow" style={{ width: 44, height: 44, padding: 0, borderRadius: 14 }} data-testid="swap-flip"><Icon name="swap.svg" size={20} /></button>
           </div>
-          <TokenCard label="To" token={toT} amount={quote ? fmt(quote.amount_out, 4) : "0.0"} tokens={tokens} onToken={setToT} readOnly />
+          <TokenCard label="To" token={toT} amount={quote ? fmt(quote.minOutput, 4) : "0.0"} tokens={tokens} onToken={setToT} readOnly />
+
+          {/* 滑点控制 */}
+          <div className="mt-4">
+            <SlippageControl
+              slippageMode={slippageMode}
+              setSlippageMode={setSlippageMode}
+              customSlippage={customSlippage}
+              setCustomSlippage={setCustomSlippage}
+              suggestedSlippage={suggestedSlippage}
+              priceImpact={priceImpact}
+              validateSlippage={validateSlippage}
+            />
+          </div>
 
           {quote && (
             <div className="mt-4 space-y-2" style={{ fontSize: 13, color: "var(--text-dim)" }}>
-              <div className="flex justify-between"><span>Rate</span><span className="mono" style={{ color: "var(--text)" }}>1 {fromT} = {fmt(quote.rate, 4)} {toT}</span></div>
-              <div className="flex justify-between"><span>Route</span><span style={{ color: "var(--cyan)" }}>{quote.route.join(" → ")}</span></div>
-              <div className="flex justify-between"><span>Gas</span><span className="mono" style={{ color: "var(--text)" }}>{quote.gas_estimate} BNB</span></div>
-              <div className="flex justify-between"><span>Slippage</span><span className="mono" style={{ color: "var(--text)" }}>{quote.slippage}%</span></div>
-              <div className="flex justify-between"><span>Price Impact</span><span className="mono" style={{ color: quote.price_impact > 3 ? "var(--red)" : "var(--green)" }}>{quote.price_impact}%</span></div>
-              <div className="flex justify-between"><span>Fee (ION)</span><span className="mono" style={{ color: "var(--gold)" }}>{fmt(quote.fee_ion, 4)}</span></div>
+              <div className="flex justify-between">
+                <span>Rate</span>
+                <span className="mono" style={{ color: "var(--text)" }}>
+                  1 {fromT} = {fmt(quote.rate, 4)} {toT}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Route</span>
+                <span style={{ color: "var(--cyan)" }}>{quote.route.join(" → ")}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Price Impact</span>
+                <span
+                  className="mono"
+                  style={{
+                    color:
+                      quote.priceImpact > 5
+                        ? "var(--red)"
+                        : quote.priceImpact > 2
+                        ? "var(--gold)"
+                        : "var(--green)",
+                  }}
+                >
+                  {quote.priceImpact}%
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Slippage</span>
+                <span className="mono" style={{ color: "var(--cyan)" }}>{quote.slippage.toFixed(2)}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Min Output</span>
+                <span className="mono" style={{ color: "var(--green)" }}>
+                  {fmt(quote.minOutput, 4)} {toT}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Trading Fee</span>
+                <span className="mono" style={{ color: "var(--gold)" }}>{fmt(quote.tradingFee, 4)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Eco Fee (ION)</span>
+                <span className="mono" style={{ color: "var(--red)" }}>{fmt(quote.ecoFeeInION, 4)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Est. Time</span>
+                <span className="mono" style={{ color: "var(--text)" }}>{quote.executionTime}</span>
+              </div>
             </div>
           )}
-          <NeonButton className="mt-5" onClick={doSwap} disabled={!quote} data-testid="swap-submit">{address ? "Swap" : "Connect & Swap"}</NeonButton>
+          <NeonButton
+            className="mt-5"
+            onClick={doSwap}
+            disabled={!quote || isSwapping}
+            data-testid="swap-submit"
+          >
+            {isSwapping ? "Swapping..." : address ? "Swap" : "Connect & Swap"}
+          </NeonButton>
         </Panel>
       </div>
 
@@ -149,6 +278,7 @@ export default function SwapPage() {
       </div>
     </div>
       <div className="depth-bottom"><QuickTiles /></div>
+      <div className="depth-bottom"><SwapHistory /></div>
     </div>
   );
 }

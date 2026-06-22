@@ -24,6 +24,7 @@ import BatchTransferPage from "./pages/BatchTransferPage";
 import BusinessPages from "./pages/BusinessPages";
 import ApproveManagerPage from "./pages/ApproveManagerPage";
 import DiscoverPage from "./pages/DiscoverPage";
+import PortfolioPage from "./pages/PortfolioPage";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path="/" element={<Navigate to="/swap" replace />} />
             <Route path="/swap" element={<SwapPage />} />
             <Route path="/discover" element={<DiscoverPage />} />
+            <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/pool" element={<PoolPage />} />
             <Route path="/stake" element={<StakePage />} />
             <Route path="/bridge" element={<BridgePage />} />

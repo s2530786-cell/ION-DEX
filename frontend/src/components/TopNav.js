@@ -4,6 +4,7 @@ import { useWallet } from "../context/WalletContext";
 import { Icon } from "./kit";
 import { short } from "../lib/api";
 import SkinSwitcher from "./SkinSwitcher";
+import WalletButton from "./WalletButton";
 
 const PRIMARY = [
   { to: "/swap", label: "Swap" },
@@ -13,6 +14,7 @@ const PRIMARY = [
 ];
 
 const MORE = [
+  { to: "/portfolio", label: "Portfolio" },
   { to: "/discover", label: "Discover" },
   { to: "/dashboard", label: "Dashboard" },
   { to: "/trade-pro", label: "Trade Pro" },
@@ -71,15 +73,7 @@ export default function TopNav() {
         <div className="flex items-center gap-3">
           <button className="lg:hidden ghost-btn" style={{ height: 40, padding: "0 12px" }} onClick={() => setOpen(!open)} data-testid="mobile-menu">☰</button>
           <SkinSwitcher />
-          {address ? (
-            <button onClick={disconnect} className="ghost-btn" style={{ height: 44 }} data-testid="wallet-connected">
-              <Icon name="wallet.svg" size={18} /> <span className="mono" style={{ fontSize: 13 }}>{short(address)}</span>
-            </button>
-          ) : (
-            <button onClick={connect} disabled={connecting} className="neon-btn" style={{ height: 44 }} data-testid="connect-wallet">
-              <Icon name="wallet.svg" size={18} /> {connecting ? "Connecting..." : "Connect Wallet"}
-            </button>
-          )}
+          <WalletButton />
         </div>
       </div>
 
