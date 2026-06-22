@@ -87,3 +87,5 @@ contracts/script/Deploy.s.sol/
 
 cache/
 .next/
+*.env
+!.env.example
