@@ -1,82 +1,43 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-    darkMode: ["class"],
-    content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-    "./public/index.html"
-  ],
+export default {
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
-      },
       colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
+        ion: {
+          cyan: "#00ffff",
+          purple: "#6020ff",
+          violet: "#6020ff",
+          magenta: "#ff00ff",
+          gold: "#ffd166",
+          green: "#00ff88",
+          pink: "#ff0088",
+          ink: "#010104",
+          elevated: "#06060f",
         },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))'
-        },
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))'
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))'
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))'
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))'
-        },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))'
-        }
       },
-      keyframes: {
-        'accordion-down': {
-          from: {
-            height: '0'
-          },
-          to: {
-            height: 'var(--radix-accordion-content-height)'
-          }
-        },
-        'accordion-up': {
-          from: {
-            height: 'var(--radix-accordion-content-height)'
-          },
-          to: {
-            height: '0'
-          }
-        }
+      boxShadow: {
+        neonCyan: "0 0 28px rgba(0, 255, 255, 0.55)",
+        neonMagenta: "0 0 28px rgba(255, 0, 255, 0.48)",
+        neonGold: "0 0 28px rgba(255, 209, 102, 0.35)",
+        neonViolet: "0 0 28px rgba(96, 32, 255, 0.45)",
+        neonPurple: "0 0 28px rgba(96, 32, 255, 0.45)",
+        neonGreen: "0 0 28px rgba(0, 255, 136, 0.35)",
+        cyberPanel: "0 0 24px rgba(0, 255, 255, 0.35), 0 0 48px rgba(96, 32, 255, 0.22), 0 0 72px rgba(255, 0, 255, 0.14)",
+      },
+      fontFamily: {
+        display: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out'
+        'ion-spin-slow': 'ionSpinSlow 4s linear infinite',
+        'ion-pulse-slow': 'ionPulseSlow 4s ease-in-out infinite',
+        'ion-float-3d': 'ionFloat3d 9s ease-in-out infinite',
+        'ion-shimmer': 'ionShimmer 2.5s ease-in-out infinite',
+        'ion-scale': 'ionScale 1.5s ease-in-out infinite',
+        scanline: 'ionScanlineDrift 8s linear infinite',
+        'border-pulse': 'ionNeonPulse 3.5s ease-in-out infinite',
       }
-    }
+    },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [],
 };

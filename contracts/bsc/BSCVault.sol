@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {IonProtocolFeeLib} from "./IonProtocolFeeLib.sol";
 
 interface IERC20Vault {
-    function transfer(address to, uint256 value) external returns (bool);
-    function transferFrom(address from, address to, uint256 value) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
 }
 
@@ -15,6 +14,8 @@ interface IERC20Vault {
  * @dev Only owner or registered relayer may release. No placeholder balances — all amounts from transfers.
  */
 contract BSCVault {
+    using SafeCast for int256;
+
     error IonDexZeroAddress();
     error IonDexZeroAmount();
     error IonDexUnauthorized();
@@ -84,7 +85,7 @@ contract BSCVault {
         if (amount == 0) revert IonDexZeroAmount();
         if (ionRecipient == bytes32(0)) revert IonDexZeroAddress();
         IonProtocolFeeLib.collectIonFee(feeReceiver, address(this), msg.sender, ionProtocolFee);
-        if (!_transferFrom(token, msg.sender, address(this), amount)) revert IonDexTokenTransferFailed();
+        _safeTransferFrom(token, msg.sender, address(this), amount);
         lockedBalance[token][msg.sender] += amount;
         emit Locked(msg.sender, token, amount, ionRecipient);
     }
@@ -106,18 +107,17 @@ contract BSCVault {
 
         releaseConsumed[releaseId] = true;
         lockedBalance[token][user] -= amount;
-        if (!_transfer(token, user, amount)) revert IonDexTokenTransferFailed();
+        _safeTransfer(token, user, amount);
         emit Released(user, token, amount, releaseId);
     }
 
     function adjustLpShares(address user, int256 deltaShares) external onlyRelayerOrOwner {
         if (user == address(0)) revert IonDexZeroAddress();
         if (deltaShares > 0) {
-            // forge-lint: disable-next-line(unsafe-typecast)
-            lpShares[user] += uint256(deltaShares);
+            lpShares[user] += deltaShares.toUint256();
         } else if (deltaShares < 0) {
-            // forge-lint: disable-next-line(unsafe-typecast)
-            uint256 dec = uint256(-deltaShares);
+            if (deltaShares == type(int256).min) revert IonDexInsufficientLocked();
+            uint256 dec = (-deltaShares).toUint256();
             if (lpShares[user] < dec) revert IonDexInsufficientLocked();
             lpShares[user] -= dec;
         }
@@ -128,11 +128,18 @@ contract BSCVault {
         return IERC20Vault(token).balanceOf(address(this));
     }
 
-    function _transferFrom(address token, address from, address to, uint256 amount) private returns (bool) {
-        return IERC20Vault(token).transferFrom(from, to, amount);
+    function _safeTransferFrom(address token, address from, address to, uint256 amount) private {
+        _callOptionalReturn(token, abi.encodeWithSignature("transferFrom(address,address,uint256)", from, to, amount));
     }
 
-    function _transfer(address token, address to, uint256 amount) private returns (bool) {
-        return IERC20Vault(token).transfer(to, amount);
+    function _safeTransfer(address token, address to, uint256 amount) private {
+        _callOptionalReturn(token, abi.encodeWithSignature("transfer(address,uint256)", to, amount));
+    }
+
+    function _callOptionalReturn(address token, bytes memory data) private {
+        (bool success, bytes memory returndata) = token.call(data);
+        if (!success || (returndata.length != 0 && !abi.decode(returndata, (bool)))) {
+            revert IonDexTokenTransferFailed();
+        }
     }
 }

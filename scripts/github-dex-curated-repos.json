@@ -1,0 +1,24 @@
+{
+  "comment": "High-signal DEX / AMM / aggregator implementations — enriched via repos API (not search)",
+  "repos": [
+    "Uniswap/v4-core",
+    "Uniswap/v3-core",
+    "Uniswap/interface",
+    "Uniswap/sdk-core",
+    "Uniswap/universal-router",
+    "pancakeswap/pancake-smart-contracts",
+    "pancakeswap/pancake-subgraph",
+    "curvefi/curve-contract",
+    "balancer/balancer-v2-monorepo",
+    "sushiswap/sushiswap",
+    "velodrome-finance/contracts",
+    "aerodrome-finance/contracts",
+    "VeloraDEX/paraswap-dex-lib",
+    "1inch/limit-order-protocol",
+    "dydxprotocol/v4-chain",
+    "traderjoe-xyz/joe-v2",
+    "Uniswap/smart-order-router",
+    "cowprotocol/contracts",
+    "odos-xyz/odos-router-v2"
+  ]
+}

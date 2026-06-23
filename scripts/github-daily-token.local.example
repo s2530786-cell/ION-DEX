@@ -1,0 +1,3 @@
+# Copy to scripts/.github-token.local (gitignored) — one line, no quotes:
+# github_pat_xxxxxxxx OR ghp_xxxxxxxx
+# Scopes: public_repo (read) is enough for search + clone.

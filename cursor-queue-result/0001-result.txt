@@ -1,0 +1,8 @@
+﻿cursor-agent.cmd : S: Increase limits for faster responses You're out of usage. Switch to Auto, or ask your admin to in
+crease your limit to continue.
+所在位置 行:1 字符: 269
++ ... sk.md -Raw; & "D:\openclaw-tools\cursor-agent\dist-package\cursor-age ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (S: Increase lim...it to continue.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

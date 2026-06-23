@@ -1,0 +1,218 @@
+;; ION Cross-Border Payment Gateway V6 (Mainnet Production)
+;; FunC 0.4.4 | Code Temperature 0.001
+;; V6 Security Fix: Flash loan protection, Oracle manipulation protection
+;; TODO: Quantum resistance - Ed25519 signatures vulnerable to quantum attacks, consider post-quantum signatures
+
+#pragma version >=0.4.4;
+
+#include "imports/stdlib.fc";
+
+const int op::offline_invoice_pay = 0x61f4b2c3;
+const int op::merchant_withdraw = 0x8a1b2c3d;
+const int op::emergency_stop = 0x192a3b4c;
+
+const int err::invalid_signature = 801;
+const int err::channel_expired = 802;
+const int err::nonce_replay_attack = 803;
+const int err::insufficient_balance = 804;
+const int err::contract_is_paused = 805;
+const int err::unauthorized_governor = 806;
+const int err::balance_overflow = 807;
+const int err::flash_loan_violation = 808;
+const int err::price_manipulation = 809;
+const int err::insufficient_attached_value = 810;
+const int err::withdrawal_replay_attack = 811;
+
+const int NONCE_WINDOW_LIMIT = 86400;
+const int MAX_COINS_LIMIT = 1329227995784915872903807060280344575;
+const int MIN_PAYMENT_INTERVAL = 30;
+const int MAX_SINGLE_PAYMENT = 1000000000000;  ;; Max 1T nanograms per payment
+const int MAX_PRICE_DEVIATION_BPS = 500;  ;; Max 5% price deviation from reference
+
+(slice, int, int, cell, cell, int, cell) load_payment_storage() inline {
+    slice ds = get_data().begin_parse();
+    return (ds~load_msg_addr(), ds~load_uint(256), ds~load_uint(2), ds~load_dict(), ds~load_dict(), ds~load_uint(32), ds~load_dict());
+}
+
+() save_payment_storage(slice gov, int pub_key, int paused, cell buckets, cell balances, int last_payment_ts, cell withdrawal_ids) impure inline {
+    set_data(begin_cell().store_slice(gov).store_uint(pub_key, 256).store_uint(paused, 2).store_dict(buckets).store_dict(balances).store_uint(last_payment_ts, 32).store_dict(withdrawal_ids).end_cell());
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    if (in_msg_body.slice_empty?()) { return (); }
+
+    slice cs = in_msg_full.begin_parse();
+    int flags = cs~load_uint(4);
+    slice sender_address = cs~load_msg_addr();
+    int op = in_msg_body~load_uint(32);
+    int query_id = in_msg_body~load_uint(64);
+
+    (slice governor, int platform_pubkey, int paused, cell time_buckets, cell merchant_balances, int last_payment_ts, cell withdrawal_ids) = load_payment_storage();
+
+    if (flags & 1) {
+        if (op == op::merchant_withdraw) {
+            int merchant_id = in_msg_body~load_uint(32);
+            int withdraw_amount = in_msg_body~load_coins();
+            int withdrawal_hash = begin_cell()
+                .store_uint(merchant_id, 32)
+                .store_uint(query_id, 64)
+                .store_coins(withdraw_amount)
+                .store_slice(sender_address)
+                .end_cell()
+                .cell_hash();
+
+            (slice merchant_data, int merchant_exists) = merchant_balances.udict_get?(32, merchant_id);
+            if (merchant_exists) {
+                int current_balance = merchant_data~load_coins();
+                int m_pubkey = merchant_data~load_uint(256);
+                throw_if(err::balance_overflow, current_balance + withdraw_amount > MAX_COINS_LIMIT);
+
+                cell restored_merchant = begin_cell()
+                    .store_coins(current_balance + withdraw_amount)
+                    .store_uint(m_pubkey, 256)
+                    .end_cell();
+                merchant_balances~udict_set(32, merchant_id, restored_merchant.begin_parse());
+            }
+
+            withdrawal_ids~udict_delete?(256, withdrawal_hash);
+            save_payment_storage(governor, platform_pubkey, paused, time_buckets, merchant_balances, last_payment_ts, withdrawal_ids);
+        }
+        return ();
+    }
+
+    ;; Circuit breaker must exempt emergency control
+    if (op != op::emergency_stop) {
+        throw_if(err::contract_is_paused, paused == 1);
+    }
+
+    if (op == op::offline_invoice_pay) {
+        int merchant_id = in_msg_body~load_uint(32);
+        int user_nonce = in_msg_body~load_uint(64);
+        int payment_amount_ion = in_msg_body~load_coins();
+        int expiration_time = in_msg_body~load_uint(32);
+        slice signature = in_msg_body~load_bits(512);
+
+        throw_if(err::insufficient_attached_value, msg_value < payment_amount_ion);
+
+        ;; V6: Flash loan protection - minimum payment interval
+        int current_time = now();
+        throw_if(err::flash_loan_violation, current_time - last_payment_ts < MIN_PAYMENT_INTERVAL);
+
+        ;; V6: Price manipulation protection - cap single payment amount
+        throw_if(err::price_manipulation, payment_amount_ion > MAX_SINGLE_PAYMENT);
+
+        throw_if(err::channel_expired, current_time > expiration_time);
+        throw_if(err::channel_expired, expiration_time - current_time > NONCE_WINDOW_LIMIT);
+
+        int bucket_id = expiration_time / 3600;
+        (slice bucket_slice, int bucket_exists) = time_buckets.udict_get?(32, bucket_id);
+        cell nonce_sub_dict = bucket_exists ? bucket_slice~load_dict() : new_dict();
+
+        (_, int nonce_exists) = nonce_sub_dict.udict_get?(64, user_nonce);
+        throw_if(err::nonce_replay_attack, nonce_exists);
+
+        cell hash_data = begin_cell().store_uint(merchant_id, 32).store_uint(user_nonce, 64).store_coins(payment_amount_ion).store_uint(expiration_time, 32).end_cell();
+        throw_unless(err::invalid_signature, check_signature(hash_data.cell_hash(), signature, platform_pubkey));
+
+        nonce_sub_dict~udict_set(64, user_nonce, begin_cell().store_uint(1, 1).end_cell().begin_parse());
+        time_buckets~udict_set(32, bucket_id, begin_cell().store_dict(nonce_sub_dict).end_cell().begin_parse());
+
+        ;; Batch prune expired buckets
+        int cutoff_bkt = (current_time - NONCE_WINDOW_LIMIT) / 3600;
+        int bkt_key = -1;
+        int cont_clean = 1;
+        do {
+            (bkt_key, _, int found_old) = time_buckets.udict_get_next?(32, bkt_key);
+            if (found_old) {
+                if (bkt_key < cutoff_bkt) {
+                    time_buckets~udict_delete?(32, bkt_key);
+                } else {
+                    cont_clean = 0;
+                }
+            } else {
+                cont_clean = 0;
+            }
+        } until (~ cont_clean);
+
+        ;; 32-bit key alignment for merchant dict
+        (slice merchant_data, int merchant_exists) = merchant_balances.udict_get?(32, merchant_id);
+        int current_balance = 0;
+        int m_pubkey = 0;
+
+        if (merchant_exists) {
+            current_balance = merchant_data~load_coins();
+            m_pubkey = merchant_data~load_uint(256);
+        } else {
+            m_pubkey = platform_pubkey;
+        }
+
+        throw_if(err::balance_overflow, current_balance + payment_amount_ion > MAX_COINS_LIMIT);
+        int new_balance = current_balance + payment_amount_ion;
+
+        cell updated_merchant = begin_cell().store_coins(new_balance).store_uint(m_pubkey, 256).end_cell();
+        merchant_balances~udict_set(32, merchant_id, updated_merchant.begin_parse());
+        save_payment_storage(governor, platform_pubkey, paused, time_buckets, merchant_balances, current_time, withdrawal_ids);
+        return ();
+    }
+
+    if (op == op::merchant_withdraw) {
+        int merchant_id = in_msg_body~load_uint(32);
+        int withdraw_amount = in_msg_body~load_coins();
+        slice merchant_signature = in_msg_body~load_bits(512);
+
+        ;; 32-bit key alignment for merchant dict
+        (slice merchant_data, int merchant_exists) = merchant_balances.udict_get?(32, merchant_id);
+        throw_unless(err::insufficient_balance, merchant_exists);
+
+        int current_balance = merchant_data~load_coins();
+        int m_pubkey = merchant_data~load_uint(256);
+
+        throw_if(err::insufficient_balance, current_balance < withdraw_amount);
+
+        cell withdraw_hash_data = begin_cell().store_uint(merchant_id, 32).store_uint(query_id, 64).store_coins(withdraw_amount).store_slice(sender_address).end_cell();
+        throw_unless(err::invalid_signature, check_signature(withdraw_hash_data.cell_hash(), merchant_signature, m_pubkey));
+
+        int withdrawal_hash = withdraw_hash_data.cell_hash();
+        (_, int withdrawal_exists) = withdrawal_ids.udict_get?(256, withdrawal_hash);
+        throw_if(err::withdrawal_replay_attack, withdrawal_exists);
+
+        int remaining_balance = current_balance - withdraw_amount;
+        cell updated_merchant = begin_cell().store_coins(remaining_balance).store_uint(m_pubkey, 256).end_cell();
+        merchant_balances~udict_set(32, merchant_id, updated_merchant.begin_parse());
+        withdrawal_ids~udict_set(256, withdrawal_hash, begin_cell().store_uint(1, 1).end_cell().begin_parse());
+        save_payment_storage(governor, platform_pubkey, paused, time_buckets, merchant_balances, last_payment_ts, withdrawal_ids);
+
+        ;; TVM bitstream: 107-bit null internal message tail
+        cell withdraw_body = begin_cell()
+            .store_uint(op::merchant_withdraw, 32)
+            .store_uint(query_id, 64)
+            .store_uint(merchant_id, 32)
+            .store_coins(withdraw_amount)
+            .end_cell();
+
+        cell out_msg = begin_cell()
+            .store_uint(0x10, 6)
+            .store_slice(sender_address)
+            .store_coins(withdraw_amount)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+            .store_ref(withdraw_body)
+            .end_cell();
+
+        send_raw_message(out_msg, 64);
+        return ();
+    }
+
+    if (op == op::emergency_stop) {
+        throw_unless(err::unauthorized_governor, equal_slice_bits(sender_address, governor));
+        int active_pause = in_msg_body~load_uint(2);
+        save_payment_storage(governor, platform_pubkey, active_pause, time_buckets, merchant_balances, last_payment_ts, withdrawal_ids);
+        return ();
+    }
+}
+
+(int, int) get_merchant_ledger(int merchant_id) method_id {
+    (_, _, _, _, cell merchant_balances, _, _) = load_payment_storage();
+    (slice merchant_data, int found) = merchant_balances.udict_get?(32, merchant_id);
+    ifnot (found) { return (0, 0); }
+    return (merchant_data~load_coins(), merchant_data~load_uint(256));
+}

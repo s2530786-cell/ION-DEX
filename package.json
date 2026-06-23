@@ -1,0 +1,41 @@
+{
+  "name": "ion-dex",
+  "version": "1.0.0",
+  "description": "ION DEX — Future Digital Civilization Entry Point",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "audit": "python3 scripts/audit_tokens.py",
+    "lint": "echo '[lint] 待配置 ESLint/Prettier'",
+    "test": "python3 agent_harness.py --audit",
+    "validate": "npm run audit && npm run test",
+    "clean": "rm -rf dist build .next"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^25.9.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "claude-flow": "3.7.0-alpha.35",
+    "jsdom": "^29.1.1",
+    "lost-pixel": "^3.22.0",
+    "pixelmatch": "^7.2.0",
+    "playwright": "^1.61.0",
+    "viem": "^2.52.2",
+    "vitest": "^4.1.9"
+  },
+  "overrides": {
+    "protobufjs": "7.5.9",
+    "@opentelemetry/sdk-node": "0.218.0",
+    "@opentelemetry/exporter-prometheus": "0.218.0",
+    "@opentelemetry/auto-instrumentations-node": "0.75.0"
+  },
+  "dependencies": {
+    "@ton-community/func-js": "^0.11.0",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  }
+}

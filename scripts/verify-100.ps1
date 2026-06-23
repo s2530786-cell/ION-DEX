@@ -23,29 +23,8 @@ $script:System32 = Join-Path $sysRoot "System32"
 $script:WinPs = Join-Path $script:System32 "WindowsPowerShell\v1.0"
 $script:CmdExe = Join-Path $script:System32 "cmd.exe"
 $script:PsExe = Join-Path $script:WinPs "powershell.exe"
-$script:Utf8NoBom = New-Object System.Text.UTF8Encoding $false
 if ($env:PATH -notlike "*$($script:System32)*") {
   $env:PATH = "$($script:System32);$($script:WinPs);$env:PATH"
-}
-
-function Append-Utf8NoBom {
-  param(
-    [string]$Path,
-    [string]$Value
-  )
-  [System.IO.File]::AppendAllText($Path, $Value + "`n", $script:Utf8NoBom)
-}
-
-function Write-Utf8NoBom {
-  param(
-    [string]$Path,
-    [string[]]$Lines
-  )
-  $text = ($Lines -join "`n")
-  if ($Lines.Count -gt 0) {
-    $text += "`n"
-  }
-  [System.IO.File]::WriteAllText($Path, $text, $script:Utf8NoBom)
 }
 
 function Write-Log {
@@ -53,18 +32,15 @@ function Write-Log {
   $line = "[" + (Get-Date -Format "s") + "] " + $Message
   Write-Host $line
   try {
-    Append-Utf8NoBom -Path $log -Value $line
+    Add-Content -Path $log -Value $line -Encoding utf8 -ErrorAction Stop
   }
   catch {
     if (-not $script:LogFallback) {
       $script:LogFallback = Join-Path $env:TEMP ("ion-verify-100-fallback-" + $stamp + ".log")
       $log = $script:LogFallback
-      try {
-        Append-Utf8NoBom -Path $summary -Value ("LOG_FALLBACK=" + $log)
-      }
-      catch {}
+      ("LOG_FALLBACK=" + $log) | Add-Content -Path $summary -Encoding utf8 -ErrorAction SilentlyContinue
     }
-    Append-Utf8NoBom -Path $log -Value $line
+    Add-Content -Path $log -Value $line -Encoding utf8
   }
 }
 
@@ -123,7 +99,7 @@ if ($ResumeSummary -and (Test-Path $ResumeSummary)) {
 }
 if ($ResumeLog -and (Test-Path $ResumeLog)) {
   try {
-    Append-Utf8NoBom -Path $ResumeLog -Value ("--- RESUME " + (Get-Date -Format "s") + " ---")
+    Add-Content -Path $ResumeLog -Value ("--- RESUME " + (Get-Date -Format "s") + " ---") -Encoding utf8 -ErrorAction Stop
     $log = $ResumeLog
   }
   catch {
@@ -135,11 +111,9 @@ if ($ResumeSummary -and (Test-Path $summary)) {
   Write-Log ("RESUME summary=" + $summary + " startAt=" + $StartAt + " initialPassed=" + $InitialPassed)
 } else {
   Remove-Item $summary, $log -ErrorAction SilentlyContinue
-  Write-Utf8NoBom -Path $summary -Lines @(
-    "ION DEX 100-pass verification",
-    "ITERATIONS=$Iterations",
-    "LOG=$log"
-  )
+  "ION DEX 100-pass verification" | Set-Content -Path $summary -Encoding utf8
+  ("ITERATIONS=" + $Iterations) | Add-Content -Path $summary -Encoding utf8
+  ("LOG=" + $log) | Add-Content -Path $summary -Encoding utf8
 }
 
 if ($StartAt -lt 1) { $StartAt = 1 }
@@ -233,13 +207,13 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
 
   if ($encodingExit -eq 0 -and $ipLeakExit -eq 0 -and $backendVerifyExit -eq 0 -and $backendAuditExit -eq 0 -and $backendStressExit -eq 0 -and $verifyExit -eq 0 -and $auditExit -eq 0) {
     $passed++
-    Append-Utf8NoBom -Path $summary -Value ("PASS " + $i + " OK")
+    Add-Content -Path $summary -Value ("PASS " + $i + " OK") -Encoding utf8
     Write-Host ("*** PASS " + $i + " OK (" + $passed + "/" + $Iterations + " green) ***")
   }
   else {
     $failed++
     $failureLine = "PASS " + $i + " FAILED encoding=" + $encodingExit + " ipLeak=" + $ipLeakExit + " backendVerify=" + $backendVerifyExit + " backendAudit=" + $backendAuditExit + " backendStress=" + $backendStressExit + " frontendVerify=" + $verifyExit + " frontendAudit=" + $auditExit
-    Append-Utf8NoBom -Path $summary -Value $failureLine
+    Add-Content -Path $summary -Value $failureLine -Encoding utf8
     Write-Log $failureLine
     if (-not $ContinueOnFailure) {
       break
@@ -249,11 +223,11 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
 
 Set-Location $root
 Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
-Append-Utf8NoBom -Path $summary -Value ("PASSED=" + $passed)
-Append-Utf8NoBom -Path $summary -Value ("FAILED=" + $failed)
+("PASSED=" + $passed) | Add-Content -Path $summary -Encoding utf8
+("FAILED=" + $failed) | Add-Content -Path $summary -Encoding utf8
 
 if ($failed -eq 0 -and $passed -eq $Iterations) {
-  Append-Utf8NoBom -Path $summary -Value "RESULT=GREEN"
+  Add-Content -Path $summary -Value "RESULT=GREEN" -Encoding utf8
   Write-Log "RESULT=GREEN"
   Set-Location $root
   $recordArgs = @(
@@ -277,7 +251,7 @@ if ($failed -eq 0 -and $passed -eq $Iterations) {
   & node $recordArgs
   if ($LASTEXITCODE -ne 0) {
     Write-Log ("ERROR verify-100-gate record failed exit=" + $LASTEXITCODE)
-    Append-Utf8NoBom -Path $summary -Value "RESULT=FAILED"
+    Add-Content -Path $summary -Value "RESULT=FAILED" -Encoding utf8
     exit 1
   }
   if ($env:ION_AGENT_AUTONOMOUS -eq "1") {
@@ -288,6 +262,6 @@ if ($failed -eq 0 -and $passed -eq $Iterations) {
   exit 0
 }
 
-Append-Utf8NoBom -Path $summary -Value "RESULT=FAILED"
+Add-Content -Path $summary -Value "RESULT=FAILED" -Encoding utf8
 Write-Log "RESULT=FAILED"
 exit 1

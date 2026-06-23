@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "description": "Discovery profiles: ion-dev (31 ION stack buckets) vs broad (GitHub-wide taxonomy) vs full (merge).",
+  "profiles": {
+    "ion-dev": {
+      "label": "ION DEX development stack",
+      "sources": ["github-daily-queries.json"],
+      "defaultPerCategoryStubs": 5
+    },
+    "broad": {
+      "label": "GitHub-wide open-source taxonomy",
+      "sources": ["github-daily-queries-broad.json"],
+      "defaultPerCategoryStubs": 5
+    },
+    "full": {
+      "label": "ION dev + GitHub-wide (recommended for 全域)",
+      "sources": ["github-daily-queries.json", "github-daily-queries-broad.json"],
+      "defaultPerCategoryStubs": 5,
+      "note": "Broad categories override ion-dev on same id. Expect ~100+ Search API calls per run — GITHUB_TOKEN required."
+    }
+  },
+  "sections": [
+    { "id": "languages", "label": "Programming languages & runtimes" },
+    { "id": "systems", "label": "OS / kernel / embedded / FPGA" },
+    { "id": "ml-ai", "label": "ML frameworks & inference (non-agent)" },
+    { "id": "graphics-games", "label": "Games / graphics / GPU" },
+    { "id": "science", "label": "Scientific computing / bio / GIS" },
+    { "id": "web-content", "label": "Education / blogs / static sites / CMS" },
+    { "id": "mobile", "label": "Mobile native & cross-platform" },
+    { "id": "blockchain-non-dex", "label": "Blockchain L1/L2/ZK (non-DEX)" },
+    { "id": "hardware-iot", "label": "Hardware / robotics / IoT" },
+    { "id": "data-infra", "label": "Data engineering / messaging / search" },
+    { "id": "cloud-compilers", "label": "Cloud / compilers / networking" },
+    { "id": "ion-dev", "label": "ION DEX product development (legacy bucket)" }
+  ],
+  "defaultProfile": "full"
+}

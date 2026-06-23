@@ -1,90 +1,91 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Official ION reference tree — clone locally (nested repo; do not vendor into this repo).
+# git clone https://github.com/ice-blockchain/ion ion
+/ion/
 
-# IDE and editors
-.idea/
-.vscode/
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/playwright-report/
+frontend/test-results/
 
-# Dependencies
+# Backend
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/.aws-sam/
+backend/serverless/samconfig.toml
+
+# Frontend
+frontend/.env
+frontend/.env.local
+
+# Root tooling dependencies
 node_modules/
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
-# Testing
-/coverage
+# Private AI/quant skills (junction to ion-private-core) — NEVER commit
+.cursor/skills-private/
+.cursor/hooks/.ion-skill-route-last.json
+vendor-quant/
 
-# Next.js
-/.next/
-/out/
-next-env.d.ts
-*.tsbuildinfo
+# Hermes Agent (cloned upstream; keep venv/node_modules out of git)
+hermes-agent/venv/
+hermes-agent/node_modules/
+hermes-agent/.venv/
 
-# Production builds
-/build
-dist/
-dist
+# Local Cursor maintenance backups (large / machine-specific)
+.maintenance/
 
-# Environment files (comprehensive coverage)
+# Live deploy generated fift (contains resolved addresses from secrets)
+contracts/ion/deploy/deploy-live.generated.fif
+contracts/ion/deploy/deploy-live-params.generated.fif
+contracts/ion/deploy/out/
 
-*token.json*
-*credentials.json*
+# Secrets / tokens (local-only)
+scripts/.github-token.local
 
-# Logs and debug files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-dump.rdb
-
-# System files
+# OS / editor
+Thumbs.db
 .DS_Store
-*.pem
+NUL  
 
-# Python
-__pycache__/
-*pyc*
-venv/
-.venv/
+# FunC verify build artifacts (intermediate)
+contracts/ion/build/_verify_*
 
-# Development tools
-chainlit.md
-.chainlit
-.ipynb_checkpoints/
-.ac
+# Autonomous runtime state (machine-local, not source)
+.memory-bank/autonomous-work-queue.json
+.memory-bank/autonomous-work-watchdog-state.json
+.memory-bank/autonomous-work-watchdog.log
 
-# Deployment
-.vercel
+# Temp verify/build logs
+frontend/tmp_verify_i18n.log
+**/tmp_*.log
 
-# Data and databases
-agenthub/agents/youtube/db
+# FunC probe outputs
+contracts/ion/build/_probe_*
 
-# Archive files and large assets
-**/*.zip
-**/*.tar.gz
-**/*.tar
-**/*.tgz
-*.pack
-*.deb
-*.dylib
+# Strategic audit drafts (local only — do not push to public remote)
+COMPREHENSIVE_AUDIT_REPORT_*.md
+EXECUTIVE_SUMMARY_*.md
+DETAILED_FIXES_IMPLEMENTATION.md
+VULNERABILITY_MATRIX_AND_RISK_SCORES.md
+SECURITY_FIXES_V*.md
+FINAL_V7_FIXES_SUMMARY.md
+QUICK_REFERENCE.md
+FILE_INDEX.md
 
-# Build caches
-.cache/
+# Build artifacts
+contracts/out/
+contracts/cache/
+contracts/ion/build-func/
+contracts/ion/imports/
+contracts/gas-snapshot.txt
+contracts/script/Deploy.s.sol/
 
-memory/test_credentials.md
+.next
 
-# Mobile development
-android-sdk/
-.env
-.env.*
+.tmp/
+
+cache/
+.next/
 *.env
-credentials.json
-*.key
-.credentials
-
-NUL
+!.env.example

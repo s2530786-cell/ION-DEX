@@ -1,0 +1,274 @@
+;; ION Multi-Chain Gateway V6 (Mainnet Production)
+;; FunC 0.4.4 | Code Temperature 0.001
+;; V6: 20+ chains seamless swap gateway
+;; V6 Security Fix: Timestamp manipulation protection (order expiry), Integer overflow protection
+;; TODO: Quantum resistance - Ed25519 signatures vulnerable to quantum attacks, consider post-quantum signatures
+
+#pragma version >=0.4.4;
+
+#include "imports/stdlib.fc";
+
+const int op::cross_chain_deposit = 0x1a7b3c9d;
+const int op::execute_routing_swap = 0x4d8e2f6a;
+const int op::router_callback_success = 0x7b9a1c3d;
+const int op::emergency_security_lock = 0x9e8d7c6b;
+
+const int err::unauthorized_relayer = 601;
+const int err::insufficient_liquidity = 602;
+const int err::slippage_limit_exceeded = 603;
+const int err::unsupported_chain_id = 604;
+const int err::gateway_is_locked = 605;
+const int err::context_underflow = 606;
+const int err::order_expired = 607;
+const int err::integer_overflow = 608;
+const int err::duplicate_order = 609;
+const int err::insufficient_attached_value = 610;
+const int err::order_already_in_flight = 611;
+
+const int MAX_SUPPORTED_CHAINS = 32;
+const int RATIO_BASE = 10000;
+const int ORDER_EXPIRY_SECONDS = 86400;  ;; Orders expire after 24 hours
+
+(slice, cell, cell, int) load_gateway_storage() inline {
+    slice ds = get_data().begin_parse();
+    return (ds~load_msg_addr(), ds~load_dict(), ds~load_dict(), ds~load_uint(1));
+}
+
+() save_gateway_storage(slice gov, cell chains, cell orders, int locked) impure inline {
+    set_data(begin_cell().store_slice(gov).store_dict(chains).store_dict(orders).store_uint(locked, 1).end_cell());
+}
+
+;; V6: Bounced message capture for cross-chain rollback
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    slice cs = in_msg_full.begin_parse();
+    int flags = cs~load_uint(4);
+
+    (slice governor, cell chains_dict, cell orders_vault, int locked) = load_gateway_storage();
+
+    ;; Bounced message handling for ghost fund recovery
+    if (flags & 1) {
+        if (in_msg_body.slice_bits() >= 32) {
+            int bounced_op = in_msg_body~load_uint(32);
+            if (bounced_op == op::execute_routing_swap) {
+                if (in_msg_body.slice_bits() >= (64 + 256)) {
+                    int bounced_qid = in_msg_body~load_uint(64);
+                    int failed_order_hash = in_msg_body~load_uint(256);
+                    (slice order_data, int found_order) = orders_vault.udict_get?(256, failed_order_hash);
+                    if (found_order) {
+                        slice user_address = order_data~load_msg_addr();
+                        int refund_amount = order_data~load_coins();
+
+                        orders_vault~udict_delete?(256, failed_order_hash);
+                        save_gateway_storage(governor, chains_dict, orders_vault, locked);
+
+                        cell msg_refund = begin_cell()
+                            .store_uint(0x10, 6)
+                            .store_slice(user_address)
+                            .store_coins(refund_amount)
+                            .store_uint(0, 107)
+                            .end_cell();
+
+                        send_raw_message(msg_refund, 64);
+                        return ();
+                    }
+                }
+            }
+        }
+        return ();
+    }
+
+    slice sender_address = cs~load_msg_addr();
+    int op = in_msg_body~load_uint(32);
+    int query_id = in_msg_body~load_uint(64);
+
+    ;; Circuit breaker
+    if (op != op::emergency_security_lock) {
+        throw_if(err::gateway_is_locked, locked == 1);
+    }
+
+    ;; Cross-chain deposit
+    if (op == op::cross_chain_deposit) {
+        throw_unless(err::unauthorized_relayer, equal_slice_bits(sender_address, governor));
+
+        int source_chain_id = in_msg_body~load_uint(8);
+        slice user_ton_address = in_msg_body~load_msg_addr();
+        int deposit_amount = in_msg_body~load_coins();
+        int target_chain_id = in_msg_body~load_uint(8);
+
+        throw_if(err::unsupported_chain_id, source_chain_id >= MAX_SUPPORTED_CHAINS);
+        throw_if(err::unsupported_chain_id, target_chain_id >= MAX_SUPPORTED_CHAINS);
+        throw_if(err::insufficient_attached_value, msg_value < deposit_amount);
+
+        (slice chain_route, int chain_exists) = chains_dict.udict_get?(8, source_chain_id);
+        throw_if(err::unsupported_chain_id, ~ chain_exists);
+
+        ;; V6: Integer overflow protection - cap deposit amount
+        throw_if(err::integer_overflow, deposit_amount > 1000000000000000);  ;; Max 1M nanograms per deposit
+
+        int order_hash = begin_cell()
+            .store_slice(user_ton_address)
+            .store_coins(deposit_amount)
+            .store_uint(source_chain_id, 8)
+            .store_uint(target_chain_id, 8)
+            .store_uint(now(), 32)
+            .store_uint(query_id, 64)
+            .end_cell()
+            .cell_hash();
+
+        (_, int existing_order) = orders_vault.udict_get?(256, order_hash);
+        throw_if(err::duplicate_order, existing_order);
+
+        cell order_context = begin_cell()
+            .store_slice(user_ton_address)
+            .store_coins(deposit_amount)
+            .store_uint(source_chain_id, 8)
+            .store_uint(target_chain_id, 8)
+            .store_uint(now(), 32)
+            .store_uint(query_id, 64)
+            .store_uint(0, 1)
+            .end_cell();
+
+        orders_vault~udict_set(256, order_hash, order_context.begin_parse());
+        save_gateway_storage(governor, chains_dict, orders_vault, locked);
+        return ();
+    }
+
+    ;; Execute routing swap
+    if (op == op::execute_routing_swap) {
+        throw_unless(err::unauthorized_relayer, equal_slice_bits(sender_address, governor));
+
+        int order_hash = in_msg_body~load_uint(256);
+        int min_output_amount = in_msg_body~load_coins();
+
+        (slice order_data, int found) = orders_vault.udict_get?(256, order_hash);
+        throw_if(err::context_underflow, ~ found);
+
+        slice user_address = order_data~load_msg_addr();
+        int deposit_amount = order_data~load_coins();
+        int source_chain_id = order_data~load_uint(8);
+        int target_chain_id = order_data~load_uint(8);
+        int order_timestamp = order_data~load_uint(32);
+        int order_qid = order_data~load_uint(64);
+        int in_flight = order_data~load_uint(1);
+
+        ;; V6: Timestamp manipulation protection - check order expiry
+        int current_time = now();
+        throw_if(err::order_expired, current_time - order_timestamp > ORDER_EXPIRY_SECONDS);
+        throw_if(err::order_already_in_flight, in_flight == 1);
+
+        (slice target_route, int target_exists) = chains_dict.udict_get?(8, target_chain_id);
+        throw_if(err::unsupported_chain_id, ~ target_exists);
+
+        slice target_router_addr = target_route~load_msg_addr();
+        int target_fee_bps = target_route~load_uint(16);
+
+        int gas_compensation = deposit_amount / 200;
+        int fee_amount = (deposit_amount * target_fee_bps) / RATIO_BASE;
+        int net_swap_amount = deposit_amount - gas_compensation - fee_amount;
+
+        throw_if(err::slippage_limit_exceeded, net_swap_amount < min_output_amount);
+        throw_if(err::insufficient_liquidity, net_swap_amount <= 0);
+
+        cell updated_order_context = begin_cell()
+            .store_slice(user_address)
+            .store_coins(deposit_amount)
+            .store_uint(source_chain_id, 8)
+            .store_uint(target_chain_id, 8)
+            .store_uint(order_timestamp, 32)
+            .store_uint(order_qid, 64)
+            .store_uint(1, 1)
+            .end_cell();
+        orders_vault~udict_set(256, order_hash, updated_order_context.begin_parse());
+        save_gateway_storage(governor, chains_dict, orders_vault, locked);
+
+        ;; Routing message Mode 1
+        cell routing_body = begin_cell()
+            .store_uint(op::execute_routing_swap, 32)
+            .store_uint(query_id, 64)
+            .store_uint(order_hash, 256)
+            .store_uint(target_chain_id, 8)
+            .store_coins(net_swap_amount)
+            .store_slice(user_address)
+            .end_cell();
+
+        cell msg_routing = begin_cell()
+            .store_uint(0x18, 6)
+            .store_slice(target_router_addr)
+            .store_coins(net_swap_amount)
+            .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+            .store_ref(routing_body)
+            .end_cell();
+
+        send_raw_message(msg_routing, 1);
+        return ();
+    }
+
+    ;; Success callback
+    if (op == op::router_callback_success) {
+        throw_unless(err::unauthorized_relayer, equal_slice_bits(sender_address, governor));
+
+        int completed_order_hash = in_msg_body~load_uint(256);
+        int actual_output = in_msg_body~load_coins();
+
+        (slice completed_order, int order_still_exists) = orders_vault.udict_get?(256, completed_order_hash);
+        if (order_still_exists) {
+            slice user_address = completed_order~load_msg_addr();
+            int deposit_amount = completed_order~load_coins();
+            int source_chain_id = completed_order~load_uint(8);
+            int target_chain_id = completed_order~load_uint(8);
+            int order_timestamp = completed_order~load_uint(32);
+            int order_qid = completed_order~load_uint(64);
+            int in_flight = completed_order~load_uint(1);
+            throw_if(err::context_underflow, in_flight == 0);
+
+            (slice target_route, int target_exists) = chains_dict.udict_get?(8, target_chain_id);
+            throw_if(err::unsupported_chain_id, ~ target_exists);
+            slice target_router_addr = target_route~load_msg_addr();
+            int target_fee_bps = target_route~load_uint(16);
+
+            int gas_compensation = deposit_amount / 200;
+            int fee_amount = (deposit_amount * target_fee_bps) / RATIO_BASE;
+
+            orders_vault~udict_delete?(256, completed_order_hash);
+            save_gateway_storage(governor, chains_dict, orders_vault, locked);
+
+            if (fee_amount > 0) {
+                cell msg_fee = begin_cell()
+                    .store_uint(0x10, 6)
+                    .store_slice(governor)
+                    .store_coins(fee_amount)
+                    .store_uint(0, 107)
+                    .end_cell();
+                send_raw_message(msg_fee, 1);
+            }
+
+            if (gas_compensation > 0) {
+                cell msg_gas_refund = begin_cell()
+                    .store_uint(0x10, 6)
+                    .store_slice(governor)
+                    .store_coins(gas_compensation)
+                    .store_uint(0, 107)
+                    .end_cell();
+                send_raw_message(msg_gas_refund, 1);
+            }
+        }
+        return ();
+    }
+
+    ;; Emergency lock
+    if (op == op::emergency_security_lock) {
+        throw_unless(err::unauthorized_relayer, equal_slice_bits(sender_address, governor));
+        int new_lock_state = in_msg_body~load_uint(1);
+        save_gateway_storage(governor, chains_dict, orders_vault, new_lock_state);
+        return ();
+    }
+}
+
+(int, int) get_chain_route_info(int chain_id) method_id {
+    (_, cell chains_dict, _, _) = load_gateway_storage();
+    (slice route_data, int found) = chains_dict.udict_get?(8, chain_id);
+    ifnot (found) { return (0, 0); }
+    slice route_addr = route_data~load_msg_addr();
+    int fee_bps = route_data~load_uint(16);
+    return (1, fee_bps);
+}

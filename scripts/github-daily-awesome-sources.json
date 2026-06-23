@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "description": "Clone awesome-list repos, parse all github.com/owner/repo links in markdown, generate github-discovered skill stubs for every repo (no Top-N cap).",
+  "defaults": {
+    "cloneSubdir": "_awesome-ingest",
+    "enrichWithApi": true,
+    "apiDelayMs": 350,
+    "maxReposPerSource": null,
+    "glob": "**/*.{md,markdown}"
+  },
+  "sources": [
+    {
+      "id": "awesome-web-scraping",
+      "repo": "lorien/awesome-web-scraping",
+      "label": "Awesome Web Scraping (full README crawl)",
+      "suggestedSkills": ["tavily", "firecrawl"],
+      "comment": "Primary scraping/tooling list — clone entire repo and stub every linked GitHub project"
+    },
+    {
+      "id": "scrapy-scrapy",
+      "repo": "scrapy/scrapy",
+      "label": "Scrapy core framework",
+      "suggestedSkills": ["tavily", "firecrawl", "luke-agent-browser-clawdbot"]
+    },
+    {
+      "id": "scrapinghub-portia",
+      "repo": "scrapinghub/portia",
+      "label": "Portia visual scraping for Scrapy",
+      "suggestedSkills": ["tavily", "firecrawl", "luke-agent-browser-clawdbot"]
+    },
+    {
+      "id": "d4vinci-scrapling",
+      "repo": "D4Vinci/Scrapling",
+      "label": "Scrapling adaptive scraping framework",
+      "suggestedSkills": ["tavily", "firecrawl", "luke-agent-browser-clawdbot"]
+    },
+    {
+      "id": "firecrawl-firecrawl",
+      "repo": "firecrawl/firecrawl",
+      "label": "Firecrawl search/scrape stack",
+      "suggestedSkills": ["tavily", "firecrawl", "luke-agent-browser-clawdbot"]
+    },
+    {
+      "id": "h4ckf0r0day-obscura",
+      "repo": "h4ckf0r0day/obscura",
+      "label": "Obscura headless browser for agents",
+      "suggestedSkills": ["tavily", "firecrawl", "luke-agent-browser-clawdbot"]
+    },
+    {
+      "id": "awesome-data-science",
+      "repo": "academic/awesome-datascience",
+      "label": "Awesome Data Science",
+      "suggestedSkills": ["tavily"],
+      "maxReposPerSource": 800,
+      "enabled": false
+    },
+    {
+      "id": "awesome-selfhosted",
+      "repo": "awesome-selfhosted/awesome-selfhosted",
+      "label": "Awesome Self-Hosted",
+      "suggestedSkills": ["tavily"],
+      "maxReposPerSource": 500,
+      "enabled": false
+    }
+  ]
+}
