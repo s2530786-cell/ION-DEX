@@ -11,6 +11,7 @@ contract BridgeRelayV2 is ReentrancyGuard {
     error IonDexZeroAddress();
     error IonDexZeroAmount();
     error IonDexUnauthorized();
+    error IonDexDuplicateAttestation();
     error IonDexDuplicateNonce();
     error IonDexInvalidQuorum();
     error IonDexQuorumNotMet(uint256 attestations, uint256 required);
@@ -113,7 +114,7 @@ contract BridgeRelayV2 is ReentrancyGuard {
 
         uint8 idx = getRelayerIndex(msg.sender);
         uint256 mask = attestationMask[nonce];
-        if ((mask & (1 << idx)) != 0) revert IonDexUnauthorized();
+        if ((mask & (1 << idx)) != 0) revert IonDexDuplicateAttestation();
 
         attestationMask[nonce] = mask | (1 << idx);
         uint8 count = attestationCount[nonce] + 1;

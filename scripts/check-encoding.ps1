@@ -99,12 +99,9 @@ function Get-ScanFiles {
           if (Test-IsExcluded $entry) {
             continue
           }
-<<<<<<< HEAD
-=======
           if (Test-Path (Join-Path $entry ".git")) {
             continue
           }
->>>>>>> codex/audit-follow-up-final
           $stack.Push($entry)
           continue
         }
@@ -123,8 +120,6 @@ function Get-ScanFiles {
   return $list
 }
 
-<<<<<<< HEAD
-=======
 function Read-FileBytesShared {
   # Read bytes with FileShare.ReadWrite so a file briefly held open by another
   # process (e.g. the verify-100 driver updating SESSION_STATE.md between passes)
@@ -155,7 +150,6 @@ function Read-FileBytesShared {
   }
 }
 
->>>>>>> codex/audit-follow-up-final
 $root = Resolve-Path $Path
 Write-Host ""
 Write-Host "===== ION DEX Encoding Check =====" -ForegroundColor Cyan
@@ -171,11 +165,7 @@ $files = Get-ScanFiles -Dir $root.Path
 
 foreach ($f in $files) {
   $scanned++
-<<<<<<< HEAD
-  $bytes = [IO.File]::ReadAllBytes($f.FullName)
-=======
   $bytes = Read-FileBytesShared -FullName $f.FullName
->>>>>>> codex/audit-follow-up-final
   if ($bytes.Length -eq 0) { continue }
 
   $issues = @()

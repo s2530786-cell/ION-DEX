@@ -14,6 +14,12 @@ contract BatchTransfer is ReentrancyGuard {
         require(tos.length == amounts.length, "Length mismatch");
         require(tos.length > 0 && tos.length <= 100, "Batch size");
 
+        uint256 total;
+        for (uint256 i = 0; i < tos.length; i++) {
+            total += amounts[i];
+        }
+        require(msg.value == total, "Value mismatch");
+
         for (uint256 i = 0; i < tos.length; i++) {
             (bool ok, ) = payable(tos[i]).call{value: amounts[i]}("");
             require(ok, "Transfer failed");

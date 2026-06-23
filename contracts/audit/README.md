@@ -11,6 +11,7 @@
 - New round report:
   - [`2026-06-22-bsc-audit-round-1.md`](./2026-06-22-bsc-audit-round-1.md)
   - [`2026-06-23-func-audit-round-2.md`](./2026-06-23-func-audit-round-2.md)
+  - [`2026-06-24-unaudited-solidity-audit-round-8.md`](./2026-06-24-unaudited-solidity-audit-round-8.md)
 
 ## Coverage summary
 
@@ -30,6 +31,7 @@
 | `contracts/bsc/Burn.sol` | Preview-only | Not production-safe |
 | `contracts/bsc/VaultLock.sol` | Preview-only | Not production-safe |
 | Root-level FunC drafts (`ion_*_v6.fc`) | Audited round 2 | Three funding/rollback issues fixed; MMR residual design issue recorded |
+| Root support Solidity / bridge / dex / governance | Audited round 8 | Agent registry, escrow, task routing, bridge validator, token bridge, AMM/router, timelock/governor covered |
 
 ## Verification note
 
@@ -41,4 +43,4 @@ This round's real contract verification used:
 D:\openclaw-tools\foundry\bin\forge.exe test --root contracts --match-path "test/*.t.sol" --no-match-path "lib/**" -vv
 ```
 
-Result: `43 passed, 0 failed`.
+Result: `81 passed, 0 failed`.

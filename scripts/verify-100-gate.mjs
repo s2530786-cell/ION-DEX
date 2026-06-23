@@ -21,11 +21,8 @@ const ignoredWorkspacePaths = new Set([
   ".memory-bank/autonomous-work-watchdog.log",
 ]);
 
-<<<<<<< HEAD
-=======
 const ignoredWorkspaceSuffixes = [".tsbuildinfo"];
 
->>>>>>> codex/audit-follow-up-final
 function runGit(args, options = {}) {
   const result = spawnSync("git", args, {
     cwd: options.cwd ?? root,
@@ -81,12 +78,6 @@ function latestSummaryPath() {
 }
 
 function parseSummaryText(text) {
-<<<<<<< HEAD
-  const passed = Number((text.match(/PASSED=(\d+)/) || [])[1] || 0);
-  const failed = Number((text.match(/FAILED=(\d+)/) || [])[1] || 0);
-  const result = (text.match(/RESULT=(GREEN|FAILED)/) || [])[1] || "UNKNOWN";
-  return { passed, failed, result };
-=======
   const blockPattern = /PASSED=(\d+)\s+FAILED=(\d+)\s+RESULT=(GREEN|FAILED)/g;
   const matches = [...text.matchAll(blockPattern)];
   const latest = matches.at(-1);
@@ -98,7 +89,6 @@ function parseSummaryText(text) {
     failed: Number(latest[2] || 0),
     result: latest[3] || "UNKNOWN",
   };
->>>>>>> codex/audit-follow-up-final
 }
 
 function assertGreenSummary(path) {
@@ -137,15 +127,11 @@ function normalizeRepoPath(path) {
 }
 
 function isIgnoredWorkspacePath(path) {
-<<<<<<< HEAD
-  return ignoredWorkspacePaths.has(normalizeRepoPath(path));
-=======
   const normalized = normalizeRepoPath(path);
   return (
     ignoredWorkspacePaths.has(normalized) ||
     ignoredWorkspaceSuffixes.some((suffix) => normalized.endsWith(suffix))
   );
->>>>>>> codex/audit-follow-up-final
 }
 
 function workspaceEntries() {

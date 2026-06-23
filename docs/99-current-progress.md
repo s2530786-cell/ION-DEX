@@ -1,5 +1,14 @@
 # Current Progress
 
+## 2026-06-24 unaudited Solidity audit / round 8
+
+- **Audit gap closed**: reviewed root support Solidity, `contracts/bridge/*.sol`, `contracts/dex/*.sol`, and `contracts/governance/*.sol`; report added at `contracts/audit/2026-06-24-unaudited-solidity-audit-round-8.md`.
+- **10 attack surfaces reviewed**: reentrancy, integer/precision, access control, replay/signatures, oracle/timestamp, MEV/slippage, token compatibility, custody/accounting, events/indexing, and gas/DoS.
+- **Fixes**: restored managed-share protection in `Dividend` to block arbitrary reward share minting; restored exact native value accounting in `BatchTransfer`; repaired `BridgeRelayV2` duplicate-attestation selector and stale audit tests; fixed `scripts/check-encoding.ps1` conflict markers so encoding gates run again.
+- **Result**: no remaining unpatched Critical or High issues found in the reviewed current source. Existing hardening was verified for Timelock, GovernorAlpha, BridgeValidator, TokenBridge, AMMPool, Router, PaymentEscrow, TaskRouter, AgentRegistry, plus BSCVault/NFTAuction/OrderBookV2 consistency.
+- **Verification**: `forge test --root contracts --match-path "test/*.t.sol" --no-match-path "lib/**" -vv` -> **81 passed, 0 failed**; `check-encoding.ps1 -Path contracts` -> **88 files OK**; `check-encoding.ps1 -Path scripts` -> **95 files OK**.
+- **Known blocker**: raw `forge test -C contracts` still fails because vendored OpenZeppelin `test/`/`fv/` trees are incomplete in this checkout; the effective project regression excludes `lib/**`.
+
 ## 2026-06-23 root-level FunC audit / funding integrity fixes
 
 - **Audit gap closed**: reviewed the four root-level FunC drafts that were not covered by `contracts/audit/2026-06-22-bsc-audit-round-1.md`:

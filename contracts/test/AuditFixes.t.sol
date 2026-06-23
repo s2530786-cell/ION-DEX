@@ -6,6 +6,7 @@ import {MockERC20} from "../bsc/MockERC20.sol";
 import {AdminManager} from "../bsc/AdminManager.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
 import {BridgeRelay} from "../bsc/BridgeRelay.sol";
+import {BridgeRelayV2} from "../bsc/BridgeRelayV2.sol";
 import {DexSwap} from "../bsc/DexSwap.sol";
 import {LiquidityPool} from "../bsc/LiquidityPool.sol";
 import {BatchTransfer} from "../bsc/BatchTransfer.sol";
@@ -41,7 +42,7 @@ contract AuditFixesTest is Test {
         assertFalse(vault.releaseConsumed(nonce));
 
         vm.prank(relayerA);
-        vm.expectRevert(BridgeRelay.IonDexDuplicateAttestation.selector);
+        vm.expectRevert(BridgeRelayV2.IonDexDuplicateAttestation.selector);
         relay.attestInbound(nonce, address(token), user, 100 ether);
 
         vm.prank(relayerB);
@@ -54,7 +55,7 @@ contract AuditFixesTest is Test {
         MockERC20 tokenA = new MockERC20("A", "A", 18);
         MockERC20 tokenB = new MockERC20("B", "B", 18);
         AdminManager admin = new AdminManager(owner);
-        LiquidityPool pool = new LiquidityPool("LP", "LP", address(tokenA), address(tokenB), address(admin), address(0));
+        LiquidityPool pool = new LiquidityPool("LP", "LP", address(tokenA), address(tokenB), address(admin), address(0xD00D));
 
         address lp1 = address(0x1111);
         address lp2 = address(0x2222);
@@ -64,7 +65,7 @@ contract AuditFixesTest is Test {
         vm.startPrank(lp1);
         tokenA.approve(address(pool), type(uint256).max);
         tokenB.approve(address(pool), type(uint256).max);
-        uint256 firstMint = pool.addLiquidity(1_000 ether, 1_000 ether);
+        pool.addLiquidity(1_000 ether, 1_000 ether);
         vm.stopPrank();
 
         tokenA.mint(lp2, 100 ether);
@@ -72,21 +73,25 @@ contract AuditFixesTest is Test {
         vm.startPrank(lp2);
         tokenA.approve(address(pool), type(uint256).max);
         tokenB.approve(address(pool), type(uint256).max);
+        uint256 expectedSecondMint = (100 ether * pool.totalSupply()) / 1_000 ether;
         uint256 secondMint = pool.addLiquidity(100 ether, 100 ether);
         vm.stopPrank();
 
-        assertEq(secondMint, firstMint / 10);
+        assertEq(secondMint, expectedSecondMint);
     }
 
     function testDexSwapPaysOutFromPoolAndUsesPreSwapReserves() public {
         MockERC20 tokenA = new MockERC20("A", "A", 18);
         MockERC20 tokenB = new MockERC20("B", "B", 18);
         AdminManager admin = new AdminManager(owner);
-        LiquidityPool pool = new LiquidityPool("LP", "LP", address(tokenA), address(tokenB), address(admin), address(0));
+        LiquidityPool pool = new LiquidityPool("LP", "LP", address(tokenA), address(tokenB), address(admin), address(0xD00D));
         DexSwap dex = new DexSwap(address(admin), address(pool));
 
-        vm.prank(owner);
+        vm.startPrank(owner);
         pool.setDexContract(address(dex));
+        dex.setPoolWhitelist(address(tokenA), true);
+        dex.setPoolWhitelist(address(tokenB), true);
+        vm.stopPrank();
 
         tokenA.mint(owner, 1_000 ether);
         tokenB.mint(owner, 1_000 ether);
@@ -99,7 +104,7 @@ contract AuditFixesTest is Test {
         tokenA.mint(user, 100 ether);
         vm.startPrank(user);
         tokenA.approve(address(dex), type(uint256).max);
-        uint256 amountOut = dex.swap(address(tokenA), address(tokenB), 100 ether, 0);
+        uint256 amountOut = dex.swap(address(tokenA), address(tokenB), 100 ether, 0, block.timestamp, 0);
         vm.stopPrank();
 
         uint256 amountInAfterFee = (100 ether * 9_970) / 10_000;
