@@ -47,6 +47,6 @@
     "start-server-and-test": "^2.1.2",
     "tailwindcss": "latest",
     "typescript": "latest",
-    "vite": "^8.0.16"
+    "vite": "^8.1.0"
   }
 }
