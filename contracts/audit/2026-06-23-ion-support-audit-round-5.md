@@ -11,7 +11,7 @@
 - Cross-check pass on previously unarchived / support-only BSC contracts:
   - `contracts/bsc/AdminManager.sol`
   - `contracts/bsc/DynamicBurnConfig.sol`
-  - `contracts/bsc/FeeReceiverAdmin.sol`
+  - `contracts/bsc/FeeReceiverAdmin.sol` *(DELETED 2026-06-24; FeeReceiver.sol now covers all fee admin)*
   - `contracts/bsc/IonProtocolFeeLib.sol`
   - `contracts/bsc/LiquidityMine.sol`
   - `contracts/bsc/StakeReward.sol`
@@ -65,11 +65,11 @@
    - Recommendation:
      - move relayer governance to multisig + timelock before production use
 
-3. Review-only residual design risk: `contracts/bsc/FeeReceiverAdmin.sol`
+3. DELETED CONTRACT (2026-06-24) — `contracts/bsc/FeeReceiverAdmin.sol` has been deleted; FeeReceiver.sol now covers all fee admin. Original review:
    - Issue: destination / oracle changes remain owner-controlled and only threshold changes are timelocked.
    - Impact: admin compromise can still redirect fee flow or swap in a bad oracle.
    - Recommendation:
-     - extend timelock or multisig protection to destination/oracle management before production deployment
+     - *(OBSOLETE — FeeReceiver.sol has absorbed all admin functionality)*
 
 ## Contract-by-contract disposition
 
@@ -82,7 +82,7 @@
 | `contracts/ion/sandwich.fc` | Reviewed; residual design risk recorded |
 | `contracts/bsc/AdminManager.sol` | Reviewed; no new vulnerability found |
 | `contracts/bsc/DynamicBurnConfig.sol` | Reviewed; invariants unchanged |
-| `contracts/bsc/FeeReceiverAdmin.sol` | Reviewed; residual admin-centralization risk recorded |
+| `contracts/bsc/FeeReceiverAdmin.sol` | DELETED (2026-06-24); FeeReceiver.sol now covers all fee admin. Original review: residual admin-centralization risk recorded |
 | `contracts/bsc/IonProtocolFeeLib.sol` | Reviewed; current optional-return assumptions unchanged |
 | `contracts/bsc/LiquidityMine.sol` | Reviewed; no new vulnerability found |
 | `contracts/bsc/StakeReward.sol` | Reviewed; no new vulnerability found |
@@ -127,5 +127,5 @@ Result:
 ## Residual risk
 
 - ION AMM-side contracts still need a full custody/value-flow redesign plus dedicated FunC tests before any production-safety claim.
-- `BridgeInbox.fc` and `FeeReceiverAdmin.sol` retain centralized privileged-control surfaces.
+- `BridgeInbox.fc` retains centralized privileged-control surfaces. *(FeeReceiverAdmin.sol has been deleted; FeeReceiver.sol now covers all fee admin.)*
 - No invariant / fuzz / chaos harness exists yet for the ION-side FunC support contracts.

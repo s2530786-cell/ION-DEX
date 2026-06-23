@@ -44,7 +44,7 @@
 |---|---|
 | `IonOracle.sol` | Fixed |
 | `FeeReceiver.sol` | Reviewed with oracle-unit fix |
-| `FeeReceiverAdmin.sol` | Reviewed; centralized owner/timelock model unchanged |
+| `FeeReceiverAdmin.sol` | DELETED (2026-06-24) — FeeReceiver.sol now covers all fee admin. Original review: centralized owner/timelock model unchanged |
 | `AdminManager.sol` | Reviewed; no new vulnerability found |
 | `DynamicBurnConfig.sol` | Reviewed; config invariants unchanged |
 | `StakeReward.sol` | Reviewed; reward solvency still depends on operator funding |
@@ -75,5 +75,5 @@ Result:
 ## Residual risk
 
 - `IonOracle.sol` still trusts a single upstream feed; this round fixed unit safety, not single-source trust assumptions.
-- `FeeReceiverAdmin.sol` owner/oracle/destination controls remain centralized and are not multisig-protected.
+- `FeeReceiverAdmin.sol` — DELETED (2026-06-24); FeeReceiver.sol now covers all fee admin. Original finding: owner/oracle/destination controls were centralized and not multisig-protected.
 - `StakeReward.sol` reward solvency still depends on operators funding `rewardToken` inventory before claims.

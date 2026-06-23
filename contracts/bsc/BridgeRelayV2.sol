@@ -114,8 +114,10 @@ contract BridgeRelayV2 is ReentrancyGuard {
 
         uint8 idx = getRelayerIndex(msg.sender);
         uint256 mask = attestationMask[nonce];
+        // forge-lint: disable-next-line(incorrect-shift)
         if ((mask & (1 << idx)) != 0) revert IonDexDuplicateAttestation();
 
+        // forge-lint: disable-next-line(incorrect-shift)
         attestationMask[nonce] = mask | (1 << idx);
         uint8 count = attestationCount[nonce] + 1;
         attestationCount[nonce] = count;

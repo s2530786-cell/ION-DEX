@@ -120,7 +120,7 @@
 | `Dividend.sol` | Fixed |
 | `DynamicBurnConfig.sol` | Reviewed; config invariants encoded |
 | `FeeReceiver.sol` | Reviewed; ION-only fee path preserved |
-| `FeeReceiverAdmin.sol` | Reviewed; still centralized for oracle/destination writes, treat as admin-risk surface |
+| `FeeReceiverAdmin.sol` | DELETED (2026-06-24) — FeeReceiver.sol now covers all fee admin functionality. Original review: centralized for oracle/destination writes, treat as admin-risk surface |
 | `IonOracle.sol` | Reviewed; single-source oracle remains a trust assumption |
 | `IonProtocolFeeLib.sol` | Reviewed; fee collection path consistent with current token assumptions |
 | `IonSwapRouter.sol` | Reviewed; minimum-output guard remains the safer user-facing path |
@@ -175,6 +175,6 @@ Result:
 ## Residual risk
 
 - `DexSwap.sol` still has no native `amountOutMinimum` parameter; safer user path remains `IonSwapRouter.sol`.
-- `FeeReceiverAdmin.sol` privileged destination/oracle changes are not timelocked.
+- `FeeReceiverAdmin.sol` — DELETED (2026-06-24); FeeReceiver.sol now covers all fee admin. Original finding: privileged destination/oracle changes were not timelocked.
 - `IonOracle.sol` remains single-source; stale fallback exists, but multi-source/TWAP hardening is still pending.
 - Preview-only contracts must not be deployed as production surfaces.

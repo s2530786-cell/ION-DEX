@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// forge-lint: disable-file(erc20-unchecked-transfer)
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
