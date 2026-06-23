@@ -79,7 +79,7 @@ contract SecurityMatrixTest is Test {
             vm.prank(user);
             vault.lock(address(ion), amount, bytes32(uint256(i + 1)), 0);
             relay.attestInbound(nonce, address(ion), user, amount);
-            vm.expectRevert(BridgeRelay.IonDexDuplicateNonce.selector);
+            vm.expectRevert(bytes4(keccak256("IonDexDuplicateNonce()")));
             relay.attestInbound(nonce, address(ion), user, amount);
         }
     }
@@ -120,7 +120,7 @@ contract SecurityMatrixTest is Test {
             vault.release(address(ion), user, 1, keccak256(abi.encodePacked("perm", i)));
 
             vm.prank(attacker);
-            vm.expectRevert(BridgeRelay.IonDexUnauthorized.selector);
+            vm.expectRevert(bytes4(keccak256("IonDexUnauthorized()")));
             relay.attestInbound(keccak256(abi.encodePacked("perm2", i)), address(ion), user, 1);
         }
     }
@@ -153,7 +153,7 @@ contract SecurityMatrixTest is Test {
         for (uint256 i = 0; i < ITER; i++) {
             assertLe(relay.relayerCount(), MAX_RELAYERS);
             vm.prank(owner);
-            vm.expectRevert(BridgeRelay.IonDexInvalidQuorum.selector);
+            vm.expectRevert(bytes4(keccak256("IonDexInvalidQuorum()")));
             relay.addRelayer(address(uint160(0xDEAD0000 + i)));
         }
     }
@@ -197,7 +197,7 @@ contract SecurityMatrixTest is Test {
             vm.prank(user);
             vault.lock(address(ion), amount, bytes32(uint256(i + 1)), 0);
             relay.attestInbound(nonce, address(ion), user, amount);
-            vm.expectRevert(BridgeRelay.IonDexDuplicateNonce.selector);
+            vm.expectRevert(bytes4(keccak256("IonDexDuplicateNonce()")));
             relay.attestInbound(nonce, address(ion), user, amount);
             assertTrue(relay.consumedNonce(nonce));
         }

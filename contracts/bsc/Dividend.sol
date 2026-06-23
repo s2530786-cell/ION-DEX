@@ -63,14 +63,17 @@ contract Dividend is Ownable, ReentrancyGuard {
     }
 
     function _updateReward(address user) internal {
-        uint256 pending = (shares[user] * accRewardPerShare) / 1e18 - rewardDebt[user];
-        pendingRewards[user] += pending;
-        rewardDebt[user] = (shares[user] * accRewardPerShare) / 1e18;
+        uint256 accumulated = (shares[user] * accRewardPerShare) / 1e18;
+        if (accumulated > rewardDebt[user]) {
+            pendingRewards[user] += accumulated - rewardDebt[user];
+        }
+        rewardDebt[user] = accumulated;
     }
 
     /// @notice 查看待领取分红
     function pendingReward(address user) external view returns (uint256) {
-        uint256 pending = (shares[user] * accRewardPerShare) / 1e18 - rewardDebt[user];
+        uint256 accumulated = (shares[user] * accRewardPerShare) / 1e18;
+        uint256 pending = accumulated > rewardDebt[user] ? accumulated - rewardDebt[user] : 0;
         return pendingRewards[user] + pending;
     }
 }

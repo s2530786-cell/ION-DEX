@@ -6,6 +6,7 @@ import {MockERC20} from "../bsc/MockERC20.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
 import {FeeReceiver} from "../bsc/FeeReceiver.sol";
 import {BridgeRelay} from "../bsc/BridgeRelay.sol";
+import {BridgeRelayV2} from "../bsc/BridgeRelayV2.sol";
 import {IonOracle} from "../bsc/IonOracle.sol";
 import {MockAggregator} from "./MockAggregator.sol";
 
@@ -165,7 +166,7 @@ contract BSCContractsTest is Test {
         vault.lock(address(token), 50 ether, bytes32(uint256(1)), 0);
         vm.stopPrank();
         relay.attestInbound(nonce, address(token), user, 50 ether);
-        vm.expectRevert(BridgeRelay.IonDexDuplicateNonce.selector);
+        vm.expectRevert(bytes4(keccak256("IonDexDuplicateNonce()")));
         relay.attestInbound(nonce, address(token), user, 50 ether);
     }
 

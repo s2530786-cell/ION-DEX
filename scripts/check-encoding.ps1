@@ -99,6 +99,12 @@ function Get-ScanFiles {
           if (Test-IsExcluded $entry) {
             continue
           }
+<<<<<<< HEAD
+=======
+          if (Test-Path (Join-Path $entry ".git")) {
+            continue
+          }
+>>>>>>> codex/audit-follow-up-final
           $stack.Push($entry)
           continue
         }
@@ -117,6 +123,39 @@ function Get-ScanFiles {
   return $list
 }
 
+<<<<<<< HEAD
+=======
+function Read-FileBytesShared {
+  # Read bytes with FileShare.ReadWrite so a file briefly held open by another
+  # process (e.g. the verify-100 driver updating SESSION_STATE.md between passes)
+  # does not abort the whole encoding gate. Retries transient IO locks.
+  param([string]$FullName)
+  $attempts = 0
+  while ($true) {
+    $attempts++
+    try {
+      $fs = [IO.File]::Open($FullName, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+      try {
+        $len = [int]$fs.Length
+        $buffer = New-Object byte[] $len
+        $offset = 0
+        while ($offset -lt $len) {
+          $read = $fs.Read($buffer, $offset, $len - $offset)
+          if ($read -le 0) { break }
+          $offset += $read
+        }
+        return $buffer
+      } finally {
+        $fs.Dispose()
+      }
+    } catch [System.IO.IOException] {
+      if ($attempts -ge 5) { throw }
+      Start-Sleep -Milliseconds (100 * $attempts)
+    }
+  }
+}
+
+>>>>>>> codex/audit-follow-up-final
 $root = Resolve-Path $Path
 Write-Host ""
 Write-Host "===== ION DEX Encoding Check =====" -ForegroundColor Cyan
@@ -132,7 +171,11 @@ $files = Get-ScanFiles -Dir $root.Path
 
 foreach ($f in $files) {
   $scanned++
+<<<<<<< HEAD
   $bytes = [IO.File]::ReadAllBytes($f.FullName)
+=======
+  $bytes = Read-FileBytesShared -FullName $f.FullName
+>>>>>>> codex/audit-follow-up-final
   if ($bytes.Length -eq 0) { continue }
 
   $issues = @()

@@ -4,7 +4,11 @@ Set-Location D:\openclaw-tools\ion-dex-nuke\contracts
 $failed = 0
 for ($i = 1; $i -le 100; $i++) {
     $output = forge test 2>&1 | Out-String
+<<<<<<< HEAD
     if ($output -notmatch "36 tests passed, 0 failed") {
+=======
+    if ($output -notmatch "71 tests passed, 0 failed") {
+>>>>>>> codex/audit-follow-up-final
         Write-Host "FAIL at round $i"
         Write-Host $output
         $failed++

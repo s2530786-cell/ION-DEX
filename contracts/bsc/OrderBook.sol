@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+<<<<<<< HEAD
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
@@ -93,4 +94,13 @@ contract OrderBook is ReentrancyGuard {
     function orderCount() external view returns (uint256) {
         return orders.length;
     }
+=======
+pragma solidity 0.8.24;
+
+import {OrderBookV2} from "./OrderBookV2.sol";
+
+/// @notice Legacy name preserved as a funded V2 order book to avoid exposing the unfunded transparent book.
+contract OrderBook is OrderBookV2 {
+    constructor(address admin_, address quoteToken_) OrderBookV2(admin_, quoteToken_) {}
+>>>>>>> codex/audit-follow-up-final
 }
