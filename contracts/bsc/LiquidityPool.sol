@@ -6,30 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./AdminManager.sol";
 
-<<<<<<< HEAD
-/// @notice LP 流动性池合约 — ERC20 LP 代币，支持添加/移除流动性
-contract LiquidityPool is ERC20, ReentrancyGuard {
-    address public immutable tokenA;
-    address public immutable tokenB;
-    address public dexContract;
-    AdminManager public admin;
-
-    event AddLiquidity(address indexed user, uint256 amountA, uint256 amountB, uint256 lpMinted);
-    event RemoveLiquidity(address indexed user, uint256 lpBurned, uint256 amountA, uint256 amountB);
-
-    constructor(
-        string memory name,
-        string memory symbol,
-        address _tokenA,
-        address _tokenB,
-        address _admin,
-        address _dex
-    ) ERC20(name, symbol) {
-        tokenA = _tokenA;
-        tokenB = _tokenB;
-        admin = AdminManager(_admin);
-        dexContract = _dex;
-=======
 contract LiquidityPool is ERC20, ReentrancyGuard {
     uint256 public constant MINIMUM_LIQUIDITY = 1_000;
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
@@ -58,7 +34,6 @@ contract LiquidityPool is ERC20, ReentrancyGuard {
         tokenB = tokenB_;
         admin = AdminManager(admin_);
         dexContract = dex_;
->>>>>>> codex/audit-follow-up-final
     }
 
     modifier onlyWhenRunning() {
@@ -66,15 +41,6 @@ contract LiquidityPool is ERC20, ReentrancyGuard {
         _;
     }
 
-<<<<<<< HEAD
-    /// @notice 添加流动性
-    function addLiquidity(
-        uint256 amountA,
-        uint256 amountB
-    ) external nonReentrant onlyWhenRunning returns (uint256 lpAmount) {
-        require(amountA > 0 && amountB > 0, "Amount zero");
-
-=======
     function addLiquidity(uint256 amountA, uint256 amountB)
         external
         nonReentrant
@@ -86,21 +52,10 @@ contract LiquidityPool is ERC20, ReentrancyGuard {
         uint256 reserveA = IERC20(tokenA).balanceOf(address(this));
         uint256 reserveB = IERC20(tokenB).balanceOf(address(this));
 
->>>>>>> codex/audit-follow-up-final
         require(IERC20(tokenA).transferFrom(msg.sender, address(this), amountA), "TF fail");
         require(IERC20(tokenB).transferFrom(msg.sender, address(this), amountB), "TF fail");
 
         if (totalSupply() == 0) {
-<<<<<<< HEAD
-            lpAmount = _sqrt(amountA * amountB);
-            require(lpAmount >= 1e3, "Min LP not met");
-        } else {
-            uint256 shareA = (amountA * totalSupply()) / IERC20(tokenA).balanceOf(address(this));
-            uint256 shareB = (amountB * totalSupply()) / IERC20(tokenB).balanceOf(address(this));
-            lpAmount = shareA < shareB ? shareA : shareB;
-        }
-
-=======
             uint256 rootK = _sqrt(amountA * amountB);
             require(rootK > MINIMUM_LIQUIDITY, "Min LP not met");
             _mint(DEAD_ADDRESS, MINIMUM_LIQUIDITY);
@@ -113,15 +68,10 @@ contract LiquidityPool is ERC20, ReentrancyGuard {
         }
 
         require(lpAmount > 0, "LP zero");
->>>>>>> codex/audit-follow-up-final
         _mint(msg.sender, lpAmount);
         emit AddLiquidity(msg.sender, amountA, amountB, lpAmount);
     }
 
-<<<<<<< HEAD
-    /// @notice 移除流动性
-=======
->>>>>>> codex/audit-follow-up-final
     function removeLiquidity(uint256 lpAmount) external nonReentrant onlyWhenRunning {
         require(lpAmount > 0, "LP zero");
         require(balanceOf(msg.sender) >= lpAmount, "Insufficient LP");
@@ -140,12 +90,6 @@ contract LiquidityPool is ERC20, ReentrancyGuard {
         emit RemoveLiquidity(msg.sender, lpAmount, amountA, amountB);
     }
 
-<<<<<<< HEAD
-    /// @notice 设置 DEX 合约地址
-    function setDexContract(address _dex) external {
-        require(msg.sender == address(admin) || msg.sender == owner(), "Not authorized");
-        dexContract = _dex;
-=======
     function setDexContract(address dex_) external {
         require(msg.sender == owner(), "Not authorized");
         require(dex_ != address(0), "Dex zero");
@@ -158,7 +102,6 @@ contract LiquidityPool is ERC20, ReentrancyGuard {
         require(to != address(0), "To zero");
         require(amount > 0, "Amount zero");
         require(IERC20(token).transfer(to, amount), "TF fail");
->>>>>>> codex/audit-follow-up-final
     }
 
     function owner() public view returns (address) {
