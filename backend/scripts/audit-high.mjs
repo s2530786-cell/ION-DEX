@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { spawn } from "node:child_process";
 
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+const officialNpmRegistry = "https://registry.npmjs.org/";
 const transientPatterns = [
   "ECONNREFUSED",
   "ECONNRESET",
@@ -17,6 +18,11 @@ const transientPatterns = [
   "503 service unavailable",
   "504 gateway timeout",
   "429 too many requests",
+];
+const unsupportedAuditRegistryPatterns = [
+  "[NOT_IMPLEMENTED] /-/npm/v1/security",
+  "/-/npm/v1/security/advisories/bulk",
+  "/-/npm/v1/security/audits/quick",
 ];
 const npmLogsDir = join(
   process.env.LOCALAPPDATA || process.env.HOME || process.cwd(),
@@ -54,6 +60,13 @@ function classifyTransient(text) {
   return transientPatterns.some((pattern) => normalized.includes(pattern.toLowerCase()));
 }
 
+function classifyUnsupportedAuditRegistry(text) {
+  const normalized = text.toLowerCase();
+  return unsupportedAuditRegistryPatterns.some((pattern) =>
+    normalized.includes(pattern.toLowerCase()),
+  );
+}
+
 function summarizeDebugLog(text) {
   const lines = text.split(/\r?\n/);
   const interesting = lines.filter((line) => {
@@ -71,7 +84,7 @@ function summarizeDebugLog(text) {
   return lines.slice(-12).join("\n");
 }
 
-function runAudit() {
+function runAudit({ registry = "" } = {}) {
   return new Promise((resolve, reject) => {
     let output = "";
     const env = { ...process.env };
@@ -80,7 +93,12 @@ function runAudit() {
     const beforeLogs = new Set(listRecentNpmLogs().map((entry) => entry.name));
     const startedAtMs = Date.now();
 
-    const child = spawn(npmCommand, ["audit", "--audit-level=high"], {
+    const args = ["audit", "--audit-level=high"];
+    if (registry) {
+      args.push("--registry", registry);
+    }
+
+    const child = spawn(npmCommand, args, {
       env,
       shell: process.platform === "win32",
     });
@@ -120,9 +138,20 @@ function runAudit() {
 }
 
 for (let attempt = 1; attempt <= 5; attempt += 1) {
-  const result = await runAudit();
+  let result = await runAudit();
   if (result.code === 0) {
     process.exit(0);
+  }
+
+  if (
+    classifyUnsupportedAuditRegistry(result.output) &&
+    process.env.ION_NPM_AUDIT_NO_REGISTRY_FALLBACK !== "1"
+  ) {
+    console.log(`npm audit registry does not support security API; retrying ${officialNpmRegistry}`);
+    result = await runAudit({ registry: officialNpmRegistry });
+    if (result.code === 0) {
+      process.exit(0);
+    }
   }
 
   const transient = classifyTransient(result.output);
