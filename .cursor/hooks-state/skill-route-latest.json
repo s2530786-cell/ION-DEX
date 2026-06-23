@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "pathRouteIds": [
+    "engineering-standards",
+    "backend-data",
+    "frontend-ui",
+    "verification-scripts",
+    "memory-bank",
+    "cursor-skills-public",
+    "docs-product"
+  ],
+  "keywordRouteIds": [],
+  "skills": [
+    {
+      "id": "chinese-language",
+      "path": ".cursor/skills/chinese-language/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "ion-dex-memory",
+      "path": ".cursor/skills/ion-dex-memory/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "cursor-engineering-workflow",
+      "path": ".cursor/skills/cursor-engineering-workflow/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "ion-dev-accelerators",
+      "path": ".cursor/skills/ion-dev-accelerators/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "ion-data-backend",
+      "path": ".cursor/skills/ion-data-backend/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "ion-web3-ui",
+      "path": ".cursor/skills/ion-web3-ui/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "self-evolving",
+      "path": ".cursor/skills/self-evolving/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "find-skill",
+      "path": ".cursor/skills/find-skill/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "skill-vetter",
+      "path": ".cursor/skills/skill-vetter/SKILL.md",
+      "source": "public"
+    },
+    {
+      "id": "summarize-pro",
+      "path": ".cursor/skills/summarize-pro/SKILL.md",
+      "source": "public"
+    }
+  ],
+  "docs": [
+    "docs/00-engineering-standards.md",
+    "docs/05-product-prd.md",
+    "docs/06-page-flow-and-user-journeys.md",
+    "docs/10-ui-design-route.md"
+  ],
+  "memory": [
+    ".memory-bank/live-data-reference.md",
+    ".memory-bank/architecture-audit.md",
+    ".memory-bank/overall-design-framework.md",
+    ".memory-bank/implementation-playbook.md"
+  ],
+  "verify": [
+    "cd backend && npm run build && npm run test",
+    "node scripts/dev-preflight.mjs",
+    "cd frontend && npm run verify",
+    "scripts\\verify-full-save-log.cmd --no-pause"
+  ],
+  "preflight": true,
+  "securityPreflight": false,
+  "autopilotSkill": {
+    "id": "ion-skill-autopilot",
+    "path": ".cursor/skills-private/ion-skill-autopilot/SKILL.md",
+    "source": "private"
+  },
+  "manifest": ".cursor/skill-routing.manifest.json",
+  "generatedAt": "2026-05-27T23:02:46.622Z",
+  "routes": [
+    {
+      "id": "engineering-standards",
+      "priority": 100,
+      "reason": "path: AGENTS.md"
+    },
+    {
+      "id": "backend-data",
+      "priority": 90,
+      "reason": "path: backend/src/api/batchTransfer.routes.ts"
+    },
+    {
+      "id": "frontend-ui",
+      "priority": 90,
+      "reason": "path: frontend/e2e/batch-transfer.spec.ts"
+    },
+    {
+      "id": "verification-scripts",
+      "priority": 80,
+      "reason": "path: scripts/check-encoding.ps1"
+    },
+    {
+      "id": "memory-bank",
+      "priority": 70,
+      "reason": "path: .memory-bank/README.md"
+    },
+    {
+      "id": "cursor-skills-public",
+      "priority": 60,
+      "reason": "path: .cursor/skills/ion-dex-memory/SKILL.md"
+    },
+    {
+      "id": "docs-product",
+      "priority": 50,
+      "reason": "path: docs/08-ci-agent-automation.md"
+    }
+  ],
+  "hook": {
+    "event": "sessionStart",
+    "session_id": null
+  }
+}

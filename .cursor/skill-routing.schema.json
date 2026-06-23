@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ION Skill Routing Manifest",
+  "type": "object",
+  "required": ["version", "baseSkills", "pathRoutes"],
+  "properties": {
+    "version": { "type": "integer" },
+    "baseSkills": { "type": "array", "items": { "type": "string" } },
+    "privateSkillRoot": { "type": "string" },
+    "publicSkillRoot": { "type": "string" },
+    "pathRoutes": { "type": "array" },
+    "keywordRoutes": { "type": "array" },
+    "taskRoutes": { "type": "array" }
+  }
+}

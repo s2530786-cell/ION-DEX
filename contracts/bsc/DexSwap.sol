@@ -1,114 +1,81 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
-import {IERC20} from "./interfaces/IERC20.sol";
-import {IFeeReceiver} from "./interfaces/IFeeReceiver.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./AdminManager.sol";
+import "./IonProtocolFeeLib.sol";
 
-/// @title DexSwap - constant-product AMM swap with hardcoded 0.3% fee
-/// @notice All protocol fees are collected and forwarded in ION via FeeReceiver.
-contract DexSwap {
-    uint256 public constant FEE_NUMERATOR = 3;       // 0.3%
-    uint256 public constant FEE_DENOMINATOR = 1000;
+/// @notice DEX 恒定乘积 AMM 兑换合约
+contract DexSwap is ReentrancyGuard {
+    AdminManager public admin;
+    address public lpPool;
+    address public feeReceiver;
+    uint256 public swapFee = 30; // 0.3% (basis points, 10000 = 100%)
 
-    address public immutable ION;
-    IFeeReceiver public immutable feeReceiver;
-
-    // reserves keyed by token pair hash
-    mapping(bytes32 => uint112) public reserveA;
-    mapping(bytes32 => uint112) public reserveB;
-
-    uint256 private _locked = 1;
-    modifier nonReentrant() {
-        require(_locked == 1, "REENTRANCY");
-        _locked = 2;
-        _;
-        _locked = 1;
-    }
-
-    event Swap(address indexed user, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut, uint256 feeIon);
-
-    constructor(address ion, address feeReceiver_) {
-        require(ion != address(0) && feeReceiver_ != address(0), "ZERO_ADDR");
-        ION = ion;
-        feeReceiver = IFeeReceiver(feeReceiver_);
-    }
-
-    function _pairKey(address a, address b) internal pure returns (bytes32) {
-        return a < b ? keccak256(abi.encodePacked(a, b)) : keccak256(abi.encodePacked(b, a));
-    }
-
-    function getReserves(address tokenIn, address tokenOut) public view returns (uint112 rIn, uint112 rOut) {
-        bytes32 k = _pairKey(tokenIn, tokenOut);
-        if (tokenIn < tokenOut) return (reserveA[k], reserveB[k]);
-        return (reserveB[k], reserveA[k]);
-    }
-
-    /// @dev x*y=k pricing with 0.3% fee deducted from amountIn
-    function getAmountOut(uint256 amountIn, uint256 rIn, uint256 rOut) public pure returns (uint256) {
-        require(amountIn > 0, "INSUFFICIENT_INPUT");
-        require(rIn > 0 && rOut > 0, "NO_LIQUIDITY");
-        uint256 amountInWithFee = amountIn * (FEE_DENOMINATOR - FEE_NUMERATOR);
-        uint256 numerator = amountInWithFee * rOut;
-        uint256 denominator = rIn * FEE_DENOMINATOR + amountInWithFee;
-        return numerator / denominator;
-    }
-
-    function swapExactTokensForTokens(
+    event Swap(
+        address indexed user,
         address tokenIn,
         address tokenOut,
         uint256 amountIn,
-        uint256 minAmountOut,
-        address to,
-        uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
-        require(block.timestamp <= deadline, "EXPIRED");
-        (uint112 rIn, uint112 rOut) = getReserves(tokenIn, tokenOut);
-        amountOut = getAmountOut(amountIn, rIn, rOut);
-        require(amountOut >= minAmountOut, "SLIPPAGE");
+        uint256 amountOut
+    );
 
-        require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), "TRANSFER_IN");
-
-        // protocol fee routed to FeeReceiver in ION terms (0.3% of input value)
-        uint256 feeIon = (amountIn * FEE_NUMERATOR) / FEE_DENOMINATOR;
-        IERC20(tokenIn).approve(address(feeReceiver), feeIon);
-        feeReceiver.collect(tokenIn, feeIon);
-
-        _update(tokenIn, tokenOut, amountIn, amountOut);
-        require(IERC20(tokenOut).transfer(to, amountOut), "TRANSFER_OUT");
-
-        emit Swap(msg.sender, tokenIn, tokenOut, amountIn, amountOut, feeIon);
+    constructor(address _admin, address _lpPool) {
+        admin = AdminManager(_admin);
+        lpPool = _lpPool;
     }
 
-    function swapTokensForExactTokens(
+    /// @notice 恒定乘积 X*Y=K 兑换
+    function swap(
         address tokenIn,
         address tokenOut,
-        uint256 amountOut,
-        uint256 maxAmountIn,
-        address to,
-        uint256 deadline
-    ) external nonReentrant returns (uint256 amountIn) {
-        require(block.timestamp <= deadline, "EXPIRED");
-        (uint112 rIn, uint112 rOut) = getReserves(tokenIn, tokenOut);
-        require(amountOut < rOut, "INSUFFICIENT_LIQUIDITY");
-        uint256 numerator = uint256(rIn) * amountOut * FEE_DENOMINATOR;
-        uint256 denominator = (uint256(rOut) - amountOut) * (FEE_DENOMINATOR - FEE_NUMERATOR);
-        amountIn = (numerator / denominator) + 1;
-        require(amountIn <= maxAmountIn, "EXCESSIVE_INPUT");
+        uint256 amountIn,
+        uint256 ionProtocolFee
+    ) external nonReentrant returns (uint256 amountOut) {
+        require(!admin.paused(), "Paused");
+        require(amountIn > 0, "Amount zero");
+        require(tokenIn != tokenOut, "Same token");
+        require(tokenIn != address(0) && tokenOut != address(0), "Zero address");
 
-        require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), "TRANSFER_IN");
-        _update(tokenIn, tokenOut, amountIn, amountOut);
-        require(IERC20(tokenOut).transfer(to, amountOut), "TRANSFER_OUT");
-        emit Swap(msg.sender, tokenIn, tokenOut, amountIn, amountOut, 0);
+        IonProtocolFeeLib.collectIonFee(feeReceiver, address(this), msg.sender, ionProtocolFee);
+
+        // 用户转入代币到池子
+        require(IERC20(tokenIn).transferFrom(msg.sender, lpPool, amountIn), "TF fail");
+
+        // 计算池中储备
+        uint256 reserveIn = IERC20(tokenIn).balanceOf(lpPool);
+        uint256 reserveOut = IERC20(tokenOut).balanceOf(lpPool);
+        require(reserveIn > 0 && reserveOut > 0, "Insufficient liquidity");
+
+        // 扣手续费后计算输出
+        uint256 amountInAfterFee = amountIn * (10000 - swapFee) / 10000;
+        amountOut = (amountInAfterFee * reserveOut) / (reserveIn + amountInAfterFee);
+        require(amountOut > 0, "Insufficient output");
+
+        // 从池子转 output 给用户
+        require(IERC20(tokenOut).transfer(msg.sender, amountOut), "TF fail");
+
+        emit Swap(msg.sender, tokenIn, tokenOut, amountIn, amountOut);
     }
 
-    function _update(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut) internal {
-        bytes32 k = _pairKey(tokenIn, tokenOut);
-        if (tokenIn < tokenOut) {
-            reserveA[k] += uint112(amountIn);
-            reserveB[k] -= uint112(amountOut);
-        } else {
-            reserveB[k] += uint112(amountIn);
-            reserveA[k] -= uint112(amountOut);
-        }
+    /// @notice 设置池子地址
+    function setLpPool(address _lpPool) external onlyOwner {
+        lpPool = _lpPool;
+    }
+
+    function setFeeReceiver(address _feeReceiver) external onlyOwner {
+        feeReceiver = _feeReceiver;
+    }
+
+    /// @notice 修改手续费（管理员，最高1%）
+    function setFee(uint256 newFee) external onlyOwner {
+        require(newFee <= 100, "Fee too high");
+        swapFee = newFee;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == admin.owner(), "Not owner");
+        _;
     }
 }

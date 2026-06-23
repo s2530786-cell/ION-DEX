@@ -1,0 +1,121 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::router_address;
+global cell storage::commit_dict;
+global int storage::min_blocks;
+global int storage::max_blocks;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::router_address = ds~load_msg_addr();
+    storage::commit_dict = ds~load_dict();
+    storage::min_blocks = ds~load_uint(16);
+    storage::max_blocks = ds~load_uint(16);
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::router_address)
+        .store_dict(storage::commit_dict)
+        .store_uint(storage::min_blocks, 16)
+        .store_uint(storage::max_blocks, 16)
+    .end_cell());
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::commit_swap {
+        slice body = ctx::body();
+        int query_id = body~load_uint(64);
+        int commit_id = body~load_uint(256);
+        int reveal_block = body~load_uint(32);
+        int now_block = cur_lt() >> 16;
+
+        throw_unless(error::invalid_amount, commit_id > 0);
+        throw_unless(error::commit_too_early, reveal_block >= now_block + storage::min_blocks);
+        throw_unless(error::commit_expired, reveal_block <= now_block + storage::max_blocks);
+
+        (slice _val, int found) = storage::commit_dict.udict_get?(256, commit_id);
+        throw_unless(error::duplicate_nonce, found == 0);
+
+        storage::commit_dict~udict_set(
+            256,
+            commit_id,
+            begin_cell()
+                .store_uint(query_id, 64)
+                .store_slice(ctx::sender())
+                .store_uint(reveal_block, 32)
+            .end_cell().begin_parse());
+        storage::save();
+        return ();
+    }
+
+    if ctx::opcode() == op::reveal_swap {
+        slice body = ctx::body();
+        int query_id = body~load_uint(64);
+        int commit_id = body~load_uint(256);
+        slice pool = body~load_msg_addr();
+        int zero_for_one = body~load_uint(1);
+        int amount_in = body~load_coins();
+        int min_out = body~load_coins();
+        slice recipient = body~load_msg_addr();
+        int now_block = cur_lt() >> 16;
+
+        (slice entry, int found) = storage::commit_dict.udict_get?(256, commit_id);
+        throw_unless(error::commit_not_found, found);
+        slice es = entry;
+        int stored_qid = es~load_uint(64);
+        slice committer = es~load_msg_addr();
+        int reveal_block = es~load_uint(32);
+        es.end_parse();
+
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), committer));
+        throw_unless(error::commit_too_early, now_block >= reveal_block);
+        throw_unless(error::commit_expired, now_block <= reveal_block + storage::max_blocks);
+
+        storage::commit_dict~udict_delete?(256, commit_id);
+        storage::save();
+
+        msgs::send_simple(
+            0,
+            storage::router_address,
+            begin_cell()
+                .store_uint(op::route_swap, 32)
+                .store_uint(stored_qid, 64)
+                .store_slice(pool)
+                .store_uint(zero_for_one, 1)
+                .store_coins(amount_in)
+                .store_coins(min_out)
+                .store_slice(recipient)
+            .end_cell(),
+            CARRY_ALL_BALANCE);
+        return ();
+    }
+
+    if ctx::opcode() == op::report_suspicious {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+_ get_sandwich_data() method_id {
+    storage::load();
+    return (storage::owner_address, storage::router_address, storage::min_blocks, storage::max_blocks);
+}

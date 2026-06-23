@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+tmp_file="$(mktemp)"
+trap 'rm -f "$tmp_file"' EXIT
+cat >"$tmp_file"
+
+if command -v git-lfs >/dev/null 2>&1; then
+  git lfs pre-push "$@" <"$tmp_file"
+fi
+
+node scripts/verify-100-gate.mjs assert-push "$@" <"$tmp_file"

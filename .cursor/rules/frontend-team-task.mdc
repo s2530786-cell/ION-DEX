@@ -1,0 +1,37 @@
+# 🔴 P0-TASK: 前端开发团队 — UI 全线推进
+
+**Master 钦定：2026-06-19 00:52 — 全力推进前端开发**
+
+## 当前状态
+- verify-100 后台跑着（15/100 绿）
+- Cursor 桌面窗口在线
+- 前端 15 个页面已经存在，需要全面打磨
+
+## 任务（按优先级）
+
+### P0-1: UI 打磨 + 响应式 (立即开始)
+文件：`cursor-queue-result/005-ui-polish-responsive.md`
+- 所有页面 glass morphism 风格统一
+- 移动端 375px 响应式全覆盖
+- 每个数据加载页 skeleton loading
+- 每个 API 错误友好提示 + 重试按钮
+- tsc 零错误
+
+### P0-2: 交易页面完整交互 (紧跟 P0-1)
+- Swap 页面：真实链上数据、滑点保护、gas 预估
+- Pool 页面：添加/移除流动性完整流程
+- Stake 页面：质押/解质押完整流程
+- Bridge 页面：跨链桥完整流程
+
+### P0-3: 新页面创建（按需）
+- AI 量化策略展示页（TradingAgents 数据对接）
+- Token Launch 页面（一键发币）
+- Portfolio 资产仪表盘（多链聚合）
+
+## 铁律
+- 零 mock 数据，全部对接真实 API
+- 文件 ≤300 行
+- 颜色用精确 hex：品牌色 #24f7ff (cyan) #ff3bd4 (magenta) #8d4dff (violet) #ffd166 (gold)
+- UI 参考 react-bits (https://github.com/DavidHDev/react-bits)
+- 每个文件写完立即 tsc 检查
+- commit: `feat(frontend): UI polish + responsive + full interaction flows`

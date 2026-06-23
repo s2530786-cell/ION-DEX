@@ -1,0 +1,439 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global slice storage::router_address;
+global cell storage::relayer_dict;
+global cell storage::pending_dict;
+global cell storage::executed_dict;
+global int storage::quorum;
+global int storage::next_relayer_idx;
+
+const bridge_state::pending = 1;
+const bridge_state::forwarded = 2;
+const bridge_state::executed = 3;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::router_address = ds~load_msg_addr();
+    storage::relayer_dict = ds~load_dict();
+    storage::pending_dict = ds~load_dict();
+    storage::executed_dict = ds~load_dict();
+    storage::quorum = ds~load_uint(8);
+    if ds.slice_empty?() {
+        storage::next_relayer_idx = 0;
+    } else {
+        storage::next_relayer_idx = ds~load_uint(8);
+    }
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_slice(storage::router_address)
+        .store_dict(storage::relayer_dict)
+        .store_dict(storage::pending_dict)
+        .store_dict(storage::executed_dict)
+        .store_uint(storage::quorum, 8)
+        .store_uint(storage::next_relayer_idx, 8)
+    .end_cell());
+}
+
+int bridge::message_id(int source_chain_id, int source_nonce, int amount, slice recipient, slice token) inline {
+    return cell_hash(begin_cell()
+        .store_uint(source_chain_id, 32)
+        .store_uint(source_nonce, 256)
+        .store_coins(amount)
+        .store_slice(recipient)
+        .store_slice(token)
+    .end_cell());
+}
+
+(int, int) bridge::get_relayer_meta(slice relayer) impure inline {
+    (slice entry, int found) = storage::relayer_dict.udict_get?(256, relayer.slice_hash());
+    ifnot (found) {
+        return (0, 0);
+    }
+    int idx = entry~load_uint(8);
+    int enabled = entry~load_uint(1);
+    return (idx, enabled);
+}
+
+int bridge::active_relayer_count() impure inline {
+    int count = 0;
+    int pivot = -1;
+    do {
+        (int next_key, slice entry, int found) = storage::relayer_dict.udict_get_next?(256, pivot);
+        if (found) {
+            pivot = next_key;
+            count += entry.skip_bits(8).preload_uint(1);
+        }
+    } until (~ found);
+    return count;
+}
+
+cell bridge::build_pending_value(
+    int approvals_mask,
+    int approvals_count,
+    int source_chain_id,
+    int source_nonce,
+    int amount,
+    slice recipient,
+    slice token,
+    int state,
+    int created_at
+) inline_ref {
+    return begin_cell()
+        .store_uint(approvals_mask, 32)
+        .store_uint(approvals_count, 8)
+        .store_uint(source_chain_id, 32)
+        .store_uint(source_nonce, 256)
+        .store_coins(amount)
+        .store_slice(recipient)
+        .store_slice(token)
+        .store_uint(state, 2)
+        .store_uint(created_at, 64)
+    .end_cell();
+}
+
+(
+    int,
+    int,
+    int,
+    int,
+    int,
+    slice,
+    slice,
+    int,
+    int
+) bridge::load_pending(slice entry) inline_ref {
+    return (
+        entry~load_uint(32),
+        entry~load_uint(8),
+        entry~load_uint(32),
+        entry~load_uint(256),
+        entry~load_coins(),
+        entry~load_msg_addr(),
+        entry~load_msg_addr(),
+        entry~load_uint(2),
+        entry~load_uint(64)
+    );
+}
+
+() bridge::mark_executed(int message_id) impure inline_ref {
+    storage::executed_dict~udict_set(
+        256,
+        message_id,
+        begin_cell()
+            .store_uint(now(), 64)
+            .store_uint(bridge_state::executed, 2)
+        .end_cell().begin_parse());
+}
+
+() bridge::forward_execute(
+    int query_id,
+    int message_id,
+    int source_chain_id,
+    int source_nonce,
+    int amount,
+    slice recipient,
+    slice token
+) impure inline_ref {
+    int reserve = storage_fee::bridge_inbox + gas::bridge_inbox::ack;
+    throw_unless(error::insufficient_gas, ctx::balance() > reserve + gas::bridge_inbox::forward_execute);
+    reserves::max_balance(reserve);
+    msgs::send_value(
+        gas::bridge_inbox::forward_execute,
+        storage::router_address,
+        begin_cell()
+            .store_uint(op::bridge_execute, 32)
+            .store_uint(query_id, 64)
+            .store_uint(message_id, 256)
+            .store_uint(source_chain_id, 32)
+            .store_uint(source_nonce, 256)
+            .store_coins(amount)
+            .store_slice(token)
+            .store_slice(recipient)
+        .end_cell(),
+        0);
+}
+
+() handle_bridge_submit() impure {
+    (int relayer_idx, int relayer_enabled) = bridge::get_relayer_meta(ctx::sender());
+    throw_unless(error::unauthorized_relayer, relayer_enabled);
+
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int source_chain_id = body~load_uint(32);
+    int source_nonce = body~load_uint(256);
+    int amount = body~load_coins();
+    slice recipient = body~load_msg_addr();
+    slice token = body~load_msg_addr();
+
+    throw_unless(error::invalid_amount, amount > 0);
+
+    int message_id = bridge::message_id(source_chain_id, source_nonce, amount, recipient, token);
+    (slice _executed, int already_done) = storage::executed_dict.udict_get?(256, message_id);
+    throw_unless(error::duplicate_nonce, already_done == 0);
+
+    int approvals_mask = 0;
+    int approvals_count = 0;
+    int state = bridge_state::pending;
+    int created_at = now();
+
+    (slice existing_entry, int found) = storage::pending_dict.udict_get?(256, message_id);
+    if (found) {
+        int stored_source_chain_id = 0;
+        int stored_source_nonce = 0;
+        int stored_amount = 0;
+        slice stored_recipient = address::none();
+        slice stored_token = address::none();
+        (
+            approvals_mask,
+            approvals_count,
+            stored_source_chain_id,
+            stored_source_nonce,
+            stored_amount,
+            stored_recipient,
+            stored_token,
+            state,
+            created_at
+        ) = bridge::load_pending(existing_entry);
+
+        throw_unless(error::bridge_bad_state, state != bridge_state::executed);
+        throw_unless(
+            error::bridge_bad_state,
+            (stored_source_chain_id == source_chain_id)
+            & (stored_source_nonce == source_nonce)
+            & (stored_amount == amount)
+            & equal_slices(stored_recipient, recipient)
+            & equal_slices(stored_token, token));
+    }
+
+    throw_unless(error::invalid_caller, relayer_idx < 32);
+    int approval_bit = 1 << relayer_idx;
+    throw_unless(error::already_approved, (approvals_mask & approval_bit) == 0);
+
+    approvals_mask = approvals_mask | approval_bit;
+    approvals_count += 1;
+
+    if (approvals_count >= storage::quorum) {
+        state = bridge_state::forwarded;
+    }
+
+    storage::pending_dict~udict_set_ref(
+        256,
+        message_id,
+        bridge::build_pending_value(
+            approvals_mask,
+            approvals_count,
+            source_chain_id,
+            source_nonce,
+            amount,
+            recipient,
+            token,
+            state,
+            created_at));
+    storage::save();
+
+    if (state == bridge_state::forwarded) {
+        bridge::forward_execute(
+            query_id,
+            message_id,
+            source_chain_id,
+            source_nonce,
+            amount,
+            recipient,
+            token);
+    }
+}
+
+() handle_bridge_ack() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::router_address));
+
+    slice body = ctx::body();
+    int _query_id = body~load_uint(64);
+    int message_id = body~load_uint(256);
+
+    (slice entry, int found) = storage::pending_dict.udict_get?(256, message_id);
+    throw_unless(error::bridge_not_found, found);
+
+    (
+        int approvals_mask,
+        int approvals_count,
+        int source_chain_id,
+        int source_nonce,
+        int amount,
+        slice recipient,
+        slice token,
+        int state,
+        int created_at
+    ) = bridge::load_pending(entry);
+    approvals_mask~touch();
+    approvals_count~touch();
+    source_chain_id~touch();
+    source_nonce~touch();
+    amount~touch();
+    recipient~touch();
+    token~touch();
+    created_at~touch();
+
+    throw_unless(error::bridge_bad_state, state == bridge_state::forwarded);
+
+    bridge::mark_executed(message_id);
+    storage::pending_dict~udict_delete?(256, message_id);
+    storage::save();
+}
+
+() handle_bridge_retry() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int message_id = body~load_uint(256);
+
+    (slice entry, int found) = storage::pending_dict.udict_get?(256, message_id);
+    throw_unless(error::bridge_not_found, found);
+
+    (
+        int approvals_mask,
+        int approvals_count,
+        int source_chain_id,
+        int source_nonce,
+        int amount,
+        slice recipient,
+        slice token,
+        int state,
+        int created_at
+    ) = bridge::load_pending(entry);
+    approvals_mask~touch();
+    created_at~touch();
+
+    throw_unless(error::quorum_not_reached, approvals_count >= storage::quorum);
+    throw_unless(error::bridge_bad_state, state == bridge_state::forwarded);
+
+    storage::save();
+    bridge::forward_execute(
+        query_id,
+        message_id,
+        source_chain_id,
+        source_nonce,
+        amount,
+        recipient,
+        token);
+}
+
+() handle_set_relayer() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+    slice body_cs = ctx::body();
+    slice relayer = body_cs~load_msg_addr();
+
+    (slice existing_entry, int found) = storage::relayer_dict.udict_get?(256, relayer.slice_hash());
+    int relayer_idx = 0;
+    if (found) {
+        relayer_idx = existing_entry~load_uint(8);
+    } else {
+        relayer_idx = storage::next_relayer_idx;
+        storage::next_relayer_idx += 1;
+    }
+
+    storage::relayer_dict~udict_set(
+        256,
+        relayer.slice_hash(),
+        begin_cell()
+            .store_uint(relayer_idx, 8)
+            .store_uint(1, 1)
+            .store_slice(relayer)
+        .end_cell().begin_parse());
+    storage::save();
+}
+
+() handle_revoke_relayer() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+    slice body_cs = ctx::body();
+    slice relayer = body_cs~load_msg_addr();
+
+    (slice existing_entry, int found) = storage::relayer_dict.udict_get?(256, relayer.slice_hash());
+    throw_unless(error::bridge_not_found, found);
+    int relayer_idx = existing_entry~load_uint(8);
+    existing_entry~load_uint(1);
+    storage::relayer_dict~udict_set(
+        256,
+        relayer.slice_hash(),
+        begin_cell()
+            .store_uint(relayer_idx, 8)
+            .store_uint(0, 1)
+            .store_slice(relayer)
+        .end_cell().begin_parse());
+
+    int active_count = bridge::active_relayer_count();
+    throw_unless(error::quorum_not_reached, (storage::quorum > 0) & (storage::quorum <= active_count));
+    storage::save();
+}
+
+() handle_set_bridge_quorum() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+    slice body = ctx::body();
+    int new_quorum = body~load_uint(8);
+    int active_count = bridge::active_relayer_count();
+    throw_unless(error::quorum_not_reached, (new_quorum > 0) & (new_quorum <= active_count));
+    storage::quorum = new_quorum;
+    storage::save();
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::bridge_submit {
+        handle_bridge_submit();
+        return ();
+    }
+
+    if ctx::opcode() == op::bridge_ack {
+        handle_bridge_ack();
+        return ();
+    }
+
+    if ctx::opcode() == op::bridge_retry {
+        handle_bridge_retry();
+        return ();
+    }
+
+    if ctx::opcode() == op::set_relayer {
+        handle_set_relayer();
+        return ();
+    }
+
+    if ctx::opcode() == op::revoke_relayer {
+        handle_revoke_relayer();
+        return ();
+    }
+
+    if ctx::opcode() == op::set_bridge_quorum {
+        handle_set_bridge_quorum();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+_ get_bridge_inbox_data() method_id {
+    storage::load();
+    return (
+        storage::owner_address,
+        storage::router_address,
+        storage::quorum,
+        storage::next_relayer_idx
+    );
+}

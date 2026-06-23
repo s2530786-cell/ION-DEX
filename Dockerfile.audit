@@ -1,0 +1,16 @@
+# FunC V6 压力测试 Dockerfile
+FROM node:20-slim
+
+WORKDIR /app
+
+# Copy contracts and test scripts
+COPY contracts/ ./contracts/
+COPY test/ ./test/
+COPY scripts/ ./scripts/
+COPY package.json ./
+
+# Install FunC compiler
+RUN npm install @ton-community/func-js
+
+# Run security audit + compilation test
+CMD ["node", "scripts/func-security-audit-v6.mjs"]

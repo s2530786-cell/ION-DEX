@@ -1,116 +1,277 @@
-;; pool.fc — ION chain constant-product AMM (x*y=k)
-;; Implements a Jetton/Jetton liquidity pool with 0.3% swap fee.
-;; Build: func -o pool.fif -SPA stdlib.fc pool.fc
+#pragma version >=0.4.4;
 
-#include "stdlib.fc";
+#include "common/common.fc";
 
-const int FEE_NUM = 3;       ;; 0.3%
-const int FEE_DEN = 1000;
-const int op::swap          = 0x25938561;
-const int op::add_liquidity = 0x3ebe5431;
-const int op::remove_liq    = 0x595f07bc;
+global slice storage::router_address;
+global slice storage::token0_address;
+global slice storage::token1_address;
+global int storage::reserve0;
+global int storage::reserve1;
+global int storage::lp_total_supply;
+global int storage::fee_numerator;
+global int storage::fee_denominator;
+global int storage::status;
+global slice storage::fee_distributor_address;
 
-;; storage: reserve0:Coins reserve1:Coins total_lp:Coins jetton0:slice jetton1:slice
-(int, int, int, slice, slice) load_data() inline {
-    var ds = get_data().begin_parse();
+const pool_status::active = 1;
+const pool_status::paused = 0;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::router_address = ds~load_msg_addr();
+    storage::token0_address = ds~load_msg_addr();
+    storage::token1_address = ds~load_msg_addr();
+    storage::reserve0 = ds~load_coins();
+    storage::reserve1 = ds~load_coins();
+    storage::lp_total_supply = ds~load_coins();
+    storage::fee_numerator = ds~load_uint(16);
+    storage::fee_denominator = ds~load_uint(16);
+    storage::status = ds~load_uint(8);
+    storage::fee_distributor_address = ds~load_msg_addr();
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::router_address)
+        .store_slice(storage::token0_address)
+        .store_slice(storage::token1_address)
+        .store_coins(storage::reserve0)
+        .store_coins(storage::reserve1)
+        .store_coins(storage::lp_total_supply)
+        .store_uint(storage::fee_numerator, 16)
+        .store_uint(storage::fee_denominator, 16)
+        .store_uint(storage::status, 8)
+        .store_slice(storage::fee_distributor_address)
+    .end_cell());
+}
+
+int pool::mint_lp(int amount0, int amount1) inline {
+    if storage::lp_total_supply == 0 {
+        return sqrt(amount0 * amount1);
+    }
+    int lp0 = math::mul_div(amount0, storage::lp_total_supply, storage::reserve0);
+    int lp1 = math::mul_div(amount1, storage::lp_total_supply, storage::reserve1);
+    return min(lp0, lp1);
+}
+
+() handle_cb_add_liquidity() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int amount0 = body~load_coins();
+    int amount1 = body~load_coins();
+    slice user = body~load_msg_addr();
+    int min_lp_out = body~load_coins();
+    body~load_coins(); ;; fwd_amount — consumed, held by pool balance
+    body~load_uint(1); ;; custom_payload flag
+    slice extras = body~load_ref().begin_parse();
+    slice to_user = extras~load_msg_addr();
+    extras~load_msg_addr(); ;; refund_address
+    extras~load_msg_addr(); ;; excess_address
+    extras.end_parse();
+
+    throw_unless(error::paused, storage::status == pool_status::active);
+    throw_unless(error::invalid_amount, (amount0 > 0) & (amount1 > 0));
+
+    int lp_out = pool::mint_lp(amount0, amount1);
+    throw_unless(error::slippage, lp_out >= min_lp_out);
+
+    storage::reserve0 += amount0;
+    storage::reserve1 += amount1;
+    storage::lp_total_supply += lp_out;
+    storage::save();
+
+    reserves::max_balance(storage_fee::pool);
+    msgs::send_simple(
+        0,
+        to_user,
+        begin_cell()
+            .store_uint(op::provide_wallet_address, 32)
+            .store_uint(query_id, 64)
+            .store_coins(lp_out)
+            .store_coins(amount0)
+            .store_coins(amount1)
+            .store_slice(user)
+        .end_cell(),
+        QCARRY_ALL_BALANCE);
+}
+
+() handle_swap() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int zero_for_one = body~load_uint(1);
+    int amount_in = body~load_coins();
+    int min_out = body~load_coins();
+    slice recipient = body~load_msg_addr();
+
+    throw_unless(error::paused, storage::status == pool_status::active);
+    throw_unless(error::invalid_amount, amount_in > 0);
+
+    int amount_out = 0;
+    if zero_for_one {
+        amount_out = amm::get_amount_out(
+            amount_in,
+            storage::reserve0,
+            storage::reserve1,
+            storage::fee_numerator,
+            storage::fee_denominator);
+        throw_unless(error::slippage, amount_out >= min_out);
+        storage::reserve0 += amount_in;
+        storage::reserve1 -= amount_out;
+    } else {
+        amount_out = amm::get_amount_out(
+            amount_in,
+            storage::reserve1,
+            storage::reserve0,
+            storage::fee_numerator,
+            storage::fee_denominator);
+        throw_unless(error::slippage, amount_out >= min_out);
+        storage::reserve1 += amount_in;
+        storage::reserve0 -= amount_out;
+    }
+
+    storage::save();
+
+    reserves::max_balance(storage_fee::pool);
+    msgs::send_simple(
+        0,
+        recipient,
+        begin_cell()
+            .store_uint(op::swap, 32)
+            .store_uint(query_id, 64)
+            .store_coins(amount_out)
+            .store_uint(zero_for_one, 1)
+            .store_coins(amount_in)
+        .end_cell(),
+        QCARRY_ALL_BALANCE);
+}
+
+() handle_remove_liquidity() impure {
+    slice body = ctx::body();
+    int query_id = body~load_uint(64);
+    int lp_amount = body~load_coins();
+    int min0 = body~load_coins();
+    int min1 = body~load_coins();
+    slice recipient = body~load_msg_addr();
+
+    throw_unless(error::paused, storage::status == pool_status::active);
+    throw_unless(error::invalid_amount, (lp_amount > 0) & (lp_amount <= storage::lp_total_supply));
+
+    int out0 = math::mul_div(lp_amount, storage::reserve0, storage::lp_total_supply);
+    int out1 = math::mul_div(lp_amount, storage::reserve1, storage::lp_total_supply);
+    throw_unless(error::slippage, (out0 >= min0) & (out1 >= min1));
+
+    storage::reserve0 -= out0;
+    storage::reserve1 -= out1;
+    storage::lp_total_supply -= lp_amount;
+    storage::save();
+
+    msgs::send_simple(
+        0,
+        recipient,
+        begin_cell()
+            .store_uint(op::remove_liquidity, 32)
+            .store_uint(query_id, 64)
+            .store_coins(out0)
+            .store_coins(out1)
+        .end_cell(),
+        QCARRY_ALL_BALANCE);
+}
+
+() handle_collect_fees() impure {
+    throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::router_address));
+    throw_unless(error::invalid_caller, storage::fee_distributor_address.slice_empty?() == 0);
+
+    ;; Protocol fee: 5 bps of total reserves (0.05%), settled in native ION
+    int protocol_fee = math::mul_div(storage::reserve0 + storage::reserve1, 5, 10000);
+    if protocol_fee > 0 {
+        ;; Send ION fee to FeeDistributor for 50% burn / 25% master / 25% rewards+treasury split
+        msgs::send_simple(
+            protocol_fee,  ;; carry fee amount as ION value
+            storage::fee_distributor_address,
+            begin_cell()
+                .store_uint(op::distribute_fees, 32)
+                .store_uint(0, 64)
+                .store_coins(protocol_fee)
+            .end_cell(),
+            1);  ;; mode=1: send message value only (ION coins)
+    }
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::cb_add_liquidity {
+        handle_cb_add_liquidity();
+        return ();
+    }
+
+    if ctx::opcode() == op::swap {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::router_address));
+        handle_swap();
+        return ();
+    }
+
+    if ctx::opcode() == op::remove_liquidity {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::router_address));
+        handle_remove_liquidity();
+        return ();
+    }
+
+    if ctx::opcode() == op::collect_fees {
+        handle_collect_fees();
+        return ();
+    }
+
+    if ctx::opcode() == op::update_pool_status {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::router_address));
+        slice body_cs = ctx::body();
+        storage::status = body_cs~load_uint(8);
+        storage::save();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+_ get_pool_data() method_id {
+    storage::load();
     return (
-        ds~load_coins(),   ;; reserve0
-        ds~load_coins(),   ;; reserve1
-        ds~load_coins(),   ;; total_lp
-        ds~load_msg_addr(),;; jetton0 wallet
-        ds~load_msg_addr() ;; jetton1 wallet
+        storage::router_address,
+        storage::token0_address,
+        storage::token1_address,
+        storage::reserve0,
+        storage::reserve1,
+        storage::lp_total_supply,
+        storage::fee_numerator,
+        storage::fee_denominator,
+        storage::status
     );
 }
 
-() save_data(int r0, int r1, int lp, slice j0, slice j1) impure inline {
-    set_data(begin_cell()
-        .store_coins(r0)
-        .store_coins(r1)
-        .store_coins(lp)
-        .store_slice(j0)
-        .store_slice(j1)
-        .end_cell());
-}
-
-;; constant-product output with 0.3% fee
-int get_amount_out(int amount_in, int reserve_in, int reserve_out) inline {
-    throw_unless(101, amount_in > 0);
-    throw_unless(102, (reserve_in > 0) & (reserve_out > 0));
-    int amount_in_with_fee = amount_in * (FEE_DEN - FEE_NUM);
-    int numerator = amount_in_with_fee * reserve_out;
-    int denominator = reserve_in * FEE_DEN + amount_in_with_fee;
-    return numerator / denominator;
-}
-
-int sqrt(int x) inline {
-    if (x == 0) { return 0; }
-    int z = (x + 1) / 2;
-    int y = x;
-    while (z < y) { y = z; z = (x / z + z) / 2; }
-    return y;
-}
-
-() recv_internal(int msg_value, cell in_msg_full, slice in_msg_body) impure {
-    if (in_msg_body.slice_empty?()) { return (); }
-    slice cs = in_msg_full.begin_parse();
-    int flags = cs~load_uint(4);
-    if (flags & 1) { return (); } ;; ignore bounced
-
-    int op = in_msg_body~load_uint(32);
-    int query_id = in_msg_body~load_uint(64);
-
-    var (r0, r1, lp, j0, j1) = load_data();
-
-    if (op == op::swap) {
-        int amount_in = in_msg_body~load_coins();
-        int zero_for_one = in_msg_body~load_uint(1);
-        int min_out = in_msg_body~load_coins();
-        int amount_out = 0;
-        if (zero_for_one) {
-            amount_out = get_amount_out(amount_in, r0, r1);
-            throw_unless(110, amount_out >= min_out);
-            r0 += amount_in; r1 -= amount_out;
-        } else {
-            amount_out = get_amount_out(amount_in, r1, r0);
-            throw_unless(110, amount_out >= min_out);
-            r1 += amount_in; r0 -= amount_out;
-        }
-        save_data(r0, r1, lp, j0, j1);
-        return ();
+_ get_amount_out(int zero_for_one, int amount_in) method_id {
+    storage::load();
+    throw_unless(error::invalid_amount, amount_in > 0);
+    if zero_for_one {
+        return amm::get_amount_out(
+            amount_in,
+            storage::reserve0,
+            storage::reserve1,
+            storage::fee_numerator,
+            storage::fee_denominator);
     }
-
-    if (op == op::add_liquidity) {
-        int amt0 = in_msg_body~load_coins();
-        int amt1 = in_msg_body~load_coins();
-        int minted = 0;
-        if (lp == 0) {
-            minted = sqrt(amt0 * amt1);
-        } else {
-            int a = amt0 * lp / r0;
-            int b = amt1 * lp / r1;
-            minted = (a < b) ? a : b;
-        }
-        throw_unless(120, minted > 0);
-        r0 += amt0; r1 += amt1; lp += minted;
-        save_data(r0, r1, lp, j0, j1);
-        return ();
-    }
-
-    if (op == op::remove_liq) {
-        int burn_lp = in_msg_body~load_coins();
-        throw_unless(130, (burn_lp > 0) & (burn_lp <= lp));
-        int out0 = burn_lp * r0 / lp;
-        int out1 = burn_lp * r1 / lp;
-        r0 -= out0; r1 -= out1; lp -= burn_lp;
-        save_data(r0, r1, lp, j0, j1);
-        return ();
-    }
-
-    throw(0xffff); ;; unknown op
-}
-
-;; getter: returns (reserve0, reserve1, total_lp)
-(int, int, int) get_reserves() method_id {
-    var (r0, r1, lp, _, _) = load_data();
-    return (r0, r1, lp);
+    return amm::get_amount_out(
+        amount_in,
+        storage::reserve1,
+        storage::reserve0,
+        storage::fee_numerator,
+        storage::fee_denominator);
 }

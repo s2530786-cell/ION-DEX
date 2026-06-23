@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": ".cursor/hooks/ion-skill-route-session.cmd",
+        "timeout": 30,
+        "failClosed": false
+      }
+    ],
+    "subagentStart": [
+      {
+        "command": ".cursor/hooks/ion-skill-route-subagent.cmd",
+        "timeout": 30,
+        "failClosed": false
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": ".cursor/hooks/ion-skill-route-task-pretool.cmd",
+        "matcher": "Task",
+        "timeout": 30,
+        "failClosed": false
+      }
+    ],
+    "stop": [
+      {
+        "command": ".cursor/hooks/ion-verify-on-stop.cmd",
+        "timeout": 600,
+        "failClosed": false
+      }
+    ]
+  }
+}

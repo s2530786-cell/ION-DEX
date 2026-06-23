@@ -1,0 +1,126 @@
+{
+  "hook": "subagentStart",
+  "generatedAt": "2026-05-27T23:23:30.618Z",
+  "subagent": {
+    "subagent_id": "sa-1",
+    "subagent_type": "explore",
+    "task": "Kronos K??? frontend"
+  },
+  "route": {
+    "version": 1,
+    "pathRouteIds": [
+      "engineering-standards",
+      "contracts-func",
+      "backend-data",
+      "frontend-ui",
+      "verification-scripts",
+      "memory-bank",
+      "cursor-skills-public",
+      "docs-product"
+    ],
+    "keywordRouteIds": [
+      "kw-kronos"
+    ],
+    "skills": [
+      {
+        "id": "chinese-language",
+        "path": ".cursor/skills/chinese-language/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "ion-dex-memory",
+        "path": ".cursor/skills/ion-dex-memory/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "cursor-engineering-workflow",
+        "path": ".cursor/skills/cursor-engineering-workflow/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "ion-dev-accelerators",
+        "path": ".cursor/skills/ion-dev-accelerators/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "ion-contract-audit",
+        "path": ".cursor/skills/ion-contract-audit/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "ion-official-source",
+        "path": ".cursor/skills/ion-official-source/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "ion-data-backend",
+        "path": ".cursor/skills/ion-data-backend/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "ion-web3-ui",
+        "path": ".cursor/skills/ion-web3-ui/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "self-evolving",
+        "path": ".cursor/skills/self-evolving/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "find-skill",
+        "path": ".cursor/skills/find-skill/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "skill-vetter",
+        "path": ".cursor/skills/skill-vetter/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "summarize-pro",
+        "path": ".cursor/skills/summarize-pro/SKILL.md",
+        "source": "public"
+      },
+      {
+        "id": "quant-trading-frameworks",
+        "path": ".cursor/skills-private/quant-trading-frameworks/SKILL.md",
+        "source": "private"
+      },
+      {
+        "id": "kronos",
+        "path": ".cursor/skills-private/kronos/SKILL.md",
+        "source": "private"
+      }
+    ],
+    "docs": [
+      "docs/00-engineering-standards.md",
+      "docs/23-security-audit-and-stress-sandbox.md",
+      "docs/05-product-prd.md",
+      "docs/06-page-flow-and-user-journeys.md",
+      "docs/10-ui-design-route.md"
+    ],
+    "memory": [
+      ".memory-bank/security-audit-and-stress-framework.md",
+      ".memory-bank/ion-dex-nuke/official-source-index.md",
+      ".memory-bank/live-data-reference.md",
+      ".memory-bank/architecture-audit.md",
+      ".memory-bank/overall-design-framework.md",
+      ".memory-bank/implementation-playbook.md"
+    ],
+    "verify": [
+      "cd backend && npm run build && npm run test",
+      "node scripts/dev-preflight.mjs",
+      "cd frontend && npm run verify",
+      "scripts\\verify-full-save-log.cmd --no-pause"
+    ],
+    "preflight": true,
+    "securityPreflight": true,
+    "manifest": ".cursor/skill-routing.manifest.json",
+    "autopilotSkill": {
+      "id": "ion-skill-autopilot",
+      "path": ".cursor/skills-private/ion-skill-autopilot/SKILL.md",
+      "source": "private"
+    }
+  }
+}

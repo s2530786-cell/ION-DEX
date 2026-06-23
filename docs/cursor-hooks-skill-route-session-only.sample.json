@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": ".cursor/hooks/ion-skill-route-session.cmd",
+        "timeout": 30,
+        "failClosed": false
+      }
+    ]
+  }
+}

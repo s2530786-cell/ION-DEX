@@ -1,0 +1,181 @@
+#pragma version >=0.4.4;
+
+#include "common/common.fc";
+
+global slice storage::owner_address;
+global int storage::total_staked;
+global int storage::reward_per_token;
+global int storage::reward_balance;
+global cell storage::stake_dict;
+
+() storage::load() impure inline {
+    slice ds = get_data().begin_parse();
+    storage::owner_address = ds~load_msg_addr();
+    storage::total_staked = ds~load_coins();
+    storage::reward_per_token = ds~load_uint(128);
+    storage::reward_balance = ds~load_coins();
+    storage::stake_dict = ds~load_dict();
+    ds.end_parse();
+}
+
+() storage::save() impure inline_ref {
+    set_data(begin_cell()
+        .store_slice(storage::owner_address)
+        .store_coins(storage::total_staked)
+        .store_uint(storage::reward_per_token, 128)
+        .store_coins(storage::reward_balance)
+        .store_dict(storage::stake_dict)
+    .end_cell());
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(error::empty_not_allowed, in_msg_body.slice_empty?());
+
+    ctx::init(my_balance, msg_value, in_msg_full, in_msg_body);
+    if ctx::isBounced() {
+        return ();
+    }
+
+    throw_unless(error::wrong_workchain, ctx::sender().address::check_workchain(params::workchain));
+    storage::load();
+
+    if ctx::opcode() == op::stake_deposit {
+        slice body = ctx::body();
+        int query_id = body~load_uint(64);
+        int amount = ctx::value();
+        slice staker = ctx::sender();
+
+        throw_unless(error::invalid_amount, amount > 0);
+
+        int key = staker.slice_hash();
+        (slice entry, int found) = storage::stake_dict.udict_get?(256, key);
+        int staked = 0;
+        int reward_debt = 0;
+        if found {
+            slice es = entry;
+            staked = es~load_coins();
+            reward_debt = es~load_uint(128);
+            es.end_parse();
+        }
+
+        storage::total_staked += amount;
+        staked += amount;
+        storage::stake_dict~udict_set(
+            256,
+            key,
+            begin_cell().store_coins(staked).store_uint(reward_debt, 128).end_cell().begin_parse());
+        storage::save();
+
+        msgs::send_simple(
+            0,
+            staker,
+            begin_cell().store_uint(op::stake_deposit, 32).store_uint(query_id, 64).store_coins(staked).end_cell(),
+            QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    if ctx::opcode() == op::stake_withdraw {
+        slice body = ctx::body();
+        int query_id = body~load_uint(64);
+        int amount = body~load_coins();
+        slice staker = ctx::sender();
+
+        throw_unless(error::invalid_amount, amount > 0);
+
+        int key = staker.slice_hash();
+        (slice entry, int found) = storage::stake_dict.udict_get?(256, key);
+        throw_unless(error::insufficient_stake, found);
+
+        slice es = entry;
+        int staked = es~load_coins();
+        int reward_debt = es~load_uint(128);
+        es.end_parse();
+
+        throw_unless(error::insufficient_stake, amount <= staked);
+
+        staked -= amount;
+        storage::total_staked -= amount;
+
+        if staked == 0 {
+            storage::stake_dict~udict_delete?(256, key);
+        } else {
+            storage::stake_dict~udict_set(
+                256,
+                key,
+                begin_cell().store_coins(staked).store_uint(reward_debt, 128).end_cell().begin_parse());
+        }
+        storage::save();
+
+        msgs::send_simple(
+            0,
+            staker,
+            begin_cell()
+                .store_uint(op::stake_withdraw, 32)
+                .store_uint(query_id, 64)
+                .store_coins(amount)
+            .end_cell(),
+            QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    if ctx::opcode() == op::stake_claim {
+        slice body = ctx::body();
+        int query_id = body~load_uint(64);
+        slice staker = ctx::sender();
+
+        int key = staker.slice_hash();
+        (slice entry, int found) = storage::stake_dict.udict_get?(256, key);
+        throw_unless(error::insufficient_stake, found);
+
+        slice es = entry;
+        int staked = es~load_coins();
+        int reward_debt = es~load_uint(128);
+        es.end_parse();
+
+        int earned = math::mul_div(staked, storage::reward_per_token, 1) - reward_debt;
+        throw_unless(error::zero_output, earned > 0);
+        throw_unless(error::invalid_amount, earned <= storage::reward_balance);
+
+        storage::reward_balance -= earned;
+        int new_debt = math::mul_div(staked, storage::reward_per_token, 1);
+        storage::stake_dict~udict_set(
+            256,
+            key,
+            begin_cell().store_coins(staked).store_uint(new_debt, 128).end_cell().begin_parse());
+        storage::save();
+
+        msgs::send_simple(
+            0,
+            staker,
+            begin_cell().store_uint(op::stake_claim, 32).store_uint(query_id, 64).store_coins(earned).end_cell(),
+            QCARRY_ALL_BALANCE);
+        return ();
+    }
+
+    if ctx::opcode() == op::stake_fund_rewards {
+        throw_unless(error::invalid_caller, equal_slices(ctx::sender(), storage::owner_address));
+        int fund_amount = ctx::value();
+        throw_unless(error::invalid_amount, (fund_amount > 0) & (storage::total_staked > 0));
+
+        storage::reward_balance += fund_amount;
+        storage::reward_per_token += math::mul_div(fund_amount, 1, storage::total_staked);
+        storage::save();
+        return ();
+    }
+
+    throw(error::wrong_op);
+}
+
+_ get_staking_data() method_id {
+    storage::load();
+    return (storage::owner_address, storage::total_staked, storage::reward_per_token, storage::reward_balance);
+}
+
+_ get_staker_balance(slice staker) method_id {
+    storage::load();
+    int key = staker.slice_hash();
+    (slice entry, int found) = storage::stake_dict.udict_get?(256, key);
+    throw_unless(error::insufficient_stake, found);
+    slice es = entry;
+    return (es~load_coins(), es~load_uint(128));
+}

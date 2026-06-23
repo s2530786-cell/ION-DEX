@@ -1,0 +1,43 @@
+# PHASE 2: AI Strategy Market - ACTIVE TASK
+
+## CURRENT MISSION (do this NOW, before anything else)
+
+Create these 4 files in order:
+
+### 1. frontend/src/pages/AiMarketPage.tsx (max 300 lines)
+- Wrap in DEXGridHarness from src/components/layout/DEXGridHarness
+- Strategy cards showing: name, returnRate, riskLevel, runtime, fundSize
+- Filter bar: risk level (Low/Medium/High), min return rate, strategy type
+- Detail modal: backtest chart, max drawdown, sharpe ratio
+- ALL colors from src/lib/design-tokens.ts (NEVER hardcode hex/rgba)
+- Import DesignTokens: import { DesignTokens } from '@/lib/design-tokens'
+
+### 2. frontend/src/components/ai/AiStrategyConfig.tsx (max 200 lines)
+- Form: fundAmount, stopLoss, takeProfit, maxSlippage
+- Strategy type dropdown: grid, trend, arbitrage, market_making
+- Input validation: positive numbers, stopLoss < takeProfit
+- ALL colors from DesignTokens
+
+### 3. backend/src/services/aiStrategy.ts
+- Strategy CRUD using JSON file storage (data/strategies.json)
+- POST /api/ai/strategy/simulate - mock simulation returning metrics
+- Types: Strategy { id, name, type, params, status, createdAt }
+
+### 4. backend/src/api/aiStrategy.routes.ts
+- Express router: GET /, POST /, GET /:id, PUT /:id, POST /:id/simulate
+- Input validation with express-validator or manual checks
+
+## RULES
+- UTF-8 no BOM
+- After creating each file, read it back to verify
+- Run: npx tsc --noEmit (must be 0 errors)
+- Run: D:\openclaw-tools\foundry\bin\forge.exe test --summary (must be 36/36)
+- Commit with descriptive message after all 4 files pass verification
+
+## DO NOT
+- Do not modify existing files (server.ts, package.json, etc.)
+- Do not create test files or WSL scripts
+- Do not touch .fif files or contract compilation output
+- Focus ONLY on these 4 files
+
+START NOW. Create file 1 first, then 2, then 3, then 4.

@@ -1,0 +1,16 @@
+---
+description: Auto-resume stopped work queues; run autonomous-work-watchdog when pipeline stalls
+globs:
+alwaysApply: false
+---
+
+# 自动续跑工单
+
+当用户提到「停了」「继续」「不要停」「自动跑完工单」，或 UI Batch / verify-100 流水线无进展时：
+
+1. 读取并遵循 `.cursor/skills/ion-autonomous-work-resume/SKILL.md`
+2. 检查 `.memory-bank/autonomous-work-queue.json` 与 `autonomous-work-watchdog.log`
+3. 有 shell 时启动 `scripts\run-autonomous-work-watchdog.cmd` 或 `node scripts/autonomous-work-watchdog.mjs --once`
+4. 不得并行启动第二路 `verify-100`；等待现有锁 + GREEN summary
+5. 队列全部 `completed` 前不得声称阶段结束
+6. **verify-100 未 GREEN 时，每次回复用户必须先展示进度**：运行 `node scripts/verify-100-progress-snapshot.mjs`（或读 `%TEMP%\ion-verify-100-summary-*.txt` 最新 PASS 行），用固定格式报告 `当前 N/100`、是否 lock、是否已 GREEN

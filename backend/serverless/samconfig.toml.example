@@ -1,0 +1,66 @@
+# Copy to samconfig.toml and adjust before deploy:
+#   copy serverless\samconfig.toml.example serverless\samconfig.toml
+#
+# Do NOT commit samconfig.toml if it contains secrets in parameter_overrides.
+
+version = 0.1
+
+[default.global.parameters]
+stack_name = "ion-dex-api-dev"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "ap-southeast-1"
+parameter_overrides = [
+  "StageName=dev",
+  "IonDataMode=auto",
+  "DbDriver=disabled",
+]
+
+[default.local_start_api.parameters]
+warm_containers = "EAGER"
+
+# --- testnet / staging profile ---
+[testnet.global.parameters]
+stack_name = "ion-dex-api-testnet"
+
+[testnet.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "ap-southeast-1"
+parameter_overrides = [
+  "StageName=testnet",
+  "IonDataMode=auto",
+  "BscRpcUrl=https://data-seed-prebsc-1-s1.binance.org:8545/",
+  "BscChainId=97",
+  "IonApiBaseUrl=https://api.testnet.ice.io/http/v2/",
+  "DbDriver=disabled",
+]
+
+# --- production profile (PostgresUrl / CmcApiKey via guided or CLI, not in git) ---
+[prod.global.parameters]
+stack_name = "ion-dex-api-prod"
+
+[prod.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "ap-southeast-1"
+parameter_overrides = [
+  "StageName=prod",
+  "IonDataMode=live",
+  "BscRpcUrl=https://bsc-dataseed.binance.org/",
+  "BscChainId=56",
+  "IonApiBaseUrl=https://api.mainnet.ice.io/http/v2/",
+  "DbDriver=postgres",
+]

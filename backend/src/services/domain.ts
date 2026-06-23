@@ -1,0 +1,51 @@
+export type DomainResolution = {
+  name: string;
+  available: boolean;
+  ownerAddress: string | null;
+  resolvedAddress: string | null;
+  expiresAt: string | null;
+  records: Array<{
+    key: "wallet" | "profile" | "avatar";
+    value: string;
+    status: "mock" | "planned";
+  }>;
+  marketplace: {
+    listed: boolean;
+    floorIon: string;
+    lastSaleIon: string | null;
+  };
+  provenance: {
+    source: "session-catalog" | "upstream-unavailable" | "ion-indexer";
+    note: string;
+  };
+};
+
+export { resolveDomainWithAdapter } from "./ion-dns-adapter.js";
+
+/** Sync catalog resolver for adapter registry smoke paths in test-mock. */
+export function resolveDomain(name: string): DomainResolution {
+  const demoOwned = name === "demo.ion" || name === "iondex.ion";
+  return {
+    name,
+    available: !demoOwned,
+    ownerAddress: demoOwned ? "ion1demoowner000000000000000000000000000000000000" : null,
+    resolvedAddress: demoOwned ? "ion1resolvedwallet000000000000000000000000000000" : null,
+    expiresAt: demoOwned ? "2027-05-18T00:00:00.000Z" : null,
+    records: demoOwned
+      ? [
+          { key: "wallet", value: "ion1resolvedwallet000000000000000000000000000000", status: "planned" },
+          { key: "profile", value: "ION DEX demo profile", status: "planned" },
+          { key: "avatar", value: "aurora-neon", status: "planned" },
+        ]
+      : [],
+    marketplace: {
+      listed: !demoOwned,
+      floorIon: demoOwned ? "0.000" : "2500.000",
+      lastSaleIon: demoOwned ? "4200.000" : null,
+    },
+    provenance: {
+      source: "session-catalog",
+      note: "Catalog resolver for test-mock and registry adapter smoke.",
+    },
+  };
+}

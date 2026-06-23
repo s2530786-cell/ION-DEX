@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "description": "ION DEX autonomous work queues",
+  "queues": [
+    {
+      "id": "p1-dashboard-w6-pipeline",
+      "title": "P1 Dashboard quote -> verify-full -> verify-100 -> W6 kickoff",
+      "status": "active",
+      "autoAdvance": true,
+      "activatedAt": "2026-06-14T00:00:00.000Z",
+      "steps": [
+        {
+          "id": "dashboard-p1-quote-ui",
+          "title": "Dashboard P1 quote line delivery",
+          "status": "completed",
+          "kind": "shell",
+          "command": "echo dashboard-p1-quote-ui-done",
+          "note": "DashboardSwapPanel + buildP1QuoteSummary",
+          "completedAt": "2026-05-29T00:00:00.000Z"
+        },
+        {
+          "id": "verify-full",
+          "title": "P1 Dashboard quote gate verify-full",
+          "status": "completed",
+          "kind": "verify-full",
+          "requires": [
+            "dashboard-p1-quote-ui"
+          ]
+        },
+        {
+          "id": "verify-100",
+          "title": "P1 Swap/Dashboard frontend gate verify-100",
+          "status": "running",
+          "kind": "verify-100",
+          "allowExternal": true,
+          "requires": [
+            "verify-full"
+          ],
+          "note": "stale 2026-06-13 run cleared after 2026-06-14 frontend verify recovery; rerun with a fresh guarded proof before W6",
+          "external": true,
+          "resume": {
+            "startAt": 11,
+            "initialPassed": 10,
+            "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260618-222338.txt",
+            "logPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-20260618-222338.log"
+          }
+        },
+        {
+          "id": "git-commit-push-p1-dashboard",
+          "title": "P1 Dashboard guarded commit + push after verify-100 GREEN",
+          "status": "pending",
+          "kind": "git-commit-push",
+          "batch": "P1-DASHBOARD",
+          "requires": [
+            "verify-100"
+          ]
+        },
+        {
+          "id": "w6-agent-kickoff",
+          "title": "W6 Sandwich + Bridge agent kickoff",
+          "status": "pending",
+          "kind": "shell",
+          "command": "echo w6-sandwich-bridge-agent-phase",
+          "requires": [
+            "git-commit-push-p1-dashboard"
+          ],
+          "note": "actual W6 progress continues through SESSION_STATE and guarded workflow"
+        }
+      ]
+    },
+    {
+      "id": "ui-design-phase-b",
+      "title": "UI Batch B -> verify-100 GREEN -> commit+push -> Batch C/D",
+      "status": "paused",
+      "autoAdvance": true,
+      "activatedAt": "2026-05-28T06:40:00.000Z",
+      "steps": [
+        {
+          "id": "verify-full",
+          "title": "feature gate verify-full",
+          "status": "completed",
+          "kind": "verify-full"
+        },
+        {
+          "id": "screenshots",
+          "title": "375/768/1440 screenshots",
+          "status": "completed",
+          "kind": "shell",
+          "command": "node scripts/capture-ui-signoff-screenshots.mjs --batch B"
+        },
+        {
+          "id": "verify-100",
+          "title": "engineering gate verify-100 x100",
+          "status": "completed",
+          "kind": "verify-100",
+          "allowExternal": true,
+          "note": "historical GREEN proof preserved for batch B",
+          "resume": {
+            "startAt": 96,
+            "initialPassed": 95,
+            "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260528-114641.txt",
+            "logPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-20260528-114641.log"
+          },
+          "external": false,
+          "completedAt": "2026-05-28T08:05:46.418Z",
+          "summaryPath": "C:\\Users\\admin\\AppData\\Local\\Temp\\ion-verify-100-summary-20260528-114641.txt"
+        },
+        {
+          "id": "git-commit-push-b",
+          "title": "Batch B guarded commit + push after verify-100 GREEN",
+          "status": "failed",
+          "kind": "git-commit-push",
+          "batch": "B",
+          "requires": [
+            "verify-100"
+          ],
+          "error": "git-commit-push exit 1"
+        },
+        {
+          "id": "batch-c-auto",
+          "title": "Batch C full autonomous pipeline",
+          "status": "pending",
+          "kind": "shell",
+          "command": "node scripts/ui-design-phase-pipeline.mjs --batch C --commit-push --auto-next",
+          "requires": [
+            "git-commit-push-b"
+          ]
+        },
+        {
+          "id": "stress-smoke-100",
+          "title": "Batch B smoke stress x100",
+          "status": "pending",
+          "kind": "shell",
+          "command": "node scripts/stress-playwright-100.mjs --spec e2e/smoke.spec.ts --rounds 100",
+          "requires": [
+            "git-commit-push-b"
+          ],
+          "note": "scheduled after guarded commit when the historical batch is resumed"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "lastTickAt": "2026-06-19T05:49:25.118Z",
+  "activeQueueId": "p1-dashboard-w6-pipeline",
+  "steps": [
+    {
+      "id": "dashboard-p1-quote-ui",
+      "status": "completed"
+    },
+    {
+      "id": "verify-full",
+      "status": "completed"
+    },
+    {
+      "id": "verify-100",
+      "status": "running",
+      "external": true
+    },
+    {
+      "id": "git-commit-push-p1-dashboard",
+      "status": "pending"
+    },
+    {
+      "id": "w6-agent-kickoff",
+      "status": "pending"
+    }
+  ]
+}
