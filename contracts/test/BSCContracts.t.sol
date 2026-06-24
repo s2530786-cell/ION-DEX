@@ -101,9 +101,9 @@ contract BSCContractsTest is Test {
         vm.prank(owner);
         vault.setBridgeRelay(address(relay));
         vm.prank(owner);
-        vault.setRelayer(address(relay), true);
+        vault.setRelayerDirect(address(relay), true);
         vm.prank(owner);
-        relay.addRelayer(address(this));
+        relay.addRelayerDirect(address(this));
         token.mint(user, 1_000_000 ether);
     }
 

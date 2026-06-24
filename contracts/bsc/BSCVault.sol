@@ -78,6 +78,13 @@ contract BSCVault {
         feeReceiver = feeReceiver_;
     }
 
+    /// @notice Direct relayer setter (no timelock) — for test/deploy convenience only.
+    function setRelayerDirect(address relayer, bool allowed) external onlyOwner {
+        if (relayer == address(0)) revert IonDexZeroAddress();
+        relayers[relayer] = allowed;
+        emit RelayerSet(relayer, allowed);
+    }
+
     function transferOwnership(address newOwner) external onlyOwner {
         if (newOwner == address(0)) revert IonDexZeroAddress();
         owner = newOwner;

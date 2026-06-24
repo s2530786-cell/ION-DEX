@@ -67,7 +67,7 @@ contract SecurityMatrixV3Test is Test {
         burn = new IonBurn(owner, OFFICIAL_BSC_ION, address(oracle), 90_000_000, 110_000_000);
 
         feeReceiver = new FeeReceiverV2(owner, OFFICIAL_BSC_ION, treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
-        orderBook = new OrderBookV2(address(admin), OFFICIAL_BSC_ION);
+        orderBook = new OrderBookV2(address(admin), OFFICIAL_BSC_ION, address(OFFICIAL_BSC_ION));
         vaultLock = new VaultLockV2(OFFICIAL_BSC_ION, 7 days);
 
         vm.prank(owner);
@@ -78,8 +78,8 @@ contract SecurityMatrixV3Test is Test {
         burn.setFeeReceiver(address(feeReceiver));
 
         vm.startPrank(owner);
-        vault.setRelayer(address(relay), true);
-        relay.addRelayer(address(this));
+        vault.setRelayerDirect(address(relay), true);
+        relay.addRelayerDirect(address(this));
         vm.stopPrank();
 
         ion.mint(user, 1_000_000_000 ether);
@@ -179,7 +179,7 @@ contract SecurityMatrixV3Test is Test {
         vm.startPrank(owner);
         for (uint256 i = 0; i < MAX_RELAYERS - 1; i++) {
             address r = address(uint160(0x1000 + i));
-            try relay.addRelayer(r) {} catch {}
+            try relay.addRelayerDirect(r) {} catch {}
         }
         vm.stopPrank();
 
@@ -187,7 +187,7 @@ contract SecurityMatrixV3Test is Test {
             address r2 = address(uint160(0x2000 + i));
             vm.prank(owner);
             vm.expectRevert(BridgeRelayV2.IonDexInvalidQuorum.selector);
-            relay.addRelayer(r2);
+            relay.addRelayerDirect(r2);
         }
     }
 
@@ -258,8 +258,8 @@ contract SecurityMatrixV3Test is Test {
 
         vm.startPrank(owner);
         address relayer2 = address(0x2001);
-        relay.addRelayer(relayer2);
-        relay.setQuorum(2);
+        relay.addRelayerDirect(relayer2);
+        relay.scheduleSetQuorum(2); vm.warp(block.timestamp + 48 hours + 1); relay.executePendingChanges();
         vm.stopPrank();
 for (uint256 i = 0; i < ITER; i++) {
             uint256 amount = 1 ether;
@@ -304,7 +304,7 @@ for (uint256 i = 0; i < ITER; i++) {
     function test_Security_Bonus_OrderBookDeadline_100x() public {
         vm.startPrank(user);
         MockERC20(OFFICIAL_BSC_ION).approve(address(orderBook), type(uint256).max);
-        orderBook.deposit(1_000_000 ether);
+        orderBook.depositQuote(1_000_000 ether);
         vm.stopPrank();
 
         for (uint256 i = 0; i < ITER; i++) {

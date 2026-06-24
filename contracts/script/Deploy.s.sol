@@ -76,7 +76,6 @@ contract Deploy is Script {
         IonSwapRouterV2 router = new IonSwapRouterV2(deployer);
 
         vault.setBridgeRelay(address(relay));
-        vault.setRelayer(address(relay), true);
         vault.setFeeReceiver(address(feeReceiver));
         router.setFeeReceiver(address(feeReceiver));
 

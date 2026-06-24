@@ -1,4 +1,4 @@
-# Current Tasks — CO Dispatch 2026-06-24 14:26 CST
+# Current Tasks — CO Dispatch 2026-06-24 17:07 CST
 
 ## P0 Tasks (Gate: 11 roles + 4 system conditions)
 
@@ -6,7 +6,7 @@
 
 ### [BE] Build Engineer — Page Routes & Build Config
 **File:** `cursor-queue/0001-p0-pages-task.md`
-**Keywords:** build(1), config(1), next(1), ci(1), deploy(1) → BE=5
+**Keywords:** build(1), config(1), next(1), deploy(0), ci(0) → BE=3
 **Permission:** R1→R2 (config/build)
 **Steps:**
 1. Create `src/pages/index.tsx` — Home page wrapping DEXConsole
@@ -20,23 +20,34 @@
 
 ---
 
+### [VQE] Visual QA Engineer — Visual Diff QA Pass
+**File:** `cursor-queue/p0-visual-qa-pass.md`
+**Keywords:** test(1), visual(1), screenshot(1), diff(1), QA(1), baseline(1) → VQE=6
+**Permission:** R1 (source/config/build/deploy)
+**Steps:**
+1. Run `node scripts/visual-diff.mjs` to compare current render vs baselines
+2. For each page with pixel diff > 0%: identify deviating component
+3. Fix ONLY via DesignTokens.ts values — NO hardcoded hex/rgba
+4. Re-run diff until < 1% for all 5 pages
+5. After all pass: verify DEXConsole page routes between 5 pages with tab navigation
+**Constraints:** ALL colors from design-tokens.ts, ALL pages in DEXGridHarness, script at scripts/visual-diff.mjs
+
+---
+
 ### [UCA] UI Component Architect — Swap Page Full Implementation
 **File:** `cursor-queue/p0-frontend-tasks.md` (Task 1)
 **Keywords:** component(1), api(1), interface(1), swap(1), router(1) → UCA=5
 **Permission:** R2 (source)
 **Steps:**
-1. READ `src/lib/design-tokens.ts` first — all colors/spacing from DesignTokens
-2. READ `.cursorrules` — Zero-Visual-Discretion, Grid-Only, Asset-Img-Only
-3. Implement `src/app/swap/page.tsx`:
-   - Token select dropdown (ION/WBNB/USDT)
-   - Amount input with "MAX" button
-   - Price quote display (rate + slippage)
-   - Swap button with confirmation
-4. Connect to PancakeSwap router (real contract, not mock)
-5. Wrap in DEXGridHarness
-6. State "Layout Intent Analysis" before outputting code
-7. After completion: run `npx playwright test` for visual regression
-**Constraints:** No mock data, no hardcoded colors, real contract only
+1. Read `src/lib/design-tokens.ts` and `.cursorrules` FIRST
+2. State "Layout Intent Analysis" before coding
+3. Implement token select dropdown (ION/WBNB/USDT) via real PancakeSwap router
+4. Implement amount input with "MAX" button
+5. Implement price quote display (rate + slippage)
+6. Implement swap button with confirmation flow
+7. Wrap everything in DEXGridHarness, use DesignTokens only
+8. After completion: run `npx playwright test` for visual regression
+**Constraints:** ZERO hardcoded colors, Grid-Only layout, Asset-Img-Only, connect to real PancakeSwap router
 
 ---
 
@@ -45,16 +56,15 @@
 **Keywords:** component(1), api(1), interface(1), pool(1) → UCA=4
 **Permission:** R2 (source)
 **Steps:**
-1. READ `src/lib/design-tokens.ts` first
-2. Implement `src/app/pool/page.tsx`:
-   - Pool list with TVL/APR/Volume columns
-   - Add Liquidity form (token pair + amounts)
-   - Remove Liquidity form
-3. Use PoolCard component from `src/components/DEX/PoolCard.tsx`
-4. Real data from PancakeSwap subgraph/on-chain
-5. Wrap in DEXGridHarness
-6. State "Layout Intent Analysis" before outputting code
-**Constraints:** No mock data, no hardcoded colors
+1. Read `src/lib/design-tokens.ts` and `.cursorrules` FIRST
+2. State "Layout Intent Analysis" before coding
+3. Implement pool list with TVL/APR/Volume columns (real data from PancakeSwap subgraph)
+4. Implement Add Liquidity form (token pair + amounts)
+5. Implement Remove Liquidity form
+6. Use existing PoolCard component from `src/components/DEX/PoolCard.tsx`
+7. Wrap in DEXGridHarness, use DesignTokens only
+8. After completion: run `npx playwright test` for visual regression
+**Constraints:** ZERO mock data, real on-chain/subgraph data, all colors from design-tokens.ts
 
 ---
 
@@ -63,16 +73,16 @@
 **Keywords:** component(1), api(1), interface(1), stake(1) → UCA=4
 **Permission:** R2 (source)
 **Steps:**
-1. READ `src/lib/design-tokens.ts` first
-2. Implement `src/app/stake/page.tsx`:
-   - Stake ION form (amount + duration selector)
-   - Unstake form
-   - Rewards display
-   - APR calculator
-3. Use StakePanel component
-4. Wrap in DEXGridHarness
-5. State "Layout Intent Analysis" before outputting code
-**Constraints:** No mock data, no hardcoded colors
+1. Read `src/lib/design-tokens.ts` and `.cursorrules` FIRST
+2. State "Layout Intent Analysis" before coding
+3. Implement Stake ION form (amount + duration selector)
+4. Implement Unstake form
+5. Implement Rewards display
+6. Implement APR calculator
+7. Use existing StakePanel component
+8. Wrap in DEXGridHarness, use DesignTokens only
+9. After completion: run `npx playwright test` for visual regression
+**Constraints:** NO mock data, real contract connections, all colors from design-tokens.ts
 
 ---
 
@@ -81,104 +91,82 @@
 **Keywords:** component(1), api(1), interface(1), bridge(1) → UCA=4
 **Permission:** R2 (source)
 **Steps:**
-1. READ `src/lib/design-tokens.ts` first
-2. Implement `src/app/bridge/page.tsx`:
-   - Chain selector (BSC ↔ ION)
-   - Token selector
-   - Amount input
-   - Bridge status tracker
-3. Use real bridge contract addresses
-4. Wrap in DEXGridHarness
-5. State "Layout Intent Analysis" before outputting code
-**Constraints:** No mock data, no hardcoded colors
+1. Read `src/lib/design-tokens.ts` and `.cursorrules` FIRST
+2. State "Layout Intent Analysis" before coding
+3. Implement chain selector (BSC ↔ ION)
+4. Implement token selector
+5. Implement amount input
+6. Implement bridge status tracker
+7. Use real bridge contract addresses
+8. Wrap in DEXGridHarness, use DesignTokens only
+9. After completion: run `npx playwright test` for visual regression
+**Constraints:** Real bridge contracts, NO mock data, all colors from design-tokens.ts
 
 ---
 
 ### [LE] Layout Engineer — Home/Dashboard Polish
 **File:** `cursor-queue/p0-frontend-tasks.md` (Task 5)
-**Keywords:** layout(1), grid(1), dashboard(1) → LE=3
+**Keywords:** layout(1), grid(1), dashboard(1→PM=1), responsive(0) → LE=2, PM=1
 **Permission:** R2 (source)
 **Steps:**
-1. READ `src/lib/design-tokens.ts` first
-2. Implement `src/app/page.tsx`:
-   - ION price chart (from DexScreener/GeckoTerminal)
-   - TVL display
-   - 24h volume
-   - Quick action cards (Swap/Pool/Stake/Bridge)
-3. Use DEXGridHarness for layout
-4. State "Layout Intent Analysis" before outputting code
-**Constraints:** CSS Grid only, no margin-based positioning, DesignTokens only
+1. Read `src/lib/design-tokens.ts` and `.cursorrules` FIRST
+2. State "Layout Intent Analysis" before coding
+3. Implement ION price chart (DexScreener/GeckoTerminal data)
+4. Implement TVL display
+5. Implement 24h volume display
+6. Implement Quick Action cards (Swap/Pool/Stake/Bridge)
+7. Use CSS Grid layout, responsive breakpoints
+8. Wrap in DEXGridHarness, use DesignTokens only
+9. After completion: run `npx playwright test` for visual regression
+**Constraints:** Real market data, Grid-Only layout, no hardcoded colors
 
 ---
 
-### [VQE] Visual QA Engineer — Visual Diff QA Pass (All 5 Pages)
-**File:** `cursor-queue/p0-visual-qa-pass.md`
-**Keywords:** test(1), visual(1), screenshot(1), diff(1), QA(1), baseline(1) → VQE=6
-**Permission:** R1 (source/config/build/deploy)
-**Steps:**
-1. Run `node scripts/visual-diff.mjs` to compare current render vs baselines
-2. For each page with pixel diff > 0%:
-   - Identify which component caused the deviation
-   - Fix the component (ONLY modify DesignTokens.ts values — NO hardcoded colors)
-   - Re-run diff until < 1%
-3. After all 5 pass: create a DEXConsole page that routes between the 5 pages with tab navigation
-**Constraints:** ALL colors from design-tokens.ts, ALL pages in DEXGridHarness, target 5/5 pages < 1% diff
+## P1 Tasks (Gate: 7 roles check)
 
----
-
-## P1 Tasks (Gate: 7 roles — BLOCKED awaiting P0 all-green)
-
----
-
-### [CE] CSS Engineer — UI Polish & Navigation (Phase 1)
+### [CE] CSS Engineer — UI Polish & Navigation
 **File:** `cursor-queue/p1-ui-polish.md`
-**Keywords:** css(1), style(1), glow(1), glass(1), polish(1) → CE=5
+**Keywords:** glow(1→CE), neon(0), polish(1→CE/style), tab(0), navigation(0), animation(0) → CE=2
+**Secondary roles:** IE (navigation/transition) → IE=1, GSE (grid layout) → GSE=1
 **Permission:** R2 (source)
 **Steps:**
-1. READ constraint files: design-tokens.ts, DEXGridHarness.tsx, ui-harness-protocol.mdc
-2. Polish 5 pages (src/pages/):
-   - index.tsx: tab nav bar (Swap|Pool|Stake|Bridge) with neon glow active indicator
-   - swap.tsx: token selector dropdowns, price impact display
-   - pool.tsx: LiquidityPanel with pair display
-   - stake.tsx: staking stats (APY, TVL, your stake)
-   - bridge.tsx: BSC↔ION chain selector with arrow animation
-3. Create DEXConsole.tsx: tab navigation + localStorage persistence
-4. Run `node scripts/visual-diff.mjs all` — all pages must pass < 1% diff
-**Constraints:** ZERO hardcoded hex/rgba, CSS Grid only, DesignTokens only
+1. READ constraint files FIRST: design-tokens.ts, DEXGridHarness.tsx, .cursor/rules/ui-harness-protocol.mdc
+2. Polish index.tsx: Add tab nav bar (Swap|Pool|Stake|Bridge) with neon glow active indicator
+3. Polish swap.tsx: Add token selector dropdowns, price impact display
+4. Polish pool.tsx: Add LiquidityPanel with pair display
+5. Polish stake.tsx: Add staking stats (APY, TVL, your stake)
+6. Polish bridge.tsx: Add BSC↔ION chain selector with arrow animation
+7. Create DEXConsole.tsx: Tab nav (cyan neon glow on active), renders selected page, localStorage persistence
+8. Run `node scripts/visual-diff.mjs all` — all pages < 1% diff
+**Constraints:** ALL colors from DesignTokens, ALL pages in DEXGridHarness, CSS Grid only, no margin-based positioning
 
 ---
 
 ## Execution Order
 
 ```
-P0-1 [BE]    → Page Routes & Build Config
-      ↓
-P0-7 [VQE]   → Visual Diff QA Pass (baseline verification)
-      ↓
-P0-2 [UCA]   → Swap Page (can parallel with P0-3~P0-6)
-P0-3 [UCA]   → Pool Page
-P0-4 [UCA]   → Stake Page
-P0-5 [UCA]   → Bridge Page
-P0-6 [LE]    → Home/Dashboard
-      ↓
-P1-1 [CE]    → UI Polish & Navigation (BLOCKED until P0 all-green)
+P0 → BE (Page Routes) → VQE (Visual Diff QA Pass)
+    ↓
+    UCA×4 (Swap→Pool→Stake→Bridge) + LE (Home Dashboard)
+    ↓
+P1 → CE (UI Polish & Navigation)
 ```
 
 ## Valve Status
 
 | Valve | Status | Detail |
 |-------|--------|--------|
-| P0 Valve | 🔹 IN PROGRESS | BE×1 + UCA×4 + LE×1 + VQE×1 pending execution |
+| P0 Valve | 🔹 IN PROGRESS | BE×1 + VQE×1 + UCA×4 + LE×1 = 7 tasks pending |
 | P1 Valve | 🔒 BLOCKED | Awaiting P0 Valve all-green |
 | P2 Valve | 🔒 BLOCKED | Awaiting P1 Valve all-green |
 | Release Valve | 🔒 BLOCKED | Awaiting P2 Valve all-green |
 
 ## Role Assignment Summary
 
-| Role | Tasks | Permission | Active |
-|------|-------|------------|--------|
-| BE | 1 (P0-1) | R1→R2 config/build | ✔ |
-| UCA | 4 (P0-2~P0-5) | R2 source | ✔ |
-| LE | 1 (P0-6) | R2 source | ✔ |
-| VQE | 1 (P0-7) | R1 source/config/build/deploy | ✔ |
-| CE | 1 (P1-1) | R2 source | 🔒 P1 blocked |
+| Role | Tasks | Permission | Priority |
+|------|-------|------------|----------|
+| BE | 1 (Page Routes) | R1→R2 config/build | P0 |
+| VQE | 1 (Visual Diff QA) | R1 source/config/build/deploy | P0 |
+| UCA | 4 (Swap/Pool/Stake/Bridge) | R2 source | P0 |
+| LE | 1 (Home Dashboard) | R2 source | P0 |
+| CE | 1 (UI Polish) | R2 source | P1 blocked |

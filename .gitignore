@@ -100,4 +100,10 @@ output/
 
 # Deprecated / removed directories
 gmx-contracts/
-dss
+dss/
+
+# Cursor local memory (machine-local, not source)
+.memory-bank/
+
+# Test reports (local only)
+test_reports/

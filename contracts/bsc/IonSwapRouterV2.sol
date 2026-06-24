@@ -70,3 +70,19 @@ contract IonSwapRouterV2 is ReentrancyGuard {
         owner = newOwner;
     }
 }
+
+contract IonSwapPoolMock is ISwapPool {
+    uint256 public fixedOutput;
+
+    constructor(uint256 _fixedOutput) {
+        fixedOutput = _fixedOutput;
+    }
+
+    function setFixedOutput(uint256 _output) external {
+        fixedOutput = _output;
+    }
+
+    function swapExactIn(uint256, uint256, address) external view returns (uint256) {
+        return fixedOutput;
+    }
+}

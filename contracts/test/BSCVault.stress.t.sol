@@ -22,8 +22,8 @@ contract BSCVaultStressTest is Test {
         relay = new BridgeRelayV2(owner, address(vault), 1);
         vm.startPrank(owner);
         vault.setBridgeRelay(address(relay));
-        vault.setRelayer(address(relay), true);
-        relay.addRelayer(address(this));
+        vault.setRelayerDirect(address(relay), true);
+        relay.addRelayerDirect(address(this));
         vm.stopPrank();
         token.mint(user, 1_000_000_000 ether);
     }

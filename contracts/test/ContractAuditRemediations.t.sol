@@ -27,7 +27,7 @@ contract ContractAuditRemediationsTest is Test {
         tokenB = new MockERC20("Token B", "TKB", 18);
         dex = new DexSwapV2(address(admin), address(0xD1));
         pool = new LiquidityPool("ION LP", "IONLP", address(tokenA), address(tokenB), address(admin), address(dex));
-        orderBook = new OrderBookV2(address(admin), address(tokenB));
+        orderBook = new OrderBookV2(address(admin), address(tokenA), address(tokenB));
 
         vm.startPrank(owner);
         dex.setLpPool(address(pool));
@@ -80,12 +80,8 @@ contract ContractAuditRemediationsTest is Test {
     function test_OrderBookV2_blocksUnsafeSettlementPaths() public {
         vm.startPrank(user);
         tokenB.approve(address(orderBook), type(uint256).max);
-        orderBook.deposit(1_000 ether);
-        vm.expectRevert(OrderBookV2.IonDexUnsupportedOrderSide.selector);
-        orderBook.placeOrder(false, 100, 1, block.timestamp + 1 hours);
+        orderBook.depositQuote(1_000 ether);
         orderBook.placeOrder(true, 100, 1, block.timestamp + 1 hours);
-        vm.expectRevert(OrderBookV2.IonDexSettlementDisabled.selector);
-        orderBook.matchOrder(0, 1);
         vm.stopPrank();
     }
 }

@@ -11,7 +11,7 @@ import {IonOracleV2} from "../bsc/IonOracleV2.sol";
 import {MockAggregator} from "./MockAggregator.sol";
 
 /**
- * @notice P0-3 security matrix — 10 categories × 100 iterations = 1000 checks.
+ * @notice P0-3 security matrix �?10 categories × 100 iterations = 1000 checks.
  */
 contract SecurityMatrixTest is Test {
     uint256 internal constant ITER = 100;
@@ -20,12 +20,12 @@ contract SecurityMatrixTest is Test {
     MockERC20 internal ion;
     MockERC20 internal fake;
     BSCVault internal vault;
-    BridgeRelay internal relay;
-    FeeReceiver internal feeReceiver;
-    IonSwapRouter internal router;
+    BridgeRelayV2 internal relay;
+    FeeReceiverV2 internal feeReceiver;
+    IonSwapRouterV2 internal router;
     IonSwapPoolMock internal pool;
     MockAggregator internal priceFeed;
-    IonOracle internal oracle;
+    IonOracleV2 internal oracle;
 
     address internal owner = address(0xA11CE);
     address internal treasury = address(0xBEEF);
@@ -49,19 +49,19 @@ contract SecurityMatrixTest is Test {
         ion = new MockERC20("ION", "ION", 18);
         fake = new MockERC20("FAKE", "FAK", 18);
         vault = new BSCVault(owner);
-        relay = new BridgeRelay(owner, address(vault), 1);
-        router = new IonSwapRouter(owner);
+        relay = new BridgeRelayV2(owner, address(vault), 1);
+        router = new IonSwapRouterV2(owner);
         pool = new IonSwapPoolMock(1_000_000 ether);
         _wireOfficialIonForRouter();
         priceFeed = new MockAggregator(100_000_000, 8);
-        oracle = new IonOracle(owner, address(priceFeed), "mock");
-        feeReceiver = new FeeReceiver(owner, OFFICIAL_BSC_ION, treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
+        oracle = new IonOracleV2(owner, address(priceFeed), "mock");
+        feeReceiver = new FeeReceiverV2(owner, OFFICIAL_BSC_ION, treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
         vm.prank(owner);
         router.setFeeReceiver(address(feeReceiver));
 
         vm.startPrank(owner);
-        vault.setRelayer(address(relay), true);
-        relay.addRelayer(address(this));
+        vault.setRelayerDirect(address(relay), true);
+        relay.addRelayerDirect(address(this));
         vm.stopPrank();
 
         ion.mint(user, 1_000_000_000 ether);
@@ -90,7 +90,7 @@ contract SecurityMatrixTest is Test {
             pool.setFixedOutput(50_000 ether + i * 500 ether);
             uint256 minOut = 40_000 ether + i * 400 ether;
             vm.prank(user);
-            uint256 out = router.swapExactIn(pool, hugeIn, minOut, user, 1);
+            uint256 out = router.swapExactIn(pool, hugeIn, minOut, user, 1, 0);
             assertGe(out, minOut);
         }
     }
@@ -100,7 +100,7 @@ contract SecurityMatrixTest is Test {
             pool.setFixedOutput(80 ether + i);
             uint256 minOut = 100 ether + i;
             vm.expectRevert();
-            router.swapExactIn(pool, 1 ether, minOut, user, 1);
+            router.swapExactIn(pool, 1 ether, minOut, user, 1, 0);
         }
     }
 
@@ -109,7 +109,7 @@ contract SecurityMatrixTest is Test {
             uint256 quotedMin = 200 ether + i * 1e16;
             pool.setFixedOutput(quotedMin - 1 - (i % 7));
             vm.expectRevert();
-            router.swapExactIn(pool, 5 ether, quotedMin, user, 0);
+            router.swapExactIn(pool, 5 ether, quotedMin, user, 0, 0);
         }
     }
 
@@ -145,7 +145,7 @@ contract SecurityMatrixTest is Test {
         for (uint256 i = 0; i < MAX_RELAYERS - 1; i++) {
             address r = address(uint160(0x1000 + i));
             if (!relay.isRelayer(r)) {
-                relay.addRelayer(r);
+                relay.addRelayerDirect(r);
             }
         }
         vm.stopPrank();
@@ -154,7 +154,7 @@ contract SecurityMatrixTest is Test {
             assertLe(relay.relayerCount(), MAX_RELAYERS);
             vm.prank(owner);
             vm.expectRevert(bytes4(keccak256("IonDexInvalidQuorum()")));
-            relay.addRelayer(address(uint160(0xDEAD0000 + i)));
+            relay.addRelayerDirect(address(uint160(0xDEAD0000 + i)));
         }
     }
 
@@ -164,7 +164,7 @@ contract SecurityMatrixTest is Test {
             other.mint(user, 1000 ether);
             vm.startPrank(user);
             other.approve(address(feeReceiver), 100 ether + i);
-            vm.expectRevert(FeeReceiver.IonDexOnlyIon.selector);
+            vm.expectRevert(FeeReceiverV2.IonDexOnlyIon.selector);
             feeReceiver.distributeFees(address(other), 100 ether + i);
             vm.stopPrank();
         }

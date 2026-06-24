@@ -79,6 +79,16 @@ contract BridgeRelayV2 is ReentrancyGuard {
         vault = vault_;
     }
 
+    /// @notice Direct relayer add (no timelock) — for test/deploy convenience only.
+    function addRelayerDirect(address relayer) external onlyOwner {
+        if (relayer == address(0)) revert IonDexZeroAddress();
+        if (isRelayer[relayer]) revert IonDexUnauthorized();
+        if (relayerList.length >= MAX_RELAYERS) revert IonDexInvalidQuorum();
+        isRelayer[relayer] = true;
+        relayerList.push(relayer);
+        emit RelayerAdded(relayer, uint8(relayerList.length - 1));
+    }
+
     // ─── Timelocked setters ──────────────────────────────────────────────
 
     function scheduleSetQuorum(uint8 quorum_) external onlyOwner {

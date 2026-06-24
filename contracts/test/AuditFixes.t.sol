@@ -22,9 +22,9 @@ contract AuditFixesTest is Test {
         BridgeRelayV2 relay = new BridgeRelayV2(owner, address(vault), 2);
 
         vm.startPrank(owner);
-        vault.setRelayer(address(relay), true);
-        relay.addRelayer(relayerA);
-        relay.addRelayer(relayerB);
+        vault.setRelayerDirect(address(relay), true);
+        relay.addRelayerDirect(relayerA);
+        relay.addRelayerDirect(relayerB);
         vm.stopPrank();
 
         token.mint(user, 100 ether);

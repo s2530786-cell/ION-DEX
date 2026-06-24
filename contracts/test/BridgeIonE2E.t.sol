@@ -8,7 +8,7 @@ import {BridgeRelayV2} from "../bsc/BridgeRelayV2.sol";
 import {IonMintLedger} from "./mocks/IonMintLedger.sol";
 
 /**
- * @notice P0-1c — BSC lock → ION credit + ION → BSC release E2E (100 rounds each direction).
+ * @notice P0-1c �?BSC lock �?ION credit + ION �?BSC release E2E (100 rounds each direction).
  */
 contract BridgeIonE2ETest is Test {
     MockERC20 internal token;
@@ -30,8 +30,8 @@ contract BridgeIonE2ETest is Test {
 
         vm.startPrank(owner);
         vault.setBridgeRelay(address(relay));
-        vault.setRelayer(address(relay), true);
-        relay.addRelayer(address(this));
+        vault.setRelayerDirect(address(relay), true);
+        relay.addRelayerDirect(address(this));
         ionLedger.setRelayer(ionRelayer, true);
         vm.stopPrank();
 
@@ -48,7 +48,7 @@ contract BridgeIonE2ETest is Test {
         return keccak256(abi.encodePacked("ion-bridge-lock", bscUser, bscToken, amount, ionRecipient, lockIndex));
     }
 
-    /// @dev BSC → ION: lock escrow on BSC, relayer credits ION-side ledger.
+    /// @dev BSC �?ION: lock escrow on BSC, relayer credits ION-side ledger.
     function test_P0_1c_BscLock_to_IonCredit_100Rounds() public {
         vm.startPrank(user);
         token.approve(address(vault), type(uint256).max);
@@ -78,7 +78,7 @@ contract BridgeIonE2ETest is Test {
         }
     }
 
-    /// @dev ION → BSC: relayer attestation releases escrow back to user on BSC.
+    /// @dev ION �?BSC: relayer attestation releases escrow back to user on BSC.
     function test_P0_1c_IonToBsc_Release_100Rounds() public {
         vm.startPrank(user);
         token.approve(address(vault), type(uint256).max);
