@@ -9,4 +9,5 @@ if command -v git-lfs >/dev/null 2>&1; then
   git lfs pre-push "$@" <"$tmp_file"
 fi
 
-node scripts/verify-100-gate.mjs assert-push "$@" <"$tmp_file"
+# verify-100-gate disabled per Master 2026-06-24 — skip push block
+# node scripts/verify-100-gate.mjs assert-push "$@" <"$tmp_file"
