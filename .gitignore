@@ -89,3 +89,15 @@ cache/
 .next/
 *.env
 !.env.example
+
+# Build / runtime caches (machine-local)
+node-compile-cache/
+playwright-transform-cache/
+output/
+
+# Visual QA screenshots (local only)
+.visual-screenshots/
+
+# Deprecated / removed directories
+gmx-contracts/
+dss
