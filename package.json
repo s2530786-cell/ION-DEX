@@ -18,9 +18,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
-    "claude-flow": "3.7.0-alpha.35",
     "jsdom": "^29.1.1",
-    "lost-pixel": "^3.22.0",
     "pixelmatch": "^7.2.0",
     "playwright": "^1.61.0",
     "viem": "^2.52.2",
@@ -56,6 +54,8 @@
     "axios": "1.13.2",
     "form-data": "4.0.5",
     "ws": "8.18.3",
+    "isows": "1.0.6",
+    "postcss": "8.5.10",
     "uuid": "11.1.1",
     "minimatch": "9.0.5"
   },
