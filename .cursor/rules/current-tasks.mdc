@@ -1,217 +1,184 @@
-# current-tasks.mdc — CO 任务派发 | 2026-06-24 06:46 CST
+# Current Tasks — CO Dispatch 2026-06-24 14:26 CST
 
-> 自动生成。CO (Composer Orchestrator) 派发，勿手动编辑。
-> 每个 P0 任务分配最佳匹配角色，按优先级排序。
-> 本轮回合：队列无变化，重新关键词评分确认一致性。
+## P0 Tasks (Gate: 11 roles + 4 system conditions)
 
 ---
 
-## P0-1: Visual Diff QA Pass — All 5 Pages
-
-- **角色**: VQE (Visual QA Engineer)
-- **任务文件**: `cursor-queue/p0-visual-qa-pass.md`
-- **优先级**: P0 (阻塞 P1 发布 — 必须先确认视觉基线)
-- **匹配**: test/visual/screenshot/diff/QA/baseline → VQE=7, DTE=1, BE=1, CRE=1
-- **权限**: R1 源码 | R1 配置 | R1 构建 | R1 部署
-
-### 具体步骤
-1. 运行 `node scripts/visual-diff.mjs` 对比当前渲染 vs baselines
-2. 对每个 pixel diff > 0% 的页面：
-   - 定位导致偏差的组件
-   - **仅修改** `src/lib/design-tokens.ts` 的值（禁止硬编码颜色）
-   - 重新运行 diff 直到 < 1%
-3. 5/5 通过后，创建带 tab 导航的 DEXConsole 页面
-4. 验证：`node scripts/visual-diff.mjs` → 5/5 < 1%
-
-### 约束
-- 所有颜色来自 `src/lib/design-tokens.ts`
-- 所有页面包装在 `DEXGridHarness`
-- 使用已有组件：SwapPanel, PoolPanel, StakePanel, WalletHarness, NeonCard
+### [BE] Build Engineer — Page Routes & Build Config
+**File:** `cursor-queue/0001-p0-pages-task.md`
+**Keywords:** build(1), config(1), next(1), ci(1), deploy(1) → BE=5
+**Permission:** R1→R2 (config/build)
+**Steps:**
+1. Create `src/pages/index.tsx` — Home page wrapping DEXConsole
+2. Create `src/pages/swap.tsx` — Standalone swap page with SwapPanel + WalletHarness
+3. Create `src/pages/pool.tsx` — Standalone pool page with PoolPanel + WalletHarness
+4. Create `src/pages/stake.tsx` — Standalone stake page with StakePanel + WalletHarness
+5. Create `src/pages/bridge.tsx` — Bridge placeholder
+6. Create `next.config.ts` — Basic Next.js config
+7. Run `npx next build` until zero errors
+**Constraints:** ALL colors from design-tokens.ts, ALL pages in DEXGridHarness, NO hardcoded hex/rgba
 
 ---
 
-## P0-2: Create Next.js Page Routes
-
-- **角色**: UCA (UI Component Architect)
-- **任务文件**: `cursor-queue/0001-p0-pages-task.md`
-- **优先级**: P0 (页面路由基础设施 — VQE 需要这些页面做 diff)
-- **匹配**: page/component/api/route → UCA=4, LE=1
-- **权限**: R2 源码 | R1 配置 | R1 构建
-
-### 具体步骤
-1. 创建 `src/pages/index.tsx` — 渲染 DEXConsole 的首页
-2. 创建 `src/pages/swap.tsx` — 独立 Swap 页面
-3. 创建 `src/pages/pool.tsx` — 独立 Pool 页面
-4. 创建 `src/pages/stake.tsx` — 独立 Stake 页面
-5. 创建 `src/pages/bridge.tsx` — Bridge 占位页面
-6. 创建 `next.config.ts` — 基础 Next.js 配置
-7. 验证：`npx next build` 无错误
-
-### 约束
-- 所有颜色来自 `src/lib/design-tokens.ts`
-- 所有页面包装在 `DEXGridHarness`
-- 复用已有组件：SwapPanel, LiquidityPanel, PoolPanel, StakePanel, WalletHarness
+### [UCA] UI Component Architect — Swap Page Full Implementation
+**File:** `cursor-queue/p0-frontend-tasks.md` (Task 1)
+**Keywords:** component(1), api(1), interface(1), swap(1), router(1) → UCA=5
+**Permission:** R2 (source)
+**Steps:**
+1. READ `src/lib/design-tokens.ts` first — all colors/spacing from DesignTokens
+2. READ `.cursorrules` — Zero-Visual-Discretion, Grid-Only, Asset-Img-Only
+3. Implement `src/app/swap/page.tsx`:
+   - Token select dropdown (ION/WBNB/USDT)
+   - Amount input with "MAX" button
+   - Price quote display (rate + slippage)
+   - Swap button with confirmation
+4. Connect to PancakeSwap router (real contract, not mock)
+5. Wrap in DEXGridHarness
+6. State "Layout Intent Analysis" before outputting code
+7. After completion: run `npx playwright test` for visual regression
+**Constraints:** No mock data, no hardcoded colors, real contract only
 
 ---
 
-## P0-3: Swap/Pool/Stake/Bridge Full Implementation
-
-- **角色**: UCA (UI Component Architect) — 主责 | CE (CSS Engineer) — 副责 | IE — 辅助
-- **任务文件**: `cursor-queue/p0-frontend-tasks.md`
-- **优先级**: P0 (核心功能实现)
-- **匹配**: component/api/interface → UCA=4 | css/style/glow/glass → CE=3 | animation → IE=2 | layout/grid → LE=2 | token → DTE=1 | grid → GSE=1
-- **权限**: UCA R2 源码 | CE R2 源码 | IE R2 源码
-
-### 子任务
-| # | 页面 | 文件 | 主角色 |
-|---|------|------|--------|
-| 1 | Swap | `src/app/swap/page.tsx` | UCA + CE |
-| 2 | Pool | `src/app/pool/page.tsx` | UCA + CE |
-| 3 | Stake | `src/app/stake/page.tsx` | UCA + CE |
-| 4 | Bridge | `src/app/bridge/page.tsx` | UCA + CE |
-| 5 | Home/Dashboard | `src/app/page.tsx` | UCA + CE |
-
-### 具体步骤 (每页)
-1. **先读约束**: `src/lib/design-tokens.ts` + `.cursorrules` + `DEXGridHarness`
-2. **Layout Intent Analysis**: 声明 grid-column / grid-row + 所需 DesignTokens
-3. **实现**: Token 选择器 / 金额输入 / 价格显示 / 确认按钮
-4. **数据**: 真实 PancakeSwap 合约（非 mock）
-5. **视觉**: 所有颜色从 DesignTokens 引用
-
-### Swap Page 需求
-- Token 选择下拉 (ION/WBNB/USDT)
-- 金额输入 + MAX 按钮
-- 价格报价 (rate + slippage)
-- Swap 确认按钮
-- 连接 PancakeSwap router（真实合约）
-
-### Pool Page 需求
-- Pool 列表 (TVL/APR/Volume 列)
-- Add Liquidity 表单
-- Remove Liquidity 表单
-- 使用 PoolCard 组件
-- 真实数据 (PancakeSwap subgraph/链上)
-
-### Stake Page 需求
-- Stake ION 表单 (金额 + 期限选择)
-- Unstake 表单
-- 奖励显示
-- APR 计算器
-- 使用 StakePanel 组件
-
-### Bridge Page 需求
-- 链选择器 (BSC → ION)
-- Token 选择器
-- 金额输入
-- Bridge 状态追踪
-- 真实 bridge 合约地址
-
-### Home/Dashboard 需求
-- ION 价格图表 (DexScreener/GeckoTerminal)
-- TVL 显示
-- 24h 交易量
-- 快捷操作卡片 (Swap/Pool/Stake/Bridge)
-
-### 约束
-- 零硬编码颜色 — 全部从 DesignTokens
-- 所有页面包装 DEXGridHarness
-- 零 mock 数据 — 连接真实合约
-- 每页完成后运行 `npx playwright test` 视觉回归
+### [UCA] UI Component Architect — Pool Page Full Implementation
+**File:** `cursor-queue/p0-frontend-tasks.md` (Task 2)
+**Keywords:** component(1), api(1), interface(1), pool(1) → UCA=4
+**Permission:** R2 (source)
+**Steps:**
+1. READ `src/lib/design-tokens.ts` first
+2. Implement `src/app/pool/page.tsx`:
+   - Pool list with TVL/APR/Volume columns
+   - Add Liquidity form (token pair + amounts)
+   - Remove Liquidity form
+3. Use PoolCard component from `src/components/DEX/PoolCard.tsx`
+4. Real data from PancakeSwap subgraph/on-chain
+5. Wrap in DEXGridHarness
+6. State "Layout Intent Analysis" before outputting code
+**Constraints:** No mock data, no hardcoded colors
 
 ---
 
-## P0-4: PoolCard Component Implementation
-
-- **角色**: UCA (UI Component Architect) + CE (CSS Engineer)
-- **任务文件**: `cursor-queue-result/pool-card-task.md`
-- **优先级**: P0 (Pool 页面依赖此组件)
-- **匹配**: component → UCA=3 | css/style/glow/glass → CE=3
-- **权限**: UCA R2 源码 | CE R2 源码
-
-### 具体步骤
-1. **Intent Analysis** (输出后再写代码):
-   - 声明 PoolCard 在 DEXGridHarness 中的 grid-column / grid-row
-   - 列出 DesignTokens: glassBase, neonCyan, neonMagenta, textPrimary, textSecondary
-   - 效果 tokens: cardGlow, backdropBlur
-   - 尺寸 tokens: borderRadius, panelGap, panelPadding
-   - 图标路径: `/public/assets/icons/pool-cube.webp`
-2. **Constraint Check**: 零硬编码 hex/rgba | 无 fixed/absolute | 3D 图标用 `<img>`
-3. **实现** `src/components/DEX/PoolCard.tsx`:
-   - Glass card: glassBase + cardGlow + backdropBlur
-   - Header: 3D 图标 + "Pool" 标题 (textPrimary, 24px bold)
-   - TVL 行: textSecondary label / textPrimary monospace 数字
-   - APR 行: textSecondary label / neonCyan bold
-   - Footer: Add/Remove 按钮 (neonCyan/neonMagenta 边框)
-   - hover:scale-[1.01] 微交互
-4. **验证**: 零硬编码颜色
+### [UCA] UI Component Architect — Stake Page Full Implementation
+**File:** `cursor-queue/p0-frontend-tasks.md` (Task 3)
+**Keywords:** component(1), api(1), interface(1), stake(1) → UCA=4
+**Permission:** R2 (source)
+**Steps:**
+1. READ `src/lib/design-tokens.ts` first
+2. Implement `src/app/stake/page.tsx`:
+   - Stake ION form (amount + duration selector)
+   - Unstake form
+   - Rewards display
+   - APR calculator
+3. Use StakePanel component
+4. Wrap in DEXGridHarness
+5. State "Layout Intent Analysis" before outputting code
+**Constraints:** No mock data, no hardcoded colors
 
 ---
 
-## P1: UI Polish & Navigation — 5 Pages
+### [UCA] UI Component Architect — Bridge Page Full Implementation
+**File:** `cursor-queue/p0-frontend-tasks.md` (Task 4)
+**Keywords:** component(1), api(1), interface(1), bridge(1) → UCA=4
+**Permission:** R2 (source)
+**Steps:**
+1. READ `src/lib/design-tokens.ts` first
+2. Implement `src/app/bridge/page.tsx`:
+   - Chain selector (BSC ↔ ION)
+   - Token selector
+   - Amount input
+   - Bridge status tracker
+3. Use real bridge contract addresses
+4. Wrap in DEXGridHarness
+5. State "Layout Intent Analysis" before outputting code
+**Constraints:** No mock data, no hardcoded colors
 
-- **角色**: IE (Interaction Engineer) — 动画 | CE (CSS Engineer) — 样式 | LE (Layout Engineer) — 布局 | RE (Responsive Engineer) — 响应式
-- **任务文件**: `cursor-queue/p1-ui-polish.md`
-- **优先级**: P1 (P0 全部通过后启动)
-- **匹配**: animation/transition/hover → IE=4 | css/glow/glass → CE=3 | layout/grid → LE=3 | responsive/mobile/breakpoint → RE=3
-- **权限**: IE R2 | CE R2 | LE R2 | RE R2
+---
 
-### Phase 1 — 润色现有页面
-| 页面 | 文件 | 主角色 | 润色内容 |
-|------|------|--------|----------|
-| index | `src/pages/index.tsx` | CE+IE | Tab 导航栏 (Swap\|Pool\|Stake\|Bridge)，cyan neon glow 激活指示器 |
-| swap | `src/pages/swap.tsx` | CE+UCA | Token 选择器下拉 + 价格影响显示 |
-| pool | `src/pages/pool.tsx` | CE+LE | LiquidityPanel + pair 显示 |
-| stake | `src/pages/stake.tsx` | CE+LE | 质押统计 (APY, TVL, 你的质押量) |
-| bridge | `src/pages/bridge.tsx` | IE+CE | BSC→ION 链选择器 + 箭头动画 |
+### [LE] Layout Engineer — Home/Dashboard Polish
+**File:** `cursor-queue/p0-frontend-tasks.md` (Task 5)
+**Keywords:** layout(1), grid(1), dashboard(1) → LE=3
+**Permission:** R2 (source)
+**Steps:**
+1. READ `src/lib/design-tokens.ts` first
+2. Implement `src/app/page.tsx`:
+   - ION price chart (from DexScreener/GeckoTerminal)
+   - TVL display
+   - 24h volume
+   - Quick action cards (Swap/Pool/Stake/Bridge)
+3. Use DEXGridHarness for layout
+4. State "Layout Intent Analysis" before outputting code
+**Constraints:** CSS Grid only, no margin-based positioning, DesignTokens only
 
-### Phase 2 — 统一 DEXConsole
-- 创建 `src/pages/DEXConsole.tsx`
-- DEXGridHarness 包装
-- Tab 导航（cyan neon glow 激活态）
-- 渲染选中页面组件
-- localStorage 持久化 tab 选择
+---
 
-### 验证
-```bash
-node scripts/visual-diff.mjs all
-# 期望: 5/5 passed, < 1% diff
+### [VQE] Visual QA Engineer — Visual Diff QA Pass (All 5 Pages)
+**File:** `cursor-queue/p0-visual-qa-pass.md`
+**Keywords:** test(1), visual(1), screenshot(1), diff(1), QA(1), baseline(1) → VQE=6
+**Permission:** R1 (source/config/build/deploy)
+**Steps:**
+1. Run `node scripts/visual-diff.mjs` to compare current render vs baselines
+2. For each page with pixel diff > 0%:
+   - Identify which component caused the deviation
+   - Fix the component (ONLY modify DesignTokens.ts values — NO hardcoded colors)
+   - Re-run diff until < 1%
+3. After all 5 pass: create a DEXConsole page that routes between the 5 pages with tab navigation
+**Constraints:** ALL colors from design-tokens.ts, ALL pages in DEXGridHarness, target 5/5 pages < 1% diff
+
+---
+
+## P1 Tasks (Gate: 7 roles — BLOCKED awaiting P0 all-green)
+
+---
+
+### [CE] CSS Engineer — UI Polish & Navigation (Phase 1)
+**File:** `cursor-queue/p1-ui-polish.md`
+**Keywords:** css(1), style(1), glow(1), glass(1), polish(1) → CE=5
+**Permission:** R2 (source)
+**Steps:**
+1. READ constraint files: design-tokens.ts, DEXGridHarness.tsx, ui-harness-protocol.mdc
+2. Polish 5 pages (src/pages/):
+   - index.tsx: tab nav bar (Swap|Pool|Stake|Bridge) with neon glow active indicator
+   - swap.tsx: token selector dropdowns, price impact display
+   - pool.tsx: LiquidityPanel with pair display
+   - stake.tsx: staking stats (APY, TVL, your stake)
+   - bridge.tsx: BSC↔ION chain selector with arrow animation
+3. Create DEXConsole.tsx: tab navigation + localStorage persistence
+4. Run `node scripts/visual-diff.mjs all` — all pages must pass < 1% diff
+**Constraints:** ZERO hardcoded hex/rgba, CSS Grid only, DesignTokens only
+
+---
+
+## Execution Order
+
+```
+P0-1 [BE]    → Page Routes & Build Config
+      ↓
+P0-7 [VQE]   → Visual Diff QA Pass (baseline verification)
+      ↓
+P0-2 [UCA]   → Swap Page (can parallel with P0-3~P0-6)
+P0-3 [UCA]   → Pool Page
+P0-4 [UCA]   → Stake Page
+P0-5 [UCA]   → Bridge Page
+P0-6 [LE]    → Home/Dashboard
+      ↓
+P1-1 [CE]    → UI Polish & Navigation (BLOCKED until P0 all-green)
 ```
 
-### 约束
-- 所有颜色来自 DesignTokens（零硬编码）
-- 所有页面包装 DEXGridHarness
-- 仅 CSS Grid，禁止 margin 定位
-- 复用已有组件
+## Valve Status
 
----
+| Valve | Status | Detail |
+|-------|--------|--------|
+| P0 Valve | 🔹 IN PROGRESS | BE×1 + UCA×4 + LE×1 + VQE×1 pending execution |
+| P1 Valve | 🔒 BLOCKED | Awaiting P0 Valve all-green |
+| P2 Valve | 🔒 BLOCKED | Awaiting P1 Valve all-green |
+| Release Valve | 🔒 BLOCKED | Awaiting P2 Valve all-green |
 
-## 阀门状态
-| 阀门 | 状态 | 条件 | 阻塞原因 |
-|------|------|------|----------|
-| P0 Valve | 🔶 PENDING | 11 roles + 4 system conditions | UCA + CE + VQE + IE + RE 未完成 |
-| P1 Valve | 🔴 BLOCKED | 7 roles check | P0 Valve 未全绿 |
-| P2 Valve | 🔴 BLOCKED | 4 roles verify | P1 Valve 锁定 |
-| Release Valve | 🔴 BLOCKED | Final readiness | P2 Valve 锁定 |
+## Role Assignment Summary
 
----
-
-## 角色关键词评分详情
-| 任务 | PM | DD | UCA | CE | LE | AM | IE | AE | RE | PE | VQE | DTE | GSE | CG | BE | CRE | i18n |
-|------|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
-| p0-visual-qa-pass | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **7** | 1 | 0 | 0 | 1 | 1 | 0 |
-| 0001-p0-pages-task | 0 | 0 | **4** | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| p0-frontend-tasks | 0 | 0 | **4** | 3 | 2 | 0 | 2 | 0 | 0 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 |
-| pool-card-task | 0 | 0 | 3 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| p1-ui-polish | 0 | 0 | 1 | 3 | 3 | 0 | **4** | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-
-## 派发摘要
-
-| 项目 | 值 |
-|------|-----|
-| 派发时间 | 2026-06-24 06:46 CST |
-| P0 任务数 | 4 |
-| P1 任务数 | 1 |
-| 涉及角色 | VQE, UCA(×3), CE(×3), IE(×2), LE(×2), RE |
-| 队列文件 | cursor-queue/ 4 active | cursor-queue-result/ 8 completed |
-| 执行顺序 | P0-1(VQE) → P0-2(UCA) → P0-3(UCA+CE) → P0-4(UCA+CE) → P1(IE+CE+LE+RE) |
-
+| Role | Tasks | Permission | Active |
+|------|-------|------------|--------|
+| BE | 1 (P0-1) | R1→R2 config/build | ✔ |
+| UCA | 4 (P0-2~P0-5) | R2 source | ✔ |
+| LE | 1 (P0-6) | R2 source | ✔ |
+| VQE | 1 (P0-7) | R1 source/config/build/deploy | ✔ |
+| CE | 1 (P1-1) | R2 source | 🔒 P1 blocked |

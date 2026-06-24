@@ -16,8 +16,10 @@ contract BridgeRelayV2 is ReentrancyGuard {
     error IonDexInvalidQuorum();
     error IonDexQuorumNotMet(uint256 attestations, uint256 required);
     error IonDexParamMismatch();
+    error IonDexTimelockActive(uint256 unlockTime);
 
     uint256 public constant MAX_RELAYERS = 32;
+    uint256 public constant TIMELOCK = 48 hours;
 
     address public owner;
     address public vault;
@@ -29,6 +31,22 @@ contract BridgeRelayV2 is ReentrancyGuard {
     mapping(bytes32 => uint256) public attestationMask;
     mapping(bytes32 => uint8) public attestationCount;
     mapping(bytes32 => bytes32) public nonceParamHash;
+
+    // ─── Timelock ────────────────────────────────────────────────────────
+    struct PendingChange {
+        uint8 quorumValue;
+        address relayerAddr;
+        bool isAdd;
+        bool isRemove;
+        uint256 unlockTime;
+        bool hasQuorum;
+        bool hasRelayer;
+    }
+    PendingChange public pending;
+
+    event PendingChangeScheduled(uint256 unlockTime, bool hasQuorum, bool hasRelayer);
+    event PendingChangeExecuted();
+    event PendingChangeCancelled();
 
     event RelayerAdded(address indexed relayer, uint8 index);
     event RelayerRemoved(address indexed relayer);
@@ -54,42 +72,85 @@ contract BridgeRelayV2 is ReentrancyGuard {
         quorum = quorum_;
     }
 
+    // ─── Non-timelocked setter ───────────────────────────────────────────
+
     function setVault(address vault_) external onlyOwner {
         if (vault_ == address(0)) revert IonDexZeroAddress();
         vault = vault_;
     }
 
-    function setQuorum(uint8 quorum_) external onlyOwner {
+    // ─── Timelocked setters ──────────────────────────────────────────────
+
+    function scheduleSetQuorum(uint8 quorum_) external onlyOwner {
         if (quorum_ == 0 || quorum_ > uint8(relayerList.length)) revert IonDexInvalidQuorum();
-        quorum = quorum_;
-        emit QuorumUpdated(quorum_);
+        pending.quorumValue = quorum_;
+        pending.hasQuorum = true;
+        pending.unlockTime = block.timestamp + TIMELOCK;
+        emit PendingChangeScheduled(pending.unlockTime, true, pending.hasRelayer);
     }
 
-    function addRelayer(address relayer) external onlyOwner {
+    function scheduleAddRelayer(address relayer) external onlyOwner {
         if (relayer == address(0)) revert IonDexZeroAddress();
         if (isRelayer[relayer]) revert IonDexUnauthorized();
         if (relayerList.length >= MAX_RELAYERS) revert IonDexInvalidQuorum();
-        isRelayer[relayer] = true;
-        relayerList.push(relayer);
-        emit RelayerAdded(relayer, uint8(relayerList.length - 1));
+        pending.relayerAddr = relayer;
+        pending.isAdd = true;
+        pending.isRemove = false;
+        pending.hasRelayer = true;
+        pending.unlockTime = block.timestamp + TIMELOCK;
+        emit PendingChangeScheduled(pending.unlockTime, pending.hasQuorum, true);
     }
 
-    function removeRelayer(address relayer) external onlyOwner {
+    function scheduleRemoveRelayer(address relayer) external onlyOwner {
         if (!isRelayer[relayer]) revert IonDexUnauthorized();
-        isRelayer[relayer] = false;
-        for (uint256 i = 0; i < relayerList.length; i++) {
-            if (relayerList[i] == relayer) {
-                relayerList[i] = relayerList[relayerList.length - 1];
-                relayerList.pop();
-                break;
-            }
-        }
-        if (quorum > uint8(relayerList.length)) {
-            quorum = uint8(relayerList.length);
+        pending.relayerAddr = relayer;
+        pending.isAdd = false;
+        pending.isRemove = true;
+        pending.hasRelayer = true;
+        pending.unlockTime = block.timestamp + TIMELOCK;
+        emit PendingChangeScheduled(pending.unlockTime, pending.hasQuorum, true);
+    }
+
+    function executePendingChanges() external onlyOwner {
+        if (block.timestamp < pending.unlockTime) revert IonDexTimelockActive(pending.unlockTime);
+        if (pending.hasQuorum) {
+            quorum = pending.quorumValue;
+            pending.hasQuorum = false;
             emit QuorumUpdated(quorum);
         }
-        emit RelayerRemoved(relayer);
+        if (pending.hasRelayer) {
+            if (pending.isAdd) {
+                isRelayer[pending.relayerAddr] = true;
+                relayerList.push(pending.relayerAddr);
+                emit RelayerAdded(pending.relayerAddr, uint8(relayerList.length - 1));
+            } else if (pending.isRemove) {
+                isRelayer[pending.relayerAddr] = false;
+                for (uint256 i = 0; i < relayerList.length; i++) {
+                    if (relayerList[i] == pending.relayerAddr) {
+                        relayerList[i] = relayerList[relayerList.length - 1];
+                        relayerList.pop();
+                        break;
+                    }
+                }
+                if (quorum > uint8(relayerList.length)) {
+                    quorum = uint8(relayerList.length);
+                    emit QuorumUpdated(quorum);
+                }
+                emit RelayerRemoved(pending.relayerAddr);
+            }
+            pending.isAdd = false;
+            pending.isRemove = false;
+            pending.hasRelayer = false;
+        }
+        emit PendingChangeExecuted();
     }
+
+    function cancelPendingChanges() external onlyOwner {
+        delete pending;
+        emit PendingChangeCancelled();
+    }
+
+    // ─── Relayer logic ───────────────────────────────────────────────────
 
     function getRelayerIndex(address relayer) internal view returns (uint8) {
         for (uint8 i = 0; i < uint8(relayerList.length); i++) {

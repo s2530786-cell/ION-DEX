@@ -16,10 +16,12 @@ contract FeeReceiverV2 {
     error IonDexTokenTransferFailed();
     error IonDexOnlyIon();
     error IonDexPriceDeviation(uint256 price, uint256 lastPrice, uint256 deviationBps);
+    error IonDexTimelockActive(uint256 unlockTime);
 
     uint256 public constant FEE_DENOMINATOR = 10_000;
     uint256 public constant BPS_TEAM_IMMUTABLE = 2500;
     uint256 public constant MAX_PRICE_DEVIATION_BPS = 5000; // 50% max deviation
+    uint256 public constant TIMELOCK = 48 hours;
     address public constant BSC_BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
 
     address public immutable ionToken;
@@ -33,6 +35,31 @@ contract FeeReceiverV2 {
     uint256 public bullThreshold;
     MarketMode public currentMode;
     uint256 internal _locked = 1;
+
+    // ─── Timelock ────────────────────────────────────────────────────────
+    struct PendingChange {
+        address destinationsTreasury;
+        address destinationsTeam;
+        address destinationsStakingRewards;
+        address destinationsKeeper;
+        address oracleAddr;
+        uint256 bear;
+        uint256 bull;
+        uint256 unlockTime;
+        bool hasDestinations;
+        bool hasOracle;
+        bool hasThresholds;
+    }
+    PendingChange public pending;
+
+    event PendingChangeScheduled(
+        uint256 unlockTime,
+        bool hasDestinations,
+        bool hasOracle,
+        bool hasThresholds
+    );
+    event PendingChangeExecuted();
+    event PendingChangeCancelled();
 
     event FeeDistributionDetail(address indexed token, uint256 amount, uint256 toBurn, uint256 toTeam, uint256 toStaking, uint256 toTreasury, uint256 toKeeper, MarketMode mode);
     event MarketModeChanged(MarketMode oldMode, MarketMode newMode, uint256 price, bool oracleStale);
@@ -109,12 +136,71 @@ contract FeeReceiverV2 {
         return IERC20Fee(token).transfer(to, amount);
     }
 
-    function setDestinations(address treasury_, address team_, address stakingRewards_, address keeper_) external onlyOwner {
+    // ─── Timelocked setters ──────────────────────────────────────────────
+
+    /// @notice Schedule a parameter change that executes after TIMELOCK (48h).
+    function scheduleSetDestinations(address treasury_, address team_, address stakingRewards_, address keeper_) external onlyOwner {
         if (treasury_ == address(0) || team_ == address(0) || stakingRewards_ == address(0) || keeper_ == address(0)) revert IonDexZeroAddress();
-        treasury = treasury_; team = team_; stakingRewards = stakingRewards_; keeper = keeper_;
+        pending.destinationsTreasury = treasury_;
+        pending.destinationsTeam = team_;
+        pending.destinationsStakingRewards = stakingRewards_;
+        pending.destinationsKeeper = keeper_;
+        pending.hasDestinations = true;
+        pending.unlockTime = block.timestamp + TIMELOCK;
+        emit PendingChangeScheduled(pending.unlockTime, true, pending.hasOracle, pending.hasThresholds);
     }
-    function setThresholds(uint256 bear_, uint256 bull_) external onlyOwner { if (bear_ >= bull_) revert IonDexUnauthorized(); bearThreshold = bear_; bullThreshold = bull_; }
-    function setOracle(address oracle_) external onlyOwner { if (oracle_ == address(0)) revert IonDexZeroAddress(); oracle = IonOracleV2(oracle_); }
+
+    function scheduleSetOracle(address oracle_) external onlyOwner {
+        if (oracle_ == address(0)) revert IonDexZeroAddress();
+        pending.oracleAddr = oracle_;
+        pending.hasOracle = true;
+        pending.unlockTime = block.timestamp + TIMELOCK;
+        emit PendingChangeScheduled(pending.unlockTime, pending.hasDestinations, true, pending.hasThresholds);
+    }
+
+    function scheduleSetThresholds(uint256 bear_, uint256 bull_) external onlyOwner {
+        if (bear_ >= bull_) revert IonDexUnauthorized();
+        pending.bear = bear_;
+        pending.bull = bull_;
+        pending.hasThresholds = true;
+        pending.unlockTime = block.timestamp + TIMELOCK;
+        emit PendingChangeScheduled(pending.unlockTime, pending.hasDestinations, pending.hasOracle, true);
+    }
+
+    /// @notice Execute all pending changes after timelock expires.
+    function executePendingChanges() external onlyOwner {
+        if (block.timestamp < pending.unlockTime) revert IonDexTimelockActive(pending.unlockTime);
+        if (pending.hasDestinations) {
+            treasury = pending.destinationsTreasury;
+            team = pending.destinationsTeam;
+            stakingRewards = pending.destinationsStakingRewards;
+            keeper = pending.destinationsKeeper;
+            pending.hasDestinations = false;
+        }
+        if (pending.hasOracle) {
+            oracle = IonOracleV2(pending.oracleAddr);
+            pending.hasOracle = false;
+        }
+        if (pending.hasThresholds) {
+            bearThreshold = pending.bear;
+            bullThreshold = pending.bull;
+            pending.hasThresholds = false;
+        }
+        emit PendingChangeExecuted();
+    }
+
+    /// @notice Cancel all pending changes.
+    function cancelPendingChanges() external onlyOwner {
+        delete pending;
+        emit PendingChangeCancelled();
+    }
+
+    // ─── Non-timelocked (ownership) ──────────────────────────────────────
+
+    /// @dev Ownership transfer is NOT timelocked — owner must be able to rotate keys.
     function transferOwnership(address no) external onlyOwner { if (no == address(0)) revert IonDexZeroAddress(); owner = no; }
+
+    // ─── Views ───────────────────────────────────────────────────────────
+
     function getMarketMode() external view returns (MarketMode) { return currentMode; }
 }

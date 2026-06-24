@@ -4,10 +4,9 @@ pragma solidity ^0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {MockERC20} from "../bsc/MockERC20.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
-import {FeeReceiver} from "../bsc/FeeReceiver.sol";
-import {BridgeRelay} from "../bsc/BridgeRelay.sol";
+import {FeeReceiverV2} from "../bsc/FeeReceiverV2.sol";
 import {BridgeRelayV2} from "../bsc/BridgeRelayV2.sol";
-import {IonOracle} from "../bsc/IonOracle.sol";
+import {IonOracleV2} from "../bsc/IonOracleV2.sol";
 import {MockAggregator} from "./MockAggregator.sol";
 
 contract NoReturnERC20 {
@@ -79,10 +78,10 @@ contract FalseReturnERC20 {
 contract BSCContractsTest is Test {
     MockERC20 internal token;
     BSCVault internal vault;
-    FeeReceiver internal feeReceiver;
-    BridgeRelay internal relay;
+    FeeReceiverV2 internal feeReceiver;
+    BridgeRelayV2 internal relay;
     MockAggregator internal priceFeed;
-    IonOracle internal oracle;
+    IonOracleV2 internal oracle;
 
     address internal owner = address(0xA11CE);
     address internal treasury = address(0xBEEF);
@@ -96,9 +95,9 @@ contract BSCContractsTest is Test {
         token = new MockERC20("ION", "ION", 18);
         vault = new BSCVault(owner);
         priceFeed = new MockAggregator(100_000_000, 8);
-        oracle = new IonOracle(owner, address(priceFeed), "mock");
-        feeReceiver = new FeeReceiver(owner, address(token), treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
-        relay = new BridgeRelay(owner, address(vault), 1);
+        oracle = new IonOracleV2(owner, address(priceFeed), "mock");
+        feeReceiver = new FeeReceiverV2(owner, address(token), treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
+        relay = new BridgeRelayV2(owner, address(vault), 1);
         vm.prank(owner);
         vault.setBridgeRelay(address(relay));
         vm.prank(owner);
@@ -142,7 +141,7 @@ contract BSCContractsTest is Test {
         other.mint(user, 100 ether);
         vm.startPrank(user);
         other.approve(address(feeReceiver), 100 ether);
-        vm.expectRevert(FeeReceiver.IonDexOnlyIon.selector);
+        vm.expectRevert(FeeReceiverV2.IonDexOnlyIon.selector);
         feeReceiver.distributeFees(address(other), 100 ether);
         vm.stopPrank();
     }

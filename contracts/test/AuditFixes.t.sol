@@ -5,9 +5,8 @@ import {Test} from "forge-std/Test.sol";
 import {MockERC20} from "../bsc/MockERC20.sol";
 import {AdminManager} from "../bsc/AdminManager.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
-import {BridgeRelay} from "../bsc/BridgeRelay.sol";
 import {BridgeRelayV2} from "../bsc/BridgeRelayV2.sol";
-import {DexSwap} from "../bsc/DexSwap.sol";
+import {DexSwapV2} from "../bsc/DexSwapV2.sol";
 import {LiquidityPool} from "../bsc/LiquidityPool.sol";
 import {BatchTransfer} from "../bsc/BatchTransfer.sol";
 
@@ -20,7 +19,7 @@ contract AuditFixesTest is Test {
     function testBridgeRelayRequiresDistinctQuorumAttestations() public {
         MockERC20 token = new MockERC20("ION", "ION", 18);
         BSCVault vault = new BSCVault(owner);
-        BridgeRelay relay = new BridgeRelay(owner, address(vault), 2);
+        BridgeRelayV2 relay = new BridgeRelayV2(owner, address(vault), 2);
 
         vm.startPrank(owner);
         vault.setRelayer(address(relay), true);
@@ -85,7 +84,7 @@ contract AuditFixesTest is Test {
         MockERC20 tokenB = new MockERC20("B", "B", 18);
         AdminManager admin = new AdminManager(owner);
         LiquidityPool pool = new LiquidityPool("LP", "LP", address(tokenA), address(tokenB), address(admin), address(0xD00D));
-        DexSwap dex = new DexSwap(address(admin), address(pool));
+        DexSwapV2 dex = new DexSwapV2(address(admin), address(pool));
 
         vm.startPrank(owner);
         pool.setDexContract(address(dex));

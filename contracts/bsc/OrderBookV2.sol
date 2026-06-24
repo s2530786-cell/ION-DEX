@@ -10,62 +10,99 @@ contract OrderBookV2 is ReentrancyGuard {
     error IonDexZeroAmount();
     error IonDexInsufficientBalance();
     error IonDexUnauthorized();
-    error IonDexUnsupportedOrderSide();
-    error IonDexSettlementDisabled();
+    error IonDexOrderNotFound();
+    error IonDexOrderExpired();
+    error IonDexOrderFilled();
+    error IonDexNotOrderOwner();
 
     AdminManager public admin;
     address public quoteToken;
+    address public baseToken;
 
     struct Order {
         address user;
         bool isBuy;
-        uint256 price;
-        uint256 amount;
-        uint256 filled;
+        uint256 price;       // quoteToken per baseToken (scaled 1e18)
+        uint256 amount;      // baseToken amount
+        uint256 filled;      // baseToken filled
         uint256 deadline;
         bool finished;
     }
 
     Order[] public orders;
-    mapping(address => uint256) public balances;
+    mapping(address => uint256) public quoteBalances;
+    mapping(address => uint256) public baseBalances;
 
     event PlaceOrder(address indexed user, bool isBuy, uint256 price, uint256 amount, uint256 orderId, uint256 deadline);
     event CancelOrder(address indexed user, uint256 orderId);
-    event MatchOrder(uint256 orderId, address indexed taker, uint256 fillAmount);
-    event Deposited(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 amount);
+    event MatchOrder(uint256 orderId, address indexed taker, uint256 fillAmount, uint256 quotePaid);
+    event QuoteDeposited(address indexed user, uint256 amount);
+    event QuoteWithdrawn(address indexed user, uint256 amount);
+    event BaseDeposited(address indexed user, uint256 amount);
+    event BaseWithdrawn(address indexed user, uint256 amount);
 
-    constructor(address admin_, address quoteToken_) {
-        if (admin_ == address(0) || quoteToken_ == address(0)) revert IonDexZeroAddress();
+    constructor(address admin_, address quoteToken_, address baseToken_) {
+        if (admin_ == address(0) || quoteToken_ == address(0) || baseToken_ == address(0)) revert IonDexZeroAddress();
         admin = AdminManager(admin_);
         quoteToken = quoteToken_;
+        baseToken = baseToken_;
     }
 
-    function deposit(uint256 amount) external {
+    // ─── Deposits ────────────────────────────────────────────────────────
+
+    function depositQuote(uint256 amount) external {
         if (amount == 0) revert IonDexZeroAmount();
         if (!IERC20(quoteToken).transferFrom(msg.sender, address(this), amount)) revert("TF fail");
-        balances[msg.sender] += amount;
-        emit Deposited(msg.sender, amount);
+        quoteBalances[msg.sender] += amount;
+        emit QuoteDeposited(msg.sender, amount);
     }
 
-    function withdraw(uint256 amount) external nonReentrant {
+    function withdrawQuote(uint256 amount) external nonReentrant {
         if (amount == 0) revert IonDexZeroAmount();
-        if (balances[msg.sender] < amount) revert IonDexInsufficientBalance();
-        balances[msg.sender] -= amount;
+        if (quoteBalances[msg.sender] < amount) revert IonDexInsufficientBalance();
+        quoteBalances[msg.sender] -= amount;
         if (!IERC20(quoteToken).transfer(msg.sender, amount)) revert("TF fail");
-        emit Withdrawn(msg.sender, amount);
+        emit QuoteWithdrawn(msg.sender, amount);
     }
 
+    function depositBase(uint256 amount) external {
+        if (amount == 0) revert IonDexZeroAmount();
+        if (!IERC20(baseToken).transferFrom(msg.sender, address(this), amount)) revert("TF fail");
+        baseBalances[msg.sender] += amount;
+        emit BaseDeposited(msg.sender, amount);
+    }
+
+    function withdrawBase(uint256 amount) external nonReentrant {
+        if (amount == 0) revert IonDexZeroAmount();
+        if (baseBalances[msg.sender] < amount) revert IonDexInsufficientBalance();
+        baseBalances[msg.sender] -= amount;
+        if (!IERC20(baseToken).transfer(msg.sender, amount)) revert("TF fail");
+        emit BaseWithdrawn(msg.sender, amount);
+    }
+
+    // ─── Orders ───────────────────────────────────────────────────────────
+
+    /// @notice Place a buy or sell order.
+    /// @param isBuy   true = pay quoteToken to receive baseToken; false = sell baseToken for quoteToken
+    /// @param price   quoteToken per baseToken (1e18 precision)
+    /// @param amount  baseToken amount
+    /// @param deadline  unix timestamp after which the order expires
     function placeOrder(bool isBuy, uint256 price, uint256 amount, uint256 deadline) external nonReentrant {
         if (admin.paused()) revert("Paused");
         if (price == 0 || amount == 0) revert("Invalid order");
         if (block.timestamp > deadline) revert("Order expired");
-        if (!isBuy) revert IonDexUnsupportedOrderSide();
 
-        uint256 cost = price * amount;
-        if (balances[msg.sender] < cost) revert IonDexInsufficientBalance();
+        if (isBuy) {
+            // Buy: lock quoteToken cost = price * amount
+            uint256 cost = price * amount / 1e18;
+            if (quoteBalances[msg.sender] < cost) revert IonDexInsufficientBalance();
+            quoteBalances[msg.sender] -= cost;
+        } else {
+            // Sell: lock baseToken amount
+            if (baseBalances[msg.sender] < amount) revert IonDexInsufficientBalance();
+            baseBalances[msg.sender] -= amount;
+        }
 
-        balances[msg.sender] -= cost;
         orders.push(
             Order({
                 user: msg.sender,
@@ -81,25 +118,71 @@ contract OrderBookV2 is ReentrancyGuard {
     }
 
     function cancelOrder(uint256 orderId) external nonReentrant {
+        if (orderId >= orders.length) revert IonDexOrderNotFound();
         Order storage o = orders[orderId];
-        if (o.user != msg.sender || o.finished) revert("Invalid order");
-        o.finished = true;
+        if (o.user != msg.sender) revert IonDexNotOrderOwner();
+        if (o.finished) revert IonDexOrderFilled();
 
+        o.finished = true;
         uint256 remaining = o.amount - o.filled;
-        if (remaining > 0 && o.isBuy) {
-            balances[msg.sender] += o.price * remaining;
+
+        if (remaining > 0) {
+            if (o.isBuy) {
+                // Return locked quoteToken
+                quoteBalances[msg.sender] += o.price * remaining / 1e18;
+            } else {
+                // Return locked baseToken
+                baseBalances[msg.sender] += remaining;
+            }
         }
         emit CancelOrder(msg.sender, orderId);
     }
 
+    /// @notice Match (fill) an order. Transfers tokens between the taker and the maker.
+    /// @param orderId    Index of the order to fill
+    /// @param fillAmount Amount of baseToken to fill (must ≤ remaining)
     function matchOrder(uint256 orderId, uint256 fillAmount) external nonReentrant {
+        if (orderId >= orders.length) revert IonDexOrderNotFound();
         Order storage o = orders[orderId];
-        if (o.finished) revert("Order finished");
-        if (block.timestamp > o.deadline) revert("Order expired");
+        if (o.finished) revert IonDexOrderFilled();
+        if (block.timestamp > o.deadline) revert IonDexOrderExpired();
         if (fillAmount == 0) revert IonDexZeroAmount();
-        if (!o.isBuy) revert IonDexUnsupportedOrderSide();
-        revert IonDexSettlementDisabled();
+        uint256 remaining = o.amount - o.filled;
+        if (fillAmount > remaining) revert IonDexInsufficientBalance();
+
+        uint256 quoteAmount = o.price * fillAmount / 1e18;
+        o.filled += fillAmount;
+        if (o.filled == o.amount) {
+            o.finished = true;
+        }
+
+        // Token settlement between maker and taker
+        if (o.isBuy) {
+            // Maker is buyer: maker locked quote, now receives baseToken
+            // Taker (msg.sender) sends baseToken, receives quoteToken
+            if (baseBalances[msg.sender] < fillAmount) revert IonDexInsufficientBalance();
+            baseBalances[msg.sender] -= fillAmount;
+            baseBalances[o.user] += fillAmount;
+
+            if (quoteBalances[msg.sender] < quoteAmount) revert IonDexInsufficientBalance();
+            quoteBalances[msg.sender] -= quoteAmount;
+            quoteBalances[o.user] += quoteAmount; // maker already prepaid quote at order time
+        } else {
+            // Maker is seller: maker locked baseToken, wants quoteToken
+            // Taker (msg.sender) sends quoteToken, receives baseToken
+            if (quoteBalances[msg.sender] < quoteAmount) revert IonDexInsufficientBalance();
+            quoteBalances[msg.sender] -= quoteAmount;
+            quoteBalances[o.user] += quoteAmount;
+
+            if (baseBalances[msg.sender] < fillAmount) revert IonDexInsufficientBalance();
+            baseBalances[msg.sender] -= fillAmount;
+            baseBalances[o.user] += fillAmount; // maker already prepaid base at order time
+        }
+
+        emit MatchOrder(orderId, msg.sender, fillAmount, quoteAmount);
     }
+
+    // ─── Views ────────────────────────────────────────────────────────────
 
     function getUserOrders(address user) external view returns (uint256[] memory) {
         uint256 count = 0;

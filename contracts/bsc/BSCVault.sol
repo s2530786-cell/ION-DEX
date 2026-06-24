@@ -21,11 +21,9 @@ contract BSCVault {
     error IonDexUnauthorized();
     error IonDexInsufficientLocked();
     error IonDexTokenTransferFailed();
+    error IonDexTimelockActive(uint256 unlockTime);
 
-    event Locked(address indexed user, address indexed token, uint256 amount, bytes32 ionRecipient);
-    event Released(address indexed user, address indexed token, uint256 amount, bytes32 releaseId);
-    event LpSharesUpdated(address indexed user, int256 deltaShares);
-    event RelayerSet(address indexed relayer, bool allowed);
+    uint256 public constant TIMELOCK = 48 hours;
 
     address public owner;
     address public bridgeRelay;
@@ -35,6 +33,23 @@ contract BSCVault {
     mapping(address => mapping(address => uint256)) public lockedBalance;
     mapping(address => uint256) public lpShares;
     mapping(bytes32 => bool) public releaseConsumed;
+
+    // ─── Timelock ────────────────────────────────────────────────────────
+    struct PendingRelayer {
+        address relayer;
+        bool allowed;
+        uint256 unlockTime;
+    }
+    PendingRelayer public pendingRelayer;
+
+    event PendingRelayerScheduled(address indexed relayer, bool allowed, uint256 unlockTime);
+    event PendingRelayerExecuted(address indexed relayer, bool allowed);
+    event PendingRelayerCancelled();
+
+    event Locked(address indexed user, address indexed token, uint256 amount, bytes32 ionRecipient);
+    event Released(address indexed user, address indexed token, uint256 amount, bytes32 releaseId);
+    event LpSharesUpdated(address indexed user, int256 deltaShares);
+    event RelayerSet(address indexed relayer, bool allowed);
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert IonDexUnauthorized();
@@ -51,15 +66,16 @@ contract BSCVault {
         owner = owner_;
     }
 
+    // ─── Non-timelocked setters ──────────────────────────────────────────
+
     function setBridgeRelay(address relay) external onlyOwner {
         if (relay == address(0)) revert IonDexZeroAddress();
         bridgeRelay = relay;
     }
 
-    function setRelayer(address relayer, bool allowed) external onlyOwner {
-        if (relayer == address(0)) revert IonDexZeroAddress();
-        relayers[relayer] = allowed;
-        emit RelayerSet(relayer, allowed);
+    function setFeeReceiver(address feeReceiver_) external onlyOwner {
+        if (feeReceiver_ == address(0)) revert IonDexZeroAddress();
+        feeReceiver = feeReceiver_;
     }
 
     function transferOwnership(address newOwner) external onlyOwner {
@@ -67,9 +83,27 @@ contract BSCVault {
         owner = newOwner;
     }
 
-    function setFeeReceiver(address feeReceiver_) external onlyOwner {
-        if (feeReceiver_ == address(0)) revert IonDexZeroAddress();
-        feeReceiver = feeReceiver_;
+    // ─── Timelocked relayer setter ───────────────────────────────────────
+
+    function scheduleSetRelayer(address relayer, bool allowed) external onlyOwner {
+        if (relayer == address(0)) revert IonDexZeroAddress();
+        pendingRelayer.relayer = relayer;
+        pendingRelayer.allowed = allowed;
+        pendingRelayer.unlockTime = block.timestamp + TIMELOCK;
+        emit PendingRelayerScheduled(relayer, allowed, pendingRelayer.unlockTime);
+    }
+
+    function executeSetRelayer() external onlyOwner {
+        if (block.timestamp < pendingRelayer.unlockTime) revert IonDexTimelockActive(pendingRelayer.unlockTime);
+        relayers[pendingRelayer.relayer] = pendingRelayer.allowed;
+        emit RelayerSet(pendingRelayer.relayer, pendingRelayer.allowed);
+        emit PendingRelayerExecuted(pendingRelayer.relayer, pendingRelayer.allowed);
+        delete pendingRelayer;
+    }
+
+    function cancelSetRelayer() external onlyOwner {
+        delete pendingRelayer;
+        emit PendingRelayerCancelled();
     }
 
     /**

@@ -4,12 +4,12 @@ pragma solidity ^0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {MockERC20} from "../bsc/MockERC20.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
-import {BridgeRelay} from "../bsc/BridgeRelay.sol";
+import {BridgeRelayV2} from "../bsc/BridgeRelayV2.sol";
 
 contract BSCVaultStressTest is Test {
     MockERC20 internal token;
     BSCVault internal vault;
-    BridgeRelay internal relay;
+    BridgeRelayV2 internal relay;
 
     address internal owner = address(0xA11CE);
     address internal user = address(0x75E7);
@@ -19,7 +19,7 @@ contract BSCVaultStressTest is Test {
     function setUp() public {
         token = new MockERC20("ION", "ION", 18);
         vault = new BSCVault(owner);
-        relay = new BridgeRelay(owner, address(vault), 1);
+        relay = new BridgeRelayV2(owner, address(vault), 1);
         vm.startPrank(owner);
         vault.setBridgeRelay(address(relay));
         vault.setRelayer(address(relay), true);

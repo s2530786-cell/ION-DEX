@@ -4,10 +4,10 @@ pragma solidity ^0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {MockERC20} from "../bsc/MockERC20.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
-import {BridgeRelay} from "../bsc/BridgeRelay.sol";
-import {FeeReceiver} from "../bsc/FeeReceiver.sol";
-import {IonSwapRouter, IonSwapPoolMock} from "../bsc/IonSwapRouter.sol";
-import {IonOracle} from "../bsc/IonOracle.sol";
+import {BridgeRelayV2} from "../bsc/BridgeRelayV2.sol";
+import {FeeReceiverV2} from "../bsc/FeeReceiverV2.sol";
+import {IonSwapRouterV2, IonSwapPoolMock} from "../bsc/IonSwapRouterV2.sol";
+import {IonOracleV2} from "../bsc/IonOracleV2.sol";
 import {MockAggregator} from "./MockAggregator.sol";
 
 /**

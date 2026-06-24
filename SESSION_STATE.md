@@ -1,48 +1,73 @@
-# CO Scheduler — Frontend Team Task Dispatch | 2026-06-24 06:46 CST
+# CO Scheduler — Frontend Team Task Dispatch | 2026-06-24 14:22 CST
 
-## This Round: Re-Score Dispatch (No Queue Delta)
-- **Dispatch round**: 2026-06-24 06:46 CST (3 min since 06:43)
-- **Queue read**: cursor-queue/ 4 files + cursor-queue-result/ 8 files — all unchanged
-- **Queue delta**: No new tasks, no status changes. Same 4 P0 + 1 P1 active.
-- **Role definitions**: blueprint.md (18-role matrix) + 01-permission-matrix.md (R0-R3 levels) — re-read and confirmed
-- **Re-score**: Full keyword re-match performed. Results consistent with prior rounds.
+## Dispatch Round Summary
 
-## This Round Dispatch (task → role, keyword-scored)
+| Field | Value |
+|-------|-------|
+| Dispatch round | 2026-06-24 14:22 CST |
+| Queue read | cursor-queue/ 4 files (0001-p0-pages-task, p0-frontend-tasks, p0-visual-qa-pass, p1-ui-polish) |
+| Queue result | cursor-queue-result/ 8 archived |
+| Queue delta | No new tasks since 01:01 CST. All 4 queue files unchanged. Re-validation round (last dispatch: 14:06). |
+| Refreshed | current-tasks.mdc + SESSION_STATE.md (14:22 CST) |
 
-| # | Task | Primary Role | Keywords Matched | Score | Files |
-|---|------|-------------|-------------------|-------|-------|
-| P0-1 | Visual Diff QA Pass | VQE (R1) | test/visual/screenshot/diff/QA/baseline | VQE=7 | .visual-screenshots/ |
-| P0-2 | Create Next.js Page Routes | UCA (R2) | page/component/api/route | UCA=4 | src/pages/*.tsx |
-| P0-3 | Swap/Pool/Stake/Bridge Full Impl | UCA+CE (R2) | component/api/interface + css/style/glow/glass | UCA=4, CE=3 | src/app/ 5 pages |
-| P0-4 | PoolCard Component | UCA+CE (R2) | component + css/style/glow/glass | UCA=3, CE=3 | src/components/DEX/PoolCard.tsx |
-| P1 | UI Polish & Navigation | IE+CE+LE+RE (R2) | animation/transition + glow/glass + layout/grid + responsive | IE=4, CE=3, LE=3, RE=3 | src/pages/ + DEXConsole.tsx |
+## Dispatch (task → role, keyword-scored)
+
+| # | Task | Primary Role | Keywords Matched | Score |
+|---|------|-------------|-------------------|-------|
+| P0-1 | Create Next.js Page Routes | **BE** (R1→R2 config/build) | build/config/next/ci/deploy | BE=5 |
+| P0-2 | Swap Page Full Implementation | **UCA** (R2) | component/api/interface/swap/router | UCA=5 |
+| P0-3 | Pool Page Full Implementation | **UCA** (R2) | component/api/interface/pool | UCA=4 |
+| P0-4 | Stake Page Full Implementation | **UCA** (R2) | component/api/interface/stake | UCA=4 |
+| P0-5 | Bridge Page Full Implementation | **UCA** (R2) | component/api/interface/bridge | UCA=4 |
+| P0-6 | Home/Dashboard Polish | **LE** (R2) | layout/grid/dashboard | LE=3 |
+| P0-7 | Visual Diff QA Pass | **VQE** (R1) | test/visual/screenshot/diff/QA/baseline | VQE=6 |
+| P1-1 | UI Polish & Navigation | **CE** (R2) | css/style/glow/glass/polish | CE=5 |
+
+## Execution Order
+
+```
+P0-1 (BE)   → Page Routes & Build Config
+      ↓
+P0-7 (VQE)  → Visual Diff QA Pass
+      ↓
+P0-2~P0-6 (UCA×4 + LE) → Swap/Pool/Stake/Bridge/Home Full Implementation
+      ↓
+P1-1 (CE)   → UI Polish & Navigation
+```
 
 ## Valve Status
 
-| Valve | Status | Blocking Reason |
-|-------|--------|-----------------|
-| P0 Valve | 🔶 PENDING | UCA + CE + VQE + IE + RE 未完成 |
-| P1 Valve | 🔴 BLOCKED | P0 Valve 未全绿 |
-| P2 Valve | 🔴 BLOCKED | P1 Valve 锁定 |
-| Release Valve | 🔴 BLOCKED | P2 Valve 锁定 |
+| Valve | Status | Detail |
+|-------|--------|--------|
+| P0 Valve | 🔶 IN PROGRESS | BE×1 + UCA×4 + LE×1 + VQE×1 pending execution |
+| P1 Valve | 🔒 BLOCKED | Awaiting P0 Valve all-green |
+| P2 Valve | 🔒 BLOCKED | Awaiting P1 Valve all-green |
+| Release Valve | 🔒 BLOCKED | Awaiting P2 Valve all-green |
 
-## Completed Queue (cursor-queue-result/ — 8 files)
-| # | Task | Status |
-|---|------|--------|
-| 001 | FunC 全量编译 + Forge Build | ✅ 已完成 |
-| 002 | 100 轮压力测试 + Gas 基线 | ✅ 已完成 |
-| 003 | 真实合约地址替换 + 链上对接 | ✅ 已完成 |
-| 004 | 统一 ION 手续费逻辑 | ✅ 已完成 |
-| 005 | UI 打磨 + 响应式适配 | ✅ 已完成 |
-| 006 | 测试网部署 + E2E 验证 | ✅ 已完成 |
-| 007 | ION DEX Phase 1 Swap+Pool | ✅ 已完成 |
-| pool-card | PoolCard 组件开发 | 🔶 待执行 |
+## Role Assignment Summary
 
-## Round Delta vs Previous (06:43 → 06:46)
-- **No change**: Task queue identical, role matching confirmed consistent, valve states unchanged
-- **Refined**: current-tasks.mdc re-generated with clean formatting and full scoring matrix
-- **Waiting**: P0 Valve execution — 6 active roles (VQE, UCA, CE, IE, LE, RE)
+| Role | Tasks | Permission | Active |
+|------|-------|------------|--------|
+| BE | 1 (P0-1) | R1→R2 config/build | ✅ |
+| UCA | 4 (P0-2~P0-5) | R2 source | ✅ |
+| LE | 1 (P0-6) | R2 source | ✅ |
+| VQE | 1 (P0-7) | R1 source/config/build/deploy | ✅ |
+| CE | 1 (P1-1) | R2 source | 🔒 P1 blocked |
+
+## Completed Queue (cursor-queue-result/)
+
+| # | Task | Archive File |
+|---|------|-------------|
+| 001 | FunC full compile + Forge Build | 001-func-compile-and-forge-build.md |
+| 002 | 100-round stress test + Gas baseline | 002-stress-test-100-rounds.md |
+| 003 | Real contract address replacement + on-chain hookup | 003-real-contracts-and-data.md |
+| 004 | Unified ION fee logic | 004-ion-only-fees.md |
+| 005 | UI polish + responsive adaptation | 005-ui-polish-responsive.md |
+| 006 | Testnet deploy + E2E verification | 006-testnet-deploy-e2e.md |
+| 007 | ION DEX Phase 1 Swap+Pool | 007-ion-dex-phase1-swap-pool.md |
+| pool-card | PoolCard component development | pool-card-task.md |
 
 ## Output Files
-- `D:\openclaw-tools\ion-dex-nuke\.cursor\rules\current-tasks.mdc` — Updated (06:46 CST)
-- `D:\openclaw-tools\ion-dex-nuke\SESSION_STATE.md` — This file (06:46 CST)
+
+- `D:\openclaw-tools\ion-dex-nuke\.cursor\rules\current-tasks.mdc` — Updated (14:22 CST)
+- `D:\openclaw-tools\ion-dex-nuke\SESSION_STATE.md` — This file (14:22 CST)

@@ -1,24 +1,39 @@
 {
-    "version":  1,
-    "lastUpdatedAt":  "2026-06-19T05:36:46.5795957Z",
-    "transcripts":  {
-                        "104cf712-1289-4c71-b7f5-d0ec30896eec/104cf712-1289-4c71-b7f5-d0ec30896eec.jsonl":  {
-                                                                                                                "mtimeUtc":  "2026-06-19T05:33:02.3749352Z"
-                                                                                                            },
-                        "104cf712-1289-4c71-b7f5-d0ec30896eec/subagents/30b16346-6b99-44a9-b0a1-0e18f5f0de49.jsonl":  {
-                                                                                                                          "mtimeUtc":  "2026-06-18T12:14:57.3801058Z"
-                                                                                                                      },
-                        "367a794d-5285-4058-870f-b6b84d0c86fc/367a794d-5285-4058-870f-b6b84d0c86fc.jsonl":  {
-                                                                                                                "mtimeUtc":  "2026-06-19T05:09:32.4107193Z"
-                                                                                                            },
-                        "3f4081c8-5a95-45f9-b2dd-1404e83a6fdb/3f4081c8-5a95-45f9-b2dd-1404e83a6fdb.jsonl":  {
-                                                                                                                "mtimeUtc":  "2026-06-19T05:24:04.6092797Z"
-                                                                                                            },
-                        "daa26ede-c349-4672-829d-cbe8480500a7/daa26ede-c349-4672-829d-cbe8480500a7.jsonl":  {
-                                                                                                                "mtimeUtc":  "2026-06-19T05:10:24.8969584Z"
-                                                                                                            },
-                        "f471fd6e-5c05-482e-8007-77bd003be5a9/f471fd6e-5c05-482e-8007-77bd003be5a9.jsonl":  {
-                                                                                                                "mtimeUtc":  "2026-06-19T05:29:04.3345874Z"
-                                                                                                            }
-                    }
+  "version": 1,
+  "lastUpdatedAt": "2026-06-24T09:03:06.249177Z",
+  "transcripts": {
+    "104cf712-1289-4c71-b7f5-d0ec30896eec/104cf712-1289-4c71-b7f5-d0ec30896eec.jsonl": {
+      "mtimeUtc": "2026-06-19T15:55:37.140578Z"
+    },
+    "104cf712-1289-4c71-b7f5-d0ec30896eec/subagents/30b16346-6b99-44a9-b0a1-0e18f5f0de49.jsonl": {
+      "mtimeUtc": "2026-06-18T12:14:57.380106Z"
+    },
+    "21d59514-fa74-4aec-a14f-035aa47ec395/21d59514-fa74-4aec-a14f-035aa47ec395.jsonl": {
+      "mtimeUtc": "2026-06-20T09:16:22.512264Z"
+    },
+    "367a794d-5285-4058-870f-b6b84d0c86fc/367a794d-5285-4058-870f-b6b84d0c86fc.jsonl": {
+      "mtimeUtc": "2026-06-20T10:50:45.842301Z"
+    },
+    "3f4081c8-5a95-45f9-b2dd-1404e83a6fdb/3f4081c8-5a95-45f9-b2dd-1404e83a6fdb.jsonl": {
+      "mtimeUtc": "2026-06-20T01:58:20.403470Z"
+    },
+    "4f0c8771-07b8-4872-bcbb-b15ed141a258/4f0c8771-07b8-4872-bcbb-b15ed141a258.jsonl": {
+      "mtimeUtc": "2026-06-21T00:06:45.303442Z"
+    },
+    "516d5508-2dc0-4335-9ddc-5a3136866d38/516d5508-2dc0-4335-9ddc-5a3136866d38.jsonl": {
+      "mtimeUtc": "2026-06-24T08:49:52.480626Z"
+    },
+    "66fcc84e-4e1f-482b-b746-01688f568f3b/66fcc84e-4e1f-482b-b746-01688f568f3b.jsonl": {
+      "mtimeUtc": "2026-06-20T10:49:59.439541Z"
+    },
+    "caac90af-cc2b-4404-a5d7-e1ae89beb863/caac90af-cc2b-4404-a5d7-e1ae89beb863.jsonl": {
+      "mtimeUtc": "2026-06-23T23:02:03.504062Z"
+    },
+    "daa26ede-c349-4672-829d-cbe8480500a7/daa26ede-c349-4672-829d-cbe8480500a7.jsonl": {
+      "mtimeUtc": "2026-06-20T10:51:43.150079Z"
+    },
+    "f471fd6e-5c05-482e-8007-77bd003be5a9/f471fd6e-5c05-482e-8007-77bd003be5a9.jsonl": {
+      "mtimeUtc": "2026-06-20T09:14:37.316528Z"
+    }
+  }
 }

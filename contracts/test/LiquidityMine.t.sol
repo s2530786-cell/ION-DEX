@@ -4,9 +4,9 @@ pragma solidity ^0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {MockERC20} from "../bsc/MockERC20.sol";
 import {AdminManager} from "../bsc/AdminManager.sol";
-import {FeeReceiver} from "../bsc/FeeReceiver.sol";
+import {FeeReceiverV2} from "../bsc/FeeReceiverV2.sol";
 import {LiquidityMine} from "../bsc/LiquidityMine.sol";
-import {IonOracle} from "../bsc/IonOracle.sol";
+import {IonOracleV2} from "../bsc/IonOracleV2.sol";
 import {MockAggregator} from "./MockAggregator.sol";
 
 contract LiquidityMineTest is Test {
@@ -14,13 +14,13 @@ contract LiquidityMineTest is Test {
     address internal constant BURN = 0x000000000000000000000000000000000000dEaD;
 
     AdminManager internal admin;
-    FeeReceiver internal feeReceiver;
+    FeeReceiverV2 internal feeReceiver;
     LiquidityMine internal mine;
     MockERC20 internal ion;
     MockERC20 internal lpIonUsdt;
     MockERC20 internal lpIonBnb;
     MockAggregator internal priceFeed;
-    IonOracle internal oracle;
+    IonOracleV2 internal oracle;
 
     address internal owner = address(0xA11CE);
     address internal treasury = address(0xBEEF);
@@ -38,8 +38,8 @@ contract LiquidityMineTest is Test {
 
         admin = new AdminManager(owner);
         priceFeed = new MockAggregator(100_000_000, 8);
-        oracle = new IonOracle(owner, address(priceFeed), "mock");
-        feeReceiver = new FeeReceiver(owner, ION_TOKEN, treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
+        oracle = new IonOracleV2(owner, address(priceFeed), "mock");
+        feeReceiver = new FeeReceiverV2(owner, ION_TOKEN, treasury, team, staking, keeper, address(oracle), 90_000_000, 110_000_000);
         mine = new LiquidityMine(address(admin), address(feeReceiver));
 
         lpIonUsdt = new MockERC20("ION-USDT LP", "IONUSDT", 18);

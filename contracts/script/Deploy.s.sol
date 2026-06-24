@@ -5,11 +5,11 @@ import {Script} from "forge-std/Script.sol";
 import {console} from "forge-std/console.sol";
 import {MockERC20} from "../bsc/MockERC20.sol";
 import {BSCVault} from "../bsc/BSCVault.sol";
-import {BridgeRelay} from "../bsc/BridgeRelay.sol";
-import {FeeReceiver} from "../bsc/FeeReceiver.sol";
+import {BridgeRelayV2} from "../bsc/BridgeRelayV2.sol";
+import {FeeReceiverV2} from "../bsc/FeeReceiverV2.sol";
 import {IonWrapper} from "../bsc/IonWrapper.sol";
-import {IonSwapRouter} from "../bsc/IonSwapRouter.sol";
-import {IonOracle} from "../bsc/IonOracle.sol";
+import {IonSwapRouterV2} from "../bsc/IonSwapRouterV2.sol";
+import {IonOracleV2} from "../bsc/IonOracleV2.sol";
 
 interface IMockAggregator {
     function decimals() external view returns (uint8);
@@ -58,10 +58,10 @@ contract Deploy is Script {
 
         MockERC20 ion = new MockERC20("ION", "ION", 18);
         BSCVault vault = new BSCVault(deployer);
-        BridgeRelay relay = new BridgeRelay(deployer, address(vault), 1);
+        BridgeRelayV2 relay = new BridgeRelayV2(deployer, address(vault), 1);
         DeployMockAggregator priceFeed = new DeployMockAggregator(100_000_000, 8);
-        IonOracle oracle = new IonOracle(deployer, address(priceFeed), "deploy-mock");
-        FeeReceiver feeReceiver = new FeeReceiver(
+        IonOracleV2 oracle = new IonOracleV2(deployer, address(priceFeed), "deploy-mock");
+        FeeReceiverV2 feeReceiver = new FeeReceiverV2(
             deployer,
             address(ion),
             deployer,
@@ -73,7 +73,7 @@ contract Deploy is Script {
             110_000_000
         );
         IonWrapper wrapper = new IonWrapper(address(ion));
-        IonSwapRouter router = new IonSwapRouter(deployer);
+        IonSwapRouterV2 router = new IonSwapRouterV2(deployer);
 
         vault.setBridgeRelay(address(relay));
         vault.setRelayer(address(relay), true);

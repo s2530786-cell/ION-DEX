@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IonSwapRouter, IonSwapPoolMock, ISwapPool} from "../bsc/IonSwapRouter.sol";
+import {IonSwapRouterV2, ISwapPool} from "../bsc/IonSwapRouterV2.sol";
+import {IonSwapPoolMock} from "./mocks/IonSwapPoolMock.sol";
 
 contract MinimumOutputTest {
-    IonSwapRouter router;
+    IonSwapRouterV2 router;
     IonSwapPoolMock pool;
 
     function setUp() public {
-        router = new IonSwapRouter(address(this));
+        router = new IonSwapRouterV2(address(this));
         pool = new IonSwapPoolMock(1_000 ether);
     }
 

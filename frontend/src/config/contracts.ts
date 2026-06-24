@@ -16,7 +16,7 @@ const PENDING_DEPLOY = PLACEHOLDER_ADDRESS;
 
 const burnContractAddress =
   resolveBurnContractAddress() ?? OFFICIAL_BSC_BURN_ADDRESS;
-const vaultLockAddress =
+const vaultAddress =
   resolveVaultContractAddress() ?? PENDING_DEPLOY;
 
 export const CONTRACTS = {
@@ -65,7 +65,7 @@ export const CONTRACTS = {
   },
   vault: {
     lock: {
-      address: vaultLockAddress,
+      address: vaultAddress,
       chainId: BSC_CHAIN_ID,
     },
   },
