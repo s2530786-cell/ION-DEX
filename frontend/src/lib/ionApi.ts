@@ -906,6 +906,86 @@ export async function toggleAiAutoRenewal(walletAddr: string, enable: boolean): 
   });
 }
 
+export type AiStrategy = {
+  id: string;
+  name: string;
+  type: string;
+  apy: number;
+  risk: string;
+  tvl: number;
+  subscribers: number;
+  desc: string;
+};
+
+export type AiStrategySubscription = {
+  id: string;
+  address: string;
+  strategy_id: string;
+  timestamp: string;
+};
+
+/** GET /api/ai/strategies — returns the raw strategy catalog list. */
+export async function fetchAiStrategies(signal?: AbortSignal): Promise<AiStrategy[]> {
+  const response = await fetch(`${apiBaseUrl}/api/ai/strategies`, {
+    headers: { accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`AI strategies request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as AiStrategy[];
+}
+
+/** POST /api/ai/subscribe-strategy — subscribe wallet to a strategy tier. */
+export async function subscribeAiStrategy(
+  address: string,
+  strategyId: string,
+  signal?: AbortSignal,
+): Promise<AiStrategySubscription> {
+  const response = await fetch(`${apiBaseUrl}/api/ai/subscribe-strategy`, {
+    method: "POST",
+    headers: { accept: "application/json", "content-type": "application/json" },
+    body: JSON.stringify({ address, tier: strategyId }),
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`AI strategy subscribe failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as AiStrategySubscription;
+}
+
+export type DiscoverToken = {
+  symbol: string;
+  name: string;
+  price: number;
+  change24h: number;
+  volume: number;
+  mcap: number;
+  chain: string;
+  cat: string;
+  icon: string;
+};
+
+/** GET /api/market?cat=&q= — returns the raw discover token list. */
+export async function fetchDiscoverMarket(
+  cat: string,
+  q: string,
+  signal?: AbortSignal,
+): Promise<DiscoverToken[]> {
+  const params = new URLSearchParams();
+  if (cat) params.set("cat", cat);
+  if (q) params.set("q", q);
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  const response = await fetch(`${apiBaseUrl}/api/market${suffix}`, {
+    headers: { accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`Discover market request failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as DiscoverToken[];
+}
+
 export type MarketProvenance = { source: string; model: string };
 
 export type MarketCandle = {

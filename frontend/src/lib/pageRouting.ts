@@ -19,6 +19,9 @@ const PAGE_KEYS: readonly PageKey[] = [
   "batch-transfer",
   "ai",
   "ai-trading",
+  "ai-market",
+  "discover",
+  "portfolio",
   "settings",
 ] as const;
 
