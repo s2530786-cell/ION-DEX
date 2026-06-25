@@ -110,3 +110,13 @@ test_reports/
 
 # verify-100-gate auto-generated proofs (never commit)
 .verify-100-gate/
+
+# Stale yarn lockfiles (project standardized on npm/package-lock.json)
+yarn.lock
+frontend/yarn.lock
+
+# Vendored third-party JS manifests (not part of our build; cleared from dependabot)
+contracts/lib/openzeppelin-contracts/**/package.json
+contracts/lib/openzeppelin-contracts/**/package-lock.json
+tools/mcp-e2b-quickstart/package.json
+tools/mcp-e2b-quickstart/package-lock.json
