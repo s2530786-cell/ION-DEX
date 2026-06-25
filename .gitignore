@@ -107,3 +107,6 @@ dss/
 
 # Test reports (local only)
 test_reports/
+
+# verify-100-gate auto-generated proofs (never commit)
+.verify-100-gate/
