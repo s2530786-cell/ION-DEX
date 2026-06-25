@@ -11,14 +11,14 @@ import { join } from "node:path";
 const root = process.cwd();
 const required = [
   "contracts/foundry.toml",
-  "contracts/bsc/IonSwapRouter.sol",
+  "contracts/bsc/IonSwapRouterV2.sol",
   "contracts/bsc/BSCVault.sol",
   "contracts/bsc/MockERC20.sol",
-  "contracts/bsc/FeeReceiver.sol",
-  "contracts/bsc/BridgeRelay.sol",
+  "contracts/bsc/FeeReceiverV2.sol",
+  "contracts/bsc/BridgeRelayV2.sol",
   "contracts/bsc/IonWrapper.sol",
   "contracts/bsc/Burn.sol",
-  "contracts/bsc/VaultLock.sol",
+  "contracts/bsc/VaultLockV2.sol",
   "contracts/test/MinimumOutput.t.sol",
   "contracts/test/BSCContracts.t.sol",
   "contracts/ion/common/common.fc",
