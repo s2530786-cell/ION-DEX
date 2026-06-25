@@ -18,6 +18,9 @@ import { CopyTradePage } from "@/pages/CopyTradePage";
 import { LiquidityMinePage } from "@/pages/LiquidityMinePage";
 import { DomainManagePage } from "@/pages/DomainManagePage";
 import { AiSubscriptionPage } from "@/pages/AiSubscriptionPage";
+import { AiMarketPage } from "@/pages/AiMarketPage";
+import { DiscoverPage } from "@/pages/DiscoverPage";
+import { PortfolioPage } from "@/pages/PortfolioPage";
 import { SettingPage } from "@/pages/SettingPage";
 import { BatchTransferPage } from "@/pages/BatchTransferPage";
 
@@ -68,6 +71,12 @@ function PageRouter({
       return <AiSubscriptionPage />;
     case "ai-trading":
       return <AiSubscriptionPage />;
+    case "ai-market":
+      return <AiMarketPage />;
+    case "discover":
+      return <DiscoverPage />;
+    case "portfolio":
+      return <PortfolioPage />;
     case "settings":
       return <SettingPage />;
     default:

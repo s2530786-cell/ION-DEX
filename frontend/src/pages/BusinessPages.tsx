@@ -69,6 +69,9 @@ export type BusinessPageKey = Exclude<
   | "batch-transfer"
   | "settings"
   | "ai-trading"
+  | "ai-market"
+  | "discover"
+  | "portfolio"
 >;
 
 function getPageConfigs(isZh: boolean): Record<BusinessPageKey, BusinessPageConfig> {

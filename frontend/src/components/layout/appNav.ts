@@ -22,6 +22,7 @@ const navGroupsByLocale: Record<AppLocale, NavGroupDef[]> = {
       items: [
         { key: "dashboard", label: "总览" },
         { key: "swap", label: "兑换" },
+        { key: "discover", label: "发现" },
         { key: "trade", label: "交易" },
         { key: "grid", label: "网格" },
         { key: "pool", label: "资金池" },
@@ -34,6 +35,7 @@ const navGroupsByLocale: Record<AppLocale, NavGroupDef[]> = {
         { key: "stake", label: "质押" },
         { key: "liquidity-mine", label: "流动性挖矿" },
         { key: "copy-trade", label: "跟单" },
+        { key: "portfolio", label: "我的资产" },
       ],
     },
     {
@@ -45,6 +47,7 @@ const navGroupsByLocale: Record<AppLocale, NavGroupDef[]> = {
         { key: "domain", label: "域名" },
         { key: "batch-transfer", label: "批量转账" },
         { key: "ai", label: "AI" },
+        { key: "ai-market", label: "AI 策略市场" },
       ],
     },
     {
@@ -70,6 +73,7 @@ const navGroupsByLocale: Record<AppLocale, NavGroupDef[]> = {
       items: [
         { key: "dashboard", label: "Dashboard" },
         { key: "swap", label: "Swap" },
+        { key: "discover", label: "Discover" },
         { key: "trade", label: "Trade" },
         { key: "grid", label: "Grid" },
         { key: "pool", label: "Pool" },
@@ -82,6 +86,7 @@ const navGroupsByLocale: Record<AppLocale, NavGroupDef[]> = {
         { key: "stake", label: "Stake" },
         { key: "liquidity-mine", label: "Liquidity Mine" },
         { key: "copy-trade", label: "Copy Trade" },
+        { key: "portfolio", label: "Portfolio" },
       ],
     },
     {
@@ -93,6 +98,7 @@ const navGroupsByLocale: Record<AppLocale, NavGroupDef[]> = {
         { key: "domain", label: "Domain" },
         { key: "batch-transfer", label: "Batch Transfer" },
         { key: "ai", label: "AI" },
+        { key: "ai-market", label: "AI Strategy Market" },
       ],
     },
     {
