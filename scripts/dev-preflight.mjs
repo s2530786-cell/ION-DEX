@@ -6,20 +6,27 @@ import { listDiscoveredSkillIds } from "./github-discovered-route.mjs";
 
 const root = process.cwd();
 
+// Files committed to the repo — always enforced (including in CI).
 const requiredFiles = [
   "docs/00-engineering-standards.md",
-  ".memory-bank/overall-design-framework.md",
-  ".memory-bank/live-data-reference.md",
-  ".memory-bank/implementation-playbook.md",
-  ".memory-bank/architecture-audit.md",
-  ".memory-bank/security-audit-and-stress-framework.md",
-  ".memory-bank/ion-dex-nuke/official-source-index.md",
   ".cursor/skills/ion-web3-ui/SKILL.md",
   "docs/05-product-prd.md",
   "docs/06-page-flow-and-user-journeys.md",
   "docs/10-ui-design-route.md",
   "AGENTS.md",
   "SESSION_STATE.md",
+];
+
+// Confidential blueprint files kept in .gitignore (铁律27: never pushed to a
+// public repo). They exist on local dev machines but never on CI runners, so
+// they are validated only when present and skipped gracefully when absent.
+const localOnlyFiles = [
+  ".memory-bank/overall-design-framework.md",
+  ".memory-bank/live-data-reference.md",
+  ".memory-bank/implementation-playbook.md",
+  ".memory-bank/architecture-audit.md",
+  ".memory-bank/security-audit-and-stress-framework.md",
+  ".memory-bank/ion-dex-nuke/official-source-index.md",
 ];
 
 const requiredMarkers = new Map([
@@ -147,6 +154,17 @@ console.log("=== ION DEX development preflight ===");
 for (const file of requiredFiles) {
   readRequiredFile(file);
   console.log(`READ_OK ${file}`);
+}
+
+// Confidential blueprint files (.memory-bank/*) live in .gitignore and never
+// reach CI runners. Validate them when present, skip gracefully when absent.
+for (const file of localOnlyFiles) {
+  if (existsSync(join(root, file))) {
+    readRequiredFile(file);
+    console.log(`READ_OK ${file}`);
+  } else {
+    console.log(`SKIP_LOCAL_ONLY ${file} (not present — expected on CI)`);
+  }
 }
 
 const warnings = collectUiDebtWarnings();
