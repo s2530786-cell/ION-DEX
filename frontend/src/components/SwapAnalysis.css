@@ -1,0 +1,337 @@
+.swap-analysis {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+/* Header */
+.analysis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.analysis-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text, #fff);
+  margin: 0;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Timeframe Selector */
+.timeframe-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.timeframe-btn {
+  padding: 0.375rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: var(--text-dim, #999);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.timeframe-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 255, 255, 0.2);
+}
+
+.timeframe-btn.active {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: rgba(0, 255, 255, 0.5);
+  color: var(--cyan, #06b6d4);
+}
+
+.refresh-btn {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  color: var(--cyan, #06b6d4);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: rgba(0, 255, 255, 0.3);
+}
+
+/* Price Summary */
+.price-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(0, 255, 255, 0.05);
+  border-radius: 0.5rem;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.summary-label {
+  font-size: 0.75rem;
+  color: var(--text-dim, #999);
+}
+
+.summary-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text, #fff);
+  font-family: 'Courier New', monospace;
+}
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 1rem;
+  background: rgba(0, 255, 255, 0.02);
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.price-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.price-line {
+  filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.5));
+}
+
+.current-point {
+  animation: pulse-point 2s infinite;
+}
+
+@keyframes pulse-point {
+  0%, 100% {
+    opacity: 1;
+    r: 4;
+  }
+  50% {
+    opacity: 0.5;
+    r: 6;
+  }
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-dim, #999);
+  font-size: 0.875rem;
+}
+
+/* Indicator Selector */
+.indicator-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.indicator-btn {
+  padding: 0.375rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: var(--text-dim, #999);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.indicator-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 255, 255, 0.2);
+}
+
+.indicator-btn.active {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(6, 182, 212, 0.2));
+  border-color: rgba(0, 255, 255, 0.5);
+  color: var(--cyan, #06b6d4);
+}
+
+/* Indicators Panel */
+.indicators-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.indicator-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.indicator-label {
+  font-size: 0.75rem;
+  color: var(--text-dim, #999);
+  margin-bottom: 0.5rem;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.indicator-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.indicator-empty {
+  font-size: 0.75rem;
+  color: var(--text-dim, #999);
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+/* RSI Gauge */
+.rsi-gauge {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.rsi-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.rsi-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.rsi-label {
+  font-size: 0.75rem;
+  color: var(--text-dim, #999);
+}
+
+/* Volatility */
+.volatility-display {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.volatility-label {
+  font-size: 0.75rem;
+  color: var(--text-dim, #999);
+}
+
+/* Liquidity & Volume */
+.liquidity-value,
+.volume-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--cyan, #06b6d4);
+  font-family: 'Courier New', monospace;
+}
+
+/* Market Analysis */
+.market-analysis {
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.analysis-subtitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text, #fff);
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.analysis-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.analysis-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-dim, #999);
+}
+
+.analysis-icon {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .indicators-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .price-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .swap-analysis {
+    padding: 0.75rem;
+  }
+
+  .header-controls {
+    gap: 0.375rem;
+  }
+
+  .timeframe-selector {
+    gap: 0.375rem;
+  }
+
+  .timeframe-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .indicators-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    height: 150px;
+  }
+}

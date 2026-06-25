@@ -22,6 +22,13 @@
   margin: 0;
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.export-btn,
 .refresh-btn {
   background: rgba(0, 255, 255, 0.1);
   border: 1px solid rgba(0, 255, 255, 0.2);
@@ -30,18 +37,24 @@
   color: var(--cyan, #06b6d4);
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.export-btn:hover,
 .refresh-btn:hover:not(:disabled) {
   background: rgba(0, 255, 255, 0.2);
   border-color: rgba(0, 255, 255, 0.3);
 }
 
+.export-btn:disabled,
 .refresh-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
+.export-btn svg,
 .refresh-btn svg {
   width: 1rem;
   height: 1rem;

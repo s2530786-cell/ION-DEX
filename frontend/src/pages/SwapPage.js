@@ -6,9 +6,15 @@ import QuickTiles from "../components/QuickTiles";
 import NeonGauge from "../components/NeonGauge";
 import SlippageControl from "../components/SlippageControl";
 import SwapHistory from "../components/SwapHistory";
+import SwapAnalysis from "../components/SwapAnalysis";
+import TechnicalIndicators from "../components/TechnicalIndicators";
+import PriceAnalytics from "../components/PriceAnalytics";
 import { api, fmt, fmtUsd } from "../lib/api";
 import { useWallet } from "../context/WalletContext";
 import { useSwapPrice } from "../hooks/useSwapPrice";
+import { useChainData } from "../hooks/useChainData";
+import { useSwapHistoryStorage, useUserPreferences } from "../hooks/useLocalStorage";
+import { swapHistoryManager } from "../lib/localStorage";
 
 const TV_SYMBOLS = { ION: "BINANCE:TONUSDT", BNB: "BINANCE:BNBUSDT", BTC: "BINANCE:BTCUSDT", ETH: "BINANCE:ETHUSDT", TON: "BINANCE:TONUSDT", CAKE: "BINANCE:CAKEUSDT" };
 
@@ -59,12 +65,31 @@ export default function SwapPage() {
   const [burn, setBurn] = useState(null);
   const [isSwapping, setIsSwapping] = useState(false);
 
+  // 技术指标状态
+  const [volatility, setVolatility] = useState(0);
+  const [rsi, setRSI] = useState(50);
+  const [priceHistoryData, setPriceHistoryData] = useState([]);
+
   useEffect(() => {
     api.tokens().then(setTokens);
     api.recentTrades("ION/USDT").then(setTrades);
     api.pools().then(setStats);
     api.burnStats().then(setBurn);
   }, []);
+
+  // 更新技术指标数据
+  useEffect(() => {
+    // 模拟波动率计算
+    setVolatility(Math.random() * 3 + 0.5);
+    // 模拟 RSI 计算
+    setRSI(Math.random() * 40 + 30);
+    // 模拟价格历史
+    setPriceHistoryData(
+      Array.from({ length: 24 }, (_, i) => 
+        4.5 + Math.sin(i / 5) * 0.5 + Math.random() * 0.3
+      )
+    );
+  }, [fromT, toT]);
 
   // 使用新的价格计算引擎
   const calculateSwapPrice = useCallback(() => {
@@ -116,6 +141,27 @@ export default function SwapPage() {
             slippage: quote.slippage,
           })
       );
+
+      // 保存交易到 localStorage
+      try {
+        const tradeRecord = {
+          id: `0x${Math.random().toString(16).slice(2)}`,
+          from: fromT,
+          to: toT,
+          inputAmount: parseFloat(amount),
+          outputAmount: quote.minOutput,
+          rate: quote.rate,
+          slippage: quote.slippage,
+          priceImpact: parseFloat(quote.priceImpact),
+          fee: quote.tradingFee,
+          status: 'completed',
+          timestamp: Date.now(),
+          txHash: `0x${Math.random().toString(16).slice(2)}`,
+        };
+        swapHistoryManager.addTrade(tradeRecord);
+      } catch (storageError) {
+        console.error('Failed to save trade history:', storageError);
+      }
 
       // 重置表单
       setAmount("0");
@@ -220,9 +266,20 @@ export default function SwapPage() {
         </Panel>
       </div>
 
-      {/* CENTER - Chart + trades */}
+      {/* CENTER - Chart + trades + analysis */}
       <div className="space-y-4">
         <NeonCandlestickChart pair={`${fromT}/${toT}`} base={fromT === "ION" ? 4.82 : 100} height={440} />
+        
+        {/* Swap Analysis Component */}
+        <SwapAnalysis
+          pair={`${fromT}/${toT}`}
+          priceHistory={priceHistoryData}
+          volatility={volatility}
+          rsi={rsi}
+          volume24h={quote?.volume24h || 0}
+          liquidity={quote?.liquidity || 0}
+        />
+        
         <Panel className="p-5">
           <div className="flex items-center gap-2 mb-3"><Icon name="order.svg" size={20} /><h3 className="h1" style={{ fontSize: 16 }}>Recent Trades</h3></div>
           <div className="grid grid-cols-4 gap-2 pb-2" style={{ color: "var(--text-dim)", fontSize: 12, borderBottom: "1px solid var(--panel-border)" }}>
@@ -241,7 +298,7 @@ export default function SwapPage() {
         </Panel>
       </div>
 
-      {/* RIGHT - Stats + Market list */}
+      {/* RIGHT - Stats + Market list + Technical Indicators */}
       <div className="space-y-4 depth-right">
         <Panel className="p-4">
           <div className="grid grid-cols-2 gap-3">
@@ -265,6 +322,16 @@ export default function SwapPage() {
             <span className="mono" style={{ color: "var(--red)" }}>{burn ? fmt(burn.total_burned) : "—"} ION</span>
           </div>
         </Panel>
+
+        {/* Technical Indicators */}
+        <TechnicalIndicators
+          pair={`${fromT}/${toT}`}
+          rsi={rsi}
+          volatility={volatility}
+          macd={null}
+          bollingerBands={null}
+          movingAverages={null}
+        />
 
         <Panel className="p-4">
           <div className="flex items-center gap-2 mb-3"><Icon name="dashboard.svg" size={20} /><h3 className="h1" style={{ fontSize: 16 }}>Markets</h3></div>

@@ -1,103 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { useWallet } from '../hooks/useWallet';
-import { useSwapHistoryStorage } from '../hooks/useLocalStorage';
+import { swapHistoryManager } from '../lib/localStorage';
 import './SwapHistory.css';
 
 /**
  * 交易历史组件
  * - 显示用户的完整交易记录
  * - 按状态过滤（完成/待处理/失败）
- * - 本地持久化存储
- * - 导出功能 (CSV/JSON)
+ * - 实时更新与刷新
+ * - 支持 localStorage 持久化
  */
 export function SwapHistory() {
   const { wallet } = useWallet();
-  const {
-    trades: savedTrades,
-    addTrade,
-    updateTradeStatus,
-    getTradesByStatus,
-    getStats,
-    exportAsCSV,
-    exportAsJSON,
-    clearHistory,
-  } = useSwapHistoryStorage();
-
-  const [filter, setFilter] = useState('all');
+  const [trades, setTrades] = useState([]);
+  const [filter, setFilter] = useState('all'); // 'all' | 'completed' | 'pending' | 'failed'
   const [isLoading, setIsLoading] = useState(false);
-  const [stats, setStats] = useState(null);
-  const [showExportMenu, setShowExportMenu] = useState(false);
-
-  // Mock 交易历史数据（初始化时使用）
-  const mockTrades = [
-    {
-      id: '0x123abc...',
-      from: 'ION',
-      to: 'USDT',
-      inputAmount: 100,
-      outputAmount: 482,
-      rate: 4.82,
-      slippage: 0.5,
-      priceImpact: 0.08,
-      fee: 1.44,
-      status: 'completed',
-      timestamp: Date.now() - 3600000, // 1 小时前
-      txHash: '0x123abc456def789...',
-    },
-    {
-      id: '0x456def...',
-      from: 'BNB',
-      to: 'USDT',
-      inputAmount: 0.5,
-      outputAmount: 305.25,
-      rate: 610.5,
-      slippage: 1.0,
-      priceImpact: 0.12,
-      fee: 0.92,
-      status: 'completed',
-      timestamp: Date.now() - 7200000, // 2 小时前
-      txHash: '0x456def789abc...',
-    },
-    {
-      id: '0x789ghi...',
-      from: 'WBTC',
-      to: 'WION',
-      inputAmount: 1.5,
-      outputAmount: 12.3,
-      rate: 8.2,
-      slippage: 0.5,
-      priceImpact: 0.05,
-      fee: 0.037,
-      status: 'pending',
-      timestamp: Date.now() - 300000, // 5 分钟前
-      txHash: null,
-    },
-    {
-      id: '0x101112...',
-      from: 'ETH',
-      to: 'USDT',
-      inputAmount: 2,
-      outputAmount: 4500,
-      rate: 2250,
-      slippage: 2.0,
-      priceImpact: 1.8,
-      fee: 13.5,
-      status: 'failed',
-      timestamp: Date.now() - 86400000, // 1 天前
-      txHash: '0x101112abc...',
-    },
-  ];
 
   useEffect(() => {
-    // 模拟加载交易历史
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setTrades(mockTrades);
-      setIsLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    // 从 localStorage 加载交易历史
+    loadTrades();
   }, [wallet.address]);
+
+  const loadTrades = () => {
+    try {
+      setIsLoading(true);
+      const storedTrades = swapHistoryManager.getAllTrades();
+      setTrades(storedTrades);
+    } catch (error) {
+      console.error('Failed to load trades:', error);
+      setTrades([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRefresh = () => {
+    loadTrades();
+  };
+
+  const handleExportCSV = () => {
+    try {
+      const csv = swapHistoryManager.exportToCSV();
+      swapHistoryManager.downloadCSV(csv);
+    } catch (error) {
+      console.error('Failed to export CSV:', error);
+    }
+  };
 
   // 过滤交易
   const filteredTrades = filter === 'all' 
@@ -148,19 +96,27 @@ export function SwapHistory() {
       {/* Header */}
       <div className="history-header">
         <h3 className="history-title">交易历史</h3>
-        <button
-          className="refresh-btn"
-          onClick={() => {
-            setIsLoading(true);
-            setTimeout(() => setIsLoading(false), 500);
-          }}
-          disabled={isLoading}
-          title="刷新交易历史"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-        </button>
+        <div className="header-actions">
+          <button
+            className="export-btn"
+            onClick={handleExportCSV}
+            title="导出为 CSV"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
+          <button
+            className="refresh-btn"
+            onClick={handleRefresh}
+            disabled={isLoading}
+            title="刷新交易历史"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Filter Tabs */}
