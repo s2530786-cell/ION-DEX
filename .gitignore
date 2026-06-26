@@ -128,3 +128,17 @@ ui-designs/
 # TypeScript incremental build info (machine-local)
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+# Detached submodule-like nested repos (untracked gitlinks, no .gitmodules entry)
+# These are full clones / forks with their own .git; not part of main repo tracking.
+ice-blockchain-repos/
+hermes-agent/
+tools/hyperframes/
+# Root-level lib/ zombie gitlinks (NOT contracts/lib which is the real foundry submodule)
+/lib/forge-std/
+/lib/openzeppelin-contracts/
+# Detached submodule-like nested repos (untracked gitlinks, no .gitmodules entry)
+ice-blockchain-repos
+hermes-agent
+tools/hyperframes
+/lib/forge-std
+/lib/openzeppelin-contracts
