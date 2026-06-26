@@ -42,7 +42,7 @@ jobs:
           node-version: "22"
 
       - name: Cache ION toolchain
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ion-dex-toolchain
           key: ion-toolchain-${{ runner.os }}-${{ hashFiles('scripts/setup-ion-toolchain.sh') }}
