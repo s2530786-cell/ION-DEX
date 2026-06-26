@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package ion.protocol.v1;
+
+option go_package = "pkg/ion/protocol";
+
+/**
+ * @file ion_protocol.proto
+ * @description Standard gRPC definitions for the ION Ecosystem.
+ * Enables cross-language development for the Sniper Engine and Intelligence Brain.
+ */
+
+service IonTradeService {
+  // Sniper Interface: Execute high-speed trades via the relay network.
+  rpc ExecuteTrade(TradeIntent) returns (TradeResponse);
+  
+  // Intelligence Interface: Retrieve real-time address labels and sentiment scores.
+  rpc GetAddressLabel(LabelRequest) returns (AddressLabel);
+  rpc GetMarketSentiment(SentimentRequest) returns (SentimentScore);
+}
+
+message TradeIntent {
+  string user_address = 1;
+  string token_pair = 2;
+  string amount_nano = 3; // String to prevent floating point drift
+  double max_slippage = 4;
+}
+
+message TradeResponse {
+  string tx_hash = 1;
+  bool success = 2;
+  string error_msg = 3;
+}
+
+message LabelRequest {
+  string address = 1;
+}
+
+message AddressLabel {
+  string tag = 1; // "WHALE", "SMART_MONEY", "DEV"
+  int32 risk_score = 2;
+}
+
+message SentimentRequest {
+  string symbol = 1;
+}
+
+message SentimentScore {
+  double score = 1; // -1.0 to 1.0
+  string trend = 2; // "BULLISH", "BEARISH"
+}

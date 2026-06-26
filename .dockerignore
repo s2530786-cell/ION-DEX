@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.gitignore
+*.md
+.gitattributes
+memory
+scripts
+skills
+*.log
+backend
+contracts
+infrastructure
+.cursor

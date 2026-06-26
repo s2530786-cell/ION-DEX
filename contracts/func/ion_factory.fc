@@ -1,0 +1,34 @@
+#pragma version >=0.4.0;
+#include "imports/stdlib.fc";
+
+/**
+ * @file ion_factory.fc
+ * @description ION DEX Factory Contract - Zero-Latency Metadata Push.
+ * Modifies the pool creation sequence to emit token decimals directly in the log,
+ * eliminating the need for downstream Indexers to perform expensive RPC lookups.
+ */
+
+const int op::log_pool_created = 0x63726561; ;; "crea"
+
+() emit_pool_created_log(slice pool_address, slice token0, int dec0, slice token1, int dec1) impure inline {
+    
+    ;; P0 Compression: Pack 8-bit precision into the log body
+    cell log_body = begin_cell()
+        .store_uint(op::log_pool_created, 32)
+        .store_slice(pool_address)
+        .store_slice(token0)
+        .store_uint(dec0, 8)  ;; Direct decimal emission for Token0
+        .store_slice(token1)
+        .store_uint(dec1, 8)  ;; Direct decimal emission for Token1
+        .end_cell();
+
+    ;; Broadcast to network via non-bounceable message
+    var msg = begin_cell()
+        .store_uint(0x10, 6)
+        .store_uint(0, 2) ;; addr_none
+        .store_uint(0, 64 + 32 + 2)
+        .store_ref(log_body)
+        .end_cell();
+        
+    send_raw_message(msg, 64); ;; Mode 64: carry all remaining gas
+}

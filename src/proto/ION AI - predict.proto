@@ -1,0 +1,24 @@
+syntax = "proto3";
+package prediction;
+
+/**
+ * @file predict.proto
+ * @description Mission-critical gRPC contract for ION DEX AI Inference.
+ * Bridges the high-concurrency Go execution kernel with the Python LSTM/NLP brain.
+ */
+
+service Predictor {
+  // GetSignal transmits real-time market vectors and retrieves an actionable trade intent.
+  rpc GetSignal (MarketFeatures) returns (SignalResponse);
+}
+
+message MarketFeatures {
+  float spread = 1;      // Bid-ask spread delta
+  float velocity = 2;    // Trade events per second
+  float utilization = 3; // Pool liquidity depth usage
+}
+
+message SignalResponse {
+  float probability = 1; // Confidence score (0.0 - 1.0)
+  string action = 2;     // Action directive: "BUY", "WAIT", "SELL"
+}

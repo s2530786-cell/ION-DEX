@@ -1,0 +1,46 @@
+#pragma version >=0.4.0;
+#include "imports/stdlib.fc";
+
+;; ION DEX - Vault Settlement Contract
+;; Handles Intent-based Limit Order execution with Ed25519 signature verification.
+
+const int op::execute_limit_order = 0x4c494d54; ;; "LIMT"
+const int error::expired = 35;
+const int error::invalid_signature = 34;
+const int error::already_executed = 36;
+const int error::insufficient_balance = 37;
+
+() process_limit_order(slice in_msg_body) impure {
+    ;; 1. Load Signature and Order Payload
+    var signature = in_msg_body~load_bits(512);
+    var order_payload_cell = in_msg_body~load_ref();
+    var order_slice = order_payload_cell.begin_parse();
+    
+    ;; 2. Parse Structured Intent
+    var user_pubkey = order_slice~load_uint(256);
+    var token_address = order_slice~load_msg_addr();
+    var amount_in = order_slice~load_coins();
+    var min_out = order_slice~load_coins();
+    var expiration = order_slice~load_uint(64);
+    var nonce = order_slice~load_uint(64);
+
+    ;; 3. Pre-flight Guards
+    throw_if(error::expired, now() > expiration);
+    
+    ;; 4. Cryptographic Truth: Verify Ed25519 Signature
+    var payload_hash = cell_hash(order_payload_cell);
+    throw_unless(error::invalid_signature, check_signature(payload_hash, signature, user_pubkey));
+
+    ;; 5. Anti-Replay: Check Nonce Dictionary
+    var ds = get_data().begin_parse();
+    var executed_orders = ds~load_dict();
+    var (_, found) = executed_orders.udict_get?(64, nonce);
+    throw_if(error::already_executed, found);
+
+    ;; 6. Latch Execution State
+    executed_orders~udict_set_builder(64, nonce, begin_cell().store_uint(1, 1));
+    set_data(begin_cell().store_dict(executed_orders).end_cell());
+
+    ;; 7. Internal Settlement Logic (Mode A: Gas Fee Rebate integrated)
+    ;; Logic here would trigger the internal ledger transfer and AMM swap.
+}

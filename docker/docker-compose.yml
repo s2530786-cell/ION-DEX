@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # 1. Core Message Bus (Redis)
+  redis:
+    image: redis:alpine
+    ports: ["6379:6379"]
+    command: redis-server --maxmemory 2gb --maxmemory-policy noeviction --appendonly yes
+    networks:
+      - ion-mesh
+
+  # 2. High-Performance Go Sniper (Main Execution Layer)
+  sniper:
+    build: ./backend
+    environment:
+      - REDIS_ADDR=redis:6379
+      - GOGC=200
+      - GOMEMLIMIT=4GiB
+    depends_on:
+      - redis
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    networks:
+      - ion-mesh
+
+  # 3. Python NLP Inference Engine (Social Intelligence)
+  nlp-worker:
+    build: ./nlp_service
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "2g"
+    networks:
+      - ion-mesh
+
+  # 4. ION DEX Frontend Terminal
+  frontend:
+    build: ./frontend
+    ports: ["80:80"]
+    depends_on:
+      - sniper
+    networks:
+      - ion-mesh
+
+  # 5. [TEST ONLY] Social Data Simulator (Mock Producer)
+  tweet-simulator:
+    build: ./nlp_service
+    command: python mock_producer.py
+    depends_on:
+      - redis
+    networks:
+      - ion-mesh
+
+networks:
+  ion-mesh:
+    driver: bridge
