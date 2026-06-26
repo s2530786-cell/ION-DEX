@@ -123,3 +123,5 @@ tools/mcp-e2b-quickstart/package-lock.json
 
 # research/ - third-party clones (274 MB, nested .git from google-stitch SDK)
 research/
+# ui-designs/ - Stitch design screenshots (439 HTML exports, not production code)
+ui-designs/
