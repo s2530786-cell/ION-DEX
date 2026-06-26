@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "@ton-community/func-js": "^0.11.0",
+    "@ton/core": "^0.58.1",
     "lucide-react": "^1.21.0",
     "next": "^16.2.9",
     "react": "^19.2.7",

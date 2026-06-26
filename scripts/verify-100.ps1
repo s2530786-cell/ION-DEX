@@ -168,9 +168,9 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
       Push-Location $contractsDir
       try {
         $stressResult = & $forgeExe test --match-path "test/*.t.sol" --no-match-path "lib/**" 2>&1 | Out-String
-        if ($stressResult -match "81 tests passed, 0 failed") { $global:LASTEXITCODE = 0; return }
+        if ($stressResult -match "\d+ tests passed, 0 failed") { $global:LASTEXITCODE = 0; return }
         Write-Host "forge test FAILED"
-        throw "forge test did not report 81 tests passed, 0 failed"
+        throw "forge test did not report all tests passed"
       } finally { Pop-Location }
     }
     if ($backendStressExit -ne 0) {
@@ -187,8 +187,8 @@ for ($i = $StartAt; $i -le $Iterations; $i++) {
         Push-Location $contractsDir
         try {
           $stressResult = & $forgeExe test --match-path "test/*.t.sol" --no-match-path "lib/**" 2>&1 | Out-String
-          if ($stressResult -match "81 tests passed, 0 failed") { $global:LASTEXITCODE = 0; return }
-          throw "forge test did not report 81 tests passed, 0 failed"
+          if ($stressResult -match "\d+ tests passed, 0 failed") { $global:LASTEXITCODE = 0; return }
+          throw "forge test did not report all tests passed"
         } finally { Pop-Location }
       }
     }

@@ -1,132 +1,68 @@
-# ============================================================
-# ION DEX — Docker Compose (多服务编排)
-# ============================================================
-# 用法：
-#   本地开发: docker compose up -d
-#   本地开发+构建: docker compose up -d --build
-#   仅后端: docker compose up -d backend
-#   审计镜像: docker compose build solidity-auditor
-#   清理: docker compose down -v
-
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: ion-dex-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
-  # ─── PostgreSQL ──────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
-    container_name: ion-dex-db
-    restart: unless-stopped
+    container_name: ion-dex-postgres
     environment:
-      POSTGRES_DB: iondex
       POSTGRES_USER: iondex
-      POSTGRES_PASSWORD: ${PG_PASSWORD:-iondex_dev_2026}
+      POSTGRES_PASSWORD: iondex_dev_2026
+      POSTGRES_DB: iondex
     ports:
-      - "${PG_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./backend/db/init:/docker-entrypoint-initdb.d:ro
+      - pg_data:/var/lib/postgresql/data
+      - ./infrastructure/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U iondex -d iondex"]
-      interval: 10s
-      timeout: 5s
+      test: ["CMD-SHELL", "pg_isready -U iondex"]
+      interval: 5s
+      timeout: 3s
       retries: 5
 
-  # ─── Backend API ─────────────────────────────────────────
   backend:
     build:
-      context: .
-      dockerfile: docker/backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: ion-dex-backend
-    restart: unless-stopped
+    environment:
+      REDIS_ADDR: redis:6379
+      DATABASE_URL: postgres://iondex:iondex_dev_2026@postgres:5432/iondex?sslmode=disable
+      ION_RPC_URL: ${ION_RPC_URL:-https://api.mainnet.ice.io/http/v2/jsonRPC}
+      BSC_RPC_URL: ${BSC_RPC_URL:-https://bsc-dataseed.binance.org}
+      HOT_WALLET_KEY: ${HOT_WALLET_KEY:-}
+      LOG_LEVEL: info
+    ports:
+      - "8080:8080"
     depends_on:
+      redis:
+        condition: service_healthy
       postgres:
         condition: service_healthy
-    environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      ION_DATA_MODE: ${ION_DATA_MODE:-auto}
-      BSC_RPC_URL: ${BSC_RPC_URL:-https://bsc-dataseed.binance.org/}
-      BSC_CHAIN_ID: ${BSC_CHAIN_ID:-56}
-      ION_API_BASE_URL: ${ION_API_BASE_URL:-https://api.mainnet.ice.io/http/v2/}
-      ION_HTTP_TIMEOUT_MS: ${ION_HTTP_TIMEOUT_MS:-12000}
-      CMC_API_KEY: ${CMC_API_KEY:-}
-      BACKEND_HOST: 0.0.0.0
-      BACKEND_PORT: 3000
-      # 代理（容器内通过 host.docker.internal 访问宿主机代理）
-      HTTP_PROXY: http://host.docker.internal:7890
-      HTTPS_PROXY: http://host.docker.internal:7890
-      NO_PROXY: localhost,127.0.0.1,postgres
-      # PostgreSQL 连接
-      PG_HOST: postgres
-      PG_PORT: 5432
-      PG_DATABASE: iondex
-      PG_USER: iondex
-      PG_PASSWORD: ${PG_PASSWORD:-iondex_dev_2026}
-    ports:
-      - "${BACKEND_PORT:-3000}:3000"
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "node -e \"fetch('http://127.0.0.1:3000/api/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\"",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 40s
 
-  # ─── Frontend (nginx) ────────────────────────────────────
   frontend:
     build:
       context: .
-      dockerfile: docker/frontend/Dockerfile
+      dockerfile: Dockerfile.frontend
     container_name: ion-dex-frontend
-    restart: unless-stopped
-    depends_on:
-      backend:
-        condition: service_healthy
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8080
     ports:
-      - "${FRONTEND_PORT:-8080}:80"
-
-  # ─── Solidity Auditor ────────────────────────────────────
-  solidity-auditor:
-    build:
-      context: ./docker/solidity-auditor
-      dockerfile: Dockerfile
-    container_name: ion-dex-auditor
-    profiles:
-      - audit
-    volumes:
-      - ./contracts:/workspace/contracts:ro
-      - ./audits:/workspace/audits:rw
-
-  # ─── 测试沙箱 ─────────────────────────────────────────────
-  sandbox:
-    build:
-      context: .
-      dockerfile: docker/sandbox/Dockerfile
-    container_name: ion-dex-sandbox
-    profiles:
-      - sandbox
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./contracts:/workspace/contracts
-      - ./backend:/workspace/backend:ro
-      - ./frontend:/workspace/frontend:ro
-      - ./audits:/workspace/audits:rw
-      - ./scripts:/workspace/scripts:ro
-    networks:
-      - sandbox-net
-
-networks:
-  # ION DEX 主服务内网
-  default:
-    name: ion-dex-nuke_default
-    driver: bridge
-  # 测试沙箱独立网络 — 与主服务网络隔离，但可通过代理访问外网
-  sandbox-net:
-    name: ion-dex-sandbox-net
-    driver: bridge
-    internal: false
+      - "3000:3000"
+    depends_on:
+      - backend
 
 volumes:
-  pgdata:
+  redis_data:
+  pg_data:

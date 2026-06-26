@@ -10,1448 +10,740 @@ Full stubs live in **ion-private-core**; load via junction `.cursor/skills-priva
 2. Read matching `SKILL.md` under `.cursor/skills-private/github-discovered/<id>/`.
 3. Keywords `github发现`, `vendor-ion-discovery`, repo names also hit `kw-github-daily`.
 
-## Stubs installed (990 skills · 271 repos in catalog selection)
+## Stubs installed (278 skills · 273 repos in catalog selection)
 
 - `github-discovered-1inch-limit-order-protocol`
 - `github-discovered-2dust-v2rayn`
 - `github-discovered-2dust-v2rayng`
-- `github-discovered-6-tiny-segmenter`
 - `github-discovered-a-poc-redteam-tools`
-- `github-discovered-a2800276-porter`
-- `github-discovered-a2design-company-json-compare`
 - `github-discovered-aaif-goose-goose`
 - `github-discovered-aalansehaiyang-technology-talk`
-- `github-discovered-aasmith-feed-normalizer`
-- `github-discovered-abadojack-whatlanggo`
-- `github-discovered-abitdodgy-words-counted`
-- `github-discovered-ad-m-python-anticaptcha`
-- `github-discovered-adbar-courlan`
-- `github-discovered-adbar-htmldate`
-- `github-discovered-adbar-trafilatura`
-- `github-discovered-adrianmo-go-nmea`
 - `github-discovered-aerodrome-finance-contracts`
 - `github-discovered-affaan-m-ecc`
 - `github-discovered-agno-agi-agno`
-- `github-discovered-agonopol-go-stem`
-- `github-discovered-ahoward-forkoff`
 - `github-discovered-aihubcn-awesome-chinese-llm`
 - `github-discovered-airbnb-javascript`
 - `github-discovered-airbytehq-airbyte`
 - `github-discovered-alamofire-alamofire`
-- `github-discovered-alexdlaird-amazon-orders`
-- `github-discovered-alexreisner-geocoder`
-- `github-discovered-alir3z4-html2text`
-- `github-discovered-alir3z4-sanitize`
-- `github-discovered-alirezamika-autoscraper`
-- `github-discovered-alixaxel-genex`
-- `github-discovered-andreidrang-python3-anticaptcha`
-- `github-discovered-andris9-mailparser`
-- `github-discovered-angeloskath-php-nlp-tools`
-- `github-discovered-angrykoala-wendigo`
-- `github-discovered-anorov-pysocks`
-- `github-discovered-antchfx-xpath`
-- `github-discovered-antchfx-xquery`
-- `github-discovered-antimatter15-ocrad-js`
 - `github-discovered-antiwork-shortest`
 - `github-discovered-apache-airflow`
 - `github-discovered-apache-spark`
-- `github-discovered-apify-crawlee`
-- `github-discovered-apify-crawlee-python`
-- `github-discovered-apifytech-proxy-chain`
-- `github-discovered-apohllo-srx-english`
 - `github-discovered-appflowy-io-appflowy`
 - `github-discovered-apple-container`
-- `github-discovered-arbox-tokenizer`
 - `github-discovered-arendst-tasmota`
 - `github-discovered-argoproj-argo-cd`
-- `github-discovered-argoproj-argo-workflows`
-- `github-discovered-ariya-phantomjs`
 - `github-discovered-armory3d-armory`
-- `github-discovered-asm89-rx-php`
-- `github-discovered-assaf-zombie`
 - `github-discovered-assemblyscript-assemblyscript`
-- `github-discovered-asynchttpclient-async-http-client`
-- `github-discovered-atelierconvivialite-word-count`
-- `github-discovered-atrilla-nlptools`
-- `github-discovered-aurelian-ruby-stemmer`
 - `github-discovered-automatic1111-stable-diffusion-webui`
-- `github-discovered-automattic-kue`
-- `github-discovered-avajs-ava`
-- `github-discovered-avelino-slugify`
-- `github-discovered-awalterschulze-gographviz`
-- `github-discovered-awesome-solidity`
-- `github-discovered-awsong-mmsego`
-- `github-discovered-axios-axios`
-- `github-discovered-ayakashi-io-ayakashi`
 - `github-discovered-aymericdamien-tensorflow-examples`
-- `github-discovered-aymerick-douceur`
 - `github-discovered-babylonjs-babylon-js`
 - `github-discovered-balancer-balancer-v2-monorepo`
-- `github-discovered-balancer-v2-monorepo`
-- `github-discovered-balvig-spyke`
 - `github-discovered-bannedbook-fanqiang`
 - `github-discovered-base-node`
-- `github-discovered-beaugunderson-ip-address`
 - `github-discovered-behaviortree-behaviortree-cpp`
-- `github-discovered-benoitc-http-parser`
-- `github-discovered-benoitc-restkit`
-- `github-discovered-benoitc-tproxy`
-- `github-discovered-bernardphp-bernard`
-- `github-discovered-bestiejs-json3`
 - `github-discovered-bevyengine-bevy`
-- `github-discovered-bextuychiev-automated-price-tracking`
-- `github-discovered-bgrins-tinycolor`
-- `github-discovered-bhollis-maruku`
-- `github-discovered-binux-pyspider`
-- `github-discovered-bitinn-node-fetch`
-- `github-discovered-bjesus-pipet`
-- `github-discovered-bkeepers-qu`
-- `github-discovered-bkrem-awesome-solidity`
-- `github-discovered-blevesearch-segment`
-- `github-discovered-bndr-node-read`
-- `github-discovered-bookmarks-tools-bookmarks-parser`
-- `github-discovered-brandonhilkert-sucker-punch`
 - `github-discovered-bregman-arie-devops-exercises`
-- `github-discovered-brianhempel-fuzzy-tools`
-- `github-discovered-brianmario-yajl-ruby`
-- `github-discovered-brianray-mm`
 - `github-discovered-bridgecrewio-checkov`
-- `github-discovered-bspaulding-sheets`
-- `github-discovered-buriy-python-readability`
-- `github-discovered-burntsushi-toml`
 - `github-discovered-bytedance-deer-flow`
-- `github-discovered-c4software-python-sitemap`
-- `github-discovered-caddyserver-caddy`
-- `github-discovered-calebq42-bbconvert`
 - `github-discovered-calesthio-openmontage`
-- `github-discovered-calibr-node-bookmarks-parser`
-- `github-discovered-cantino-ruby-readability`
-- `github-discovered-caolan-async`
 - `github-discovered-carbon-language-carbon-lang`
-- `github-discovered-cardmagic-simple-rss`
-- `github-discovered-cboden-ratchet`
-- `github-discovered-cebe-markdown`
-- `github-discovered-celery-kombu`
-- `github-discovered-celluloid-celluloid`
-- `github-discovered-celluloid-celluloid-dns`
 - `github-discovered-cesanta-mongoose`
-- `github-discovered-cgiffard-node-simplecrawler`
-- `github-discovered-cgoldberg-xvfbwrapper`
 - `github-discovered-chanchichoi-awesome-face-recognition`
-- `github-discovered-chanks-que`
-- `github-discovered-chardet-chardet`
-- `github-discovered-checkly-puppeteer-recorder`
-- `github-discovered-cheeriojs-cheerio`
 - `github-discovered-chen08209-flclash`
-- `github-discovered-chineking-cola`
-- `github-discovered-chorn-nameable`
-- `github-discovered-chrisglass-xhtml2pdf`
-- `github-discovered-chriskite-anemone`
-- `github-discovered-chriso-validator-js`
-- `github-discovered-chromedp-chromedp`
-- `github-discovered-cjheath-geoip`
-- `github-discovered-cjheath-treetop`
-- `github-discovered-clbanning-mxj`
-- `github-discovered-clips-pattern`
-- `github-discovered-closeio-ciso8601`
-- `github-discovered-cloudpipe-cloudpickle`
-- `github-discovered-cobrateam-splinter`
-- `github-discovered-cocur-slugify`
 - `github-discovered-codecrafters-io-build-your-own-x`
-- `github-discovered-codegangsta-gin`
-- `github-discovered-codeinthehole-purl`
-- `github-discovered-codelucas-newspaper`
-- `github-discovered-coleifer-huey`
-- `github-discovered-coleifer-micawber`
-- `github-discovered-colinsurprenant-hotwater`
-- `github-discovered-collectiveidea-delayed-job`
 - `github-discovered-comfy-org-comfyui`
-- `github-discovered-compileinc-hodor`
-- `github-discovered-composio`
-- `github-discovered-composiohq-composio`
-- `github-discovered-constverum-proxybroker`
 - `github-discovered-continuedev-continue`
-- `github-discovered-contracts`
 - `github-discovered-coollabsio-coolify`
 - `github-discovered-corentinj-real-time-voice-cloning`
 - `github-discovered-cowprotocol-contracts`
 - `github-discovered-cporter202-api-mega-list`
-- `github-discovered-crisu83-php-conversion`
-- `github-discovered-crossbario-crossbar`
-- `github-discovered-crwlrsoft-crawler`
-- `github-discovered-crwlrsoft-url`
 - `github-discovered-crytic-slither`
-- `github-discovered-csslint-parser-lib`
-- `github-discovered-cujojs-rest`
-- `github-discovered-curl-curl`
-- `github-discovered-currentsapi-extractnet`
-- `github-discovered-curve-contract`
 - `github-discovered-curvefi-curve-contract`
 - `github-discovered-cvhub520-x-anylabeling`
 - `github-discovered-cxli233-friendsdontletfriends`
-- `github-discovered-d4vinci-scrapling`
 - `github-discovered-daattali-beautiful-jekyll`
-- `github-discovered-daijro-camoufox`
-- `github-discovered-dam5s-happymapper`
-- `github-discovered-danieldk-dpar`
-- `github-discovered-danieldk-go2vec`
 - `github-discovered-danielmiessler-seclists`
-- `github-discovered-danielstjules-stringy`
-- `github-discovered-danmactough-node-feedparser`
 - `github-discovered-darklife-darkriscv`
-- `github-discovered-datalib-libextract`
 - `github-discovered-datatalksclub-data-engineering-zoomcamp`
-- `github-discovered-dateutil-dateutil`
-- `github-discovered-david96182-ninjemail`
-- `github-discovered-daviddrysdale-python-phonenumbers`
 - `github-discovered-daytonaio-daytona`
-- `github-discovered-dbalatero-levenshtein-ffi`
-- `github-discovered-dchest-stemmer`
-- `github-discovered-deanmalmgren-textract`
-- `github-discovered-deepfryed-ots`
 - `github-discovered-deepseek-ai-deepseek-v3`
-- `github-discovered-defi-developer-road-map`
 - `github-discovered-denizsafak-abogen`
-- `github-discovered-denoland-deno`
-- `github-discovered-derek73-python-nameparser`
 - `github-discovered-developer-y-cs-video-courses`
-- `github-discovered-dflydev-dflydev-apache-mime-types`
-- `github-discovered-dflydev-dflydev-canal`
-- `github-discovered-dgraham-json-stream`
-- `github-discovered-dhamaniasad-headlessbrowsers`
-- `github-discovered-diasks2-heroku-buildpack-mecab`
-- `github-discovered-diasks2-pragmatic-segmenter`
-- `github-discovered-diasks2-ruby-nlp`
-- `github-discovered-diasks2-word-count-analyzer`
-- `github-discovered-digitalpebble-storm-crawler`
-- `github-discovered-dimka665-awesome-slugify`
 - `github-discovered-dkhamsing-open-source-ios-apps`
 - `github-discovered-domlysz-blendergis`
-- `github-discovered-donatj-phpuseragent`
 - `github-discovered-donnemartin-system-design-primer`
 - `github-discovered-dora-rs-dora`
-- `github-discovered-dreid-treq`
-- `github-discovered-dreikanter-ruby-bookmarks`
-- `github-discovered-drkjam-netaddr`
-- `github-discovered-duanhongyi-genius`
-- `github-discovered-dustin-go-humanize`
 - `github-discovered-dusty-nv-jetson-inference`
-- `github-discovered-dveselov-mystem`
 - `github-discovered-dydxprotocol-v4-chain`
-- `github-discovered-e2b-dev-code-interpreter`
-- `github-discovered-ealdent-uea-stemmer`
-- `github-discovered-editorconfig-editorconfig-core-go`
-- `github-discovered-eduardolundgren-tracking-js`
 - `github-discovered-electron-electron`
-- `github-discovered-eliasdabbas-advertools`
 - `github-discovered-embassy-rs-embassy`
-- `github-discovered-emersion-go-imap`
-- `github-discovered-emersion-go-message`
-- `github-discovered-emersion-go-vcard`
-- `github-discovered-empact-roo`
-- `github-discovered-empact-roxml`
 - `github-discovered-emqx-emqx`
-- `github-discovered-endeveit-enca`
-- `github-discovered-endeveit-guesslanguage`
 - `github-discovered-enjoy-digital-litex`
-- `github-discovered-ericciarla-aginews`
-- `github-discovered-ericciarla-aginews-podcast`
-- `github-discovered-erikriver-opengraph`
-- `github-discovered-erocarrera-pefile`
-- `github-discovered-erusev-parsedown`
 - `github-discovered-eslint-eslint`
-- `github-discovered-esnme-ultrajson`
 - `github-discovered-ethereum-go-ethereum`
 - `github-discovered-eugeneyan-applied-ml`
-- `github-discovered-euske-pdfminer`
-- `github-discovered-eventmachine-eventmachine`
 - `github-discovered-exaloop-codon`
-- `github-discovered-excon-excon`
 - `github-discovered-exelban-stats`
-- `github-discovered-exif-js-exif-js`
-- `github-discovered-explosion-spacy`
 - `github-discovered-f-prompts-chat`
-- `github-discovered-fabpot-goutte`
-- `github-discovered-facebook-immutable-js`
-- `github-discovered-facebook-php-webdriver`
-- `github-discovered-facebook-react`
-- `github-discovered-facebook-react-native`
-- `github-discovered-facebookgo-inject`
 - `github-discovered-fairyglade-ly`
-- `github-discovered-faisalman-ua-parser-js`
-- `github-discovered-famished-tiger-rley`
-- `github-discovered-fastai-fastai`
+- `github-discovered-farion1231-cc-switch`
 - `github-discovered-fatedier-frp`
-- `github-discovered-fb55-htmlparser2`
-- `github-discovered-feedjira-feedjira`
-- `github-discovered-felipecsl-wombat`
-- `github-discovered-felixgirault-essence`
-- `github-discovered-fent-node-ytdl-core`
-- `github-discovered-feross-parse-torrent`
-- `github-discovered-fiam-gounidecode`
 - `github-discovered-filamentphp-filament`
 - `github-discovered-files-community-files`
-- `github-discovered-firecrawl-cli`
-- `github-discovered-firecrawl-create-llmstxt-py`
-- `github-discovered-firecrawl-firecrawl`
-- `github-discovered-firecrawl-firecrawl-discord-bot`
-- `github-discovered-firecrawl-firecrawl-mcp-server`
-- `github-discovered-firecrawl-firecrawl-workflows`
-- `github-discovered-firecrawl-firesearch`
-- `github-discovered-firecrawl-open-researcher`
-- `github-discovered-firecrawl-skills`
-- `github-discovered-firstclassml-firecrawl-articles`
-- `github-discovered-flavorjones-loofah`
-- `github-discovered-flori-json`
 - `github-discovered-flutter-flutter`
-- `github-discovered-fortnightlabs-snowball-js`
-- `github-discovered-forward-sql-parser`
 - `github-discovered-frappe-lms`
-- `github-discovered-fruux-sabre-vobject`
-- `github-discovered-full-blockchain-solidity-course-js`
-- `github-discovered-fxsjy-jieba`
-- `github-discovered-gabrielelana-byte-units`
-- `github-discovered-gajus-surgeon`
 - `github-discovered-gatsbyjs-gatsby`
-- `github-discovered-gawel-pyquery`
-- `github-discovered-gbiczo-oxcelix`
-- `github-discovered-ged-linkparser`
-- `github-discovered-gedoor-legado`
 - `github-discovered-genymobile-scrcpy`
-- `github-discovered-geokit-geokit`
-- `github-discovered-gerapy-gerapy`
-- `github-discovered-gettalong-kramdown`
-- `github-discovered-geziyor-geziyor`
 - `github-discovered-ggml-org-llama-cpp`
-- `github-discovered-giggsey-libphonenumber-for-php`
-- `github-discovered-gimite-google-spreadsheet-ruby`
 - `github-discovered-gin-gonic-gin`
-- `github-discovered-github-markup`
-- `github-discovered-gka-chroma-js`
-- `github-discovered-go-gomail-gomail`
-- `github-discovered-gocolly-colly`
 - `github-discovered-godotengine-godot`
 - `github-discovered-gohugoio-hugo`
 - `github-discovered-golang-go`
-- `github-discovered-goodsign-icu`
-- `github-discovered-goodsign-libtextcat`
-- `github-discovered-goodsign-snowball`
 - `github-discovered-google-deepvariant`
-- `github-discovered-google-filament`
 - `github-discovered-google-research-bert`
-- `github-discovered-googlechrome-puppeteer`
 - `github-discovered-googlecloudplatform-microservices-demo`
-- `github-discovered-gorilla-websocket`
-- `github-discovered-gosimple-slug`
-- `github-discovered-gottfrois-link-thumbnailer`
-- `github-discovered-grangier-python-goose`
-- `github-discovered-grosser-i18n-data`
-- `github-discovered-grosser-parallel`
 - `github-discovered-growinggit-github-chinese-top-charts`
-- `github-discovered-gruns-furl`
-- `github-discovered-guille-ms-js`
 - `github-discovered-gumyr-build123d`
-- `github-discovered-guzzle-guzzle`
-- `github-discovered-h2non-toxy`
-- `github-discovered-h4ckf0r0day-obscura`
-- `github-discovered-hacksider-deep-live-cam`
 - `github-discovered-hadley-r4ds`
-- `github-discovered-hapijs-wreck`
 - `github-discovered-harisekhon-devops-bash-tools`
-- `github-discovered-harthur-color`
-- `github-discovered-hectane-hectane`
-- `github-discovered-hellysmile-fake-useragent`
-- `github-discovered-henrylee2cn-pholcus`
 - `github-discovered-hexojs-hexo`
-- `github-discovered-hexydec-agentzero`
-- `github-discovered-hickford-mechanicalsoup`
+- `github-discovered-heygen-com-hyperframes`
 - `github-discovered-hiyouga-llamafactory`
 - `github-discovered-hlorus-cad-sketcher`
-- `github-discovered-hoaproject-eventsource`
-- `github-discovered-hoaproject-mime`
-- `github-discovered-hoaproject-ustring`
-- `github-discovered-hoaproject-websocket`
-- `github-discovered-howie6879-ruia`
-- `github-discovered-hpoydar-chronic-duration`
-- `github-discovered-html5lib-html5lib-python`
-- `github-discovered-httplib2-httplib2`
-- `github-discovered-httprb-http-rb`
-- `github-discovered-hu17889-go-spider`
 - `github-discovered-huggingface-transformers`
 - `github-discovered-huginn-huginn`
-- `github-discovered-hyperiongray-starbelly`
-- `github-discovered-iainbeeston-nickel`
 - `github-discovered-iced-rs-iced`
 - `github-discovered-icewhaletech-casaos`
-- `github-discovered-igorw-evenement`
-- `github-discovered-igrigorik-em-http-request`
-- `github-discovered-igrigorik-em-websocket`
-- `github-discovered-igrigorik-http-2`
 - `github-discovered-iina-iina`
-- `github-discovered-ijl-orjson`
 - `github-discovered-iluwatar-java-design-patterns`
-- `github-discovered-imangazaliev-didom`
 - `github-discovered-imthenachoman-how-to-secure-a-linux-server`
-- `github-discovered-imwildcat-scylla`
-- `github-discovered-indutny-node-ip`
-- `github-discovered-inikulin-parse5`
 - `github-discovered-inkonchain-node`
-- `github-discovered-interface`
-- `github-discovered-isaacs-sax-js`
-- `github-discovered-isnowfy-snownlp`
-- `github-discovered-itseez-opencv`
-- `github-discovered-j2a-pytils`
 - `github-discovered-jackfrued-python-100-days`
-- `github-discovered-jaimeiniesta-metainspector`
-- `github-discovered-jamwt-diesel`
-- `github-discovered-jarib-childprocess`
-- `github-discovered-jaybizzle-crawler-detect`
-- `github-discovered-jbroadway-urlify`
-- `github-discovered-jbrooksuk-node-summary`
-- `github-discovered-jch-html-pipeline`
-- `github-discovered-jcrist-msgspec`
-- `github-discovered-jdataview-jbinary`
-- `github-discovered-jdkato-prose`
-- `github-discovered-jeckman-youtube-downloader`
-- `github-discovered-jedp-porter-stemmer`
 - `github-discovered-jekyll-jekyll`
 - `github-discovered-jellyfin-jellyfin`
-- `github-discovered-jeremykendall-php-domain-parser`
 - `github-discovered-jetbrains-kotlin`
+- `github-discovered-jieyab89-osint-cheat-sheet`
 - `github-discovered-jlevy-the-art-of-command-line`
-- `github-discovered-jmcarp-robobrowser`
-- `github-discovered-jmikola-geojson`
-- `github-discovered-jnunemaker-httparty`
-- `github-discovered-joepie91-python-whois`
-- `github-discovered-john-kurkowski-tldextract`
-- `github-discovered-jondot-sneakers`
-- `github-discovered-jonnnnyw-php-phantomjs`
-- `github-discovered-jordan-wright-email`
-- `github-discovered-joseconstela-webparsy`
-- `github-discovered-jpmckinney-tf-idf-similarity`
-- `github-discovered-jprichardson-string-js`
-- `github-discovered-jrobertson-chronic-between`
-- `github-discovered-jurismarches-chopper`
 - `github-discovered-justjavac-free-programming-books-zh-cn`
-- `github-discovered-jwage-purl`
 - `github-discovered-jwasham-coding-interview-university`
 - `github-discovered-k-dense-ai-scientific-agent-skills`
-- `github-discovered-kaliiiiiiiiii-vinyzu-patchright`
-- `github-discovered-kbandla-dpkt`
-- `github-discovered-keepsafe-aiohttp`
-- `github-discovered-kennethreitz-grequests`
-- `github-discovered-kennethreitz-requests`
-- `github-discovered-kennethreitz-requests-html`
-- `github-discovered-kennethreitz-tablib`
 - `github-discovered-keras-team-keras`
 - `github-discovered-kestra-io-kestra`
 - `github-discovered-kholia-osx-kvm`
 - `github-discovered-khuedoan-homelab`
-- `github-discovered-kimtaro-ve`
 - `github-discovered-kirang89-pycrumbs`
-- `github-discovered-kiyoka-fuzzy-string-match`
-- `github-discovered-kmike-psd-tools`
-- `github-discovered-kmike-pymorphy2`
-- `github-discovered-knife-nlp`
-- `github-discovered-knrz-csv-js`
-- `github-discovered-kohlschutter-boilerpipe`
-- `github-discovered-kovidgoyal-html5-parser`
 - `github-discovered-krahets-hello-algo`
 - `github-discovered-kriasoft-react-starter-kit`
-- `github-discovered-kristopolous-porter-stemmer`
-- `github-discovered-kriswallsmith-buzz`
-- `github-discovered-kriswallsmith-spork`
 - `github-discovered-kroma-network-tachyon`
 - `github-discovered-krtirtho-spotube`
 - `github-discovered-kubeedge-kubeedge`
 - `github-discovered-kubernetes-kubernetes`
 - `github-discovered-kubernetes-sigs-aws-load-balancer-controller`
-- `github-discovered-kurtmckee-feedparser`
-- `github-discovered-kzykhys-ciconia`
-- `github-discovered-kzykhys-text`
-- `github-discovered-labstack-gommon`
-- `github-discovered-langchain`
 - `github-discovered-langchain-ai-langchain`
 - `github-discovered-laravel-framework`
-- `github-discovered-laurentj-slimerjs`
-- `github-discovered-lawouach-websocket-for-python`
-- `github-discovered-learnboost-websocket-io`
 - `github-discovered-leereilly-games`
-- `github-discovered-lefnord-nlp-toolz`
-- `github-discovered-lefnord-rstt`
 - `github-discovered-leiwang1999-fpga`
-- `github-discovered-leizongmin-js-xss`
-- `github-discovered-leonelquinteros-gotext`
-- `github-discovered-lepture-mistune`
-- `github-discovered-lexiforest-curl-cffi`
-- `github-discovered-lfcipriani-punkt-segmenter`
 - `github-discovered-lfj-gg-joe-v2`
 - `github-discovered-lh3-minimap2`
 - `github-discovered-lichess-org-lila`
 - `github-discovered-lightpanda-io-browser`
-- `github-discovered-limit-order-protocol`
 - `github-discovered-lint-staged-lint-staged`
 - `github-discovered-localsend-localsend`
-- `github-discovered-localshred-protobuf`
-- `github-discovered-lodash-lodash`
 - `github-discovered-logisim-evolution-logisim-evolution`
-- `github-discovered-lorien-awesome-pastebins`
-- `github-discovered-lorien-awesome-web-scraping`
-- `github-discovered-lorien-captcha-solver`
-- `github-discovered-lorien-user-agent`
-- `github-discovered-lorien-web-scraping`
-- `github-discovered-lostisland-faraday`
-- `github-discovered-lostisland-sawyer`
-- `github-discovered-louismullie-open-nlp`
-- `github-discovered-louismullie-scalpel`
-- `github-discovered-louismullie-stanford-core-nlp`
-- `github-discovered-louismullie-treat`
-- `github-discovered-luispedro-mahotas`
-- `github-discovered-lukasa-hyper`
 - `github-discovered-lukasmasuch-best-of-ml-python`
-- `github-discovered-luminosoinsight-python-ftfy`
 - `github-discovered-lvgl-lvgl`
-- `github-discovered-lxml-lxml`
-- `github-discovered-lxneng-xpinyin`
 - `github-discovered-ly0n-awesome-robotic-tooling`
-- `github-discovered-maccman-nestful`
 - `github-discovered-macrozheng-mall`
-- `github-discovered-madisonmay-tomorrow`
-- `github-discovered-mafintosh-multicast-dns`
-- `github-discovered-mafintosh-respawn`
-- `github-discovered-magicstack-httptools`
-- `github-discovered-magicstack-uvloop`
-- `github-discovered-mailgun-flanker`
-- `github-discovered-mailgun-talon`
-- `github-discovered-mailhog-mailhog`
-- `github-discovered-mailhog-smtp`
-- `github-discovered-makinacorpus-spynner`
-- `github-discovered-markburns-mecab`
-- `github-discovered-markdown-it-markdown-it`
-- `github-discovered-markets-awesome-ruby`
-- `github-discovered-martinblech-xmltodict`
-- `github-discovered-mashape-unirest-python`
-- `github-discovered-masterminds-html5-php`
 - `github-discovered-mastodon-mastodon`
 - `github-discovered-mastra-ai-mastra`
-- `github-discovered-matcornic-hermes`
-- `github-discovered-mathiasbynens-he`
-- `github-discovered-mattcg-socks5-http-client`
-- `github-discovered-matthewmueller-date`
-- `github-discovered-mattn-go-runewidth`
-- `github-discovered-mauricesvay-imageresolver`
-- `github-discovered-maxhumber-gazpacho`
 - `github-discovered-maybe-finance-maybe`
-- `github-discovered-mbklein-equivalent-xml`
-- `github-discovered-mblongii-ruby-ner`
-- `github-discovered-mcfreely-epitome`
-- `github-discovered-medialize-uri-js`
-- `github-discovered-meh-ruby-thread`
-- `github-discovered-mem0`
 - `github-discovered-mem0ai-mem0`
-- `github-discovered-mendableai-firecrawl`
-- `github-discovered-mendableai-firecrawl-mcp-server`
-- `github-discovered-mgdm-opencv-for-php`
-- `github-discovered-mholt-caddy`
 - `github-discovered-michaelgrupp-evo`
-- `github-discovered-michaelhelmick-lassie`
-- `github-discovered-michelf-php-markdown`
-- `github-discovered-microcosm-cc-bluemonday`
 - `github-discovered-micropython-micropython`
 - `github-discovered-microsoft-iot-for-beginners`
-- `github-discovered-microsoft-playwright`
-- `github-discovered-microsoft-playwright-python`
-- `github-discovered-microsoft-powertoys`
-- `github-discovered-microsoft-pyright`
 - `github-discovered-microsoft-typescript`
 - `github-discovered-microsoft-vscode`
-- `github-discovered-miekg-dns`
-- `github-discovered-mihaivalentin-lunr-languages`
-- `github-discovered-mikeal-bent`
-- `github-discovered-mikeemoo-colorjizz-php`
-- `github-discovered-mikel-mail`
-- `github-discovered-mikepultz-netdns2`
 - `github-discovered-mikeroyal-photogrammetry-guide`
-- `github-discovered-mikhus-jsurl`
-- `github-discovered-milesj-decoda`
 - `github-discovered-milvus-io-milvus`
-- `github-discovered-mimino666-langdetect`
-- `github-discovered-mimosa-jieba-jruby`
-- `github-discovered-minkphp-mink`
 - `github-discovered-mintplex-labs-anything-llm`
-- `github-discovered-miso-belica-sumy`
-- `github-discovered-mitsuhiko-markupsafe`
-- `github-discovered-miyakogi-pyppeteer`
-- `github-discovered-miyuchina-mistletoe`
-- `github-discovered-mmcdole-gofeed`
-- `github-discovered-mojombo-chronic`
-- `github-discovered-moment-moment`
-- `github-discovered-moment-moment-timezone`
-- `github-discovered-mongodb-bson-ruby`
-- `github-discovered-montferret-ferret`
-- `github-discovered-moskytw-uniout`
-- `github-discovered-mozilla-bleach`
-- `github-discovered-mozilla-diversity`
-- `github-discovered-mozilla-unicode-slugify`
-- `github-discovered-mozillazg-go-slugify`
-- `github-discovered-mozillazg-go-unidecode`
-- `github-discovered-mperham-em-resolv-replace`
-- `github-discovered-mpratt-embera`
-- `github-discovered-msgpack-msgpack-python`
-- `github-discovered-msgpack-msgpack-ruby`
-- `github-discovered-mstamy2-pypdf2`
 - `github-discovered-mudler-localai`
-- `github-discovered-murb-workbook`
-- `github-discovered-mvdan-sh`
-- `github-discovered-mvdbos-php-spider`
-- `github-discovered-my8100-scrapydweb`
-- `github-discovered-n1k0-casperjs`
 - `github-discovered-n8n-io-n8n`
-- `github-discovered-nahi-httpclient`
-- `github-discovered-namd-pypln-backend`
-- `github-discovered-napi-rs-package-template`
-- `github-discovered-nategood-httpful`
 - `github-discovered-nativescript-nativescript`
-- `github-discovered-nats-io-go-nats`
-- `github-discovered-naturalnode-natural`
-- `github-discovered-nesquena-backburner`
 - `github-discovered-netbootxyz-netboot-xyz`
 - `github-discovered-netdata-netdata`
 - `github-discovered-nethereum-nethereum`
-- `github-discovered-netresearch-jsonmapper`
-- `github-discovered-netromdk-vermin`
-- `github-discovered-neurosnap-sentences`
 - `github-discovered-nextcloud-server`
 - `github-discovered-nexu-io-html-video`
-- `github-discovered-nickscamara-firecrawl-openai-realtime`
-- `github-discovered-nicksnyder-go-i18n`
-- `github-discovered-nicktimko-winloop`
-- `github-discovered-nicolas-grekas-patchwork-utf8`
-- `github-discovered-nieldlr-hanzi`
 - `github-discovered-nilbuild-developer-roadmap`
-- `github-discovered-node-modules-urllib`
-- `github-discovered-nodeca-js-yaml`
-- `github-discovered-nodejitsu-nexpect`
 - `github-discovered-noir-lang-noir`
-- `github-discovered-nojacko-email-validator`
 - `github-discovered-nousresearch-hermes-agent`
-- `github-discovered-npm-node-semver`
-- `github-discovered-nrabinowitz-pjscrape`
 - `github-discovered-nrwl-nx`
-- `github-discovered-nsqio-nsq`
-- `github-discovered-nuance-go-nlp`
 - `github-discovered-nukeop-nuclear`
 - `github-discovered-nullclaw-nullclaw`
 - `github-discovered-nvbn-thefuck`
 - `github-discovered-nvm-sh-nvm`
-- `github-discovered-nykakin-chompjs`
-- `github-discovered-nyxtom-salient`
-- `github-discovered-obaied-rake-go`
 - `github-discovered-ocornut-imgui`
-- `github-discovered-odos-router-v2`
 - `github-discovered-odos-xyz-odos-router-v2`
-- `github-discovered-offciercia-defi-developer-road-map`
-- `github-discovered-ohler55-oj`
-- `github-discovered-ohler55-ox`
 - `github-discovered-ohmyzsh-ohmyzsh`
-- `github-discovered-okfn-messytables`
-- `github-discovered-olebedev-when`
 - `github-discovered-ollama-ollama`
-- `github-discovered-omkarcloud-botasaurus`
 - `github-discovered-ondyari-faceforensics`
 - `github-discovered-open-sdr-openwifi`
-- `github-discovered-openai-swarm`
-- `github-discovered-openclaw-openclaw`
-- `github-discovered-openexchangerates-accounting-js`
-- `github-discovered-openexchangerates-money-js`
 - `github-discovered-opengeos-leafmap`
-- `github-discovered-openmoss-moss-tts`
-- `github-discovered-openzeppelin-contracts`
 - `github-discovered-openzeppelin-openzeppelin-contracts`
-- `github-discovered-optimalbits-bull`
 - `github-discovered-oracle-graal`
-- `github-discovered-oscarotero-embed`
 - `github-discovered-oven-sh-bun`
-- `github-discovered-packetfu-packetfu`
-- `github-discovered-pancake-smart-contracts`
-- `github-discovered-pancake-subgraph`
 - `github-discovered-pancakeswap-pancake-smart-contracts`
 - `github-discovered-pancakeswap-pancake-subgraph`
 - `github-discovered-paradedb-paradedb`
-- `github-discovered-paraswap-dex-lib`
-- `github-discovered-parhamr-nlp-pure`
 - `github-discovered-patchy631-ai-engineering-hub`
 - `github-discovered-pathwaycom-llm-app`
 - `github-discovered-payloadcms-payload`
-- `github-discovered-pda-pheanstalk`
-- `github-discovered-pebbe-textcat`
 - `github-discovered-pedronauck-docz`
-- `github-discovered-peterc-whatlanguage`
-- `github-discovered-pgriess-node-webworker`
-- `github-discovered-philippta-flyscrape`
-- `github-discovered-php-loep-geotools`
-- `github-discovered-phpoffice-phpexcel`
-- `github-discovered-phpoffice-phppowerpoint`
-- `github-discovered-phpoffice-phpword`
-- `github-discovered-phstc-shoryuken`
-- `github-discovered-piotrdabkowski-js2py`
-- `github-discovered-piwik-device-detector`
-- `github-discovered-pks-zipf`
-- `github-discovered-podigee-device-detector`
-- `github-discovered-polera-gonameparts`
-- `github-discovered-polleverywhere-firehose`
-- `github-discovered-postmodern-raingrams`
-- `github-discovered-postmodern-spidr`
 - `github-discovered-powershell-powershell`
 - `github-discovered-practical-tutorials-project-based-learning`
 - `github-discovered-pradumnasaraf-devops`
-- `github-discovered-pricingassistant-mrq`
 - `github-discovered-prisma-prisma1`
 - `github-discovered-processing-p5-js`
-- `github-discovered-projectdiscovery-httpx`
-- `github-discovered-propublica-upton`
 - `github-discovered-provablehq-snarkos`
-- `github-discovered-proxymesh-python-proxy-headers`
-- `github-discovered-puerkitobio-goquery`
 - `github-discovered-pyca-pyopenssl`
 - `github-discovered-pycqa-bandit`
 - `github-discovered-pycurl-pycurl`
-- `github-discovered-pydantic-pydantic`
-- `github-discovered-pyparsing-pyparsing`
 - `github-discovered-pythagora-io-gpt-pilot`
-- `github-discovered-python-excel-xlrd`
-- `github-discovered-python-excel-xlwt`
-- `github-discovered-python-greenlet-greenlet`
-- `github-discovered-python-mechanize-mechanize`
-- `github-discovered-python-mypy`
-- `github-discovered-python-openxml-python-docx`
-- `github-discovered-pyyoshi-cchardet`
-- `github-discovered-qandidate-labs-broadway`
 - `github-discovered-qemu-qemu`
-- `github-discovered-quantmind-pulsar`
 - `github-discovered-rails-rails`
 - `github-discovered-rancher-rancher`
-- `github-discovered-rare-technologies-gensim`
 - `github-discovered-rasbt-llms-from-scratch`
-- `github-discovered-ray-project-ray`
 - `github-discovered-raysan5-raylib`
-- `github-discovered-rdegges-simpleq`
 - `github-discovered-react-react`
 - `github-discovered-react-react-native`
 - `github-discovered-react95-io-react95`
-- `github-discovered-reactphp-react`
 - `github-discovered-rebassjs-rebass`
-- `github-discovered-reddavis-n-gram`
-- `github-discovered-reddavis-tf-idf`
-- `github-discovered-request-request`
-- `github-discovered-resque-resque`
-- `github-discovered-rest-client-rest-client`
-- `github-discovered-rich-harris-babyparse`
-- `github-discovered-richtr-guesslanguage-js`
 - `github-discovered-rickstrahl-markdownmonster`
 - `github-discovered-ripienaar-free-for-dev`
 - `github-discovered-risc0-risc0`
-- `github-discovered-rjohnsondev-golibstemmer`
-- `github-discovered-rmccue-requests`
-- `github-discovered-roach-php-core`
 - `github-discovered-roboflow-supervision`
-- `github-discovered-roniemartinez-dude`
-- `github-discovered-rookii-paicehusk`
-- `github-discovered-rq-rq`
 - `github-discovered-rstudio-shiny`
 - `github-discovered-rsxdalv-tts-webui`
-- `github-discovered-rthalley-dnspython`
-- `github-discovered-rtomayko-posix-spawn`
-- `github-discovered-ruby-concurrency-concurrent-ruby`
-- `github-discovered-ruby-opencv-ruby-opencv`
-- `github-discovered-ruby-rdf-rdf`
-- `github-discovered-rumca-js-brutefeedparser`
-- `github-discovered-rumca-js-crawler-buddy`
 - `github-discovered-run-llama-llama-index`
-- `github-discovered-rushter-find-domains`
-- `github-discovered-rushter-selectolax`
-- `github-discovered-russross-blackfriday`
 - `github-discovered-rust-lang-rust`
 - `github-discovered-rustdesk-rustdesk`
 - `github-discovered-rustpython-rustpython`
 - `github-discovered-ruvnet-ruview`
-- `github-discovered-s0md3v-photon`
-- `github-discovered-saffsd-langid-py`
 - `github-discovered-saghul-pycares`
-- `github-discovered-samarudge-dnsyo`
-- `github-discovered-samg-diffy`
-- `github-discovered-samnissen-arachnid2`
 - `github-discovered-sansan0-trendradar`
-- `github-discovered-savonrb-savon`
-- `github-discovered-sbstjn-allot`
 - `github-discovered-scala-scala`
-- `github-discovered-schneems-going-the-distance`
-- `github-discovered-scrapegraphai-scrapegraph-ai`
-- `github-discovered-scrapinghub-dateparser`
-- `github-discovered-scrapinghub-extruct`
-- `github-discovered-scrapinghub-frontera`
-- `github-discovered-scrapinghub-portia`
-- `github-discovered-scrapinghub-price-parser`
-- `github-discovered-scrapinghub-splash`
-- `github-discovered-scrapy-cssselect`
-- `github-discovered-scrapy-parsel`
-- `github-discovered-scrapy-scrapely`
-- `github-discovered-scrapy-scrapy`
-- `github-discovered-sdk-core`
-- `github-discovered-sdogruyol-awesome-ruby`
 - `github-discovered-sdwebimage-sdwebimage`
-- `github-discovered-seamusabshere-fuzzy-match`
-- `github-discovered-seamusabshere-remote-table`
-- `github-discovered-seangeo-ratom`
-- `github-discovered-searchapi-wreq-ruby`
-- `github-discovered-seatgeek-fuzzywuzzy`
-- `github-discovered-secdev-scapy`
-- `github-discovered-secureauthcorp-impacket`
-- `github-discovered-segmentio-nightmare`
-- `github-discovered-seleniumbase-seleniumbase`
-- `github-discovered-seleniumhq-selenium`
-- `github-discovered-selvinortiz-flux`
-- `github-discovered-selwin-python-user-agents`
-- `github-discovered-sendgrid-sendgrid-go`
-- `github-discovered-sensiolabs-ansi-to-html`
-- `github-discovered-seomoz-reppy`
-- `github-discovered-serbanghita-mobile-detect`
-- `github-discovered-sergey-scat-unicaps`
-- `github-discovered-serpapi-nokolexbor`
-- `github-discovered-shadowsocks-shadowsocks`
 - `github-discovered-shadowsocks-shadowsocks-windows`
-- `github-discovered-shazow-urllib3`
-- `github-discovered-sheetjs-js-xlsx`
-- `github-discovered-shon-httpagentparser`
 - `github-discovered-shuding-react-wrap-balancer`
-- `github-discovered-sightmachine-simplecv`
 - `github-discovered-significant-gravitas-autogpt`
 - `github-discovered-sindresorhus-awesome`
-- `github-discovered-sindresorhus-got`
-- `github-discovered-sindresorhus-query-string`
-- `github-discovered-skroutz-greek-stemmer`
-- `github-discovered-skroutz-turkish-stemmer`
-- `github-discovered-slither`
-- `github-discovered-slotix-dataflowkit`
-- `github-discovered-smart-order-router`
-- `github-discovered-smartcontractkit-full-blockchain-solidity-course-js`
 - `github-discovered-snailclimb-javaguide`
-- `github-discovered-socketio-engine-io`
-- `github-discovered-socketio-socket-io`
-- `github-discovered-sony-v8eval`
-- `github-discovered-sorrycc-awesome-javascript`
 - `github-discovered-sottlmarek-devsecops`
-- `github-discovered-sparklemotion-mechanize`
-- `github-discovered-sparklemotion-nokogiri`
-- `github-discovered-spekulatius-phpscraper`
-- `github-discovered-spencermountain-nlp-compromise`
 - `github-discovered-spmallick-learnopencv`
-- `github-discovered-sponsors-d4vinci`
-- `github-discovered-sporkmonger-addressable`
-- `github-discovered-spotify-dns-java`
-- `github-discovered-spring-projects-spring-boot`
 - `github-discovered-square-okhttp`
-- `github-discovered-sshaw-normalize-country`
-- `github-discovered-sshaw-yymmdd`
 - `github-discovered-ssloy-tinyrenderer`
-- `github-discovered-ssoper-summarize`
-- `github-discovered-sstephenson-global-phone`
 - `github-discovered-standard-standard`
-- `github-discovered-stchris-untangle`
-- `github-discovered-stevegraham-slanger`
 - `github-discovered-stirling-tools-stirling-pdf`
-- `github-discovered-stopmakingthatbigface-node-wreq`
-- `github-discovered-stretchr-arg-js`
 - `github-discovered-sunweb3sec-defihacklabs`
 - `github-discovered-sushi-labs-sushiswap`
-- `github-discovered-sushiswap-sushiswap`
-- `github-discovered-svaksha-pythonidae`
 - `github-discovered-swiftlang-swift`
-- `github-discovered-sylvinus-node-crawler`
-- `github-discovered-symfony-dom-crawler`
-- `github-discovered-symfony-symfony`
 - `github-discovered-systran-faster-whisper`
-- `github-discovered-tabatkins-parse-css`
 - `github-discovered-tabbyml-tabby`
-- `github-discovered-talyssonoc-commonregexruby`
-- `github-discovered-tarcieri-http`
 - `github-discovered-tauri-apps-tauri`
-- `github-discovered-tavendo-autobahnpython`
-- `github-discovered-teampoltergeist-poltergeist`
-- `github-discovered-tech-engine-goscrapy`
-- `github-discovered-technosophos-querypath`
 - `github-discovered-tenable-terrascan`
 - `github-discovered-tensorflow-tensorflow`
-- `github-discovered-thbar-kiba`
 - `github-discovered-thealgorithms-python`
 - `github-discovered-thedotmack-claude-mem`
-- `github-discovered-thepaw-go-eco`
-- `github-discovered-thephpleague-commonmark`
-- `github-discovered-thephpleague-csv`
-- `github-discovered-thephpleague-event`
-- `github-discovered-thephpleague-uri`
-- `github-discovered-thesp0nge-wc`
-- `github-discovered-theturtle32-websocket-node`
-- `github-discovered-thoughtbot-capybara-webkit`
-- `github-discovered-threedaymonk-text`
 - `github-discovered-threedotslabs-watermill`
 - `github-discovered-tidyverse-dplyr`
 - `github-discovered-tidyverse-ggplot2`
-- `github-discovered-tiendung-ruby-nlp`
-- `github-discovered-tjfontaine-node-dns`
-- `github-discovered-tkellen-ruby-ngram`
-- `github-discovered-tobi-delayed-job`
-- `github-discovered-toland-patron`
-- `github-discovered-tomas-needle`
-- `github-discovered-tomato42-tlslite-ng`
-- `github-discovered-tomiacannondale-wrap-excel`
-- `github-discovered-tonutils-go`
-- `github-discovered-tooljet-tooljet`
-- `github-discovered-toorop-go-dkim`
 - `github-discovered-topjohnwu-magisk`
-- `github-discovered-traderjoe-xyz-joe-v2`
 - `github-discovered-travisvn-openai-edge-tts`
 - `github-discovered-trekhleb-javascript-algorithms`
 - `github-discovered-trimstray-test-your-sysadmin-skills`
 - `github-discovered-trimstray-the-book-of-secret-knowledge`
-- `github-discovered-triplepoint-php-units-of-measure`
-- `github-discovered-tryolabs-requestium`
-- `github-discovered-turicas-rows`
 - `github-discovered-twitter-the-algorithm`
-- `github-discovered-typhoeus-typhoeus`
-- `github-discovered-ua-parser-uap-php`
-- `github-discovered-ua-parser-uap-python`
 - `github-discovered-ultraworkers-claw-code`
-- `github-discovered-umihico-minigun-requests`
-- `github-discovered-umihico-pythonista-chromeless`
-- `github-discovered-un33k-python-slugify`
-- `github-discovered-unclecode-crawl4ai`
 - `github-discovered-uniswap-interface`
 - `github-discovered-uniswap-sdk-core`
 - `github-discovered-uniswap-smart-order-router`
 - `github-discovered-uniswap-universal-router`
 - `github-discovered-uniswap-v3-core`
 - `github-discovered-uniswap-v4-core`
-- `github-discovered-universal-router`
 - `github-discovered-unovue-reka-ui`
 - `github-discovered-upgundecha-howtheysre`
-- `github-discovered-utmapp-utm`
-- `github-discovered-v3-core`
-- `github-discovered-v4-chain`
-- `github-discovered-v4-core`
-- `github-discovered-veer66-thailang4r`
 - `github-discovered-velodrome-finance-contracts`
 - `github-discovered-veloradex-paraswap-dex-lib`
-- `github-discovered-venomous-cloudscraper`
-- `github-discovered-victorlin-loso`
-- `github-discovered-vida-nyu-ache`
-- `github-discovered-videlalvaro-php-amqplib`
-- `github-discovered-videlalvaro-thumper`
-- `github-discovered-vifreefly-kimuraframework`
-- `github-discovered-vinta-awesome-python`
-- `github-discovered-vinta-haul`
-- `github-discovered-vinta-pangu-py`
 - `github-discovered-virtio-win-kvm-guest-drivers-windows`
-- `github-discovered-visionmedia-superagent`
 - `github-discovered-vllm-project-vllm`
-- `github-discovered-vmg-redcarpet`
 - `github-discovered-vmware-archive-clarity`
 - `github-discovered-wangzhiwubigdata-god-of-bigdata`
-- `github-discovered-watir-watir`
-- `github-discovered-waylan-python-markdown`
-- `github-discovered-wcong-ants-go`
-- `github-discovered-weshatheleopard-rubyxl`
-- `github-discovered-wikiteam-wikiteam`
-- `github-discovered-willdurand-emailreplyparser`
-- `github-discovered-wisembly-elephant-io`
-- `github-discovered-wisembly-excelant`
 - `github-discovered-withastro-astro`
 - `github-discovered-withastro-starlight`
-- `github-discovered-wooorm-franc`
-- `github-discovered-wummel-linkchecker`
-- `github-discovered-xaviershay-kronic`
 - `github-discovered-xitu-gold-miner`
 - `github-discovered-xssnick-tonutils-go`
 - `github-discovered-yamadashy-repomix`
-- `github-discovered-yaml-pyyaml`
-- `github-discovered-yanyiwu-gojieba`
-- `github-discovered-yasserg-crawler4j`
-- `github-discovered-yb66-tickle`
 - `github-discovered-yeasy-docker-practice`
-- `github-discovered-yelp-python-gearman`
-- `github-discovered-yohasebe-engtagger`
-- `github-discovered-yorickpeterse-oga`
-- `github-discovered-your-username-your-repo`
-- `github-discovered-your-username-your-repo-name`
-- `github-discovered-your-username-your-repository`
-- `github-discovered-yourusername-gpt-4-1-web-crawler`
-- `github-discovered-yourusername-price-tracker`
 - `github-discovered-yt-dlp-yt-dlp`
 - `github-discovered-yudaocode-springboot-labs`
-- `github-discovered-yujiosaka-headless-chrome-crawler`
-- `github-discovered-yzhang-rseg`
-- `github-discovered-zach-klippenstein-goregen`
-- `github-discovered-zdavatz-spreadsheet`
-- `github-discovered-zencephalon-tactful-tokenizer`
-- `github-discovered-zhayujie-cowagent`
-- `github-discovered-zhenjl-porter2`
 - `github-discovered-zhisheng17-flink-learning`
-- `github-discovered-ziadoz-awesome-php`
 - `github-discovered-ziglang-zig`
 - `github-discovered-zigtools-zls`
 - `github-discovered-zokrates-zokrates`
-- `github-discovered-zornade-visura-api`
-- `github-discovered-ztane-python-levenshtein`
 
 ## Per-category Top (stub source)
 
 ### ai-agents-llm
-- 185022★ `Significant-Gravitas/AutoGPT`
-- 139656★ `langchain-ai/langchain`
-- 58876★ `mem0ai/mem0`
-- 50216★ `run-llama/llama_index`
-- 46971★ `mudler/LocalAI`
+- 185154★ `Significant-Gravitas/AutoGPT`
+- 140203★ `langchain-ai/langchain`
+- 59458★ `mem0ai/mem0`
+- 50395★ `run-llama/llama_index`
+- 47143★ `mudler/LocalAI`
 
 ### ai-coding-assistants
-- 72400★ `daytonaio/daytona`
-- 40762★ `agno-agi/agno`
-- 34093★ `continuedev/continue`
-- 33737★ `Pythagora-io/gpt-pilot`
-- 33613★ `TabbyML/tabby`
+- 72376★ `daytonaio/daytona`
+- 40847★ `agno-agi/agno`
+- 34466★ `continuedev/continue`
+- 33735★ `Pythagora-io/gpt-pilot`
+- 33653★ `TabbyML/tabby`
 
 ### mcp-tooling
-- 217767★ `affaan-m/ECC`
-- 59630★ `sansan0/TrendRadar`
-- 49776★ `aaif-goose/goose`
-- 46971★ `mudler/LocalAI`
+- 221748★ `affaan-m/ECC`
+- 59917★ `sansan0/TrendRadar`
+- 50193★ `aaif-goose/goose`
+- 47143★ `mudler/LocalAI`
 
 ### web3-defi-dex
-- 6666★ `cporter202/API-mega-list`
-- 4742★ `ChanChiChoi/awesome-Face_Recognition`
-- 2735★ `ondyari/FaceForensics`
+- 6828★ `cporter202/API-mega-list`
+- 4739★ `ChanChiChoi/awesome-Face_Recognition`
+- 2738★ `ondyari/FaceForensics`
+- 2032★ `Jieyab89/OSINT-Cheat-sheet`
 
 ### web3-dex-curve-balancer
-- 4300★ `kubernetes-sigs/aws-load-balancer-controller`
-- 4210★ `shuding/react-wrap-balancer`
+- 4303★ `kubernetes-sigs/aws-load-balancer-controller`
+- 4208★ `shuding/react-wrap-balancer`
 
 ### web3-dex-aggregators
-- 810★ `VeloraDEX/paraswap-dex-lib`
+- 811★ `VeloraDEX/paraswap-dex-lib`
 
 ### smart-contracts-solidity
-- 27152★ `OpenZeppelin/openzeppelin-contracts`
-- 6580★ `SunWeb3Sec/DeFiHackLabs`
-- 6299★ `crytic/slither`
+- 27163★ `OpenZeppelin/openzeppelin-contracts`
+- 6597★ `SunWeb3Sec/DeFiHackLabs`
+- 6309★ `crytic/slither`
 
 ### ton-func-blockchain
 - 687★ `xssnick/tonutils-go`
 
 ### fullstack-react
-- 93330★ `oven-sh/bun`
-- 28968★ `nrwl/nx`
-- 23604★ `kriasoft/react-starter-kit`
-- 17828★ `nukeop/nuclear`
+- 93464★ `oven-sh/bun`
+- 29018★ `nrwl/nx`
+- 23610★ `kriasoft/react-starter-kit`
+- 17882★ `nukeop/nuclear`
 
 ### ui-design-systems
-- 23604★ `pedronauck/docz`
-- 7903★ `rebassjs/rebass`
-- 7232★ `react95-io/React95`
-- 6564★ `unovue/reka-ui`
-- 6401★ `vmware-archive/clarity`
+- 23603★ `pedronauck/docz`
+- 7905★ `rebassjs/rebass`
+- 7245★ `react95-io/React95`
+- 6576★ `unovue/reka-ui`
+- 6400★ `vmware-archive/clarity`
 
 ### video-generation
-- 5840★ `calesthio/OpenMontage`
-- 3297★ `nexu-io/html-video`
+- 22019★ `calesthio/OpenMontage`
+- 3536★ `nexu-io/html-video`
 
 ### audio-tts-voice
-- 4845★ `denizsafak/abogen`
-- 3174★ `rsxdalv/TTS-WebUI`
-- 1945★ `travisvn/openai-edge-tts`
+- 4974★ `denizsafak/abogen`
+- 3180★ `rsxdalv/TTS-WebUI`
+- 1954★ `travisvn/openai-edge-tts`
 
 ### testing-e2e-quality
-- 5618★ `antiwork/shortest`
+- 5627★ `antiwork/shortest`
 
 ### security-monitoring
-- 9738★ `upgundecha/howtheysre`
+- 9742★ `upgundecha/howtheysre`
 
 ### docs-research-rag
-- 83142★ `thedotmack/claude-mem`
-- 61784★ `Mintplex-Labs/anything-llm`
-- 59314★ `pathwaycom/llm-app`
-- 44840★ `milvus-io/milvus`
-- 35862★ `patchy631/ai-engineering-hub`
+- 84290★ `thedotmack/claude-mem`
+- 62110★ `Mintplex-Labs/anything-llm`
+- 59237★ `pathwaycom/llm-app`
+- 44957★ `milvus-io/milvus`
+- 36012★ `patchy631/ai-engineering-hub`
+
+### website-capture-promo
+- 31329★ `heygen-com/hyperframes`
 
 ### devops-cicd
-- 6763★ `sottlmarek/DevSecOps`
-- 3222★ `Pradumnasaraf/DevOps`
+- 6772★ `sottlmarek/DevSecOps`
+- 3224★ `Pradumnasaraf/DevOps`
 
 ### backend-apis-node
-- 71542★ `bytedance/deer-flow`
-- 43091★ `payloadcms/payload`
-- 41757★ `hexojs/hexo`
-- 26391★ `yamadashy/repomix`
-- 25220★ `mastra-ai/mastra`
+- 74709★ `bytedance/deer-flow`
+- 43234★ `payloadcms/payload`
+- 41768★ `hexojs/hexo`
+- 26572★ `yamadashy/repomix`
+- 25456★ `mastra-ai/mastra`
 
 ### databases-orm
-- 8940★ `paradedb/paradedb`
+- 8962★ `paradedb/paradedb`
 
 ### containers-kubernetes
-- 82818★ `bregman-arie/devops-exercises`
-- 79299★ `netdata/netdata`
-- 26104★ `yeasy/docker_practice`
-- 25679★ `rancher/rancher`
-- 23173★ `argoproj/argo-cd`
+- 82933★ `bregman-arie/devops-exercises`
+- 79413★ `netdata/netdata`
+- 26118★ `yeasy/docker_practice`
+- 25695★ `rancher/rancher`
+- 23250★ `argoproj/argo-cd`
 
 ### static-analysis
-- 29435★ `standard/standard`
-- 27359★ `eslint/eslint`
-- 14661★ `lint-staged/lint-staged`
+- 29432★ `standard/standard`
+- 27398★ `eslint/eslint`
+- 14670★ `lint-staged/lint-staged`
 
 ### lang-python
-- 353779★ `donnemartin/system-design-primer`
-- 222036★ `TheAlgorithms/Python`
-- 196991★ `NousResearch/hermes-agent`
-- 185022★ `Significant-Gravitas/AutoGPT`
-- 171412★ `yt-dlp/yt-dlp`
+- 354869★ `donnemartin/system-design-primer`
+- 222204★ `TheAlgorithms/Python`
+- 203047★ `NousResearch/hermes-agent`
+- 185155★ `Significant-Gravitas/AutoGPT`
+- 173359★ `yt-dlp/yt-dlp`
 
 ### lang-javascript
-- 245986★ `react/react`
-- 217768★ `affaan-m/ECC`
-- 196101★ `trekhleb/javascript-algorithms`
-- 156465★ `Snailclimb/JavaGuide`
-- 148086★ `airbnb/javascript`
+- 246101★ `react/react`
+- 221747★ `affaan-m/ECC`
+- 196144★ `trekhleb/javascript-algorithms`
+- 156614★ `Snailclimb/JavaGuide`
+- 148095★ `airbnb/javascript`
 
 ### lang-typescript
-- 193073★ `n8n-io/n8n`
-- 186542★ `microsoft/vscode`
-- 163893★ `f/prompts.chat`
-- 139656★ `langchain-ai/langchain`
-- 109305★ `microsoft/TypeScript`
+- 194075★ `n8n-io/n8n`
+- 186767★ `microsoft/vscode`
+- 164352★ `f/prompts.chat`
+- 140204★ `langchain-ai/langchain`
+- 109393★ `microsoft/TypeScript`
 
 ### lang-java
-- 127678★ `krahets/hello-algo`
-- 108422★ `GrowingGit/GitHub-Chinese-Top-Charts`
-- 94127★ `iluwatar/java-design-patterns`
-- 83880★ `macrozheng/mall`
-- 81283★ `Stirling-Tools/Stirling-PDF`
+- 127936★ `krahets/hello-algo`
+- 108557★ `GrowingGit/GitHub-Chinese-Top-Charts`
+- 94148★ `iluwatar/java-design-patterns`
+- 84366★ `Stirling-Tools/Stirling-PDF`
+- 83922★ `macrozheng/mall`
 
 ### lang-go
-- 174482★ `ollama/ollama`
-- 134841★ `golang/go`
-- 123112★ `kubernetes/kubernetes`
-- 107425★ `fatedier/frp`
-- 88706★ `gin-gonic/gin`
+- 174909★ `ollama/ollama`
+- 134931★ `golang/go`
+- 123286★ `kubernetes/kubernetes`
+- 107559★ `fatedier/frp`
+- 88757★ `gin-gonic/gin`
 
 ### lang-rust
-- 194026★ `ultraworkers/claw-code`
-- 116412★ `rustdesk/rustdesk`
-- 113976★ `rust-lang/rust`
-- 108053★ `tauri-apps/tauri`
-- 107168★ `denoland/deno`
+- 194300★ `ultraworkers/claw-code`
+- 116953★ `rustdesk/rustdesk`
+- 114171★ `rust-lang/rust`
+- 108457★ `farion1231/cc-switch`
+- 108333★ `tauri-apps/tauri`
 
 ### lang-cpp
-- 195764★ `tensorflow/tensorflow`
-- 126031★ `react/react-native`
-- 121678★ `electron/electron`
-- 117204★ `ggml-org/llama.cpp`
-- 112752★ `godotengine/godot`
+- 195910★ `tensorflow/tensorflow`
+- 126081★ `react/react-native`
+- 121767★ `electron/electron`
+- 118147★ `ggml-org/llama.cpp`
+- 113109★ `godotengine/godot`
 
 ### lang-csharp
-- 109360★ `2dust/v2rayN`
-- 59561★ `shadowsocks/shadowsocks-windows`
-- 53974★ `PowerShell/PowerShell`
-- 53439★ `jellyfin/jellyfin`
-- 43952★ `files-community/Files`
+- 109909★ `2dust/v2rayN`
+- 59571★ `shadowsocks/shadowsocks-windows`
+- 54179★ `PowerShell/PowerShell`
+- 53670★ `jellyfin/jellyfin`
+- 44041★ `files-community/Files`
 
 ### lang-ruby
-- 58697★ `rails/rails`
-- 54157★ `maybe-finance/maybe`
-- 51502★ `jekyll/jekyll`
-- 50038★ `mastodon/mastodon`
-- 49491★ `huginn/huginn`
+- 58728★ `rails/rails`
+- 54290★ `maybe-finance/maybe`
+- 51522★ `jekyll/jekyll`
+- 50056★ `mastodon/mastodon`
+- 49521★ `huginn/huginn`
 
 ### lang-php
-- 71630★ `danielmiessler/SecLists`
-- 57154★ `coollabsio/coolify`
-- 35816★ `nextcloud/server`
-- 34777★ `laravel/framework`
-- 31153★ `filamentphp/filament`
+- 71768★ `danielmiessler/SecLists`
+- 57419★ `coollabsio/coolify`
+- 35932★ `nextcloud/server`
+- 34791★ `laravel/framework`
+- 31244★ `filamentphp/filament`
 
 ### lang-swift
-- 70052★ `swiftlang/swift`
-- 45258★ `iina/iina`
-- 42382★ `Alamofire/Alamofire`
-- 39757★ `exelban/stats`
-- 38580★ `apple/container`
+- 70117★ `swiftlang/swift`
+- 45349★ `iina/iina`
+- 43192★ `apple/container`
+- 42392★ `Alamofire/Alamofire`
+- 39970★ `exelban/stats`
 
 ### lang-kotlin
-- 61018★ `topjohnwu/Magisk`
-- 58286★ `2dust/v2rayNG`
-- 52918★ `JetBrains/kotlin`
-- 47902★ `bannedbook/fanqiang`
-- 46974★ `square/okhttp`
+- 61339★ `topjohnwu/Magisk`
+- 58665★ `2dust/v2rayNG`
+- 52988★ `JetBrains/kotlin`
+- 48043★ `bannedbook/fanqiang`
+- 46985★ `square/okhttp`
 
 ### lang-scala
-- 73444★ `twitter/the-algorithm`
-- 43474★ `apache/spark`
-- 18366★ `lichess-org/lila`
+- 73477★ `twitter/the-algorithm`
+- 43503★ `apache/spark`
+- 18389★ `lichess-org/lila`
 - 16393★ `prisma/prisma1`
-- 14542★ `scala/scala`
+- 14550★ `scala/scala`
 
 ### lang-r-lang
-- 7076★ `cxli233/FriendsDontLetFriends`
-- 6948★ `tidyverse/ggplot2`
-- 5656★ `rstudio/shiny`
-- 5066★ `hadley/r4ds`
-- 5033★ `tidyverse/dplyr`
+- 7078★ `cxli233/FriendsDontLetFriends`
+- 6954★ `tidyverse/ggplot2`
+- 5657★ `rstudio/shiny`
+- 5069★ `hadley/r4ds`
+- 5034★ `tidyverse/dplyr`
 
 ### lang-dart
-- 177013★ `flutter/flutter`
-- 83562★ `localsend/localsend`
-- 72554★ `AppFlowy-IO/AppFlowy`
-- 47033★ `KRTirtho/spotube`
-- 42844★ `chen08209/FlClash`
+- 177567★ `flutter/flutter`
+- 84160★ `localsend/localsend`
+- 72950★ `AppFlowy-IO/AppFlowy`
+- 47153★ `KRTirtho/spotube`
+- 43519★ `chen08209/FlClash`
 
 ### lang-zig
-- 43170★ `ziglang/zig`
-- 31244★ `lightpanda-io/browser`
-- 7710★ `nullclaw/nullclaw`
-- 7387★ `fairyglade/ly`
-- 4939★ `zigtools/zls`
+- 43216★ `ziglang/zig`
+- 31425★ `lightpanda-io/browser`
+- 7722★ `nullclaw/nullclaw`
+- 7415★ `fairyglade/ly`
+- 4968★ `zigtools/zls`
 
 ### os-linux-kernel
-- 161376★ `jlevy/the-art-of-command-line`
-- 27795★ `imthenachoman/How-To-Secure-A-Linux-Server`
-- 11839★ `netbootxyz/netboot.xyz`
-- 11672★ `trimstray/test-your-sysadmin-skills`
-- 9081★ `A-poc/RedTeam-Tools`
+- 161435★ `jlevy/the-art-of-command-line`
+- 28116★ `imthenachoman/How-To-Secure-A-Linux-Server`
+- 11862★ `netbootxyz/netboot.xyz`
+- 11683★ `trimstray/test-your-sysadmin-skills`
+- 9180★ `A-poc/RedTeam-Tools`
 
 ### os-bsd
-- 188113★ `ohmyzsh/ohmyzsh`
-- 117139★ `justjavac/free-programming-books-zh_CN`
-- 97373★ `nvbn/thefuck`
-- 93853★ `nvm-sh/nvm`
-- 88637★ `gohugoio/hugo`
+- 188255★ `ohmyzsh/ohmyzsh`
+- 117176★ `justjavac/free-programming-books-zh_CN`
+- 97421★ `nvbn/thefuck`
+- 93939★ `nvm-sh/nvm`
+- 88727★ `gohugoio/hugo`
 
 ### os-hypervisor
-- 23382★ `kholia/OSX-KVM`
-- 13307★ `qemu/qemu`
-- 2661★ `virtio-win/kvm-guest-drivers-windows`
+- 23404★ `kholia/OSX-KVM`
+- 13339★ `qemu/qemu`
+- 2664★ `virtio-win/kvm-guest-drivers-windows`
 
 ### embedded-rtos
-- 23854★ `lvgl/lvgl`
-- 21815★ `micropython/micropython`
-- 12879★ `cesanta/mongoose`
-- 9415★ `embassy-rs/embassy`
+- 23903★ `lvgl/lvgl`
+- 21834★ `micropython/micropython`
+- 12897★ `cesanta/mongoose`
+- 9444★ `embassy-rs/embassy`
 
 ### fpga-hdl
-- 7220★ `logisim-evolution/logisim-evolution`
-- 5506★ `LeiWang1999/FPGA`
-- 4670★ `open-sdr/openwifi`
-- 3955★ `enjoy-digital/litex`
-- 2572★ `darklife/darkriscv`
+- 7252★ `logisim-evolution/logisim-evolution`
+- 5516★ `LeiWang1999/FPGA`
+- 4680★ `open-sdr/openwifi`
+- 3967★ `enjoy-digital/litex`
+- 2573★ `darklife/darkriscv`
 
 ### ml-pytorch
-- 163781★ `AUTOMATIC1111/stable-diffusion-webui`
-- 161705★ `huggingface/transformers`
-- 117500★ `Comfy-Org/ComfyUI`
-- 97364★ `rasbt/LLMs-from-scratch`
-- 83280★ `vllm-project/vllm`
+- 163882★ `AUTOMATIC1111/stable-diffusion-webui`
+- 161923★ `huggingface/transformers`
+- 118328★ `Comfy-Org/ComfyUI`
+- 97742★ `rasbt/LLMs-from-scratch`
+- 84322★ `vllm-project/vllm`
 
 ### ml-tensorflow
-- 195764★ `tensorflow/tensorflow`
-- 64096★ `keras-team/keras`
-- 59924★ `CorentinJ/Real-Time-Voice-Cloning`
-- 44604★ `roboflow/supervision`
-- 43748★ `aymericdamien/TensorFlow-Examples`
+- 195910★ `tensorflow/tensorflow`
+- 64105★ `keras-team/keras`
+- 59944★ `CorentinJ/Real-Time-Voice-Cloning`
+- 44919★ `roboflow/supervision`
+- 43742★ `aymericdamien/TensorFlow-Examples`
 
 ### ml-inference-serving
-- 194026★ `ultraworkers/claw-code`
-- 161705★ `huggingface/transformers`
-- 103772★ `deepseek-ai/DeepSeek-V3`
+- 194300★ `ultraworkers/claw-code`
+- 161923★ `huggingface/transformers`
+- 103805★ `deepseek-ai/DeepSeek-V3`
 
 ### ml-computer-vision
-- 22975★ `spmallick/learnopencv`
-- 9473★ `CVHub520/X-AnyLabeling`
+- 22989★ `spmallick/learnopencv`
+- 9541★ `CVHub520/X-AnyLabeling`
 
 ### ml-nlp-classic
-- 161705★ `huggingface/transformers`
-- 72282★ `hiyouga/LlamaFactory`
-- 40028★ `google-research/bert`
-- 23642★ `lukasmasuch/best-of-ml-python`
-- 22631★ `AiHubCN/Awesome-Chinese-LLM`
+- 161923★ `huggingface/transformers`
+- 72497★ `hiyouga/LlamaFactory`
+- 40047★ `google-research/bert`
+- 23646★ `lukasmasuch/best-of-ml-python`
+- 22639★ `AiHubCN/Awesome-Chinese-LLM`
 
 ### game-engines
-- 112753★ `godotengine/godot`
-- 73930★ `ocornut/imgui`
-- 46678★ `bevyengine/bevy`
-- 25658★ `BabylonJS/Babylon.js`
-- 24839★ `leereilly/games`
+- 113109★ `godotengine/godot`
+- 74122★ `ocornut/imgui`
+- 46849★ `bevyengine/bevy`
+- 25695★ `BabylonJS/Babylon.js`
+- 24856★ `leereilly/games`
 
 ### graphics-rendering
-- 33502★ `raysan5/raylib`
-- 30779★ `iced-rs/iced`
-- 23854★ `lvgl/lvgl`
-- 23749★ `processing/p5.js`
-- 23726★ `ssloy/tinyrenderer`
+- 33589★ `raysan5/raylib`
+- 30832★ `iced-rs/iced`
+- 23903★ `lvgl/lvgl`
+- 23770★ `ssloy/tinyrenderer`
+- 23756★ `processing/p5.js`
 
 ### graphics-3d-assets
-- 9076★ `domlysz/BlenderGIS`
-- 3319★ `hlorus/CAD_Sketcher`
-- 3300★ `armory3d/armory`
+- 9089★ `domlysz/BlenderGIS`
+- 3327★ `hlorus/CAD_Sketcher`
+- 3301★ `armory3d/armory`
 
 ### sci-python-stack
-- 352946★ `jwasham/coding-interview-university`
-- 270023★ `practical-tutorials/project-based-learning`
-- 195764★ `tensorflow/tensorflow`
-- 183485★ `jackfrued/Python-100-Days`
-- 123205★ `ripienaar/free-for-dev`
+- 353952★ `jwasham/coding-interview-university`
+- 270900★ `practical-tutorials/project-based-learning`
+- 195910★ `tensorflow/tensorflow`
+- 183699★ `jackfrued/Python-100-Days`
+- 123455★ `ripienaar/free-for-dev`
 
 ### sci-bioinformatics
-- 81848★ `Developer-Y/cs-video-courses`
-- 28686★ `K-Dense-AI/scientific-agent-skills`
-- 3728★ `google/deepvariant`
-- 2203★ `lh3/minimap2`
+- 81927★ `Developer-Y/cs-video-courses`
+- 29334★ `K-Dense-AI/scientific-agent-skills`
+- 3736★ `google/deepvariant`
+- 2204★ `lh3/minimap2`
 
 ### sci-gis-geospatial
-- 3715★ `opengeos/leafmap`
-- 1487★ `mikeroyal/Photogrammetry-Guide`
+- 3720★ `opengeos/leafmap`
+- 1492★ `mikeroyal/Photogrammetry-Guide`
 
 ### edu-platforms
-- 2999★ `frappe/lms`
+- 3012★ `frappe/lms`
 
 ### static-site-generators
-- 60286★ `withastro/astro`
-- 55939★ `gatsbyjs/gatsby`
-- 51502★ `jekyll/jekyll`
-- 8687★ `withastro/starlight`
-- 5812★ `daattali/beautiful-jekyll`
+- 60508★ `withastro/astro`
+- 55940★ `gatsbyjs/gatsby`
+- 51522★ `jekyll/jekyll`
+- 8749★ `withastro/starlight`
+- 5813★ `daattali/beautiful-jekyll`
 
 ### cms-wordpress
-- 476860★ `sindresorhus/awesome`
-- 357651★ `nilbuild/developer-roadmap`
-- 353779★ `donnemartin/system-design-primer`
+- 478808★ `sindresorhus/awesome`
+- 358290★ `nilbuild/developer-roadmap`
+- 354869★ `donnemartin/system-design-primer`
 
 ### blog-docs-publish
 - 1678★ `RickStrahl/MarkdownMonster`
 
 ### mobile-android
-- 177013★ `flutter/flutter`
-- 143811★ `Genymobile/scrcpy`
-- 126031★ `react/react-native`
-- 117139★ `justjavac/free-programming-books-zh_CN`
-- 116413★ `rustdesk/rustdesk`
+- 177567★ `flutter/flutter`
+- 144358★ `Genymobile/scrcpy`
+- 126081★ `react/react-native`
+- 117176★ `justjavac/free-programming-books-zh_CN`
+- 116953★ `rustdesk/rustdesk`
 
 ### mobile-ios
-- 50777★ `dkhamsing/open-source-ios-apps`
-- 34306★ `xitu/gold-miner`
-- 25647★ `SDWebImage/SDWebImage`
-- 25542★ `NativeScript/NativeScript`
+- 50891★ `dkhamsing/open-source-ios-apps`
+- 34316★ `xitu/gold-miner`
+- 25645★ `SDWebImage/SDWebImage`
+- 25546★ `NativeScript/NativeScript`
 
 ### mobile-cross-platform
-- 517085★ `codecrafters-io/build-your-own-x`
-- 357651★ `nilbuild/developer-roadmap`
-- 270023★ `practical-tutorials/project-based-learning`
-- 245986★ `react/react`
-- 217769★ `affaan-m/ECC`
+- 519672★ `codecrafters-io/build-your-own-x`
+- 358291★ `nilbuild/developer-roadmap`
+- 270900★ `practical-tutorials/project-based-learning`
+- 246101★ `react/react`
+- 221747★ `affaan-m/ECC`
 
 ### chain-ethereum-clients
-- 68518★ `base/node`
-- 51191★ `ethereum/go-ethereum`
-- 36569★ `inkonchain/node`
+- 68500★ `base/node`
+- 51208★ `ethereum/go-ethereum`
+- 36562★ `inkonchain/node`
 
 ### chain-l1-alt
-- 476860★ `sindresorhus/awesome`
-- 352947★ `jwasham/coding-interview-university`
-- 171413★ `yt-dlp/yt-dlp`
-- 123205★ `ripienaar/free-for-dev`
+- 478808★ `sindresorhus/awesome`
+- 353952★ `jwasham/coding-interview-university`
+- 173360★ `yt-dlp/yt-dlp`
+- 123455★ `ripienaar/free-for-dev`
 
 ### chain-zk-crypto
-- 7670★ `kroma-network/tachyon`
-- 4525★ `ProvableHQ/snarkOS`
-- 2153★ `risc0/risc0`
-- 1878★ `Zokrates/ZoKrates`
-- 1360★ `noir-lang/noir`
+- 7667★ `kroma-network/tachyon`
+- 4527★ `ProvableHQ/snarkOS`
+- 2157★ `risc0/risc0`
+- 1876★ `Zokrates/ZoKrates`
+- 1366★ `noir-lang/noir`
 
 ### chain-indexers-non-dex
 - 2252★ `Nethereum/Nethereum`
 
 ### hardware-robotics
-- 8887★ `dusty-nv/jetson-inference`
-- 4255★ `MichaelGrupp/evo`
-- 4070★ `BehaviorTree/BehaviorTree.CPP`
-- 3836★ `Ly0n/awesome-robotic-tooling`
-- 3790★ `dora-rs/dora`
+- 8908★ `dusty-nv/jetson-inference`
+- 4260★ `MichaelGrupp/evo`
+- 4086★ `BehaviorTree/BehaviorTree.CPP`
+- 3842★ `Ly0n/awesome-robotic-tooling`
+- 3806★ `dora-rs/dora`
 
 ### iot-edge
-- 74567★ `ruvnet/RuView`
-- 16955★ `microsoft/IoT-For-Beginners`
-- 16419★ `emqx/emqx`
-- 7480★ `kubeedge/kubeedge`
+- 75490★ `ruvnet/RuView`
+- 16953★ `microsoft/IoT-For-Beginners`
+- 16438★ `emqx/emqx`
+- 7490★ `kubeedge/kubeedge`
 
 ### home-automation
-- 34097★ `IceWhaleTech/CasaOS`
-- 24491★ `arendst/Tasmota`
-- 23720★ `SYSTRAN/faster-whisper`
+- 34803★ `IceWhaleTech/CasaOS`
+- 24511★ `arendst/Tasmota`
+- 23851★ `SYSTRAN/faster-whisper`
 
 ### hardware-cad-3dprint
-- 2480★ `gumyr/build123d`
+- 2524★ `gumyr/build123d`
 
 ### data-engineering
-- 45863★ `apache/airflow`
-- 42583★ `DataTalksClub/data-engineering-zoomcamp`
-- 29802★ `eugeneyan/applied-ml`
-- 27093★ `kestra-io/kestra`
-- 21495★ `airbytehq/airbyte`
+- 45926★ `apache/airflow`
+- 42769★ `DataTalksClub/data-engineering-zoomcamp`
+- 29842★ `eugeneyan/applied-ml`
+- 27143★ `kestra-io/kestra`
+- 21531★ `airbytehq/airbyte`
 
 ### message-queues
-- 20097★ `yudaocode/SpringBoot-Labs`
-- 15070★ `zhisheng17/flink-learning`
-- 14712★ `aalansehaiyang/technology-talk`
-- 10479★ `wangzhiwubigdata/God-Of-BigData`
-- 9762★ `ThreeDotsLabs/watermill`
+- 20094★ `yudaocode/SpringBoot-Labs`
+- 15071★ `zhisheng17/flink-learning`
+- 14715★ `aalansehaiyang/technology-talk`
+- 10484★ `wangzhiwubigdata/God-Of-BigData`
+- 9772★ `ThreeDotsLabs/watermill`
 
 ### search-analytics-db
-- 357651★ `nilbuild/developer-roadmap`
-- 353780★ `donnemartin/system-design-primer`
-- 217769★ `affaan-m/ECC`
+- 358291★ `nilbuild/developer-roadmap`
+- 354869★ `donnemartin/system-design-primer`
+- 221747★ `affaan-m/ECC`
 
 ### cloud-terraform-iac
-- 20455★ `GoogleCloudPlatform/microservices-demo`
-- 9346★ `khuedoan/homelab`
-- 8802★ `bridgecrewio/checkov`
-- 8306★ `HariSekhon/DevOps-Bash-tools`
-- 5210★ `tenable/terrascan`
+- 20492★ `GoogleCloudPlatform/microservices-demo`
+- 9368★ `khuedoan/homelab`
+- 8822★ `bridgecrewio/checkov`
+- 8311★ `HariSekhon/DevOps-Bash-tools`
+- 5209★ `tenable/terrascan`
 
 ### compiler-llvm-wasm
-- 33841★ `carbon-language/carbon-lang`
-- 22124★ `RustPython/RustPython`
-- 21604★ `oracle/graal`
-- 17929★ `AssemblyScript/assemblyscript`
-- 16797★ `exaloop/codon`
+- 33852★ `carbon-language/carbon-lang`
+- 22143★ `RustPython/RustPython`
+- 21614★ `oracle/graal`
+- 17935★ `AssemblyScript/assemblyscript`
+- 16803★ `exaloop/codon`
 
 ### networking-servers
-- 476860★ `sindresorhus/awesome`
-- 353780★ `donnemartin/system-design-primer`
-- 229024★ `trimstray/the-book-of-secret-knowledge`
-- 183486★ `jackfrued/Python-100-Days`
+- 478808★ `sindresorhus/awesome`
+- 354869★ `donnemartin/system-design-primer`
+- 230239★ `trimstray/the-book-of-secret-knowledge`
+- 183699★ `jackfrued/Python-100-Days`
 
 ### web3-dex-curated
-- 5515★ `Uniswap/interface`
-- 5004★ `Uniswap/v3-core`
-- 2513★ `Uniswap/v4-core`
+- 5514★ `Uniswap/interface`
+- 5009★ `Uniswap/v3-core`
+- 2516★ `Uniswap/v4-core`
 - 1947★ `sushi-labs/sushiswap`
-- 1110★ `curvefi/curve-contract`
-- 810★ `VeloraDEX/paraswap-dex-lib`
+- 1112★ `curvefi/curve-contract`
+- 811★ `VeloraDEX/paraswap-dex-lib`
 - 512★ `Uniswap/smart-order-router`
 - 503★ `Uniswap/universal-router`
 - 369★ `pancakeswap/pancake-smart-contracts`
-- 363★ `balancer/balancer-v2-monorepo`
-- 356★ `pancakeswap/pancake-subgraph`
-- 329★ `dydxprotocol/v4-chain`
-- 304★ `1inch/limit-order-protocol`
+- 365★ `balancer/balancer-v2-monorepo`
+- 357★ `pancakeswap/pancake-subgraph`
+- 332★ `dydxprotocol/v4-chain`
+- 305★ `1inch/limit-order-protocol`
 - 165★ `lfj-gg/joe-v2`
-- 154★ `cowprotocol/contracts`
-- 136★ `Uniswap/sdk-core`
+- 155★ `cowprotocol/contracts`
+- 137★ `Uniswap/sdk-core`
 - 116★ `aerodrome-finance/contracts`
 - 65★ `velodrome-finance/contracts`
 - 51★ `odos-xyz/odos-router-v2`

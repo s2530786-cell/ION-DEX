@@ -1,5 +1,22 @@
 # Current Progress
 
+## 2026-06-25 OpenClaw Weixin bot group context-token fix
+
+- **问题定位**：`hermes-agent/gateway/platforms/weixin.py` 在处理群聊入站消息时只按发送者 `sender_id` 缓存 `context_token`；但回复链路使用 `event.source.chat_id`（群 ID / `@chatroom`）发送，导致群聊回复无法取到 iLink 要求的最新 `context_token`，容易出现群聊回复失败或退化。
+- **修复**：入站消息带 `context_token` 时，继续缓存到发送者，同时在 `effective_chat_id != sender_id` 时缓存到实际会话 ID，确保群聊回复可按群 ID 获取上下文令牌。
+- **测试补充**：`hermes-agent/tests/gateway/test_weixin.py` 新增 `TestWeixinGroupContextToken` 回归测试，覆盖群消息入站后 sender 与 group chat 两个 key 均可取到同一 `context_token`。
+- **验证**：`python -m py_compile "gateway\\platforms\\weixin.py" "tests\\gateway\\test_weixin.py"` ✅；ReadLints 两个文件 ✅ no errors；直接字节检查 `first3=222222 nul=False` ✅。尝试 `python -m pytest ...` 失败：当前解释器缺少 `pytest`；尝试 `uv run pytest ...` 被外部中断，未形成测试结果。
+- **范围控制**：仅改 `hermes-agent/gateway/platforms/weixin.py` 与 `hermes-agent/tests/gateway/test_weixin.py`；未处理 hermes-agent 子仓库内其它既有 dirty 文件。
+
+## 2026-06-25 BSC follow-up audit / OrderBookV2 settlement fix
+
+- **Audit progress checked**: reviewed `contracts/audit/` coverage and added `contracts/audit/2026-06-25-unaudited-bsc-followup-round-9.md` for BSC contracts with only summary-level coverage.
+- **10 attack surfaces reviewed**: reentrancy, integer/precision, access control, replay/order ID, oracle/timestamp, MEV/slippage, token compatibility, custody/accounting, events, and gas/DoS.
+- **Fixed vulnerability**: `contracts/bsc/OrderBookV2.sol` `matchOrder()` credited taker-paid assets incorrectly and did not credit maker-locked assets to the taker. Buy/sell settlement now uses the maker's pre-locked asset and taker's paid asset correctly.
+- **Tests added/fixed**: `contracts/test/ContractAuditRemediations.t.sol` now covers buy-order and sell-order settlement; `contracts/test/MinimumOutput.t.sol` no longer routes a placeholder protocol fee through a fake fee receiver in min-output tests.
+- **Verification**: `D:\openclaw-tools\foundry\bin\forge.exe test --root contracts --match-path "test/*.t.sol" --no-match-path "lib/**" -vv` -> **83 passed, 0 failed**; `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-encoding.ps1 -Path contracts` -> **86 files OK**.
+- **Known residual risk**: `VaultLockV2.setLockDuration` is immediate admin control for future locks; production deployment should put admin behind multisig/timelock. `LiquidityMine` and `StakeReward` reward solvency still depends on funded reward inventory.
+
 ## 2026-06-24 unaudited Solidity audit / round 8
 
 - **Audit gap closed**: reviewed root support Solidity, `contracts/bridge/*.sol`, `contracts/dex/*.sol`, and `contracts/governance/*.sol`; report added at `contracts/audit/2026-06-24-unaudited-solidity-audit-round-8.md`.

@@ -580,3 +580,52 @@ select {
   background: rgba(var(--ion-cyan-rgb), 0.28);
   color: #fff;
 }
+
+/* ========== Cyberpunk Neon & Glassmorphism System ========== */
+/* Restored from styles/neonGlassStyles.ts (was mistakenly stored as a .ts file). */
+@layer base {
+  :root {
+    --color-cyber-bg: 1 1 4;          /* #010104 */
+    --color-neon-cyan: 0 255 255;      /* #00FFFF */
+    --color-neon-magenta: 255 0 122;   /* #FF007A */
+    --color-neon-emerald: 0 255 102;   /* #00FF66 */
+    --color-neon-red: 255 68 102;      /* #FF4466 */
+  }
+}
+
+@keyframes neon-pulse {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.9; filter: brightness(1.2); }
+  1.1%, 1.2%, 5.1%, 5.2%, 12.1%, 12.2%, 13.1%, 13.3% { opacity: 0.2; filter: brightness(0.5); }
+}
+
+@keyframes glitch-border {
+  0% { clip-path: inset(40% 0 61% 0); transform: translate(-1px, -1px); }
+  20% { clip-path: inset(92% 0 1% 0); transform: translate(1px, 1px); }
+  40% { clip-path: inset(43% 0 1% 0); transform: translate(-1px, 1px); }
+  60% { clip-path: inset(25% 0 58% 0); transform: translate(1px, -1px); }
+  80% { clip-path: inset(75% 0 7% 0); transform: translate(-1px, -1px); }
+  100% { clip-path: inset(40% 0 61% 0); transform: translate(1px, 1px); }
+}
+
+@keyframes grid-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 40px; }
+}
+
+.animate-neon-pulse {
+  animation: neon-pulse 15s infinite;
+}
+
+.bg-grid-cyber {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  animation: grid-move 20s linear infinite;
+}
+
+.glass-card-base {
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(2, 4, 10, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}

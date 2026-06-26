@@ -125,3 +125,6 @@ tools/mcp-e2b-quickstart/package-lock.json
 research/
 # ui-designs/ - Stitch design screenshots (439 HTML exports, not production code)
 ui-designs/
+# TypeScript incremental build info (machine-local)
+tsconfig.tsbuildinfo
+*.tsbuildinfo
