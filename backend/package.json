@@ -28,7 +28,7 @@
     "undici": "^8.5.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.150",
+    "@types/aws-lambda": "^8.10.162",
     "@types/node": "latest",
     "@types/pg": "^8.15.5",
     "tsx": "^4.22.4",
