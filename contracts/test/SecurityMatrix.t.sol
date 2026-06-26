@@ -52,6 +52,8 @@ contract SecurityMatrixTest is Test {
         relay = new BridgeRelayV2(owner, address(vault), 1);
         router = new IonSwapRouterV2(owner);
         pool = new IonSwapPoolMock(1_000_000 ether);
+        vm.prank(owner);
+        router.setPoolWhitelist(address(pool), true);
         _wireOfficialIonForRouter();
         priceFeed = new MockAggregator(100_000_000, 8);
         oracle = new IonOracleV2(owner, address(priceFeed), "mock");
@@ -90,7 +92,7 @@ contract SecurityMatrixTest is Test {
             pool.setFixedOutput(50_000 ether + i * 500 ether);
             uint256 minOut = 40_000 ether + i * 400 ether;
             vm.prank(user);
-            uint256 out = router.swapExactIn(pool, hugeIn, minOut, user, 1, 0);
+            uint256 out = router.swapExactIn(pool, hugeIn, minOut, user, block.timestamp + 300, 1);
             assertGe(out, minOut);
         }
     }
@@ -100,7 +102,7 @@ contract SecurityMatrixTest is Test {
             pool.setFixedOutput(80 ether + i);
             uint256 minOut = 100 ether + i;
             vm.expectRevert();
-            router.swapExactIn(pool, 1 ether, minOut, user, 1, 0);
+            router.swapExactIn(pool, 1 ether, minOut, user, block.timestamp + 300, 1);
         }
     }
 
@@ -109,7 +111,7 @@ contract SecurityMatrixTest is Test {
             uint256 quotedMin = 200 ether + i * 1e16;
             pool.setFixedOutput(quotedMin - 1 - (i % 7));
             vm.expectRevert();
-            router.swapExactIn(pool, 5 ether, quotedMin, user, 0, 0);
+            router.swapExactIn(pool, 5 ether, quotedMin, user, block.timestamp + 300, 0);
         }
     }
 

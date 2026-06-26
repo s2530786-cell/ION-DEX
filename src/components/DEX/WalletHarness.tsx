@@ -1,6 +1,7 @@
 import React from 'react';
 import { DesignTokens } from '../../lib/design-tokens';
 import { useWalletConnection } from '../../hooks/useWalletConnection';
+import { useIonWallet } from '../../hooks/useIonWallet';
 
 /**
  * WalletHarness v2.0 — ION-DEX 链上钱包连接器
@@ -23,6 +24,9 @@ export const WalletHarness: React.FC = () => {
     injectWrongNetworkSimulation,
     switchBackToMainnet,
   } = useWalletConnection();
+
+  // 官方 ION Wallet (原生链) — 与上面 BSC EVM 并存
+  const ion = useIonWallet();
 
   const formatAddress = (addr: string | null) => {
     if (!addr) return '';
@@ -240,11 +244,65 @@ export const WalletHarness: React.FC = () => {
                   WalletConnect
                 </button>
               )}
-              {availableProviders.length === 0 && (
+              {ion.installed && (
+                <button
+                  onClick={ion.connect}
+                  disabled={ion.status === 'connecting'}
+                  className="w-full py-3 rounded-xl font-bold transition-all duration-300 hover:scale-[1.02]"
+                  style={{
+                    background: DesignTokens.gradients.walletPrimary,
+                    color: DesignTokens.colors.background,
+                    boxShadow: DesignTokens.effects.walletButtonCyan,
+                    fontSize: DesignTokens.typography.buttonLabel.fontSize,
+                    letterSpacing: DesignTokens.typography.buttonLabel.letterSpacing,
+                    opacity: ion.status === 'connecting' ? 0.5 : 1,
+                  }}
+                >
+                  {ion.status === 'connecting' ? 'Connecting ION Wallet...' : 'ION Wallet (Native)'}
+                </button>
+              )}
+              {availableProviders.length === 0 && !ion.installed && (
                 <p style={{ fontSize: DesignTokens.typography.caption.fontSize, color: DesignTokens.colors.textMuted, textAlign: 'center' }}>
-                  No wallet detected. Install MetaMask to continue.
+                  No wallet detected. Install ION Wallet or MetaMask to continue.
                 </p>
               )}
+            </div>
+          )}
+
+          {/* 官方 ION Wallet 原生连接态 */}
+          {ion.status === 'connected' && status === 'disconnected' && (
+            <div
+              className="p-3 rounded-xl flex flex-col gap-2 font-mono"
+              style={{
+                backgroundColor: DesignTokens.colors.cyanOverlay,
+                borderWidth: DesignTokens.borders.thin,
+                borderStyle: 'solid',
+                borderColor: DesignTokens.colors.neonCyan,
+              }}
+            >
+              <div className="flex justify-between items-center">
+                <span style={{ fontSize: DesignTokens.dimensions.microTextSize, color: DesignTokens.colors.neonCyan, fontWeight: 800 }}>
+                  ION WALLET (NATIVE)
+                </span>
+                <button
+                  onClick={ion.disconnect}
+                  style={{ background: 'transparent', color: DesignTokens.colors.textMuted, fontSize: DesignTokens.dimensions.microTextSize, minHeight: 'auto', padding: 0 }}
+                >
+                  disconnect
+                </button>
+              </div>
+              <span className="font-bold" style={{ fontSize: DesignTokens.typography.body.fontSize, color: DesignTokens.colors.textPrimary }}>
+                {formatAddress(ion.address)}
+              </span>
+            </div>
+          )}
+
+          {ion.status === 'error' && (
+            <div
+              className="p-3 rounded-xl font-mono"
+              style={{ backgroundColor: DesignTokens.colors.magentaDark, color: DesignTokens.colors.neonMagenta, fontSize: DesignTokens.typography.caption.fontSize }}
+            >
+              ⚠ ION Wallet: {ion.errorLog}
             </div>
           )}
 

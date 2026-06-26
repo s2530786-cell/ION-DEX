@@ -78,8 +78,10 @@ contract ContractAuditRemediationsTest is Test {
     }
 
     function test_OrderBookV2_blocksUnsafeSettlementPaths() public {
+        // OrderBookV2 was constructed with quoteToken = tokenA, baseToken = tokenB.
+        // depositQuote pulls quoteToken, so the user must approve/hold tokenA.
         vm.startPrank(user);
-        tokenB.approve(address(orderBook), type(uint256).max);
+        tokenA.approve(address(orderBook), type(uint256).max);
         orderBook.depositQuote(1_000 ether);
         orderBook.placeOrder(true, 100, 1, block.timestamp + 1 hours);
         vm.stopPrank();

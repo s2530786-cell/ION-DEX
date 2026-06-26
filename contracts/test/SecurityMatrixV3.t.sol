@@ -315,7 +315,7 @@ for (uint256 i = 0; i < ITER; i++) {
 
             vm.warp(block.timestamp + 3601);
             uint256 orderId = orderBook.orderCount() - 1;
-            vm.expectRevert("Order expired");
+            vm.expectRevert(OrderBookV2.IonDexOrderExpired.selector);
             vm.prank(user);
             orderBook.matchOrder(orderId, 1);
         }
