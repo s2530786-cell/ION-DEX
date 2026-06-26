@@ -120,3 +120,6 @@ contracts/lib/openzeppelin-contracts/**/package.json
 contracts/lib/openzeppelin-contracts/**/package-lock.json
 tools/mcp-e2b-quickstart/package.json
 tools/mcp-e2b-quickstart/package-lock.json
+
+# research/ - third-party clones (274 MB, nested .git from google-stitch SDK)
+research/
