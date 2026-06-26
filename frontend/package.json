@@ -42,7 +42,7 @@
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "autoprefixer": "latest",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "postcss": "latest",
     "start-server-and-test": "^2.1.2",
     "tailwindcss": "latest",
