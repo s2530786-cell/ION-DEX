@@ -29,7 +29,7 @@
     "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "viem": "^2.52.2",
+    "viem": "^2.53.1",
     "wagmi": "^3.6.17"
   },
   "overrides": {
