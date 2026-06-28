@@ -30,7 +30,7 @@
     "react": "latest",
     "react-dom": "latest",
     "viem": "^2.52.2",
-    "wagmi": "^3.6.17"
+    "wagmi": "^3.6.21"
   },
   "overrides": {
     "ws": "8.21.0"
