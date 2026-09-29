@@ -22,7 +22,7 @@
     "pixelmatch": "^7.2.0",
     "playwright": "^1.61.0",
     "viem": "^2.52.2",
-    "vitest": "^4.1.9"
+    "vitest": "^5.0.2"
   },
   "overrides": {
     "protobufjs": "7.5.9",
@@ -63,7 +63,7 @@
     "@ton-community/func-js": "^0.11.0",
     "@ton/core": "^0.58.1",
     "lucide-react": "^1.21.0",
-    "next": "^16.2.9",
+    "next": "^16.3.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tweetnacl": "^1.0.3",
